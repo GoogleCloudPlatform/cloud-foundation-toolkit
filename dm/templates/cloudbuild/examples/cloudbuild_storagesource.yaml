@@ -20,7 +20,7 @@
 #     - name: 'gcr.io/cloud-builders/git'
 #       args:
 #         - clone
-#         - https://github.com/GoogleCloudPlatform/deploymentmanager-samples
+#         - https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 
 imports:
   - path: templates/cloudbuild/cloudbuild.py

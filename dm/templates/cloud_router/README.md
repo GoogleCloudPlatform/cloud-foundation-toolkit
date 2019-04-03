@@ -22,16 +22,16 @@ See the `properties` section in the schema file(s):
 
 ### Usage
 
-1. Clone the [Deployment Manager Samples repository](https://github.com/GoogleCloudPlatform/deploymentmanager-samples):
+1. Clone the [Deployment Manager Samples repository](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit):
 
 ```
-    git clone https://github.com/GoogleCloudPlatform/deploymentmanager-samples
+    git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 ```
 
-2. Go to the [deploymentmanager-samples/community/cloud-foundation](../../) directory:
+2. Go to the [cloud-foundation-toolkit/dm](../../) directory:
 
 ```
-    cd deploymentmanager-samples/community/cloud-foundation
+    cd cloud-foundation-toolkit/dm
 ```
 
 3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/cloud_router.yaml](examples/cloud_router.yaml):

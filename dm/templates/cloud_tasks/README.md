@@ -38,16 +38,16 @@ See the `properties` section in the schema file(s):
 
 ### Usage
 
-1. Clone the [Deployment Manager samples repository](https://github.com/GoogleCloudPlatform/deploymentmanager-samples)
+1. Clone the [Deployment Manager samples repository](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit)
 
    ```(shell)
-   git clone https://github.com/GoogleCloudPlatform/deploymentmanager-samples
+   git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
    ```
 
-2. Go to the [community/cloud-foundation](../../) directory
+2. Go to the [dm](../../) directory
 
    ```(shell)
-   cd community/cloud-foundation
+   cd dm
    ```
 
 3. Create a custom type-provider named `cloudtasks`

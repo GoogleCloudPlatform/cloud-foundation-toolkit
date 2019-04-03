@@ -12,7 +12,7 @@ This template grants IAM roles for a project.
 
 ### Resources
 
-- [virtual.projects.iamMemberBinding](https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/google/resource-snippets/cloudresourcemanager-v1/policies.jinja)
+- [virtual.projects.iamMemberBinding](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/google/resource-snippets/cloudresourcemanager-v1/policies.jinja)
     - This virtual endpoint implements projects.getIamPolicy and projects.setIamPolicy internally with proper concurancy handling.
 
 ### Properties
@@ -23,16 +23,16 @@ See `properties` section in the schema file(s):
 
 ### Usage
 
-1. Clone the [Deployment Manager samples repository](https://github.com/GoogleCloudPlatform/deploymentmanager-samples):
+1. Clone the [Deployment Manager samples repository](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit):
 
 ```shell
-    git clone https://github.com/GoogleCloudPlatform/deploymentmanager-samples
+    git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 ```
 
-2. Go to the [community/cloud-foundation](../../) directory:
+2. Go to the [dm](../../) directory:
 
 ```shell
-    cd community/cloud-foundation
+    cd dm
 ```
 
 3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/iam_member.yaml](examples/iam_member.yaml):

@@ -7,10 +7,10 @@
 def config_dir = "pipeline/network" // relative to ${cft_dir}
 
 def env = "~/pipeline-vars"
-def repo = "https://github.com/sourced/deploymentmanager-samples"
+def repo = "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit"
 def branch = "pipeline"
 def git_dir = "cft"
-def cft_dir = "community/cloud-foundation"
+def cft_dir = "dm"
 
 pipeline {
     agent any

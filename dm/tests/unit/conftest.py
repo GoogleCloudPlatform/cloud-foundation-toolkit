@@ -15,7 +15,7 @@ def get_fixtures_fullpath():
     Args:
 
     Returns: The full path to the fixture diretory, Eg:
-        /home/vagrant/git/deploymentmanager-samples/community/cloud-foundation/tests/unit/../fixtures/configs/
+        /home/vagrant/git/cloud-foundation-toolkit/dm/tests/unit/../fixtures/configs/
 
     """
     return '{}/{}'.format(
@@ -29,7 +29,7 @@ def get_configsdir_fullpath():
     Args:
 
     Returns: The full path to the config directory, Eg:
-        /home/vagrant/git/deploymentmanager-samples/community/cloud-foundation/tests/unit/../fixtures/configs/config-test-1.yaml
+        /home/vagrant/git/cloud-foundation-toolkit/dm/tests/unit/../fixtures/configs/config-test-1.yaml
 
     """
     return '{}/{}'.format(
@@ -44,7 +44,7 @@ def get_config_fullpath(config):
         config (string): The config file name. Eg, config-test-1.yaml
 
     Returns: The full path to the config file, Eg:
-        /home/vagrant/git/deploymentmanager-samples/community/cloud-foundation/tests/unit/../fixtures/configs/config-test-1.yaml
+        /home/vagrant/git/cloud-foundation-toolkit/dm/tests/unit/../fixtures/configs/config-test-1.yaml
 
     """
     return '{}/{}'.format(

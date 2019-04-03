@@ -26,16 +26,16 @@ See `properties` section in the schema file(s):
 
 ### Usage
 
-1. Clone the [Deployment Manager samples repository](https://github.com/GoogleCloudPlatform/deploymentmanager-samples):
+1. Clone the [Deployment Manager samples repository](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit):
 
 ```shell
-    git clone https://github.com/GoogleCloudPlatform/deploymentmanager-samples
+    git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 ```
 
-2. Go to the [community/cloud-foundation](../../) directory:
+2. Go to the [dm](../../) directory:
 
 ```shell
-    cd community/cloud-foundation
+    cd dm
 ```
 
 3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/iam\_custom\_role.yaml](examples/iam_custom_role.yaml):

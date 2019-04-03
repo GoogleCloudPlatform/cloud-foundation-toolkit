@@ -360,8 +360,8 @@ which gcloud
 Proceed as follows:
 
 ```shell
-git clone https://github.com/GoogleCloudPlatform/deploymentmanager-samples
-cd deploymentmanager-samples/
+git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
+cd cloud-foundation-toolkit/
 ```
 
 ### Installing the CFT
@@ -369,7 +369,7 @@ cd deploymentmanager-samples/
 Proceed as follows:
 
 ```shell
-cd community/cloud-foundation
+cd dm
 sudo make prerequisites        # Installs prerequisites in system python
 make build                     # builds the package
 sudo make install              # installs the package in /usr/local
@@ -388,7 +388,7 @@ sudo make uninstall
 To update CFT to a newer version, proceed as follows:
 
 ```shell
-cd community/cloud-foundation
+cd dm
 make clean
 sudo make prerequisites
 make build
