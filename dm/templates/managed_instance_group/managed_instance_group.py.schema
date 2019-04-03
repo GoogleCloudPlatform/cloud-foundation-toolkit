@@ -1,0 +1,407 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Managed Instance Group
+  author: Sourced Group Inc.
+  description: |
+    Creates a managed instance group with or without an autoscaler.
+
+imports:
+  - path: ../autoscaler/autoscaler.py
+    name: autoscaler.py
+  - path: ../instance_template/instance_template.py
+    name: instance_template.py
+
+required:
+  - targetSize
+  - instanceTemplate
+
+oneOf:
+  - required:
+      - zone
+  - required:
+      - region
+
+properties:
+  name:
+    type: string
+    description: The name of the managed instance group.
+  description:
+    type: string
+    description: An optional description of the resource.
+  zone:
+    type: string
+    description: |
+      The name of the zone where the managed instance group is located
+      (for zonal resources).
+  region:
+    type: string
+    description: |
+      The name of the region where the managed instance group is located
+      (for regional resources).
+  baseInstanceName:
+    type: string
+    description: The base instance name to use for instances in the group.
+  targetSize:
+    type: integer
+    description: |
+      The target number of running instances for the managed instance group.
+      If used with an autoscaler, this is the maximum number of instances in
+      the group.
+  namedPorts:
+    type: array
+    description: |
+      A list of the named ports configured for the instance groups
+      complementary to the Instance Group Manager.
+    items:
+      type: object
+      required:
+        - name
+        - port
+      properties:
+        name:
+          type: string
+          description: The port name.
+        port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          description: The port number.
+  instanceTemplate:
+    type: object
+    description: |
+      The instance template specified for this managed instance group.
+      The template is used to create all new instances in the group.
+    oneOf:
+      - required:
+        - url
+      - required:
+        - diskImage
+        - network
+    properties:
+      url:
+        type: string
+        description: The URL of the existing instance template resource.
+      name:
+        type: string
+        description: The name of the instance template resource.
+      templateDescription:
+        type: string
+        description: The resource description (optional).
+      instanceDescription:
+        type: string
+        description: |
+          The description of the instance resource the instance template
+          will create (optional).
+      network:
+        type: string
+        description: |
+          The URL or name of the network where the instance is placed;
+          e.g., 'my-custom-network' or 'global/networks/default'.
+      hasExternalIp:
+        type: boolean
+        default: true
+        description: |
+          Defines wether the instance will use an external IP from a shared
+          ephemeral IP address pool. If this is set to false, the instance
+          will not have an external IP.
+      natIp:
+        type: string
+        description: |
+          An external IP address associated with this instance. Specify an unused
+          static external IP address available to the project or leave this field
+          undefined to use an IP from a shared ephemeral IP address pool. If you
+          specify a static external IP address, it must live in the same region
+          as the zone of the instance.
+          If hasExternalIp is false this field is ignored.
+      subnetwork:
+        type: string
+        description: |
+          The URL of the Subnetwork resource for this instance. If the network
+          resource is in legacy mode, do not provide this property. If the network
+          is in auto subnet mode, providing the subnetwork is optional. If the
+          network is in custom subnet mode, then this field should be specified.
+          If you specify this property, you can specify the subnetwork as a full
+          or partial URL. For example, the following are all valid URLs:
+            - https://www.googleapis.com/compute/v1/projects/project/regions/region/subnetworks/subnetwork
+            - regions/region/subnetworks/subnetwork
+      networkIp:
+        type: string
+        description: |
+          An IPv4 internal network address to assign to the instance for this
+          network interface. If not specified by the user, an unused internal IP
+          is assigned by the system.
+      machineType:
+        type: string
+        default: n1-standard-1
+        description: |
+          The Compute Instance type; e.g., 'n1-standard-1'.
+          See https://cloud.google.com/compute/docs/machine-types for details.
+      canIpForward:
+        type: boolean
+        description: |
+          Defines whether the instance is allowed to send and receive packets
+          with non-matching destination or source IPs.
+      diskType:
+        type: string
+        default: pd-standard
+        enum:
+          - pd-ssd
+          - pd-standard
+          - local-ssd
+        description: Boot disk type.
+      diskImage:
+        type: string
+        description: |
+          The source image to create the disk. To create the disk with one of
+          the public operating system images, specify the image by its family
+          name.
+          For example, specify family/debian-9 to use the latest Debian 9
+          image, projects/debian-cloud/global/images/family/debian-9.
+          To create a disk with a custom image, specify the image name in the
+          global/images/my-custom-image format.
+          See https://cloud.google.com/compute/docs/images for details.
+      diskSizeGb:
+        type: integer
+        minimum: 10
+      metadata:
+        type: object
+        description: |
+          Instance metadata.
+          For example:
+            metadata:
+            items:
+              - key: startup-script
+              - value: sudo apt-get update
+        properties:
+          items:
+            type: array
+            description: The metadata key-value pairs.
+            items:
+              type: object
+              properties:
+                key:
+                  type: string
+                value:
+                  type: string
+      serviceAccounts:
+        type: array
+        description: |
+          The list of service accounts, with their specified scopes, authorized
+          for this instance. Only one service account per VM instance is
+          supported.
+        items:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The email address of the service account.
+            scopes:
+              type: array
+              description: |
+                The list of scopes to be made available to the service account.
+              items:
+                type: string
+                description: |
+                  The access scope;
+                  e.g., 'https://www.googleapis.com/auth/compute.readonly'.
+                  See https://cloud.google.com/compute/docs/access/service-accounts#accesscopesiam
+                  for details
+      tags:
+        type: object
+        description: |
+          The list of tags to apply to the instances that are created from the
+          template. The tags identify valid sources or targets for network
+          firewalls.
+        properties:
+          items:
+            type: array
+            description: The array of tags.
+            items:
+              type: string
+      labels:
+        type: object
+        description: |
+          The labels to apply to instances created from the template.
+          Example:
+            name: wrench
+            mass: 1.3kg
+            count: 3
+  healthChecks:
+    type: array
+    description: |
+      An array that defines how individual instances must be checked for
+      health.
+    items:
+      type: object
+      requried:
+        - initialDelaySec
+        - healthCheck
+      properties:
+        initialDelaySec:
+          type: integer
+          description: |
+            The time period to allow an instance to boot, and its applications
+            to fully start, before the first healthcheck.
+        healthCheck:
+          type: string
+          description: The healthcheck resource URL.
+  distributionPolicy:
+    type: object
+    description: |
+      The policy that specifies the intended distribution of instances in a
+      regional managed instance group.
+    properties:
+      zones:
+        type: array
+        description: |
+          A list of zones where the regional managed instance group creates and
+          manages instances.
+        items:
+          type: object
+          properties:
+            zone:
+              type: string
+              description: |
+                The URL of the zone. The zone must exist in the region where
+                the managed instance group is located.
+  autoscaler:
+    type: object
+    description: |
+      The configuration of the autosaler - a mechanism that automatically
+      adjusts the number of instances in a group based on the current load.
+    anyOf:
+      - required:
+        - cpuUtilization
+      - required:
+        - loadBalancingUtilization
+      - required:
+        - customMetricUtilizations
+    properties:
+      minSize:
+        type: integer
+        default: 1
+        minimum: 0
+        description: |
+          The minimum number of replicas the autoscaler can scale down to.
+      name:
+        type: string
+        description: The resource name.
+      description:
+        type: string
+        description: The resource description.
+      coolDownPeriodSec:
+        type: integer
+        default: 60
+        description: |
+          The number of seconds the autoscaler must wait before it starts
+          collecting information from a new instance.
+      cpuUtilization:
+        type: object
+        description: |
+          Defines the CPU utilization policy that allows the autoscaler to
+          scale based on the average CPU utilization of a managed instance
+          group.
+        required:
+          - utilizationTarget
+        properties:
+          utilizationTarget:
+            type: number
+            minimum: 0
+            maximum: 1
+            description: |
+              The CPU utilization the autoscaler must maintain (as a target
+              value).
+      loadBalancingUtilization:
+        type: object
+        required:
+          - utilizationTarget
+        description: |
+          Configuration parameters for autoscaling based on the load balancer.
+        properties:
+          utilizationTarget:
+            type: number
+            minimum: 0
+            maximum: 1
+            description: The fraction of the back-end capacity utilization.
+      customMetricUtilizations:
+        type: array
+        description: |
+          Configuration parameters for autoscaling based on a custom metric.
+        items:
+          type: object
+          required:
+            - metric
+            - utilizationTarget
+          properties:
+            metric:
+              type: string
+              description: |
+                The identifier (type) of the Stackdriver Monitoring metric.
+            utilizationTarget:
+              type: number
+              description: |
+                The value of the metric the autoscaler must maintain (as a
+                target). This must be a positive value.
+            utilizationTargetType:
+              type: string
+              default: GAUGE
+              enum:
+                - GAUGE
+                - DELTA_PER_SECOND
+                - DELTA_PER_MINUTE
+              description: |
+                The option that defines how the target utilization value of the
+                Stackdriver Monitoring metric is expressed.
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The name of the managed instance group manager resource.
+    - selfLink:
+        type: string
+        description: |
+          The URL (SelfLink) of the managed instance group manager resource.
+    - instanceGroupSelfLink:
+        type: string
+        description: The URL (SelfLink) of the managed instance group resource.
+    - region:
+        type: string
+        description: |
+          The URL of the region where the managed instance group resides
+          (for regional resources).
+    - zone:
+        type: string
+        description: |
+          The URL of the zone where the managed instance group is located
+          (for zonal resources).
+    - autoscalerSelfLink:
+        type: string
+        description: |
+          The URL (SelfLink) of the autoscaler resource (if the group is used
+          with the autoscaler).
+    - instanceTemplateSelfLink:
+        type: string
+        description: |
+          The URL (SelfLink) of the instance template resource (if new instance
+          template was created for the group).
+
+documentation:
+  - templates/managed_instance_group/README.md
+
+examples:
+  - templates/managed_instance_group/examples/managed_instance_group.yaml
+  - templates/managed_instance_group/examples/managed_instance_group_healthcheck.yaml

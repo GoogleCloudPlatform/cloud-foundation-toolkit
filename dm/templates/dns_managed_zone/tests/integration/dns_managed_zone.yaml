@@ -1,0 +1,14 @@
+# Test of the DNS managed zone template.
+#
+
+imports:
+  - path: templates/dns_managed_zone/dns_managed_zone.py
+    name: dns_managed_zone.py
+
+resources:
+  - name: ${CLOUDDNS_ZONE_NAME}
+    type: dns_managed_zone.py
+    properties:
+      zoneName: ${CLOUDDNS_ZONE_NAME}
+      dnsName: ${CLOUDDNS_DNS_NAME}
+      description: ${CLOUDDNS_DESCRIPTION}

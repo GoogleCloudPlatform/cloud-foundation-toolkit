@@ -1,0 +1,44 @@
+# Example of the project template usage.
+#
+# In this example, a project is created, along with some of the
+# resources that an enterprise is likely to need for regular operations.
+#
+# Note that the `parent.type` property defaults to "organization", so it
+# does not need to be specified in the config. It is specified here for
+# informational purposes.
+#
+# See `templates/project.py.schema` for detailed information on the
+# properties.
+#
+# Replace the `parent.id` placeholder with your organization ID.
+# Replace the `billingAccountId` placeholder with your billing
+# account ID.
+
+imports:
+  - path: templates/project/project.py
+    name: project.py
+
+resources:
+  - name: <FIXME:UniqueProjectName>
+    type: project.py
+    properties:
+      parent:
+        type: organization
+        id: <FIXME:OrgID>
+      billingAccountId: <FIXME:BillingAccount:ID>
+      activateApis:
+        - compute.googleapis.com
+        - deploymentmanager.googleapis.com
+        - pubsub.googleapis.com
+      serviceAccounts:
+        - accountId: test-sa-1
+          displayName: test service account 1
+          roles:
+            - roles/editor
+            - roles/viewer
+          networkAccess: true
+      usageExportBucket: true
+      sharedVPC: test-vpc-host-project
+      sharedVPCSubnets:
+        - subnetId: subnet-1
+          region: us-east1

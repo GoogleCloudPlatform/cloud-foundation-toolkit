@@ -1,0 +1,84 @@
+# Test of the backend service template.
+
+imports:
+  - path: templates/backend_service/backend_service.py
+    name: backend_service.py
+
+resources:
+  - name: regional-internal-backend-service-${RAND}
+    type: backend_service.py
+    properties:
+      name: regional-backend-${RAND}
+      region: ${REGION}
+      protocol: ${REGIONAL_BALANCING_PROTOCOL}
+      description: ${RES_DESCRIPTION}
+      loadBalancingScheme: ${REGIONAL_BALANCING_SCHEME}
+      timeoutSec: ${TIMEOUT}
+      sessionAffinity: ${SESSION}
+      backends:
+        - group: $(ref.regional-igm-${RAND}.instanceGroup)
+          description: ${BC_DESCRIPTION}
+          balancingMode: ${REGIONAL_BALANCING_MODE}
+      healthCheck: $(ref.test-healthcheck-tcp-${RAND}.selfLink)
+
+  - name: global-external-backend-service-${RAND}
+    type: backend_service.py
+    properties:
+      protocol: ${GLOBAL_BALANCING_PROTOCOL}
+      healthCheck: $(ref.test-healthcheck-http-${RAND}.selfLink)
+      loadBalancingScheme: ${GLOBAL_BALANCING_SCHEME}
+      enableCDN: ${ENABLE_CDN}
+      backends:
+        - group: $(ref.zonal-igm-${RAND}.instanceGroup)
+          balancingMode: ${GLOBAL_BALANCING_MODE}
+          maxRate: ${MAX_RATE}
+
+# Prerequisites: instance groups, instance template, healthchecks,
+# and a network
+  - name: regional-igm-${RAND}
+    type: compute.v1.regionInstanceGroupManager
+    properties:
+      instanceTemplate: $(ref.instance-template-${RAND}.selfLink)
+      region: ${REGION}
+      targetSize: 1
+
+  - name: zonal-igm-${RAND}
+    type: compute.v1.instanceGroupManager
+    properties:
+      instanceTemplate: $(ref.instance-template-${RAND}.selfLink)
+      zone: us-central1-c
+      targetSize: 1
+
+  - name: instance-template-${RAND}
+    type: compute.v1.instanceTemplate
+    properties:
+      properties:
+        machineType: f1-micro
+        disks:
+          - autoDelete: true
+            boot: true
+            deviceName: boot
+            initializeParams:
+              sourceImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+            type: PERSISTENT
+        networkInterfaces:
+          - accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
+            network: $(ref.test-network-${RAND}.selfLink)
+
+  - name: test-network-${RAND}
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: true
+
+  - name: test-healthcheck-tcp-${RAND}
+    type: compute.v1.healthCheck
+    properties:
+      type: TCP
+      tcpHealthCheck:
+        port: 80
+        proxyHeader: NONE
+
+  - name: test-healthcheck-http-${RAND}
+    type: compute.v1.httpHealthCheck

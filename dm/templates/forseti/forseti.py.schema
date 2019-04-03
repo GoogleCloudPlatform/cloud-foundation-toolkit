@@ -1,0 +1,256 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Forseti Security
+  author: Sourced Group Inc.
+  description: |
+    Supports creation of a Forseti Security project, client, and server
+    instances.
+
+imports:
+  - path: ../project/project.py
+    name: project.py
+  - path: server.py
+  - path: client.py
+
+required:
+  - project
+  - organizationId
+  - server
+  - client
+  - bucket
+  - cloudSql
+
+properties:
+  project:
+    type: object
+    description: Forseti project settings.
+    properties:
+      create:
+        type: boolean
+        default: false
+        description: Defines whether or not to create the project.
+      id:
+        type: string
+        description: |
+          The Forseti project ID. If you are creating a new project and the
+          value is missing, the project ID is auto-generated.
+      name:
+        type: string
+        description: |
+          The optional project name. Ignored when using an existing project.
+      parent:
+        type: object
+        description: The parent of the project.
+        properties:
+          type:
+            type: string
+            description: The parent type (organization or folder).
+            enum:
+              - organization
+              - folder
+            default: organization
+          id:
+            type: [integer, string]
+            description: The ID of the projects' parent.
+      billingAccountId:
+        type: string
+        description: |
+          The ID of the billing account to attach to the projects.
+          For example, '00E12A-0AB8B2-078CE8'.
+  organizationId:
+    type: number
+    description: |
+      ID of the organization under which the Forseti project is going to be
+      deployed.
+  server:
+    type: object
+    description: The Forseti server config.
+    required:
+      - zone
+    properties:
+      serviceAccount:
+        type: object
+        description: Forseti server's new service account settings.
+        properties:
+          accountId:
+            type: string
+            description: The optional ID of the service account.
+          displayName:
+            type: string
+            description: The optional name of the service account.
+      name:
+        type: string
+        default: forseti-server
+        description: The name of the Forseti server instance.
+      sourceImage:
+        type: string
+        default: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+        description: |
+          The source image for the disk. To create a disk with one of the
+          public operating system images, specify the image by its family name.
+          For example, specify family/debian-9 to use the latest Debian 9 image
+          projects/debian-cloud/global/images/family/debian-9.
+          To create a disk with a custom (your own) image, specify the
+          image name in the following format: global/images/my-custom-image.
+          See https://cloud.google.com/compute/docs/images for details.
+      srcPath:
+        type: string
+        default: https://github.com/GoogleCloudPlatform/forseti-security
+        description: |
+          The URL of the git repository containing the Forseti source code.
+      srcVersion:
+        type: string
+        default: 'v2.0'
+        description: The version (git tag name) of the source code to use.
+      zone:
+        type: string
+        description: The availability zone. E.g., 'us-central1-a'.
+      port:
+        type: number
+        default: 3306
+        description: The Cloud SQL port number.
+      frequency:
+        type: string
+        default: '0 */2 * * *'
+        description: The CRON string specifying how often Forseti should run.
+      machineType:
+        type: string
+        default: n1-standard-1
+        description: |
+          The Compute Instance type; e.g., 'n1-standard-1'.
+          See https://cloud.google.com/compute/docs/machine-types for details.
+      sqlOsArch:
+        type: string
+        default: linux.amd64
+        description: The architecture of the Cloud SQL proxy to use.
+  client:
+    type: object
+    description: The Forseti client instance configuration.
+    required:
+      - zone
+    properties:
+      serviceAccount:
+        type: object
+        description: |
+          Forseti client's new service account settings.
+        properties:
+          accountId:
+            type: string
+            description: The optional ID of the service account.
+          displayName:
+            type: string
+            description: The optional name of the service account.
+      name:
+        type: string
+        default: forseti-client
+        description: The name of the Forseti client instance.
+      sourceImage:
+        type: string
+        default: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+        description: |
+          The source image for the disk. To create a disk with one of the
+          public operating system images, specify the image by its family name.
+          For example, specify family/debian-9 to use the latest Debian 9 image
+          projects/debian-cloud/global/images/family/debian-9.
+          To create a disk with a custom (your own) image, specify the image
+          name in the following format: global/images/my-custom-image.
+          See https://cloud.google.com/compute/docs/images for details.
+      srcPath:
+        type: string
+        default: https://github.com/GoogleCloudPlatform/forseti-security
+        description: |
+          The URL of the git repository containing the Forseti source code.
+      srcVersion:
+        type: string
+        default: 'v2.0'
+        description: The version (git tag name) of the source code to use.
+      zone:
+        type: string
+        description: The availability zone. E.g., 'us-central1-a'.
+      machineType:
+        type: string
+        default: n1-standard-1
+        description: |
+          The Compute Instance type; e.g., 'n1-standard-1'.
+          See https://cloud.google.com/compute/docs/machine-types for details.
+  bucket:
+    type: object
+    description: The Forseti server's configuration bucket.
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        description: |
+          The name of the bucket containing the configuration files. As a bare
+          minimum, the bucket must contain the Forseti server configuration
+          file.
+          E.g.
+            configs/
+              forseti_conf_server.yaml
+          Additionally, it can contain the `rules` folder.
+  cloudSql:
+    type: object
+    description: The Forseti Cloud SQL instance configuration.
+    required:
+      - region
+      - instanceName
+    properties:
+      region:
+        type: string
+        description: The region where the instance is created.
+      instanceName:
+        type: string
+        description: The Cloud SQL Instance name.
+
+outputs:
+  properties:
+    - projectId:
+        type: string
+        description: The ID of created project.
+    - connectionName:
+        type: string
+        description: The connection string to the Cloud SQL instance.
+    - databaseName:
+        type: string
+        description: The name of the database created for Forseti.
+    - networkName:
+        type: string
+        description: The name of the network created for Forseti.
+    - networkSelfLink:
+        type: string
+        description: The URI (SelfLink) of the network resource.
+    - serverName:
+        type: string
+        description: The name of the Forseti server instance.
+    - serverSelfLink:
+        type: string
+        description: The URI (SelfLink) of the Forseti server resource.
+    - serverInternalIp:
+        type: string
+        description: The internal IP address of the server resource.
+    - clientName:
+        type: string
+        description: The name of the Forseti client instance.
+    - clientSelfLink:
+        type: string
+        description: The URI (SelfLink) of the Forseti client resource.
+
+documentation:
+  - templates/forseti/README.md
+
+examples:
+  - templates/forseti/examples/forseti.yaml

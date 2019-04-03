@@ -1,0 +1,24 @@
+# Example of the forwarding rule template usage.
+#
+# In this example, a regional forwarding rule is created.
+#
+# Replace the following placeholders with valid values:
+#   <FIXME:region>: a URL of a region where the forwarding rule resides
+#   <FIXME:regionalBackendService>: a URL of a backend service residing in
+#   the same region as the forwarding rule
+#   <FIXME:port>: a number of a port traffic from which must be forwarded to the
+#   backend service; e.g., 80
+#
+imports:
+  - path: templates/forwarding_rule/forwarding_rule.py
+    name: forwarding_rule.py
+
+resources:
+  - name: internal-regional-forwarding-rule
+    type: forwarding_rule.py
+    properties:
+      region: <FIXME:region>
+      ports:
+        - <FIXME:port>
+      loadBalancingScheme: INTERNAL
+      backendService: <FIXME:regionalBackendService>

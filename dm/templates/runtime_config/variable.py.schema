@@ -1,0 +1,69 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Variable
+  author: Sourced Group Inc.
+  description: Creates a RuntimeConfig variable resource.
+    For more information on this resource, see
+    https://cloud.google.com/deployment-manager/runtime-configurator/.
+
+required:
+  - parent
+  - variable
+
+oneOf:
+  - required:
+      - text
+  - required:
+      - value
+
+properties:
+  parent:
+    type: string
+    description: |
+      The path to the configuration that will own the waiter.
+      The configuration must exist beforehand; the path must be in the
+      projects/[PROJECT_ID]/configs/[CONFIG_NAME] format.
+  variable:
+    type: string
+    description: |
+      The key (name) of the variable. For example, status and
+      users/jane-smith/favorite_color are valid keys. Can contain digits,
+      letters, dashes, and slashes. The max length is 256 characters.
+  text:
+    type: string
+    description: |
+      The string value of the variable. The length of the value must be less
+      than 4096 bytes. Empty values are also accepted.
+      For example, text: "my text value". The string must be valid UTF-8.
+  value:
+    type: string
+    description: |
+      The binary value of the variable. The length of the value must be less
+      than 4096 bytes. Empty values are also accepted. The value must be base64
+      encoded. Only one of value or text can be set.
+      A base64-encoded string.
+
+outputs:
+  properties:
+    - updateTime:
+        type: string
+        description: The time when the variable was last updated.
+
+documentation:
+  - templates/runtime_config/README.md
+
+examples:
+  - templates/runtime_config/examples/runtime_config.yaml

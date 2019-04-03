@@ -1,0 +1,32 @@
+# Example of the IP reservation template usage.
+#
+# In this example, an array of reserved IPs is applied to the PROJECTID project.
+#
+# <FIXME:project_id>: The project ID that created your network.
+# <FIXME:region>: The network's region.
+# <FIXME:subnet>: The subnetwork ID.
+#
+
+imports:
+  - path: templates/ip_reservation/ip_reservation.py
+    name: ip_reservation.py
+
+resources:
+  - name: allmyips
+    type: ip_reservation.py
+    properties:
+      ipAddresses:
+        - name: myglobal
+          ipType: global
+          description: 'my global ip'
+        - name: myregionalexternal
+          ipType: regional
+          region: <FIXME:region>
+          description: 'my static external ip'
+        - name: myinternal
+          ipType: internal
+          # This IP address must be within the subnet range.
+          address: 10.128.1.111
+          subnetwork: projects/<FIXME:project_id>/regions/<FIXME:region>/subnetworks/<FIXME:subnet>
+          region: <FIXME:region>
+          description: 'my internal ip'

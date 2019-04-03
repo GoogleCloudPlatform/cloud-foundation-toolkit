@@ -1,0 +1,99 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Network
+  author: Sourced Group Inc.
+  description: |
+    Creates a network.
+
+    For more information on this resource:
+      - https://cloud.google.com/compute/docs/reference/rest/v1/networks
+
+imports:
+  - path: subnetwork.py
+
+# required:
+#  - name
+
+properties:
+  name:
+    type: string
+    description: Name of the network resource.
+  autoCreateSubnetworks:
+    type: boolean
+    default: false
+    description: |
+      If "true": (a) the newly created network is assigned the default CIDR of
+      10.128.0.0/9; and (b) one subnetwork per region is created automatically.
+  subnetworks:
+    type: array
+    description: |
+      An array of subnetworks, as defined in the `subnetwork.py` template.
+      Example:
+        - name: test-subnetwork-1
+          region: us-east1
+          ipCidrRange: 10.116.48.0/22
+          privateIpGoogleAccess: false
+          enableFlowLogs: true
+          secondaryIpRanges:
+            - rangeName: my-secondary-range-1
+              ipCidrRange: 172.16.0.0/24
+            - rangeName: my-secondary-range-2
+              ipCidrRange: 172.16.1.0/24
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The network resource name.
+    - selfLink:
+        type: string
+        description: The URI (SelfLink) of the network resource.
+    - subnetworks:
+      type: array
+      description: Array of subnetwork` information.
+      items:
+        description: |
+          The name of the subnetwork resource. For example, the output can be
+          referenced as: $(ref.<my-network>.subnetworks.<subnetwork-name>.selfLink)
+        patternProperties:
+          ".*":
+            type: object
+            description: Details for a subnetwork resource.
+            properties:
+              - selfLink:
+                  type: string
+                  description: The URI (SelfLink) of the subnet resource.
+              - region:
+                  type: string
+                  description: The name of the region where the subnetwork resides.
+              - network:
+                  type: string
+                  description: The URL of the network to which the subnetwork belongs.
+              - ipCidrRange:
+                  type: string
+                  description: |
+                    The range of internal addresses owned by the subnetwork.
+              - gatewayAddress:
+                  type: string
+                  description: |
+                    The gateway address for default routes to reach destination addresses
+                    outside this subnetwork.
+
+documentation:
+  - templates/network/README.md
+
+examples:
+  - templates/network/examples/network.yaml

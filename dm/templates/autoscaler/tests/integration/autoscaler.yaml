@@ -1,0 +1,70 @@
+# Test of the autoscaler template.
+#
+
+imports:
+  - path: templates/autoscaler/autoscaler.py
+    name: autoscaler.py
+
+resources:
+  - name: regional-autoscaler-${RAND}
+    type: autoscaler.py
+    properties:
+      region: ${REGION}
+      cpuUtilization:
+        utilizationTarget: ${CPU_UTILIZATION_1}
+      customMetricUtilizations:
+        - metric: ${CUSTOM_METRIC}
+          utilizationTarget: ${CUSTOM_METRIC_TARGET}
+          utilizationTargetType: ${CUSTOM_METRIC_TYPE}
+      maxNumReplicas: ${NUM_REPLICAS}
+      target: $(ref.regional-igm-${RAND}.selfLink)
+
+  - name: zonal-autoscaler-${RAND}
+    type: autoscaler.py
+    properties:
+      zone: ${ZONE}
+      description: ${DESCRIPTION}
+      coolDownPeriodSec: ${COOL_DOWN_PERIOD}
+      cpuUtilization:
+        utilizationTarget: ${CPU_UTILIZATION_2}
+      maxNumReplicas: ${NUM_REPLICAS}
+      target: $(ref.zonal-igm-${RAND}.selfLink)
+
+# Test prerequisites: two instance group managers, an instance template,
+# and a network
+  - name: zonal-igm-${RAND}
+    type: compute.v1.instanceGroupManager
+    properties:
+      instanceTemplate: $(ref.instance-template-${RAND}.selfLink)
+      zone: ${ZONE}
+      targetSize: 1
+
+  - name: regional-igm-${RAND}
+    type: compute.v1.regionInstanceGroupManager
+    properties:
+      instanceTemplate: $(ref.instance-template-${RAND}.selfLink)
+      region: ${REGION}
+      targetSize: 1
+
+  - name: instance-template-${RAND}
+    type: compute.v1.instanceTemplate
+    properties:
+      properties:
+        machineType: f1-micro
+        disks:
+        - autoDelete: true
+          boot: true
+          deviceName: boot
+          initializeParams:
+            sourceImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+          type: PERSISTENT
+        networkInterfaces:
+        - accessConfigs:
+          - name: External NAT
+            type: ONE_TO_ONE_NAT
+          network: $(ref.test-network-${RAND}.selfLink)
+
+  - name: test-network-${RAND}
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: true

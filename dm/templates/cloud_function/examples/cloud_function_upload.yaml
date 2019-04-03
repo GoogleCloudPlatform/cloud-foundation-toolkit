@@ -1,0 +1,21 @@
+# Example of the Cloud Function template usage.
+#
+# In this example, a Cloud Function with an HTTP trigger is created
+# from the local source code.
+
+imports:
+  - path: templates/cloud_function/cloud_function.py
+    name: cloud_function.py
+  - path: templates/cloud_function/upload.py
+    name: upload.py
+  - path: templates/cloud_function/function/helloGET.js
+  - path: templates/cloud_function/function/package.json
+
+resources:
+  - name: test-function
+    type: cloud_function.py
+    properties:
+      region: us-central1
+      entryPoint: helloGET
+      localUploadPath: templates/cloud_function/function
+      sourceArchiveUrl: gs://test-function-example-bucket/helloGET.zip

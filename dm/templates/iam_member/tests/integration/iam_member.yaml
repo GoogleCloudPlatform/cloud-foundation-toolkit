@@ -1,0 +1,22 @@
+# Test of the IAM member template .
+#
+# Variables:
+#   RAND: A random string used by the testing suite
+#   TEST_SERVICE_ACCOUNT: Service account name
+#   CLOUD_FOUNDATION_PROJECT_ID: Project ID
+
+imports:
+  - path: templates/iam_member/iam_member.py
+    name: iam_member.py
+
+resources:
+  - name: iam-member-test-${RAND}
+    type: iam_member.py
+    properties:
+      roles:
+        - role: roles/editor
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+        - role: roles/viewer
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com

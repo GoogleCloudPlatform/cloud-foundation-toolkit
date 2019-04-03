@@ -1,0 +1,80 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Interconnect Attachment
+  author: Sourced Group Inc.
+  description: |
+    Creates an Interconnect Attachment.
+
+    For more information on this resource:
+    https://cloud.google.com/interconnect/docs/how-to/dedicated/creating-vlan-attachments (Dedicated)
+    https://cloud.google.com/interconnect/docs/how-to/partner/creating-vlan-attachments (Partner)
+
+imports:
+  - path: interconnect_attachment.py
+
+required:
+  - router
+  - region
+  - type
+
+properties:
+  name:
+    type: string
+    description: The name of the Interconnect Attachment.
+  router:
+    type: string
+    description: The URL of the cloud router that the attachment is being 
+                 attached to.
+  region:
+    type: string
+    description: The URL of the region where the router resides.
+  type:
+    type: string
+    description: The type of Interconnect
+    enum:
+      - DEDICATED
+      - PARTNER
+      - PARTNER_PROVIDER
+  interconnect:
+    type: string
+    description: |
+      URL of the underlying Interconnect object that this attachment's traffic 
+      will traverse through.
+  edgeAvailabilityDomain:
+    type: string
+    description: |
+      Desired availability domain for the attachment. Only available for type 
+      PARTNER, at creation time
+    enum:
+      - AVAILABILITY_DOMAIN_1
+      - AVAILABILITY_DOMAIN_2
+      - AVAILABILITY_DOMAIN_ANY
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The created attachments name.
+    - selfLink:
+        type: string
+        description: Server-defined URL for the resource.
+
+documentation:
+  - templates/interconnect_attachment/README.md
+
+examples:
+  - templates/interconnect_attachment/examples/interconnect_attachment_dedicated.yaml
+  - templates/interconnect_attachment/examples/interconnect_attachment_partner.yaml

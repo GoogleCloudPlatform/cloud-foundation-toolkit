@@ -1,0 +1,18 @@
+# Example on how to use the Pub/Sub template
+#
+# In this example, a 'test-topic' is created with one PUSH subscription.
+# Replace the following placeholders with valid values:
+#   <FIXME:pushEndpointUrl>: a URL where the messages will be pushed to
+#
+imports:
+  - path: templates/pubsub/pubsub.py
+    name: pubsub.py
+
+resources:
+  - name: test-push-pubsub
+    type: pubsub.py
+    properties:
+      topic: test-topic
+      subscriptions:
+        - name: push-subscription
+          pushEndpoint: <FIXME:pushEndpointUrl>

@@ -1,0 +1,106 @@
+# Test of the forwarding rule template.
+#
+
+imports:
+  - path: templates/forwarding_rule/forwarding_rule.py
+    name: forwarding_rule.py
+
+resources:
+  - name: ${EXTERNAL_RES_NAME}
+    type: forwarding_rule.py
+    properties:
+      loadBalancingScheme: ${EXTERNAL_LB_SCHEME}
+      target: $(ref.${PROXY_NAME}.selfLink)
+      portRange: ${EXTERNAL_PORT}
+
+  - name: ${INTERNAL_RES_NAME}
+    type: forwarding_rule.py
+    properties:
+      name: ${INTERNAL_NAME}
+      description: ${INTERNAL_DESC}
+      region: ${REGION}
+      ports:
+        - ${INTERNAL_PORT}
+      loadBalancingScheme: ${INTERNAL_LB_SCHEME}
+      backendService: $(ref.regional-internal-backend-service-${RAND}.selfLink)
+
+# Test prerequisites: backend services, group managers, healthchecks,
+# the URL map, instance template, and network.
+  - name: ${PROXY_NAME}
+    type: compute.v1.targetHttpProxy
+    properties:
+      urlMap: $(ref.url-map-${RAND}.selfLink)
+
+  - name: url-map-${RAND}
+    type: compute.v1.urlMap
+    properties:
+      defaultService: $(ref.global-external-backend-service-${RAND}.selfLink)
+
+  - name: regional-internal-backend-service-${RAND}
+    type: compute.v1.regionBackendService
+    properties:
+      region: ${REGION}
+      protocol: TCP
+      loadBalancingScheme: INTERNAL
+      backends:
+        - group: $(ref.regional-igm-${RAND}.instanceGroup)
+      healthChecks:
+        - $(ref.test-healthcheck-tcp-${RAND}.selfLink)
+
+  - name: regional-igm-${RAND}
+    type: compute.v1.regionInstanceGroupManager
+    properties:
+      instanceTemplate: $(ref.instance-template-${RAND}.selfLink)
+      region: ${REGION}
+      targetSize: 1
+
+  - name: global-external-backend-service-${RAND}
+    type: compute.v1.backendService
+    properties:
+      protocol: HTTP
+      healthChecks:
+        - $(ref.test-healthcheck-http-${RAND}.selfLink)
+      loadBalancingScheme: EXTERNAL
+      backends:
+        - group: $(ref.zonal-igm-${RAND}.instanceGroup)
+
+  - name: zonal-igm-${RAND}
+    type: compute.v1.instanceGroupManager
+    properties:
+      instanceTemplate: $(ref.instance-template-${RAND}.selfLink)
+      zone: ${ZONE}
+      targetSize: 1
+
+  - name: instance-template-${RAND}
+    type: compute.v1.instanceTemplate
+    properties:
+      properties:
+        machineType: f1-micro
+        disks:
+          - autoDelete: true
+            boot: true
+            deviceName: boot
+            initializeParams:
+              sourceImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+            type: PERSISTENT
+        networkInterfaces:
+          - accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
+            network: $(ref.test-network-${RAND}.selfLink)
+
+  - name: test-healthcheck-tcp-${RAND}
+    type: compute.v1.healthCheck
+    properties:
+      type: TCP
+      tcpHealthCheck:
+        port: ${INTERNAL_PORT}
+        proxyHeader: NONE
+
+  - name: test-healthcheck-http-${RAND}
+    type: compute.v1.httpHealthCheck
+
+  - name: test-network-${RAND}
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: true

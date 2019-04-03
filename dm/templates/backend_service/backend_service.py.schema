@@ -1,0 +1,254 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Backend Service
+  author: Sourced Group Inc.
+  description: |
+    Creates a backend service. For details, visit
+    https://cloud.google.com/load-balancing/docs/backend-service.
+
+properties:
+  name:
+    type: string
+    description: The backend service name.
+  description:
+    type: string
+    description: An optional description of the resource.
+  region:
+    type: string
+    description: |
+      The URL of the region where the regional backend service resides.
+  backends:
+    type: array
+    description: |
+      The list of backends (instance groups) to which the backend service
+      distributes traffic.
+    items:
+      type: object
+      required:
+        - group
+      properties:
+        description:
+          type: string
+          description: |
+            An optional description of the resource.
+        group:
+          type: string
+          description: |
+            The fully-qualified URL of the Instance Group resource. If the
+            backend service's load balancing scheme is INTERNAL, the instance
+            group must reside on the same region as the backend service.
+        balancingMode:
+          type: string
+          description: |
+            The balancing mode for the backend. For INTERNAL load
+            balancing, the default (and the only supported) mode is CONNECTION.
+          enum:
+            - UTILIZATION
+            - RATE
+            - CONNECTION
+        maxUtilization:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: |
+            The ratio that defines the CPU utilization target for the group. 
+            The default value is 0.8. Used when balancingMode is UTILIZATION. 
+        maxRate:
+          type: number
+          description: |
+            The maximum number of requests per second (RPS) for the group. Can be
+            used with either RATE or UTILIZATION balancing mode. Mandatory with
+            the RATE mode. For the RATE mode, either maxRate or maxRatePerInstance
+            must be set. Cannot be used for INTERNAL load balancing.
+        maxRatePerInstance:
+          type: number
+          description: |
+            The maximum number of requests per second (RPS) that a single backend 
+            instance can handle. This is used to calculate the capacity of the group. 
+            Can be used with any balancing mode. For the RATE mode, either maxRate or
+            maxRatePerInstance must be set. Cannot be used for INTERNAL load 
+            balancing.
+        maxConnections:
+          type: number
+          description: |
+            The maximum number of simultaneous connections for the group. Can be
+            used with either CONNECTION or UTILIZATION balancing mode. For
+            the CONNECTION mode, either maxConnections or maxConnectionsPerInstance
+            must be set. Cannot be used for INTERNAL load balancing.
+        maxConnectionsPerInstance:
+          type: number
+          description: |
+            The maximum number of simultaneous connections that a single backend
+            instance can handle. This is used to calculate the capacity of the
+            group. Can be used in either CONNECTION or UTILIZATION balancing
+            modes. For the CONNECTION mode, either maxConnections or
+            maxConnectionsPerInstance must be set. Cannot be used for INTERNAL load balancing.
+        capacityScaler:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: |
+            The multiplier applied to the group's maximum servicing capacity
+            (based on UTILIZATION, RATE, or CONNECTION). The default value is 1.0.
+            Cannot be used for INTERNAL load balancing.
+  healthCheck:
+    type: string
+    description: |
+      The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck resource
+      for healthchecking the backend service.
+  timeoutSec:
+    type: number
+    default: 30
+    description: |
+      The number of seconds to wait for the backend response before considering 
+      the request as failed.
+  protocol:
+    type: string
+    description: |
+      The protocol the backend service uses to communicate with backends.
+      The default is HTTP. For INTERNAL load balancing, the possible values are
+      TCP and UDP, and the default is TCP.
+    enum:
+      - HTTP
+      - HTTPS
+      - TCP
+      - UDP
+      - SSL
+  portName:
+    type: string
+    description: |
+      The backend port name. The same name must appear in the instance groups
+      referenced by this service. Required when the load balancing scheme is
+      EXTERNAL. If the load balancing scheme is INTERNAL, this field is not used.
+  enableCDN:
+    type: boolean
+    description: |
+      Defines whether Cloud CDN is enabled for the backend service.
+      When the load balancing scheme is INTERNAL, this field is not used.
+  sessionAffinity:
+    type: string
+    default: NONE
+    description: |
+      The type of the session affinity to use. For the EXTERNAL load balancing 
+      scheme, the value can be NONE, CLIENT_IP, or GENERATED_COOKIE.
+      For the INTERNAL load balancing scheme, the value can be NONE, CLIENT_IP,
+      CLIENT_IP_PROTO, or CLIENT_IP_PORT_PROTO. This field is not used with the 
+      UDP protocol.
+    enum:
+      - NONE
+      - GENERATED_COOKIE
+      - CLIENT_IP
+      - CLIENT_IP_PROTO
+      - CLIENT_IP_PORT_PROTO
+  affinityCookieTtlSec:
+    type: integer
+    minimum: 0
+    maximum: 86400
+    description: |
+      The lifetime of cookies, in seconds, if sessionAffinity is GENERATED_COOKIE.
+      If set to 0, the cookies are non-persistent and last only until the end of
+      the browser session (or equivalent). This field is not used if the load
+      balancing scheme is INTERNAL.
+  loadBalancingScheme:
+    type: string
+    description: |
+      Defines whether the backend service is used with INTERNAL or
+      EXTERNAL load balancing schema. Backend service created for one type of load
+      balancing cannot be used with the other.
+    enum:
+      - INTERNAL
+      - EXTERNAL
+  connectionDraining:
+    type: object
+    description: the connection draining settings.
+    properties:
+      drainingTimeoutSec:
+        type: integer
+        description: |
+          The time period during which the instance is drained (not accepting 
+          new connections but still procedding the ones accepted earlier).
+  cdnPolicy:
+    type: object
+    description: The cloud CDN configuration for the backend service.
+    properties:
+      cacheKeyPolicy:
+        type: object
+        description: The CacheKeyPolicy for the CdnPolicy.
+        properties:
+          includeProtocol:
+            type: boolean
+            description: |
+              Defines whether the HTTP and HTTPS requests are cached separately.
+          includeHost:
+            type: boolean
+            description: |
+              If True, requests to different hosts are cached separately.
+          includeQueryString:
+            type: boolean
+            description: |
+              If True, includes query string parameters in the cache key
+              according to queryStringWhitelist and queryStringBlacklist. If
+              neither of the two is set, the entire query string is included. If
+              False, the query string is excluded from the cache key entirely.
+          queryStringWhitelist:
+            type: array
+            description: |
+              The names of the query string parameters to include in cache keys. 
+              All other parameters are excluded. Specify either
+              queryStringWhitelist or queryStringBlacklist, not both.
+              '&' and '=' will be percent-encoded and not treated as delimiters.
+            items:
+              type: string
+          queryStringBlacklist:
+            type: array
+            description: |
+              The names of query string parameters to exclude from cache keys. 
+              All other parameters are included. Specify either
+              queryStringWhitelist or queryStringBlacklist, not both.
+              '&' and '=' are percent-encoded and not treated as delimiters.
+            items:
+              type: string
+      signedUrlCacheMaxAgeSec:
+        type: string
+        default: 3600s
+        description: |
+          The maximum number of seconds the response to a signed URL request is
+          considered fresh. After this time period, the response is
+          revalidated before being served. When serving responses to the signed URL
+          requests, Cloud CDN internally behaves as if all responses
+          from the backend have the "Cache-Control: public, max-age=[TTL]" header,
+          regardless of any existing Cache-Control header. The actual headers
+          served in responses are not altered.
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The backend name.
+    - region:
+        type: string
+        description: |
+            The URL of the region where the regional backend service resides.
+    - selfLink:
+        type: string
+        description: The URI (SelfLink) of the backend service resource.
+
+documentation:
+  - templates/backend_service/README.md
+
+examples:
+  - templates/backend_service/examples/backend_service_global.yaml
+  - templates/backend_service/examples/backend_service_regional.yaml

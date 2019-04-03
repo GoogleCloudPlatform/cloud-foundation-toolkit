@@ -1,0 +1,130 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Route
+  author: Sourced Group
+  description: Creates a custom route.
+
+  For more information on this resource:
+    - https://cloud.google.com/compute/docs/reference/rest/v1/routes
+
+imports:
+  - path: route.py
+
+required:
+  - network
+  - routes
+
+properties:
+  name:
+    type: string
+    description: Name of the route resource.
+  network:
+    type: string
+    description: Name of the network the route applies to.
+  routes:
+    type: array
+    description: A list of routes.
+    items:
+      name:
+        type: string
+        description: Name of the route.
+      routeType:
+        type: string
+        description: The resource type that will handle the matching packets.
+        enum:
+          - ipaddress
+          - instance
+          - gateway
+          - vpntunnel
+      tags:
+        type: array
+        description: A list of instance tags to which the route applies.
+        items:
+          type: string
+          description: An instance tag for the route.
+      priority:
+        type: number
+        description: The priority of the route.
+        default: 1000
+        minimum: 0
+        maximum: 65535
+      destRange:
+        type: string
+        description: |
+          The destination range of outgoing packets the route applies
+          to. Example: 192.168.0.1/10. Only IPv4 is supported.
+        pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}\/[0-9]{1,2}$
+      nextHopIp:
+        type: string
+        description: |
+          Used when routeType is 'ipaddress'.
+          The network IP address of the instance that should handle the matching
+          packets. Example: 192.168.0.1. Only IPv4 is supported.
+          pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}$
+      instanceName:
+        type: string
+        description: |
+          Used when routeType is 'instance'.
+          The name of the instance that should handle the matching packets.
+      zone:
+        type: string
+        description: |
+          Used when routeType is 'instance'.
+          The zone where the instance resides.
+      gatewayName:
+        type: string
+        description: |
+          Used when routeType is 'gateway'.
+          The name of the gateway that will handle the matching packets. Only the 
+          'default-internet-gateway' value is supported.
+        default: default-internet-gateway
+      vpnTunnelName:
+        type: string
+        description: |
+          Used when routeType is 'vpntunnel'.
+          The name of the VPN tunnel that should handle the matching packets.
+      region:
+        type: string
+        description: |
+          Used when routeType is 'vpntunnel'.
+          The region where the VPN tunnel resides.
+
+outputs:
+  properties:
+    routes:
+      type: array
+      description: Array of route information.
+      items:
+        description: |
+          The name of the firewall rule resource. For example, the output can
+          be referenced as: $(ref.<my-routes>.routes.<route-name>.selfLink)
+        patternProperties:
+          ".*":
+            type: object
+            description: Details for a route resource.
+            properties:
+              selfLink:
+                type: string
+                description: The URI (SelfLink) of the firewall rule resource.
+              nextHopNetwork:
+                type: string
+                description: URL to a Network that should handle matching packets.
+
+documentation:
+  - templates/route/README.md
+
+examples:
+  - templates/route/examples/route.yaml

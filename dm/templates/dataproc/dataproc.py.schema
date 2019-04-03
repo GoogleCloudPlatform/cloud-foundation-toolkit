@@ -1,0 +1,238 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Dataproc
+  author: Sourced Group Inc.
+  description: |
+    Creates a Dataproc cluster.
+
+imports:
+  - path: dataproc.py
+
+properties:
+  name:
+    type: string
+    description: |
+      The cluster name. If not provided, the resource name is used.
+  region:
+    type: string
+    default: global
+    description: |
+      The region where the Compute Engine cluster is located. When deployed
+      in the 'global' region, or with no region specified, the 'zone' parameter
+      must be provided.
+  zone:
+    type: string
+    description: |
+      The zone where the Compute Engine cluster is located. A full URL, partial
+      URI, or short name are valid. Examples:
+        - https://www.googleapis.com/compute/v1/projects/[projectId]/zones/[zone]
+        - projects/[projectId]/zones/[zone]
+        - us-central1-f
+      Mandatory if the region parameter value is 'global', or is not defined.
+  image:
+    type: string
+    description: |
+      The Compute Engine image resource used for cluster instances. Can be
+      either specified or inferred from 'softwareConfig.imageVersion'.
+  serviceAccountEmail:
+    type: string
+    description: |
+      The service account of the instances. Defaults to the default Compute
+      Engine service account.
+  serviceAccountScopes:
+    type: array
+    description: |
+      A list of URIs of service account scopes to be included in the Compute
+      Engine instances.
+    items:
+      type: string
+      description: |
+        The URI of service account scope to be included in the Compute Engine
+        instances.
+  internalIpOnly:
+    type: boolean
+    description: |
+      If True, all instances in the cluster have only internal IP addresses.
+  network:
+    type: string
+    description: |
+      The Compute Engine network to be used for machine communications. Cannot
+      be specified if the 'subnetwork' value is provided.
+  subnetwork:
+    type: string
+    description: |
+      The Compute Engine subnetwork to be used for machine communications.
+      Cannot be specified if the 'network' value is provided.
+  networkTags:
+    type: array
+    description: A list of Compute Engine tags to add to all instances.
+    items:
+      type: string
+  metadata:
+    type: object
+    description: |
+      The Compute Engine metadata key-value entries to add to all instances.
+  configBucket:
+    type: string
+    description: |
+      The Cloud Storage staging bucket used for sharing the generated SSH keys
+      and config.
+  softwareConfig:
+    type: object
+    description: |
+      The selection and config of software inside the cluster.
+    properties:
+      imageVersion:
+        type: string
+        description: |
+          The version of the software inside the cluster. One of the
+          supported Cloud Dataproc Versions, such as "1.2" (including a
+          subminor version, such as "1.2.29"), or the "preview" version.
+      properties:
+        type: object
+        description: |
+          The key-value pairs for properties to set on the daemon config files.
+  initializationActions:
+    type: array
+    description: |
+      A list of commands to execute on each node after the config is completed.
+    items:
+      type: object
+      description: |
+        The executable to run on a fully configured node + the timeout
+        period for the executable completion.
+      properties:
+        executableFile:
+          type: string
+          description: The Cloud Storage URI of the executable file.
+        executableTimeout:
+          type: string
+          description: |
+            The executable completion timeout, e.g. "3.5s". The default value
+            is 10 minutes.
+  master:
+    type: object
+    description: |
+      The Compute Engine config settings for the master instance in the
+      cluster.
+    properties:
+      numInstances:
+        type: integer
+        description: The number of VM instances in the instance group.
+      machineType:
+        type: string
+        description: |
+          The Compute Engine machine type used for the cluster instances.
+          A full URL, partial URI, or short name are valid. Examples:
+            - https://www.googleapis.com/compute/v1/projects/[projectId]/zones/us-east1-a/machineTypes/n1-standard-2
+            - projects/[projectId]/zones/us-east1-a/machineTypes/n1-standard-2
+            - n1-standard-2
+      diskType:
+        type: string
+        default: pd-standard
+        description: The boot disk type.
+        enum:
+          - pd-standard
+          - pd-ssd
+      diskSizeGb:
+        type: integer
+        default: 500
+        description: The boot disk size in GB.
+      numLocalSsds:
+        type: integer
+        default: 0
+        description: The number of attached SSDs.
+        minimum: 0
+        maximum: 4
+  worker:
+    type: object
+    description: |
+      The Compute Engine config settings for worker instances in the cluster.
+    properties:
+      numInstances:
+        type: integer
+        description: The number of VM instances in the instance group.
+      machineType:
+        type: string
+        description: |
+          The Compute Engine machine type used for cluster instances.
+          A full URL, partial URI, or short name are valid. Examples:
+            - https://www.googleapis.com/compute/v1/projects/[projectId]/zones/us-east1-a/machineTypes/n1-standard-2
+            - projects/[projectId]/zones/us-east1-a/machineTypes/n1-standard-2
+            - n1-standard-2
+      diskType:
+        type: string
+        default: pd-standard
+        description: The boot disk type.
+        enum:
+          - pd-standard
+          - pd-ssd
+      diskSizeGb:
+        type: integer
+        default: 500
+        description: The boot disk size in GB.
+      numLocalSsds:
+        type: integer
+        default: 0
+        description: The number of attached SSDs.
+        minimum: 0
+        maximum: 4
+  secondaryWorker:
+    type: object
+    description: |
+      The Compute Engine config settings for additional worker instances in
+      the cluster.
+    properties:
+      numInstances:
+        type: integer
+        description: The number of VM instances in the instance group.
+      isPreemptible:
+        type: boolean
+        description: |
+          If True, specifies that the instance group consists of preemptible
+          instances.
+outputs:
+  properties:
+    - masterInstanceNames:
+        type: array
+        description: When configured, the list of master instance names.
+        items:
+          type: string
+    - workerInstanceNames:
+        type: array
+        description: When configured, the list of worker instance names.
+        items:
+          type: string
+    - secondaryWorkerInstanceNames:
+        type: array
+        description: |
+          When configured, the list of additional worker instance names.
+        items:
+          type: string
+    - name:
+        type: string
+        description: The cluster name.
+    - configBucket:
+        type: string
+        description: |
+          A Cloud Storage staging bucket used for sharing generated SSH keys
+          and config.
+
+documentation:
+  - templates/dataproc/README.md
+
+examples:
+  - templates/dataproc/examples/dataproc.yaml

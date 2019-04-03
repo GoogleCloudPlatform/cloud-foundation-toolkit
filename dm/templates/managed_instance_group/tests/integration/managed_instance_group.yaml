@@ -1,0 +1,47 @@
+# Test of the Managed Instance Group template.
+
+imports:
+  - path: templates/managed_instance_group/managed_instance_group.py
+    name: managed_instance_group.py
+
+resources:
+  - name: ${ZONAL_MIG_RES_NAME}
+    type: managed_instance_group.py
+    properties:
+      name: ${ZONAL_MIG_NAME}
+      zone: ${ZONE}
+      autoscaler:
+        name: ${AUTOSCALER_NAME}
+        coolDownPeriodSec: ${COOL_DOWN_PERIOD}
+        minSize: ${MIN_SIZE}
+        cpuUtilization:
+          utilizationTarget: ${UTILIZATION_TARGET}
+      namedPorts:
+        - name: ${PORT_NAME}
+          port: ${PORT}
+      baseInstanceName: ${BASE_INSTANCE_NAME}
+      targetSize: ${TARGET_SIZE}
+      instanceTemplate:
+        name: ${INSTANCE_TEMPLATE_NAME}
+        diskImage: ${IT_BASE_IMAGE}
+        network: ${IT_NETWORK}
+      healthChecks:
+        - initialDelaySec: ${INITIAL_DELAY_SEC}
+          healthCheck: projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/httpHealthChecks/${SECOND_HEALTH_CHECK_NAME}
+  - name: ${REGIONAL_MIG_NAME}
+    type: managed_instance_group.py
+    properties:
+      region: ${REGION}
+      autoscaler:
+        cpuUtilization:
+          utilizationTarget: ${UTILIZATION_TARGET}
+      targetSize: ${TARGET_SIZE}
+      instanceTemplate:
+        url: $(ref.${ZONAL_MIG_RES_NAME}.instanceTemplateSelfLink)
+      healthChecks:
+        - initialDelaySec: ${INITIAL_DELAY_SEC}
+          healthCheck: $(ref.${HEALTH_CHECK_NAME}.selfLink)
+
+# Test prerequisites:
+  - name: ${HEALTH_CHECK_NAME}
+    type: compute.v1.httpHealthCheck

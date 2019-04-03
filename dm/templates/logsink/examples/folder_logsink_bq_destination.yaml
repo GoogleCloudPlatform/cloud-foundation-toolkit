@@ -1,0 +1,24 @@
+# Example of a folder logsink with a BigQuery dataset destination template
+# usage.
+#
+# In this example, a folder log sink is created with a BigQuery dataset
+# destination name.
+#
+# Replace the following with appropirate values
+# <FIXME:folder_id>: The folder ID to create the losink for.
+# <FIXME:existing_bq_dataset_name>: The name of a BigQuery dataset that exists.
+#
+
+imports:
+  - path: templates/logsink/logsink.py
+    name: logsink.py
+
+resources:
+  # Folder sink with a BigQuery dataset destination.
+  - name: test-folder-logsink-bq
+    type: logsink.py
+    properties:
+      folderId: <FIXME:folder_id>
+      destinationName: <FIXME:existing_bq_dataset_name>
+      destinationType: bigquery
+      uniqueWriterIdentity: true

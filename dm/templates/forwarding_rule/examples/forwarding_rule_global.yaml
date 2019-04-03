@@ -1,0 +1,21 @@
+# Example of the forwarding rule template usage.
+#
+# In this example, a global forwarding rule is created.
+#
+# Replace the following placeholders with valid values:
+#   <FIXME:globalTarget>: a URL of a global load balancing 
+#   resource to receive the matched traffic; e.g., targetHttpProxy
+#   <FIXME:portRange>: a range of port numbers traffic from which 
+#   must be forwarded to the target; e.g., '80, 8080'
+#
+imports:
+  - path: templates/forwarding_rule/forwarding_rule.py
+    name: forwarding_rule.py
+
+resources:
+  - name: external-global-forwarding-rule
+    type: forwarding_rule.py
+    properties:
+      loadBalancingScheme: EXTERNAL
+      target: <FIXME:globalTarget>
+      portRange: <FIXME:portRange>

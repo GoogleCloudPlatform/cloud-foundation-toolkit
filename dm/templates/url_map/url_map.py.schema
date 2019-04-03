@@ -1,0 +1,133 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: URL Map
+  author: Sourced Group Inc.
+  description: Supports creation of the URL Map resource.
+
+properties:
+  name:
+    type: string
+    description: The resource name.
+  description:
+    type: string
+    description: The resource description (optional).
+  defaultService:
+    type: string
+    description: |
+      The URL of the BackendService resource if none of the hostRules match.
+  hostRules:
+    type: array
+    description: The list of HostRules to use against the URL.
+    items:
+      type: object
+      properties:
+        description:
+          type: string
+          description: The resource description (optional).
+        hosts:
+          type: array
+          description: |
+            The list of host patterns to match. They must be valid hostnames;
+            asterisk (*) matches any string of ([a-z0-9-.]*).
+          items:
+            type: string
+        pathMatcher:
+          type: string
+          description: |
+            The name of the PathMatcher to use for matching the path portion of
+            the URL if the hostRule matches the URL's host portion.
+  pathMatchers:
+    type: array
+    description: The list of the named PathMatchers to use against the URL.
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+          description: |
+            The name to which the PathMatcher is referred by the HostRule.
+        description:
+          type: string
+          description: The resource description (optional).
+        defaultService:
+          type: string
+          description: |
+            The full or partial URL to the BackendService resource. Used if
+            none of the pathRules defined by the PathMatcher are matched by
+            the URL's path portion. For example, the following are valid URLs
+            for the BackendService resource:
+              - https://www.googleapis.com/compute/v1/projects/PROJECT/global/backendServices/BACKENDSERVICE
+              - compute/v1/projects/project/global/backendServices/BACKENDSERVICE
+              - global/backendServices/BACKENDSERVICE
+        pathRules:
+          type: array
+          description: The list of path rules.
+          items:
+            type: object
+            properties:
+              service:
+                type: string
+                description: |
+                  The URL of the BackendService resource if the rule is
+                  matched.
+              paths:
+                type: array
+                description: |
+                  The list of the path patterns to match. Each pattern must
+                  start with /. Asterisks (*) are allowed only at the end,
+                  following the /. The string fed to the path matcher does not
+                  include any text after the first ? or #, and those characters
+                  are not allowed here.
+                items:
+                  type: string
+  tests:
+    type: array
+    description: |
+      The list of the expected URL mapping tests. Request to update this UrlMap
+      succeed only if all of the test cases pass. You can specify a maximum of
+      100 tests per UrlMap.
+    items:
+      type: object
+      properties:
+        description:
+          type: string
+          description: The test case description.
+        host:
+          type: string
+          description: The host portion of the URL.
+        path:
+          type: string
+          description: The path portion of the URL.
+        service:
+          type: string
+          description: |
+            The BackendService resource the given URL is expected to be mapped
+            to.
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The resource name.
+    - selfLink:
+        type: string
+        description: The URI (SelfLink) of the URL map rule resource.
+
+documentation:
+  - templates/url_map/README.md
+
+examples:
+  - templates/url_map/examples/url_map.yaml

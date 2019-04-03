@@ -1,0 +1,21 @@
+# Test of the Cloud Build template.
+
+imports:
+  - path: templates/cloudbuild/cloudbuild.py
+    name: build.py
+
+resources:
+  - name: ${CLOUDBUILD_NAME}
+    type: build.py
+    properties:
+      steps:
+        - name: 'gcr.io/cloud-builders/git'
+          args: ['clone', 'https://github.com/GoogleCloudPlatform/cloud-builders']
+        - name: 'gcr.io/cloud-builders/docker'
+          args: [ 'build', '-t', 'gcr.io/${CLOUD_FOUNDATION_PROJECT_ID}/${IMAGE_NAME}', '.' ]
+          dir: cloud-builders/npm/examples/hello_world
+        - name: 'gcr.io/cloud-builders/docker'
+          args: [ 'push', 'gcr.io/${CLOUD_FOUNDATION_PROJECT_ID}/${IMAGE_NAME}']
+      images:
+        - 'gcr.io/${CLOUD_FOUNDATION_PROJECT_ID}/${IMAGE_NAME}'
+      timeout: '${BUILD_TIMEOUT}'

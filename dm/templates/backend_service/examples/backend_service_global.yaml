@@ -1,0 +1,23 @@
+# Example of the backend service template usage.
+#
+# In this example, a global HTTP backend service is created.
+#
+# Replace the following placeholders with valid values:
+#   <FIXME:instanceGroup>: a URL of a zonal instance group
+#   <FIXME:healthcheck>: a URL of the TCP healthcheck
+#
+
+imports:
+  - path: templates/backend_service/backend_service.py
+    name: backend_service.py
+
+resources:
+  - name: global-http-backend-service
+    type: backend_service.py
+    properties:
+      protocol: HTTP
+      backends:
+        - group: <FIXME:instanceGroup>
+          balancingMode: RATE
+          maxRate: 10000
+      healthCheck: <FIXME:healthcheck>

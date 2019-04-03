@@ -1,0 +1,15 @@
+# This file is used by the sample pipeline configs to make them usable by
+# different organizations, and to hide sensitive IDs from git.
+#
+# It's strongly recommended not to keep your organization's specific info in
+# a public git repo.
+#
+# To use the supplied configs without modification, replace the <FIXME:XXX>
+# fields with values pertinent to your organization, and install this file
+# inside the Jenkins user's home directory (~jenkins/, or ~tomcat/, etc)
+
+export CLOUD_FOUNDATION_PROJECT_ID=<FIXME:ParentProjectID>  # This is the project used to create new projects (only used in the 'project' Jenkins job)
+export CFT_ORGANIZATION_ID=<FIXME:OrgId>                    # Organization ID in which new projects get created (only used in the 'project' Jenkins job)
+export CFT_ORGANIZATION_FOLDER_ID=<FIXME:FolderId>          # Folder ID in which new projects get created (only used in the 'project' Jenkins job)
+export CFT_BILLING_ACCOUNT_ID=<FIXME:BillingAccountId>      # Billing accounts to associate with new projects (only used in the 'project' Jenkins job)
+export CFT_CHILD_PROJECT=<FIXME:ChildProjectID>             # This is the project where the resources get created

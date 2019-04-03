@@ -1,0 +1,132 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: HAProxy load balancer template
+  author: Sourced Group Inc.
+  description: |
+    Deploys a Compute instance, with an HAProxy installed and configured to
+    load-balance traffic between instance groups.
+
+imports:
+  - path: haproxy.py
+
+required:
+  - zone
+  - network
+  - loadBalancer
+  - instances
+
+properties:
+  name:
+    type: string
+    description: A name of a load balancer instance
+  network:
+    type: string
+    description: |
+      Name of the network to which a load balancer will be connected; e.g.,
+      'my-custom-network' or 'default'.
+  zone:
+    type: string
+    description: Availability zone. E.g. 'us-central1-a'
+  machineType:
+    type: string
+    default: n1-standard-1
+    description: |
+      The Compute instance type. E.g., 'n1-standard-1'. For details, see:
+      https://cloud.google.com/compute/docs/machine-types.
+  serviceAccountEmail:
+    type: string
+    default: default
+    description: |
+      A service account email with permissions sufficient to list zones and
+      instanceGroups instances.
+  loadBalancer:
+    type: object
+    description: Front-end settings for the HAProxy load balancer.
+    required:
+      - port
+    properties:
+      algorithm:
+        type: string
+        default: roundrobin
+        description: The load balancing algorithm.
+        enum:
+          - roundrobin
+          - leastconn
+          - source
+      port:
+        type: integer
+        description: |
+          Number of the port at which the load balancer will receive requests.
+      mode:
+        type: string
+        default: http
+        description: The type of traffic the HAProxy will be load-balancing.
+        enum:
+          - http
+          - tcp
+  instances:
+    type: object
+    description: Back-end settings of the HAProxy load balancer.
+    required:
+      - port
+      - groups
+    properties:
+      port:
+        type: integer
+        description: |
+          Number of the port at which instances will accept requests.
+      groups:
+        type: array
+        description: A list of instanceGroups that will be load-balanced.
+        items:
+          type: string
+          description: |
+            The instance group name. If located in the same availability zone
+            as a load balancer, a group name is sufficient. If located elsewhere,
+            the name should have the following format: 'zones/[ZONE]/instanceGroups/[GROUP]'.
+      refreshIntervalMin:
+        type: integer
+        minimum: 1
+        maximum: 30
+        default: 10
+        description: |
+          Specifies how often the list of instances should be refreshed.
+
+outputs:
+  properties:
+    - externalIp:
+        type: string
+        description: Reference to an external IP address of the load balancer.
+    - internalIp:
+        type: string
+        description: Reference to an internal IP address of the load balancer.
+    - name:
+        type: string
+        description: The load balancer name.
+    - selfLink:
+        type: string
+        description: Link to the load balancer instance.
+    - port:
+        type: integer
+        description: |
+          Number of the port where the HAProxy load balancer will accept requests.
+
+documentation:
+  - templates/haproxy/README.md
+
+examples:
+  - templates/haproxy/examples/haproxy.yaml
+

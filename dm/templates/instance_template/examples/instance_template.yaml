@@ -1,0 +1,22 @@
+# Example of the Instance Template template usage.
+#
+# In this example, an instance template with Nginx is created.
+
+imports:
+  - path: templates/instance_template/instance_template.py
+    name: instance_template.py
+
+resources:
+  - name: instance-template-example
+    type: instance_template.py
+    properties:
+      diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+      network: default
+      machineType: f1-micro
+      tags:
+        items:
+          - http
+      metadata:
+        items:
+          - key: startup-script
+            value: apt-get update && apt-get install -y nginx

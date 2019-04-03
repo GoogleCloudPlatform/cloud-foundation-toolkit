@@ -1,0 +1,29 @@
+# Example of the HAProxy template usage.
+#
+# In this example, an HAProxy load balancing instance is created to route traffic
+# between two existing managed instance groups:
+# * zones/us-central1-a/instanceGroups/instance-group-1
+# * zones/us-east1-b/instanceGroups/instance-group-3
+
+imports:
+  - path: templates/instance/instance.py
+    name: instance.py
+  - path: templates/haproxy/haproxy.py
+    name: haproxy.py
+
+resources:
+  - name: ilb-haproxy
+    type: haproxy.py
+    properties:
+      zone: us-central1-a
+      machineType: f1-micro
+      network: default
+      loadBalancer:
+        algorithm: roundrobin
+        port: 8080
+        mode: tcp
+      instances:
+        port: 80
+        groups:
+          - instance-group-1
+          - zones/us-east1-b/instanceGroups/instance-group-3

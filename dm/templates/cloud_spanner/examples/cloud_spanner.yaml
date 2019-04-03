@@ -1,0 +1,23 @@
+# Example of the Cloud Spanner template usage.
+
+imports:
+  - path: templates/cloud_spanner/cloud_spanner.py
+    name: cloud_spanner.py
+
+resources:
+  - name: myspannercluster
+    type: cloud_spanner.py
+    properties:
+      displayName: "Spanner Cluster 1"
+      nodeCount: 2
+      instanceConfig: nam3
+      bindings:
+        - role: "roles/spanner.admin"
+          members:
+            - "user:myuser@mycompany.com"
+      databases:
+        - name: "spannerdb1"
+          bindings:
+            - role: "roles/spanner.databaseAdmin"
+              members:
+                - "user:myotheruser@mycompany.com"

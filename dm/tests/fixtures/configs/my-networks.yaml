@@ -1,0 +1,27 @@
+# Example of a config that has no dependencies.
+#
+# Notice the 'name' and 'project' yaml directives are not specified in this
+# config, meaning that the deployment name will be obtained from the filename
+# (without the extension), and the project needs to be specified via one of
+# these methods, in this order of precedence:
+# 1- The '--project' command line option (highest precedence)
+# 2- The 'project' directive in this config file
+# 3- The CLOUD_FOUNDATION_TOOLKIT_PROJECT_ID environment variable
+# 4- The default projected configured with the CGP SDK
+
+
+description: my networks deployment
+
+imports:
+  - path: templates/network/network.py
+
+resources:
+  - type: templates/network/network.py
+    name: my-network-prod
+    properties:
+      autoCreateSubnetworks: true
+
+  - type: templates/network/network.py
+    name: my-network-dev
+    properties:
+      autoCreateSubnetworks: false
