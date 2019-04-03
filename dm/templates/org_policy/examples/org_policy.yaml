@@ -1,0 +1,18 @@
+# Example of the organization policy template usage.
+#
+imports:
+  - path: templates/org_policy/org_policy.py
+    name: org_policy.py
+
+resources:
+  - name: test-org-policy-myproject
+    type: org_policy.py
+    properties:
+      projectId: myproject
+      policies:
+        - constraint: constraints/compute.vmExternalIpAccess
+          listPolicy:
+            allValues: ALLOW
+        - constraint: constraints/compute.disableNestedVirtualization
+          booleanPolicy:
+            enforced: true

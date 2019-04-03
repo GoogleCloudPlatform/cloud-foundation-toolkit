@@ -1,0 +1,50 @@
+# Example of a organization logsink with a pubsub destination template usage.
+#
+# In this example, two organization log sinks are created. One with a pubsub
+# destination name, another that also creates the pubsub.
+#
+# Replace the following with appropirate values
+# <FIXME:OrgId>: The organization ID to create the logsink for.
+# <FIXME:existing_pubsub_topic_name>: The name of a pubsub topic that exists.
+# <FIXME:pubsub_topic_name>: The pubsub topic name.
+# <FIXME:topic_name>: A pubsub topic name.
+# <FIXME:user_account_email_address>: A valid user account to give permissions
+# to the pubsub topic.
+#
+
+imports:
+  - path: templates/logsink/logsink.py
+    name: logsink.py
+
+resources:
+  # Organization sink with a PubSub topic destination
+  - name: test-org-logsink-pubsub
+    type: logsink.py
+    properties:
+      orgId: <FIXME:OrgId>
+      # When using a PubSub topic, the value must be the topic ID. The ID must
+      # contain only letters (a-z, A-Z), numbers (0-9), or underscores (_).
+      # The maximum length is 1,024 characters.
+      destinationName: <FIXME:existing_pubsub_topic_name>
+      destinationType: pubsub
+      uniqueWriterIdentity: true
+
+  # Organization sink with a pubsub destination that is created.
+  - name: test-org-logsink-create-pubsub
+    type: logsink.py
+    properties:
+      orgId: <FIXME:OrgId>
+      # When using a PubSub topic, the value must be the topic ID. The ID must
+      # contain only letters (a-z, A-Z), numbers (0-9), or underscores (_).
+      # The maximum length is 1,024 characters.
+      destinationName: <FIXME:pubsub_topic_name>
+      destinationType: pubsub
+      uniqueWriterIdentity: true
+      # Properties for the pubsub destination to be created.
+      # Refer to templates/pubsub/pubsub.py.schema for supported properties.
+      pubsubProperties:
+        topic: <FIXME:topic_name>
+        accessControl:
+          - role: roles/pubsub.admin
+            members:
+              - user:<FIXME:user_account_email_address>

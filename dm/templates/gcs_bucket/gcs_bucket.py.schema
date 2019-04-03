@@ -1,0 +1,235 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Google Cloud Storage Bucket
+  author: Sourced Group Inc.
+  description: |
+    Supports creation of a Google Cloud Storage bucket.
+    For more information on this resource:
+    https://cloud.google.com/storage/docs/json_api/.
+
+imports:
+  - path: gcs_bucket.py
+
+required:
+  - name
+
+properties:
+  name:
+    type: string
+    description: The name of the bucket.
+  location:
+    type: string
+    default: us-east1
+    description: The region name where the bucket is deployed.
+  storageClass:
+    type: string
+    default: STANDARD
+    description: |
+      The bucket's default storage class. Defines how objects
+      in the bucket are stored; determines the SLA and the 
+      cost of storage.
+    enum:
+      - REGIONAL
+      - MULTI_REGIONAL
+      - STANDARD
+      - NEARLINE
+      - COLDLINE
+      - DURABLE_REDUCED_AVAILABILITY
+  versioning:
+    type: object
+    description: Enables/disables object versioning.
+    required:
+      - enabled
+    properties:
+      enabled:
+        type: boolean
+        description: Enables/disables object versioning.
+  predefinedAcl:
+    type: string
+    default: private
+    description: |
+      The predefined or "canned" ACL - an alias for a set of specific
+      ACL entries that you can use to quickly apply multiple ACL entries
+      to a bucket or object in a single operation.
+      Ref: https://cloud.google.com/storage/docs/access-control/lists.
+    enum:
+      - authenticatedRead
+      - private
+      - projectPrivate
+      - publicRead
+      - publicReadWrite
+  predefinedDefaultObjectAcl:
+    type: string
+    default: private
+    enum:
+      - authenticatedRead
+      - bucketOwnerFullControl
+      - bucketOwnerRead
+      - private
+      - projectPrivate
+      - publicRead
+    description: |
+      The predefined or "canned" ACL for the default object in the bucket -
+      an alias for a set of specific ACL entries that you can use to quickly
+      apply multiple ACL entries to a bucket or object in a single operation.
+      Ref: https://cloud.google.com/storage/docs/access-control/lists.
+  logging:
+    type: object
+    required:
+      - logBucket
+      - logObjectPrefix
+    properties:
+      logBucket:
+        type: string
+        description: |
+          The destination bucket where the current bucket's logs 
+          must be placed.
+      logObjectPrefix:
+        type: string
+        description: The prefix for log object names.
+  bindings:
+    type: array
+    description: IAM bindings for the bucket.
+    items:
+      type: object
+      required:
+        - role
+        - members
+      properties:
+        role:
+          type: string
+          pattern: ^roles\/
+          description: The role to assign to members.
+        members:
+          type: array
+          items:
+            type: string
+            description: |
+              The member to add the binding for. Must be in the form user|
+              group|serviceAccount:email or domain:domain.
+              Can also be one of the following special values: allUsers,
+              allAuthenticatedUsers.
+  lifecycle:
+    type: object
+    description: The storage object's lifecycle actions and conditions.
+    properties:
+      rule:
+        type: array
+        description: The lifecycle action and condition.
+        items:
+          type: object
+          required:
+            - action
+            - condition
+          properties:
+            action:
+              type: object
+              description: The action to be taken if the condition is met.
+              required:
+                - type
+              properties:
+                storageClass:
+                  type: string
+                  description: 
+                    The storage class to switch on if the condition is met.
+                  enum:
+                    - NEARLINE
+                    - COLDLINE
+                type:
+                  type: string
+                  description: The action type - setStorageClass or Delete.
+                  enum:
+                    - SetStorageClass
+                    - Delete
+            condition:
+              type: object
+              description: The lifecycle condition.
+              properties:
+                age:
+                  type: number
+                  description: |
+                    The object age. Selects all objects of this age or older.
+                createdBefore:
+                  type: string
+                  description: |
+                    The date part of a date in the RFC 3339 format.
+                    For example, "2013-01-15".
+                matchesStorageClass:
+                  type: array
+                  description: |
+                    All objects with any of the selected storage classes.
+                  items:
+                    type: string
+                    enum:
+                      - MULTI_REGIONAL
+                      - REGIONAL
+                      - STANDARD
+                      - DURABLE_REDUCED_AVAILABILITY
+                      - NEARLINE
+                      - COLDLINE
+                isLive:
+                  type: boolean
+                  description: |
+                    Defines whether the object is live. Applies only to 
+                    versioned objects.
+                numNewerVersions:
+                  type: number
+                  description: |
+                    The number of newer versions. Selects all objects with
+                    at least that many newer versions. Applies only to
+                    versioned objects. 
+  labels:
+    type: object
+    description: User-provided labels in key/value pairs.
+  website:
+    type: object
+    description: |
+      The bucket's website configuration, controlling how the service behaves
+      when accessing the bucket contents as a web site.
+    properties:
+      mainPageSuffix:
+        type: string
+        description: |
+          The suffix that allows creation of index.html objects to represent
+          directory pages. If the requested object path is missing, the service
+          ensures that the trailing '/' is present, appends this suffix, and
+          attempt to retrieve the resulting object. 
+      notFoundPage:
+        type: string
+        description: |
+          The named object from the bucket that the service returns as the
+          content for the 404 Not Found result if the requested object path
+          is missing, and no mainPageSuffix object is provided.
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The name of the storage bucket resource.
+    - selfLink:
+        type: string
+        description: The URI (SelfLink) of the storage bucket resource.
+    - url:
+        type: string
+        description: |
+          The base URL of the bucket in the gs://<bucket-name> format.
+
+documentation:
+  - templates/gcs_bucket/README.md
+
+examples:
+  - templates/gcs_bucket/examples/gcs_bucket.yaml
+  - templates/gcs_bucket/examples/gcs_bucket_iam_bindings.yaml
+  - templates/gcs_bucket/examples/gcs_bucket_lifecycle.yaml

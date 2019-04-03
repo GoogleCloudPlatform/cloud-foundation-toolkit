@@ -1,0 +1,28 @@
+# Example of the autoscaleer template usage.
+#
+# In this example, a zonal autoscaler with multiple
+# autoscaling rules is created.
+#
+# Replace the following with valid values:
+# <FIXME:instanceGroupManager>: a valid link to an existing
+# zonal instanceGroupManager
+# <FIXME:zone>: a name of the zone where the instanceGroupManager
+# resides
+
+imports:
+  - path: templates/autoscaler/autoscaler.py
+    name: autoscaler.py
+
+resources:
+  - name: zonal-autoscaler
+    type: autoscaler.py
+    properties:
+      zone: <FIXME:zone>
+      cpuUtilization:
+        utilizationTarget: 0.7
+      customMetricUtilizations:
+        - metric: compute.googleapis.com/instance/disk/read_ops_count
+          utilizationTarget: 1000
+          utilizationTargetType: DELTA_PER_SECOND
+      maxNumReplicas: 4
+      target: <FIXME:instanceGroupManager>

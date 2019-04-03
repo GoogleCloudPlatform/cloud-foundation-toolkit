@@ -1,0 +1,30 @@
+# Example of the VPN template usage.
+#
+# In this example, a VPN is created.
+#
+# Upon successful deployment of the VPN resource, the following resources
+# are created:
+#   - a target VPN gateway (compute.v1.targetVpnGateway)
+#   - a static address (compute.v1.address)
+#   - an ESP forwarding rule (compute.v1.forwardingRule)
+#   - a UDP 4500 forwarding rule (compute.v1.forwardingRule)
+#   - a UDP 500 forwarding rule (compute.v1.forwardingRule)
+#   - a VPN tunnel (compute.v1.vpnTunnel)
+#
+# Replace FIXME:network-name with the name of a valid VPC within the region
+# Replace FIXME:cloud-router-name with the name a valid Cloud Router
+
+imports:
+  - path: templates/vpn/vpn.py
+    name: vpn.py
+
+resources:
+  - name: test-vpn
+    type: vpn.py
+    properties:
+      region: us-east1
+      network: <FIXME:network-name>
+      peerAddress: 1.2.3.4
+      asn: 65001
+      sharedSecret: superSecretPassw0rd
+      router: <FIXME:cloud-router-name>

@@ -1,0 +1,45 @@
+# Test of the Cloud Function template usage.
+#
+# Variables:
+#   RAND: a random string used by the testing suite.
+#
+
+imports:
+  - path: templates/cloud_function/cloud_function.py
+    name: cloud_function.py
+  - path: templates/cloud_function/upload.py
+    name: upload.py
+  - path: templates/cloud_function/function/helloGET.js
+  - path: templates/cloud_function/function/package.json
+
+resources:
+
+  - name: test-function-https-${RAND}
+    type: cloud_function.py
+    properties:
+      name: test-function-https-name-${RAND}
+      region: us-central1
+      timeout: 120s
+      availableMemoryMb: 512
+      entryPoint: helloGET
+      localUploadPath: templates/cloud_function/function
+      sourceArchiveUrl: gs://test-function-http-${RAND}/helloGET.zip
+
+  - name: test-function-topic-${RAND}
+    type: cloud_function.py
+    properties:
+      region: us-central1
+      entryPoint: helloGET
+      sourceArchiveUrl: $(ref.test-function-https-${RAND}.sourceArchiveUrl)
+      triggerTopic: projects/${CLOUD_FOUNDATION_PROJECT_ID}/topics/topic-${RAND}
+
+  - name: test-function-storage-${RAND}
+    type: cloud_function.py
+    properties:
+      region: us-central1
+      entryPoint: helloGET
+      sourceArchiveUrl: $(ref.test-function-https-${RAND}.sourceArchiveUrl)
+      triggerStorage:
+        bucketName: test-function-http-${RAND}
+        event: finalize
+

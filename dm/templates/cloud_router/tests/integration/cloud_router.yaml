@@ -1,0 +1,18 @@
+# Test of the Cloud Router template usage.
+#
+# Variables:
+#   RAND: a random string used by the testing suite.
+#
+
+imports:
+  - path: templates/cloud_router/cloud_router.py
+    name: cloud_router.py
+
+resources:
+  - name: cloud-router-${RAND}
+    type: cloud_router.py
+    properties:
+      name: cloud-router-${RAND}
+      network: network-${RAND}
+      region: us-east1
+      asn: 65001

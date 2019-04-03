@@ -1,0 +1,28 @@
+# Example of the IAM member template usage.
+#
+# The `members` property is a list of members to which the
+# `role` is applied.
+#
+# Replace `user-email` with a valid email.
+# Replace `service-account` with a valid service account.
+# Replace `group-address` with a valid group. 
+# Replace `domain-name` with a valid domain.
+
+
+imports:
+  - path: templates/iam_member/iam_member.py
+    name: iam_member.py
+
+resources:
+  - name: iam-member-test
+    type: iam_member.py
+    properties:
+      roles:
+        - role: roles/editor
+          members:
+            - user:<FIXME:user-email-example:name@example.com>
+            - serviceAccount:<FIXME:service-account-example:example@myprojectname.gserviceaccount.com>
+        - role: roles/viewer
+          members:
+            - group:<FIXME:group-address-example:admins@example.com>
+            - domain:<FIXME:domain-name-example:example.com>

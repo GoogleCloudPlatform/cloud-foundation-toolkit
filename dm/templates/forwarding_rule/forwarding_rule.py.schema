@@ -1,0 +1,141 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Forwarding Rule
+  author: Sourced Group Inc.
+  description: |
+    Creates a forwrding rule.
+    See https://cloud.google.com/load-balancing/docs/forwarding-rules for
+    details.
+
+properties:
+  name:
+    type: string
+    description: The resource name.
+  description:
+    type: string
+    description: The resource description (optional).
+  region:
+    type: string
+    description: |
+      The URL of the region where the regional forwarding rule resides.
+      Not applicable to global forwarding rules.
+  IPAddress:
+    type: string
+    description: |
+      The IP address on behalf of which the forwarding rule serves. The
+      address can be specified either by a literal IP address or by a URL
+      reference to an existing Address resource.
+  IPProtocol:
+    type: string
+    description: |
+      The IP protocol to which the rule applies. If the load balancing scheme
+      is INTERNAL, the valid valuse are TCP and UDP. For the INTERNAL_SELF_MANAGED
+      load balancing scheme, only TCP is valid.
+    enum:
+      - TCP
+      - UDP
+      - ESP
+      - AH
+      - SCTP
+      - ICMP
+  portRange:
+    type: [integer,string]
+    description: |
+      The port range; only packets addressed to ports in that range are
+      forwarded to the target. Used in conjunction with the target field
+      for TargetHttpProxy, TargetHttpsProxy, TargetSslProxy, TargetTcpProxy,
+      TargetVpnGateway, TargetPool, and TargetInstance. Applicable only
+      when IPProtocol is TCP, UDP, or SCTP.
+  ports:
+    type: array
+    description: |
+      The list of ports; only packets addressed to these ports are forwarded
+      to the backends configured with the forwarding rule. Used in conjunction with
+      the backendService field for INTERNAL load balancing.
+    items:
+      type: integer
+      minimum: 1
+      maximum: 65535
+  target:
+    type: string
+    description: |
+      The URL of the target resource to receive the matched traffic. For
+      regional forwarding rules, this target must be located in the same region
+      as the forwarding rule. For global forwarding rules, this target must be a
+      global load balancing resource.
+      For example: https://www.googleapis.com/compute/v1/projects/{project}/global/{targetType}/{targetName}
+  loadBalancingScheme:
+    type: string
+    description: |
+      Defines what the forwarding rule is used for.
+      INTERNAL - used for Internal Network load balancing
+      (TCP, UDP)
+      INTERNAL_SELF_MANAGED - used for Internal Global HTTP(S) load balancing
+      EXTERNAL - used for External load balancing (HTTP(S), External
+      TCP/UDP, SSL Proxy)
+    enum:
+     - INTERNAL
+     - INTERNAL_SELF_MANAGED
+     - EXTERNAL
+  subnetwork:
+    type: string
+    description: |
+      The subnetwork the load-balanced IP must belong to for the forwarding rule.
+      Used only for INTERNAL load balancing.
+  network:
+    type: string
+    description: |
+      The network the load-balanced IP must belong to for this forwarding rule.
+      If no value is provided, the default network is used. Used only for
+      INTERNAL and INTERNAL_SELF_MANAGED load balancing.
+  backendService:
+    type: string
+    description: |
+      The backend service URL to receive the matched traffic.
+      Used only for INTERNAL load balancing.
+      For example: https://www.googleapis.com/compute/v1/projects/{project}/regions/{region}/backendServices/{backendName}
+  ipVersion:
+    type: string
+    description: |
+      The IP Version the forwarding rule uses. Can be
+      specified only for external global forwarding rules.
+    enum:
+      - IPV4
+      - IPV6
+
+outputs:
+  properties:
+    - region:
+        type: string
+        description: |
+          The URL of the region where the regional forwarding rule resides.
+    - name:
+        type: string
+        description: The resource name.
+    - selfLink:
+        type: string
+        description: The URI (SelfLink) of the forwarding rule resource.
+    - IPAddress:
+        type: string
+        description: |
+          The IP address on behalf of which the forwarding rule serves.
+
+documentation:
+  - templates/forwarding_rule/README.md
+
+examples:
+  - templates/forwarding_rule/examples/forwarding_rule_regional.yaml
+  - templates/forwarding_rule/examples/forwarding_rule_global.yaml

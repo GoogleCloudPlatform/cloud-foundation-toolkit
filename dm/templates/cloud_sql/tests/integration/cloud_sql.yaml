@@ -1,0 +1,41 @@
+# Test of the Cloud SQL template.
+
+imports:
+  - path: templates/cloud_sql/cloud_sql.py
+    name: cloud_sql.py
+
+resources:
+  - name: ${MASTER_INSTANCE_NAME}
+    type: cloud_sql.py
+    properties:
+      databaseVersion: ${VERSION}
+      region: ${REGION}
+      settings:
+        tier: ${MASTER_INSTANCE_TIER}
+        backupConfiguration:
+          startTime: ${BACKUP_START_TIME}
+          enabled: ${BACKUP_ENABLED}
+          binaryLogEnabled: ${BACKUP_BL_ENABLED}
+        locationPreference:
+          zone: ${MASTER_ZONE}
+      users:
+        - name: ${USER1_NAME}
+          host: ${USER1_HOST}
+        - name: ${USER2_NAME}
+          host: ${USER2_HOST}
+      databases:
+        - name: ${DB1}
+        - name: ${DB2}
+
+  - name: ${REPLICA_INSTANCE_NAME}
+    type: cloud_sql.py
+    properties:
+      databaseVersion: ${VERSION}
+      region: ${REGION}
+      instanceType: ${REPLICA_INSTANCE_TYPE}
+      settings:
+        tier: ${REPLICA_INSTANCE_TIER}
+        locationPreference:
+          zone: ${REPLICA_ZONE}
+      masterInstanceName: $(ref.${MASTER_INSTANCE_NAME}.name)
+      dependsOn: $(ref.${MASTER_INSTANCE_NAME}.resources)

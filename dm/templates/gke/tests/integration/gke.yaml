@@ -1,0 +1,37 @@
+# Test of the GKE (Google Kubernetes Engine) template.
+
+imports:
+  - path: templates/gke/gke.py
+    name: gke.py
+
+resources:
+  - name: ${CLUSTER_NAME}
+    type: gke.py
+    properties:
+      clusterLocationType: Regional
+      region: ${REGION}
+      cluster:
+        name: ${CLUSTER_NAME}
+        description: test gke cluster
+        network: ${NETWORK_NAME}
+        subnetwork: ${SUBNET_NAME}
+        initialClusterVersion: ${CLUSTER_VERSION}
+        initialNodeCount: ${NODE_COUNT}
+        nodeConfig:
+          machineType: ${MACHINE_TYPE}
+          oauthScopes:
+            - https://www.googleapis.com/auth/compute
+            - https://www.googleapis.com/auth/devstorage.read_only
+            - https://www.googleapis.com/auth/logging.write
+            - https://www.googleapis.com/auth/monitoring
+          localSsdCount: ${LOCALSSD_COUNT}
+        locations:
+          - us-east1-b
+          - us-east1-d
+        loggingService: ${LOGGING_SERVICE}
+        monitoringService: ${MONITORING_SERVICE}
+        masterIpv4CidrBlock: ${MASTERIPV4_CIDRBLOCK}
+        clusterIpv4Cidr: ${CLUSTERIPV4_CIDR}
+        ipAllocationPolicy:
+          useIpAliases: True
+          servicesIpv4CidrBlock: ${SERVICESIPV4_CIDRBLOCK}

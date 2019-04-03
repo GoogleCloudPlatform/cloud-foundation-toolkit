@@ -1,0 +1,108 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Waiter
+  author: Sourced Group Inc.
+  description: Supports creation of a RuntimeConfig Waiter resource.
+    For more information on this resource, see
+    https://cloud.google.com/deployment-manager/runtime-configurator/creating-a-waiter.
+
+required:
+  - parent
+  - waiter
+  - timeout
+  - success
+
+properties:
+  parent:
+    type: string
+    description: |
+      The path to the configuration that will own the waiter.
+      The configuration must exist beforehand; the path must be in the
+      projects/[PROJECT_ID]/configs/[CONFIG_NAME] format.
+  waiter:
+    type: string
+    description: |
+      The name of the waiter resource, in the
+      projects/[PROJECT_ID]/configs/[CONFIG_NAME]/waiters/[WAITER_NAME] format.
+      Must match the RFC 1035 segment specification. Maximum length is 64
+      bytes.
+  timeout:
+    type: string
+    description: |
+      The timeout of the waiter in seconds, beginning from the
+      instant when the waiters().create method is called; e.g., "3.5s".
+      If this time elapses before the success or failure conditions are met,
+      the waiter fails and sets the error code to DEADLINE_EXCEEDED.
+  failure:
+    type: object
+    description: |
+      The failure condition for the waiter. If this condition is met, done is
+      set to True, and the error code is set to ABORTED. The failure
+      condition takes precedence over the success condition. If both conditions
+      are met, the failure is indicated. This value is optional; if no
+      failure condition is set, the only failure scenario is the timeout.
+    properties:
+      cardinality:
+        type: object
+        description: The cardinality of the EndCondition.
+        properties:
+          path:
+            type: string
+            description: |
+              The root of the variable subtree to monitor. E.g., /foo.
+          number:
+            type: number
+            default: 1
+            description: |
+              The number of variables under the path that must exist to meet
+              this condition. If not specified, defaults to 1.
+  success:
+    type: object
+    description: |
+      The success condition. If this condition is met, done is set to True,
+      and the error value remains unset. The failure condition takes
+      precedence over the success condition. If both conditions are met, the
+      failure is indicated.
+    properties:
+      cardinality:
+        type: object
+        description: The cardinality of the EndCondition.
+        properties:
+          path:
+            type: string
+            description: |
+              The root of the variable subtree to monitor. E.g. /foo.
+          number:
+            type: number
+            default: 1
+            description: |
+              The number of variables under the path that must exist to meet
+              this condition. If not specified, defaults to 1.
+
+outputs:
+ properties:
+   - createTime:
+       type: string
+       description: |
+         The instant at which the waiter resource was created.
+         A timestamp in the RFC3339 UTC "Zulu" format, accurate to nanoseconds.
+         Example: "2014-10-02T15:01:23.045123456Z".
+
+documentation:
+  - templates/runtime_config/README.md
+
+examples:
+  - templates/runtime_config/examples/runtime_config.yaml

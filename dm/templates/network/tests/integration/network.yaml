@@ -1,0 +1,48 @@
+# Test of the network and subnetwork templates.
+#
+# Variables:
+#   RAND: A random string used by the testing suite.
+#
+
+imports:
+  - path: templates/network/network.py
+    name: network.py
+  - path: templates/network/subnetwork.py
+    name: subnetwork.py
+
+resources:
+  - name: test-network-${RAND}
+    type: network.py
+    properties:
+      autoCreateSubnetworks: false
+      subnetworks:
+        - name: test-subnetwork-${RAND}-1
+          region: us-east1
+          ipCidrRange: 10.0.0.0/24
+          privateIpGoogleAccess: false
+          enableFlowLogs: true
+          secondaryIpRanges:
+            - rangeName: my-secondary-range-${RAND}-1
+              ipCidrRange: 10.0.1.0/24
+            - rangeName: my-secondary-range-${RAND}-2
+              ipCidrRange: 10.0.2.0/24
+  - name: test-subnetwork-${RAND}-2
+    type: subnetwork.py
+    properties:
+      network: $(ref.test-network-${RAND}.selfLink)
+      region: us-east1
+      ipCidrRange: 192.168.0.0/16
+  - name: test-subnetwork-${RAND}-3
+    type: subnetwork.py
+    properties:
+      name: test-subnetwork-${RAND}-3
+      network: $(ref.test-network-${RAND}.selfLink)
+      region: us-east1
+      ipCidrRange: 172.16.0.0/24
+      privateIpGoogleAccess: false
+      enableFlowLogs: true
+      secondaryIpRanges:
+        - rangeName: my-secondary-range-${RAND}-1
+          ipCidrRange: 172.16.1.0/24
+        - rangeName: my-secondary-range-${RAND}-2
+          ipCidrRange: 172.16.2.0/24

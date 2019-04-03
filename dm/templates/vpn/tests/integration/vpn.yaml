@@ -1,0 +1,20 @@
+# Test of the VPN template.
+#
+# Variables:
+#   RAND: A random string used by the testing suite.
+#
+
+imports:
+  - path: templates/vpn/vpn.py
+    name: vpn.py
+
+resources:
+  - name: test-vpn-${RAND}
+    type: vpn.py
+    properties:
+      region: us-east1
+      network: network-${RAND}
+      peerAddress: 1.2.3.4
+      asn: 65001
+      sharedSecret: superSecretPassw0rd
+      router: router-${RAND}

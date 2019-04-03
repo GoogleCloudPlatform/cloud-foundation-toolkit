@@ -1,0 +1,73 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: IP Reservation
+  author: Sourced Group Inc.
+  description: Reservers internal, external, or global IP address.
+
+imports:
+  - path: ../ip_reservation/ip_address.py
+    name: ip_address.py
+
+required:
+  - ipAddresses
+
+properties:
+  ipAddresses:
+    type: array
+    description: |
+      An array of IPs to create as defined by the `ip_address.py` template.
+      Example:
+        - name: myregionalexternal
+          ipType: regional
+          region: <FIXME:region>
+          description: 'my static external ip'
+
+outputs:
+  properties:
+    addresses:
+      type: array
+      description: |
+        Array of address details. For example, the output can be referenced
+        as: `$(ref.<my-address>.addresses.<address-name>.selfLink)`
+      items:
+        description: The name of the address resource.
+        patternProperties:
+          ".*":
+            type: object
+            description: Details for an address resource.
+            properties:
+              selfLink:
+                type: string
+                description: The URI (SelfLink) of the address resource.
+              address:
+                type: string
+                description: |
+                  The static IP address represented by this resource.
+              status:
+                type: string
+                description: |
+                  The status of the address, which can be one of RESERVING,
+                  RESERVED, or IN_USE. An address that is RESERVING is
+                  currently in the process of being reserved. A RESERVED
+                  address is currently reserved and available to use. An IN_USE
+                  address is currently being used by another resource and is
+                  not available.
+
+documentation:
+  - templates/ip_reservation/README.md
+
+examples:
+  - templates/ip_reservation/examples/ip_reservation.yaml

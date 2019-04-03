@@ -1,0 +1,64 @@
+# Example of the GKE template usage.
+#
+# In this example, a GKE private regional cluster is created.
+# Optional properties are also set in this example.
+#
+# Replace the following with valid values:
+#   <FIXME:network_name>: a valid VPC network name.
+#   <FIXME:subnet_name>: a valid VPC subnet name.
+# Replace credentials, for accessing the master endpoint, with the valid values:
+#   <FIXME:user_name>: user name for masterAuth.
+#   <FIXME:password>: password (atleast 16 chars) for masterAuth
+
+imports:
+  - path: templates/gke/gke.py
+    name: gke.py
+
+resources:
+  - name: myk8sregional
+    type: gke.py
+    properties:
+      clusterLocationType: Regional
+      region: us-east1
+      cluster:
+        name: myk8sregional
+        description: my awesome k8s cluster
+        network: <FIXME:network_name>
+        subnetwork: <FIXME:subnet_name>
+        intialNodeCount: 1
+        initialClusterVersion: 1.10.6-gke.3
+        nodeConfig:
+          localSsdCount: 1
+          oauthScopes:
+            - https://www.googleapis.com/auth/compute
+            - https://www.googleapis.com/auth/devstorage.read_only
+            - https://www.googleapis.com/auth/logging.write
+            - https://www.googleapis.com/auth/monitoring
+          taints:
+            - key: mykey1
+              value: value1
+              effect: NO_SCHEDULE
+            - key: mykey2
+              value: value2
+              effect: NO_EXECUTE
+        locations:
+          - us-east1-c
+          - us-east1-b
+        autoScaling:
+          enabled: True
+          minNodeCount: 1
+          maxNodeCount: 2
+        management:
+          autoUpgrade: True
+          autoRepair: True
+        masterAuth:
+          username: <FIXME:user_name>
+          password: <FIXME:password>
+        loggingService: logging.googleapis.com
+        monitoringService: monitoring.googleapis.com
+        privateCluster: True
+        masterIpv4CidrBlock: 172.16.0.0/28
+        clusterIpv4Cidr: 10.0.0.0/11
+        ipAllocationPolicy:
+          useIpAliases: True
+          servicesIpv4CidrBlock: 10.96.0.0/18

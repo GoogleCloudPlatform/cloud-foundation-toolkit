@@ -1,0 +1,14 @@
+# Test of the VPC network peering template.
+
+imports:
+  - path: templates/network_peering/network_peering.py
+    name: peering.py
+
+resources:
+  - name: test-peering
+    type: peering.py
+    properties:
+      name: ${PEER_NAME}
+      network: ${NETWORK}
+      peerNetwork: projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/networks/${PEER_NETWORK}
+      autoCreateRoutes: true

@@ -1,0 +1,371 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: External Load Balancer
+  author: Sourced Group Inc.
+  description: |
+    Supports creation of an HTTP(S), SSL Proxy, or TCP Proxy external load
+    balancer. For details, visit https://cloud.google.com/load-balancing/docs/.
+
+imports:
+  - path: ../backend_service/backend_service.py
+    name: backend_service.py
+  - path: ../forwarding_rule/forwarding_rule.py
+    name: forwarding_rule.py
+  - path: ../url_map/url_map.py
+    name: url_map.py
+  - path: ../ssl_certificate/ssl_certificate.py
+    name: ssl_certificate.py
+  - path: ../target_proxy/target_proxy.py
+    name: target_proxy.py
+
+properties:
+  name:
+    type: string
+    description: |
+      The external load balancer name. This name is assigned to the
+      underlying forwarding rule resource.
+  description:
+    type: string
+    description: |
+      The description of the external load balancer (optional). This
+      description is assigned to the underlying forwarding rule resource.
+  IPAddress:
+    type: string
+    description: |
+      The IP address on behalf of which the forwarding rule serves. Can be
+      specified either by a literal IP address or by a URL reference to an
+      existing Address resource.
+  portRange:
+    type: [integer,string]
+    description: |
+      The port range; only packets addressed to ports in that range are
+      forwarded to the target.
+  ipVersion:
+    type: string
+    description: The IP version of the load balancer.
+    enum:
+      - IPV4
+      - IPV6
+  backendServices:
+    type: array
+    description: |
+      Backend services to create. These services will deliver traffic to the
+      instance groups.
+    items:
+      type: object
+      required:
+        - backends
+        - healthCheck
+      properties:
+        name:
+          type: string
+          description: The backend service name.
+        description:
+          type: string
+          description: The resource description (optional).
+        backends:
+          type: array
+          description: |
+            The list of backends (instance groups) to which the backend service
+            distributes traffic.
+          items:
+            type: object
+            required:
+              - group
+            properties:
+              description:
+                type: string
+                description: The resource description (optional).
+              group:
+                type: string
+                description: |
+                  The fully-qualified URL of the Instance Group resource.
+              balancingMode:
+                type: string
+                description: The balancing mode for the backend.
+                enum:
+                  - UTILIZATION
+                  - RATE
+                  - CONNECTION
+              maxUtilization:
+                type: number
+                minimum: 0.0
+                maximum: 1.0
+                description: |
+                  The ratio that defines the CPU utilization target for the
+                  group. The default value is 0.8. Used when balancingMode is
+                  UTILIZATION.
+              maxRate:
+                type: number
+                description: |
+                  The maximum number of requests per second (RPS) for the
+                  group. Can be used with either RATE or UTILIZATION balancing
+                  mode. Mandatory with the RATE mode. For the RATE mode, either
+                  maxRate or maxRatePerInstance must be set.
+              maxRatePerInstance:
+                type: number
+                description: |
+                  The maximum number of requests per second (RPS) that a single
+                  backend instance can handle. This is used to calculate the
+                  capacity of the group. Can be used with any balancing mode.
+                  For the RATE mode, either maxRate or maxRatePerInstance must
+                  be set.
+              maxConnections:
+                type: number
+                description: |
+                  The maximum number of simultaneous connections for the group.
+                  Can be used with either CONNECTION or UTILIZATION balancing
+                  mode. For the CONNECTION mode, either maxConnections or
+                  maxConnectionsPerInstance must be set.
+              maxConnectionsPerInstance:
+                type: number
+                description: |
+                  The maximum number of simultaneous connections that a single
+                  backend instance can handle. This is used to calculate the
+                  capacity of the group. Can be used in either CONNECTION or
+                  UTILIZATION balancing modes. For the CONNECTION mode, either
+                  maxConnections or maxConnectionsPerInstance must be set.
+              capacityScaler:
+                type: number
+                default: 1
+                description: |
+                  The multiplier applied to the group's maximum servicing
+                  capacity (based on UTILIZATION, RATE, or CONNECTION).
+                minimum: 0
+                maximum: 1
+        healthCheck:
+          type: string
+          description: |
+            The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck
+            resource for healthchecking the backend service.
+        timeoutSec:
+          type: number
+          default: 30
+          description: |
+            The number of seconds to wait for the backend response before
+            considering the request as failed.
+        portName:
+          type: string
+          description: |
+            The backend port name. The same name must appear in the instance
+            groups referenced by this service.
+        enableCDN:
+          type: boolean
+          description: |
+            Defines whether Cloud CDN is enabled for the backend service.
+        sessionAffinity:
+          type: string
+          default: NONE
+          description: The type of the session affinity to use.
+          enum:
+            - NONE
+            - GENERATED_COOKIE
+            - CLIENT_IP
+        affinityCookieTtlSec:
+          type: integer
+          minimum: 0
+          maximum: 86400
+          description: |
+            The lifetime of cookies, in seconds, if sessionAffinity is
+            GENERATED_COOKIE. If set to 0, the cookies are non-persistent and
+            last only until the end of the browser session (or equivalent).
+        connectionDraining:
+          type: object
+          description: The connection draining settings.
+          properties:
+            drainingTimeoutSec:
+              type: integer
+              description: |
+                The time period during which the instance is drained (not
+                accepting new connections but still processing the ones
+                accepted earlier).
+        cdnPolicy:
+          type: object
+          description: The cloud CDN configuration for the backend service.
+          properties:
+            cacheKeyPolicy:
+              type: object
+              description: The CacheKeyPolicy for the CdnPolicy.
+              properties:
+                includeProtocol:
+                  type: boolean
+                  description: |
+                    Defines whether the HTTP and HTTPS requests are cached
+                    separately.
+                includeHost:
+                  type: boolean
+                  description: |
+                    If True, requests to different hosts are cached separately.
+                includeQueryString:
+                  type: boolean
+                  description: |
+                    If True, includes query string parameters in the cache key
+                    according to queryStringWhitelist and queryStringBlacklist.
+                    If neither of the two is set, the entire query string is
+                    included. If False, the query string is excluded from the
+                    cache key entirely.
+                queryStringWhitelist:
+                  type: array
+                  description: |
+                    The names of the query string parameters to include in
+                    cache keys. All other parameters are excluded. Specify
+                    either queryStringWhitelist or queryStringBlacklist, not
+                    both. '&' and '=' are percent-encoded and not treated
+                    as delimiters.
+                  items:
+                    type: string
+                queryStringBlacklist:
+                  type: array
+                  description: |
+                    The names of the query string parameters to exclude from
+                    the cache keys. All other parameters are included. Specify
+                    either queryStringWhitelist or queryStringBlacklist, not
+                    both. '&' and '=' are percent-encoded and not treated as
+                    delimiters.
+                  items:
+                    type: string
+            signedUrlCacheMaxAgeSec:
+              type: string
+              default: 3600s
+              description: |
+                The maximum number of seconds the response to a signed URL
+                request is considered fresh. After this time period, the
+                response is revalidated before being served. When serving
+                responses to the signed URL requests, Cloud CDN internally
+                behaves as if all responses from the backend have the
+                "Cache-Control: public, max-age=[TTL]" header,
+                regardless of any existing Cache-Control header. The actual
+                headers served in responses are not altered.
+  quicOverride:
+    type: string
+    default: NONE
+    description: |
+      The QUIC override policy for the HTTPS Load Balancer's proxy
+      resource. Determines whether the load balancer will attempt to
+      negotiate QUIC with clients. Valid values are NONE, ENABLE, and
+      DISABLE. Enables QUIC when set to ENABLE; disables QUIC when set to
+      DISABLE. When set to NONE, the QUIC policy is used with no user
+      overrides. If no value is specified, defaults to NONE. This field
+      is used for the HTTPS load balancing mode, i.e., when both the URL Map
+      and SSL are configured.
+    enum:
+      - NONE
+      - ENABLE
+      - DISABLE
+  proxyHeader:
+    type: string
+    default: NONE
+    description: |
+      The type of proxy header to append before sending data to the
+      backend: NONE or PROXY_V1. The default is NONE. Used only for TCP and SSL
+      load balancing modes, i.e., when the  URL Map is configured.
+    enum:
+      - NONE
+      - PROXY_V1
+  ssl:
+    type: object
+    description: |
+      Encryption settings for connections processed by the resource.
+    required:
+      - certificate
+    properties:
+      certificate:
+        type: object
+        description: SSL certificate settings.
+        oneOf:
+          - required:
+              - url
+          - required:
+              - privateKey
+              - certificate
+        properties:
+          url:
+            type: string
+            description: The URL of an existing SSL certificate resource.
+          name:
+            type: string
+            description: The name of the SSL certificate resource.
+          description:
+            type: string
+            description: |
+              The description of the SSL certificate resource (optional).
+          privateKey:
+            type: string
+            description: The write-only private key in the PEM format.
+          certificate:
+            type: string
+            description: |
+              The local certificate file. The certificate must be in the PEM
+              format. The certificate chain must be no greater than 5 certs
+              long. The chain must include at least one intermediate cert.
+      sslPolicy:
+        type: string
+        description: |
+          The URL of the SslPolicy resource to be associated with this
+          resource. If not set, the proxy resource will have no SSL policy
+          configured.
+
+
+outputs:
+  properties:
+    - forwardingRuleName:
+        type: string
+        description: The name of the external load balancer's forwarding rule.
+    - forwardingRuleSelfLink:
+        type: string
+        description: |
+          The URI (SelfLink) of the external load balancer's forwarding rule.
+    - IPAddress:
+        type: string
+        description: |
+          The IP address on whose behalf the external load balancer
+          (the forwarding rule) operates.
+    - backendServiceNames:
+        type: array
+        description: |
+          The names of the external load balancer's backend services.
+    - backendServiceSelfLinks:
+        type: string
+        description: The URIs (SelfLinks) of the backend service resources.
+    - targetProxyName:
+        type: string
+        description: |
+          The name of the target proxy resource created for the load balancer.
+    - targetProxySelfLink:
+        type: string
+        description: |
+          The URI (SelfLink) of the URL target proxy resource.
+    - targetProxyKind:
+        type: string
+        description: |
+          The type of the target proxy resource created for the load balancer.
+    - certificateName:
+        type: string
+        description: |
+          The name of the SSL certificate, if one is to be created.
+    - certificateSelfLink:
+        type: string
+        description: |
+          The URI (SelfLink) of the SSL certificate, if one is to be created.
+
+documentation:
+  - templates/external_load_balancer/README.md
+
+examples:
+  - templates/external_load_balancer/examples/external_load_balancer_http.yaml
+  - templates/external_load_balancer/examples/external_load_balancer_https.yaml
+  - templates/external_load_balancer/examples/external_load_balancer_ssl.yaml
+  - templates/external_load_balancer/examples/external_load_balancer_tcp.yaml

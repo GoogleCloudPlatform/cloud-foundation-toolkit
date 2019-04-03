@@ -1,0 +1,183 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Project
+  author: Sourced Group Inc.
+  description: |
+    Supports creation of a single project. The project is created with a
+    billing account attached, permissions altered, APIs activated, and 
+    service accounts created.
+
+imports:
+- path: ../iam_member/iam_member.py
+  name: cft-iam_project_member.py
+
+required:
+  - billingAccountId
+
+properties:
+  name:
+    type: string
+    description: |
+      The project name. If provided, configures the project to have a
+      human-readable name that is different from the project ID.
+  projectId:
+    type: string
+    pattern: ^[a-z][a-z0-9-]{5,28}[a-z0-9]$
+    description: |
+      The unique, user-assigned ID of the Project. It must be 6 to 30 lowercase
+      letters, digits, or hyphens. It must start with a letter. Trailing
+      hyphens are prohibited. Read-only after creation.
+      Example: tokyo-rain-123
+  parent:
+    type: object
+    description: The parent of the project.
+    properties:
+      type:
+        type: string
+        decription: The parent type (organization or folder).
+        enum:
+          - organization
+          - folder
+        default: organization
+      id:
+        type: [integer, string]
+        description: |
+          The ID of the projects' parent.
+  billingAccountId:
+    type: string
+    description: |
+      The ID of the billing account to attach to the projects.
+      For example, 00E12A-0AB8B2-078CE8
+  activateApis:
+    type: array
+    items:
+      type: string
+    description: The list of APIs to enable for each project.
+  usageExportBucket:
+    type: boolean
+    description: |
+      Defines whether a usage export bucket must be created.
+      False by default so as to not inadvertently incur
+      costs to the user. It is strongly suggested to be enabled
+      (set to True).
+  serviceAccounts:
+    type: array
+    default: []
+    items:
+      accountId:
+        type: string
+        pattern: ^[a-z]([-a-z0-9]{0,61}[a-z0-9])?$
+        description: The name used to create the service account.
+      displayName:
+        type: string
+        description: |
+          The name to display for the service account. If not set, `accountId`
+          is used as the display name.
+      roles:
+        type: array
+        items:
+          type: string
+          description: The list of roles to grant the service account.
+      networkAccess:
+        type: boolean
+        description: |
+          If True, grants the shared VPC subnet IAM permissions
+          to the service account for the subnet specified by the
+          `sharedVPCSubnets.subnetId` field.
+          This field must not be set if `sharedVPCHost` is True.
+  groups:
+    type: array
+    default: []
+    items:
+      name:
+        type: string
+        description: The name of the Google group.
+      roles:
+        type: array
+        items:
+          type: string
+          description: The list of roles to grant the Google group.
+  concurrentApiActivation:
+    type: boolean
+    default: False
+    description: |
+      If True, activates all the requested APIs concurrently.
+      When set to False, the APIs are activated serially.
+      Concurrent activation makes for faster deployment but could potentially
+      fail the deployment exceeding the quota limits. Make sure to request
+      adequate quota before using this option. Serial activation tends to be
+      significantly slower.
+  sharedVPC:
+    type: string
+    description: |
+      Name of the Shared VPC Host Project that this project will participate
+      in. The `sharedVPCHost` property cannot be set if this property is set.
+  sharedVPCSubnets:
+    type: array
+    description: |
+      The IDs of specific shared VPC subnets to share in the new project.
+    items:
+      subnetId:
+        type: string
+        description: |
+          The ID of the subnet to set IAM policies on. For example,
+          `test-subnetwork-1`.
+      region:
+        type: string
+        description: The region of the subnet.
+  sharedVPCHost:
+    type: boolean
+    description: |
+      If set to True, indicates that this project is to be used as a
+      host project for Shared VPC networks.
+      The `sharedVPC` and `sharedVPCSubnets` properties cannot be set if this
+      property is set.
+  removeDefaultVPC:
+    type: boolean
+    default: True
+    description: |
+      If True, removes the default VPC that is provisioned when a project
+      is created.
+  removeDefaultSA:
+    type: boolean
+    default: True
+    description: |
+      If True, removes the default service account. This SA is in the 
+      <projectID>-compute@developer.gserviceaccount.com form.
+
+outputs:
+  properties:
+    - projectId:
+        type: string
+        description: The unique, user-assigned ID of the Project.
+    - usageExportBucketName:
+        type: string
+        description: The usage export bucket name.
+    - serviceAccountDisplayName:
+        type: string
+        description: Name of the default service account for the project.
+    - resources:
+        type: array
+        description: |
+          Names of the resources the template creates. This output can be used
+          by other templates for explicit waiting for all project configuration
+          steps to finish.
+
+documentation:
+  - templates/project/README.md
+
+examples:
+  - templates/project/examples/project.yaml

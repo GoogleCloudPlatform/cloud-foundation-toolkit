@@ -1,0 +1,382 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Cloud Build
+  author: Sourced Group Inc.
+  description: |
+    Creates a Cloud Build resource.
+    For more information on this resource, see
+    https://cloud.google.com/cloud-build/docs/.
+
+imports:
+  - path: cloudbuild.py
+
+required:
+  - steps
+
+properties:
+  source:
+    description: The location of the source files to build.
+    oneOf:
+      - "$ref": "#/definitions/storageSource"
+      - "$ref": "#/definitions/repoSource"
+  steps:
+    type: array
+    description: The list of steps in the build pipeline.
+    items:
+      type: object
+      description: A step in the build pipeline.
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: |
+            The name of the container image that runs this particular build
+            step.
+        env:
+          type: array
+          description: |
+            The list of environment variable definitions to be used when 
+            running a step. The elements are in the "KEY=VALUE" form, 
+            wherein the environment variable "KEY" is given the value "VALUE".
+          items:
+            type: string
+        args:
+          type: array
+          description: |
+            The list of build arguments to be passed to the step when
+            it is started. If the image used to run the step's container has an
+            entry point, the array elements are used as arguments to that entry
+            point. If the image does not define an entry point, the first
+            element in the array is used as the entry point, and the remainder
+            are used as arguments.
+          items:
+            type: string
+        dir:
+          type: string
+          description: |
+            The working directory to use when running the step's container.
+            If the value is a relative path, it is relative to the build's
+            working directory. If this value is an absolute path, it may be 
+            outside the build's working directory. In this case, the contents
+            of the path may not be persisted across the build step executions,
+            unless a volume for that path is specified.
+            If the build specifies a RepoSource with dir and a step with a dir,
+            which specifies an absolute path, the RepoSource dir is ignored
+            for the step's execution.
+        id:
+          type: string
+          description: |
+            The unique identifier for the build step. Used in waitFor to
+            reference this build step as a dependency.
+        waitFor:
+          type: array
+          description: |
+            The ID(s) of the step(s) that the build step depends on.
+            This build step will not start until all the build steps in waitFor
+            have completed successfully. If waitFor is empty, this build step
+            will start when all the previous build steps in the Build.Steps
+            list have completed successfully.
+          items:
+            type: string
+        entrypoint:
+          type: string
+          description: |
+            The entry point to be used instead of the build step image's
+            default entry point. If not set, the image's default entry 
+            point is used.
+        secretEnv:
+          type: array
+          description: |
+            The list of environment variables which are encrypted using the 
+            Cloud Key Management Service crypto key. These values must be 
+            specified in the build's Secret.
+          items:
+            type: string
+        volumes:
+          type: array
+          description: The list of volumes to mount into the build step.
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: |
+                  The name of the volume to mount. Volume names must be unique
+                  per build step, and must be valid names for Docker volumes.
+                  Each named volume must be used by at least two build steps.
+              path:
+                type: string
+                description: |
+                  The path to mount the volume at. Paths must be absolute.
+                  They cannot conflict with other volume paths on the same
+                  build step or with certain reserved volume paths.
+        timeout:
+          type: string
+          description: |
+            The time limit for executing the build step. If not defined, the
+            step has no time limit, and is allowed to continue to run
+            either until it completes or until the build itself times out.
+            Defined in seconds with up to nine fractional digits,
+            terminated by 's'; for example 3.5s.
+  timeout:
+    type: string
+    description: |
+      The time limit for executing the build step. If not defined, the
+      step has no time limit, and is allowed to continue to run
+      either until it completes or until the build itself times out.
+      Defined in seconds with up to nine fractional digits,
+      terminated by 's'; for example 3.5s.
+  images:
+    type: array
+    description: |
+      The list of images to be pushed upon successful completion of all build
+      steps. The images are pushed using the Builder service account's
+      credentials. The digests of the pushed images are stored in the Build
+      resource's results field. If any of the images fail to be pushed, the
+      build status is marked as FAILURE.
+    items:
+      type: string
+  artifacts:
+    type: object
+    description: |
+      Artifacts produced by the build, to be uploaded upon successful
+      completion of all build steps.
+    properties:
+      images:
+        type: array
+        description: |
+          The list of images to be pushed upon successful completion of all
+          build steps. The images are pushed using the Builder serviceaccount's
+          credentials. The digests of the pushed images are stored in the Build
+          resource's results field. If any of the images fail to be pushed, the
+          build status is marked as FAILURE. 
+        items:
+          type: string
+      objects:
+        type: object
+        description: |
+          The list of objects to be uploaded to Cloud Storage upon successful
+          completion of all build steps. Files in the workspace matching
+          the specified paths globs are uploaded using the Builder
+          serviceaccount's credentials.
+        properties:
+          artifactObjects:
+            type: object
+            description: |
+              Files in the workspace to upload to Cloud Storage upon successful
+              completion of all build steps.
+            properties:
+              location:
+                type: string
+                description: |
+                  The Cloud Storage bucket, with an optional object path, in
+                  the "gs://bucket/path/to/somewhere/" form. Files in the
+                  workspace matching any pattern specified uder that path are
+                  uploaded to Cloud Storage with this location as a prefix.
+              paths:
+                type: array
+                description: |
+                  Path globs used to match files in the build's workspace.
+                items:
+                  type: string
+  logsBucket:
+    type: string
+    description: |
+      The Google Cloud Storage bucket where logs are written.
+      Log file names are in the ${logsBucket}/log-${build_id}.txt format.
+  options:
+    type: object
+    description: Special options for the build.
+    properties:
+      sourceProvenanceHash:
+        type: array
+        items:
+          type: string
+          enum:
+            - NONE
+            - SHA256
+            - MD5
+      requestedVerifyOption:
+        type: string
+        description: The requested verifiability option.
+        enum:
+          - NOT_VERIFIED
+          - VERIFIED
+      machineType:
+        type: string
+        description: |
+          The type of the Compute Engine machine to run the build on.
+        enum:
+          - UNSPECIFIED
+          - N1_HIGHCPU_8
+          - N1_HIGHCPU_32
+      diskSizeGb:
+        type: string
+        description: |
+          The requested disk size for the VM that runs the build. This is 
+          NOT "disk free"; some of the space is used by the operating
+          system and build utilities.
+      substitutionOption:
+        type: string
+        description: |
+          The option to specify behavior when there is an error in the
+          substitution checks.
+        enum:
+          - MUST_MATCH
+          - ALLOW_LOOSE
+      logStreamingOption:
+        type: string
+        description: |
+          The option to define the build's behavior when streaming logs to 
+          Google Cloud Storage.
+        enum:
+          - STREAM_DEFAULT
+          - STREAM_ON
+          - STREAM_OFF
+      logging:
+        type: string
+        description: |
+          The option to specify the logging mode, which determines where the 
+          logs are stored.
+        enum:
+          - LOGGING_UNSPECIFIED
+          - LEGACY
+          - GCS_ONLY
+  substitutions:
+    type: object
+    description: |
+      Substitution data for the Build resource in the key-value format.
+      Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+  tags:
+    type: array
+    description: Build annotation tags. These are NOT Docker tags.
+    items:
+      type: string
+  secrets:
+    type: object
+    description: Secrets to decrypt using Cloud Key Management Service.
+    properties:
+      secret:
+        type: object
+        properties:
+          kmsKeyName:
+            type: string
+            description: |
+              The Cloud KMS key name to use for decrypting the environment
+              variables.
+          secretEnv:
+            type: object
+            description: |
+              The map of the environment variable name to its encrypted value.
+ 
+definitions:
+  storageSource:
+    type: object
+    description: |
+      The location of the source in an archive file on Google Cloud Storage.
+    required:
+      - bucket
+      - object
+    properties:
+      bucket:
+        type: string
+        description: The Google Cloud Storage bucket containing the source.
+      object:
+        type: string
+        description: |
+          The Google Cloud Storage object containing the source. Must be a 
+          gzipped archive file (*.tar.gz).
+          to build.
+      generation:
+        type: string
+        description: |
+          The Google Cloud Storage generation for the object. If omitted, the 
+          latest generation is used.
+  repoSource:
+    type: object
+    description: |
+      The location of the source in the Google Cloud Source repository.
+    properties:
+      projectId:
+        type: string
+        description: |
+          The ID of the project that owns the Cloud Source repository.
+      repoName:
+        type: string
+        description: |
+          The name of the Google Cloud Source repository. If omitted, the
+          name "default" is assumed.
+      dir:
+        type: string
+        description: |
+          The directory to run the build in (relative to the source root).
+          If a step's dir is specified as an absolute path, the value is
+          ignored for that step's execution.
+      revision:
+        type: string
+        oneOf:
+          - "$ref": "#/definitions/branchName"
+          - "$ref": "#/definitions/tagName"
+          - "$ref": "#/definitions/commitSha"
+  branchName:
+    type: string
+    description: The name of the branch to build.
+  tagName:
+    type: string
+    description: The name of the tag to build.
+  commitSha:
+    type: string
+    description: The explicit commit SHA to build.
+
+outputs:
+  properties:
+    - id:
+        type: string
+        description: Build Unique identifier.
+    - status:
+        type: string
+        description: The build status.
+    - results:
+        type: object
+        description: The build results.
+    - createTime:
+        type: string
+        description: | 
+          The time the build was requested, in the RFC3339 UTC "Zulu" format.
+    - startTime:
+        type: string
+        description: |
+          The time the build execution started, in the RFC3339 UTC "Zulu" format.
+    - finishTime:
+        type: string
+        description: |
+          The time the build finished, in the RFC3339 UTC "Zulu" format.
+    - logUrl:
+        type: string
+        description: The URL to the build logs in the Google Cloud console.
+    - sourceProvenance:
+        type: object
+        description: |
+          Fixed identifier to used to describe the original source, or verify that some source was used for this build.
+            
+documentation:
+  - templates/cloudbuild/README.md
+
+examples:
+  - templates/cloudbuild/examples/cloudbuild.yaml
+  - templates/cloudbuild/examples/cloudbuild_storagesource.yaml
+  - templates/cloudbuild/examples/cloudbuild_reposource.yaml

@@ -1,0 +1,66 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Cloud Router
+  author: Sourced Group Inc.
+  description: |
+    Deploys a Cloud Router.
+
+    For more information on this resource:
+    https://cloud.google.com/router/docs/
+
+imports:
+  - path: cloud_router.py
+
+required:
+  - network
+  - region
+  - asn
+
+properties:
+  name:
+    type: string
+    description: The name of Cloud Router the resource.
+  network:
+    type: string
+    description: The name of the network to which the Cloud Router belongs.
+  region:
+    type: string
+    description: The URI of the region where the Cloud Router resides.
+  asn:
+    type: integer
+    description: |
+      The local BGP Autonomous System Number (ASN). Must be an RFC6996 private ASN,
+      either 16-bit or 32-bit. The value will be fixed for this router.
+      All VPN tunnels that link to this router will have the same
+      local ASN.
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The name of the Cloud Router resource.
+    - selfLink:
+        type: string
+        description: The URI (SelfLink) of the Cloud Router resource.
+    - creationTimestamp:
+        type: string
+        description: Creation timestamp in RFC3339 text format.
+
+documentation:
+  - templates/cloud_router/README.md
+
+examples:
+  - templates/cloud_router/examples/cloud_router.yaml

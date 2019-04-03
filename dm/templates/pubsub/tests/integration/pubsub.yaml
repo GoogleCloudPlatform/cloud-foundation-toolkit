@@ -1,0 +1,26 @@
+# Test of the PubSub template.
+#
+# Variables:
+#   RAND: A random string used by the testing suite.
+
+imports:
+  - path: templates/pubsub/pubsub.py
+    name: pubsub.py
+
+resources:
+  - name: test-pubsub-${RAND}
+    type: pubsub.py
+    properties:
+      topic: test-topic-${RAND}
+      accessControl:
+        - role: roles/pubsub.subscriber
+          members:
+            - user:demo@user.com
+      subscriptions:
+        - name: first-subscription-${RAND}
+          accessControl:
+            - role: roles/pubsub.subscriber
+              members:
+                - user:demo@user.com
+        - name: second-subscription-${RAND}
+          ackDeadlineSeconds: 15

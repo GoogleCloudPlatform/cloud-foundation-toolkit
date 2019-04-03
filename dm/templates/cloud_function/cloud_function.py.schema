@@ -1,0 +1,134 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Cloud Function
+  author: Sourced Group Inc.
+  description: |
+    Creates a Cloud Function from a local file system, a Cloud Storage bucket, 
+    or a cloud source repository, and then assigns HTTPS, Storage, or Pub/Sub 
+    trigger to that Cloud Function.
+
+required:
+  - region
+
+properties:
+  name:
+    type: string
+    description: The function name.
+  region:
+    type: string
+    description: The region where the function is deployed.
+  timeout:
+    type: string
+    description: The timeout for the function, in seconds; e.g., '120s'.
+    default: 60s
+  runtime:
+    name: string
+    description: |
+      The runtime in which the function is going to run. See 
+      https://cloud.google.com/functions/docs/concepts/exec#runtimes.
+    enum:
+      - nodejs6
+      - nodejs8
+      - python37
+    default: nodejs6
+  availableMemoryMb:
+    type: integer
+    description: The amount of memory available for the function, MB.
+    default: 256
+  entryPoint:
+    type: string
+    description: |
+      The function name (as defined in the source code) to be executed.
+      Defaults to the resource name's suffix.
+  localUploadPath:
+    type: string
+    description: |
+      The partial or complete path. If defined, all imported files that 
+      start with this path are treated as function source code, archived 
+      and then uploaded to Google Storage. The destination URL is either 
+      taken from the sourceArchiveUrl property or auto-generated. If
+      the target bucket does not exist, it is created.
+  sourceArchiveUrl:
+    type: string
+    description: |
+      The URL of the archive containing the Cloud Function's source code
+      in Google Storage. When used along with localUploadPath, 
+      this is the path to which the source code is uploaded. If the URL points 
+      to a non-existing bucket, the bucket is created automatically.
+  sourceRepositoryUrl:
+    type: string
+    description: |
+      The URL of the cloud source repository pointing to the function source code.
+      E.g., https://source.developers.google.com/projects/PROJET_NAME/repos/REPO_NAME/moveable-aliases/BRANCH_NAME/paths/SUBPATH.
+      See more at https://cloud.google.com/functions/docs/reference/rest/v1/projects.locations.functions.
+  triggerTopic:
+    type: string
+    description: |
+      The Pub/Sub topic name (projects/PROJECT_NAME/topics/TOPIC_NAME) that
+      triggers the Cloud Function. If neither triggerTopic nor triggerStorage are
+      provided, the function is triggered by an HTTPS call. See more at
+      https://cloud.google.com/functions/docs/concepts/events-triggers#events.
+  triggerStorage:
+    type: object
+    description: |
+      Configures the Cloud Storage trigger for the function. If neither triggerTopic
+      nor triggerStorage are provided, the function is triggered by an HTTPS call.
+      See more at https://cloud.google.com/functions/docs/concepts/events-triggers#events.
+    required:
+      - bucketName
+      - event
+    properties:
+      bucketName:
+        type: string
+        description: |
+          The name of the bucket triggering the event; e.g. my-bucket-name.
+      event:
+        type: string
+        description: |
+          The trigger event name. See more at
+          https://cloud.google.com/functions/docs/calling/storage#cloud_storage_event_types.
+        enum:
+          - finalize
+          - delete
+          - archive
+          - metadataUpdate
+
+outputs:
+  properties:
+    - region:
+      description: The region where the function is deployed.
+      type: string
+    - name:
+      description: The function name.
+      type: string
+    - httpsTriggerUrl:
+      description: For HTTPS-triggered functions, the trigger URL.
+      type: string
+    - sourceRepositoryUrl:
+      description: |
+        For functions deployed from cloud repositories, 
+        the repository URL.
+      type: string
+    - sourceArchiveUrl:
+      description: For functions deployed from Cloud Storage, the bucket URL.
+      type: string
+
+documentation:
+  - templates/cloud_function/README.md
+
+examples:
+  - templates/cloud_function/examples/cloud_function.yaml
+  - templates/cloud_function/examples/cloud_function_upload.yaml

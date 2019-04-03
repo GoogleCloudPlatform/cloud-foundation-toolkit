@@ -1,0 +1,25 @@
+# Test of the Instance template.
+#
+# Variables:
+#   RAND: A random string used by the testing suite.
+
+imports:
+  - path: templates/instance/instance.py
+    name: instance.py
+
+resources:
+  - name: test-instance-${RAND}
+    type: instance.py
+    properties:
+      zone: us-central1-a
+      diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+      diskSizeGb: 100
+      machineType: f1-micro
+      diskType: pd-ssd
+      canIpForward: true
+      network: test-network-${RAND}
+      subnetwork: regions/us-central1/subnetworks/test-subnet-${RAND}
+      metadata:
+        items:
+          - key: startup-script
+            value: sudo apt-get update && sudo apt-get install -y nginx

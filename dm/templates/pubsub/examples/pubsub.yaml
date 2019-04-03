@@ -1,0 +1,26 @@
+# Example of the PubSub template usage.
+#
+# In this example, a 'test-topic' is created with two PULL subscriptions.
+# IAM policies are assigned to the topic and to one of the subscriptions.
+
+imports:
+  - path: templates/pubsub/pubsub.py
+    name: pubsub.py
+
+resources:
+  - name: test-pubsub
+    type: pubsub.py
+    properties:
+      topic: test-topic
+      accessControl:
+        - role: roles/pubsub.subscriber
+          members:
+            - user:demo@user.com
+      subscriptions:
+        - name: first-subscription
+          accessControl:
+            - role: roles/pubsub.subscriber
+              members:
+               - user:demo@user.com
+        - name: second-subscription
+          ackDeadlineSeconds: 15

@@ -1,0 +1,28 @@
+# Test of the Dataproc template.
+#
+# Variables:
+#   RAND: a random string used by the testing suite.
+#
+
+imports:
+  - path: templates/dataproc/dataproc.py
+    name: dataproc.py
+
+resources:
+  - name: ${CLUSTER_NAME}
+    type: dataproc.py
+    properties:
+      zone: ${ZONE}
+      networkTags:
+        - ${TAG}
+      master:
+        numInstances: ${MASTER_INSTANCES}
+        machineType: ${MASTER_TYPE}
+        diskSizeGb: ${MASTER_DISK_SIZE}
+        diskType: ${MASTER_DISK_TYPE}
+      worker:
+        numInstances: ${WORKER_INSTANCES}
+        machineType: ${WORKER_TYPE}
+      secondaryWorker:
+        numInstances: ${SECONDARY_WORKER_INSTANCES}
+        isPreemptible: ${SECONDARY_WORKER_PREEMPTIBLE}

@@ -1,0 +1,128 @@
+# Example of the healthcheck template usage.
+
+imports:
+- path: templates/healthcheck/healthcheck.py
+  name: healthcheck.py
+
+resources:
+- name: my-legacy-http-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    host: my-host.testing
+    port: 80
+    healthcheck_type: HTTP
+- name: my-legacy-https-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    port: 80
+    healthcheck_type: HTTPS
+- name: my-beta-http-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    host: my-host.testing
+    port: 80
+    healthcheck_type: HTTP
+    response: my-response
+    version: beta
+- name: my-beta-https-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    host: my-host.testing
+    port: 80
+    healthcheck_type: HTTPS
+    response: my-response
+    version: beta
+- name: my-beta-http2-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    port: 80
+    healthcheck_type: HTTP2
+    version: beta
+- name: my-tcp-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    port: 80
+    healthcheck_type: TCP
+- name: my-ssl-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    port: 80
+    healthcheck_type: SSL
+- name: my-beta-tcp-healthcheck
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine beta TCP healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    port: 80
+    healthcheck_type: TCP
+- name: my-beta-ssl-healthcheck
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine beta SSL healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    port: 80
+    healthcheck_type: SSL
+- name: my-requestpath-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    proxyHeader: PROXY_V1
+    requestPath: /health.html
+    healthcheck_type: HTTPS
+- name: my-response-healthcheck-local
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine healthcheck.
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+    proxyHeader: PROXY_V1
+    healthcheck_type: TCP
+    request: request-data
+    response: response-data

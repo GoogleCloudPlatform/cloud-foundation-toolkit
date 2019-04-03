@@ -1,0 +1,175 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Internal Load Balancer
+  author: Sourced Group Inc.
+  description: |
+    Supports the creation of an internal load balancing solution that consists 
+    of a forwarding rule and a backend service. For details, visit
+    https://cloud.google.com/load-balancing/docs/internal/.
+
+imports:
+  - path: ../backend_service/backend_service.py
+    name: backend_service.py
+  - path: ../forwarding_rule/forwarding_rule.py
+    name: forwarding_rule.py
+
+required:
+  - region
+  - backendService
+
+properties:
+  name:
+    type: string
+    description: |
+      The internal load balancer name. This name is assigned to the 
+      underlying forwarding rule resource.
+  description:
+    type: string
+    description: |
+      An optional description of the internal load balancer. This description
+      is assigned to the underlying forwarding rule resource.
+  region:
+    type: string
+    description: |
+      The name of the region where the internal load balancer resides.
+  ports:
+    type: array
+    description: | 
+      The list of ports; only packets addressed to these ports are forwarded
+      to the backends configured with the load balancer.
+    items:
+      type: integer
+      minimum: 1
+      maximum: 65535
+  network:
+    type: string
+    description: |
+      The network which the load-balanced IP must belong to. If no value is provided,
+      the default network is used.
+      If you specify this property, you can specify the network as a full or
+      partial URL. For example, the following are all valid URLs:
+       - https://www.googleapis.com/compute/v1/projects/PROJECT/global/networks/NETWORK
+       - projects/PROJECT/global/networks/NETWORK
+       - global/networks/default
+  subnetwork:
+    type: string
+    description: |
+      The subnetwork which the load-balanced IP must belong to.
+      If you specify this property, you can specify the subnetwork as a full or
+      partial URL. For example, the following are all valid URLs:
+       - https://www.googleapis.com/compute/v1/projects/PROJECT/regions/REGION/subnetworks/SUBNETWORK
+       - regions/REGION/subnetworks/SUBNETWORK
+  protocol:
+    type: string
+    default: TCP
+    description: The protocol of the traffic the load balancer uses.
+    enum:
+      - TCP
+      - UDP
+  backendService:
+    type: object
+    description: The backend service configuration.
+    required:
+      - healthCheck
+      - backends
+    properties:
+      name:
+        type: string
+        description: The backend service resource name.
+      description:
+        type: string
+        description: An optional description of the backend service resource.
+      backends:
+        type: array
+        description: |
+          The list of backends (instance groups) to which the backend service
+          distributes traffic.
+        items:
+          type: object
+          required:
+            - group
+          properties:
+            description:
+              type: string
+              description: An optional description of the resource.
+            group:
+              type: string
+              description: |
+                The fully-qualified URL of the Instance Group resource. The
+                instance group must reside in the same region as the backend
+                service.
+      timeoutSec:
+        type: number
+        default: 30
+        description: |
+          The number of seconds to wait for the backend response before
+          considering the request as failed.
+      healthCheck:
+        type: string
+        description: |
+          The URL of the HealthCheck resource for healthchecking the backend
+          service.
+      sessionAffinity:
+        type: string
+        default: NONE
+        description: |
+          The type of the session affinity to use. This field is not used with
+          the UDP protocol.
+        enum:
+          - NONE
+          - CLIENT_IP
+          - CLIENT_IP_PROTO
+          - CLIENT_IP_PORT_PROTO
+      connectionDraining:
+        type: object
+        description: The connection draining settings.
+        properties:
+          drainingTimeoutSec:
+            type: integer
+            description: |
+              The time period during which the instance is drained (is not
+              accepting new connections but still procedding the ones accepted
+              earlier).
+
+outputs:
+  properties:
+    - forwardingRuleName:
+        type: string
+        description: The name of the internal load balancer's forwarding rule.
+    - backendServiceName:
+        type: string
+        description: The name of the internal load balancer's backend service.
+    - region:
+        type: string
+        description: |
+            The URL of the region where the internal load balancer resides.
+    - forwardingRuleSelfLink:
+        type: string
+        description: The URI (SelfLink) of the forwarding rule resource.
+    - backendServiceSelfLink:
+        type: string
+        description: The URI (SelfLink) of the backend service resource.
+    - IPAddress:
+        type: string
+        description: |
+          The IP address on whose behalf the internal load balancer
+          (the forwarding rule) operates.
+
+documentation:
+  - templates/internal_load_balancer/README.md
+
+examples:
+  - templates/internal_load_balancer/examples/internal_load_balancer.yaml

@@ -1,0 +1,24 @@
+# Example of the backend service template usage.
+#
+# In this example, an internal regional TCP backend service is created.
+#
+# Replace the following placeholders with valid values:
+#   <FIXME:region>: a region where the service resides
+#   <FIXME:instanceGroup>: a URL of an instance group residing in
+#                          <FIXME:region>
+# <FIXME:healthcheck>: a URL of the TCP healthcheck
+
+imports:
+  - path: templates/backend_service/backend_service.py
+    name: backend_service.py
+
+resources:
+  - name: regional-backend-service
+    type: backend_service.py
+    properties:
+      region: <FIXME:region>
+      protocol: TCP
+      loadBalancingScheme: INTERNAL
+      backends:
+        - group: <FIXME:instanceGroup>
+      healthCheck: <FIXME:healthcheck>

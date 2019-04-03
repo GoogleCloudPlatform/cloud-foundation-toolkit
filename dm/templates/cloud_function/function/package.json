@@ -1,0 +1,11 @@
+{
+  "name": "function",
+  "version": "1.0.0",
+  "description": "A sample cloud function",
+  "main": "helloGET.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Google Inc.",
+  "license": "Apache2"
+}

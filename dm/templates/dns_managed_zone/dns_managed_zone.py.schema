@@ -1,0 +1,70 @@
+# Copyright 2016 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Cloud DNS Managed Zone
+  author: Source Group Inc.
+  description: |
+    Creates a managed zone in the Cloud DNS.
+    For more information on this resource
+    - https://cloud.google.com/dns/zones/
+
+imports:
+  - path: dns_managed_zone.py
+
+required:
+  - zoneName
+  - dnsName
+
+properties:
+  zoneName:
+    type: string
+    description: |
+      A user-assigned name for the managed zone.
+      This is required by the Cloud DNS.
+  dnsName:
+    type: string
+    pattern: \.$
+    description: |
+      The DNS name of the managed zone; for example, "example.com."
+      Make sure that the value ends with a period "."
+  description:
+    type: string
+    pattern: ^.{0,1023}$
+    description: |
+      A description of the managed zone. A mutable string, max 1024 characters 
+      long. Associated with the resource for users' convenience; does not affect 
+      managed zone's function.
+
+outputs:
+  properties:
+    - dnsName:
+        type: string
+        description: The DNS name of the managed zone.
+    - managedZoneDescription:
+        type: string
+        description: The description of the managed zone.
+    - nameServers:
+        type: array
+        description: |
+          The list of nameservers that will be authoritative for this domain.
+    - managedZoneName:
+        type: string
+        description: The managed zone's resource name.
+
+documentation:
+  - templates/dns_managed_zone/README.md
+
+examples:
+  - templates/dns_managed_zone/examples/dns_managed_zone.yaml

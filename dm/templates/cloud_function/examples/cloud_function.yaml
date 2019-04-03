@@ -1,0 +1,22 @@
+# Example of the Cloud Function template usage.
+#
+# In this example, a Cloud Function with an HTTP trigger 
+# is created from the existing source.
+#
+# Replace the following placeholders with valid values:
+#  <FIXME:region>: a region where the function resides
+#  <FIXME:sourceArchiveUrl>: a URL, starting with gs://, 
+#  pointing to an existing ZIP archive that contains the function
+#  <FIXME:entryPoint>: the name of the function in the archive
+#
+imports:
+  - path: templates/cloud_function/cloud_function.py
+    name: cloud_function.py
+
+resources: 
+  - name: test-function
+    type: cloud_function.py
+    properties:
+      region: <FIXME:region>
+      entryPoint: <FIXME:entryPoint>
+      sourceArchiveUrl: <FIXME:sourceArchiveUrl>

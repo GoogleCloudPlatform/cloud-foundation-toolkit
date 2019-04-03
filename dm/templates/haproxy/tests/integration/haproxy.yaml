@@ -1,0 +1,29 @@
+# Test of the HAProxy template usage.
+#
+# Variables:
+#   RAND: a random string used by the testing suite.
+#
+
+imports:
+  - path: templates/instance/instance.py
+    name: instance.py
+  - path: templates/haproxy/haproxy.py
+    name: haproxy.py
+
+resources:
+  - name: ilb-proxy-${RAND}
+    type: haproxy.py
+    properties:
+      zone: us-central1-a
+      machineType: f1-micro
+      network: default
+      loadBalancer:
+        algorithm: leastconn
+        port: 9999
+        mode: tcp
+      instances:
+        port: 8888
+        refreshIntervalMin: 15
+        groups:
+          - group-${RAND}-1
+          - zones/us-central1-c/instanceGroups/group-${RAND}-2
