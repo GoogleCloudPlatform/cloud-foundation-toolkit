@@ -46,7 +46,7 @@ properties:
       Defines wether the instance will use an external IP from a shared
       ephemeral IP address pool. If this is set to false, the instance
       will not have an external IP.
-  natIp:
+  natIP:
     type: string
     description: |
       An external IP address associated with this instance. Specify an unused
@@ -66,7 +66,7 @@ properties:
       or partial URL. For example, the following are all valid URLs:
         - https://www.googleapis.com/compute/v1/projects/project/regions/region/subnetworks/subnetwork
         - regions/region/subnetworks/subnetwork
-  networkIp:
+  networkIP:
     type: string
     description: |
       An IPv4 internal network address to assign to the instance for this
