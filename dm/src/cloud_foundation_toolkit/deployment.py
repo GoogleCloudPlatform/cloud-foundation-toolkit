@@ -294,7 +294,7 @@ class Deployment(DM_API):
     OPERATION_TIMEOUT = 20 * 60  # 20 mins. Same as gcloud
 
     # The keys required by a DM config (not CFT config)
-    DM_CONFIG_KEYS = ['imports', 'resources', 'outputs']
+    DM_CONFIG_KEYS = ['imports', 'resources', 'outputs', 'configVersion']
 
     def __init__(self, config):
         """ The class constructor
