@@ -1,0 +1,9 @@
+.env
+.DS_Store
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+!terraform/terraform_backend/terraform.tfstate
+credentials.json
+*.credentials.json
+concourse/fly

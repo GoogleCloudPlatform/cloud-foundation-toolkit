@@ -1,0 +1,31 @@
+resources:
+
+- name: terraform-google-network
+  type: git
+  source:
+    uri: https://github.com/terraform-google-modules/terraform-google-network
+
+- name: lint-test-image
+  type: docker-image
+  source:
+    repository: gcr.io/cloud-foundation-cicd/cft/lint
+    username: _json_key
+    password: ((sa.google))
+
+jobs:
+- name: lint-tests
+  plan:
+  - get: terraform-google-network
+    trigger: true
+  - get: lint-test-image
+    trigger: true
+  - task: run
+    image: lint-test-image
+    config:
+      platform: linux
+      inputs:
+      - name: terraform-google-network
+      run:
+        path: make
+        args: ['-s']
+        dir: terraform-google-network
