@@ -1,0 +1,1 @@
+module "variables" { source = "../variables" }

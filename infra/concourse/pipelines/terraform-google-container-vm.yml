@@ -1,0 +1,81 @@
+resources:
+
+- name: terraform-google-container-vm
+  type: git
+  source:
+    uri: https://github.com/terraform-google-modules/terraform-google-container-vm
+
+- name: lint-test-image
+  type: docker-image
+  source:
+    repository: gcr.io/cloud-foundation-cicd/cft/lint
+    username: _json_key
+    password: ((sa.google))
+
+- name: integration-test-image
+  type: docker-image
+  source:
+    repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
+    tag: 0.11.10_216.0.0_1.19.1_0.1.10
+    username: _json_key
+    password: ((sa.google))
+
+jobs:
+
+- name: lint-tests
+  plan:
+  - get: terraform-google-container-vm
+    trigger: true
+  - get: lint-test-image
+    trigger: true
+  - task: run
+    image: lint-test-image
+    config:
+      platform: linux
+      inputs:
+      - name: terraform-google-container-vm
+      run:
+        path: make
+        args: ['-s']
+        dir: terraform-google-container-vm
+
+- name: integration-tests
+  plan:
+  - get: terraform-google-container-vm
+    trigger: true
+  - get: integration-test-image
+    trigger: true
+  - task: run-tests
+    image: integration-test-image
+    config:
+      platform: linux
+      inputs:
+      - name: terraform-google-container-vm
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          set +x
+          echo $SERVICE_ACCOUNT_JSON | tee test/fixtures/credentials.json &> /dev/null
+          set -x
+          tee test/fixtures/terraform.tfvars <<-EOF
+          credentials_path="../../test/fixtures/credentials.json"
+          image="gcr.io/google-samples/hello-app:1.0"
+          image_port="8080"
+          machine_type="n1-standard-1"
+          project_id="$PROJECT_ID"
+          region="us-east4"
+          restart_policy="Always"
+          subnetwork="default"
+          subnetwork_project="$PROJECT_ID"
+          zone="us-east4-b"
+          EOF
+          bundle install
+          bundle exec kitchen create
+          bundle exec kitchen converge
+          bundle exec kitchen destroy
+        dir: terraform-google-container-vm
+      params:
+        PROJECT_ID: ((container-vm.phoogle_project_id))
+        SERVICE_ACCOUNT_JSON: ((container-vm.phoogle_sa))

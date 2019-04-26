@@ -1,0 +1,214 @@
+resource_types:
+
+- name: pull-request
+  type: docker-image
+  source:
+    repository: teliaoss/github-pr-resource
+
+resources:
+
+- name: pull-request
+  type: pull-request
+  webhook_token: ((kubernetes-engine.github_webhook_token))
+  source:
+    repository: terraform-google-modules/terraform-google-kubernetes-engine
+    access_token: ((github.pr-access-token))
+
+- name: lint-test-image
+  type: docker-image
+  source:
+    repository: gcr.io/cloud-foundation-cicd/cft/lint
+    username: _json_key
+    password: ((sa.google))
+
+- name: integration-test-image
+  type: docker-image
+  source:
+    username: _json_key
+    password: ((sa.google))
+    repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform_terraform-google-kubernetes-engine
+
+jobs:
+
+- name: lint-tests
+  public: true
+  serial: true
+  plan:
+  - get: pull-request
+    trigger: true
+    version: every
+  - put: notify-lint-test-pending
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: pending
+  - get: lint-test-image
+  - task: run
+    image: lint-test-image
+    config:
+      platform: linux
+      inputs:
+      - name: pull-request
+        path: terraform-google-kubernetes-engine
+      - name: lint-test-image
+      run:
+        path: make
+        args: ['-s']
+        dir: terraform-google-kubernetes-engine
+  - put: notify-lint-test-success
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: success
+
+- name: build-integration-test-image
+  public: true
+  serial: true
+  plan:
+  - get: pull-request
+    trigger: true
+    passed: [lint-tests]
+    version: every
+  - put: notify-build-integration-test-image-pending
+    resource: pull-request
+    params:
+      path: pull-request
+      context: build-integration-test-image
+      status: pending
+  - task: build-and-push
+    privileged: true
+    config:
+      platform: linux
+      inputs:
+      - name: pull-request
+        path: terraform-google-kubernetes-engine
+      image_resource:
+        type: docker-image
+        source:
+          repository: karlkfi/concourse-dcind
+      run:
+        path: entrypoint.sh
+        args:
+        - bash
+        - -exc
+        - |
+          apk add --update make git
+          set +x
+          echo $SA | docker login -u _json_key --password-stdin https://gcr.io
+          set -x
+          make docker_build_kitchen_terraform DOCKER_TAG_KITCHEN_TERRAFORM=`git rev-parse --verify HEAD`
+          make docker_push_kitchen_terraform DOCKER_TAG_KITCHEN_TERRAFORM=`git rev-parse --verify HEAD`
+        dir: terraform-google-kubernetes-engine
+      params:
+        SA: ((sa.google))
+  - put: notify-build-integration-test-image-success
+    resource: pull-request
+    params:
+      path: pull-request
+      context: build-integration-test-image
+      status: success
+
+- name: integration-tests
+  public: true
+  serial: true
+  plan:
+  - get: pull-request
+    passed: [lint-tests, build-integration-test-image]
+    trigger: true
+    version: every
+  - put: notify-integration-test-pending
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: pending
+  - get: integration-test-image
+    trigger: true
+    params:
+      tag: [pull-request/commit]
+  - task: run-tests
+    image: integration-test-image
+    config:
+      platform: linux
+      inputs:
+      - name: pull-request
+        path: terraform-google-kubernetes-engine
+      run:
+        path: /bin/bash
+        args:
+        - -exc
+        - |
+          set +x
+          echo $SERVICE_ACCOUNT_JSON | tee test/fixtures/shared/credentials.json &> /dev/null
+          export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/test/fixtures/shared/credentials.json
+          export CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=`pwd`/test/fixtures/shared/credentials.json
+          set -x
+          tee test/fixtures/shared/terraform.tfvars <<-EOF
+          project_id="$PROJECT_ID"
+          credentials_path_relative="../shared/credentials.json"
+          region="$REGION"
+          zones=$ZONES
+          compute_engine_service_account="$COMPUTE_ENGINE_SERVICE_ACCOUNT"
+          EOF
+          set +e
+          make test_integration
+          _result=$?
+          set -e
+          if [ "$_result" -ne "0" ]; then
+            bundle exec kitchen destroy
+          fi
+        dir: terraform-google-kubernetes-engine
+      params:
+        COMPUTE_ENGINE_SERVICE_ACCOUNT: ""
+        PROJECT_ID: ((kubernetes-engine.phoogle_project_id))
+        REGION: "us-east4"
+        SERVICE_ACCOUNT_JSON: ((kubernetes-engine.phoogle_sa))
+        ZONES: '["us-east4-a", "us-east4-b", "us-east4-c"]'
+    on_failure:
+      put: notify-integration-test-failure
+      resource: pull-request
+      params:
+        path: pull-request
+        context: integration-tests
+        status: failure
+  - put: notify-integration-test-success
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: success
+
+- name: delete-integration-test-image
+  public: true
+  serial: true
+  plan:
+  - get: pull-request
+    trigger: true
+    passed: [integration-tests]
+  - task: delete-image
+    config:
+      platform: linux
+      inputs:
+      - name: pull-request
+        path: terraform-google-kubernetes-engine
+      image_resource:
+        type: docker-image
+        source:
+          repository: google/cloud-sdk
+          tag: alpine
+      run:
+        path: /bin/bash
+        args:
+        - -exc
+        - |
+          set +x
+          echo $SA > $GOOGLE_APPLICATION_CREDENTIALS
+          set -x
+          TAG=`git rev-parse --verify HEAD`
+          echo "Y" | gcloud container images delete gcr.io/cloud-foundation-cicd/cft/kitchen-terraform_terraform-google-kubernetes-engine:$TAG --force-delete-tags
+        dir: terraform-google-kubernetes-engine
+      params:
+        GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json
+        SA: ((sa.google))

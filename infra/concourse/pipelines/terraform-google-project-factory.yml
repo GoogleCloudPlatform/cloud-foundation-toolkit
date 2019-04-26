@@ -1,0 +1,144 @@
+resource_types:
+
+- name: pull-request
+  type: docker-image
+  source:
+    repository: teliaoss/github-pr-resource
+
+resources:
+
+- name: pull-request
+  type: pull-request
+  webhook_token: ((project-factory.github_webhook_token))
+  source:
+    repository: terraform-google-modules/terraform-google-project-factory
+    access_token: ((github.pr-access-token))
+
+- name: lint-test-image
+  type: docker-image
+  source:
+    repository: gcr.io/cloud-foundation-cicd/cft/lint
+    username: _json_key
+    password: ((sa.google))
+
+- name: integration-test-image
+  type: docker-image
+  source:
+    repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
+    tag: 0.11.10_216.0.0_1.19.1_0.1.10
+    username: _json_key
+    password: ((sa.google))
+
+jobs:
+
+- name: lint-tests
+  public: true
+  plan:
+  - get: pull-request
+    trigger: true
+    version: every
+  - put: notify-lint-test-pending
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: pending
+  - get: lint-test-image
+    trigger: true
+  - task: run
+    image: lint-test-image
+    config:
+      platform: linux
+      inputs:
+      - name: pull-request
+        path: terraform-google-project-factory
+      run:
+        path: make
+        args: ['-s']
+        dir: terraform-google-project-factory
+    on_failure:
+      put: notify-lint-test-failure
+      resource: pull-request
+      params:
+        path: pull-request
+        context: lint-tests
+        status: failure
+  - put: notify-lint-test-success
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: success
+
+- name: integration-tests
+  public: true
+  serial: true
+  plan:
+  - get: pull-request
+    trigger: true
+    passed: [lint-tests]
+    version: every
+  - put: notify-integration-test-pending
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: pending
+  - get: integration-test-image
+    trigger: true
+  - task: run-tests
+    image: integration-test-image
+    config:
+      platform: linux
+      inputs:
+      - name: pull-request
+        path: terraform-google-project-factory
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          set +x
+          echo $SERVICE_ACCOUNT_JSON | tee test/fixtures/shared/credentials.json &> /dev/null
+          set -x
+          tee test/fixtures/shared/terraform.tfvars <<-EOF
+          billing_account="$BILLING_ACCOUNT_ID"
+          credentials_path="../shared/credentials.json"
+          domain="$DOMAIN"
+          folder_id="$FOLDER_ID"
+          group_name="$GROUP_NAME"
+          gsuite_admin_account="$ADMIN_ACCOUNT_EMAIL"
+          org_id="$ORG_ID"
+          shared_vpc="$PROJECT_ID"
+          EOF
+          set +e
+          make test_integration
+          _result=$?
+          set -e
+          if [ "$_result" -ne "0" ]; then
+            bundle exec kitchen destroy
+            exit $_result
+          fi
+        dir: terraform-google-project-factory
+      params:
+        ADMIN_ACCOUNT_EMAIL: ((phoogle.admin_account_email))
+        BILLING_ACCOUNT_ID: ((phoogle.billing_account_id))
+        DOMAIN: ((phoogle.domain))
+        FOLDER_ID: ((project-factory.phoogle_folder_id))
+        GROUP_NAME: ((phoogle.group_name))
+        ORG_ID: ((phoogle.org_id))
+        PROJECT_ID: ((project-factory.phoogle_project_id))
+        SERVICE_ACCOUNT_JSON: ((project-factory.phoogle_sa))
+    on_failure:
+      put: notify-integration-test-failure
+      resource: pull-request
+      params:
+        path: pull-request
+        context: integration-tests
+        status: failure
+  - put: notify-lint-test-success
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: success
