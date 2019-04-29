@@ -3,6 +3,8 @@ provider "google" {
 }
 
 terraform {
+  required_version = "0.11.13"
+
   backend "gcs" {
     bucket = "cloud-foundation-cicd-tfstate"
     prefix = "gke"
@@ -11,15 +13,16 @@ terraform {
 
 data "terraform_remote_state" "networking" {
   backend = "gcs"
+
   config {
     bucket = "cloud-foundation-cicd-tfstate"
     prefix = "networking"
   }
+
   workspace = "${terraform.workspace}"
 }
 
 module "gke" {
-
   source  = "terraform-google-modules/kubernetes-engine/google"
   version = "0.3.0"
 
@@ -43,17 +46,17 @@ module "gke" {
   ]
 
   node_pools_labels = {
-    all = {}
+    all     = {}
     pool-00 = {}
   }
 
   node_pools_taints = {
-    all = []
+    all     = []
     pool-00 = []
   }
 
   node_pools_tags = {
-    all = []
+    all     = []
     pool-00 = []
   }
 }

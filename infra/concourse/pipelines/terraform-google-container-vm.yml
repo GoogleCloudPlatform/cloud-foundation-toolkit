@@ -1,9 +1,17 @@
-resources:
+resource_types:
 
-- name: terraform-google-container-vm
-  type: git
+- name: pull-request
+  type: docker-image
   source:
-    uri: https://github.com/terraform-google-modules/terraform-google-container-vm
+    repository: teliaoss/github-pr-resource
+
+resources:
+- name: pull-request
+  type: pull-request
+  webhook_token: ((container-vm.github_webhook_token))
+  source:
+    repository: terraform-google-modules/terraform-google-container-vm
+    access_token: ((github.pr-access-token))
 
 - name: lint-test-image
   type: docker-image
@@ -23,9 +31,17 @@ resources:
 jobs:
 
 - name: lint-tests
+  public: true
   plan:
-  - get: terraform-google-container-vm
+  - get: pull-request
     trigger: true
+    version: every
+  - put: notify-lint-test-pending
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: pending
   - get: lint-test-image
     trigger: true
   - task: run
@@ -33,16 +49,47 @@ jobs:
     config:
       platform: linux
       inputs:
-      - name: terraform-google-container-vm
+      - name: pull-request
+        path: terraform-google-container-vm
+      - name: lint-test-image
       run:
         path: make
         args: ['-s']
         dir: terraform-google-container-vm
+  on_success:
+    put: notify-lint-test-success
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: success
+  on_failure:
+    put: notify-lint-test-failure
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: failure
+  on_abort:
+    put: notify-lint-test-error
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: error
 
 - name: integration-tests
+  public: true
   plan:
-  - get: terraform-google-container-vm
+  - get: pull-request
     trigger: true
+    version: every
+  - put: notify-integration-test-pending
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: pending
   - get: integration-test-image
     trigger: true
   - task: run-tests
@@ -50,32 +97,34 @@ jobs:
     config:
       platform: linux
       inputs:
-      - name: terraform-google-container-vm
+      - name: pull-request
+        path: terraform-google-container-vm
       run:
-        path: sh
+        path: /bin/bash
         args:
-        - -exc
-        - |
-          set +x
-          echo $SERVICE_ACCOUNT_JSON | tee test/fixtures/credentials.json &> /dev/null
-          set -x
-          tee test/fixtures/terraform.tfvars <<-EOF
-          credentials_path="../../test/fixtures/credentials.json"
-          image="gcr.io/google-samples/hello-app:1.0"
-          image_port="8080"
-          machine_type="n1-standard-1"
-          project_id="$PROJECT_ID"
-          region="us-east4"
-          restart_policy="Always"
-          subnetwork="default"
-          subnetwork_project="$PROJECT_ID"
-          zone="us-east4-b"
-          EOF
-          bundle install
-          bundle exec kitchen create
-          bundle exec kitchen converge
-          bundle exec kitchen destroy
+        - ./test/run_ci.sh
         dir: terraform-google-container-vm
       params:
         PROJECT_ID: ((container-vm.phoogle_project_id))
         SERVICE_ACCOUNT_JSON: ((container-vm.phoogle_sa))
+  on_success:
+    put: notify-integration-test-success
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: success
+  on_failure:
+    put: notify-integration-test-failure
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: failure
+  on_abort:
+    put: notify-integration-test-error
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: error

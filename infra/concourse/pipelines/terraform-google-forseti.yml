@@ -6,25 +6,17 @@ resource_types:
     repository: teliaoss/github-pr-resource
 
 resources:
-
 - name: pull-request
   type: pull-request
-  webhook_token: ((project-factory.github_webhook_token))
+  webhook_token: ((forseti.github_webhook_token))
   source:
-    repository: terraform-google-modules/terraform-google-project-factory
+    repository: terraform-google-modules/terraform-google-forseti
     access_token: ((github.pr-access-token))
 
 - name: lint-test-image
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/lint
-    username: _json_key
-    password: ((sa.google))
-
-- name: unit-test-image
-  type: docker-image
-  source:
-    repository: gcr.io/cloud-foundation-cicd/cft/unit
     username: _json_key
     password: ((sa.google))
 
@@ -58,11 +50,14 @@ jobs:
       platform: linux
       inputs:
       - name: pull-request
-        path: terraform-google-project-factory
+        path: terraform-google-forseti
+      - name: lint-test-image
       run:
         path: make
-        args: ['-s']
-        dir: terraform-google-project-factory
+        args:
+          - '-s'
+          - check
+        dir: terraform-google-forseti
   on_success:
     put: notify-lint-test-success
     resource: pull-request
@@ -85,56 +80,9 @@ jobs:
       context: lint-tests
       status: error
 
-- name: unit-tests
-  public: true
-  plan:
-  - get: pull-request
-    trigger: true
-    version: every
-  - put: notify-unit-test-pending
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: pending
-  - get: unit-test-image
-    trigger: true
-  - task: run
-    image: unit-test-image
-    config:
-      platform: linux
-      inputs:
-      - name: pull-request
-        path: terraform-google-project-factory
-      run:
-        path: make
-        args: ['test_unit']
-        dir: terraform-google-project-factory
-  on_success:
-    put: notify-unit-test-success
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: success
-  on_failure:
-    put: notify-unit-test-failure
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: failure
-  on_abort:
-    put: notify-unit-test-error
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: error
-
 - name: integration-tests
+  max_in_flight: 3
   public: true
-  serial: true
   plan:
   - get: pull-request
     trigger: true
@@ -147,28 +95,48 @@ jobs:
       status: pending
   - get: integration-test-image
     trigger: true
-  - task: run-tests
-    image: integration-test-image
-    config:
-      platform: linux
-      inputs:
-      - name: pull-request
-        path: terraform-google-project-factory
-      run:
-        path: make
-        args: ['-s', 'test_integration']
-        dir: terraform-google-project-factory
-      params:
-        ADMIN_ACCOUNT_EMAIL: ((phoogle.admin_account_email))
-        BILLING_ACCOUNT_ID: ((phoogle.billing_account_id))
-        DOMAIN: ((phoogle.domain))
-        FOLDER_ID: ((project-factory.phoogle_folder_id))
-        GROUP_NAME: ((phoogle.group_name))
+  - aggregate:
+
+    - task: run-tests-simple-example
+      image: integration-test-image
+      file: pull-request/test/ci/simple-example.yml
+      params: &run-tests-params
+        PROJECT_ID: ((forseti.phoogle_project_id))
         ORG_ID: ((phoogle.org_id))
-        PROJECT_ID: ((project-factory.phoogle_project_id))
-        SERVICE_ACCOUNT_JSON: ((project-factory.phoogle_sa))
+        DOMAIN: ((phoogle.domain))
+        GSUITE_ADMIN_EMAIL: ((phoogle.admin_account_email))
+        SERVICE_ACCOUNT_JSON: ((forseti.phoogle_sa))
+        NETWORK_PROJECT: ((forseti.phoogle_network_project))
+        NETWORK: ((forseti.phoogle_network))
+        SUBNETWORK: ((forseti.phoogle_subnetwork))
+        ENFORCER_PROJECT: ((forseti.phoogle_enforcer_project))
+
+    - task: run-tests-shared-vpc
+      image: integration-test-image
+      file: pull-request/test/ci/shared-vpc.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-real-time-enforcer
+      image: integration-test-image
+      file: pull-request/test/ci/real-time-enforcer.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-real-time-enforcer-roles
+      image: integration-test-image
+      file: pull-request/test/ci/real-time-enforcer-roles.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-real-time-enforcer-sinks
+      image: integration-test-image
+      file: pull-request/test/ci/real-time-enforcer-sinks.yml
+      params:
+        <<: *run-tests-params
+
   on_success:
-    put: notify-lint-test-success
+    put: notify-integration-test-success
     resource: pull-request
     params:
       path: pull-request

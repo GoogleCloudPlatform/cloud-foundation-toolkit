@@ -3,11 +3,14 @@ FROM alpine:3.8
 RUN apk add --no-cache --update \
     bash \
     make \
-    go=1.10.7-r0 \
+    go=1.10.8-r0 \
     python=2.7.15-r1 \
-    py-pip=10.0.1-r0
+    python3 \
+    py-pip=10.0.1-r0 \
+    grep \
+    git
 
-RUN pip install flake8
+RUN pip install flake8 jinja2
 
 RUN wget https://shellcheck.storage.googleapis.com/shellcheck-v0.6.0.linux.x86_64.tar.xz && \
     tar -xf shellcheck-v0.6.0.linux.x86_64.tar.xz && \
@@ -24,3 +27,7 @@ RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform
 RUN wget https://github.com/hadolint/hadolint/releases/download/v1.15.0/hadolint-Linux-x86_64 && \
     chmod +x hadolint-Linux-x86_64 && \
     mv hadolint-Linux-x86_64 /usr/local/bin/hadolint
+
+RUN wget https://github.com/segmentio/terraform-docs/releases/download/v0.6.0/terraform-docs-v0.6.0-linux-amd64 && \
+    mv terraform-docs* /usr/local/bin/terraform-docs && \
+    chmod 0755 /usr/local/bin/terraform-docs

@@ -20,13 +20,15 @@ FROM ruby:$BUILD_RUBY_VERSION-alpine
 
 RUN apk add --no-cache \
     bash \
+    coreutils \
     curl \
     git \
     g++ \
     jq \
     make \
     musl-dev \
-    python
+    python \
+    python3
 
 SHELL ["/bin/bash", "-c"]
 
@@ -51,9 +53,15 @@ RUN terraform --version && \
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN bundle install
+ADD ./build/data/requirements.txt .
+RUN bundle install && pip3 install -r requirements.txt
 
 WORKDIR $APP_BASE_DIR/workdir
 
 RUN gcloud components install beta --quiet
 RUN gcloud components install alpha --quiet
+
+# Authenticate gcloud with service account credentials key to allow gsutil authentication
+ADD ./build/scripts/gcloud_auth.sh $HOME/entrypoint_scripts/
+RUN chmod +x $HOME/entrypoint_scripts/gcloud_auth.sh
+ENTRYPOINT ["/cft/home/entrypoint_scripts/gcloud_auth.sh"]

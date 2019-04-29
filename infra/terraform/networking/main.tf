@@ -1,4 +1,6 @@
 terraform {
+  required_version = "0.11.13"
+
   backend "gcs" {
     bucket = "cloud-foundation-cicd-tfstate"
     prefix = "networking"
@@ -6,11 +8,10 @@ terraform {
 }
 
 module "network" {
-
   source  = "terraform-google-modules/network/google"
   version = "0.4.0"
 
-  project_id   = "${module.variables.project_id}"
+  project_id = "${module.variables.project_id}"
 
   network_name = "${local.network_name}"
 
@@ -19,7 +20,7 @@ module "network" {
       subnet_name   = "${local.subnet_name}"
       subnet_ip     = "${var.subnet_range[terraform.workspace]}"
       subnet_region = "${module.variables.region[terraform.workspace]}"
-    }
+    },
   ]
 
   secondary_ranges = {
