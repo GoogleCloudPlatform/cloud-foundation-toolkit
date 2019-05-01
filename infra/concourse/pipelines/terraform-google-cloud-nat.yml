@@ -109,12 +109,6 @@ jobs:
         - test_integration
         dir: terraform-google-cloud-nat
       params:
-        ADMIN_ACCOUNT_EMAIL: ((phoogle.admin_account_email))
-        BILLING_ACCOUNT_ID: ((phoogle.billing_account_id))
-        DOMAIN: ((phoogle.domain))
-        FOLDER_ID: ((cloud-nat.phoogle_folder_id))
-        GROUP_NAME: ((phoogle.group_name))
-        ORG_ID: ((phoogle.org_id))
         PROJECT_ID: ((cloud-nat.phoogle_project_id))
         SERVICE_ACCOUNT_JSON: ((cloud-nat.phoogle_sa))
   on_success:
