@@ -104,11 +104,9 @@ jobs:
         path: terraform-google-cloud-nat
       - name: integration-test-image
       run:
-        path: sh
+        path: make
         args:
-        - -exc
-        - |
-          make test_integration
+        - test_integration
         dir: terraform-google-cloud-nat
       params:
         ADMIN_ACCOUNT_EMAIL: ((phoogle.admin_account_email))
