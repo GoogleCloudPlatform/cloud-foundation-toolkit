@@ -83,11 +83,9 @@ jobs:
 
 - name: integration-tests
   public: true
-  serial: true
   plan:
   - get: pull-request
     trigger: true
-    passed: [lint-tests]
     version: every
   - put: notify-integration-test-pending
     resource: pull-request
