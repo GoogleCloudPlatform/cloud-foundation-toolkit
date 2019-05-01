@@ -61,7 +61,9 @@ jobs:
         path: terraform-google-project-factory
       run:
         path: make
-        args: ['-s']
+        args:
+        - '-s'
+        - check
         dir: terraform-google-project-factory
   on_success:
     put: notify-lint-test-success
