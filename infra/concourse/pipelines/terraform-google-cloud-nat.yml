@@ -55,7 +55,9 @@ jobs:
       - name: lint-test-image
       run:
         path: make
-        args: ['-s']
+        args:
+          - '-s'
+          - check
         dir: terraform-google-cloud-nat
   on_success:
     put: notify-lint-test-success
