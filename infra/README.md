@@ -8,7 +8,7 @@ Concourse runs on [GKE](https://cloud.google.com/kubernetes-engine/docs/) and [C
 
 Concourse is deployed with [Helm](https://helm.sh/) and the official [Concourse chart](https://github.com/helm/charts/tree/master/stable/concourse).
 
-This is all managed with [Terraform](https://www.terraform.io/). All Terraform configurations are located in the [terraform](./terraform) directory of this repository. At this time, `terraform` is intended to be executed locally on an adminstrator workstation.
+This is all managed with [Terraform](https://www.terraform.io/). All Terraform configurations are located in the [terraform](./terraform) directory of this repository. At this time, `terraform` is intended to be executed locally on an administrator workstation.
 
 ### Workspaces
 
@@ -115,16 +115,203 @@ kubectl get secret github --namespace concourse-cft -o yaml
 
 ### Terraform
 
-All configurations currently use Terraform 0.11.10.
-
 You will need to create two service accounts to interact with Terraform - one for the google.com project `cloud-foundation-cicd` and one for the `phoogle.net` organization.
 
-The google.com service account should have the Project Owner role on the `cloud-foundation-cicd` project, and the phoogle.net service account should have Organization Admin and Folder Admin roles.
+The google.com service account should have the Project Owner role on the `cloud-foundation-cicd` project, and the phoogle.net service account should have Organization Admin and Folder Admin roles bound to the [cloud-foundation-cicd][cicd-folder] folder.
+
+#### Workspaces
+
+When managing fixtures for new modules, switch to the primary workspace:
+
+```
+terraform workspace select primary
+```
+
+#### Google SA
+
+Log into [Service accounts for project cloud-foundation-cicd](https://pantheon.corp.google.com/iam-admin/serviceaccounts?folder=&organizationId=433637338589&project=cloud-foundation-cicd) using your google.com identity.
+
+ 1. Create `<user>@cloud-foundation-cicd.iam.gserviceaccount.com`
+ 2. Select role: Project / Owner for `cloud-foundation-cicd`.
+ 3. Create key.  This key is used as the value of `GOOGLE_CREDENTIALS` in
+    .env.sample.
+
+#### Phoogle SA
+
+Log into [Permissions for organization
+phoogle.net](https://console.cloud.google.com/iam-admin/iam?organizationId=826592752744&orgonly=true&supportedpurview=project) using your phoogle.net identity.
+
+If you do not have a [seed
+project](https://github.com/terraform-google-modules/terraform-google-project-factory#script-helper)
+yet, create one.  The cloud-foundation-infra SA may be created in any project,
+the seed project is used only because it contains the project factory SA and is
+a per-user project.
+
+Navigate to Service accounts for your seed project.
+
+ 1. Create `cloud-foundation-infra@<ldap>-seed.iam.gserviceaccount.com`
+ 2. Add role: Service Usage / Service Usage Viewer for the
+    cloud-foundation-infra SA from step 1.
+ 3. Create key.  This key is used as the value of
+    `TF_VAR_phoogle_credentials_path` in .env.sample.
+ 4. Navigate to the [cloud-foundation-cicd][cicd-folder] org level.
+ 5. Add role: Owner for the cloud-foundation-infra SA from step 1.
+ 6. Add role: Project Creator for the cloud-foundation-infra SA from step 1.
+ 7. Navigate to the [phoogle.net Organization][phoogle-org]
+ 8. Add role: Resource Manager / Organization Administrator for the
+    cloud-foundation-infra SA from step 1.
+ 9. Add role: IAM / Organization Role Administrator for the
+    cloud-foundation-infra SA from step 1.
+ 10. Add role: Resource Manager / Folder Administrator for the
+    cloud-foundation-infra SA from step 1.
+ 11. Add a binding resource to the billing account for role/billing.user the
+     memeber SA from step 1.  See [Missing roles/billing.user][billing-user] for
+     step by step instructions.
+
+#### Environment Variables
 
 Copy `.env.sample` locally and update as necessary. You will need to specify paths to credientials for those two service accounts. As well, there is a `TF_VAR_postgres_concourse_user_password` environment variable - this is only necessary for interacting with the [terraform/postgres](./terraform/postgres) configuration. You may obtain this value from Kubernetes: `kubectl get secret concourse-concourse -o yaml` and Base64 decode the value for `postgresql-password`.
+
+#### Terraform plan
+
+With the workspace set and Service Accounts configured as per the environment
+variables above, a terraform plan in `terraform/test_fixtures/` should succeed.
+If you get 403 errors, check the IAM bindings carefully as per above.
+
+#### Future Improvements
+
+The use of two service accounts is questionable because a single logical process
+is managing all of these fixtures.  A future improvement could consolidate the
+Terraform fixtures under a single machine/process identity.
 
 ### Concourse
 
 The Concourse UI URL isk https://concourse.infra.cft.tips/.
 
 From the UI, download the [Fly CLI](https://concourse-ci.org/fly.html).
+
+[cicd-folder]: https://console.cloud.google.com/iam-admin/iam?organizationId=826592752744&orgonly=true&project=&folder=853002531658
+[phoogle-org]: https://console.cloud.google.com/iam-admin/iam?organizationId=826592752744&orgonly=true&project=
+[billing-user]: https://github.com/terraform-google-modules/terraform-google-project-factory/blob/master/docs/TROUBLESHOOTING.md#missing-rolesbillinguser-role
+
+#### Managing Concourse
+
+##### Setup Concourse `gcloud` and `kubectl` configuration
+
+In order to manage the Concourse GKE cluster you'll need to configure `gcloud`
+and `kubectl` with the CICD project and the credentials you set up in the
+[Google SA][#google-sa] step.
+
+1. Create a new gcloud configuration
+    ```
+    $ gcloud config configurations create cloud-foundation-cicd
+    ```
+2. Activate your cloud-foundation-cicd service account (if not already activated)
+    ```
+    $ gcloud auth activate-service-account \
+        <user>@cloud-foundation-cicd.iam.gserviceaccount.com \
+        --key-file=<GOOGLE_CREDENTIALS key file>
+    ```
+3. Configure the gcloud account and project
+    ```
+    $ gcloud config set account <user>@cloud-foundation-cicd.iam.gserviceaccount.com
+    $ gcloud config set project cloud-foundation-cicd
+    $ gcloud config set container/cluster cicd-primary
+    ```
+4. Load the CI Kubernetes credentials
+    ```
+    $ gcloud container clusters get-credentials cicd-primary --region us-west1
+    ```
+5. Verify that you can access Kubernetes resources
+    ```
+    $ kubectl get nodes
+    NAME                                     STATUS   ROLES    AGE   VERSION
+    gke-cicd-primary-pool-00-3754cb77-24s1   Ready    <none>   47d   v1.11.5-gke.5
+    gke-cicd-primary-pool-00-3754cb77-n9qk   Ready    <none>   47d   v1.11.5-gke.5
+    gke-cicd-primary-pool-00-51233741-lbdm   Ready    <none>   19d   v1.11.5-gke.5
+    gke-cicd-primary-pool-00-51233741-pr78   Ready    <none>   19d   v1.11.5-gke.5
+    gke-cicd-primary-pool-00-60ee1986-s48n   Ready    <none>   76d   v1.11.5-gke.5
+    ```
+
+##### Check for stuck workers
+
+Occasionally Concourse workers become stuck. This shows up when jobs start
+queueing up even when Concourse jobs can be run in parallel, indicating that
+there aren't enough workers running to service all requests.
+
+1. Check Concourse for stalled workers
+    **Note** - You can check worker status with either the CFT group (`-t cft`)
+    or the main group (`-t main`). In practice this tends to be done with the
+    CFT group as those are the credentials you'll use on a daily basis, though
+    the main group works equally well if you've already escalated privileges.
+    ```
+    $ fly -t cft workers
+    name                containers  platform  tags  team  state    version
+    concourse-worker-0  21          linux     none  none  running  2.1
+    concourse-worker-1  13          linux     none  none  running  2.1
+    concourse-worker-2  19          linux     none  none  running  2.1
+
+    the following workers have not checked in recently:
+
+    name                containers  platform  tags  team  state    version
+    concourse-worker-3  0           linux     none  none  stalled  2.1
+    ```
+2. Check Kubernetes pod status
+    ```
+    $ kubectl get pods
+    NAME                             READY   STATUS             RESTARTS   AGE
+    concourse-web-767bbdf675-6lbns   1/1     Running            0          9d
+    concourse-worker-0               1/1     Running            1          9d
+    concourse-worker-1               1/1     Running            0          9d
+    concourse-worker-2               1/1     Running            16         9d
+    concourse-worker-3               0/1     CrashLoopBackOff   3637       9d
+    ```
+
+##### Logging into the **main** group
+
+Concourse defines a **main** group that has permissions to directly administer
+Concourse. Members of this group can perform maintenance tasks with `fly`, such
+as prune stalled workers.
+
+Logging into Concourse with your Google LDAP places you in the **cft** group, so
+by default you will not have access to functionality like pruning workers.
+You'll need to use the **concourse** user to authenticate as a user in the **main**
+group.
+
+1. Fetch the **concourse** user credentials
+    ```
+    $ kubectl --namespace default get secrets concourse-concourse -o yaml|grep local-users
+      local-users: bm90IHRoZSBhY3R1YWwgY3JlZGVudGlhbHMK
+    ```
+2. Decode the **concourse** credentials
+    ```
+    $ echo bm90IHRoZSBhY3R1YWwgY3JlZGVudGlhbHMK | base64 --decode
+    ```
+3.  Log into concourse with the **concourse** user
+    **Note** - Log out of the Concourse GUI before you run this step, otherwise
+    you'll automatically log into Concourse with your Google LDAP.
+    ```
+    $ fly login --target main -n main -c https://concourse.infra.cft.tips
+    ```
+
+
+##### Terminate stalled workers
+
+If a worker has become stuck you can delete the failed pod and prune the
+stalled worker from Concourse. Kubernetes will automatically re-create the
+deleted pod, and Concourse will start sending jobs to the new worker once the
+old worker has been pruned.
+
+1.  Terminate a stalled Concourse worker
+    **Note** - deleting the pod will cause a new pod to be automatically created.
+    ```
+    $ kubectl delete pod concourse-worker-3
+    pod "concourse-worker-3" deleted
+    ```
+2. Prune a stalled worker from Concourse
+    **Note** - deleting the pod from Kubernetes will clear the faulty pod but will
+    prevent the new node from registering - this deletion allows the re-created pod
+    to start accepting jobs.
+    ```
+    $ fly -t main prune-worker -w concourse-worker-3
+    ```

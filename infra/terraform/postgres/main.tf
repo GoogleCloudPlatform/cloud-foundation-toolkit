@@ -3,6 +3,8 @@ provider "google-beta" {
 }
 
 terraform {
+  required_version = "0.11.13"
+
   backend "gcs" {
     bucket = "cloud-foundation-cicd-tfstate"
     prefix = "postgres"
@@ -11,15 +13,16 @@ terraform {
 
 data "terraform_remote_state" "networking" {
   backend = "gcs"
+
   config {
     bucket = "cloud-foundation-cicd-tfstate"
     prefix = "networking"
   }
+
   workspace = "${terraform.workspace}"
 }
 
 resource "google_sql_database_instance" "postgres" {
-
   provider = "google-beta"
 
   name             = "${module.variables.name_prefix}-postgres-${terraform.workspace}"
@@ -30,15 +33,15 @@ resource "google_sql_database_instance" "postgres" {
 
   settings {
     tier = "db-g1-small"
+
     ip_configuration {
-      ipv4_enabled = "false"
+      ipv4_enabled    = "false"
       private_network = "${data.terraform_remote_state.networking.network_self_link}"
     }
   }
 }
 
 resource "google_sql_user" "concourse" {
-
   provider = "google-beta"
 
   name     = "concourse"
@@ -47,7 +50,6 @@ resource "google_sql_user" "concourse" {
 }
 
 resource "google_sql_database" "atc" {
-
   provider = "google-beta"
 
   name     = "atc"

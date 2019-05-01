@@ -32,7 +32,6 @@ jobs:
 
 - name: lint-tests
   public: true
-  serial: true
   plan:
   - get: pull-request
     trigger: true
@@ -56,20 +55,33 @@ jobs:
         path: make
         args: ['-s']
         dir: terraform-google-kubernetes-engine
-  - put: notify-lint-test-success
+  on_success:
+    put: notify-lint-test-success
     resource: pull-request
     params:
       path: pull-request
       context: lint-tests
       status: success
+  on_failure:
+    put: notify-lint-test-failure
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: failure
+  on_abort:
+    put: notify-lint-test-error
+    resource: pull-request
+    params:
+      path: pull-request
+      context: lint-tests
+      status: error
 
 - name: build-integration-test-image
   public: true
-  serial: true
   plan:
   - get: pull-request
     trigger: true
-    passed: [lint-tests]
     version: every
   - put: notify-build-integration-test-image-pending
     resource: pull-request
@@ -103,19 +115,33 @@ jobs:
         dir: terraform-google-kubernetes-engine
       params:
         SA: ((sa.google))
-  - put: notify-build-integration-test-image-success
+  on_success:
+    put: notify-build-integration-test-success
     resource: pull-request
     params:
       path: pull-request
       context: build-integration-test-image
       status: success
+  on_failure:
+    put: notify-build-integration-test-failure
+    resource: pull-request
+    params:
+      path: pull-request
+      context: build-integration-test-image
+      status: failure
+  on_abort:
+    put: notify-build-integration-test-error
+    resource: pull-request
+    params:
+      path: pull-request
+      context: build-integration-test-image
+      status: error
 
 - name: integration-tests
   public: true
-  serial: true
   plan:
   - get: pull-request
-    passed: [lint-tests, build-integration-test-image]
+    passed: [build-integration-test-image]
     trigger: true
     version: every
   - put: notify-integration-test-pending
@@ -128,61 +154,81 @@ jobs:
     trigger: true
     params:
       tag: [pull-request/commit]
-  - task: run-tests
-    image: integration-test-image
-    config:
-      platform: linux
-      inputs:
-      - name: pull-request
-        path: terraform-google-kubernetes-engine
-      run:
-        path: /bin/bash
-        args:
-        - -exc
-        - |
-          set +x
-          echo $SERVICE_ACCOUNT_JSON | tee test/fixtures/shared/credentials.json &> /dev/null
-          export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/test/fixtures/shared/credentials.json
-          export CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=`pwd`/test/fixtures/shared/credentials.json
-          set -x
-          tee test/fixtures/shared/terraform.tfvars <<-EOF
-          project_id="$PROJECT_ID"
-          credentials_path_relative="../shared/credentials.json"
-          region="$REGION"
-          zones=$ZONES
-          compute_engine_service_account="$COMPUTE_ENGINE_SERVICE_ACCOUNT"
-          EOF
-          set +e
-          make test_integration
-          _result=$?
-          set -e
-          if [ "$_result" -ne "0" ]; then
-            bundle exec kitchen destroy
-          fi
-        dir: terraform-google-kubernetes-engine
-      params:
-        COMPUTE_ENGINE_SERVICE_ACCOUNT: ""
+  - aggregate:
+
+    - task: run-tests-deploy-service
+      image: integration-test-image
+      file: pull-request/test/ci/deploy-service.yml
+      params: &run-tests-params
         PROJECT_ID: ((kubernetes-engine.phoogle_project_id))
-        REGION: "us-east4"
         SERVICE_ACCOUNT_JSON: ((kubernetes-engine.phoogle_sa))
-        ZONES: '["us-east4-a", "us-east4-b", "us-east4-c"]'
-    on_failure:
-      put: notify-integration-test-failure
-      resource: pull-request
+
+    - task: run-tests-node-pool
+      image: integration-test-image
+      file: pull-request/test/ci/node-pool.yml
       params:
-        path: pull-request
-        context: integration-tests
-        status: failure
-  - put: notify-integration-test-success
+        <<: *run-tests-params
+
+    - task: run-tests-shared-vpc
+      image: integration-test-image
+      file: pull-request/test/ci/shared-vpc.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-simple-regional
+      image: integration-test-image
+      file: pull-request/test/ci/simple-regional.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-simple-regional-private
+      image: integration-test-image
+      file: pull-request/test/ci/simple-regional-private.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-simple-zonal
+      image: integration-test-image
+      file: pull-request/test/ci/simple-zonal.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-simple-zonal-private
+      image: integration-test-image
+      file: pull-request/test/ci/simple-zonal-private.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-stub-domains
+      image: integration-test-image
+      file: pull-request/test/ci/stub-domains.yml
+      params:
+        <<: *run-tests-params
+
+  on_success:
+    put: notify-integration-test-success
     resource: pull-request
     params:
       path: pull-request
       context: integration-tests
       status: success
+  on_failure:
+    put: notify-integration-test-failure
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: failure
+  on_abort:
+    put: notify-integration-tests-abort
+    resource: pull-request
+    params:
+      path: pull-request
+      context: integration-tests
+      status: error
 
 - name: delete-integration-test-image
   public: true
-  serial: true
   plan:
   - get: pull-request
     trigger: true

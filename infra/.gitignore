@@ -7,3 +7,4 @@ terraform.tfstate.backup
 credentials.json
 *.credentials.json
 concourse/fly
+.idea/

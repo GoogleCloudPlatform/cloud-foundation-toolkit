@@ -9,9 +9,9 @@ resources:
 
 - name: pull-request
   type: pull-request
-  webhook_token: ((project-factory.github_webhook_token))
+  webhook_token: ((address.github_webhook_token))
   source:
-    repository: terraform-google-modules/terraform-google-project-factory
+    repository: terraform-google-modules/terraform-google-address
     access_token: ((github.pr-access-token))
 
 - name: lint-test-image
@@ -21,18 +21,11 @@ resources:
     username: _json_key
     password: ((sa.google))
 
-- name: unit-test-image
-  type: docker-image
-  source:
-    repository: gcr.io/cloud-foundation-cicd/cft/unit
-    username: _json_key
-    password: ((sa.google))
-
 - name: integration-test-image
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
-    tag: 0.11.11_235.0.0_1.19.1_0.1.10
+    tag: 0.11.10_216.0.0_1.19.1_0.1.10
     username: _json_key
     password: ((sa.google))
 
@@ -51,18 +44,18 @@ jobs:
       context: lint-tests
       status: pending
   - get: lint-test-image
-    trigger: true
   - task: run
     image: lint-test-image
     config:
       platform: linux
       inputs:
       - name: pull-request
-        path: terraform-google-project-factory
+        path: terraform-google-address
+      - name: lint-test-image
       run:
         path: make
         args: ['-s']
-        dir: terraform-google-project-factory
+        dir: terraform-google-address
   on_success:
     put: notify-lint-test-success
     resource: pull-request
@@ -85,56 +78,8 @@ jobs:
       context: lint-tests
       status: error
 
-- name: unit-tests
-  public: true
-  plan:
-  - get: pull-request
-    trigger: true
-    version: every
-  - put: notify-unit-test-pending
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: pending
-  - get: unit-test-image
-    trigger: true
-  - task: run
-    image: unit-test-image
-    config:
-      platform: linux
-      inputs:
-      - name: pull-request
-        path: terraform-google-project-factory
-      run:
-        path: make
-        args: ['test_unit']
-        dir: terraform-google-project-factory
-  on_success:
-    put: notify-unit-test-success
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: success
-  on_failure:
-    put: notify-unit-test-failure
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: failure
-  on_abort:
-    put: notify-unit-test-error
-    resource: pull-request
-    params:
-      path: pull-request
-      context: unit-tests
-      status: error
-
 - name: integration-tests
   public: true
-  serial: true
   plan:
   - get: pull-request
     trigger: true
@@ -153,22 +98,17 @@ jobs:
       platform: linux
       inputs:
       - name: pull-request
-        path: terraform-google-project-factory
+        path: terraform-google-address
       run:
         path: make
-        args: ['-s', 'test_integration']
-        dir: terraform-google-project-factory
+        args: ['test_integration']
+        dir: terraform-google-address
       params:
-        ADMIN_ACCOUNT_EMAIL: ((phoogle.admin_account_email))
-        BILLING_ACCOUNT_ID: ((phoogle.billing_account_id))
-        DOMAIN: ((phoogle.domain))
-        FOLDER_ID: ((project-factory.phoogle_folder_id))
-        GROUP_NAME: ((phoogle.group_name))
-        ORG_ID: ((phoogle.org_id))
-        PROJECT_ID: ((project-factory.phoogle_project_id))
-        SERVICE_ACCOUNT_JSON: ((project-factory.phoogle_sa))
+        PROJECT_ID: ((address.phoogle_project_id))
+        REGION: "us-east4"
+        SERVICE_ACCOUNT_JSON: ((address.phoogle_sa))
   on_success:
-    put: notify-lint-test-success
+    put: notify-integration-test-success
     resource: pull-request
     params:
       path: pull-request

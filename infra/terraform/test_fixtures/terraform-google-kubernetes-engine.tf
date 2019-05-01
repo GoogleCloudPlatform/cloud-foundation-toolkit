@@ -4,25 +4,25 @@ locals {
     "roles/compute.viewer",
     "roles/container.clusterAdmin",
     "roles/container.developer",
+    "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
   ]
 }
 
 resource "google_project" "ci_kubernetes_engine" {
-
   provider = "google.phoogle"
 
-  name = "ci-kubernetes-engine"
-  project_id = "ci-kubernetes-engine"
-  folder_id = "${google_folder.phoogle_cloud_foundation_cicd.name}"
+  name            = "ci-kubernetes-engine"
+  project_id      = "ci-kubernetes-engine"
+  folder_id       = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account = "${module.variables.phoogle_billing_account}"
 }
 
 resource "google_project_services" "ci_kubernetes_engine" {
-
   provider = "google.phoogle"
 
   project = "${google_project.ci_kubernetes_engine.id}"
+
   services = [
     "bigquery-json.googleapis.com",
     "compute.googleapis.com",
@@ -31,26 +31,28 @@ resource "google_project_services" "ci_kubernetes_engine" {
     "oslogin.googleapis.com",
     "pubsub.googleapis.com",
     "storage-api.googleapis.com",
+    "iam.googleapis.com",
+    "serviceusage.googleapis.com",
+    "iamcredentials.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
   ]
 }
 
 resource "google_service_account" "ci_kubernetes_engine" {
-
   provider = "google.phoogle"
 
-  project = "${google_project.ci_kubernetes_engine.id}"
-  account_id = "ci-kubernetes-engine"
+  project      = "${google_project.ci_kubernetes_engine.id}"
+  account_id   = "ci-kubernetes-engine"
   display_name = "ci-kubernetes-engine"
 }
 
 resource "google_project_iam_binding" "ci_kubernetes_engine" {
-
   provider = "google.phoogle"
 
   count = "${length(local.kubernetes_engine_required_roles)}"
 
   project = "${google_project_services.ci_kubernetes_engine.project}"
-  role = "${element(local.kubernetes_engine_required_roles, count.index)}"
+  role    = "${element(local.kubernetes_engine_required_roles, count.index)}"
 
   members = [
     "serviceAccount:${google_service_account.ci_kubernetes_engine.email}",
@@ -58,7 +60,6 @@ resource "google_project_iam_binding" "ci_kubernetes_engine" {
 }
 
 resource "google_service_account_key" "ci_kubernetes_engine" {
-
   provider = "google.phoogle"
 
   service_account_id = "${google_service_account.ci_kubernetes_engine.id}"
@@ -69,11 +70,10 @@ resource "random_id" "kubernetes_engine_github_webhook_token" {
 }
 
 data "template_file" "kubernetes_engine_github_webhook_url" {
-
   template = "https://concourse.infra.cft.tips/api/v1/teams/cft/pipelines/$${pipeline}/resources/pull-request/check/webhook?webhook_token=$${webhook_token}"
 
   vars {
-    pipeline = "terraform-google-kubernetes-engine"
+    pipeline      = "terraform-google-kubernetes-engine"
     webhook_token = "${random_id.kubernetes_engine_github_webhook_token.hex}"
   }
 }
@@ -81,11 +81,12 @@ data "template_file" "kubernetes_engine_github_webhook_url" {
 resource "kubernetes_secret" "ci_kubernetes_engine" {
   metadata {
     namespace = "concourse-cft"
-    name = "kubernetes-engine"
+    name      = "kubernetes-engine"
   }
+
   data {
     github_webhook_token = "${random_id.kubernetes_engine_github_webhook_token.hex}"
-    phoogle_project_id = "${google_project.ci_kubernetes_engine.id}"
-    phoogle_sa = "${base64decode(google_service_account_key.ci_kubernetes_engine.private_key)}"
+    phoogle_project_id   = "${google_project.ci_kubernetes_engine.id}"
+    phoogle_sa           = "${base64decode(google_service_account_key.ci_kubernetes_engine.private_key)}"
   }
 }

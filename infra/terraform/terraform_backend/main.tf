@@ -3,5 +3,17 @@ resource "google_storage_bucket" "terraform_backend" {
   location = "US"
   project  = "${module.variables.project_id}"
 
-  versioning { enabled = true }
+  versioning {
+    enabled = true
+  }
+}
+
+resource "google_storage_bucket" "terraform_backend_seed_projects" {
+  name     = "cloud-foundation-cicd-seed-projects-tfstate"
+  location = "US"
+  project  = "${module.variables.project_id}"
+
+  versioning {
+    enabled = true
+  }
 }

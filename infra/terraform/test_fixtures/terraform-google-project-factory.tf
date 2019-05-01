@@ -1,10 +1,18 @@
 locals {
+  // Roles required by CI service accounts to run the Project Factory
+  // integration tests.
   project_factory_required_roles = [
     "roles/resourcemanager.projectCreator",
     "roles/compute.xpnAdmin",
     "roles/compute.networkAdmin",
     "roles/iam.serviceAccountAdmin",
     "roles/resourcemanager.projectIamAdmin",
+  ]
+
+  // Roles granted to the CFT core group on the shared Project Factory service account
+  project_factory_core_sa_roles = [
+    "roles/iam.serviceAccountUser",
+    "roles/iam.serviceAccountKeyAdmin",
   ]
 }
 
@@ -43,27 +51,70 @@ resource "google_project_services" "project_factory" {
   ]
 }
 
+// This account has domain wide delegation enabled, which is a manual process.
+// See the [Delegation Guide][delegation-guide] for more information.
+//
+// NOTE(thebo): Domain wide delegation has been removed from this account while we debug a phoogle.net outage
+//
+// [delegation-guide]: https://developers.google.com/admin-sdk/directory/v1/guides/delegation
 resource "google_service_account" "project_factory" {
-
   provider = "google.phoogle"
 
-  project = "${google_project.project_factory.id}"
-  account_id = "ci-project-factory"
+  project      = "${google_project.project_factory.id}"
+  account_id   = "ci-project-factory"
   display_name = "ci-project-factory"
 }
 
-resource "google_folder_iam_binding" "project_factory" {
-
+resource "google_folder_iam_member" "project_factory" {
   provider = "google.phoogle"
 
   count = "${length(local.project_factory_required_roles)}"
 
   folder = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   role   = "${element(local.project_factory_required_roles, count.index)}"
+  member = "serviceAccount:${google_service_account.project_factory.email}"
+}
 
-  members = [
-    "serviceAccount:${google_service_account.project_factory.email}",
-  ]
+// Define a persistent service account for running Project Factory integration
+// tests outside of CI.
+//
+// This account has domain wide delegation enabled, which is a manual process.
+// See the [Delegation Guide][delegation-guide] for more information.
+//
+// NOTE(thebo): Domain wide delegation has been removed from this account while we debug a phoogle.net outage
+//
+// [delegation-guide]: https://developers.google.com/admin-sdk/directory/v1/guides/delegation
+resource "google_service_account" "project_factory_cft" {
+  provider = "google.phoogle"
+
+  project      = "${google_project.project_factory.id}"
+  account_id   = "cft-project-factory"
+  display_name = "CFT Shared Project Factory account"
+}
+
+// Grant the project_factory_cft account IAM rights over the CI folder.
+//
+// The project_factory_cft user needs the same rights as the 'ci-project-factory'
+// user so we apply the same list of roles here.
+resource "google_folder_iam_member" "project_factory_cft" {
+  provider = "google.phoogle"
+
+  count = "${length(local.project_factory_required_roles)}"
+
+  folder = "${google_folder.phoogle_cloud_foundation_cicd.name}"
+  role   = "${element(local.project_factory_required_roles, count.index)}"
+  member = "serviceAccount:${google_service_account.project_factory_cft.email}"
+}
+
+// Grant the cloud-foundation core team access to the project_factory
+resource "google_service_account_iam_member" "project_factory_cft" {
+  provider = "google.phoogle"
+
+  count = "${length(local.project_factory_core_sa_roles)}"
+
+  service_account_id = "${google_service_account.project_factory_cft.id}"
+  role               = "${element(local.project_factory_core_sa_roles, count.index)}"
+  member             = "group:${var.core_group}"
 }
 
 resource "google_service_account_key" "project_factory" {
