@@ -25,7 +25,7 @@ resources:
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
-    tag: 1.0.0
+    tag: 1.0.1
     username: _json_key
     password: ((sa.google))
 
@@ -52,9 +52,12 @@ jobs:
       inputs:
       - name: pull-request
         path: terraform-google-cloud-nat
+      - name: lint-test-image
       run:
         path: make
-        args: ['-s']
+        args:
+          - '-s'
+          - check
         dir: terraform-google-cloud-nat
   on_success:
     put: notify-lint-test-success
@@ -80,11 +83,9 @@ jobs:
 
 - name: integration-tests
   public: true
-  serial: true
   plan:
   - get: pull-request
     trigger: true
-    passed: [lint-tests]
     version: every
   - put: notify-integration-test-pending
     resource: pull-request
@@ -101,20 +102,13 @@ jobs:
       inputs:
       - name: pull-request
         path: terraform-google-cloud-nat
+      - name: integration-test-image
       run:
-        path: sh
+        path: make
         args:
-        - -exc
-        - |
-          make test_integration
+        - test_integration
         dir: terraform-google-cloud-nat
       params:
-        ADMIN_ACCOUNT_EMAIL: ((phoogle.admin_account_email))
-        BILLING_ACCOUNT_ID: ((phoogle.billing_account_id))
-        DOMAIN: ((phoogle.domain))
-        FOLDER_ID: ((cloud-nat.phoogle_folder_id))
-        GROUP_NAME: ((phoogle.group_name))
-        ORG_ID: ((phoogle.org_id))
         PROJECT_ID: ((cloud-nat.phoogle_project_id))
         SERVICE_ACCOUNT_JSON: ((cloud-nat.phoogle_sa))
   on_success:
