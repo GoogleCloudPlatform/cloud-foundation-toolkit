@@ -10,7 +10,7 @@ resources:
   type: pull-request
   webhook_token: ((forseti.github_webhook_token))
   source:
-    repository: terraform-google-modules/terraform-google-forseti
+    repository: forseti-security/terraform-google-forseti
     access_token: ((github.pr-access-token))
 
 - name: lint-test-image
