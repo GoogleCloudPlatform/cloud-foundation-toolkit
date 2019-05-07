@@ -27,6 +27,7 @@ RUN apk add --no-cache \
     jq \
     make \
     musl-dev \
+    openssh \
     python \
     python3
 
