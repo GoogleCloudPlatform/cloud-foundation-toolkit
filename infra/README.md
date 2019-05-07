@@ -53,8 +53,8 @@ The [concourse/build](./concourse/build) directory contains Dockerfiles to use i
 
 ```
 cd concourse
-make build-lint-image
-make release-lint-image
+make build-image-lint
+make release-image-lint
 ```
 
 ### Github Pull Request Integration
