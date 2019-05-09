@@ -12,7 +12,7 @@ locals {
 
   forseti_project_required_roles = [
     "roles/compute.instanceAdmin",
-    "roles/compute.networkViewer",
+    "roles/compute.networkAdmin",
     "roles/compute.securityAdmin",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
