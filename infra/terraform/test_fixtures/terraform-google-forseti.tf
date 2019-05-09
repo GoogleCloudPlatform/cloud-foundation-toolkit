@@ -1,8 +1,8 @@
 locals {
   forseti_org_required_roles = [
     "roles/resourcemanager.organizationAdmin",
-    "roles/iam.organizationRoleAdmin", // Permissions to manage/test real-time-enforcer roles
-    "roles/logging.configWriter", // Permissions to create stackdriver log exports
+    "roles/iam.organizationRoleAdmin",         // Permissions to manage/test real-time-enforcer roles
+    "roles/logging.configWriter",              // Permissions to create stackdriver log exports
   ]
 
   forseti_host_project_required_roles = [
@@ -12,7 +12,7 @@ locals {
 
   forseti_project_required_roles = [
     "roles/compute.instanceAdmin",
-    "roles/compute.networkViewer",
+    "roles/compute.networkAdmin",
     "roles/compute.securityAdmin",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
@@ -23,7 +23,7 @@ locals {
   ]
 
   forseti_enforcer_project_required_roles = [
-    "roles/storage.admin",        // Permissions to create GCS buckets that the enforcer will manage
+    "roles/storage.admin", // Permissions to create GCS buckets that the enforcer will manage
   ]
 
   forseti_required_apis = [
@@ -67,7 +67,7 @@ module "forseti-host-network-01" {
       subnet_name   = "us-central1-01"
       subnet_ip     = "10.128.0.0/20"
       subnet_region = "us-central1"
-    }
+    },
   ]
 
   secondary_ranges {
@@ -127,9 +127,9 @@ resource "google_organization_iam_member" "forseti" {
 
   count = "${length(local.forseti_org_required_roles)}"
 
-  org_id  = "${var.phoogle_org_id}"
-  role    = "${element(local.forseti_org_required_roles, count.index)}"
-  member  = "serviceAccount:${google_service_account.forseti.email}"
+  org_id = "${var.phoogle_org_id}"
+  role   = "${element(local.forseti_org_required_roles, count.index)}"
+  member = "serviceAccount:${google_service_account.forseti.email}"
 }
 
 // Grant the forseti service account the rights to create GCE instances within
@@ -154,8 +154,6 @@ resource "google_project_iam_member" "forseti" {
   role    = "${element(local.forseti_project_required_roles, count.index)}"
   member  = "serviceAccount:${google_service_account.forseti.email}"
 }
-
-
 
 // Define a project for the Forseti real time enforcer.
 //
