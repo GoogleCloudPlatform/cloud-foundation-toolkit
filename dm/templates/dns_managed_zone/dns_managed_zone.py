@@ -22,7 +22,7 @@ def generate_config(context):
     managed_zone_name = context.properties.get('zoneName')
     dnsname = context.properties['dnsName']
     managed_zone_description = context.properties['description']
-    name_servers = '$(ref.' + context.properties['zoneName'] + '.nameServers)'
+    name_servers = '$(ref.' + context.env['name'] + '.nameServers)'
 
     managed_zone = {
         'name': context.env['name'],

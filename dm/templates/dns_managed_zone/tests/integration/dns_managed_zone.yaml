@@ -6,7 +6,7 @@ imports:
     name: dns_managed_zone.py
 
 resources:
-  - name: ${CLOUDDNS_ZONE_NAME}
+  - name: ${CLOUDDNS_ZONE_NAME}-resource
     type: dns_managed_zone.py
     properties:
       zoneName: ${CLOUDDNS_ZONE_NAME}
