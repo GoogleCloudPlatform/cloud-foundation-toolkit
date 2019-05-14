@@ -89,7 +89,7 @@ changes.
 Always run the test from the root of the `cloud-foundation` project:
 
 ```shell
-./tests/integration/network.bats
+./templates/network/tests/integration/network.bats
  ✓ Creating deployment my-gcp-project-network from my-gcp-project-network.yaml
  ✓ Verifying resources were created in deployment my-gcp-project-network
  ✓ Verifying subnets were created in deployment my-gcp-project-network
