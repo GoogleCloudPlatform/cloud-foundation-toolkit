@@ -4,7 +4,7 @@ BUILD_TERRAFORM_VERSION := 0.11.13
 BUILD_CLOUD_SDK_VERSION := 239.0.0
 BUILD_PROVIDER_GOOGLE_VERSION := 1.19.1
 BUILD_PROVIDER_GSUITE_VERSION := 0.1.10
-BUILD_RUBY_VERSION := 2.5.3
+BUILD_RUBY_VERSION := 2.6.3
 # Make sure you update DOCKER_TAG_VERSION_TERRAFORM or DOCKER_TAG_VERSION_KITCHEN_TERRAFORM independently:
 # If you make changes to the Docker.terraform file, update DOCKER_TAG_VERSION_TERRAFORM
 # If you make changes to the Docker.kitchen-terraform file, update DOCKER_TAG_VERSION_KITCHEN_TERRAFORM
@@ -14,7 +14,7 @@ BUILD_RUBY_VERSION := 2.5.3
 # Fixing bugs or making trivial changes should be considered a patch release.
 
 DOCKER_TAG_VERSION_TERRAFORM := 1.0.0
-DOCKER_TAG_VERSION_KITCHEN_TERRAFORM := 1.1.0
+DOCKER_TAG_VERSION_KITCHEN_TERRAFORM := 1.2.0
 
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
