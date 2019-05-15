@@ -55,13 +55,25 @@ def generate_config(context):
     api_resources, api_names_list = activate_apis(context.properties)
     resources.extend(api_resources)
     resources.extend(create_service_accounts(context, project_id))
-    resources.extend(create_bucket(context.properties))
+
+    if (
+        context.properties.get('usageExportBucket', True) and
+        'api-compute.googleapis.com' in api_names_list
+    ):
+        resources.extend(create_bucket(context.properties))
+
     resources.extend(create_shared_vpc(project_id, context.properties))
 
-    if context.properties.get('removeDefaultVPC', True):
+    if (
+        context.properties.get('removeDefaultVPC', True) and
+        'api-compute.googleapis.com' in api_names_list
+    ):
         resources.extend(delete_default_network(api_names_list))
 
-    if context.properties.get('removeDefaultSA', True):
+    if (
+        context.properties.get('removeDefaultSA', True) and
+        'api-compute.googleapis.com' in api_names_list
+    ):
         resources.extend(delete_default_service_account(api_names_list))
 
     return {
@@ -99,16 +111,24 @@ def activate_apis(properties):
     concurrent_api_activation = properties.get('concurrentApiActivation')
     apis = properties.get('activateApis', [])
 
-    # Enable the storage-component API if the usage export bucket is enabled.
-    if (
-            properties.get('usageExportBucket') and
-            'storage-component.googleapis.com' not in apis
-    ):
-        apis.append('storage-component.googleapis.com')
+    if 'storage-component.googleapis.com' not in apis:
+        if (
+            # Enable the storage-component API if the usage export bucket is enabled.
+            properties.get('usageExportBucket')
+        ):
+            apis.append('storage-component.googleapis.com')
+
+    if 'compute.googleapis.com' not in apis:
+        if (
+            properties.get('sharedVPCHost') or
+            properties.get('sharedVPC') or
+            properties.get('sharedVPCSubnets')
+        ):
+            apis.append('compute.googleapis.com')
 
     resources = []
     api_names_list = ['billing']
-    for api in properties.get('activateApis', []):
+    for api in apis:
         depends_on = ['billing']
         # Serialize activation of all APIs by making apis[n]
         # depend on apis[n-1].
@@ -166,38 +186,35 @@ def create_shared_vpc_subnet_iam(context, dependencies, members_list):
     """ Grant the shared VPC subnet IAM permissions to Service Accounts. """
 
     resources = []
-    if (
-            context.properties.get('sharedVPCSubnets') and
-            context.properties.get('sharedVPC')
-    ):
-        # Grant the Service Accounts access to the shared VPC subnets.
-        # Note that, until there is a subnetwork IAM patch support,
-        # setIamPolicy will overwrite any existing policies on the subnet.
-        for i, subnet in enumerate(
-                context.properties.get('sharedVPCSubnets'), 1
-            ):
-            resources.append(
-                {
-                    'name': 'add-vpc-subnet-iam-policy-{}'.format(i),
-                    'type': 'gcp-types/compute-beta:compute.subnetworks.setIamPolicy',  # pylint: disable=line-too-long
-                    'metadata':
-                        {
-                            'dependsOn': dependencies,
-                        },
-                    'properties':
-                        {
-                            'name': subnet['subnetId'],
-                            'project': context.properties['sharedVPC'],
-                            'region': subnet['region'],
-                            'bindings': [
-                                {
-                                    'role': 'roles/compute.networkUser',
-                                    'members': members_list
-                                }
-                            ]
-                        }
-                }
-            )
+
+    # Grant the Service Accounts access to the shared VPC subnets.
+    # Note that, until there is a subnetwork IAM patch support,
+    # setIamPolicy will overwrite any existing policies on the subnet.
+    for i, subnet in enumerate(
+            context.properties.get('sharedVPCSubnets'), 1
+        ):
+        resources.append(
+            {
+                'name': 'add-vpc-subnet-iam-policy-{}'.format(i),
+                'type': 'gcp-types/compute-beta:compute.subnetworks.setIamPolicy',  # pylint: disable=line-too-long
+                'metadata':
+                    {
+                        'dependsOn': dependencies,
+                    },
+                'properties':
+                    {
+                        'name': subnet['subnetId'],
+                        'project': context.properties['sharedVPC'],
+                        'region': subnet['region'],
+                        'bindings': [
+                            {
+                                'role': 'roles/compute.networkUser',
+                                'members': members_list
+                            }
+                        ]
+                    }
+            }
+        )
 
     return resources
 
@@ -207,7 +224,7 @@ def create_service_accounts(context, project_id):
 
     resources = []
     network_list = ['serviceAccount:$(ref.project.projectNumber)@cloudservices.gserviceaccount.com'] # pylint: disable=line-too-long
-    service_account_dep = []
+    service_account_dep = ["api-compute.googleapis.com"]
     policies_to_add = []
 
     for service_account in context.properties['serviceAccounts']:
@@ -252,12 +269,21 @@ def create_service_accounts(context, project_id):
         for role in group['roles']:
             policies_to_add.append({'role': role, 'members': [group_name]})
 
+        # Check if the group needs shared VPC permissions. Put in
+        # a list to grant the shared VPC subnet IAM permissions.
+        if group.get('networkAccess'):
+            network_list.append(group_name)
+
     # Create the project IAM permissions.
     if policies_to_add:
         iam = create_project_iam(service_account_dep, policies_to_add)
         resources.extend(iam)
 
-    if not context.properties.get('sharedVPCHost'):
+    if (
+        not context.properties.get('sharedVPCHost') and
+        context.properties.get('sharedVPCSubnets') and
+        context.properties.get('sharedVPC')
+    ):
         # Create the shared VPC subnet IAM permissions.
         resources.extend(
             create_shared_vpc_subnet_iam(
@@ -274,43 +300,46 @@ def create_bucket(properties):
     """ Resources for the usage export bucket. """
 
     resources = []
-    if properties.get('usageExportBucket'):
-        bucket_name = '$(ref.project.projectId)-usage-export'
 
-        # Create the bucket.
-        resources.append(
-            {
-                'name': 'create-usage-export-bucket',
-                'type': 'gcp-types/storage-v1:buckets',
-                'properties':
-                    {
-                        'project': '$(ref.project.projectId)',
-                        'name': bucket_name
-                    },
-                'metadata':
-                    {
-                        'dependsOn': ['api-storage-component.googleapis.com']
-                    }
-            }
-        )
+    bucket_name = '$(ref.project.projectId)-usage-export'
 
-        # Set the project's usage export bucket.
-        resources.append(
-            {
-                'name':
-                    'set-usage-export-bucket',
-                'action':
-                    'gcp-types/compute-v1:compute.projects.setUsageExportBucket',  # pylint: disable=line-too-long
-                'properties':
-                    {
-                        'project': '$(ref.project.projectId)',
-                        'bucketName': 'gs://' + bucket_name
-                    },
-                'metadata': {
-                    'dependsOn': ['create-usage-export-bucket']
+    # Create the bucket.
+    resources.append(
+        {
+            'name': 'create-usage-export-bucket',
+            'type': 'gcp-types/storage-v1:buckets',
+            'properties':
+                {
+                    'project': '$(ref.project.projectId)',
+                    'name': bucket_name
+                },
+            'metadata':
+                {
+                    'dependsOn': ['api-storage-component.googleapis.com']
                 }
+        }
+    )
+
+    # Set the project's usage export bucket.
+    resources.append(
+        {
+            'name':
+                'set-usage-export-bucket',
+            'action':
+                'gcp-types/compute-v1:compute.projects.setUsageExportBucket',  # pylint: disable=line-too-long
+            'properties':
+                {
+                    'project': '$(ref.project.projectId)',
+                    'bucketName': 'gs://' + bucket_name
+                },
+            'metadata': {
+                'dependsOn': [
+                    'create-usage-export-bucket',
+                    'api-compute.googleapis.com',
+                ]
             }
-        )
+        }
+    )
 
     return resources
 
