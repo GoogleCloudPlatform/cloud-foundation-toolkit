@@ -3,11 +3,11 @@ resource "google_compute_global_address" "concourse" {
 }
 
 resource "google_dns_record_set" "concourse" {
-  name = "${var.concourse_subdomain[terraform.workspace]}.${data.google_dns_managed_zone.tips_cft_infra.dns_name}"
-  type = "A"
-  ttl = 300
+  name         = "${var.concourse_subdomain[terraform.workspace]}.${data.google_dns_managed_zone.tips_cft_infra.dns_name}"
+  type         = "A"
+  ttl          = 300
   managed_zone = "${data.google_dns_managed_zone.tips_cft_infra.name}"
-  rrdatas = ["${google_compute_global_address.concourse.address}"]
+  rrdatas      = ["${google_compute_global_address.concourse.address}"]
 }
 
 # Service Account for main project.
@@ -19,6 +19,7 @@ resource "google_service_account" "concourse_cft_team" {
 
 resource "google_project_iam_binding" "concourse_cft_team_storage" {
   role = "roles/storage.admin"
+
   members = [
     "serviceAccount:${google_service_account.concourse_cft_team.email}",
   ]
@@ -35,9 +36,11 @@ resource "kubernetes_secret" "concourse_cft_team_service_accounts" {
     namespace = "concourse-cft"
     name      = "sa"
   }
+
   data {
-    google  = "${base64decode(google_service_account_key.concourse_cft_team.private_key)}"
+    google = "${base64decode(google_service_account_key.concourse_cft_team.private_key)}"
   }
+
   depends_on = ["helm_release.concourse"]
 }
 
@@ -46,11 +49,11 @@ locals {
 }
 
 resource "helm_release" "concourse" {
-
   depends_on = ["null_resource.helm_init"]
 
   name      = "concourse"
   chart     = "stable/concourse"
+  version   = "3.0.0"
   namespace = "default"
   keyring   = ""
 
@@ -60,6 +63,8 @@ imageTag: 4.2.1
 concourse:
   web:
     externalUrl: https://${local.concourse_host}
+    localAuth:
+      enabled: true
     auth:
       oidc:
         enabled: true
@@ -94,5 +99,6 @@ secrets:
 postgresql:
   enabled: false
 EOF
+    ,
   ]
 }
