@@ -60,6 +60,8 @@ imageTag: 4.2.1
 concourse:
   web:
     externalUrl: https://${local.concourse_host}
+    localAuth:
+      enabled: true
     auth:
       oidc:
         enabled: true
