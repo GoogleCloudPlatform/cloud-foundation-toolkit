@@ -52,7 +52,7 @@ function setup() {
 }
 
 function teardown() {
-    Global teardown; this is executed once per test file
+    #Global teardown; this is executed once per test file
     if [[ "$BATS_TEST_NUMBER" -eq "${#BATS_TEST_NAMES[@]}" ]]; then
         gcloud compute networks subnets delete "test-subnet-${RAND}" \
             --project "${CLOUD_FOUNDATION_PROJECT_ID}" \

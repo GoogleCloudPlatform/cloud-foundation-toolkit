@@ -12,7 +12,6 @@ resources:
     properties:
       zone: us-central1-a
       diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
-      diskSizeGb: 100
       machineType: f1-micro
       diskType: pd-ssd
       network: default
