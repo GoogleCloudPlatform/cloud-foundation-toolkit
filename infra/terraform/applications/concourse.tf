@@ -46,11 +46,11 @@ locals {
 }
 
 resource "helm_release" "concourse" {
-
   depends_on = ["null_resource.helm_init"]
 
   name      = "concourse"
   chart     = "stable/concourse"
+  version   = "3.0.0"
   namespace = "default"
   keyring   = ""
 
