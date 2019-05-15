@@ -269,6 +269,11 @@ def create_service_accounts(context, project_id):
         for role in group['roles']:
             policies_to_add.append({'role': role, 'members': [group_name]})
 
+        # Check if the group needs shared VPC permissions. Put in
+        # a list to grant the shared VPC subnet IAM permissions.
+        if group.get('networkAccess'):
+            network_list.append(group_name)
+
     # Create the project IAM permissions.
     if policies_to_add:
         iam = create_project_iam(service_account_dep, policies_to_add)

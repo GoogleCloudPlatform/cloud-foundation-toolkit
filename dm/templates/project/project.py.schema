@@ -110,6 +110,13 @@ properties:
         items:
           type: string
           description: The list of roles to grant the Google group.
+      networkAccess:
+        type: boolean
+        description: |
+          If True, grants the shared VPC subnet IAM permissions
+          to the group for the subnet specified by the
+          `sharedVPCSubnets.subnetId` field.
+          This field must not be set if `sharedVPCHost` is True.
   concurrentApiActivation:
     type: boolean
     default: False
