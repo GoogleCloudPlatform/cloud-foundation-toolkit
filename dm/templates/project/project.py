@@ -64,10 +64,16 @@ def generate_config(context):
 
     resources.extend(create_shared_vpc(project_id, context.properties))
 
-    if context.properties.get('removeDefaultVPC', True):
+    if (
+        context.properties.get('removeDefaultVPC', True) and
+        'api-compute.googleapis.com' in api_names_list
+    ):
         resources.extend(delete_default_network(api_names_list))
 
-    if context.properties.get('removeDefaultSA', True):
+    if (
+        context.properties.get('removeDefaultSA', True) and
+        'api-compute.googleapis.com' in api_names_list
+    ):
         resources.extend(delete_default_service_account(api_names_list))
 
     return {
