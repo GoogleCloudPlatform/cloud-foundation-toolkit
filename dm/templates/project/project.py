@@ -186,38 +186,35 @@ def create_shared_vpc_subnet_iam(context, dependencies, members_list):
     """ Grant the shared VPC subnet IAM permissions to Service Accounts. """
 
     resources = []
-    if (
-            context.properties.get('sharedVPCSubnets') and
-            context.properties.get('sharedVPC')
-    ):
-        # Grant the Service Accounts access to the shared VPC subnets.
-        # Note that, until there is a subnetwork IAM patch support,
-        # setIamPolicy will overwrite any existing policies on the subnet.
-        for i, subnet in enumerate(
-                context.properties.get('sharedVPCSubnets'), 1
-            ):
-            resources.append(
-                {
-                    'name': 'add-vpc-subnet-iam-policy-{}'.format(i),
-                    'type': 'gcp-types/compute-beta:compute.subnetworks.setIamPolicy',  # pylint: disable=line-too-long
-                    'metadata':
-                        {
-                            'dependsOn': dependencies,
-                        },
-                    'properties':
-                        {
-                            'name': subnet['subnetId'],
-                            'project': context.properties['sharedVPC'],
-                            'region': subnet['region'],
-                            'bindings': [
-                                {
-                                    'role': 'roles/compute.networkUser',
-                                    'members': members_list
-                                }
-                            ]
-                        }
-                }
-            )
+
+    # Grant the Service Accounts access to the shared VPC subnets.
+    # Note that, until there is a subnetwork IAM patch support,
+    # setIamPolicy will overwrite any existing policies on the subnet.
+    for i, subnet in enumerate(
+            context.properties.get('sharedVPCSubnets'), 1
+        ):
+        resources.append(
+            {
+                'name': 'add-vpc-subnet-iam-policy-{}'.format(i),
+                'type': 'gcp-types/compute-beta:compute.subnetworks.setIamPolicy',  # pylint: disable=line-too-long
+                'metadata':
+                    {
+                        'dependsOn': dependencies,
+                    },
+                'properties':
+                    {
+                        'name': subnet['subnetId'],
+                        'project': context.properties['sharedVPC'],
+                        'region': subnet['region'],
+                        'bindings': [
+                            {
+                                'role': 'roles/compute.networkUser',
+                                'members': members_list
+                            }
+                        ]
+                    }
+            }
+        )
 
     return resources
 
@@ -227,7 +224,7 @@ def create_service_accounts(context, project_id):
 
     resources = []
     network_list = ['serviceAccount:$(ref.project.projectNumber)@cloudservices.gserviceaccount.com'] # pylint: disable=line-too-long
-    service_account_dep = []
+    service_account_dep = ["api-compute.googleapis.com"]
     policies_to_add = []
 
     for service_account in context.properties['serviceAccounts']:
@@ -277,7 +274,11 @@ def create_service_accounts(context, project_id):
         iam = create_project_iam(service_account_dep, policies_to_add)
         resources.extend(iam)
 
-    if not context.properties.get('sharedVPCHost'):
+    if (
+        not context.properties.get('sharedVPCHost') and
+        context.properties.get('sharedVPCSubnets') and
+        context.properties.get('sharedVPC')
+    ):
         # Create the shared VPC subnet IAM permissions.
         resources.extend(
             create_shared_vpc_subnet_iam(
