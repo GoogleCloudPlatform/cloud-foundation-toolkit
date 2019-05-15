@@ -55,7 +55,13 @@ def generate_config(context):
     api_resources, api_names_list = activate_apis(context.properties)
     resources.extend(api_resources)
     resources.extend(create_service_accounts(context, project_id))
-    resources.extend(create_bucket(context.properties))
+
+    if (
+        context.properties.get('usageExportBucket', True) and
+        'api-compute.googleapis.com' in api_names_list
+    ):
+        resources.extend(create_bucket(context.properties))
+
     resources.extend(create_shared_vpc(project_id, context.properties))
 
     if context.properties.get('removeDefaultVPC', True):
@@ -99,16 +105,16 @@ def activate_apis(properties):
     concurrent_api_activation = properties.get('concurrentApiActivation')
     apis = properties.get('activateApis', [])
 
-    # Enable the storage-component API if the usage export bucket is enabled.
-    if (
-            properties.get('usageExportBucket') and
-            'storage-component.googleapis.com' not in apis
-    ):
-        apis.append('storage-component.googleapis.com')
+    if 'storage-component.googleapis.com' not in apis:
+        if (
+            # Enable the storage-component API if the usage export bucket is enabled.
+            properties.get('usageExportBucket')
+        ):
+            apis.append('storage-component.googleapis.com')
 
     resources = []
     api_names_list = ['billing']
-    for api in properties.get('activateApis', []):
+    for api in apis:
         depends_on = ['billing']
         # Serialize activation of all APIs by making apis[n]
         # depend on apis[n-1].
@@ -274,43 +280,46 @@ def create_bucket(properties):
     """ Resources for the usage export bucket. """
 
     resources = []
-    if properties.get('usageExportBucket'):
-        bucket_name = '$(ref.project.projectId)-usage-export'
 
-        # Create the bucket.
-        resources.append(
-            {
-                'name': 'create-usage-export-bucket',
-                'type': 'gcp-types/storage-v1:buckets',
-                'properties':
-                    {
-                        'project': '$(ref.project.projectId)',
-                        'name': bucket_name
-                    },
-                'metadata':
-                    {
-                        'dependsOn': ['api-storage-component.googleapis.com']
-                    }
-            }
-        )
+    bucket_name = '$(ref.project.projectId)-usage-export'
 
-        # Set the project's usage export bucket.
-        resources.append(
-            {
-                'name':
-                    'set-usage-export-bucket',
-                'action':
-                    'gcp-types/compute-v1:compute.projects.setUsageExportBucket',  # pylint: disable=line-too-long
-                'properties':
-                    {
-                        'project': '$(ref.project.projectId)',
-                        'bucketName': 'gs://' + bucket_name
-                    },
-                'metadata': {
-                    'dependsOn': ['create-usage-export-bucket']
+    # Create the bucket.
+    resources.append(
+        {
+            'name': 'create-usage-export-bucket',
+            'type': 'gcp-types/storage-v1:buckets',
+            'properties':
+                {
+                    'project': '$(ref.project.projectId)',
+                    'name': bucket_name
+                },
+            'metadata':
+                {
+                    'dependsOn': ['api-storage-component.googleapis.com']
                 }
+        }
+    )
+
+    # Set the project's usage export bucket.
+    resources.append(
+        {
+            'name':
+                'set-usage-export-bucket',
+            'action':
+                'gcp-types/compute-v1:compute.projects.setUsageExportBucket',  # pylint: disable=line-too-long
+            'properties':
+                {
+                    'project': '$(ref.project.projectId)',
+                    'bucketName': 'gs://' + bucket_name
+                },
+            'metadata': {
+                'dependsOn': [
+                    'create-usage-export-bucket',
+                    'api-compute.googleapis.com',
+                ]
             }
-        )
+        }
+    )
 
     return resources
 
