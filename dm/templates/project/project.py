@@ -112,6 +112,14 @@ def activate_apis(properties):
         ):
             apis.append('storage-component.googleapis.com')
 
+    if 'compute.googleapis.com' not in apis:
+        if (
+            properties.get('sharedVPCHost') or
+            properties.get('sharedVPC') or
+            properties.get('sharedVPCSubnets')
+        ):
+            apis.append('compute.googleapis.com')
+
     resources = []
     api_names_list = ['billing']
     for api in apis:
