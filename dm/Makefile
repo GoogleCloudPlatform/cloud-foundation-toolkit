@@ -28,7 +28,10 @@ cft-clean-venv:
 	rm -rf venv
 
 cft-test:
-	${PYTHON} -m tox
+	${PYTHON} -m tox -- -x tests/unit
+
+cft-test-templates:
+	${PYTHON} -m tox -- -x tests/templates
 
 cft-test-venv:
 	${PYTHON} -m pytest -v
