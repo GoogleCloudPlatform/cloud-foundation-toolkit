@@ -102,7 +102,7 @@ jobs:
             - name: pull-request
               path: terraform-google-jenkins
           run:
-            path: /bin/bash
+            path: make
             args:
               - ./test/run_ci.sh
             dir: terraform-google-jenkins
