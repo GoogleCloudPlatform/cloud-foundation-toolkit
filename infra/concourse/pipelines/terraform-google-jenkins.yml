@@ -100,8 +100,9 @@ jobs:
             - name: pull-request
               path: terraform-google-jenkins
           run:
-            path: make
-            args: ['-s', 'test_integration']
+            path: /bin/bash
+            args:
+              - ./test/run_ci.sh
             dir: terraform-google-jenkins
           params:
             PROJECT_ID: ((jenkins.phoogle_project_id))
