@@ -104,7 +104,8 @@ jobs:
           run:
             path: make
             args:
-              - ./test/run_ci.sh
+              - '-s'
+              - test_integration
             dir: terraform-google-jenkins
           params:
             PROJECT_ID: ((jenkins.phoogle_project_id))
