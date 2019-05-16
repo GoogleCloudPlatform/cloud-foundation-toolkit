@@ -15,7 +15,8 @@ resources:
       name: it-${RAND}
       instanceDescription: Instance description
       templateDescription: Template description
-      network: $(ref.test-network-${RAND}.selfLink)
+      networks:
+        - name: $(ref.test-network-${RAND}.selfLink)
       diskImage: ${IMAGE}
       machineType: f1-micro
       canIpForward: true
