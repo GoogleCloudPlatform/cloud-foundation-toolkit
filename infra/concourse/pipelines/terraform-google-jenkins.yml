@@ -54,7 +54,9 @@ jobs:
             - name: lint-test-image
           run:
             path: make
-            args: ['-s']
+            args:
+              - '-s'
+              - check
             dir: terraform-google-jenkins
     on_success:
       put: notify-lint-test-success
