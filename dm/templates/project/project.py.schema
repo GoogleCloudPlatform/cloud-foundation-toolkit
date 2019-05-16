@@ -27,6 +27,80 @@ imports:
 required:
   - billingAccountId
 
+oneOf:
+  - required:
+      - sharedVPCHost
+    not:
+      required:
+        - sharedVPC
+        - sharedVPCSubnets
+  - required:
+      - sharedVPC
+    not:
+      required:
+        - sharedVPCHost
+  - allOf:
+    - not:
+        required:
+          - sharedVPC
+    - not:
+        required:
+          - sharedVPCHost
+    - not:
+        required:
+          - sharedVPCSubnets
+
+dependencies:
+  sharedVPCSubnets:
+    required:
+      - sharedVPC
+
+allOf:
+  - $ref: '#/definitions/networkAccess-requires-sharedVPCSubnets'
+
+definitions:
+  networkAccess-requires-sharedVPCSubnets:
+    oneOf:
+      - $ref: '#/definitions/no-sharedVPCSubnets'
+      - $ref: '#/definitions/sharedVPCSubnets'
+  no-sharedVPCSubnets:
+    allOf:
+      - not:
+          required:
+            - sharedVPCSubnets
+      - properties:
+          serviceAccounts:
+            items:
+              properties:
+                networkAccess:
+                  enum:
+                    - False
+          groups:
+            items:
+              properties:
+                networkAccess:
+                  enum:
+                    - False
+  sharedVPCSubnets:
+    allOf:
+      - required:
+          - sharedVPCSubnets
+      - properties:
+          serviceAccounts:
+            items:
+              properties:
+                networkAccess:
+                  enum:
+                    - True
+                    - False
+          groups:
+            items:
+              properties:
+                networkAccess:
+                  enum:
+                    - True
+                    - False
+
 properties:
   name:
     type: string
@@ -63,6 +137,7 @@ properties:
       For example, 00E12A-0AB8B2-078CE8
   activateApis:
     type: array
+    uniqueItems: True
     items:
       type: string
     description: The list of APIs to enable for each project.
@@ -75,48 +150,64 @@ properties:
       (set to True).
   serviceAccounts:
     type: array
+    uniqueItems: True
     default: []
     items:
-      accountId:
-        type: string
-        pattern: ^[a-z]([-a-z0-9]{0,61}[a-z0-9])?$
-        description: The name used to create the service account.
-      displayName:
-        type: string
-        description: |
-          The name to display for the service account. If not set, `accountId`
-          is used as the display name.
-      roles:
-        type: array
-        items:
+      type: object
+      required:
+        - accountId
+        - roles
+      properties:
+        accountId:
           type: string
-          description: The list of roles to grant the service account.
-      networkAccess:
-        type: boolean
-        description: |
-          If True, grants the shared VPC subnet IAM permissions
-          to the service account for the subnet specified by the
-          `sharedVPCSubnets.subnetId` field.
-          This field must not be set if `sharedVPCHost` is True.
+          pattern: ^[a-z]([-a-z0-9]{0,61}[a-z0-9])?$
+          description: The name used to create the service account.
+        displayName:
+          type: string
+          description: |
+            The name to display for the service account. If not set, `accountId`
+            is used as the display name.
+        roles:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            description: The list of roles to grant the service account.
+        networkAccess:
+          type: boolean
+          default: False
+          description: |
+            If True, grants the shared VPC subnet IAM permissions
+            to the service account for the subnet specified by the
+            `sharedVPCSubnets.subnetId` field.
+            This field must not be set if `sharedVPCHost` is True.
   groups:
     type: array
+    uniqueItems: True
     default: []
     items:
-      name:
-        type: string
-        description: The name of the Google group.
-      roles:
-        type: array
-        items:
+      type: object
+      required:
+        - name
+        - roles
+      properties:
+        name:
           type: string
-          description: The list of roles to grant the Google group.
-      networkAccess:
-        type: boolean
-        description: |
-          If True, grants the shared VPC subnet IAM permissions
-          to the group for the subnet specified by the
-          `sharedVPCSubnets.subnetId` field.
-          This field must not be set if `sharedVPCHost` is True.
+          description: The name of the Google group.
+        roles:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            description: The list of roles to grant the Google group.
+        networkAccess:
+          type: boolean
+          default: False
+          description: |
+            If True, grants the shared VPC subnet IAM permissions
+            to the group for the subnet specified by the
+            `sharedVPCSubnets.subnetId` field.
+            This field must not be set if `sharedVPCHost` is True.
   concurrentApiActivation:
     type: boolean
     default: False
@@ -134,8 +225,10 @@ properties:
       in. The `sharedVPCHost` property cannot be set if this property is set.
   sharedVPCSubnets:
     type: array
+    uniqueItems: True
     description: |
       The IDs of specific shared VPC subnets to share in the new project.
+    minItems: 1
     items:
       subnetId:
         type: string
