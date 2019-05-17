@@ -18,9 +18,31 @@ resources:
       diskType: pd-ssd
       canIpForward: true
       networks:
-        - name: test-network-${RAND}
-          subnetwork: regions/us-central1/subnetworks/test-subnet-${RAND}
+        - name: $(ref.test-network-0-${RAND}.selfLink)
+          subnetwork: $(ref.test-subnetwork-0-${RAND}.selfLink)
+        - name: $(ref.test-network-1-${RAND}.selfLink)
+          subnetwork: $(ref.test-subnetwork-1-${RAND}.selfLink)
       metadata:
         items:
           - key: startup-script
             value: sudo apt-get update && sudo apt-get install -y nginx
+  - name: test-network-0-${RAND}
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: false
+  - name: test-network-1-${RAND}
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: false
+  - name: test-subnetwork-0-${RAND}
+    type: compute.v1.subnetwork
+    properties:
+      network: $(ref.test-network-0-${RAND}.selfLink)
+      ipCidrRange: 10.0.1.0/24
+      region: us-central1
+  - name: test-subnetwork-1-${RAND}
+    type: compute.v1.subnetwork
+    properties:
+      network: $(ref.test-network-1-${RAND}.selfLink)
+      ipCidrRange: 10.0.2.0/24
+      region: us-central1
