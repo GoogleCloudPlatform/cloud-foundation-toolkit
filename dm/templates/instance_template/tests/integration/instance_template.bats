@@ -105,10 +105,21 @@ function teardown() {
     [[ "$output" =~ "value: unitTest" ]]
 }
 
-@test "Verifying instance template network properties" {
-    NET="https://www.googleapis.com/compute/v1/projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/networks/test-network-${RAND}"
+@test "Verifying instance template first network properties" {
+    NET="https://www.googleapis.com/compute/v1/projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/networks/test-network-0-${RAND}"
     run gcloud compute instance-templates describe it-${RAND} \
         --format "yaml(properties.networkInterfaces[0])" \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "name: External NAT" ]]
+    [[ "$output" =~ "type: ONE_TO_ONE_NAT" ]]
+    [[ "$output" =~ "network: ${NET}" ]]
+}
+
+@test "Verifying instance template second network properties" {
+    NET="https://www.googleapis.com/compute/v1/projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/networks/test-network-1-${RAND}"
+    run gcloud compute instance-templates describe it-${RAND} \
+        --format "yaml(properties.networkInterfaces[1])" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "name: External NAT" ]]

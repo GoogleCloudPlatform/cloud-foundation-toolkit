@@ -37,15 +37,6 @@ function setup() {
     # Global setup; this is executed once per test file.
     if [ ${BATS_TEST_NUMBER} -eq 1 ]; then
         create_config
-        gcloud compute networks create "test-network-${RAND}" \
-            --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
-            --description "integration test ${RAND}" \
-            --subnet-mode custom
-        gcloud compute networks subnets create "test-subnet-${RAND}" \
-            --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
-            --network "test-network-${RAND}" \
-            --range 10.0.1.0/24 \
-            --region us-central1
     fi
 
   # Per-test setup steps.
@@ -54,11 +45,7 @@ function setup() {
 function teardown() {
     #Global teardown; this is executed once per test file
     if [[ "$BATS_TEST_NUMBER" -eq "${#BATS_TEST_NAMES[@]}" ]]; then
-        gcloud compute networks subnets delete "test-subnet-${RAND}" \
-            --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
-            --region us-central1 -q
-        gcloud compute networks delete "test-network-${RAND}" \
-            --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
+        rm -f "${RANDOM_FILE}"
         delete_config
     fi
 
@@ -77,11 +64,18 @@ function teardown() {
     [[ "$output" =~ "test-instance-${RAND}" ]]
 }
 
-@test "Verifying that the Compute Instance was connected to a custom network in deployment ${DEPLOYMENT_NAME}" {
+@test "Verifying that the Compute Instance was connected to the first custom network in deployment ${DEPLOYMENT_NAME}" {
     run gcloud compute instances describe test-instance-${RAND} --zone "us-central1-a" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 
-    [[ "$output" =~ "test-network-${RAND}" ]]
+    [[ "$output" =~ "test-network-0-${RAND}" ]]
+}
+
+@test "Verifying that the Compute Instance was connected to the second custom network in deployment ${DEPLOYMENT_NAME}" {
+    run gcloud compute instances describe test-instance-${RAND} --zone "us-central1-a" \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+
+    [[ "$output" =~ "test-network-1-${RAND}" ]]
 }
 
 @test "Verifying that the Compute Instance has the canIpForward property set in deployment ${DEPLOYMENT_NAME}" {
