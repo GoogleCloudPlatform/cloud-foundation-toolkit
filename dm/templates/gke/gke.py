@@ -116,9 +116,11 @@ def generate_config(context):
         'clientKey',
         'currentMasterVersion',
         'currentNodeVersion',
-        'nodeIpv4CidrSize',
         'servicesIpv4Cidr'
     ]
+
+    if not propc.get('ipAllocationPolicy', {}).get('useIpAliases', False):
+        output_props.append('nodeIpv4CidrSize')
 
     for outprop in output_props:
         output_obj = {}
