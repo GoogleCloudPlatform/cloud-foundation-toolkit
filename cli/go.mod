@@ -1,4 +1,4 @@
-module github.com/kopachevsky/cloud-foundation-toolkit/cli
+module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
 go 1.12
 
