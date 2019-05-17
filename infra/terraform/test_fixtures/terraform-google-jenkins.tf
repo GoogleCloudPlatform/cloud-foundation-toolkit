@@ -1,6 +1,5 @@
 locals {
   jenkins_required_roles = [
-    "roles/editor",
     "roles/compute.admin",
     "roles/compute.networkAdmin",
     "roles/iam.serviceAccountUser",
