@@ -16,10 +16,13 @@ func ExecuteCommandC(root *cobra.Command, args ...string) (c *cobra.Command, out
 	buf := new(bytes.Buffer)
 	setOutput(root, buf)
 
+	// reset command state after prev test execution
+	root.SetArgs([]string{})
+	root.ResetFlags()
+
+	// set child command and/or command line args
 	if args != nil {
 		root.SetArgs(args)
-	} else {
-		root.SetArgs([]string{})
 	}
 
 	c, err = root.ExecuteC()
