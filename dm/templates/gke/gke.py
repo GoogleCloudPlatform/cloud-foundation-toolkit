@@ -13,6 +13,7 @@
 # limitations under the License.
 """ This template creates a Google Kubernetes Engine cluster. """
 
+from packaging import version
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
@@ -82,7 +83,7 @@ def generate_config(context):
         'legacyAbac',
         'networkPolicy',
         'ipAllocationPolicy',
-        'masterAuthorizedNetworksConfig'
+        'masterAuthorizedNetworksConfig',
         'maintenancePolicy',
         'podSecurityPolicyConfig',
         'privateCluster',
@@ -112,13 +113,18 @@ def generate_config(context):
         'endpoint',
         'instanceGroupUrls',
         'clusterCaCertificate',
-        'clientCertificate',
-        'clientKey',
         'currentMasterVersion',
         'currentNodeVersion',
         'servicesIpv4Cidr'
     ]
 
+    if (
+        version.parse(propc.get('initialClusterVersion').split('-')[0]) < version.parse("1.12") or
+        propc.get('masterAuth', {}).get('clientCertificateConfig', False)
+    ):
+        output_props.append('clientCertificate')
+        output_props.append('clientKey')
+        
     if not propc.get('ipAllocationPolicy', {}).get('useIpAliases', False):
         output_props.append('nodeIpv4CidrSize')
 
