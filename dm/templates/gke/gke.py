@@ -115,7 +115,6 @@ def generate_config(context):
         'clusterCaCertificate',
         'currentMasterVersion',
         'currentNodeVersion',
-        'nodeIpv4CidrSize',
         'servicesIpv4Cidr'
     ]
 
@@ -125,6 +124,9 @@ def generate_config(context):
     ):
         output_props.append('clientCertificate')
         output_props.append('clientKey')
+        
+    if not propc.get('ipAllocationPolicy', {}).get('useIpAliases', False):
+        output_props.append('nodeIpv4CidrSize')
 
     for outprop in output_props:
         output_obj = {}

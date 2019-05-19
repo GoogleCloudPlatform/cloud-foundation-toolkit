@@ -101,6 +101,17 @@ Always run the test from the root of the `cloud-foundation` project:
 For the sake of consistency, keep the test files similar, as much as possible,
 to the *example configs* available in each template's `examples/` directory.
 
+#### Unit Tests
+
+
+This testing mode is typically used when running tests from a CI tool.
+
+Use `tox` to create the necessary virtual environment and run tests:
+
+```shell
+make cft-test-templates
+```
+
 ### Temporary Files and Fixtures
 
 When running tests, temporary Deployment Manager configs and fixtures
