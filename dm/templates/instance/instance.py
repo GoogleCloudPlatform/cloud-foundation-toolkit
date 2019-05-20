@@ -73,14 +73,14 @@ def get_network_interfaces(properties):
                 'type': 'ONE_TO_ONE_NAT'
             }
 
-            if 'natIP' in network:
+            if network.get('natIP'):
                 access_configs['natIP'] = network['natIP']
 
             network_interface['accessConfigs'] = [access_configs]
 
         netif_optional_props = ['subnetwork', 'networkIP']
         for prop in netif_optional_props:
-            if prop in network:
+            if network.get(prop):
                 network_interface[prop] = network[prop]
         network_interfaces.append(network_interface)
 

@@ -156,6 +156,7 @@ properties:
       See https://cloud.google.com/compute/docs/machine-types for details.
   canIpForward:
     type: boolean
+    default: False
     description: |
       If "True". allows the instance to send and receive packets with non-matching destination
       and source IPs.
@@ -168,6 +169,7 @@ properties:
       - local-ssd
   diskImage:
     type: string
+    default: None
     description: |
       The source image for the disk. To create the disk with one of the
       public operating system images, specify the image by its family name.
@@ -195,6 +197,7 @@ properties:
         description: A collection of metadata key-value pairs.
         items:
           type: object
+          additionalProperties: false
           properties:
             key:
               type: string
@@ -207,6 +210,7 @@ properties:
       this instance. Only one service account per VM instance is supported.
     items:
       type: object
+      additionalProperties: false
       properties:
         email:
           type: string
@@ -247,5 +251,4 @@ documentation:
   - templates/instance/README.md
 
 examples:
-  - templates/instance/examples/instance_1_nic.yaml
-  - templates/instance/examples/instance_2_nics.yaml
+  - templates/instance/examples/instance.yaml
