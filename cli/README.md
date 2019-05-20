@@ -22,7 +22,7 @@ Google Cloud Formation Toolkit CLI
 ```bash
 Usage:
   cft [flags]
-  cft [command]
+  cft [command] [flags]
 
 Available Commands:
   help        Help about any command

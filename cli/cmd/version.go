@@ -14,7 +14,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print version information",
 	Long: `Print version information
-			example: CFT CLI version v1.0.0`,
+example: CFT CLI version v1.0.0`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Println("CFT CLI version", Version)
