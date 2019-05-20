@@ -22,7 +22,6 @@ resource "google_project_services" "jenkins" {
 
   services = [
     "compute.googleapis.com",
-    "oslogin.googleapis.com",
     "storage-api.googleapis.com",
   ]
 }
