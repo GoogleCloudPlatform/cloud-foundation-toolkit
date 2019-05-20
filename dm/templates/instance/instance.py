@@ -49,7 +49,15 @@ def get_network_interfaces(properties):
     """
     network_interfaces = []
 
-    for network in properties.get('networks'):
+    networks = properties.get('networks', [{
+        "name": properties.get('network'),
+        "hasExternalIp": properties.get('hasExternalIp'),
+        "natIP": properties.get('natIP'),
+        "subnetwork": properties.get('subnetwork'),
+        "networkIP": properties.get('networkIP'),
+    }])
+
+    for network in networks:
         if not '.' in network['name'] and not '/' in network['name']:
             network_name = 'global/networks/{}'.format(network['name'])
         else:
