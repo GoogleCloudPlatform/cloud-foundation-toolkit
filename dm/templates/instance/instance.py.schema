@@ -194,4 +194,5 @@ documentation:
   - templates/instance/README.md
 
 examples:
-  - templates/instance/examples/instance.yaml
+  - templates/instance/examples/instance_1_nic.yaml
+  - templates/instance/examples/instance_2_nics.yaml
