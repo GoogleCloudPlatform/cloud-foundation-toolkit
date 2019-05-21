@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # need to change this to VERSION=`git describe --tags`
-VERSION=v1.0.0
+VERSION=v0.1.0
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 
