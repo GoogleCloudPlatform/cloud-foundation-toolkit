@@ -36,14 +36,13 @@ locals {
 // Define a host project for the Forseti shared VPC test suite.
 module "forseti-host-project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 2.0"
+  version = "~> 2.0.0"
 
   name              = "ci-forseti-host"
   random_project_id = "true"
   org_id            = "${var.phoogle_org_id}"
   folder_id         = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account   = "${module.variables.phoogle_billing_account}"
-  credentials_path  = "${var.phoogle_credentials_path}"
 
   activate_apis = "${local.forseti_required_apis}"
 
@@ -162,14 +161,13 @@ resource "google_project_iam_member" "forseti" {
 // enforcer manages additional resources.
 module "forseti-enforcer-project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 2.0"
+  version = "~> 2.0.0"
 
   name              = "ci-forseti-enforcer"
   random_project_id = "true"
   org_id            = "${var.phoogle_org_id}"
   folder_id         = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account   = "${module.variables.phoogle_billing_account}"
-  credentials_path  = "${var.phoogle_credentials_path}"
 
   activate_apis = [
     "compute.googleapis.com",

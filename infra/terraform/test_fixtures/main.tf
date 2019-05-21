@@ -12,13 +12,11 @@ provider "google-beta" {
 
 provider "google" {
   alias       = "phoogle"
-  credentials = "${var.phoogle_credentials_path}"
   version     = "~> 1.20"
 }
 
 provider "google-beta" {
   alias       = "phoogle"
-  credentials = "${var.phoogle_credentials_path}"
   version     = "~> 1.20"
 }
 
