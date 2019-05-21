@@ -9,8 +9,8 @@ locals {
 resource "google_project" "jenkins" {
   provider = "google.phoogle"
 
-  name            = "ci-jenkins"
-  project_id      = "ci-jenkins"
+  name            = "phoogle-ci-jenkins-project"
+  project_id      = "phoogle-ci-jenkins-project"
   folder_id       = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account = "${module.variables.phoogle_billing_account}"
 }
@@ -30,8 +30,8 @@ resource "google_service_account" "jenkins" {
   provider = "google.phoogle"
 
   project      = "${google_project.jenkins.id}"
-  account_id   = "ci-jenkins"
-  display_name = "ci-jenkins"
+  account_id   = "phoogle-ci-jenkins-id"
+  display_name = "phoogle-ci-jenkins-id"
 }
 
 resource "google_project_iam_member" "jenkins" {
@@ -84,7 +84,7 @@ data "template_file" "jenkins_github_webhook_url" {
 resource "kubernetes_secret" "jenkins" {
   metadata {
     namespace = "concourse-cft"
-    name      = "jenkins"
+    name      = "phoogle-jenkins"
   }
 
   data {
