@@ -1,0 +1,37 @@
+# Test of the Instance Template template.
+#
+# Variables:
+#   RAND: a random string used by the testing suite
+#   IMAGE: a URL to the base disk image provided by the testing suite
+
+imports:
+  - path: templates/instance_template/instance_template.py
+    name: instance_template.py
+
+resources:
+  - name: instance-template-${RAND}
+    type: instance_template.py
+    properties:
+      name: it-${RAND}
+      instanceDescription: Instance description
+      templateDescription: Template description
+      network: $(ref.test-network-${RAND}.selfLink)
+      diskImage: ${IMAGE}
+      machineType: f1-micro
+      canIpForward: true
+      diskType: pd-ssd
+      diskSizeGb: 50
+      tags:
+        items:
+          - ftp
+          - https
+      metadata:
+        items:
+          - key: createdBy
+            value: unitTest
+      labels:
+        name: wrench
+  - name: test-network-${RAND}
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: true

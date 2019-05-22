@@ -25,7 +25,69 @@ required:
   - zone
   - machineType
   - diskImage
-  - network
+
+oneOf:
+  - allOf:
+    - required:
+        - networks
+    - properties:
+        networks:
+          minItems: 1
+    - not:
+        required:
+          - network
+    - not:
+        required:
+          - natIP
+    - not:
+        required:
+          - subnetwork
+    - not:
+        required:
+          - networkIP
+  - allOf:
+    - required:
+        - network
+    - not:
+       required:
+         - networks
+
+additionalProperties: false
+
+definitions:
+    hasExternalIp:
+      type: boolean
+      default: true
+      description: |
+        Defines wether the instance will use an external IP from a shared
+        ephemeral IP address pool. If this is set to false, the instance
+        will not have an external IP.
+    natIP:
+      type: string
+      description: |
+        An external IP address associated with this instance. Specify an unused
+        static external IP address available to the project or leave this field
+        undefined to use an IP from a shared ephemeral IP address pool. If you
+        specify a static external IP address, it must live in the same region
+        as the zone of the instance.
+        If hasExternalIp is false this field is ignored.
+    subnetwork:
+      type: string
+      description: |
+        The URL of the Subnetwork resource for this instance. If the network
+        resource is in legacy mode, do not provide this property. If the network
+        is in auto subnet mode, providing the subnetwork is optional. If the
+        network is in custom subnet mode, then this field should be specified.
+        If you specify this property, you can specify the subnetwork as a full
+        or partial URL. For example, the following are all valid URLs:
+          - https://www.googleapis.com/compute/v1/projects/project/regions/region/subnetworks/subnetwork
+          - regions/region/subnetworks/subnetwork
+    networkIP:
+      type: string
+      description: |
+        An IPv4 internal network address to assign to the instance for this
+        network interface. If not specified by the user, an unused internal IP
+        is assigned by the system.
 
 properties:
   name:
@@ -36,42 +98,41 @@ properties:
     description: |
       Name of the network the instance will be connected to;
       e.g., 'my-custom-network' or 'default'.
+  hasExternalIp:
+    $ref: '#/definitions/hasExternalIp'
+  natIP:
+    $ref: '#/definitions/natIP'
+  subnetwork:
+    $ref: '#/definitions/subnetwork'
+  networkIP:
+    $ref: '#/definitions/networkIP'
+  networks:
+    type: array
+    description: |
+      Networks the instance will be connected to;
+      e.g., 'my-custom-network' or 'default'.
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: |
+            Name of the network the instance will be connected to;
+            e.g., 'my-custom-network' or 'default'.
+        hasExternalIp:
+          $ref: '#/definitions/hasExternalIp'
+        natIP:
+          $ref: '#/definitions/natIP'
+        subnetwork:
+          $ref: '#/definitions/subnetwork'
+        networkIP:
+          $ref: '#/definitions/networkIP'
   zone:
     type: string
     description: Availability zone. E.g. 'us-central1-a'
-  hasExternalIp:
-    type: boolean
-    default: true
-    description: |
-      Defines wether the instance will use an external IP from a shared
-      ephemeral IP address pool. If this is set to false, the instance
-      will not have an external IP.
-  natIP:
-    type: string
-    description: |
-      An external IP address associated with this instance. Specify an unused
-      static external IP address available to the project or leave this field
-      undefined to use an IP from a shared ephemeral IP address pool. If you
-      specify a static external IP address, it must live in the same region
-      as the zone of the instance.
-      If hasExternalIp is false this field is ignored.
-  subnetwork:
-    type: string
-    description: |
-      The URL of the Subnetwork resource for this instance. If the network
-      resource is in legacy mode, do not provide this property. If the network
-      is in auto subnet mode, providing the subnetwork is optional. If the
-      network is in custom subnet mode, then this field should be specified.
-      If you specify this property, you can specify the subnetwork as a full
-      or partial URL. For example, the following are all valid URLs:
-        - https://www.googleapis.com/compute/v1/projects/project/regions/region/subnetworks/subnetwork
-        - regions/region/subnetworks/subnetwork
-  networkIP:
-    type: string
-    description: |
-      An IPv4 internal network address to assign to the instance for this
-      network interface. If not specified by the user, an unused internal IP
-      is assigned by the system.
   tags:
     type: object
     description: |
@@ -95,6 +156,7 @@ properties:
       See https://cloud.google.com/compute/docs/machine-types for details.
   canIpForward:
     type: boolean
+    default: False
     description: |
       If "True". allows the instance to send and receive packets with non-matching destination
       and source IPs.
@@ -107,6 +169,7 @@ properties:
       - local-ssd
   diskImage:
     type: string
+    default: None
     description: |
       The source image for the disk. To create the disk with one of the
       public operating system images, specify the image by its family name.
@@ -134,6 +197,7 @@ properties:
         description: A collection of metadata key-value pairs.
         items:
           type: object
+          additionalProperties: false
           properties:
             key:
               type: string
@@ -146,6 +210,7 @@ properties:
       this instance. Only one service account per VM instance is supported.
     items:
       type: object
+      additionalProperties: false
       properties:
         email:
           type: string
@@ -162,12 +227,19 @@ properties:
 
 outputs:
   properties:
-    - externalIp:
-        type: string
-        description: Reference to the external ip address of the new instance
-    - internalIp:
-        type: string
-        description: Reference to tbe internal ip address of the new instance
+    - networkInterfaces:
+      type: array
+      description: |
+        A list of network interfaces of the new instance.
+      items:
+        type: object
+        properties:
+          externalIp:
+            type: string
+            description: Reference to the external ip address of the new instance
+          internalIp:
+            type: string
+            description: Reference to tbe internal ip address of the new instance
     - name:
         type: string
         description: A name of the instance resource
@@ -180,4 +252,3 @@ documentation:
 
 examples:
   - templates/instance/examples/instance.yaml
-
