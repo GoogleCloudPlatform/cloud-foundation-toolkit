@@ -24,6 +24,8 @@ info:
 imports:
   - path: subnetwork.py
 
+additionalProperties: false
+
 # required:
 #  - name
 

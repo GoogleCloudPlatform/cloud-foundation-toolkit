@@ -17,6 +17,8 @@ info:
   author: Sourced Group Inc.
   description: Creates an internal, external, or global IP address.
 
+additionalProperties: false
+
 required:
   - name
   - ipType

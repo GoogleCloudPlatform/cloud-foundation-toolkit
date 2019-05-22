@@ -23,6 +23,8 @@ info:
 imports:
   - path: bigquery_dataset.py
 
+additionalProperties: false
+
 required:
   - name
 

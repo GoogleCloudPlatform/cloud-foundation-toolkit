@@ -19,6 +19,8 @@ info:
     Creates a backend service. For details, visit
     https://cloud.google.com/load-balancing/docs/backend-service.
 
+additionalProperties: false
+
 properties:
   name:
     type: string

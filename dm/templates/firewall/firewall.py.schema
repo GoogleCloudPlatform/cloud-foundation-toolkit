@@ -17,6 +17,8 @@ info:
   author: Sourced Group Inc.
   description: Deploys firewall rules
 
+additionalProperties: false
+
 required:
   - rules
 

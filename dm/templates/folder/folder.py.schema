@@ -21,6 +21,8 @@ info:
 imports:
   - path: folder.py
 
+additionalProperties: false
+
 required:
   - folders
 

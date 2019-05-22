@@ -24,6 +24,8 @@ info:
 imports:
   - path: dns_records.py
 
+additionalProperties: false
+
 required:
   - zoneName
   - dnsName

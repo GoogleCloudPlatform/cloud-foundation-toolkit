@@ -24,6 +24,8 @@ imports:
   - path: ../instance_template/instance_template.py
     name: instance_template.py
 
+additionalProperties: false
+
 required:
   - targetSize
   - instanceTemplate

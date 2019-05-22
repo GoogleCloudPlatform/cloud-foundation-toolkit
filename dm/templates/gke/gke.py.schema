@@ -23,6 +23,8 @@ info:
 imports:
   - path: gke.py
 
+additionalProperties: false
+
 required:
   - cluster
 

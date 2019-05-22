@@ -20,6 +20,8 @@ info:
 imports:
   - path: org_policy.py
 
+additionalProperties: false
+
 required:
   - projectId
   - policies

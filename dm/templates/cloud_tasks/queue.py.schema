@@ -23,6 +23,8 @@ info:
 imports:
   - path: queue.py
 
+additionalProperties: false
+
 required:
   - name
 

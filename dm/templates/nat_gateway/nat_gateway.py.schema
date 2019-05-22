@@ -35,6 +35,8 @@ imports:
   - path: ../firewall/firewall.py
     name: firewall.py
 
+additionalProperties: false
+
 required:
   - network
   - subnetwork
