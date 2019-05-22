@@ -13,6 +13,7 @@ output "github_webhook_urls" {
     terraform-google-startup-scripts   = "${data.template_file.startup_scripts_github_webhook_url.rendered}"
     terraform-google-event-function    = "${data.template_file.event_function_github_webhook_url.rendered}"
     terraform-google-vpn               = "${data.template_file.vpn_github_webhook_url.rendered}"
+    terraform-google-vm               = "${data.template_file.vm_github_webhook_url.rendered}"
   }
 }
 
