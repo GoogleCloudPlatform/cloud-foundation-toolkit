@@ -21,8 +21,6 @@ info:
 imports:
   - path: instance.py
 
-additionalProperties: false
-
 required:
   - zone
   - machineType
