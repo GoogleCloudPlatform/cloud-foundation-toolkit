@@ -18,6 +18,8 @@ info:
   description: |
     Creates an instance template.
 
+additionalProperties: false
+
 required:
   - diskImage
 

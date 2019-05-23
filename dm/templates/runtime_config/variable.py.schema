@@ -19,6 +19,8 @@ info:
     For more information on this resource, see
     https://cloud.google.com/deployment-manager/runtime-configurator/.
 
+additionalProperties: false
+
 required:
   - parent
   - variable

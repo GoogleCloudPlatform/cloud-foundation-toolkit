@@ -18,6 +18,8 @@ info:
   description: |
     Creates a topic, optionally with multiple subscriptions.
 
+additionalProperties: false
+
 properties:
   topic:
     type: string

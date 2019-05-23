@@ -23,6 +23,8 @@ imports:
   - path: ../instance/instance.py
     name: instance.py
 
+additionalProperties: false
+
 required:
   - zone
   - network

@@ -27,6 +27,8 @@ imports:
   - path: ../ssl_certificate/ssl_certificate.py
     name: ssl_certificate.py
 
+additionalProperties: false
+
 required:
   - target
   - protocol

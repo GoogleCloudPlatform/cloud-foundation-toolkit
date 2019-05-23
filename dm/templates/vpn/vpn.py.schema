@@ -17,6 +17,8 @@ info:
   author: Sourced Group
   description: Creates a VPN tunnel, gateway, and fowarding rules.
 
+additionalProperties: false
+
 required:
   - network
   - region

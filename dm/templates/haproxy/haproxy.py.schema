@@ -22,6 +22,8 @@ info:
 imports:
   - path: haproxy.py
 
+additionalProperties: false
+
 required:
   - zone
   - network

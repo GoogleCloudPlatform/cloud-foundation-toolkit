@@ -17,6 +17,8 @@ info:
   author: Sourced Group Inc.
   description: Supports creation of the SSL certificate resource.
 
+additionalProperties: false
+
 required:
   - privateKey
   - certificate

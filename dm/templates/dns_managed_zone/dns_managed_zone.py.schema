@@ -23,6 +23,8 @@ info:
 imports:
   - path: dns_managed_zone.py
 
+additionalProperties: false
+
 required:
   - zoneName
   - dnsName

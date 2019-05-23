@@ -21,6 +21,8 @@ imports:
   - path: ../ip_reservation/ip_address.py
     name: ip_address.py
 
+additionalProperties: false
+
 required:
   - ipAddresses
 

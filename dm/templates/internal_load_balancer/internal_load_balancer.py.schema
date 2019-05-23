@@ -26,6 +26,8 @@ imports:
   - path: ../forwarding_rule/forwarding_rule.py
     name: forwarding_rule.py
 
+additionalProperties: false
+
 required:
   - region
   - backendService

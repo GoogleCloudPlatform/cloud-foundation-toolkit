@@ -36,6 +36,8 @@ info:
 imports:
   - path: organization_custom_role.py
 
+additionalProperties: false
+
 required:
   - orgId
   - roleId

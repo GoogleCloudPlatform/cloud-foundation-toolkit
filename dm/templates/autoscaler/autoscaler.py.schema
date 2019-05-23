@@ -19,6 +19,8 @@ info:
     Creates an autoscaler.
     See https://cloud.google.com/compute/docs/autoscaler/ for more details.
 
+additionalProperties: false
+
 required:
   - maxNumReplicas
   - target

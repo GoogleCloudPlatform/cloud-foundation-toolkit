@@ -22,6 +22,8 @@ info:
 imports:
   - path: cloud_sql.py
 
+additionalProperties: false
+
 required:
   - region
   - settings

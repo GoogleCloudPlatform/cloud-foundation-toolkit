@@ -23,6 +23,8 @@ info:
 imports:
   - path: stackdriver_metric_descriptor.py
 
+additionalProperties: false
+
 required:
   - type
   - metricKind

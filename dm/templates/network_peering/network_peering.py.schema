@@ -24,6 +24,8 @@ info:
 imports:
   - path: network_peering.py
 
+additionalProperties: false
+
 required:
   - name
   - network

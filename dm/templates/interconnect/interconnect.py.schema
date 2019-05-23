@@ -23,6 +23,8 @@ info:
 imports:
   - path: interconnect.py
 
+additionalProperties: false
+
 required:
   - name
   - customerName

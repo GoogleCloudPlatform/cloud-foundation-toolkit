@@ -17,6 +17,8 @@ info:
   author: Sourced Group Inc.
   description: Creates a Cloud Spanner instance and database.
 
+additionalProperties: false
+
 required:
   - displayName
   - nodeCount

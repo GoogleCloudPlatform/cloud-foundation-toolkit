@@ -21,6 +21,8 @@ info:
 imports:
   - path: dataproc.py
 
+additionalProperties: false
+
 properties:
   name:
     type: string

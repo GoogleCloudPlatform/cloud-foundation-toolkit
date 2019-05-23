@@ -23,6 +23,8 @@ info:
 imports:
   - path: gcs_bucket.py
 
+additionalProperties: false
+
 required:
   - name
 

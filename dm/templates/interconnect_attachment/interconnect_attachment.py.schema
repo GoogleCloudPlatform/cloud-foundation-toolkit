@@ -25,6 +25,8 @@ info:
 imports:
   - path: interconnect_attachment.py
 
+additionalProperties: false
+
 required:
   - router
   - region

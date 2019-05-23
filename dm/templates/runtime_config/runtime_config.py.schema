@@ -24,6 +24,8 @@ imports:
   - path: variable.py
   - path: waiter.py
 
+additionalProperties: false
+
 required:
   - config
 

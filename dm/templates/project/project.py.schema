@@ -24,6 +24,8 @@ imports:
 - path: ../iam_member/iam_member.py
   name: cft-iam_project_member.py
 
+additionalProperties: false
+
 required:
   - billingAccountId
 

@@ -20,6 +20,8 @@ info:
     or a cloud source repository, and then assigns HTTPS, Storage, or Pub/Sub 
     trigger to that Cloud Function.
 
+additionalProperties: false
+
 required:
   - region
 

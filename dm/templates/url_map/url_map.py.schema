@@ -17,6 +17,8 @@ info:
   author: Sourced Group Inc.
   description: Supports creation of the URL Map resource.
 
+additionalProperties: false
+
 properties:
   name:
     type: string
