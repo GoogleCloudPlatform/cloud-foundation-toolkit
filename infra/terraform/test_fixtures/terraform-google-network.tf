@@ -1,6 +1,7 @@
 locals {
   network_required_roles = [
     "roles/compute.networkAdmin",
+    "roles/compute.securityAdmin",
     "roles/iam.serviceAccountUser",
   ]
 
