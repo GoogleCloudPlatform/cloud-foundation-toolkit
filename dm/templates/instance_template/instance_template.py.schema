@@ -18,6 +18,8 @@ info:
   description: |
     Creates an instance template.
 
+additionalProperties: false
+
 required:
   - diskImage
 
@@ -94,6 +96,11 @@ properties:
     description: |
       The description of the instance resource the instance template
       will create (optional).
+  network:
+    type: string
+    description: |
+      Name of the network the instance will be connected to;
+      e.g., 'my-custom-network' or 'default'.
   hasExternalIp:
     $ref: '#/definitions/hasExternalIp'
   natIP:
