@@ -52,8 +52,6 @@ oneOf:
        required:
          - networks
 
-additionalProperties: false
-
 definitions:
     hasExternalIp:
       type: boolean
