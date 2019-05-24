@@ -15,6 +15,7 @@
 info:
   title: Cloud SQL
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Cloud SQL instance with database and user resources.
     For more information, see https://cloud.google.com/sql/docs/.
@@ -29,6 +30,11 @@ required:
   - settings
 
 properties:
+  name:
+    type: string
+    description: |
+      The name of the Cloud SQL instance. This does not include the project ID.
+      Resource name would be used if omitted.
   databaseVersion:
     type: string
     description: |
@@ -39,6 +45,7 @@ properties:
       PostgreSQL instances POSTGRES_9_6.
   failoverReplica:
     type: object
+    additionalProperties: false
     description: |
       The name and status of the failover replica. Applicable only to Second
       Generation instances.
@@ -71,12 +78,9 @@ properties:
   maxDiskSize:
     type: number
     description: The maximum disk size of the instance in bytes.
-  name:
-    type: string
-    description: |
-      The name of the Cloud SQL instance. This does not include the project ID.
   onPremisesConfiguration:
     type: object
+    additionalProperties: false
     description: |
       Configuration specific to on-premises instances.
     properties:
@@ -92,6 +96,7 @@ properties:
       Google apps domain is prefixed if applicable.
   replicaConfiguration:
     type: object
+    additionalProperties: false
     description: |
       Configuration specific to failover replicas and read replicas.
     properties:
@@ -106,6 +111,7 @@ properties:
           instance.
       mysqlReplicaConfiguration:
         type: object
+        additionalProperties: false
         description: |
           MySQL-specific configuration when replicating from an MySQL
           on-premises master. Replication configuration information such as the
@@ -172,6 +178,7 @@ properties:
       only to Second Generation instances.
   settings:
     type: object
+    additionalProperties: false
     description: User settings.
     required:
       - tier
@@ -214,6 +221,7 @@ properties:
           - REGIONAL
       backupConfiguration:
         type: object
+        additionalProperties: false
         description: The daily backup configuration for the instance.
         properties:
           binaryLogEnabled:
@@ -257,6 +265,7 @@ properties:
           Database flags passed to the instance at startup.
         items:
           type: object
+          additionalProperties: false
           properties:
             name:
               type: string
@@ -279,6 +288,7 @@ properties:
           specific to read replica instances. Writable.  
       ipConfiguration:
         type: object
+        additionalProperties: false
         description: |
           Settings for IP Management. This allows to enable or disable the
           instance IP and to define which external networks can connect to the
@@ -293,6 +303,7 @@ properties:
               notation (e.g., 192.168.100.0/24). Writable.
             items:
               type: object
+              additionalProperties: false
               properties:
                 expirationTime:
                   type: string
@@ -327,6 +338,7 @@ properties:
               Defines whether SSL connections over IP must be enforced.
       locationPreference:
         type: object
+        additionalProperties: false
         description: |
           Location preference settings. This allows the instance to be
           located as near as possible to either an App Engine app or Compute
@@ -345,6 +357,7 @@ properties:
               us-central1-b, etc.).
       maintenanceWindow:
         type: object
+        additionalProperties: false
         description: |
           The maintenance window for the instance. Specifies when the instance
           can be restarted for maintenance purposes. Not used for First
@@ -399,6 +412,7 @@ properties:
           First or Second Generation.
       userLabels:
         type: object
+        additionalProperties: false
         description: |
           User-provided labels - a dictionary where each label is a single
           key-value pair.
@@ -416,6 +430,7 @@ properties:
       - name
     items:
       type: object
+      additionalProperties: false
       properties:
         name:
           type: string
@@ -430,10 +445,11 @@ properties:
   users:
     type: array
     description: Cloud SQL users to create in the new instance.
-    required:
-      - name
     items:
       type: object
+      additionalProperties: false
+      required:
+        - name
       properties:
         name:
           type: string

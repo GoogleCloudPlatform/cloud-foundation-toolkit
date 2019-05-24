@@ -64,7 +64,7 @@ def get_instance(res_name, project_id, properties):
 
     instance = {
         'name': name,
-        'type': 'sqladmin.v1beta4.instance',
+        'type': 'gcp-types/sqladmin-v1beta4:instances',
         'properties': instance_properties
     }
 
@@ -116,7 +116,7 @@ def get_database(instance_name, project_id, properties):
 
     database = {
         'name': res_name,
-        'type': 'sqladmin.v1beta4.database',
+        'type': 'gcp-types/sqladmin-v1beta4:databases',
         'properties': db_properties
     }
 
@@ -160,7 +160,7 @@ def get_user(instance_name, project_id, properties):
 
     user = {
         'name': res_name,
-        'type': 'sqladmin.v1beta4.user',
+        'type': 'gcp-types/sqladmin-v1beta4:users',
         'properties': user_properties
     }
 
