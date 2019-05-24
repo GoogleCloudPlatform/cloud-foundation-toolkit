@@ -1,5 +1,4 @@
-
-cals {
+locals {
   vm_required_roles = [
     "roles/compute.admin",
     "roles/compute.networkAdmin",
