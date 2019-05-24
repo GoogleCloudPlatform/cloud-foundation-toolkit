@@ -50,7 +50,7 @@ jobs:
           platform: linux
           inputs:
             - name: pull-request
-              path: terraform-google-jenkins
+              path: terraform-google-vm
             - name: lint-test-image
           run:
             path: make
@@ -106,7 +106,7 @@ jobs:
             args:
               - '-s'
               - test_integration
-            dir: terraform-google-jenkins
+            dir: terraform-google-vm
           params:
             PROJECT_ID: ((vm.phoogle_project_id))
             SERVICE_ACCOUNT_JSON: ((vm.phoogle_sa))
