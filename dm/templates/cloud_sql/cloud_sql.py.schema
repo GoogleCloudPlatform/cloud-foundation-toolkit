@@ -35,6 +35,11 @@ properties:
     description: |
       The name of the Cloud SQL instance. This does not include the project ID.
       Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the Cloud SQL instance. The
+      Google apps domain is prefixed if applicable.
   databaseVersion:
     type: string
     description: |
@@ -89,11 +94,6 @@ properties:
         description: |
           The host and port of the on-premises instance in the host:port
           format.
-  project:
-    type: string
-    description: |
-      The project ID of the project containing the Cloud SQL instance. The
-      Google apps domain is prefixed if applicable.
   replicaConfiguration:
     type: object
     additionalProperties: false

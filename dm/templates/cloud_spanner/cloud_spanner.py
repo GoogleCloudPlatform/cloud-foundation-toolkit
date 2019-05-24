@@ -36,21 +36,23 @@ def generate_config(context):
     """
 
     resources_list = []
-    name = context.env['name']
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
-    instance_id = get_spanner_instance_id(context.env['project'], name)
+    instance_id = get_spanner_instance_id(project_id, name)
     instance_config = get_spanner_instance_config(
-        context.env['project'],
+        project_id,
         context.properties['instanceConfig']
     )
 
     resource = {
         'name': name,
-        'type': 'spanner.v1.instance',
+        'type': 'gcp-types/spanner-v1:projects.instances',
         'properties':
             {
                 'instanceId': name,
-                'parent': 'projects/{}'.format(context.env['project']),
+                'parent': 'projects/{}'.format(project_id),
                 'instance':
                     {
                         'name': instance_id,

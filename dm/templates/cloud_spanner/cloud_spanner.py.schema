@@ -15,6 +15,7 @@
 info:
   title: Cloud Spanner
   author: Sourced Group Inc.
+  version: 1.0.0
   description: Creates a Cloud Spanner instance and database.
 
 additionalProperties: false
@@ -25,6 +26,16 @@ required:
   - instanceConfig
 
 properties:
+  name:
+    type: string
+    description: |
+      The instance ID of the Cloud Spanner instance. This does not include the project ID.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the Cloud Spanner instance. The
+      Google apps domain is prefixed if applicable.
   displayName:
     type: string
     description: The cluster display name in GCP Console.
@@ -60,6 +71,7 @@ properties:
     description: IAM policies applied at the CLUSTER level.
     items:
       type: object
+      additionalProperties: false
       required:
         - role
         - members
@@ -82,6 +94,7 @@ properties:
     description: A list of databases created under the instance cluster.
     items:
       type: object
+      additionalProperties: false
       required:
         - name
       properties:
@@ -93,6 +106,7 @@ properties:
           description: A list of IAM policies applied at the DATABASE level.
           items:
             type: object
+            additionalProperties: false
             required:
               - role
               - members
@@ -131,6 +145,7 @@ outputs:
         patternProperties:
           ".*":
             type: object
+            additionalProperties: false
             description: Details for an address resource.
             properties:
               state:
