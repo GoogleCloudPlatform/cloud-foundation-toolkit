@@ -1,6 +1,6 @@
 /.tox
 /.coverage
-/.*.yaml
+/*.yaml
 *.pyc
 __pycache__
 /build
