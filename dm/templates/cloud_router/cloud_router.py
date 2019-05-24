@@ -17,12 +17,14 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    name = context.properties.get('name', context.env['name'])
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
     resources = [
         {
             'name': context.env['name'],
-            'type': 'compute.v1.router',
+            'type': 'gcp-types/compute-v1:routers',
             'properties':
                 {
                     'name':
@@ -32,11 +34,13 @@ def generate_config(context):
                     },
                     'network':
                         generate_network_url(
-                            context,
+                            project_id,
                             context.properties['network']
                         ),
                     'region':
-                        context.properties['region']
+                        context.properties['region'],
+                    'project':
+                        project_id
                 }
         }
     ]
@@ -64,10 +68,10 @@ def generate_config(context):
     }
 
 
-def generate_network_url(context, network):
+def generate_network_url(project_id, network):
     """Format the resource name as a resource URI."""
 
     return 'projects/{}/global/networks/{}'.format(
-        context.env['project'],
+        project_id,
         network
     )
