@@ -21,25 +21,29 @@ import copy
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    project_id = context.properties.get('projectId', context.env['name'])
-    project_name = context.properties.get('name', context.env['name'])
+    properties = context.properties
+    project_name = properties.get('name', context.env['name'])
+    project_id = properties.get('projectId', project_name)
 
     # Ensure that the parent ID is a string.
-    context.properties['parent']['id'] = str(context.properties['parent']['id'])
+    properties['parent']['id'] = str(properties['parent']['id'])
 
     resources = [
         {
             'name': 'project',
-            'type': 'cloudresourcemanager.v1.project',
+            # https://cloud.google.com/resource-manager/reference/rest/v1/projects/create
+            'type': 'gcp-types/cloudresourcemanager-v1:projects',
             'properties':
                 {
                     'name': project_name,
                     'projectId': project_id,
-                    'parent': context.properties['parent']
+                    'parent': properties['parent'],
+                    'labels' : properties.get('labels', {})
                 }
         },
         {
             'name': 'billing',
+            # https://cloud.google.com/billing/reference/rest/v1/projects/updateBillingInfo
             'type': 'deploymentmanager.v2.virtual.projectBillingInfo',
             'properties':
                 {
@@ -47,31 +51,35 @@ def generate_config(context):
                         'projects/$(ref.project.projectId)',
                     'billingAccountName':
                         'billingAccounts/' +
-                        context.properties['billingAccountId']
+                        properties['billingAccountId']
                 }
         }
     ]
 
-    api_resources, api_names_list = activate_apis(context.properties)
+    api_resources, api_names_list = activate_apis(properties)
     resources.extend(api_resources)
     resources.extend(create_service_accounts(context, project_id))
 
+    if isinstance(properties.get('usageExportBucket', True), bool):
+        properties['usageExportBucket'] = {
+            'enabled': properties.get('usageExportBucket', True),
+        }
     if (
-        context.properties.get('usageExportBucket', True) and
+        properties.get('usageExportBucket', {}).get('enabled', True) and
         'api-compute.googleapis.com' in api_names_list
     ):
-        resources.extend(create_bucket(context.properties))
+        resources.extend(create_bucket(properties))
 
-    resources.extend(create_shared_vpc(project_id, context.properties))
+    resources.extend(create_shared_vpc(project_id, properties))
 
     if (
-        context.properties.get('removeDefaultVPC', True) and
+        properties.get('removeDefaultVPC', True) and
         'api-compute.googleapis.com' in api_names_list
     ):
         resources.extend(delete_default_network(api_names_list))
 
     if (
-        context.properties.get('removeDefaultSA', True) and
+        properties.get('removeDefaultSA', True) and
         'api-compute.googleapis.com' in api_names_list
     ):
         resources.extend(delete_default_service_account(api_names_list))
@@ -135,18 +143,19 @@ def activate_apis(properties):
         if resources and not concurrent_api_activation:
             depends_on.append(resources[-1]['name'])
 
-        api_name = 'api-' + api
+        api_name = 'api-{}'.format(api)
         api_names_list.append(api_name)
         resources.append(
             {
                 'name': api_name,
-                'type': 'deploymentmanager.v2.virtual.enableService',
+                # https://cloud.google.com/service-infrastructure/docs/service-management/reference/rest/v1/services/enable
+                'type': 'gcp-types/servicemanagement-v1:servicemanagement.services.enable',
                 'metadata': {
                     'dependsOn': depends_on
                 },
                 'properties':
                     {
-                        'consumerId': 'project:' + '$(ref.project.projectId)',
+                        'consumerId': 'project:$(ref.project.projectId)',
                         'serviceName': api
                     }
             }
@@ -196,7 +205,8 @@ def create_shared_vpc_subnet_iam(context, dependencies, members_list):
         resources.append(
             {
                 'name': 'add-vpc-subnet-iam-policy-{}'.format(i),
-                'type': 'gcp-types/compute-beta:compute.subnetworks.setIamPolicy',  # pylint: disable=line-too-long
+                # https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/setIamPolicy
+                'type': 'gcp-types/compute-v1:compute.subnetworks.setIamPolicy',  # pylint: disable=line-too-long
                 'metadata':
                     {
                         'dependsOn': dependencies,
@@ -206,12 +216,14 @@ def create_shared_vpc_subnet_iam(context, dependencies, members_list):
                         'name': subnet['subnetId'],
                         'project': context.properties['sharedVPC'],
                         'region': subnet['region'],
-                        'bindings': [
-                            {
-                                'role': 'roles/compute.networkUser',
-                                'members': members_list
-                            }
-                        ]
+                        'policy' : {
+                            'bindings': [
+                                {
+                                    'role': 'roles/compute.networkUser',
+                                    'members': members_list,
+                                }
+                            ],
+                        },
                     }
             }
         )
@@ -253,7 +265,8 @@ def create_service_accounts(context, project_id):
         resources.append(
             {
                 'name': name,
-                'type': 'iam.v1.serviceAccount',
+                # https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/create
+                'type': 'gcp-types/iam-v1:projects.serviceAccounts',
                 'properties':
                     {
                         'accountId': account_id,
@@ -304,42 +317,44 @@ def create_bucket(properties):
     bucket_name = '$(ref.project.projectId)-usage-export'
 
     # Create the bucket.
-    resources.append(
-        {
-            'name': 'create-usage-export-bucket',
-            'type': 'gcp-types/storage-v1:buckets',
-            'properties':
-                {
-                    'project': '$(ref.project.projectId)',
-                    'name': bucket_name
-                },
-            'metadata':
-                {
-                    'dependsOn': ['api-storage-component.googleapis.com']
-                }
-        }
-    )
+    resources.append({
+        'name': 'create-usage-export-bucket',
+        # https://cloud.google.com/storage/docs/json_api/v1/buckets/insert
+        'type': 'gcp-types/storage-v1:buckets',
+        'properties':
+            {
+                'project': '$(ref.project.projectId)',
+                'name': bucket_name
+            },
+        'metadata':
+            {
+                'dependsOn': ['api-storage-component.googleapis.com']
+            }
+    })
 
     # Set the project's usage export bucket.
-    resources.append(
-        {
-            'name':
-                'set-usage-export-bucket',
-            'action':
-                'gcp-types/compute-v1:compute.projects.setUsageExportBucket',  # pylint: disable=line-too-long
-            'properties':
-                {
-                    'project': '$(ref.project.projectId)',
-                    'bucketName': 'gs://' + bucket_name
-                },
-            'metadata': {
-                'dependsOn': [
-                    'create-usage-export-bucket',
-                    'api-compute.googleapis.com',
-                ]
-            }
+    usage_resource = {
+        'name':
+            'set-usage-export-bucket',
+        'action':
+        # https://cloud.google.com/compute/docs/reference/rest/v1/projects/setUsageExportBucket
+            'gcp-types/compute-v1:compute.projects.setUsageExportBucket',  # pylint: disable=line-too-long
+        'properties':
+            {
+                'project': '$(ref.project.projectId)',
+                'bucketName': 'gs://' + bucket_name
+            },
+        'metadata': {
+            'dependsOn': [
+                'create-usage-export-bucket',
+                'api-compute.googleapis.com',
+            ]
         }
-    )
+    }
+    if properties.get('usageExportBucket', {}).get('reportNamePrefix'):
+        usage_resource['properties']['reportNamePrefix'] = properties.get('usageExportBucket', {}).get('reportNamePrefix')
+    resources.append(usage_resource)
+
 
     return resources
 
@@ -354,7 +369,8 @@ def create_shared_vpc(project_id, properties):
         resources.append(
             {
                 'name': project_id + '-attach-xpn-service-' + service_project,
-                'type': 'compute.beta.xpnResource',
+                # https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnResource
+                'type': 'gcp-types/compute-v1:compute.projects.enableXpnResource',
                 'metadata': {
                     'dependsOn': ['api-compute.googleapis.com']
                 },
@@ -373,7 +389,8 @@ def create_shared_vpc(project_id, properties):
         resources.append(
             {
                 'name': project_id + '-xpn-host',
-                'type': 'compute.beta.xpnHost',
+                # https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnHost
+                'type': 'gcp-types/compute-v1:compute.projects.enableXpnHost',
                 'metadata': {
                     'dependsOn': ['api-compute.googleapis.com']
                 },
@@ -389,70 +406,38 @@ def create_shared_vpc(project_id, properties):
 def delete_default_network(api_names_list):
     """ Delete the default network. """
 
-    icmp_name = 'delete-default-allow-icmp'
-    internal_name = 'delete-default-allow-internal'
-    rdp_name = 'delete-default-allow-rdp'
-    ssh_name = 'delete-default-allow-ssh'
-
-    resource = [
-        {
-            'name': icmp_name,
-            'action': 'gcp-types/compute-beta:compute.firewalls.delete',
-            'metadata': {
-                'dependsOn': api_names_list
-            },
-            'properties':
-                {
-                    'firewall': 'default-allow-icmp',
-                    'project': '$(ref.project.projectId)',
-                }
-        },
-        {
-            'name': internal_name,
-            'action': 'gcp-types/compute-beta:compute.firewalls.delete',
-            'metadata': {
-                'dependsOn': api_names_list
-            },
-            'properties':
-                {
-                    'firewall': 'default-allow-internal',
-                    'project': '$(ref.project.projectId)',
-                }
-        },
-        {
-            'name': rdp_name,
-            'action': 'gcp-types/compute-beta:compute.firewalls.delete',
-            'metadata': {
-                'dependsOn': api_names_list
-            },
-            'properties':
-                {
-                    'firewall': 'default-allow-rdp',
-                    'project': '$(ref.project.projectId)',
-                }
-        },
-        {
-            'name': ssh_name,
-            'action': 'gcp-types/compute-beta:compute.firewalls.delete',
-            'metadata': {
-                'dependsOn': api_names_list
-            },
-            'properties':
-                {
-                    'firewall': 'default-allow-ssh',
-                    'project': '$(ref.project.projectId)',
-                }
-        }
+    default_firewalls = [
+        'default-allow-icmp',
+        'default-allow-internal',
+        'default-allow-rdp',
+        'default-allow-ssh',
     ]
+
+    resources = []
+    for firewall_name in default_firewalls:
+        resources.append({
+            'name': 'delete-{}'.format(firewall_name),
+            # https://cloud.google.com/compute/docs/reference/rest/v1/firewalls/delete
+            'action': 'gcp-types/compute-v1:compute.firewalls.delete',
+            'metadata': {
+                'dependsOn': api_names_list
+            },
+            'properties':
+                {
+                    'firewall': firewall_name,
+                    'project': '$(ref.project.projectId)',
+                }
+        })
 
     # Ensure the firewall rules are removed before deleting the VPC.
     network_dependency = copy.copy(api_names_list)
-    network_dependency.extend([icmp_name, internal_name, rdp_name, ssh_name])
+    network_dependency.extend([row['name'] for row in resources])
 
-    resource.append(
+    resources.append(
         {
             'name': 'delete-default-network',
-            'action': 'gcp-types/compute-beta:compute.networks.delete',
+            # https://cloud.google.com/compute/docs/reference/rest/v1/networks/delete
+            'action': 'gcp-types/compute-v1:compute.networks.delete',
             'metadata': {
                 'dependsOn': network_dependency
             },
@@ -464,7 +449,7 @@ def delete_default_network(api_names_list):
         }
     )
 
-    return resource
+    return resources
 
 
 def delete_default_service_account(api_names_list):
@@ -473,6 +458,7 @@ def delete_default_service_account(api_names_list):
     resource = [
         {
             'name': 'delete-default-sa',
+            # https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/delete
             'action': 'gcp-types/iam-v1:iam.projects.serviceAccounts.delete',
             'metadata':
                 {
