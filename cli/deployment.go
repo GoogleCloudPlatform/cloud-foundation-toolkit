@@ -4,7 +4,10 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
+	"regexp"
 )
+
+var /* const */ pattern = regexp.MustCompile(`\$\(out\.(?P<token>[-.a-zA-Z0-9]+)\)`)
 
 type Config struct {
 	Name        string
@@ -29,6 +32,9 @@ func NewConfig(file_path string) *Config {
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-
 	return config
+}
+
+func (c Config) findAllOutRefs() []string {
+	return pattern.FindAllString(c.yaml_string, -1)
 }
