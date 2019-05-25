@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"regexp"
+	"strings"
 )
 
 var /* const */ pattern = regexp.MustCompile(`\$\(out\.(?P<token>[-.a-zA-Z0-9]+)\)`)
@@ -45,44 +46,78 @@ func (c Config) findAllOutRefs() []string {
 	return pattern.FindAllString(c.yaml_string, -1)
 }
 
+func (c Config) findAllDependencies(configs []Config) []Config {
+	refs := c.findAllOutRefs()
+	if refs != nil {
+		dependencies := map[Config]bool{}
+		for _, ref := range refs {
+			var dependency *Config
+			project, deployment, _, _ := parseOutRef(ref)
+			for _, config := range configs {
+				if config.Project == project && config.Name == deployment {
+					dependency = &config
+				}
+			}
+			if dependency != nil {
+				log.Fatalf("Could not find config for project = %s, deployment = %s", project, deployment)
+			}
+			dependencies[*dependency] = true
+		}
+		result := []Config{}
+		for dependency := range dependencies {
+			result = append(result, dependency)
+		}
+		return result
+	}
+	return nil
+}
+
+func parseOutRef(text string) (string, string, string, string) {
+	array := strings.Split(text, ".")
+	return array[0], array[1], array[2], array[3]
+}
+
 type Dependency struct {
 	from Config
 	to   Config
 }
 
-func (d Dependency) From() Config {
+func (d Dependency) From() graph.Node {
 	return d.from
 }
 
-func (d Dependency) To() Config {
+func (d Dependency) To() graph.Node {
 	return d.to
 }
 
-type ConfigGraphIterator struct {
-	graph *ConfigGraph
+func (d Dependency) ReversedEdge() graph.Edge {
+	return nil
+}
+
+type NodesIterator struct {
+	nodes []graph.Node
 	index int
 }
 
-func (i *ConfigGraphIterator) Node() graph.Node {
-	return i.graph.nodes[i.index]
+func (i *NodesIterator) Node() graph.Node {
+	return i.nodes[i.index]
 }
 
-func (i *ConfigGraphIterator) Len() int {
-	return len(i.graph.nodes)
+func (i *NodesIterator) Len() int {
+	return len(i.nodes)
 }
 
-func (i *ConfigGraphIterator) Reset() {
+func (i *NodesIterator) Reset() {
 	i.index = 0
 }
 
-func (i *ConfigGraphIterator) Next() bool {
+func (i *NodesIterator) Next() bool {
 	return i.index < i.Len()-1
 }
 
 type ConfigGraph struct {
-	nodes     []Config
-	edgesFrom map[int64]Dependency
-	edgesTo   map[int64]Dependency
+	nodes     []graph.Node
+	edgesFrom map[int64][]Dependency
 }
 
 func (c ConfigGraph) Node(id int64) graph.Node {
@@ -95,14 +130,54 @@ func (c ConfigGraph) Node(id int64) graph.Node {
 }
 
 func (c ConfigGraph) Nodes() graph.Nodes {
-	return &ConfigGraphIterator{graph: &c}
+	return &NodesIterator{nodes: c.nodes}
 }
 
 func (c ConfigGraph) From(id int64) graph.Nodes {
-	return c.edgesFrom[id]
+	edges := c.edgesFrom[id]
+	if edges != nil {
+		res := []graph.Node{}
+		for _, edge := range edges {
+			res = append(res, edge.To())
+		}
+		return &NodesIterator{nodes: res}
+	}
+	return nil
 }
 
-func NewConfigGraph(config []Config) {
+func (c ConfigGraph) Edge(uid, vid int64) graph.Edge {
+	for _, edge := range c.edgesFrom[uid] {
+		if edge.To().ID() == vid {
+			return edge
+		}
+	}
+	return nil
+}
+
+func (c *ConfigGraph) AddNode(config Config) {
+	c.nodes = append(c.nodes, config)
+}
+
+func (c *ConfigGraph) AddDependency(from Config, to Config) {
+	dependencies := c.edgesFrom[from.ID()]
+	if dependencies == nil {
+		dependencies = []Dependency{}
+	}
+	c.edgesFrom[from.ID()] = append(dependencies, Dependency{from: from, to: to})
+}
+
+func NewConfigGraph(configs []Config) {
 	graph := &ConfigGraph{}
+
+	for _, config := range configs {
+		graph.AddNode(config)
+	}
+
+	for _, config := range configs {
+		deps := config.findAllDependencies(configs)
+		for _, dep := range deps {
+			graph.AddDependency(config, dep)
+		}
+	}
 
 }

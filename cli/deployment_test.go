@@ -16,7 +16,7 @@ func TestNewConfig(t *testing.T) {
 
 func TestFindAllOutRefs(t *testing.T) {
 	executeFindAllOutRefsAndAssert(
-		`network: $(out.project1.resource1.output1)
+		`network: $(out.project1.deployment1.resource1.output_name1)
                     other: $(out.resource2.output2)`,
 		[]string{"$(out.project1.resource1.output1)", "$(out.resource2.output2)"},
 		t)
@@ -32,4 +32,8 @@ func executeFindAllOutRefsAndAssert(yaml_string string, expected []string, t *te
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("got: %v, expected: %v.", actual, expected)
 	}
+}
+
+func TestNewConfigGraph(t *testing.T) {
+
 }
