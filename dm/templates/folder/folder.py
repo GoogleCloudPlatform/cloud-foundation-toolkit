@@ -22,15 +22,20 @@ def generate_config(context):
 
     resources = []
     out = {}
-    for folder in context.properties.get('folders', []):
+    for i, folder in enumerate(
+        context.properties.get('folders', []), 1
+    ):
+        create_folder = '{}-{}'.format(context.env['name'], i)
 
-        create_folder = folder['name']
-
-        parent = folder.get('orgId', folder.get('folderId'))
+        if folder.get('parent'):
+            parent = '{}s/{}'.format(folder['parent']['type'], folder['parent']['id'])
+        else:
+            parent = folder.get('orgId', folder.get('folderId'))
 
         resources.append(
             {
                 'name': create_folder,
+                # https://cloud.google.com/resource-manager/reference/rest/v2/folders
                 'type': 'gcp-types/cloudresourcemanager-v2:folders',
                 'properties':
                     {
