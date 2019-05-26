@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"gonum.org/v1/gonum/graph"
+	"gonum.org/v1/gonum/graph/topo"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -21,6 +23,10 @@ type Config struct {
 // implementation of graph.Node interface
 func (c Config) ID() int64 {
 	return hash64(c.Project + "." + c.Name)
+}
+
+func (c Config) String() string {
+	return fmt.Sprintf("%s.%s", c.Project, c.Name)
 }
 
 func NewConfig(file_path string) *Config {
@@ -43,7 +49,15 @@ func NewConfig(file_path string) *Config {
 }
 
 func (c Config) findAllOutRefs() []string {
-	return pattern.FindAllString(c.yaml_string, -1)
+	matches := pattern.FindAllStringSubmatch(c.yaml_string, -1)
+	result := make([]string, len(matches))
+	for i, match := range matches {
+		result[i] = match[1]
+	}
+	if len(result) == 0 {
+		return nil
+	}
+	return result
 }
 
 func (c Config) findAllDependencies(configs []Config) []Config {
@@ -58,7 +72,7 @@ func (c Config) findAllDependencies(configs []Config) []Config {
 					dependency = &config
 				}
 			}
-			if dependency != nil {
+			if dependency == nil {
 				log.Fatalf("Could not find config for project = %s, deployment = %s", project, deployment)
 			}
 			dependencies[*dependency] = true
@@ -100,7 +114,9 @@ type NodesIterator struct {
 }
 
 func (i *NodesIterator) Node() graph.Node {
-	return i.nodes[i.index]
+	node := i.nodes[i.index]
+	i.index++
+	return node
 }
 
 func (i *NodesIterator) Len() int {
@@ -112,12 +128,13 @@ func (i *NodesIterator) Reset() {
 }
 
 func (i *NodesIterator) Next() bool {
-	return i.index < i.Len()-1
+	return i.index < i.Len()
 }
 
 type ConfigGraph struct {
 	nodes     []graph.Node
 	edgesFrom map[int64][]Dependency
+	edgesTo   map[int64][]Dependency
 }
 
 func (c ConfigGraph) Node(id int64) graph.Node {
@@ -133,16 +150,18 @@ func (c ConfigGraph) Nodes() graph.Nodes {
 	return &NodesIterator{nodes: c.nodes}
 }
 
-func (c ConfigGraph) From(id int64) graph.Nodes {
-	edges := c.edgesFrom[id]
-	if edges != nil {
-		res := []graph.Node{}
-		for _, edge := range edges {
-			res = append(res, edge.To())
+func (c ConfigGraph) HasEdgeFromTo(fromid, toid int64) bool {
+	nodes := c.From(fromid)
+	for nodes.Next() {
+		if nodes.Node().ID() == toid {
+			return true
 		}
-		return &NodesIterator{nodes: res}
 	}
-	return nil
+	return false
+}
+
+func (c ConfigGraph) HasEdgeBetween(xid, yid int64) bool {
+	return c.HasEdgeFromTo(xid, yid) || c.HasEdgeFromTo(yid, xid)
 }
 
 func (c ConfigGraph) Edge(uid, vid int64) graph.Edge {
@@ -154,8 +173,34 @@ func (c ConfigGraph) Edge(uid, vid int64) graph.Edge {
 	return nil
 }
 
+func (c ConfigGraph) sort() (sorted []graph.Node, err error) {
+	return topo.Sort(c)
+}
+
 func (c *ConfigGraph) AddNode(config Config) {
 	c.nodes = append(c.nodes, config)
+}
+
+func (c ConfigGraph) From(id int64) graph.Nodes {
+	edges := c.edgesFrom[id]
+	res := []graph.Node{}
+	if edges != nil {
+		for _, edge := range edges {
+			res = append(res, edge.To())
+		}
+	}
+	return &NodesIterator{nodes: res}
+}
+
+func (c ConfigGraph) To(id int64) graph.Nodes {
+	edges := c.edgesTo[id]
+	res := []graph.Node{}
+	if edges != nil {
+		for _, edge := range edges {
+			res = append(res, edge.From())
+		}
+	}
+	return &NodesIterator{nodes: res}
 }
 
 func (c *ConfigGraph) AddDependency(from Config, to Config) {
@@ -163,21 +208,25 @@ func (c *ConfigGraph) AddDependency(from Config, to Config) {
 	if dependencies == nil {
 		dependencies = []Dependency{}
 	}
-	c.edgesFrom[from.ID()] = append(dependencies, Dependency{from: from, to: to})
+	dep := &Dependency{from: from, to: to}
+	c.edgesFrom[from.ID()] = append(dependencies, *dep)
+	c.edgesTo[to.ID()] = append(dependencies, *dep)
 }
 
-func NewConfigGraph(configs []Config) {
-	graph := &ConfigGraph{}
+func NewConfigGraph(configs []Config) *ConfigGraph {
+	instance := &ConfigGraph{}
+	instance.edgesFrom = make(map[int64][]Dependency)
+	instance.edgesTo = make(map[int64][]Dependency)
 
 	for _, config := range configs {
-		graph.AddNode(config)
+		instance.AddNode(config)
 	}
 
 	for _, config := range configs {
 		deps := config.findAllDependencies(configs)
 		for _, dep := range deps {
-			graph.AddDependency(config, dep)
+			instance.AddDependency(config, dep)
 		}
 	}
-
+	return instance
 }
