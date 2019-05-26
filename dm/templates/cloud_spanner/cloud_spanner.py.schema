@@ -29,8 +29,10 @@ properties:
   name:
     type: string
     description: |
-      The instance ID of the Cloud Spanner instance. This does not include the project ID.
-      Resource name would be used if omitted.
+      A unique identifier for the instance, which cannot be changed after the instance is created.Values are
+      of the form projects/<project>/instances/[a-z][-a-z0-9]*[a-z0-9]. The final segment of the name must be
+      between 2 and 64 characters in length.
+      This does not include the project ID. Resource name would be used if omitted.
   project:
     type: string
     description: |
@@ -41,6 +43,7 @@ properties:
     description: The cluster display name in GCP Console.
   nodeCount:
     type: integer
+    minimum: 1
     description: The number of instances allocated to your node.
   instanceConfig:
     type: string
@@ -53,6 +56,7 @@ properties:
       - regional-asia-east1
       - regional-asia-east2
       - regional-asia-northeast1
+      - regional-asia-northeast2
       - regional-asia-south1
       - regional-asia-southeast1
       - regional-australia-southeast1
@@ -60,12 +64,21 @@ properties:
       - regional-europe-west1
       - regional-europe-west2
       - regional-europe-west4
+      - regional-europe-west6
       - regional-northamerica-northeast1
       - regional-us-central1
       - regional-us-east1
       - regional-us-east4
       - regional-us-west1
       - regional-us-west2
+  labels:
+    type: object
+    description: |
+      Map labels associated with this Cloud spanner instance.
+      Example:
+        name: wrench
+        mass: 1.3kg
+        count: 3
   bindings:
     type: array
     description: IAM policies applied at the CLUSTER level.

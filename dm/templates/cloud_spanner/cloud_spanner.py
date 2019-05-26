@@ -14,6 +14,14 @@
 """ This template creates a Cloud Spanner instance and database. """
 
 
+def append_optional_property(res, properties, prop_name):
+    """ If the property is set, it is added to the resource. """
+
+    val = properties.get(prop_name)
+    if val:
+        res['properties'][prop_name] = val
+    return
+
 def get_spanner_instance_id(project_id, base_name):
     """ Generate the instance URL """
 
@@ -48,6 +56,7 @@ def generate_config(context):
 
     resource = {
         'name': name,
+        # https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances
         'type': 'gcp-types/spanner-v1:projects.instances',
         'properties':
             {
@@ -62,11 +71,18 @@ def generate_config(context):
                     }
             }
     }
+
+    optional_properties = [
+        'labels',
+    ]
+    for prop in optional_properties:
+        append_optional_property(resource, properties, prop)
     resources_list.append(resource)
 
     if context.properties.get('bindings'):
         policy = {
             'name': "{}{}".format(name, '-setIamPolicy'),
+            # https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances/setIamPolicy
             'action': 'gcp-types/spanner-v1:spanner.projects.instances.setIamPolicy',  # pylint: disable=line-too-long
             'properties':
                 {
@@ -90,6 +106,7 @@ def generate_config(context):
         )
         database_resource = {
             'name': database_resource_name,
+            # https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances.databases
             'type': 'gcp-types/spanner-v1:projects.instances.databases',
             'properties':
                 {
@@ -107,6 +124,7 @@ def generate_config(context):
                 'name':
                     "{}{}".format(database_resource_name,
                                   "-setIamPolicy"),
+                # https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances.databases/setIamPolicy
                 'action': 'gcp-types/spanner-v1:spanner.projects.instances.databases.setIamPolicy',  # pylint: disable=line-too-long
                 'properties':
                     {
