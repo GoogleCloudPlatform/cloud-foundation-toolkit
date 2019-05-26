@@ -44,10 +44,15 @@ properties:
     type: string
     description: |
       The database engine type and version.
-      The value of this field cannot be changed after instance creation.
-      Supports MySQL Second Generation instances MYSQL_5_7 | MYSQL_5_6,
-      First Generation instances MYSQL_5_6 | MYSQL_5_5, and 
-      PostgreSQL instances POSTGRES_9_6.
+      The databaseVersion field can not be changed after instance creation.
+      MySQL Second Generation instances: MYSQL_5_7 (default) or MYSQL_5_6.
+      PostgreSQL instances: POSTGRES_9_6
+      MySQL First Generation instances: MYSQL_5_6 (default) or MYSQL_5_5
+    enum:
+      - MYSQL_5_5 # Deprecated
+      - MYSQL_5_6
+      - MYSQL_5_7
+      - POSTGRES_9_6
   failoverReplica:
     type: object
     additionalProperties: false
@@ -88,12 +93,20 @@ properties:
     additionalProperties: false
     description: |
       Configuration specific to on-premises instances.
+    requires:
+      - hostPort
+      - kind
     properties:
       hostPort:
         type: string
         description: |
           The host and port of the on-premises instance in the host:port
           format.
+      kind:
+        type: string
+        const: "sql#onPremisesConfiguration"
+        description: |
+          This is always sql#onPremisesConfiguration.
   replicaConfiguration:
     type: object
     additionalProperties: false
@@ -172,10 +185,10 @@ properties:
     type: object
     description: SSL configuration.
   serviceAccountEmailAddress:
-    type: object
+    type: string
     description: |
-      The service account's email address assigned to the instance. Applicable
-      only to Second Generation instances.
+      The service account email address assigned to the instance. This property is applicable only
+      to Second Generation instances.
   settings:
     type: object
     additionalProperties: false
@@ -378,11 +391,16 @@ properties:
         description: |
           The pricing plan for the instance: PER_USE or PACKAGE. Only PER_USE
           is supported for Second Generation instances.
+        enum:
+          - PER_USE
+          - PACKAGE
       replicationType:
         type: string
         description: |
-          The type of replication the instance uses: ASYNCHRONOUS or
-          SYNCHRONOUS.
+          The type of replication the instance uses: ASYNCHRONOUS or SYNCHRONOUS.
+        enum:
+          - ASYNCHRONOUS
+          - SYNCHRONOUS
       settingsVersion:
         type: number
         description: |
@@ -412,7 +430,6 @@ properties:
           First or Second Generation.
       userLabels:
         type: object
-        additionalProperties: false
         description: |
           User-provided labels - a dictionary where each label is a single
           key-value pair.
@@ -423,6 +440,29 @@ properties:
       on the instance type (First Generation or Second Generation/PostgreSQL).
       For a complete list of valid values, see Instance Locations. The region
       cannot be changed after instance creation.
+      See https://cloud.google.com/sql/docs/mysql/locations
+    enum:
+      - northamerica-northeast1
+      - us-central
+      - us-central1
+      - us-east1
+      - us-east4
+      - us-west1
+      - us-west2
+      - southamerica-east1
+      - europe-north1
+      - europe-west1
+      - europe-west2
+      - europe-west3
+      - europe-west4
+      - europe-west6
+      - asia-east1
+      - asia-east2
+      - asia-northeast1
+      - asia-northeast2
+      - asia-south1
+      - asia-southeast1
+      - australia-southeast1
   databases:
     type: array
     description: SQL Databases to create in the new instance.
