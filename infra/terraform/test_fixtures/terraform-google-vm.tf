@@ -10,7 +10,7 @@ resource "google_project" "vm" {
   provider = "google.phoogle"
 
   name            = "ci-vm"
-  project_id      = "ci-vm"
+  project_id      = "ci-google-vm"
   folder_id       = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account = "${module.variables.phoogle_billing_account}"
 }
@@ -22,7 +22,7 @@ resource "google_project_services" "vm" {
 
   services = [
     "compute.googleapis.com",
-    "iam.googleapis.com"
+    "iam.googleapis.com",
   ]
 }
 
@@ -32,7 +32,6 @@ resource "google_service_account" "vm" {
   project      = "${google_project.vm.id}"
   account_id   = "ci-google-vm"
   display_name = "ci-vm"
-
 }
 
 resource "google_project_iam_member" "vm" {
@@ -86,7 +85,7 @@ resource "kubernetes_secret" "vm" {
   metadata {
     namespace = "concourse-cft"
 
-    name      = "phoogle-vm"
+    name = "phoogle-vm"
   }
 
   data {
@@ -95,4 +94,3 @@ resource "kubernetes_secret" "vm" {
     phoogle_sa           = "${base64decode(google_service_account_key.vm.private_key)}"
   }
 }
-
