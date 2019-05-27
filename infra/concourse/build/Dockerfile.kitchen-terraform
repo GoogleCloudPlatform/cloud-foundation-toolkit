@@ -36,9 +36,9 @@ SHELL ["/bin/bash", "-c"]
 ENV APP_BASE_DIR="/cft"
 
 RUN cd /tmp && \
-    wget https://releases.hashicorp.com/packer/1.3.3/packer_1.3.3_linux_amd64.zip && \
-    unzip packer_1.3.3_linux_amd64.zip && \
-    rm -rf packer_1.3.3_linux_amd64.zip && \
+    wget wget https://releases.hashicorp.com/packer/1.4.1/packer_1.4.1_linux_amd64.zip && \
+    unzip packer_1.4.1_linux_amd64.zip && \
+    rm -rf packer_1.4.1_linux_amd64.zip && \
     mv packer /bin/
 
 COPY --from=cft-terraform $APP_BASE_DIR $APP_BASE_DIR

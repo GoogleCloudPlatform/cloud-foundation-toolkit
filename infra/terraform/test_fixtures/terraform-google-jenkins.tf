@@ -84,7 +84,7 @@ data "template_file" "jenkins_github_webhook_url" {
 resource "kubernetes_secret" "jenkins" {
   metadata {
     namespace = "concourse-cft"
-    name      = "phoogle-jenkins"
+    name      = "jenkins"
   }
 
   data {
