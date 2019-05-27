@@ -10,7 +10,7 @@ resource "google_project" "vm" {
   provider = "google.phoogle"
 
   name            = "ci-vm"
-  project_id      = "ci-google-vm"
+  project_id      = "ci-vm-module"
   folder_id       = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account = "${module.variables.phoogle_billing_account}"
 }
