@@ -58,6 +58,7 @@ def generate_config(context):
                                  + '.creationTimestamp)',
         }
 
-    outputs = [{'name': 'rules', 'value': out}]
+    name = context.properties.get('name', 'rules')
+    outputs = [{'name': name, 'value': out}]
 
     return {'resources': resources, 'outputs': outputs}
