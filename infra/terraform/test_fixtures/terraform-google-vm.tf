@@ -9,8 +9,8 @@ locals {
 resource "google_project" "vm" {
   provider = "google.phoogle"
 
-  name            = "phoogle-ci-vm-project"
-  project_id      = "phoogle-ci-vm-project"
+  name            = "ci-vm"
+  project_id      = "ci-vm"
   folder_id       = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account = "${module.variables.phoogle_billing_account}"
 }
@@ -22,7 +22,7 @@ resource "google_project_services" "vm" {
 
   services = [
     "compute.googleapis.com",
-    "storage-api.googleapis.com",
+    "iam.googleapis.com"
   ]
 }
 
@@ -30,8 +30,8 @@ resource "google_service_account" "vm" {
   provider = "google.phoogle"
 
   project      = "${google_project.vm.id}"
-  account_id   = "phoogle-ci-vm-id"
-  display_name = "phoogle-ci-vm-id"
+  account_id   = "ci-google-vm"
+  display_name = "ci-vm"
 
 }
 
