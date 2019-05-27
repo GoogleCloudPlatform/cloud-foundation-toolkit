@@ -23,6 +23,11 @@ required:
   - rules
 
 properties:
+  name:
+    type: string
+    description: |
+      The (optional) firewall name. This is only for documentation purposes and
+      is used as the Deployment Manager resource name if set.
   network:
     type: string
     description: |
