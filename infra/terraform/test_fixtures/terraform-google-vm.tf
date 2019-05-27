@@ -84,8 +84,7 @@ data "template_file" "vm_github_webhook_url" {
 resource "kubernetes_secret" "vm" {
   metadata {
     namespace = "concourse-cft"
-
-    name = "phoogle-vm"
+    name      = "vm"
   }
 
   data {
