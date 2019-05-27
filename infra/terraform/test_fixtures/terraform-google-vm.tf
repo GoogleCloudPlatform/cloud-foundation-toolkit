@@ -30,7 +30,7 @@ resource "google_service_account" "vm" {
   provider = "google.phoogle"
 
   project      = "${google_project.vm.id}"
-  account_id   = "ci-vm"
+  account_id   = "ci-google-vm"
   display_name = "ci-vm"
 
 }
