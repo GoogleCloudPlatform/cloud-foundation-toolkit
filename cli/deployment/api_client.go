@@ -17,14 +17,12 @@ var execFunction = func(args ...string) (result string, err error) {
 	cmd.Stderr = errBuff
 
 	if err := cmd.Start(); err != nil {
-		log.Printf("Failed to start cmd: %v", err)
+		log.Printf("Failed to start cmd: %v, \n Output:\n %v", err, errBuff.String())
 		return "", err
 	}
 
-	log.Println("Doing other stuff...")
-
 	if err := cmd.Wait(); err != nil {
-		log.Printf("Cmd returned error: %v", err)
+		log.Printf("Cmd returned error: %v, \n Output:\n %v", err, errBuff.String())
 		return errBuff.String(), err
 	}
 
@@ -38,6 +36,22 @@ func GetOutputs(name string, project string) (map[string]string, error) {
 		return nil, err
 	}
 	return ParseOutputs(data)
+}
+
+func Create(deployment *Deployment) (*Deployment, error) {
+	_, err := execFunction("deployment-manager", "deployments", "create", deployment.config.Name, "--config",
+		deployment.ConfigFile(), "--project", deployment.config.Project)
+	if err != nil {
+		log.Print("Failed to create deployment", err)
+		return nil, err
+	}
+	outputs, err := GetOutputs(deployment.config.Name, deployment.config.Project)
+	if err != nil {
+		log.Print("Failed to get deployment outputs", err)
+		return nil, err
+	}
+	deployment.outputs = outputs
+	return deployment, nil
 }
 
 func ParseOutputs(data string) (map[string]string, error) {

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/deployment"
 	"github.com/spf13/cobra"
 	"io/ioutil"
@@ -19,18 +18,24 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create deployment(s)",
 	Long:  `Create deployment(s)`,
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Printf("Create deployment, configs %v, project %s", args, ProjectFlag)
-		configs := loadConfigs(args)
-		graph := deployment.NewDependencyGraph(configs)
-		ordered, err := graph.Order()
+	Run:   run,
+}
+
+func run(cmd *cobra.Command, args []string) {
+	cmd.Printf("Create deployment, configs %v, project %s", args, ProjectFlag)
+	configs := loadConfigs(args)
+	graph := deployment.NewDependencyGraph(configs)
+	ordered, err := graph.Order()
+	if err != nil {
+		log.Fatal("Error during creating deployment dependencies graph", err)
+	}
+	for _, config := range ordered {
+		dep := deployment.NewDeployment(config)
+		_, err = deployment.Create(dep)
 		if err != nil {
-			log.Fatal("Error during creating deployment dependencies grahp", err)
+			log.Fatal("Error during creating deployment %v, \n %v", dep, err)
 		}
-		for _, config := range ordered {
-			fmt.Println(config)
-		}
-	},
+	}
 }
 
 func loadConfigs(args []string) []deployment.Config {
