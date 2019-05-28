@@ -78,7 +78,7 @@ func (c Config) findAllOutRefs() []string {
 }
 
 func parseOutRef(text string) (project string, deployment string,
-	resouce string, property string) {
+	resource string, property string) {
 	array := strings.Split(text, ".")
 	return array[0], array[1], array[2], array[3]
 }
