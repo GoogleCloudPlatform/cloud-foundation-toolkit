@@ -109,7 +109,7 @@ jobs:
             dir: terraform-google-vm
           params:
             PROJECT_ID: ((vm.phoogle_project_id))
-            REGION: "us-east4"
+            REGION: "us-central1"
             SERVICE_ACCOUNT_JSON: ((vm.phoogle_sa))
     on_success:
       put: notify-integration-test-success
