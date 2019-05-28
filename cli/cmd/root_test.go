@@ -61,7 +61,7 @@ func TestRootCommandHelpArgs(t *testing.T) {
 func TestRootCommandWithUnknownCommand(t *testing.T) {
 	output, err := ExecuteCommand(rootCmd, "unknown")
 	if !strings.HasPrefix(output, "Error: unknown command \"unknown\" for \"cft\"") {
-		t.Errorf("Unexpected output: %v", output)
+		t.Errorf("expected: %s", output)
 	}
 	if err == nil {
 		t.Errorf("Expected unkwnown command error")
