@@ -2,28 +2,13 @@ package deployment
 
 import (
 	"bytes"
-	"fmt"
 	"gopkg.in/yaml.v2"
 	"log"
 	"os/exec"
 )
 
-type Deployment struct {
-	name    string
-	outputs map[string]string
-}
-
-func unmarshal(data string) (map[string]interface{}, error) {
-	my := make(map[string]interface{})
-	err := yaml.Unmarshal([]byte(data), my)
-	if err != nil {
-		fmt.Printf("error %+v", err)
-		return nil, err
-	}
-	return my, nil
-}
-
-func GCloud(args ...string) (result string, err error) {
+// during testing it will be replaced with mock
+var execFunction = func(args ...string) (result string, err error) {
 	cmd := exec.Command("/home/kopachevsky/google-cloud-sdk/bin/gcloud", append(args, "--format", "yaml")...)
 	//cmd.Dir = entryPath
 	outBuff := &bytes.Buffer{}
@@ -46,7 +31,16 @@ func GCloud(args ...string) (result string, err error) {
 	return outBuff.String(), err
 }
 
-func GetOutputs(data string) (map[string]string, error) {
+func GetOutputs(name string, project string) (map[string]string, error) {
+	data, err := execFunction("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project)
+	if err != nil {
+		log.Print("Failed to get deployment manifest", err)
+		return nil, err
+	}
+	return ParseOutputs(data)
+}
+
+func ParseOutputs(data string) (map[string]string, error) {
 
 	type resources struct {
 		Resources []struct {
