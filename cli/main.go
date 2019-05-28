@@ -1,10 +1,8 @@
 package main
 
-import (
-	"fmt"
-)
+import "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/cmd"
 
 func main() {
 
-	fmt.Println(Config{})
+	cmd.Execute()
 }
