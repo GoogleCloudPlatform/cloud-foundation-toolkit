@@ -35,6 +35,12 @@ SHELL ["/bin/bash", "-c"]
 
 ENV APP_BASE_DIR="/cft"
 
+RUN cd /tmp && \
+    wget https://releases.hashicorp.com/packer/1.4.1/packer_1.4.1_linux_amd64.zip && \
+    unzip packer_1.4.1_linux_amd64.zip && \
+    rm -rf packer_1.4.1_linux_amd64.zip && \
+    mv packer /bin/
+
 COPY --from=cft-terraform $APP_BASE_DIR $APP_BASE_DIR
 
 ENV HOME="$APP_BASE_DIR/home"
@@ -49,7 +55,8 @@ RUN echo 'base64() { if [[ $@ == "--decode" ]]; then command base64 -d | more; e
 RUN terraform --version && \
     gcloud --version && \
     ruby --version && \
-    bundle --version
+    bundle --version && \
+    packer --version
 
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
