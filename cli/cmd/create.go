@@ -22,18 +22,20 @@ var createCmd = &cobra.Command{
 }
 
 func run(cmd *cobra.Command, args []string) {
-	cmd.Printf("Create deployment, configs %v, project %s", args, ProjectFlag)
+	cmd.Printf("Create deployment, configs %v, project %s\n", args, ProjectFlag)
 	configs := loadConfigs(args)
 	graph := deployment.NewDependencyGraph(configs)
 	ordered, err := graph.Order()
 	if err != nil {
 		log.Fatal("Error during creating deployment dependencies graph", err)
 	}
+	outputs := make(map[string]map[string]string)
 	for _, config := range ordered {
-		dep := deployment.NewDeployment(config)
+		dep := deployment.NewDeployment(config, outputs)
+		log.Println("Start creating deployment", dep.String())
 		_, err = deployment.Create(dep)
 		if err != nil {
-			log.Fatal("Error during creating deployment %v, \n %v", dep, err)
+			log.Fatalf("Error during creating deployment %v, \n %v", dep, err)
 		}
 	}
 }
