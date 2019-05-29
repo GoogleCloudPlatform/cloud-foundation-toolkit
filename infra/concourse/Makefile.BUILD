@@ -14,7 +14,7 @@ BUILD_RUBY_VERSION := 2.6.3
 # Fixing bugs or making trivial changes should be considered a patch release.
 
 DOCKER_TAG_VERSION_TERRAFORM := 1.0.0
-DOCKER_TAG_VERSION_KITCHEN_TERRAFORM := 1.2.0
+DOCKER_TAG_VERSION_KITCHEN_TERRAFORM := 1.3.0
 
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
