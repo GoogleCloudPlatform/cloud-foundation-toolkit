@@ -7,10 +7,13 @@ import (
 )
 
 func TestGetOutputs(t *testing.T) {
+
 	execFunction = func(args ...string) (result string, err error) {
 		expected := "deployment-manager manifests describe --deployment myproject --project mydeployment"
 		actual := strings.Join(args, " ")
 		if expected != actual {
+			fmt.Println(actual)
+			fmt.Println(expected)
 			t.Errorf("expected %v, got %v", expected, actual)
 		}
 		return GetTestData("deployment", "api-describe-manifest.yaml", t), nil
@@ -26,7 +29,8 @@ func TestGetOutputs(t *testing.T) {
 	}
 }
 
-func TestCreate(t *testing.T) {
+// do actuall deployment creation call
+func testCreate(t *testing.T) {
 	dep := Deployment{
 		configFile: "/1-prj/projects/google/CFT/fork/cloud-foundation-toolkit/dm/network.yaml",
 		config: Config{

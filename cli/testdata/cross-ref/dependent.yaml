@@ -1,0 +1,11 @@
+name: my-networks-parent
+description: my networks deployment
+
+imports:
+- path: templates/network/network.py
+
+resources:
+- type: templates/network/network.py
+  name: ${out.gl-akopachevskyy-dm-seed.my-network.my-network.name}-dependent
+  properties:
+    autoCreateSubnetworks: true

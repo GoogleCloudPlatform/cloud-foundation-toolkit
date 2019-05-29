@@ -11,10 +11,13 @@ import (
 var /* const */ pattern = regexp.MustCompile(`\$\(out\.(?P<token>[-.a-zA-Z0-9]+)\)`)
 
 type Config struct {
-	Name    string
-	Project string
-	file    string
-	data    string
+	Name        string
+	Project     string
+	Description string
+	Imports     interface{}
+	Resources   interface{}
+	file        string
+	data        string
 }
 
 func NewConfig(data string, file string) *Config {
@@ -33,7 +36,7 @@ func NewConfig(data string, file string) *Config {
 func (c Config) findAllDependencies(configs []Config) []Config {
 	refs := c.findAllOutRefs()
 	if refs != nil {
-		dependencies := map[Config]bool{}
+		dependencies := map[int64]Config{}
 		for _, ref := range refs {
 			var dependency *Config
 			project, deployment, _, _ := parseOutRef(ref)
@@ -45,15 +48,26 @@ func (c Config) findAllDependencies(configs []Config) []Config {
 			if dependency == nil {
 				log.Fatalf("Could not find config for project = %s, deployment = %s", project, deployment)
 			}
-			dependencies[*dependency] = true
+			dependencies[dependency.ID()] = *dependency
 		}
 		var result []Config
-		for dependency := range dependencies {
+		for _, dependency := range dependencies {
 			result = append(result, dependency)
 		}
 		return result
 	}
 	return nil
+}
+
+func (c Config) Yaml() ([]byte, error) {
+	tmp := struct {
+		Imports   interface{}
+		Resources interface{}
+	}{
+		Imports:   c.Imports,
+		Resources: c.Resources,
+	}
+	return yaml.Marshal(tmp)
 }
 
 // implementation of graph.Node interface
