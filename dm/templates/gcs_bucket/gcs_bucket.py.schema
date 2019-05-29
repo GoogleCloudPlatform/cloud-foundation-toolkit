@@ -92,7 +92,6 @@ properties:
     type: object
     required:
       - logBucket
-      - logObjectPrefix
     properties:
       logBucket:
         type: string
