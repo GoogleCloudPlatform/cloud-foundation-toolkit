@@ -2,6 +2,7 @@ package deployment
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -10,6 +11,12 @@ func TestNewConfig(t *testing.T) {
 	config := NewConfig(data, "")
 	if config == nil {
 		t.Errorf("Config is nil")
+	}
+	if len(config.Imports.([]interface{})) != 1 {
+		t.Errorf("Expected to have 1 import")
+	}
+	if len(config.Resources.([]interface{})) != 2 {
+		t.Errorf("Expected to have 2 resources")
 	}
 }
 
@@ -48,6 +55,18 @@ func TestFindAllDependencies(t *testing.T) {
 
 	if !reflect.DeepEqual(configB.findAllDependencies(configs), []Config{configA}) {
 		t.Errorf("ConfigB should have ConfigA as dep")
+	}
+}
+
+func TestYaml(t *testing.T) {
+	data, err := Config{
+		data: GetTestData("config", "custom-fields.yaml", t),
+	}.Yaml()
+	if err != nil {
+		t.Error(err)
+	}
+	if strings.Contains(string(data), "project:") {
+		t.Errorf("Should not contain, project, name or descriptions")
 	}
 }
 

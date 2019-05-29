@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
-	"path/filepath"
 )
 
 type Deployment struct {
@@ -20,22 +18,32 @@ func (d Deployment) ConfigFile() string {
 	return d.configFile
 }
 
-func NewDeployment(config Config, outputs map[string](map[string]string)) *Deployment {
-	file, err := ioutil.TempFile("dm", config.Name)
+func NewDeployment(config Config, outputs map[string]map[string]string) *Deployment {
+	file, err := ioutil.TempFile("", config.Name)
+	defer file.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
-	path, _ := filepath.Abs(filepath.Dir(file.Name()))
-	ioutil.WriteFile(path, []byte(config.data), os.ModeTemporary)
+
+	data := replaceOutRefs(config, outputs)
+
+	_, err = file.Write(data)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return &Deployment{
 		config:     config,
-		configFile: path,
+		configFile: file.Name(),
 	}
 }
 
-func (d Deployment) ReplaceOutRefs(data []byte, outputs map[string](map[string]string)) {
-	refs := d.config.findAllOutRefs()
+func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte {
+	data, err := config.Yaml()
+	if err != nil {
+		panic(err)
+	}
+	refs := config.findAllOutRefs()
 	for _, ref := range refs {
 		project, deployment, _, _ := parseOutRef(ref)
 		outputsMap := outputs[project+"."+deployment]
@@ -47,12 +55,13 @@ func (d Deployment) ReplaceOutRefs(data []byte, outputs map[string](map[string]s
 			outputs[project+"."+deployment] = outputsMap
 		}
 		value := outputsMap[ref]
-		fullRef := fmt.Sprint("${out.%s}", ref)
+		fullRef := fmt.Sprintf("${out.%s}", ref)
 		if len(value) == 0 {
 			log.Fatal("Could not resolve reference ", fullRef)
 		}
-		bytes.ReplaceAll(data, []byte(fullRef), []byte(value))
+		data = bytes.ReplaceAll(data, []byte(fullRef), []byte(value))
 	}
+	return data
 }
 
 func (d Deployment) String() string {
