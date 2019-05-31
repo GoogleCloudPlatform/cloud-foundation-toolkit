@@ -15,7 +15,9 @@ resources:
       machineType: f1-micro
       diskType: pd-ssd
       networks:
-        - name: default
+        - network: default
+          accessConfigs:
+            - type: ONE_TO_ONE_NAT
       metadata:
         items:
           - key: startup-script
