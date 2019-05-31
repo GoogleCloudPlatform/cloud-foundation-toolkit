@@ -8,9 +8,8 @@ import (
 )
 
 type Deployment struct {
-	outputs map[string]string
-	config  Config
-	// tmp config file location
+	Outputs    map[string]string
+	config     Config
 	configFile string
 }
 
@@ -45,7 +44,7 @@ func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte 
 	}
 	refs := config.findAllOutRefs()
 	for _, ref := range refs {
-		project, deployment, _, _ := parseOutRef(ref)
+		project, deployment, resource, property := parseOutRef(ref)
 		outputsMap := outputs[project+"."+deployment]
 		if outputsMap == nil {
 			outputsMap, err := GetOutputs(deployment, project)
@@ -54,8 +53,9 @@ func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte 
 			}
 			outputs[project+"."+deployment] = outputsMap
 		}
-		value := outputsMap[ref]
-		fullRef := fmt.Sprintf("${out.%s}", ref)
+		key := resource + "." + property
+		value := outputsMap[key]
+		fullRef := fmt.Sprintf("$(out.%s)", ref)
 		if len(value) == 0 {
 			log.Fatal("Could not resolve reference ", fullRef)
 		}
@@ -66,4 +66,8 @@ func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte 
 
 func (d Deployment) String() string {
 	return fmt.Sprintf("Deployment[name=%s, config=%s]", d.config.String(), d.configFile)
+}
+
+func (d Deployment) ID() string {
+	return d.config.String()
 }

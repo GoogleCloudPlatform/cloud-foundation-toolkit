@@ -17,6 +17,42 @@ func TestUnmarshal(t *testing.T) {
 	}
 }
 
+func TestAbsolutePath(t *testing.T) {
+	expected := "/base/folder/script.py"
+	actual := AbsolutePath("/base/folder/config.yaml", "script.py")
+	if actual != expected {
+		t.Errorf("Expected %s, actual %s", expected, actual)
+	}
+
+	actual = AbsolutePath("/base/folder/config.yaml", "./script.py")
+	if actual != expected {
+		t.Errorf("Expected %s, actual %s", expected, actual)
+	}
+
+	actual = AbsolutePath("/base/folder/config.yaml", expected)
+	if actual != expected {
+		t.Errorf("Expected %s, actual %s", expected, actual)
+	}
+
+	expected = "/base/script.py"
+	actual = AbsolutePath("/base/folder/config.yaml", "../script.py")
+	if actual != expected {
+		t.Errorf("Expected %s, actual %s", expected, actual)
+	}
+
+	expected = "/base/folder/templates/script.py"
+	actual = AbsolutePath("/base/folder/config.yaml", "templates/script.py")
+	if actual != expected {
+		t.Errorf("Expected %s, actual %s", expected, actual)
+	}
+
+	expected = "/base/templates/script.py"
+	actual = AbsolutePath("/base/folder/config.yaml", "../templates/script.py")
+	if actual != expected {
+		t.Errorf("Expected %s, actual %s", expected, actual)
+	}
+}
+
 func GetTestData(folder string, name string, t *testing.T) string {
 	path := filepath.Join("../testdata", folder, name)
 	buff, err := ioutil.ReadFile(path)
