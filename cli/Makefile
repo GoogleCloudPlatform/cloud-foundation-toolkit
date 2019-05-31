@@ -4,7 +4,6 @@ SHELL := /bin/bash
 VERSION=v0.1.0
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
-GOOGLE_APPLICATION_CREDENTIALS=
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
