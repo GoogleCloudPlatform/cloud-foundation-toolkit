@@ -5,12 +5,14 @@ import (
 	"gopkg.in/yaml.v2"
 	"log"
 	"os/exec"
+	"strings"
 )
 
 // during testing it will be replaced with mock
 var execFunction = func(args ...string) (result string, err error) {
-	cmd := exec.Command("/home/kopachevsky/google-cloud-sdk/bin/gcloud", append(args, "--format", "yaml")...)
-	//cmd.Dir = entryPath
+	args = append(args, "--format", "yaml")
+	log.Println("gcloud", strings.Join(args, " "))
+	cmd := exec.Command("/home/kopachevsky/google-cloud-sdk/bin/gcloud", args...)
 	outBuff := &bytes.Buffer{}
 	errBuff := &bytes.Buffer{}
 	cmd.Stdout = outBuff
@@ -47,10 +49,10 @@ func Create(deployment *Deployment) (*Deployment, error) {
 	}
 	outputs, err := GetOutputs(deployment.config.Name, deployment.config.Project)
 	if err != nil {
-		log.Print("Failed to get deployment outputs", err)
+		log.Print("Failed to get deployment Outputs", err)
 		return nil, err
 	}
-	deployment.outputs = outputs
+	deployment.Outputs = outputs
 	return deployment, nil
 }
 
@@ -60,7 +62,7 @@ func ParseOutputs(data string) (map[string]string, error) {
 		Resources []struct {
 			Name    string
 			Outputs []struct {
-				Value interface{}
+				Value interface{} `yaml:"finalValue"`
 				Name  string
 			}
 		}
@@ -68,7 +70,7 @@ func ParseOutputs(data string) (map[string]string, error) {
 
 	describe, err := unmarshal(data)
 	if err != nil {
-		log.Println("Error unmarshal deployment outputs")
+		log.Println("Error unmarshal deployment Outputs")
 		return nil, err
 	}
 
@@ -77,7 +79,7 @@ func ParseOutputs(data string) (map[string]string, error) {
 	res := &resources{}
 	err = yaml.Unmarshal([]byte(layoutData), res)
 	if err != nil {
-		log.Println("Error unmarshal deployment outputs layout data")
+		log.Println("Error unmarshal deployment Outputs layout data")
 		return nil, err
 	}
 
