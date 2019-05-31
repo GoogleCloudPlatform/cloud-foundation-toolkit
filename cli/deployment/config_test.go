@@ -12,10 +12,10 @@ func TestNewConfig(t *testing.T) {
 	if config == nil {
 		t.Errorf("Config is nil")
 	}
-	if len(config.Imports.([]interface{})) != 1 {
+	if len(config.Imports) != 1 {
 		t.Errorf("Expected to have 1 import")
 	}
-	if len(config.Resources.([]interface{})) != 2 {
+	if len(config.Resources) != 2 {
 		t.Errorf("Expected to have 2 resources")
 	}
 }
@@ -27,8 +27,7 @@ func TestFindAllOutRefs(t *testing.T) {
 		[]string{
 			"project1.deployment1.resource1.output1",
 			"deployment2.resource2.output2",
-		},
-		t)
+		}, t)
 	// empty string
 	executeFindAllOutRefsAndAssert("", nil, t)
 	// invalid notation
