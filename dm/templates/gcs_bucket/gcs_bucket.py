@@ -35,6 +35,7 @@ def generate_config(context):
     }
 
     optional_props = [
+        'billing',
         'location',
         'versioning',
         'storageClass',
