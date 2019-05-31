@@ -75,4 +75,16 @@ func TestOrder(t *testing.T) {
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Expected %v, got %v", expected, actual)
 	}
+
+	graph1 := NewDependencyGraph([]Config{*configA, *configB})
+
+	actual1, err1 := graph1.Order()
+	if err1 != nil {
+		t.Error(err)
+	}
+	expected1 := []Config{*configB, *configA}
+
+	if !reflect.DeepEqual(actual1, expected1) {
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
 }

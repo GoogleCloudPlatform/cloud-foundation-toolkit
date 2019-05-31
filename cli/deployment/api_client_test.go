@@ -43,8 +43,8 @@ func testCreate(t *testing.T) {
 		t.Error(err)
 	}
 
-	if len(deployment.outputs) == 0 {
-		t.Errorf("Should be more outputs")
+	if len(deployment.Outputs) == 0 {
+		t.Errorf("Should be more Outputs")
 	}
 
 	fmt.Println(deployment)
