@@ -123,14 +123,6 @@ properties:
               group|serviceAccount:email or domain:domain.
               Can also be one of the following special values: allUsers,
               allAuthenticatedUsers.
-  billing:
-    type: object
-    description: The bucket's billing configuration.
-    properties:
-      requesterPays:
-        type: boolean
-        description: |
-          When set to true, Requester Pays is enabled for this bucket.
   lifecycle:
     type: object
     description: The storage object's lifecycle actions and conditions.
@@ -203,6 +195,10 @@ properties:
   labels:
     type: object
     description: User-provided labels in key/value pairs.
+  requesterPays:
+    type: boolean
+    description: |
+      When set to true, Requester Pays is enabled for this bucket.
   website:
     type: object
     description: |
