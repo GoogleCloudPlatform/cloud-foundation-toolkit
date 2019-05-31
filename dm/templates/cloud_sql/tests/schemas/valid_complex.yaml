@@ -1,0 +1,17 @@
+region: us-central1
+settings:
+  tier: db-n1-standard-1
+  backupConfiguration:
+    startTime: '02:00'
+    enabled: true
+    binaryLogEnabled: true
+  locationPreference:
+    zone: us-central1-c
+users:
+  - name: user-1
+    host: 10.1.1.1
+  - name: user-2
+    host: 10.1.1.2
+databases:
+  - name: db-1
+  - name: db-2

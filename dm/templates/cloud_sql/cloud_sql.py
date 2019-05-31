@@ -64,7 +64,8 @@ def get_instance(res_name, project_id, properties):
 
     instance = {
         'name': name,
-        'type': 'sqladmin.v1beta4.instance',
+        # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances
+        'type': 'gcp-types/sqladmin-v1beta4:instances',
         'properties': instance_properties
     }
 
@@ -87,6 +88,10 @@ def get_instance(res_name, project_id, properties):
         {
             'name': 'connectionName',
             'value': '$(ref.{}.connectionName)'.format(name)
+        },
+        {
+            'name': 'backendType',
+            'value': '$(ref.{}.backendType)'.format(name)
         },
     ]
 
@@ -116,7 +121,8 @@ def get_database(instance_name, project_id, properties):
 
     database = {
         'name': res_name,
-        'type': 'sqladmin.v1beta4.database',
+        # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases
+        'type': 'gcp-types/sqladmin-v1beta4:databases',
         'properties': db_properties
     }
 
@@ -160,7 +166,8 @@ def get_user(instance_name, project_id, properties):
 
     user = {
         'name': res_name,
-        'type': 'sqladmin.v1beta4.user',
+        # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users
+        'type': 'gcp-types/sqladmin-v1beta4:users',
         'properties': user_properties
     }
 
