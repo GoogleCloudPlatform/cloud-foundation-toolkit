@@ -24,14 +24,12 @@ var createCmd = &cobra.Command{
 func run(cmd *cobra.Command, args []string) {
 	cmd.Printf("Create deployment, configs %v, project %s\n", args, ProjectFlag)
 	configs := loadConfigs(args)
-	//graph := deployment.NewDependencyGraph(configs)
-	// TODO fix graph sort
-	// ordered, err := graph.Order()
-	// if err != nil {
-	//	log.Fatal("Error during creating deployment dependencies graph", err)
-	// }
+	ordered, err := deployment.Order(configs)
+	if err != nil {
+		log.Fatal("Error during creating deployment dependencies graph", err)
+	}
 
-	ordered := configs
+	log.Print("Ordered dependencies", ordered)
 
 	outputs := make(map[string]map[string]string)
 	for _, config := range ordered {
@@ -45,14 +43,17 @@ func run(cmd *cobra.Command, args []string) {
 	}
 }
 
-func loadConfigs(args []string) []deployment.Config {
-	result := make([]deployment.Config, len(args))
-	for i, path := range args {
+func loadConfigs(args []string) map[string]deployment.Config {
+	result := make(map[string]deployment.Config, len(args))
+	for _, path := range args {
 		data, err := ioutil.ReadFile(path)
 		if err != nil {
 			log.Fatal("Error loading file", path)
 		}
-		result[i] = *deployment.NewConfig(string(data), path)
+
+		config := deployment.NewConfig(string(data), path)
+
+		result[config.FullName()] = config
 	}
 	return result
 }
