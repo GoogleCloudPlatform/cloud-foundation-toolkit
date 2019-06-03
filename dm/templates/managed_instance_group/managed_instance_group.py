@@ -16,8 +16,10 @@
 import copy
 
 REGIONAL_LOCAL_IGM_TYPES = {
-    True: 'compute.v1.regionInstanceGroupManager',
-    False: 'compute.v1.instanceGroupManager'
+    # https://cloud.google.com/compute/docs/reference/rest/v1/regionInstanceGroupManagers
+    True: 'gcp-types/compute-v1:regionInstanceGroupManagers',
+    # https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroupManagers
+    False: 'gcp-types/compute-v1:instanceGroupManagers'
 }
 
 
@@ -63,14 +65,15 @@ def get_instance_template(properties, name_prefix):
     return create_instance_template(properties, name_prefix)
 
 
-def create_autoscaler(autoscaler_spec, igm):
+def create_autoscaler(context, autoscaler_spec, igm):
     """ Creates an autoscaler. """
 
-    igm_name = igm['name']
     igm_properties = igm['properties']
 
     autoscaler_properties = autoscaler_spec.copy()
-    name = autoscaler_properties.get('name', igm_name + '-autoscaler')
+    name =  '{}-autoscaler'.format(context.env['name'])
+
+    autoscaler_properties['project'] = context.properties.get('project', context.env['project'])
 
     autoscaler_resource = {
         'type': 'autoscaler.py',
@@ -85,7 +88,7 @@ def create_autoscaler(autoscaler_spec, igm):
     min_size = autoscaler_properties.pop('minSize')
     autoscaler_properties['minNumReplicas'] = min_size
 
-    autoscaler_properties['target'] = '$(ref.{}.selfLink)'.format(igm_name)
+    autoscaler_properties['target'] = '$(ref.{}.selfLink)'.format(context.env['name'])
 
     for location in ['zone', 'region']:
         set_optional_property(autoscaler_properties, igm_properties, location)
@@ -98,12 +101,12 @@ def create_autoscaler(autoscaler_spec, igm):
     return [autoscaler_resource], [autoscaler_output]
 
 
-def get_autoscaler(properties, igm):
+def get_autoscaler(context, igm):
     """ Creates an autoscaler, if necessary. """
 
-    autoscaler_spec = properties.get('autoscaler')
+    autoscaler_spec = context.properties.get('autoscaler')
     if autoscaler_spec:
-        return create_autoscaler(autoscaler_spec, igm)
+        return create_autoscaler(context, autoscaler_spec, igm)
 
     return [], []
 
@@ -150,8 +153,8 @@ def is_reference(candidate):
 def create_health_checks_assignment(healthchecks, igm_resource, project):
     """ Create resource for IGMs health checks assignment. """
 
-    igm_name = igm_resource['name']
     igm_properties = igm_resource['properties']
+    igm_name = igm_properties['name']
 
     properties = {
         'instanceGroupManager': igm_name,
@@ -162,6 +165,8 @@ def create_health_checks_assignment(healthchecks, igm_resource, project):
     dependencies = []
     metadata = {'dependsOn': dependencies}
     # Have to use a type-provider for health checks assignment
+    # https://cloud.google.com/compute/docs/reference/rest/beta/regionInstanceGroupManagers/setAutoHealingPolicies
+    # https://cloud.google.com/compute/docs/reference/rest/beta/instanceGroupManagers/setAutoHealingPolicies
     type_provider = 'gcp-types/compute-beta'
     action = '{}:compute.{}GroupManagers.setAutoHealingPolicies'.format(
         type_provider,
@@ -170,7 +175,7 @@ def create_health_checks_assignment(healthchecks, igm_resource, project):
 
     assign_healthcheck_resource = {
         'action': action,
-        'name': igm_name + '-set-hc',
+        'name': igm_resource['name'] + '-set-hc',
         'properties': properties,
         'metadata': metadata
     }
@@ -188,7 +193,7 @@ def create_health_checks_assignment(healthchecks, igm_resource, project):
 
     # setAutoHealingPolicies depends both on the health checks and IGM
     # resource
-    dependencies.append(igm_name)
+    dependencies.append(igm_resource['name'])
 
     for location in ['region', 'zone']:
         set_optional_property(properties, igm_properties, location)
@@ -210,15 +215,22 @@ def get_health_checks(properties, igm_resource, project):
     return []
 
 
-def get_igm(properties, name, template_link):
+def get_igm(context, template_link):
     """ Creates the IGM resource with its outputs. """
 
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
     is_regional = 'region' in properties
 
-    igm_properties = {'instanceTemplate': template_link}
+    igm_properties = {
+        'name': name,
+        'project': project_id,
+        'instanceTemplate': template_link,
+    }
 
     igm = {
-        'name': name,
+        'name': context.env['name'],
         'type': REGIONAL_LOCAL_IGM_TYPES[is_regional],
         'properties': igm_properties
     }
@@ -236,7 +248,7 @@ def get_igm(properties, name, template_link):
     for prop in known_properties:
         set_optional_property(igm_properties, properties, prop)
 
-    outputs = get_igm_outputs(name, igm_properties)
+    outputs = get_igm_outputs(context.env['name'], igm_properties)
 
     return [igm], outputs
 
@@ -245,23 +257,23 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     properties = context.properties
-    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
     # Instance template
-    template = get_instance_template(properties['instanceTemplate'], name)
+    properties['instanceTemplate']['project'] = project_id
+    template = get_instance_template(properties['instanceTemplate'], context.env['name'])
     template_link, template_resources, template_outputs = template
 
     # Instance group manager
-    igm_resources, igm_outputs = get_igm(properties, name, template_link)
+    igm_resources, igm_outputs = get_igm(context, template_link)
     igm = igm_resources[0]
 
     # Autoscaler
-    autoscaler = get_autoscaler(properties, igm)
+    autoscaler = get_autoscaler(context, igm)
     autoscaler_resources, autoscaler_outputs = autoscaler
 
     # Health checks
-    project = context.env['project']
-    healthcheck_resources = get_health_checks(properties, igm, project)
+    healthcheck_resources = get_health_checks(properties, igm, project_id)
 
     return {
         'resources':

@@ -24,7 +24,10 @@ resources:
       instanceTemplate:
         name: ${INSTANCE_TEMPLATE_NAME}
         diskImage: ${IT_BASE_IMAGE}
-        network: ${IT_NETWORK}
+        networks:
+          - network: ${IT_NETWORK}
+            accessConfigs:
+              - type: ONE_TO_ONE_NAT
       healthChecks:
         - initialDelaySec: ${INITIAL_DELAY_SEC}
           healthCheck: projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/httpHealthChecks/${SECOND_HEALTH_CHECK_NAME}
