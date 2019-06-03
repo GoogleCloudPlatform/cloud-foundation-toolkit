@@ -1,5 +1,6 @@
 name: my-networks-main
-description: my-networks-dependent
+description: my-networks-main
+project: gl-akopachevskyy-dm-seed
 
 imports:
 - path: templates/network/network.py

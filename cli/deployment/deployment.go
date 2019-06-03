@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 type Deployment struct {
@@ -44,14 +45,15 @@ func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte 
 	}
 	refs := config.findAllOutRefs()
 	for _, ref := range refs {
-		project, deployment, resource, property := parseOutRef(ref)
-		outputsMap := outputs[project+"."+deployment]
+		fullName, resource, property := parseOutRef(ref)
+		outputsMap := outputs[fullName]
 		if outputsMap == nil {
-			outputsMap, err := GetOutputs(deployment, project)
+			arr := strings.Split(fullName, ".")
+			outputsMap, err := GetOutputs(arr[0], arr[1])
 			if err != nil {
 				log.Fatal(err)
 			}
-			outputs[project+"."+deployment] = outputsMap
+			outputs[fullName] = outputsMap
 		}
 		key := resource + "." + property
 		value := outputsMap[key]
