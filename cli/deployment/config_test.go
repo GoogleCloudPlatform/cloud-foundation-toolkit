@@ -9,9 +9,7 @@ import (
 func TestNewConfig(t *testing.T) {
 	data := GetTestData("config", "simple.yaml", t)
 	config := NewConfig(data, "")
-	if config == nil {
-		t.Errorf("Config is nil")
-	}
+
 	if len(config.Imports) != 1 {
 		t.Errorf("Expected to have 1 import")
 	}
@@ -46,7 +44,10 @@ func TestFindAllDependencies(t *testing.T) {
 		Name:    "deploymentB",
 	}
 
-	configs := []Config{configB, configA}
+	configs := map[string]Config{
+		configB.FullName(): configB,
+		configA.FullName(): configA,
+	}
 
 	if configA.findAllDependencies(configs) != nil {
 		t.Errorf("ConfigA should not have any deps")

@@ -23,8 +23,8 @@ type Config struct {
 	data      string
 }
 
-func NewConfig(data string, file string) *Config {
-	config := &Config{
+func NewConfig(data string, file string) Config {
+	config := Config{
 		file: file,
 		data: data,
 	}
@@ -36,27 +36,21 @@ func NewConfig(data string, file string) *Config {
 	return config
 }
 
-func (c Config) findAllDependencies(configs []Config) []Config {
+func (c Config) findAllDependencies(configs map[string]Config) []Config {
 	refs := c.findAllOutRefs()
 	if refs != nil {
-		dependencies := map[int64]Config{}
+		dependencies := map[string]Config{}
 		for _, ref := range refs {
-			var dependency *Config
-			project, deployment, _, _ := parseOutRef(ref)
-			for i, config := range configs {
-				if config.Project == project && config.Name == deployment {
-					dependency = &configs[i]
-					fmt.Printf("Found dependency %s\n", dependency.String())
-				}
+			fullName, _, _ := parseOutRef(ref)
+			dependency, found := configs[fullName]
+			if !found {
+				log.Fatalf("Could not find config for deployment = %s", fullName)
 			}
-			if dependency == nil {
-				log.Fatalf("Could not find config for project = %s, deployment = %s", project, deployment)
-			}
-			dependencies[dependency.ID()] = *dependency
+			dependencies[fullName] = dependency
 		}
 		var result []Config
 		for _, dependency := range dependencies {
-			fmt.Printf("Adding dependency %s\n", dependency.String())
+			fmt.Printf("Adding dependency %s -> %s\n", c.FullName(), dependency.FullName())
 			result = append(result, dependency)
 		}
 		return result
@@ -101,13 +95,12 @@ func (c Config) resources(typeMap map[string]string) []interface{} {
 	return c.Resources
 }
 
-// implementation of graph.Node interface
-func (c Config) ID() int64 {
-	return hash64(c.Project + "." + c.Name)
+func (c Config) FullName() string {
+	return c.Project + "." + c.Name
 }
 
 func (c Config) String() string {
-	return fmt.Sprintf("%s.%s", c.Project, c.Name)
+	return c.FullName()
 }
 
 func (c Config) findAllOutRefs() []string {
@@ -122,8 +115,8 @@ func (c Config) findAllOutRefs() []string {
 	return result
 }
 
-func parseOutRef(text string) (project string, deployment string,
+func parseOutRef(text string) (fullName string,
 	resource string, property string) {
 	array := strings.Split(text, ".")
-	return array[0], array[1], array[2], array[3]
+	return array[0] + "." + array[1], array[2], array[3]
 }
