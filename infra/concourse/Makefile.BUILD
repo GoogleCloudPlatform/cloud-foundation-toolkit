@@ -19,7 +19,7 @@ DOCKER_TAG_VERSION_KITCHEN_TERRAFORM := 2.0.0
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
 DOCKER_IMAGE_LINT := cft/lint
-DOCKER_TAG_LINT := latest
+DOCKER_TAG_LINT := 2.0.0
 
 DOCKER_IMAGE_UNIT := cft/unit
 DOCKER_TAG_UNIT := latest
