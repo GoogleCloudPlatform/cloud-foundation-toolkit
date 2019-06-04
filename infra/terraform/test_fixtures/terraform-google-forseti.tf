@@ -6,8 +6,7 @@ locals {
   ]
 
   forseti_host_project_required_roles = [
-    "roles/compute.networkAdmin",
-    "roles/compute.securityAdmin",
+    "roles/compute.admin",
   ]
 
   forseti_project_required_roles = [
