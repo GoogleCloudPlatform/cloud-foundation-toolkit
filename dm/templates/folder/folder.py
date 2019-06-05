@@ -16,6 +16,8 @@
     parent folder.
 """
 
+from hashlib import sha1
+
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
@@ -23,14 +25,20 @@ def generate_config(context):
     resources = []
     out = {}
     for folder in context.properties.get('folders', []):
+        if folder.get('parent'):
+            parent = '{}s/{}'.format(folder['parent']['type'], folder['parent']['id'])
+        else:
+            parent = folder.get('orgId', folder.get('folderId'))
 
-        create_folder = folder['name']
-
-        parent = folder.get('orgId', folder.get('folderId'))
-
+        suffix = folder.get(
+            'resourceNameSuffix',
+            sha1('{}/folders/{}'.format(parent, folder.get('displayName'))).hexdigest()[:10]
+        )
+        create_folder = '{}-{}'.format(context.env['name'], suffix)
         resources.append(
             {
                 'name': create_folder,
+                # https://cloud.google.com/resource-manager/reference/rest/v2/folders
                 'type': 'gcp-types/cloudresourcemanager-v2:folders',
                 'properties':
                     {
