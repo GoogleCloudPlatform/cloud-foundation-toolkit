@@ -2,7 +2,6 @@ package deployment
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"log"
 	"os"
