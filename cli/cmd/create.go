@@ -1,16 +1,18 @@
 package cmd
 
 import (
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/deployment"
-	"github.com/spf13/cobra"
-	"io/ioutil"
 	"log"
+	"io/ioutil"
+
+	"github.com/spf13/cobra"
+
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/deployment"
 )
 
-var ProjectFlag string
+var projectFlag string
 
 func init() {
-	createCmd.PersistentFlags().StringVarP(&ProjectFlag, "project", "p", "", "project name")
+	createCmd.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project name")
 	rootCmd.AddCommand(createCmd)
 }
 
@@ -22,14 +24,14 @@ var createCmd = &cobra.Command{
 }
 
 func run(cmd *cobra.Command, args []string) {
-	cmd.Printf("Create deployment, configs %v, project %s\n", args, ProjectFlag)
+	cmd.Printf("Create deployment, configs %v, project %s\n", args, projectFlag)
 	configs := loadConfigs(args)
 	ordered, err := deployment.Order(configs)
 	if err != nil {
-		log.Fatal("Error during creating deployment dependencies graph", err)
+		log.Fatalf("Error ordering deployments in dependency order: %v", err)
 	}
 
-	log.Print("Ordered dependencies", ordered)
+	log.Printf("Ordered dependencies: %v", ordered)
 
 	outputs := make(map[string]map[string]string)
 	for _, config := range ordered {
@@ -39,7 +41,7 @@ func run(cmd *cobra.Command, args []string) {
 		if err != nil {
 			log.Fatalf("Error during creating deployment %v, \n %v", dep, err)
 		}
-		outputs[result.ID()] = result.Outputs
+		outputs[result.FullName()] = result.Outputs
 	}
 }
 
@@ -48,7 +50,7 @@ func loadConfigs(args []string) map[string]deployment.Config {
 	for _, path := range args {
 		data, err := ioutil.ReadFile(path)
 		if err != nil {
-			log.Fatal("Error loading file", path)
+			log.Fatalf("Error loading file: %s", path)
 		}
 
 		config := deployment.NewConfig(string(data), path)
