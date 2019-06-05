@@ -5,8 +5,7 @@ import (
 	"testing"
 )
 
-func TestSort(t *testing.T) {
-
+func TestOrder(t *testing.T) {
 	configA := Config{
 		data:    "network: my-net",
 		Project: "projectA",
@@ -25,7 +24,7 @@ func TestSort(t *testing.T) {
 
 	actual, err := Order(input)
 	if err != nil {
-		t.Error(err)
+		t.Errorf("unexpected error on order: %v", err)
 	}
 	expected := []Config{configA, configB}
 

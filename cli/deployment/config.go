@@ -2,14 +2,17 @@ package deployment
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"log"
 	"regexp"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
-var /* const */ pattern = regexp.MustCompile(`\$\(out\.(?P<token>[-.a-zA-Z0-9]+)\)`)
+// patern to parse $(project.deployment.resource.name) and $(deployment.resource.name)
+var pattern = regexp.MustCompile(`\$\(out\.(?P<token>[-.a-zA-Z0-9]+)\)`)
 
+// Config struct keep config data parsed from passed config.yaml
 type Config struct {
 	Name        string
 	Project     string
@@ -23,6 +26,7 @@ type Config struct {
 	data      string
 }
 
+// NewConfig creates new Config object from provided yaml file
 func NewConfig(data string, file string) Config {
 	config := Config{
 		file: file,
@@ -34,6 +38,32 @@ func NewConfig(data string, file string) Config {
 		log.Fatalf("error: %v", err)
 	}
 	return config
+}
+
+// FullName returns name in form of ProjectName.DeploymentName, this name should be unique and it could be used as map key
+// for maps like map[string]Config
+func (c Config) FullName() string {
+	return c.Project + "." + c.Name
+}
+
+func (c Config) String() string {
+	return c.FullName()
+}
+
+// Yaml function converts Config object to yaml
+// overrides all relative paths for imports to absolute form,
+// removes all custom elements gcloud deployment manager not aware of (name, project, description)
+func (c Config) Yaml() ([]byte, error) {
+	imports, typeMap := c.importsAbsolutePath()
+
+	tmp := struct {
+		Imports   interface{}
+		Resources interface{}
+	}{
+		Imports:   imports,
+		Resources: c.resources(typeMap),
+	}
+	return yaml.Marshal(tmp)
 }
 
 func (c Config) findAllDependencies(configs map[string]Config) []Config {
@@ -56,19 +86,6 @@ func (c Config) findAllDependencies(configs map[string]Config) []Config {
 		return result
 	}
 	return nil
-}
-
-func (c Config) Yaml() ([]byte, error) {
-	imports, typeMap := c.importsAbsolutePath()
-
-	tmp := struct {
-		Imports   interface{}
-		Resources interface{}
-	}{
-		Imports:   imports,
-		Resources: c.resources(typeMap),
-	}
-	return yaml.Marshal(tmp)
 }
 
 func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]string) {
@@ -95,14 +112,6 @@ func (c Config) resources(typeMap map[string]string) []interface{} {
 	return c.Resources
 }
 
-func (c Config) FullName() string {
-	return c.Project + "." + c.Name
-}
-
-func (c Config) String() string {
-	return c.FullName()
-}
-
 func (c Config) findAllOutRefs() []string {
 	matches := pattern.FindAllStringSubmatch(c.data, -1)
 	result := make([]string, len(matches))
@@ -115,8 +124,7 @@ func (c Config) findAllOutRefs() []string {
 	return result
 }
 
-func parseOutRef(text string) (fullName string,
-	resource string, property string) {
+func parseOutRef(text string) (fullName string, resource string, property string) {
 	array := strings.Split(text, ".")
 	return array[0] + "." + array[1], array[2], array[3]
 }

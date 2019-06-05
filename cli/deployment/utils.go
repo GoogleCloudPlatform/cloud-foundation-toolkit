@@ -2,10 +2,11 @@ package deployment
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"hash/fnv"
 	"os"
 	"path/filepath"
+
+	"gopkg.in/yaml.v2"
 )
 
 func hash64(s string) int64 {
