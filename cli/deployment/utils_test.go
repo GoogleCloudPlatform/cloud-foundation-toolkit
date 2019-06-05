@@ -31,10 +31,10 @@ var pathtests = []struct {
 	{"/base/folder/config.yaml", "../templates/script.py", "/base/templates/script.py"},
 }
 
-func TestAbsolutePath(t *testing.T) {
+func TestReparentPath(t *testing.T) {
 	for _, tt := range pathtests {
 		t.Run(tt.parent + "  " + tt.child, func(t *testing.T) {
-			actual := AbsolutePath(tt.parent, tt.child)
+			actual := ReparentPath(tt.parent, tt.child)
 			if actual != tt.out {
 				t.Errorf("got: %s, want: %s", actual, tt.out)
 			}

@@ -26,7 +26,7 @@ func unmarshal(data string) (map[string]interface{}, error) {
 	return my, nil
 }
 
-func AbsolutePath(parent string, child string) string {
+func ReparentPath(parent string, child string) string {
 	// check if file already has absolute path
 	if child[0] == os.PathSeparator {
 		return child
