@@ -3,11 +3,15 @@ package deployment
 import (
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 )
+
+var DefaultProjectID string
 
 // Pattern to parse $(project.deployment.resource.name) and $(deployment.resource.name).
 var pattern = regexp.MustCompile(`\$\(out\.(?P<token>[-.a-zA-Z0-9]+)\)`)
@@ -18,6 +22,7 @@ type Config struct {
 	// config YAML field and if it missing in YAML, from config YAML file name itself.
 	Name string
 	// Project field contains GCP Project Id it could be initialized from config YAML, env variable, gcloud default.
+	// Node: don't use this varible directly, use GetProjectID instead!!!
 	Project string
 	// Deployment string contains GCP Deployment description it not required and can be empty.
 	Description string
@@ -28,9 +33,11 @@ type Config struct {
 		// Path to import file, can be relative or absolute.
 		Path string
 	}
-	// Resources contains list of All Deployment Resources, listed in deployment config YAML file.
-	Resources []interface{}
+	// Resources map contains all Deployment Resources, listed in deployment config YAML file.
+	// TODO explain what value used as map key
+	Resources []map[string]interface{}
 	file      string
+	dir       string
 	data      string
 }
 
@@ -41,17 +48,59 @@ func NewConfig(data string, file string) Config {
 		data: data,
 	}
 
+	if len(file) > 0 {
+		config.file = filepath.Clean(file)
+		config.dir = filepath.Dir(file)
+	} else {
+		// yaml passed as sting through parameter
+		dir, err := os.Getwd()
+		if err != nil {
+			log.Fatalf("could not get current folder path: %v", err)
+		}
+		config.dir = dir
+	}
+
 	err := yaml.Unmarshal([]byte(data), &config)
 	if err != nil {
-		log.Fatalf("error: %v", err)
+		log.Fatalf("failed unmarshal config yaml %s, error: %v", file, err)
+	}
+	// check project id and deployment name
+	if len(config.Project) == 0 {
+		config.Project = DefaultProjectID
+	}
+	if len(config.Name) == 0 {
+		if len(config.file) == 0 {
+			// if file empty, than yaml string as a parameter was passed, it SHOULD contain name field
+			log.Fatalf("name field not defined in yaml: %s", data)
+		} else {
+			config.Name = DeploymentNameFromFile(config.file)
+		}
 	}
 	return config
+}
+
+// GetProject returns project id if it set in config file, otherwise default value defined in DefaultProjectID var.
+func (c Config) GetProject() string {
+	if len(c.Project) > 0 {
+		return c.Project
+	} else {
+		return DefaultProjectID
+	}
+}
+
+// returns file path in case of file source or yaml string in case of yaml source
+func (c Config) Source() string {
+	if len(c.file) > 0 {
+		return c.file
+	} else {
+		return c.data
+	}
 }
 
 // FullName returns a name for the configuration that is intended to be unique.
 // The name is in the format "ProjectName.DeploymentName" and may be used as a map key.
 func (c Config) FullName() string {
-	return c.Project + "." + c.Name
+	return c.GetProject() + "." + c.Name
 }
 
 // String implements fmt.Stringer for the Config type.
@@ -61,15 +110,19 @@ func (c Config) String() string {
 
 // The YAML function marshals a Config object to YAML. It sets all relative import paths to absolute paths and removes
 // all custom elements that the gcloud deployment manager is not aware of, including name, project, and description.
-func (c Config) YAML() ([]byte, error) {
+func (c Config) YAML(outputs map[string]map[string]interface{}) ([]byte, error) {
 	imports, typeMap := c.importsAbsolutePath()
+	resources := c.resources(typeMap)
+	for _, value := range resources {
+		replaceOutRefsResource(value, outputs)
+	}
 
 	tmp := struct {
 		Imports   interface{}
 		Resources interface{}
 	}{
 		Imports:   imports,
-		Resources: c.resources(typeMap),
+		Resources: resources,
 	}
 	return yaml.Marshal(tmp)
 }
@@ -90,7 +143,7 @@ func (c Config) findAllDependencies(configs map[string]Config) []Config {
 	}
 
 	for _, dependency := range dependencies {
-		fmt.Printf("Adding dependency %s -> %s\n", c.FullName(), dependency.FullName())
+		log.Printf("Adding dependency %s -> %s\n", c.FullName(), dependency.FullName())
 		result = append(result, dependency)
 	}
 	return result
@@ -99,7 +152,7 @@ func (c Config) findAllDependencies(configs map[string]Config) []Config {
 func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]string) {
 	typeMap = map[string]string{}
 	for i, imp := range c.Imports {
-		newPath := ReparentPath(c.file, imp.Path)
+		newPath := ReparentPath(c.dir, imp.Path)
 		if newPath != c.Imports[i].Path {
 			typeMap[c.Imports[i].Path] = newPath
 		}
@@ -108,12 +161,11 @@ func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]s
 	return c.Imports, typeMap
 }
 
-func (c Config) resources(typeMap map[string]string) []interface{} {
+func (c Config) resources(typeMap map[string]string) []map[string]interface{} {
 	if len(typeMap) > 0 {
-		for i := range c.Resources {
-			res := c.Resources[i].(map[interface{}]interface{})
-			if typeMap[res["type"].(string)] != "" {
-				res["type"] = typeMap[res["type"].(string)]
+		for _, element := range c.Resources {
+			if typeMap[element["type"].(string)] != "" {
+				element["type"] = typeMap[element["type"].(string)]
 			}
 		}
 	}
@@ -129,7 +181,70 @@ func (c Config) findAllOutRefs() []string {
 	return result
 }
 
+func getOutRefValue(ref string, outputs map[string]map[string]interface{}) interface{} {
+	fullName, res, name := parseOutRef(ref)
+	outputsMap := outputs[fullName]
+	if outputsMap == nil {
+		arr := strings.Split(fullName, ".")
+		var err error
+		outputsMap, err = GetOutputs(arr[0], arr[1])
+		if err != nil {
+			log.Fatalf("Erorr getting outputs for deployment: %s, error: %v", fullName, err)
+		}
+		outputs[fullName] = outputsMap
+	}
+	value, ok := outputsMap[res+"."+name]
+	fullRef := fmt.Sprintf("$(out.%s)", ref)
+	if !ok {
+		log.Fatalf("Unresolved dependency: %s. Deployment: %s , on whichother resources depended, neither was specifiedin the submitted congigs nor existed inDeployment Manager", fullRef, fullName)
+	}
+	return value
+}
+
 func parseOutRef(text string) (fullName string, resource string, property string) {
 	array := strings.Split(text, ".")
-	return array[0] + "." + array[1], array[2], array[3]
+	project, deploymentName, resource, property := DefaultProjectID, array[0], array[1], array[2]
+	if len(array) == 4 {
+		project, deploymentName, resource, property = array[0], array[1], array[2], array[3]
+	}
+	return project + "." + deploymentName, resource, property
+}
+
+func replaceOutRefsResource(resource interface{}, outputs map[string]map[string]interface{}) interface{} {
+	switch t := resource.(type) {
+	case string:
+		value := resource.(string)
+		match := pattern.FindStringSubmatch(value)
+		if match == nil {
+			return value
+		} else {
+			return getOutRefValue(match[1], outputs)
+		}
+	case map[string]interface{}:
+		values := resource.(map[string]interface{})
+		for key, value := range values {
+			values[key] = replaceOutRefsResource(value, outputs)
+		}
+		return values
+	case map[interface{}]interface{}:
+		values := resource.(map[interface{}]interface{})
+		for key, value := range values {
+			values[key] = replaceOutRefsResource(value, outputs)
+		}
+		return values
+	case []interface{}:
+		values := resource.([]interface{})
+		var result = []interface{}{}
+		for _, value := range values {
+			result = append(result, replaceOutRefsResource(value, outputs))
+		}
+		return result
+	case bool:
+		return resource
+	case int:
+		return resource
+	default:
+		log.Fatalf("unexpected yaml element type: %v", t)
+	}
+	return nil
 }
