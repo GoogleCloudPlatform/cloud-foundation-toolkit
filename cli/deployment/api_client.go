@@ -2,12 +2,24 @@ package deployment
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"gopkg.in/yaml.v2"
+)
+
+type Status int
+
+const (
+	Done     Status = 0
+	Pending  Status = 1
+	Running  Status = 2
+	NotFound Status = 3
+	Error    Status = -1
 )
 
 // function exposed to variable in order to mock it inside api_client_test.go
@@ -71,6 +83,45 @@ func Create(deployment *Deployment) (*Deployment, error) {
 	}
 	deployment.Outputs = outputs
 	return deployment, nil
+}
+
+func GetStatus(deployment Deployment) (Status, error) {
+	name, project := deployment.config.Name, deployment.config.Project
+	response, err := runGCloud("deployment-manager", "deployments", "describe", name, "--project", project)
+	if err != nil {
+		if strings.Contains(response, "code=404") {
+			return NotFound, nil
+		} else {
+			log.Printf("Failed to get deployment %s status, \n error: %v", deployment.config.FullName(), err)
+			return Error, err
+		}
+	}
+
+	description := &struct {
+		Deployment struct {
+			Name      string
+			Operation struct {
+				Status        string
+				OperationType string
+			}
+		}
+	}{}
+
+	yaml.Unmarshal([]byte(response), description)
+
+	status := description.Deployment.Operation.Status
+
+	switch status {
+	case "DONE":
+		return Done, nil
+	case "RUNNING":
+		return Running, nil
+	case "PENDING":
+		return Pending, nil
+	default:
+		return Error, errors.New(fmt.Sprintf("Unknown status %s, for deployment %s",
+			deployment.config.FullName(), status))
+	}
 }
 
 func parseOutputs(data string) (map[string]string, error) {
