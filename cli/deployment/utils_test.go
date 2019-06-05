@@ -2,8 +2,8 @@ package deployment
 
 import (
 	"io/ioutil"
-	"path/filepath"
 	"testing"
+	"path/filepath"
 )
 
 func TestUnmarshal(t *testing.T) {
@@ -12,52 +12,44 @@ func TestUnmarshal(t *testing.T) {
 		t.Errorf("Error %v", err)
 	}
 	deployment := res["deployment"].(map[interface{}]interface{})
-	if deployment["name"] != "gl-akopachevsky-test" {
-		t.Errorf("Expected \"gl-akopachevsky-test\", got \"%s\"", deployment["name"])
+	expect := "gl-akopachevsky-test"
+	if deployment["name"] != expect {
+		t.Errorf("got: %s, want: %s", deployment["name"], expect)
 	}
+}
+
+var pathtests = []struct {
+	parent string
+	child string
+	out string
+}{
+	{"/base/folder/config.yaml", "script.py", "/base/folder/script.py"},
+	{"/base/folder/config.yaml", "./script.py", "/base/folder/script.py"},
+	{"/base/folder/config.yaml", "../script.py", "/base/script.py"},
+	{"/base/folder/config.yaml", "/base/folder/script.py", "/base/folder/script.py"},
+	{"/base/folder/config.yaml", "templates/script.py", "/base/folder/templates/script.py"},
+	{"/base/folder/config.yaml", "../templates/script.py", "/base/templates/script.py"},
 }
 
 func TestAbsolutePath(t *testing.T) {
-	expected := "/base/folder/script.py"
-	actual := AbsolutePath("/base/folder/config.yaml", "script.py")
-	if actual != expected {
-		t.Errorf("Expected %s, actual %s", expected, actual)
-	}
-
-	actual = AbsolutePath("/base/folder/config.yaml", "./script.py")
-	if actual != expected {
-		t.Errorf("Expected %s, actual %s", expected, actual)
-	}
-
-	actual = AbsolutePath("/base/folder/config.yaml", expected)
-	if actual != expected {
-		t.Errorf("Expected %s, actual %s", expected, actual)
-	}
-
-	expected = "/base/script.py"
-	actual = AbsolutePath("/base/folder/config.yaml", "../script.py")
-	if actual != expected {
-		t.Errorf("Expected %s, actual %s", expected, actual)
-	}
-
-	expected = "/base/folder/templates/script.py"
-	actual = AbsolutePath("/base/folder/config.yaml", "templates/script.py")
-	if actual != expected {
-		t.Errorf("Expected %s, actual %s", expected, actual)
-	}
-
-	expected = "/base/templates/script.py"
-	actual = AbsolutePath("/base/folder/config.yaml", "../templates/script.py")
-	if actual != expected {
-		t.Errorf("Expected %s, actual %s", expected, actual)
+	for _, tt := range pathtests {
+		t.Run(tt.parent + "  " + tt.child, func(t *testing.T) {
+			actual := AbsolutePath(tt.parent, tt.child)
+			if actual != tt.out {
+				t.Errorf("got: %s, want: %s", actual, tt.out)
+			}
+		})
 	}
 }
 
+// GetTestData returns file content of PROJECT_ROOT/testdata sub folder or file.
+// Function suppose to call from test method, might not work otherwise
+// example GetTestData("myfolder", "file.yalm") will return content of testdata/myfolder/file.yaml
 func GetTestData(folder string, name string, t *testing.T) string {
 	path := filepath.Join("../testdata", folder, name)
 	buff, err := ioutil.ReadFile(path)
 	if err != nil {
-		t.Errorf("Error %v", err)
+		t.Errorf("unexpected error reading test file: %v", err)
 	}
 	return string(buff)
 }

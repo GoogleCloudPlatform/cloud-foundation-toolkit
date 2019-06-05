@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"bytes"
-	"github.com/spf13/cobra"
 	"strings"
 	"testing"
+
+	"github.com/spf13/cobra"
 )
 
 func ExecuteCommand(root *cobra.Command, args ...string) (output string, err error) {
@@ -41,29 +42,30 @@ func TestRootCommand(t *testing.T) {
 	rootCmd.SetArgs([]string{})
 	output, err := ExecuteCommand(rootCmd)
 	if output == "" {
-		t.Errorf("Unexpected output: %v", output)
+		t.Errorf("expected no output, got: %s", output)
 	}
 	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+		t.Errorf("expected no error, got: %v", err)
 	}
 }
 
 func TestRootCommandHelpArgs(t *testing.T) {
 	output, err := ExecuteCommand(rootCmd, "-h")
 	if output == "" {
-		t.Errorf("Unexpected output: %v", output)
+		t.Errorf("expected no output, got: %s", output)
 	}
 	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+		t.Errorf("expected no error, got: %v", err)
 	}
 }
 
 func TestRootCommandWithUnknownCommand(t *testing.T) {
 	output, err := ExecuteCommand(rootCmd, "unknown")
-	if !strings.HasPrefix(output, "Error: unknown command \"unknown\" for \"cft\"") {
-		t.Errorf("expected: %s", output)
+	prefix := "Error: unknown command \"unknown\" for \"cft\""
+	if !strings.HasPrefix(output, prefix) {
+		t.Errorf("expected to have prefix: %s, actual: %s", prefix, output)
 	}
 	if err == nil {
-		t.Errorf("Expected unkwnown command error")
+		t.Errorf("expected to have erorr but it nil")
 	}
 }
