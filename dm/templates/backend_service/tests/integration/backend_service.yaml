@@ -8,7 +8,7 @@ resources:
   - name: regional-internal-backend-service-${RAND}
     type: backend_service.py
     properties:
-      name: regional-backend-${RAND}
+      name: regional-internal-backend-service-${RAND}
       region: ${REGION}
       protocol: ${REGIONAL_BALANCING_PROTOCOL}
       description: ${RES_DESCRIPTION}
