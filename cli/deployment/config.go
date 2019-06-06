@@ -50,10 +50,10 @@ func (c Config) String() string {
 	return c.FullName()
 }
 
-// Yaml function converts Config object to yaml
+// YAML function converts Config object to yaml
 // overrides all relative paths for imports to absolute form,
 // removes all custom elements gcloud deployment manager not aware of (name, project, description)
-func (c Config) Yaml() ([]byte, error) {
+func (c Config) YAML() ([]byte, error) {
 	imports, typeMap := c.importsAbsolutePath()
 
 	tmp := struct {
@@ -66,26 +66,26 @@ func (c Config) Yaml() ([]byte, error) {
 	return yaml.Marshal(tmp)
 }
 
+// findAllDependencies finds all dependencies base on cross-deployment references found in config yaml,
+// if no dependencies found, returns empty slice
 func (c Config) findAllDependencies(configs map[string]Config) []Config {
+	var result []Config
 	refs := c.findAllOutRefs()
-	if refs != nil {
-		dependencies := map[string]Config{}
-		for _, ref := range refs {
-			fullName, _, _ := parseOutRef(ref)
-			dependency, found := configs[fullName]
-			if !found {
-				log.Fatalf("Could not find config for deployment = %s", fullName)
-			}
-			dependencies[fullName] = dependency
+	dependencies := map[string]Config{}
+	for _, ref := range refs {
+		fullName, _, _ := parseOutRef(ref)
+		dependency, found := configs[fullName]
+		if !found {
+			log.Fatalf("Could not find config for deployment = %s", fullName)
 		}
-		var result []Config
-		for _, dependency := range dependencies {
-			fmt.Printf("Adding dependency %s -> %s\n", c.FullName(), dependency.FullName())
-			result = append(result, dependency)
-		}
-		return result
+		dependencies[fullName] = dependency
 	}
-	return nil
+
+	for _, dependency := range dependencies {
+		fmt.Printf("Adding dependency %s -> %s\n", c.FullName(), dependency.FullName())
+		result = append(result, dependency)
+	}
+	return result
 }
 
 func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]string) {
@@ -113,13 +113,10 @@ func (c Config) resources(typeMap map[string]string) []interface{} {
 }
 
 func (c Config) findAllOutRefs() []string {
+	var result []string
 	matches := pattern.FindAllStringSubmatch(c.data, -1)
-	result := make([]string, len(matches))
-	for i, match := range matches {
-		result[i] = match[1]
-	}
-	if len(result) == 0 {
-		return nil
+	for _, match := range matches {
+		result = append(result, match[1])
 	}
 	return result
 }

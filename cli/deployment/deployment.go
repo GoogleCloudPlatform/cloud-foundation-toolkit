@@ -3,9 +3,9 @@ package deployment
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strings"
-	"io/ioutil"
 )
 
 // Deployment object represent real GCP Deployment entity that already created or have to be created
@@ -50,7 +50,7 @@ func (d Deployment) FullName() string {
 }
 
 func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte {
-	data, err := config.Yaml()
+	data, err := config.YAML()
 	if err != nil {
 		log.Fatalf("error while parsing yaml for config: %s, error: %v", config.FullName(), err)
 	}
