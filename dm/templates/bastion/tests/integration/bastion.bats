@@ -93,12 +93,16 @@ function teardown() {
 
 @test "Verifying the first Bastion's sudo is ON" {
     # Wait until VM provisioning finishes
+    i=0
     until gcloud compute instances get-serial-port-output \
         ${BASTION1_RES_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
         --zone ${ZONE} | grep ${PROVISION_COMPLETED_MARKER}; do
 
-        sleep 10;
+        sleep 5;
+        i=$(($i+1))
+
+        if [[ $i > 10 ]]; then break; fi
     done
 
     run gcloud compute ssh ${BASTION1_RES_NAME} --command "sudo whoami" \
@@ -130,11 +134,15 @@ function teardown() {
 
 @test "Verifying the second Bastion's sudo is OFF" {
     # Wait until VM provisioning finishes
+    i=0
     until gcloud compute instances get-serial-port-output ${BASTION2_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
         --zone ${ZONE} | grep ${PROVISION_COMPLETED_MARKER}; do
 
-        sleep 10;
+        sleep 5;
+        i=$(($i+1))
+
+        if [[ $i > 10 ]]; then break; fi
     done
 
     run gcloud compute ssh ${BASTION2_NAME} --command "sudo -n whoami" \
