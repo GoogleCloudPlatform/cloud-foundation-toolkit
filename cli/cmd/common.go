@@ -26,7 +26,7 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	for _, config := range ordered {
 		dep := deployment.NewDeployment(config, outputs)
 		cmd.Printf("Start %s deployment: %v", action, dep)
-		err := deployment.Execute(action, dep)
+		err := dep.Execute(action)
 		if err != nil {
 			log.Fatalf("Error %s deployment %v, \n %v", action, dep, err)
 		}

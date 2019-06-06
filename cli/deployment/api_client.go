@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
-	"sort"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -113,39 +112,6 @@ func Delete(deployment *Deployment) error {
 		return err
 	}
 	return nil
-}
-
-func Execute(action string, deployment *Deployment) error {
-	if sort.SearchStrings(actions, action) == len(actions) {
-		log.Fatalf("action: %s not in %v for deployment: %v", actions, actions, deployment)
-	}
-
-	if action == ActionCreate || action == ActionUpdate {
-		return CreateOrUpdate(action, deployment)
-	} else if action == ActionDelete {
-		return Delete(deployment)
-	} else {
-		status, err := GetStatus(deployment)
-		if err != nil {
-			log.Printf("Apply action for deployment: %s, break error: %v", deployment, err)
-		}
-		switch status {
-		case Done:
-			log.Printf("Deployment %v exists, run Update()", deployment)
-			return CreateOrUpdate(ActionUpdate, deployment)
-		case NotFound:
-			log.Printf("Deployment %v does not exists, run Create()", deployment)
-			return CreateOrUpdate(ActionCreate, deployment)
-		case Pending:
-			log.Printf("Deployment %v is in pending state, break", deployment)
-			return errors.New(fmt.Sprintf("Deployment %v is in PENDING state", deployment))
-		case Error:
-			message := fmt.Sprintf("Could not get state of deployment: %v", deployment)
-			log.Print(message)
-			return errors.New(message)
-		}
-		return errors.New(fmt.Sprintf("Error during Apply command for deployment: %v", deployment))
-	}
 }
 
 func GetStatus(deployment *Deployment) (Status, error) {
