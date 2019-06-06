@@ -2,9 +2,11 @@ package deployment
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"sort"
 	"strings"
 )
 
@@ -50,6 +52,39 @@ func (d Deployment) String() string {
 // FullName function is the same as deployment.Config.FullName(), can be used in map[string]Deployment as a key.
 func (d Deployment) FullName() string {
 	return d.config.FullName()
+}
+
+func (d *Deployment) Execute(action string) error {
+	if sort.SearchStrings(actions, action) == len(actions) {
+		log.Fatalf("action: %s not in %v for deployment: %v", actions, actions, d)
+	}
+
+	if action == ActionCreate || action == ActionUpdate {
+		return CreateOrUpdate(action, d)
+	} else if action == ActionDelete {
+		return Delete(d)
+	} else {
+		status, err := GetStatus(d)
+		if err != nil {
+			log.Printf("Apply action for deployment: %s, break error: %v", d, err)
+		}
+		switch status {
+		case Done:
+			log.Printf("Deployment %v exists, run Update()", d)
+			return CreateOrUpdate(ActionUpdate, d)
+		case NotFound:
+			log.Printf("Deployment %v does not exists, run Create()", d)
+			return CreateOrUpdate(ActionCreate, d)
+		case Pending:
+			log.Printf("Deployment %v is in pending state, break", d)
+			return errors.New(fmt.Sprintf("Deployment %v is in PENDING state", d))
+		case Error:
+			message := fmt.Sprintf("Could not get state of deployment: %v", d)
+			log.Print(message)
+			return errors.New(message)
+		}
+		return errors.New(fmt.Sprintf("Error during Apply command for deployment: %v", d))
+	}
 }
 
 func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte {

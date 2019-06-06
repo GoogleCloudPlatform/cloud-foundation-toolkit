@@ -12,7 +12,7 @@ func TestGetOutputs(t *testing.T) {
 		if expected != actual {
 			t.Errorf("expected %v, got %v", expected, actual)
 		}
-		return GetTestData("deployment", "api-describe-manifest.yaml", t), nil
+		return GetTestData("deployment", "describe-manifest.yaml", t), nil
 	}
 
 	outputs, err := GetOutputs("myproject", "mydeployment")

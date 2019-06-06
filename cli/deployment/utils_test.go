@@ -7,7 +7,7 @@ import (
 )
 
 func TestUnmarshal(t *testing.T) {
-	res, err := unmarshal(GetTestData("deployment", "api-client-describe.yaml", t))
+	res, err := unmarshal(GetTestData("deployment", "describe-deployment.yaml", t))
 	if err != nil {
 		t.Errorf("Error %v", err)
 	}
