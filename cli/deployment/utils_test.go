@@ -2,8 +2,8 @@ package deployment
 
 import (
 	"io/ioutil"
-	"testing"
 	"path/filepath"
+	"testing"
 )
 
 func TestUnmarshal(t *testing.T) {
@@ -20,8 +20,8 @@ func TestUnmarshal(t *testing.T) {
 
 var pathtests = []struct {
 	parent string
-	child string
-	out string
+	child  string
+	out    string
 }{
 	{"/base/folder/config.yaml", "script.py", "/base/folder/script.py"},
 	{"/base/folder/config.yaml", "./script.py", "/base/folder/script.py"},
@@ -33,7 +33,7 @@ var pathtests = []struct {
 
 func TestReparentPath(t *testing.T) {
 	for _, tt := range pathtests {
-		t.Run(tt.parent + "  " + tt.child, func(t *testing.T) {
+		t.Run(tt.parent+"  "+tt.child, func(t *testing.T) {
 			actual := ReparentPath(tt.parent, tt.child)
 			if actual != tt.out {
 				t.Errorf("got: %s, want: %s", actual, tt.out)
@@ -47,9 +47,9 @@ func TestReparentPath(t *testing.T) {
 // example GetTestData("myfolder", "file.yalm") will return content of testdata/myfolder/file.yaml
 func GetTestData(folder string, name string, t *testing.T) string {
 	path := filepath.Join("../testdata", folder, name)
-	buff, err := ioutil.ReadFile(path)
+	buf, err := ioutil.ReadFile(path)
 	if err != nil {
 		t.Errorf("unexpected error reading test file: %v", err)
 	}
-	return string(buff)
+	return string(buf)
 }
