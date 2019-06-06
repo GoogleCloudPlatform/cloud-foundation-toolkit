@@ -20,13 +20,13 @@ func TestNewConfig(t *testing.T) {
 
 var outRefTests = []struct {
 	name string
-	in string
-	out []string
-} {
+	in   string
+	out  []string
+}{
 	{
 		"one refs",
 		"$(out.project1.deployment1.resource1.output1)",
-		[]string {
+		[]string{
 			"project1.deployment1.resource1.output1",
 		},
 	},
@@ -34,11 +34,10 @@ var outRefTests = []struct {
 		"several refs",
 		`$(out.project1.deployment1.resource1.output1)
                     $(out.deployment2.resource2.output2)`,
-		[]string {
+		[]string{
 			"project1.deployment1.resource1.output1",
 			"deployment2.resource2.output2",
 		},
-
 	},
 	{"empty file", "", nil},
 	{"no refs", "name: myname", nil},
@@ -53,7 +52,7 @@ func TestFindAllOutRefs(t *testing.T) {
 			config := &Config{data: tt.in}
 			actual := config.findAllOutRefs()
 			if !reflect.DeepEqual(actual, tt.out) {
-				t.Errorf("got: %v, expected: %v.", actual, tt.out)
+				t.Errorf("want: %v, got: %v.", tt.out, actual)
 			}
 		})
 	}
@@ -77,8 +76,8 @@ func TestFindAllDependencies(t *testing.T) {
 	}
 
 	actual := configA.findAllDependencies(configs)
-	if actual != nil {
-		t.Errorf("expected nil dependencies, got %v", actual)
+	if len(actual) != 0 {
+		t.Errorf("want %d, got %v", 0, len(actual))
 	}
 
 	actual = configB.findAllDependencies(configs)
@@ -87,10 +86,10 @@ func TestFindAllDependencies(t *testing.T) {
 	}
 }
 
-func TestYaml(t *testing.T) {
+func TestYAML(t *testing.T) {
 	data, err := Config{
 		data: GetTestData("config", "custom-fields.yaml", t),
-	}.Yaml()
+	}.YAML()
 	if err != nil {
 		t.Error(err)
 	}
@@ -98,5 +97,3 @@ func TestYaml(t *testing.T) {
 		t.Errorf("Should not contain, project, name or descriptions")
 	}
 }
-
-
