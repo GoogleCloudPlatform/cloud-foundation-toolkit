@@ -27,7 +27,7 @@ func TestGetOutputs(t *testing.T) {
 
 // do actuall deployment get status call
 func testGetStatus(t *testing.T) {
-	dep := Deployment{
+	dep := &Deployment{
 		configFile: "/1-prj/projects/google/CFT/fork/cloud-foundation-toolkit/dm/network.yaml",
 		config: Config{
 			Project: "gl-akopachevskyy-dm-seed",
