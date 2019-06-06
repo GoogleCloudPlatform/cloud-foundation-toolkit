@@ -2,10 +2,12 @@ package deployment
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"sort"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -21,6 +23,16 @@ const (
 	Error    Status = -1
 )
 
+const (
+	ActionApply  string = "apply"
+	ActionDelete string = "delete"
+	ActionCreate string = "create"
+	ActionUpdate string = "update"
+)
+
+var actions = []string{ActionApply, ActionDelete, ActionCreate, ActionUpdate}
+
+// function exposed to variable in order to mock it inside api_client_test.go
 // The runGCloud function runs the gcloud tool with the specified arguments. It is implemented
 // as a variable so that it can be mocked in tests of its exported consumers.
 var runGCloud = func(args ...string) (result string, err error) {
@@ -35,12 +47,12 @@ var runGCloud = func(args ...string) (result string, err error) {
 	cmd.Env = append(cmd.Env, fmt.Sprintf("PATH=%s", os.Getenv("PATH")))
 
 	if err := cmd.Start(); err != nil {
-		log.Printf("Failed to start cmd: %v, \n Output:\n %v", err, errBuff.String())
+		log.Printf("failed to start cmd: %v, \n Output: %v", err, errBuff.String())
 		return "", err
 	}
 
 	if err := cmd.Wait(); err != nil {
-		log.Printf("Cmd returned error: %v, \n Output:\n %v", err, errBuff.String())
+		log.Printf("cmd returned error: %v, \n Output: %v", err, errBuff.String())
 		return errBuff.String(), err
 	}
 
@@ -58,12 +70,17 @@ func GetOutputs(name string, project string) (map[string]string, error) {
 	return parseOutputs(data)
 }
 
-// Create creates a new Deployment based on a Deployment object passed into it.
-func Create(deployment *Deployment) (*Deployment, error) {
+// Create deployment based on passed Deployment object passed into it.
+// Initialize Deployment with Outputs map in case of successful creation and error otherwise.
+func CreateOrUpdate(action string, deployment *Deployment) error {
+	if action != ActionCreate && action != ActionUpdate {
+		log.Fatalf("action %s not in [%s,%s] for deployment: %v", action, ActionCreate, ActionUpdate, deployment)
+	}
+
 	args := []string{
 		"deployment-manager",
 		"deployments",
-		"create",
+		action,
 		deployment.config.Name,
 		"--config",
 		deployment.configFile,
@@ -72,26 +89,84 @@ func Create(deployment *Deployment) (*Deployment, error) {
 	}
 	_, err := runGCloud(args...)
 	if err != nil {
-		log.Printf("Failed to create deployment: %v, error: %v", deployment, err)
-		return nil, err
+		log.Printf("failed to %s deployment: %v, error: %v", action, deployment, err)
+		return err
 	}
 	outputs, err := GetOutputs(deployment.config.Name, deployment.config.Project)
 	if err != nil {
-		log.Printf("Failed to get outputs for deployment: %v, error: %v", deployment, err)
-		return nil, err
+		log.Printf("on %s action, failed to get outputs for deployment: %v, error: %v", action, deployment, err)
+		return err
 	}
 	deployment.Outputs = outputs
-	return deployment, nil
+	return nil
 }
 
-func GetStatus(deployment Deployment) (Status, error) {
-	name, project := deployment.config.Name, deployment.config.Project
-	response, err := runGCloud("deployment-manager", "deployments", "describe", name, "--project", project)
+// Delete function removed Deployment passed into it as parameter.
+func Delete(deployment *Deployment) error {
+	args := []string{
+		"deployment-manager",
+		"deployments",
+		"delete",
+		deployment.config.Name,
+		"--project",
+		deployment.config.Project,
+	}
+	_, err := runGCloud(args...)
+	if err != nil {
+		log.Printf("failed to get deployment manifest: %v", err)
+		return err
+	}
+	return nil
+}
+
+func Execute(action string, deployment *Deployment) error {
+	if sort.SearchStrings(actions, action) == len(actions) {
+		log.Fatalf("action: %s not in %v for deployment: %v", actions, actions, deployment)
+	}
+
+	if action == ActionCreate || action == ActionUpdate {
+		return CreateOrUpdate(action, deployment)
+	} else if action == ActionDelete {
+		return Delete(deployment)
+	} else {
+		status, err := GetStatus(deployment)
+		if err != nil {
+			log.Printf("Apply action for deployment: %s, break error: %v", deployment, err)
+		}
+		switch status {
+		case Done:
+			log.Printf("Deployment %v exists, run Update()", deployment)
+			return CreateOrUpdate(ActionUpdate, deployment)
+		case NotFound:
+			log.Printf("Deployment %v does not exists, run Create()", deployment)
+			return CreateOrUpdate(ActionCreate, deployment)
+		case Pending:
+			log.Printf("Deployment %v is in pending state, break", deployment)
+			return errors.New(fmt.Sprintf("Deployment %v is in PENDING state", deployment))
+		case Error:
+			message := fmt.Sprintf("Could not get state of deployment: %v", deployment)
+			log.Print(message)
+			return errors.New(message)
+		}
+		return errors.New(fmt.Sprintf("Error during Apply command for deployment: %v", deployment))
+	}
+}
+
+func GetStatus(deployment *Deployment) (Status, error) {
+	args := []string{
+		"deployment-manager",
+		"deployments",
+		"describe",
+		deployment.config.Name,
+		"--project",
+		deployment.config.Project,
+	}
+	response, err := runGCloud(args...)
 	if err != nil {
 		if strings.Contains(response, "code=404") {
 			return NotFound, nil
 		} else {
-			log.Printf("Failed to get deployment %s status, \n error: %v", deployment.config.FullName(), err)
+			log.Printf("failed to get status for deployment: %s, \n error: %v", deployment.config.FullName(), err)
 			return Error, err
 		}
 	}
@@ -106,7 +181,11 @@ func GetStatus(deployment Deployment) (Status, error) {
 		}
 	}{}
 
-	yaml.Unmarshal([]byte(response), description)
+	err = yaml.Unmarshal([]byte(response), description)
+	if err != nil {
+		log.Printf("error unmarshall response: %s,\n deployment: %v \n error: %v", response, deployment, err)
+		return Error, err
+	}
 
 	status := description.Deployment.Operation.Status
 
@@ -126,7 +205,7 @@ func GetStatus(deployment Deployment) (Status, error) {
 func parseOutputs(data string) (map[string]string, error) {
 	describe, err := unmarshal(data)
 	if err != nil {
-		log.Println("Error parsing deployment outputs")
+		log.Println("error parsing deployment outputs")
 		return nil, err
 	}
 
@@ -143,7 +222,7 @@ func parseOutputs(data string) (map[string]string, error) {
 	}{}
 	err = yaml.Unmarshal([]byte(layoutData), res)
 	if err != nil {
-		log.Println("Error parsing deployment outputs layout section")
+		log.Println("error parsing deployment outputs layout section")
 		return nil, err
 	}
 
@@ -163,6 +242,5 @@ func parseOutputs(data string) (map[string]string, error) {
 	if len(result) == 0 {
 		return nil, nil
 	}
-
 	return result, nil
 }

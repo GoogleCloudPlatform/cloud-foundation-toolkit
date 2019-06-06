@@ -7,15 +7,15 @@ import (
 )
 
 func init() {
-	createCmd.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project name")
-	rootCmd.AddCommand(createCmd)
+	deleteCdm.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project name")
+	rootCmd.AddCommand(deleteCdm)
 }
 
-var createCmd = &cobra.Command{
+var deleteCdm = &cobra.Command{
 	Use:   "create",
 	Short: "Create deployment(s)",
 	Long:  `Create deployment(s)`,
 	Run: func(cmd *cobra.Command, args []string) {
-		execute(deployment.ActionCreate, cmd, args)
+		execute(deployment.ActionDelete, cmd, args)
 	},
 }
