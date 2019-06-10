@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"log"
 	"io/ioutil"
+	"log"
 
 	"github.com/spf13/cobra"
 
@@ -12,7 +12,7 @@ import (
 var projectFlag string
 
 func init() {
-	createCmd.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project name")
+	createCmd.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "ID for the project you want to create deployment")
 	rootCmd.AddCommand(createCmd)
 }
 
