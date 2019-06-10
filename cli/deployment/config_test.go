@@ -1,6 +1,8 @@
 package deployment
 
 import (
+	"fmt"
+	"gopkg.in/yaml.v2"
 	"reflect"
 	"strings"
 	"testing"
@@ -96,4 +98,15 @@ func TestYAML(t *testing.T) {
 	if strings.Contains(string(data), "project:") {
 		t.Errorf("Should not contain, project, name or descriptions")
 	}
+}
+
+func TestReplaceOutRefsResource(t *testing.T) {
+	data := GetTestData("deployment", "describe-manifest.yaml", t)
+	describe := map[string]interface{}{}
+	yaml.Unmarshal([]byte(data), describe)
+
+	layoutData := describe["layout"].(string)
+	res := map[string]interface{}{}
+	yaml.Unmarshal([]byte(layoutData), res)
+	fmt.Println(res)
 }

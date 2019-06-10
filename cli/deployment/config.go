@@ -1,6 +1,7 @@
 package deployment
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"regexp"
@@ -111,7 +112,7 @@ func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]s
 func (c Config) resources(typeMap map[string]string) []interface{} {
 	if len(typeMap) > 0 {
 		for i := range c.Resources {
-			res := c.Resources[i].(map[interface{}]interface{})
+			res := c.Resources[i].(map[string]interface{})
 			if typeMap[res["type"].(string)] != "" {
 				res["type"] = typeMap[res["type"].(string)]
 			}
@@ -129,7 +130,27 @@ func (c Config) findAllOutRefs() []string {
 	return result
 }
 
+func replaceStringOutRefs(data string, values map[string]interface{}) {
+	matches := pattern.FindAllStringSubmatch(c.data, -1)
+	for _, ref := range refs {
+		bytes.ReplaceAll([]byte(data), []byte(ref), []byte(re))
+	}
+}
+
 func parseOutRef(text string) (fullName string, resource string, property string) {
 	array := strings.Split(text, ".")
 	return array[0] + "." + array[1], array[2], array[3]
 }
+
+func replaceOutRefsResource(resource map[string]interface{}, values map[string]interface{}) map[string]interface{} {
+	for key, value := range resource {
+		switch t := value.(type) {
+		case string:
+			pattern.
+		default:
+			fmt.Printf("key: %d, type: %v", key, t)
+		}
+	}
+	return nil
+}
+
