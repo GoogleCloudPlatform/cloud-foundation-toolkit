@@ -23,10 +23,11 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	log.Printf("Ordered dependencies: %v", ordered)
 
 	outputs := make(map[string]map[string]string)
-	for _, config := range ordered {
+	for i, config := range ordered {
 		dep := deployment.NewDeployment(config, outputs)
-		cmd.Printf("Start %s deployment: %v", action, dep)
-		err := dep.Execute(action)
+		cmd.Printf("---------- Stage %d ----------\n", i)
+		output, err := dep.Execute(action)
+		cmd.Print(output)
 		if err != nil {
 			log.Fatalf("Error %s deployment %v, \n %v", action, dep, err)
 		}

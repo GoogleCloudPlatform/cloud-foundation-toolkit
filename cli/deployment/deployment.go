@@ -23,7 +23,13 @@ type Deployment struct {
 // deployments it depends to should exists in GCP project
 func NewDeployment(config Config, outputs map[string]map[string]string) *Deployment {
 	file, err := ioutil.TempFile("", config.Name)
-	defer file.Close()
+	defer func() {
+		er := file.Close()
+		if er != nil {
+			log.Printf("close temp config file error : %v", err)
+		}
+	}()
+
 	if err != nil {
 		log.Fatalf("Error creating temp file for deployment: %s, error: %v", config.FullName(), err)
 	}
@@ -51,7 +57,7 @@ func (d Deployment) FullName() string {
 	return d.config.FullName()
 }
 
-func (d *Deployment) Execute(action string) error {
+func (d *Deployment) Execute(action string) (output string, error error) {
 	if sort.SearchStrings(actions, action) == len(actions) {
 		log.Fatalf("action: %s not in %v for deployment: %v", actions, actions, d)
 	}
@@ -74,13 +80,13 @@ func (d *Deployment) Execute(action string) error {
 			return CreateOrUpdate(ActionCreate, d)
 		case Pending:
 			log.Printf("Deployment %v is in pending state, break", d)
-			return errors.New(fmt.Sprintf("Deployment %v is in PENDING state", d))
+			return "", errors.New(fmt.Sprintf("Deployment %v is in PENDING state", d))
 		case Error:
 			message := fmt.Sprintf("Could not get state of deployment: %v", d)
 			log.Print(message)
-			return errors.New(message)
+			return "", errors.New(message)
 		}
-		return errors.New(fmt.Sprintf("Error during Apply command for deployment: %v", d))
+		return "", errors.New(fmt.Sprintf("Error during Apply command for deployment: %v", d))
 	}
 }
 

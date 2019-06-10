@@ -1,11 +1,10 @@
 package deployment
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"os"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -16,7 +15,7 @@ type Status int
 
 const (
 	Done     Status = 0
-	Pending  Status = 1
+	Pending  Status = 111
 	Running  Status = 2
 	NotFound Status = 3
 	Error    Status = -1
@@ -36,24 +35,22 @@ var runGCloud = func(args ...string) (result string, err error) {
 	args = append(args, "--format", "yaml")
 	log.Println("gcloud", strings.Join(args, " "))
 	cmd := exec.Command("gcloud", args...)
-	outBuff := &bytes.Buffer{}
-	errBuff := &bytes.Buffer{}
-	cmd.Stdout = outBuff
-	cmd.Stderr = errBuff
 	// pass user's PATH env variable, expected gcloud executable can be found in PATH
 	cmd.Env = append(cmd.Env, fmt.Sprintf("PATH=%s", os.Getenv("PATH")))
 
-	if err := cmd.Start(); err != nil {
-		log.Printf("failed to start cmd: %v, \n Output: %v", err, errBuff.String())
-		return "", err
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		log.Printf("failed to start cmd: %v, \n output: %v", err, string(output))
+		return string(output), err
 	}
 
 	if err := cmd.Wait(); err != nil {
-		log.Printf("cmd returned error: %v, \n Output: %v", err, errBuff.String())
-		return errBuff.String(), err
+		log.Printf("cmd returned error: %v, \n output: %v", err, string(output))
+		return string(output), err
 	}
 
-	return outBuff.String(), err
+	return string(output), err
 }
 
 // GetOutputs execute deployment-manager manifest describe call with gcloud tool and parse returned
@@ -69,7 +66,7 @@ func GetOutputs(name string, project string) (map[string]string, error) {
 
 // Create deployment based on passed Deployment object
 // Returns Deployment with Outputs map in case of successful creation and error otherwise
-func CreateOrUpdate(action string, deployment *Deployment) error {
+func CreateOrUpdate(action string, deployment *Deployment) (string, error) {
 	if action != ActionCreate && action != ActionUpdate {
 		log.Fatalf("action %s not in [%s,%s] for deployment: %v", action, ActionCreate, ActionUpdate, deployment)
 	}
@@ -84,21 +81,21 @@ func CreateOrUpdate(action string, deployment *Deployment) error {
 		"--project",
 		deployment.config.Project,
 	}
-	_, err := runGCloud(args...)
+	output, err := runGCloud(args...)
 	if err != nil {
 		log.Printf("failed to %s deployment: %v, error: %v", action, deployment, err)
-		return err
+		return output, err
 	}
 	outputs, err := GetOutputs(deployment.config.Name, deployment.config.Project)
 	if err != nil {
 		log.Printf("on %s action, failed to get outputs for deployment: %v, error: %v", action, deployment, err)
-		return err
+		return output, err
 	}
 	deployment.Outputs = outputs
-	return nil
+	return output, nil
 }
 
-func Delete(deployment *Deployment) error {
+func Delete(deployment *Deployment) (string, error) {
 	args := []string{
 		"deployment-manager",
 		"deployments",
@@ -106,13 +103,14 @@ func Delete(deployment *Deployment) error {
 		deployment.config.Name,
 		"--project",
 		deployment.config.Project,
+		"-q",
 	}
-	_, err := runGCloud(args...)
+	output, err := runGCloud(args...)
 	if err != nil {
 		log.Printf("failed to get deployment manifest: %v", err)
-		return err
+		return output, err
 	}
-	return nil
+	return output, nil
 }
 
 func GetStatus(deployment *Deployment) (Status, error) {
