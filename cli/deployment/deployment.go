@@ -1,22 +1,20 @@
 package deployment
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"sort"
-	"strings"
 )
 
 // The Deployment type represents a real GCP Deployment entity that is either already created, or yet-to-be created.
 type Deployment struct {
 	// Outputs map contains deployment outputs values in form resourceName.proeprtyName: value, map filled with data
-	// after deployment update/create operation
-	Outputs map[string]string
+	// after deployment update/create operation. Value could be either plain string or complex object.
+	Outputs    map[string]interface{}
 	// config object store config state parsed from config YAML as it is, no modification, cross-deployment reference values substitution etc
-	config Config
+	config     Config
 	// configFile field point to YAML file, generated from Config object with all cross-deployment references
 	// overwritten with actual values.
 	configFile string
@@ -24,7 +22,7 @@ type Deployment struct {
 
 // NewDeployment creates a new Deployment object, overriding all outward references.
 // In effect, this means all deployment dependencies must exist in the GCP project.
-func NewDeployment(config Config, outputs map[string]map[string]string) *Deployment {
+func NewDeployment(config Config, outputs map[string]map[string]interface{}) *Deployment {
 	file, err := ioutil.TempFile("", config.Name)
 	defer func() {
 		er := file.Close()
@@ -93,30 +91,10 @@ func (d *Deployment) Execute(action string) (output string, error error) {
 	}
 }
 
-func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte {
-	data, err := config.YAML()
+func replaceOutRefs(config Config, outputs map[string]map[string]interface{}) []byte {
+	data, err := config.YAML(outputs)
 	if err != nil {
 		log.Fatalf("error while parsing yaml for config: %s, error: %v", config.FullName(), err)
-	}
-	refs := config.findAllOutRefs()
-	for _, ref := range refs {
-		fullName, resource, property := parseOutRef(ref)
-		outputsMap := outputs[fullName]
-		if outputsMap == nil {
-			arr := strings.Split(fullName, ".")
-			outputsMap, err := GetOutputs(arr[0], arr[1])
-			if err != nil {
-				log.Fatalf("Erorr getting outputs for deployment: %s, error: %v", fullName, err)
-			}
-			outputs[fullName] = outputsMap
-		}
-		key := resource + "." + property
-		value := outputsMap[key]
-		fullRef := fmt.Sprintf("$(out.%s)", ref)
-		if len(value) == 0 {
-			log.Fatalf("Could not resolve reference: %s", fullRef)
-		}
-		data = bytes.ReplaceAll(data, []byte(fullRef), []byte(value))
 	}
 	return data
 }

@@ -1,7 +1,6 @@
 package deployment
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"regexp"
@@ -29,8 +28,9 @@ type Config struct {
 		// Path to import file, can be relative or absolute.
 		Path string
 	}
-	// Resources contains list of All Deployment Resources, listed in deployment config YAML file.
-	Resources []interface{}
+	// Resources map contains all Deployment Resources, listed in deployment config YAML file.
+	// TODO explain what value used as map key
+	Resources []map[string]interface{}
 	file      string
 	data      string
 }
@@ -62,15 +62,19 @@ func (c Config) String() string {
 
 // The YAML function marshals a Config object to YAML. It sets all relative import paths to absolute paths and removes
 // all custom elements that the gcloud deployment manager is not aware of, including name, project, and description.
-func (c Config) YAML() ([]byte, error) {
+func (c Config) YAML(outputs map[string]map[string]interface{}) ([]byte, error) {
 	imports, typeMap := c.importsAbsolutePath()
+	resources := c.resources(typeMap)
+	for _, value := range resources {
+		replaceOutRefsResource(value, outputs)
+	}
 
 	tmp := struct {
 		Imports   interface{}
 		Resources interface{}
 	}{
 		Imports:   imports,
-		Resources: c.resources(typeMap),
+		Resources: resources,
 	}
 	return yaml.Marshal(tmp)
 }
@@ -109,12 +113,11 @@ func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]s
 	return c.Imports, typeMap
 }
 
-func (c Config) resources(typeMap map[string]string) []interface{} {
+func (c Config) resources(typeMap map[string]string) []map[string]interface{} {
 	if len(typeMap) > 0 {
-		for i := range c.Resources {
-			res := c.Resources[i].(map[string]interface{})
-			if typeMap[res["type"].(string)] != "" {
-				res["type"] = typeMap[res["type"].(string)]
+		for _, element := range c.Resources {
+			if typeMap[element["type"].(string)] != "" {
+				element["type"] = typeMap[element["type"].(string)]
 			}
 		}
 	}
@@ -130,11 +133,23 @@ func (c Config) findAllOutRefs() []string {
 	return result
 }
 
-func replaceStringOutRefs(data string, values map[string]interface{}) {
-	matches := pattern.FindAllStringSubmatch(c.data, -1)
-	for _, ref := range refs {
-		bytes.ReplaceAll([]byte(data), []byte(ref), []byte(re))
+func getOutRefValue(ref string, outputs map[string]map[string]interface{}) interface{} {
+	fullName, res, name := parseOutRef(ref)
+	outputsMap := outputs[fullName]
+	if outputsMap == nil {
+		arr := strings.Split(fullName, ".")
+		outputsMap, err := GetOutputs(arr[0], arr[1])
+		if err != nil {
+			log.Fatalf("Erorr getting outputs for deployment: %s, error: %v", fullName, err)
+		}
+		outputs[fullName] = outputsMap
 	}
+	value, ok := outputsMap[res+"."+name]
+	fullRef := fmt.Sprintf("$(out.%s)", ref)
+	if !ok {
+		log.Fatalf("Could not resolve reference: %s", fullRef)
+	}
+	return value
 }
 
 func parseOutRef(text string) (fullName string, resource string, property string) {
@@ -142,15 +157,42 @@ func parseOutRef(text string) (fullName string, resource string, property string
 	return array[0] + "." + array[1], array[2], array[3]
 }
 
-func replaceOutRefsResource(resource map[string]interface{}, values map[string]interface{}) map[string]interface{} {
-	for key, value := range resource {
-		switch t := value.(type) {
-		case string:
-			pattern.
-		default:
-			fmt.Printf("key: %d, type: %v", key, t)
+func replaceOutRefsResource(resource interface{}, outputs map[string]map[string]interface{}) interface{} {
+
+	switch t := resource.(type) {
+	case string:
+		value := resource.(string)
+		match := pattern.FindStringSubmatch(value)
+		if match == nil {
+			return value
+		} else {
+			return getOutRefValue(match[1], outputs)
 		}
+	case map[string]interface{}:
+		values := resource.(map[string]interface{})
+		for key, value := range values {
+			values[key] = replaceOutRefsResource(value, outputs)
+		}
+		return values
+	case map[interface{}]interface{}:
+		values := resource.(map[interface{}]interface{})
+		for key, value := range values {
+			values[key] = replaceOutRefsResource(value, outputs)
+		}
+		return values
+	case []interface{}:
+		values := resource.([]interface{})
+		var result = []interface{}{}
+		for _, value := range values {
+			result = append(result, replaceOutRefsResource(value, outputs))
+		}
+		return result
+	case bool:
+		return resource
+	case int:
+		return resource
+	default:
+		log.Fatalf("unexpected yaml element type: %v", t)
 	}
 	return nil
 }
-

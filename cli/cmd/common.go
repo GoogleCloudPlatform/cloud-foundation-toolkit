@@ -22,7 +22,7 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	}
 	log.Printf("Ordered dependencies: %v", ordered)
 
-	outputs := make(map[string]map[string]string)
+	outputs := make(map[string]map[string]interface{})
 	for i, config := range ordered {
 		dep := deployment.NewDeployment(config, outputs)
 		cmd.Printf("---------- Stage %d ----------\n", i)

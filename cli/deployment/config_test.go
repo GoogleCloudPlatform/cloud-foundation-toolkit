@@ -1,8 +1,7 @@
 package deployment
 
 import (
-	"fmt"
-	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"reflect"
 	"strings"
 	"testing"
@@ -88,10 +87,10 @@ func TestFindAllDependencies(t *testing.T) {
 	}
 }
 
-func TestYAML(t *testing.T) {
+func TestYAMLStripCustomFields(t *testing.T) {
 	data, err := Config{
 		data: GetTestData("config", "custom-fields.yaml", t),
-	}.YAML()
+	}.YAML(map[string]map[string]interface{}{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -100,13 +99,22 @@ func TestYAML(t *testing.T) {
 	}
 }
 
-func TestReplaceOutRefsResource(t *testing.T) {
-	data := GetTestData("deployment", "describe-manifest.yaml", t)
-	describe := map[string]interface{}{}
-	yaml.Unmarshal([]byte(data), describe)
-
-	layoutData := describe["layout"].(string)
-	res := map[string]interface{}{}
-	yaml.Unmarshal([]byte(layoutData), res)
-	fmt.Println(res)
+func TestYamlReplaceOutRefs(t *testing.T) {
+	data := GetTestData("cross-ref", "main-manifest.yaml", t)
+	output, err := parseOutputs(data)
+	if err != nil {
+		t.Errorf("failed to parse outputs: %v", err)
+	}
+	config := NewConfig(GetTestData("cross-ref", "dependent-with-refs.yaml", t), "/user/home/test.yaml")
+	outputs := map[string]map[string]interface{}{}
+	outputs["prj1.name1"] = output
+	actual, err := config.YAML(outputs)
+	if err != nil {
+		t.Errorf("failed to export config YAML: %v", err)
+	}
+	ioutil.WriteFile("/1-prj/projects/google/cloud-foundation-toolkit/cli/testdata/cross-ref/test", actual, 0755)
+	expected := GetTestData("cross-ref", "dependent-final-expected.yaml", t)
+	if strings.TrimSpace(string(actual)) != strings.TrimSpace(expected) {
+		t.Errorf("got: \n%s, want: \n%s", actual, expected)
+	}
 }
