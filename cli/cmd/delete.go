@@ -12,7 +12,7 @@ func init() {
 }
 
 var deleteCdm = &cobra.Command{
-	Use:   "create",
+	Use:   "delete",
 	Short: "Create deployment(s)",
 	Long:  `Create deployment(s)`,
 	Run: func(cmd *cobra.Command, args []string) {
