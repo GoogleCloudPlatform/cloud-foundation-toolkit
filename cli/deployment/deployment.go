@@ -1,27 +1,25 @@
 package deployment
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"sort"
-	"strings"
 )
 
 // Deployment object represent real GCP Deployment entity that already created or have to be created
 // configFile field point to yaml file, generated from Config object with all cross-deployment references
 // overwritten with actual values
 type Deployment struct {
-	Outputs    map[string]string
+	Outputs    map[string]interface{}
 	config     Config
 	configFile string
 }
 
 // NewDeployment creates Deployment object and override all out refs, this means all
 // deployments it depends to should exists in GCP project
-func NewDeployment(config Config, outputs map[string]map[string]string) *Deployment {
+func NewDeployment(config Config, outputs map[string]map[string]interface{}) *Deployment {
 	file, err := ioutil.TempFile("", config.Name)
 	defer func() {
 		er := file.Close()
@@ -90,30 +88,10 @@ func (d *Deployment) Execute(action string) (output string, error error) {
 	}
 }
 
-func replaceOutRefs(config Config, outputs map[string]map[string]string) []byte {
-	data, err := config.YAML()
+func replaceOutRefs(config Config, outputs map[string]map[string]interface{}) []byte {
+	data, err := config.YAML(outputs)
 	if err != nil {
 		log.Fatalf("error while parsing yaml for config: %s, error: %v", config.FullName(), err)
-	}
-	refs := config.findAllOutRefs()
-	for _, ref := range refs {
-		fullName, resource, property := parseOutRef(ref)
-		outputsMap := outputs[fullName]
-		if outputsMap == nil {
-			arr := strings.Split(fullName, ".")
-			outputsMap, err := GetOutputs(arr[0], arr[1])
-			if err != nil {
-				log.Fatalf("Erorr getting outputs for deployment: %s, error: %v", fullName, err)
-			}
-			outputs[fullName] = outputsMap
-		}
-		key := resource + "." + property
-		value := outputsMap[key]
-		fullRef := fmt.Sprintf("$(out.%s)", ref)
-		if len(value) == 0 {
-			log.Fatalf("Could not resolve reference: %s", fullRef)
-		}
-		data = bytes.ReplaceAll(data, []byte(fullRef), []byte(value))
 	}
 	return data
 }

@@ -36,7 +36,7 @@ var executeTests = []struct {
 	{
 		action: ActionDelete,
 		commands: []string{
-			"deployment-manager deployments delete dpl --project prj",
+			"deployment-manager deployments delete dpl --project prj -q",
 		},
 	},
 }

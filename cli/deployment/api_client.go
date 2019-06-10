@@ -32,7 +32,6 @@ var actions = []string{ActionApply, ActionDelete, ActionCreate, ActionUpdate}
 
 // function exposed to variable in order to mock it inside api_client_test.go
 var runGCloud = func(args ...string) (result string, err error) {
-	args = append(args, "--format", "yaml")
 	log.Println("gcloud", strings.Join(args, " "))
 	cmd := exec.Command("gcloud", args...)
 	// pass user's PATH env variable, expected gcloud executable can be found in PATH
@@ -45,18 +44,13 @@ var runGCloud = func(args ...string) (result string, err error) {
 		return string(output), err
 	}
 
-	if err := cmd.Wait(); err != nil {
-		log.Printf("cmd returned error: %v, \n output: %v", err, string(output))
-		return string(output), err
-	}
-
 	return string(output), err
 }
 
 // GetOutputs execute deployment-manager manifest describe call with gcloud tool and parse returned
 // resources.output yaml section. Returns map where "resourceName.propertyName" is key
-func GetOutputs(name string, project string) (map[string]string, error) {
-	data, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project)
+func GetOutputs(name string, project string) (map[string]interface{}, error) {
+	data, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project, "--format", "yaml")
 	if err != nil {
 		log.Printf("Failed to get deployment manifest: %v", err)
 		return nil, err
@@ -121,6 +115,7 @@ func GetStatus(deployment *Deployment) (Status, error) {
 		deployment.config.Name,
 		"--project",
 		deployment.config.Project,
+		"--format", "yaml",
 	}
 	response, err := runGCloud(args...)
 	if err != nil {
@@ -163,7 +158,7 @@ func GetStatus(deployment *Deployment) (Status, error) {
 	}
 }
 
-func parseOutputs(data string) (map[string]string, error) {
+func parseOutputs(data string) (map[string]interface{}, error) {
 	describe, err := unmarshal(data)
 	if err != nil {
 		log.Println("error parsing deployment outputs")
@@ -187,16 +182,12 @@ func parseOutputs(data string) (map[string]string, error) {
 		return nil, err
 	}
 
-	result := make(map[string]string)
+	result := make(map[string]interface{})
 	for _, resource := range res.Resources {
 		for _, output := range resource.Outputs {
 			key := resource.Name + "." + output.Name
-			switch value := output.Value.(type) {
-			case string:
-				result[key] = value
-			case map[interface{}]interface{}:
-				log.Println(key + " is map")
-			}
+			value := output.Value
+			result[key] = value
 		}
 	}
 
