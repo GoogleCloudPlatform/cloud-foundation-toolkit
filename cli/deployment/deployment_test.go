@@ -23,14 +23,14 @@ var executeTests = []struct {
 		action: ActionCreate,
 		commands: []string{
 			"deployment-manager deployments create dpl --config /tmp/myconfig.yaml --project prj",
-			"deployment-manager manifests describe --deployment dpl --project prj",
+			"deployment-manager manifests describe --deployment dpl --project prj --format yaml",
 		},
 	},
 	{
 		action: ActionUpdate,
 		commands: []string{
 			"deployment-manager deployments update dpl --config /tmp/myconfig.yaml --project prj",
-			"deployment-manager manifests describe --deployment dpl --project prj",
+			"deployment-manager manifests describe --deployment dpl --project prj --format yaml",
 		},
 	},
 	{
@@ -72,9 +72,9 @@ var applyTests = []struct {
 		status:    Done,
 		statusStr: "DONE",
 		commands: []string{
-			"deployment-manager deployments describe dpl --project prj",
+			"deployment-manager deployments describe dpl --project prj --format yaml",
 			"deployment-manager deployments update dpl --config /tmp/myconfig.yaml --project prj",
-			"deployment-manager manifests describe --deployment dpl --project prj",
+			"deployment-manager manifests describe --deployment dpl --project prj --format yaml",
 		},
 	},
 	{
@@ -83,7 +83,7 @@ var applyTests = []struct {
 		statusStr: "PENDING",
 		err:       true,
 		commands: []string{
-			"deployment-manager deployments describe dpl --project prj",
+			"deployment-manager deployments describe dpl --project prj --format yaml",
 		},
 	},
 	{
@@ -92,9 +92,9 @@ var applyTests = []struct {
 		statusStr: "",
 		err:       false,
 		commands: []string{
-			"deployment-manager deployments describe dpl --project prj",
+			"deployment-manager deployments describe dpl --project prj --format yaml",
 			"deployment-manager deployments create dpl --config /tmp/myconfig.yaml --project prj",
-			"deployment-manager manifests describe --deployment dpl --project prj",
+			"deployment-manager manifests describe --deployment dpl --project prj --format yaml",
 		},
 	},
 }

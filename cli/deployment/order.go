@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 )
+
 // Order function receives map of configs with Config.FullName() string as a key,
 // find dependencies between them, and order them topologically using directed graph.
-// Returns array of ordered config's objects and error if configs have circle dependencies
+// Returns array of ordered config's objects and error if configs have circle dependencies,
 func Order(configs map[string]Config) ([]Config, error) {
 	size := len(configs)
 
@@ -15,12 +16,12 @@ func Order(configs map[string]Config) ([]Config, error) {
 	// we don't know number or dependencies, so initial size is 0
 	edges := make([]edge, 0)
 	for _, config := range configs {
-		nodes  = append(nodes, config.FullName())
+		nodes = append(nodes, config.FullName())
 		deps := config.findAllDependencies(configs)
 		for _, dep := range deps {
-			edges = append(edges, edge {
-					from:dep.FullName(),
-					to:config.FullName(),
+			edges = append(edges, edge{
+				from: dep.FullName(),
+				to:   config.FullName(),
 			})
 		}
 	}
@@ -42,7 +43,6 @@ func Order(configs map[string]Config) ([]Config, error) {
 	}
 	return res, nil
 }
-
 
 // directedGraph struct used to build graph of cross-config depencencies
 // and do topological sort to define ordering of deployment creation
@@ -85,7 +85,7 @@ func newDirectedGraph(nodes []string, edges []edge) (*directedGraph, error) {
 
 type edge struct {
 	from string
-	to string
+	to   string
 }
 
 func (g *directedGraph) unsafeRemoveEdge(from, to string) {
