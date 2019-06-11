@@ -20,11 +20,19 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatalf("Error ordering deployments in dependency order: %v", err)
 	}
+	isDelete := action == deployment.ActionDelete
+	if isDelete {
+		// reverse order, dependent goes first for deletion
+		for i := len(ordered)/2 - 1; i >= 0; i-- {
+			opp := len(ordered) - 1 - i
+			ordered[i], ordered[opp] = ordered[opp], ordered[i]
+		}
+	}
 	log.Printf("Ordered dependencies: %v", ordered)
 
 	outputs := make(map[string]map[string]interface{})
 	for i, config := range ordered {
-		dep := deployment.NewDeployment(config, outputs)
+		dep := deployment.NewDeployment(config, outputs, !isDelete)
 		cmd.Printf("---------- Stage %d ----------\n", i)
 		output, err := dep.Execute(action)
 		cmd.Print(output)

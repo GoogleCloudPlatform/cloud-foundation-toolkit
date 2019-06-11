@@ -22,7 +22,7 @@ type Deployment struct {
 
 // NewDeployment creates a new Deployment object, overriding all outward references.
 // In effect, this means all deployment dependencies must exist in the GCP project.
-func NewDeployment(config Config, outputs map[string]map[string]interface{}) *Deployment {
+func NewDeployment(config Config, outputs map[string]map[string]interface{}, processConfig bool) *Deployment {
 	file, err := ioutil.TempFile("", config.Name)
 	defer func() {
 		er := file.Close()
@@ -34,14 +34,16 @@ func NewDeployment(config Config, outputs map[string]map[string]interface{}) *De
 	if err != nil {
 		log.Fatalf("Error creating temp file for deployment: %s, error: %v", config.FullName(), err)
 	}
-
-	data := replaceOutRefs(config, outputs)
-
-	_, err = file.Write(data)
-	if err != nil {
-		log.Fatalf("Error wirte to file: %s, error: %v", file.Name(), err)
+	var data []byte
+	if processConfig {
+		// don't need to process config, fix import paths, replace out refs in case of Delete command,
+		// only deployment name and project required for operation
+		data = replaceOutRefs(config, outputs)
+		_, err = file.Write(data)
+		if err != nil {
+			log.Fatalf("Error wirte to file: %s, error: %v", file.Name(), err)
+		}
 	}
-
 	return &Deployment{
 		config:     config,
 		configFile: file.Name(),
