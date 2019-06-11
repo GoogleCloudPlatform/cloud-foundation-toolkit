@@ -2,18 +2,11 @@ package deployment
 
 import (
 	"fmt"
-	"hash/fnv"
 	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
-
-func hash64(s string) int64 {
-	hash := fnv.New32()
-	hash.Write([]byte(s))
-	return int64(hash.Sum32())
-}
 
 // unmarshal arbitrary yaml to map
 func unmarshal(data string) (map[string]interface{}, error) {
@@ -33,4 +26,18 @@ func ReparentPath(parent string, child string) string {
 	}
 	dir := filepath.Dir(parent)
 	return filepath.Clean(filepath.Join(dir, child))
+}
+
+// check if string is yaml
+func IsYAML(text string) bool {
+	obj := struct{}{}
+	err := yaml.Unmarshal([]byte(text), obj)
+	return err == nil
+}
+
+func AppendMap(a map[string]string, b map[string]string) map[string]string {
+	for k, v := range b {
+		a[k] = v
+	}
+	return a
 }
