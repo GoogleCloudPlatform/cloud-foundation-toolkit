@@ -1,8 +1,14 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -11,6 +17,8 @@ import (
 
 // --project flag value will be mapped during app initialization
 var projectFlag string
+
+var supportedExt = []string{"*.yaml", "*.yml", "*.jinja"}
 
 // common code for create/update/apply and delete actions
 func execute(action string, cmd *cobra.Command, args []string) {
@@ -49,15 +57,85 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	}
 }
 
-func loadConfigs(args []string) map[string]deployment.Config {
-	result := make(map[string]deployment.Config, len(args))
-	for _, path := range args {
-		data, err := ioutil.ReadFile(path)
-		if err != nil {
-			log.Fatalf("Error loading file: %s", path)
+func listConfigs(args []string, errs map[string]error) (map[string]string, []string) {
+	resFiles := map[string]string{}
+	var resYamls []string
+	for _, arg := range args {
+		stat, err := os.Stat(arg)
+		if err == nil {
+			if stat.IsDir() {
+				configs := map[string]string{}
+				for _, ext := range supportedExt {
+					glob := path.Clean(arg) + "/" + ext
+					files, _ := listConfigs([]string{glob}, errs)
+					configs = deployment.AppendMap(configs, files)
+				}
+				resFiles = deployment.AppendMap(resFiles, configs)
+				if len(configs) == 0 {
+					errs[arg] = errors.New(fmt.Sprintf("No %s files found in directory: %s", strings.Join(supportedExt, ", "), arg))
+				}
+			} else {
+				data, err := ioutil.ReadFile(arg)
+				if err != nil {
+					log.Fatalf("file %s read error: %v", arg, err)
+				}
+				resFiles[arg] = string(data)
+			}
+		} else if os.IsNotExist(err) {
+			if deployment.IsYAML(arg) {
+				resYamls = append(resYamls, arg)
+			} else {
+				// check Glob
+				maches, err := filepath.Glob(arg)
+				if err != nil {
+					errs[arg] = errors.New(fmt.Sprintf("Error during search files for config: %s, %v", arg, err))
+				} else {
+					if len(maches) > 0 {
+						files, _ := listConfigs(maches, errs)
+						resFiles = deployment.AppendMap(resFiles, files)
+					} else {
+						errs[arg] = errors.New(fmt.Sprintf("No file(s) exists or valid yaml for config param: %s", arg))
+					}
+				}
+			}
+		} else {
+			log.Fatalf("file %s stat error: %v", arg, err)
 		}
-		config := deployment.NewConfig(string(data), path)
+	}
+	return resFiles, resYamls
+}
+
+func loadConfigs(args []string) map[string]deployment.Config {
+	result := map[string]deployment.Config{}
+	errs := map[string]error{}
+	files, yamls := listConfigs(args, errs)
+
+	// check errors
+	for _, entry := range args {
+		if err, ok := errs[entry]; ok {
+			log.Fatal(err)
+		}
+	}
+
+	for file, data := range files {
+		config := deployment.NewConfig(data, file)
 		result[config.FullName()] = config
 	}
+
+	if len(yamls) > 0 {
+		dir, err := os.Getwd()
+		if err != nil {
+			log.Fatalf("could not get current folder path: %v", err)
+		}
+		for _, data := range yamls {
+			config := deployment.NewConfig(data, dir)
+			result[config.FullName()] = config
+		}
+	}
+
+	if len(result) == 0 {
+		log.Fatal("no configs provided")
+	}
+
 	return result
 }
