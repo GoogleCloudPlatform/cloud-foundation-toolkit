@@ -60,6 +60,26 @@ func GetOutputs(name string, project string) (map[string]interface{}, error) {
 	return parseOutputs(data)
 }
 
+/*
+returns project id taken from local gcloud configuration
+*/
+func GCloudDefaultProjectID() (string, error) {
+	data, err := runGCloud("config", "list", "--format", "yaml")
+	if err != nil {
+		return "", err
+	}
+	out := struct {
+		Core struct {
+			Project string
+		}
+	}{}
+	err = yaml.Unmarshal([]byte(data), &out)
+	if err != nil {
+		return "", err
+	}
+	return out.Core.Project, nil
+}
+
 // Create deployment based on passed Deployment object passed into it.
 // Initialize Deployment with Outputs map in case of successful creation and error otherwise.
 func CreateOrUpdate(action string, deployment *Deployment) (string, error) {
@@ -75,14 +95,14 @@ func CreateOrUpdate(action string, deployment *Deployment) (string, error) {
 		"--config",
 		deployment.configFile,
 		"--project",
-		deployment.config.Project,
+		deployment.config.GetProject(),
 	}
 	output, err := runGCloud(args...)
 	if err != nil {
 		log.Printf("failed to %s deployment: %v, error: %v", action, deployment, err)
 		return output, err
 	}
-	outputs, err := GetOutputs(deployment.config.Name, deployment.config.Project)
+	outputs, err := GetOutputs(deployment.config.Name, deployment.config.GetProject())
 	if err != nil {
 		log.Printf("on %s action, failed to get outputs for deployment: %v, error: %v", action, deployment, err)
 		return output, err
@@ -99,7 +119,7 @@ func Delete(deployment *Deployment) (string, error) {
 		"delete",
 		deployment.config.Name,
 		"--project",
-		deployment.config.Project,
+		deployment.config.GetProject(),
 		"-q",
 	}
 	output, err := runGCloud(args...)
@@ -117,7 +137,7 @@ func GetStatus(deployment *Deployment) (Status, error) {
 		"describe",
 		deployment.config.Name,
 		"--project",
-		deployment.config.Project,
+		deployment.config.GetProject(),
 		"--format", "yaml",
 	}
 	response, err := runGCloud(args...)
