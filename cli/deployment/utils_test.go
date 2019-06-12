@@ -23,20 +23,51 @@ var pathtests = []struct {
 	child  string
 	out    string
 }{
-	{"/base/folder/config.yaml", "script.py", "/base/folder/script.py"},
-	{"/base/folder/config.yaml", "./script.py", "/base/folder/script.py"},
-	{"/base/folder/config.yaml", "../script.py", "/base/script.py"},
-	{"/base/folder/config.yaml", "/base/folder/script.py", "/base/folder/script.py"},
-	{"/base/folder/config.yaml", "templates/script.py", "/base/folder/templates/script.py"},
-	{"/base/folder/config.yaml", "../templates/script.py", "/base/templates/script.py"},
+	{"/base/folder", "script.py", "/base/folder/script.py"},
+	{"/base/folder", "./script.py", "/base/folder/script.py"},
+	{"/base/folder", "../script.py", "/base/script.py"},
+	{"/base/folder", "/other/script.py", "/other/script.py"},
+	{"/base/folder", "templates/script.py", "/base/folder/templates/script.py"},
+	{"/base/folder", "../templates/script.py", "/base/templates/script.py"},
 }
 
-func TestReparentPath(t *testing.T) {
+func TestAbsolutePath(t *testing.T) {
 	for _, tt := range pathtests {
 		t.Run(tt.parent+"  "+tt.child, func(t *testing.T) {
-			actual := ReparentPath(tt.parent, tt.child)
+			actual := AbsolutePath(tt.parent, tt.child)
 			if actual != tt.out {
 				t.Errorf("got: %s, want: %s", actual, tt.out)
+			}
+		})
+	}
+}
+
+var fileNameTests = []struct {
+	file string
+	name string
+}{
+	{"name", "name"},
+	{"name.txt", "name"},
+	{"../name.txt", "name"},
+	{"./name.txt", "name"},
+	{"/test/name.txt", "name"},
+	{"UPPERCASE.yaml", "uppercase"},
+	{"under_scores_.yaml", "under-scores"},
+	{"last-dash-.yaml", "last-dash"},
+	{"-8first-dash-and-number.yaml", "first-dash-and-number"},
+	{"8-number-followed-by-dash.yaml", "number-followed-by-dash"},
+	{"--double-dash.yaml", "double-dash"},
+	{"last-dash-.yaml", "last-dash"},
+	{"last-dobule-dash--.yaml", "last-dobule-dash"},
+	{"more-than-63-chars--------------------------------63-ends-here-----.yaml", "more-than-63-chars--------------------------------63-ends-here"},
+}
+
+func TestDeploymentNameFromFile(t *testing.T) {
+	for _, tt := range fileNameTests {
+		t.Run(tt.file, func(t *testing.T) {
+			actual := DeploymentNameFromFile(tt.file)
+			if actual != tt.name {
+				t.Errorf("got: %s, want: %s", actual, tt.name)
 			}
 		})
 	}

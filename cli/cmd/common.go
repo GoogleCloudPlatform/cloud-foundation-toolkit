@@ -22,6 +22,7 @@ var supportedExt = []string{"*.yaml", "*.yml", "*.jinja"}
 
 // common code for create/update/apply and delete actions
 func execute(action string, cmd *cobra.Command, args []string) {
+	setDefaultProjectID()
 	cmd.Printf("%s deployment(s), configs %v, project %s\n", action, args, projectFlag)
 	configs := loadConfigs(args)
 	ordered, err := deployment.Order(configs)
@@ -57,6 +58,11 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	}
 }
 
+/**
+ listConfigs search for config files according rules described in CLL usage section of following doc:
+https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/dm/docs/userguide.md#syntax
+listConfigs returns map[fileName: fileContent] for files, and list of strings for yamls passed as string parameters to cli
+*/
 func listConfigs(args []string, errs map[string]error) (map[string]string, []string) {
 	resFiles := map[string]string{}
 	var resYamls []string
@@ -105,6 +111,11 @@ func listConfigs(args []string, errs map[string]error) (map[string]string, []str
 	return resFiles, resYamls
 }
 
+/*
+listConfigs accept list of config parameters (file/directory paths, glob pattern, yaml strings)
+search all possible files in case of directory/glob patterns with listConfigs function and create
+Config objects from loaded data
+*/
 func loadConfigs(args []string) map[string]deployment.Config {
 	result := map[string]deployment.Config{}
 	errs := map[string]error{}
@@ -123,12 +134,8 @@ func loadConfigs(args []string) map[string]deployment.Config {
 	}
 
 	if len(yamls) > 0 {
-		dir, err := os.Getwd()
-		if err != nil {
-			log.Fatalf("could not get current folder path: %v", err)
-		}
 		for _, data := range yamls {
-			config := deployment.NewConfig(data, dir)
+			config := deployment.NewConfig(data, "")
 			result[config.FullName()] = config
 		}
 	}
@@ -136,6 +143,28 @@ func loadConfigs(args []string) map[string]deployment.Config {
 	if len(result) == 0 {
 		log.Fatal("no configs provided")
 	}
-
 	return result
+}
+
+/*
+set deployment.DefaultProjectID variable by search following options:
+The --project command-line option.
+The CLOUD_FOUNDATION_PROJECT_ID environment variable.
+The "default project" configured with the GCP SDK.
+*/
+func setDefaultProjectID() {
+	if len(projectFlag) > 0 {
+		deployment.DefaultProjectID = projectFlag
+	} else if env := os.Getenv("CLOUD_FOUNDATION_PROJECT_ID"); len(env) > 0 {
+		deployment.DefaultProjectID = env
+	} else {
+		gcloudDefault, err := deployment.GCloudDefaultProjectID()
+		if err != nil {
+			log.Fatalf("error getting gcloud default project: %v", err)
+		}
+		if len(gcloudDefault) == 0 {
+			log.Fatalf("can't get project id from --project arg, CLOUD_FOUNDATION_PROJECT_ID env variable and gcloud default")
+		}
+		deployment.DefaultProjectID = gcloudDefault
+	}
 }
