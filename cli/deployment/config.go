@@ -88,6 +88,14 @@ func (c Config) GetProject() string {
 	}
 }
 
+// returns file path in case of file source or yaml string in case of yaml source
+func (c Config) Source() string {
+	if len(c.file) > 0 {
+		return c.file
+	} else {
+		return c.data
+	}
+}
 
 // FullName returns a name for the configuration that is intended to be unique.
 // The name is in the format "ProjectName.DeploymentName" and may be used as a map key.
@@ -188,7 +196,7 @@ func getOutRefValue(ref string, outputs map[string]map[string]interface{}) inter
 	value, ok := outputsMap[res+"."+name]
 	fullRef := fmt.Sprintf("$(out.%s)", ref)
 	if !ok {
-		log.Fatalf("Could not resolve reference: %s", fullRef)
+		log.Fatalf("Unresolved dependency: %s. Deployment: %s , on whichother resources depended, neither was specifiedin the submitted congigs nor existed inDeployment Manager", fullRef, fullName)
 	}
 	return value
 }
