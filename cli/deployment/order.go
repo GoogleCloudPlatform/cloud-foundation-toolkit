@@ -8,11 +8,10 @@ import (
 
 // Order function receives map of configs with Config.FullName() string as a key,
 // find dependencies between them, and order them topologically using directed graph.
-// Returns array of ordered config's objects and error if configs have circle dependencies,
-func Order(configs map[string]Config) ([]Config, error) {
-	size := len(configs)
-
-	nodes := make([]string, 0)
+// Returns array of arrays of config, each inner array represent configs that could be created in parallel
+// each next level depends on previous
+func Order(configs map[string]Config) ([][]Config, error) {
+	var nodes []string
 	// we don't know number or dependencies, so initial size is 0
 	edges := make([]edge, 0)
 	for _, config := range configs {
@@ -37,9 +36,13 @@ func Order(configs map[string]Config) ([]Config, error) {
 		log.Printf("error ordering configs: %v", err)
 		return nil, err
 	}
-	res := make([]Config, size)
-	for i, name := range sorted {
-		res[i] = configs[name]
+	var res [][]Config
+	for _, level := range sorted {
+		var resLevel []Config
+		for _, name := range level {
+			resLevel = append(resLevel, configs[name])
+		}
+		res = append(res, resLevel)
 	}
 	return res, nil
 }
@@ -94,21 +97,22 @@ func (g *directedGraph) unsafeRemoveEdge(from, to string) {
 }
 
 // main logic of topological search here is to find root nodes (no incoming nodes),
-// remove them from graph and repeat untill all grahp will be traversed
-func (g *directedGraph) topologicalSort() ([]string, error) {
-	sorted := make([]string, 0, len(g.nodes))
-	rootNodes := make([]string, 0, len(g.nodes))
+// remove them from graph and repeat until all graph will be traversed
+func (g *directedGraph) topologicalSort() ([][]string, error) {
+	var result [][]string
 
+	rootNodes := make([]string, 0, len(g.nodes))
 	for _, n := range g.nodes {
 		if g.incomingNodes[n] == 0 {
 			rootNodes = append(rootNodes, n)
 		}
 	}
+	result = append(result, rootNodes)
 
+	var nextLevel []string
 	for len(rootNodes) > 0 {
 		var current string
 		current, rootNodes = rootNodes[0], rootNodes[1:]
-		sorted = append(sorted, current)
 
 		outgoingNodes := make([]string, len(g.outgoingNodes[current]))
 		for outgoingNode, i := range g.outgoingNodes[current] {
@@ -119,8 +123,16 @@ func (g *directedGraph) topologicalSort() ([]string, error) {
 			g.unsafeRemoveEdge(current, outgoingNode)
 
 			if g.incomingNodes[outgoingNode] == 0 {
-				rootNodes = append(rootNodes, outgoingNode)
+				nextLevel = append(nextLevel, outgoingNode)
 			}
+		}
+
+		if len(rootNodes) == 0 && len(nextLevel) > 0 {
+			for _, next := range nextLevel {
+				rootNodes = append(rootNodes, next)
+			}
+			result = append(result, nextLevel)
+			nextLevel = nil
 		}
 	}
 
@@ -132,6 +144,5 @@ func (g *directedGraph) topologicalSort() ([]string, error) {
 	if outgoingCount > 0 {
 		return nil, errors.New("cycle detected in graph")
 	}
-
-	return sorted, nil
+	return result, nil
 }
