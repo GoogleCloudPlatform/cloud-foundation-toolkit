@@ -7,8 +7,7 @@ import (
 )
 
 func init() {
-	deleteCdm.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project name")
-	rootCmd.AddCommand(deleteCdm)
+	initCommon(deleteCdm)
 }
 
 var deleteCdm = &cobra.Command{

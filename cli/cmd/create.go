@@ -7,8 +7,7 @@ import (
 )
 
 func init() {
-	createCmd.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project name")
-	rootCmd.AddCommand(createCmd)
+	initCommon(createCmd)
 }
 
 var createCmd = &cobra.Command{

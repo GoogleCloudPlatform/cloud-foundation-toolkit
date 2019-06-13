@@ -3,6 +3,7 @@ package deployment
 import (
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -68,6 +69,30 @@ func TestDeploymentNameFromFile(t *testing.T) {
 			actual := DeploymentNameFromFile(tt.file)
 			if actual != tt.name {
 				t.Errorf("got: %s, want: %s", actual, tt.name)
+			}
+		})
+	}
+}
+
+var inputTests = []struct {
+	input    string
+	expected string
+}{
+	{"a\n", "a"},
+	{"a \n", "a"},
+	{" a \n", "a"},
+	{"a\r\n", "a"},
+	{"u\n", "u"},
+	{"s\n", "s"},
+}
+
+func TestGetUserInput(t *testing.T) {
+	for _, tt := range inputTests {
+		t.Run(tt.input, func(t *testing.T) {
+			input := strings.NewReader(tt.input)
+			actual := GetUserInput("Update(u), Skip (s), or Abort(a) Deployment?", []string{"u", "s", "a"}, input)
+			if actual != tt.expected {
+				t.Errorf("got: %s, want: %s", actual, tt.expected)
 			}
 		})
 	}

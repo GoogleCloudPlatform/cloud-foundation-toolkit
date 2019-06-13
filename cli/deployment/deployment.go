@@ -57,15 +57,15 @@ func (d Deployment) FullName() string {
 	return d.config.FullName()
 }
 
-func (d *Deployment) Execute(action string) (output string, error error) {
+func (d *Deployment) Execute(action string, preview bool) (output string, error error) {
 	if sort.SearchStrings(actions, action) == len(actions) {
 		log.Fatalf("action: %s not in %v for deployment: %v", actions, actions, d)
 	}
 
 	if action == ActionCreate || action == ActionUpdate {
-		return CreateOrUpdate(action, d)
+		return CreateOrUpdate(action, d, preview)
 	} else if action == ActionDelete {
-		return Delete(d)
+		return Delete(d, preview)
 	} else {
 		status, err := GetStatus(d)
 		if err != nil {
@@ -74,10 +74,10 @@ func (d *Deployment) Execute(action string) (output string, error error) {
 		switch status {
 		case Done:
 			log.Printf("Deployment %v exists, run Update()", d)
-			return CreateOrUpdate(ActionUpdate, d)
+			return CreateOrUpdate(ActionUpdate, d, preview)
 		case NotFound:
 			log.Printf("Deployment %v does not exists, run Create()", d)
-			return CreateOrUpdate(ActionCreate, d)
+			return CreateOrUpdate(ActionCreate, d, preview)
 		case Pending:
 			log.Printf("Deployment %v is in pending state, break", d)
 			return "", errors.New(fmt.Sprintf("Deployment %v is in PENDING state", d))

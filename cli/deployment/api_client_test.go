@@ -1,14 +1,13 @@
 package deployment
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 )
 
 func TestGetOutputs(t *testing.T) {
 	runGCloud = func(args ...string) (result string, err error) {
-		expected := "deployment-manager manifests describe --deployment myproject --project mydeployment --format yaml"
+		expected := "deployment-manager manifests describe --deployment mydeployment --project myproject --format yaml"
 		actual := strings.Join(args, " ")
 		if expected != actual {
 			t.Errorf("expected %v, got %v", expected, actual)
@@ -26,6 +25,7 @@ func TestGetOutputs(t *testing.T) {
 	}
 }
 
+/*
 // do actuall deployment get status call
 func TestGetStatus(t *testing.T) {
 	dep := &Deployment{
@@ -47,3 +47,4 @@ func TestGetStatus(t *testing.T) {
 func TestGCloudDefaultProjectID(t *testing.T) {
 	fmt.Println(GCloudDefaultProjectID())
 }
+*/
