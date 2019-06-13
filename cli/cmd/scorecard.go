@@ -8,6 +8,8 @@ import (
 
 func init() {
 	rootCmd.AddCommand(scorecardCmd)
+	scorecardCmd.Flags().StringVar(&flags.scorecard.policyPath, "policy-path", "", "Path to directory containing validation policies")
+	scorecardCmd.MarkFlagRequired("policy-path")
 }
 
 var scorecardCmd = &cobra.Command{
@@ -15,12 +17,26 @@ var scorecardCmd = &cobra.Command{
 	Short: "Print a scorecard of your GCP envirment",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cmd.Println("CFT scorecard")
+		cmd.Println("Generating CFT scorecard")
+		var err error
+
 		inventory := scorecard.NewInventory("gcp-foundation-shared-devops")
-		err := scorecard.ExportInventory(inventory)
-		if err != nil {
-			return errors.Wrap(err, "Error exporting asset inventory")
+
+		if false {
+			err = scorecard.ExportInventory(inventory)
+			if err != nil {
+				return errors.Wrap(err, "Error exporting asset inventory")
+			}
 		}
+
+		config := &scorecard.ScoringConfig{
+			PolicyPath: flags.scorecard.policyPath,
+		}
+		err = scorecard.ScoreInventory(inventory, config)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	},
 }

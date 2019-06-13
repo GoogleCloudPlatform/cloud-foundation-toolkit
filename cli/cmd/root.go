@@ -19,6 +19,13 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+var flags struct {
+	// flags that correspond to subcommands:
+	scorecard struct {
+		policyPath string
+	}
+}
+
 func init() {
 	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}{{.UseLine}}{{end}}
   {{if .HasAvailableSubCommands}}{{.CommandPath}} [command] [flags]{{end}}{{if gt (len .Aliases) 0}}

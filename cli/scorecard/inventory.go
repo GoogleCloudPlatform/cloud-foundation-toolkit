@@ -16,6 +16,7 @@ package scorecard
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -28,7 +29,8 @@ import (
 type Inventory struct {
 	ProjectID string
 	Parent    string
-	GcsPath   string
+	GcsBucket string
+	GcsObject string
 }
 
 // NewInventory creates a new CAI inventory manager
@@ -36,8 +38,16 @@ func NewInventory(projectID string) *Inventory {
 	inventory := new(Inventory)
 	inventory.ProjectID = projectID
 	inventory.Parent = "organizations/816421441114"
-	inventory.GcsPath = "gs://clf-gcp-inventory/inventory.json"
+	inventory.GcsBucket = "clf-gcp-inventory"
+	inventory.GcsObject = "inventory.json"
+	// inventory.GcsPath = "gs://clf-gcp-inventory/inventory.json"
 	return inventory
+}
+
+func getGcsDestination(inventory *Inventory) *assetpb.GcsDestination_Uri {
+	return &assetpb.GcsDestination_Uri{
+		Uri: fmt.Sprintf("gs://%v/%v", inventory.GcsBucket, inventory.GcsObject),
+	}
 }
 
 // ExportInventory creates a new inventory export
@@ -54,9 +64,7 @@ func ExportInventory(inventory *Inventory) error {
 		OutputConfig: &assetpb.OutputConfig{
 			Destination: &assetpb.OutputConfig_GcsDestination{
 				GcsDestination: &assetpb.GcsDestination{
-					ObjectUri: &assetpb.GcsDestination_Uri{
-						Uri: inventory.GcsPath,
-					},
+					ObjectUri: getGcsDestination(inventory),
 				},
 			},
 		},

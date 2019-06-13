@@ -6,7 +6,9 @@ require (
 	cloud.google.com/go v0.38.0
 	github.com/GoogleCloudPlatform/terraform-validator v0.0.0-20190611191127-0aa9d709266e
 	github.com/briandowns/spinner v1.6.1
+	github.com/forseti-security/config-validator v0.0.0-20190611184209-ce0fa1c12514
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/golang/protobuf v1.3.1
 	github.com/hashicorp/terraform v0.12.2
 	github.com/kr/pty v1.1.3 // indirect
 	github.com/pkg/errors v0.8.1
