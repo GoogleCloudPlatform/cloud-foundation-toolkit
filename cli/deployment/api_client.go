@@ -42,7 +42,7 @@ var runGCloud = func(args ...string) (result string, err error) {
 	output, err := cmd.CombinedOutput()
 
 	if err != nil {
-		log.Printf("failed to start cmd: %v, \n output: %v", err, string(output))
+		log.Printf("failed to start cmd: %v, output: %v", err, string(output))
 		return string(output), err
 	}
 
@@ -51,7 +51,7 @@ var runGCloud = func(args ...string) (result string, err error) {
 
 // GetOutputs retrive existing Deployment outputs using gcloud and store result in map[string]string
 // where "resourceName.propertyName" is key, and value is string representation of the output value.
-func GetOutputs(name string, project string) (map[string]interface{}, error) {
+func GetOutputs(project string, name string) (map[string]interface{}, error) {
 	data, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project, "--format", "yaml")
 	if err != nil {
 		log.Printf("Failed to get deployment manifest: %v", err)
@@ -82,7 +82,7 @@ func GCloudDefaultProjectID() (string, error) {
 
 // Create deployment based on passed Deployment object passed into it.
 // Initialize Deployment with Outputs map in case of successful creation and error otherwise.
-func CreateOrUpdate(action string, deployment *Deployment) (string, error) {
+func CreateOrUpdate(action string, deployment *Deployment, preview bool) (string, error) {
 	if action != ActionCreate && action != ActionUpdate {
 		log.Fatalf("action %s not in [%s,%s] for deployment: %v", action, ActionCreate, ActionUpdate, deployment)
 	}
@@ -97,22 +97,73 @@ func CreateOrUpdate(action string, deployment *Deployment) (string, error) {
 		"--project",
 		deployment.config.GetProject(),
 	}
+
+	if preview {
+		args = append(args, "--preview")
+	}
+
 	output, err := runGCloud(args...)
 	if err != nil {
 		log.Printf("failed to %s deployment: %v, error: %v", action, deployment, err)
 		return output, err
 	}
-	outputs, err := GetOutputs(deployment.config.Name, deployment.config.GetProject())
+
+	if !preview {
+		outputs, err := GetOutputs(deployment.config.GetProject(), deployment.config.Name)
+		if err != nil {
+			log.Printf("on %s action, failed to get outputs for deployment: %v, error: %v", action, deployment, err)
+			return output, err
+		}
+		deployment.Outputs = outputs
+	}
+	return output, nil
+}
+
+/*
+cancel update/create/delete preview with gcloud deployments cancel-preview command,
+in case of cancel preview of create action, need to clean deployment and run Delete() after CancelPreview()
+*/
+func CancelPreview(deployment *Deployment) (string, error) {
+	args := []string{
+		"deployment-manager",
+		"deployments",
+		"cancel-preview",
+		deployment.config.Name,
+		"--project",
+		deployment.config.GetProject(),
+		"-q",
+	}
+	output, err := runGCloud(args...)
 	if err != nil {
-		log.Printf("on %s action, failed to get outputs for deployment: %v, error: %v", action, deployment, err)
+		log.Printf("failed to cancel preview, error: %v", err)
 		return output, err
 	}
-	deployment.Outputs = outputs
+	return output, nil
+}
+
+
+// ApplyPreview function apply changes made before with --preview flag
+func ApplyPreview(deployment *Deployment) (string, error) {
+	args := []string{
+		"deployment-manager",
+		"deployments",
+		"update",
+		deployment.config.Name,
+		"--project",
+		deployment.config.GetProject(),
+		"-q",
+	}
+	output, err := runGCloud(args...)
+	if err != nil {
+		log.Printf("failed to apply preview, error: %v", err)
+		return output, err
+	}
 	return output, nil
 }
 
 // Delete function removed Deployment passed into it as parameter.
-func Delete(deployment *Deployment) (string, error) {
+// Boolean preview param define if changes have to be previewed before apply.
+func Delete(deployment *Deployment, preview bool) (string, error) {
 	args := []string{
 		"deployment-manager",
 		"deployments",
@@ -121,6 +172,9 @@ func Delete(deployment *Deployment) (string, error) {
 		"--project",
 		deployment.config.GetProject(),
 		"-q",
+	}
+	if preview {
+		args = append(args, "--preview")
 	}
 	output, err := runGCloud(args...)
 	if err != nil {

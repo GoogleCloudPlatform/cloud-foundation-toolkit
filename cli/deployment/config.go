@@ -178,7 +178,8 @@ func getOutRefValue(ref string, outputs map[string]map[string]interface{}) inter
 	outputsMap := outputs[fullName]
 	if outputsMap == nil {
 		arr := strings.Split(fullName, ".")
-		outputsMap, err := GetOutputs(arr[0], arr[1])
+		var err error
+		outputsMap, err = GetOutputs(arr[0], arr[1])
 		if err != nil {
 			log.Fatalf("Erorr getting outputs for deployment: %s, error: %v", fullName, err)
 		}

@@ -49,7 +49,7 @@ func TestDeploymentExecuteCreateUpdateDelete(t *testing.T) {
 				actual = append(actual, strings.Join(args, " "))
 				return GetTestData("deployment", "describe-manifest.yaml", t), nil
 			}
-			_, err := d.Execute(tt.action)
+			_, err := d.Execute(tt.action, false)
 			if err != nil {
 				t.Errorf("expected no error, got: %v", err)
 			}
@@ -116,7 +116,7 @@ func TestDeploymentExecuteApply(t *testing.T) {
 
 				return GetTestData("deployment", "describe-manifest.yaml", t), nil
 			}
-			_, err := d.Execute(tt.name)
+			_, err := d.Execute(tt.name, false)
 			if err != nil && !tt.err {
 				t.Errorf("expected no error, got: %v", err)
 			}

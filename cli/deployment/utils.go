@@ -1,7 +1,10 @@
 package deployment
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -72,4 +75,35 @@ func DeploymentNameFromFile(path string) string {
 	name = firstChar.ReplaceAllString(name, "")
 	name = lastChar.ReplaceAllString(name, "")
 	return name
+}
+
+/*
+As for user input and validate entered value is equal to one of the provided options.
+Returns validated option string
+*/
+func GetUserInput(message string, options []string, rd io.Reader) string {
+	reader := bufio.NewReader(rd)
+	var input string
+	var err error
+	for !stringInSlice(input, options) {
+		log.Print(message + " ")
+		input, err = reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+		if err != nil {
+			log.Fatalf("failed to get user input, error: %v", err)
+		}
+	}
+	return input
+}
+
+/*
+Checks if string a in slice
+*/
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }

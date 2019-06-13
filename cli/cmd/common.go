@@ -17,8 +17,15 @@ import (
 
 // --project flag value will be mapped during app initialization
 var projectFlag string
+var previewFlag bool = false
 
 var supportedExt = []string{"*.yaml", "*.yml", "*.jinja"}
+
+func initCommon(command *cobra.Command) {
+	command.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project id")
+	command.PersistentFlags().BoolVar(&previewFlag, "preview", false, "preview before apply changes")
+	rootCmd.AddCommand(command)
+}
 
 // common code for create/update/apply and delete actions
 func execute(action string, cmd *cobra.Command, args []string) {
@@ -43,10 +50,42 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	for i, config := range ordered {
 		dep := deployment.NewDeployment(config, outputs, !isDelete)
 		cmd.Printf("---------- Stage %d ----------\n", i)
-		output, err := dep.Execute(action)
+		output, err := dep.Execute(action, previewFlag)
 		cmd.Print(output)
 		if err != nil {
-			log.Fatalf("Error %s deployment %v, \n %v", action, dep, err)
+			if action == deployment.ActionDelete {
+				status, _ := deployment.GetStatus(dep)
+				if status == deployment.NotFound {
+					// for Delete action, Deployment might not exists, in this case just skip
+					log.Printf("Deployment %v does not exists, skip deletion\n", dep)
+					continue
+				}
+			}
+			log.Fatalf("Error %s deployment: %v, erro: %v", action, dep, err)
+		}
+		if previewFlag {
+			choise := deployment.GetUserInput("Update(u), Skip (s), or Abort(a) Deployment?", []string{"u", "s", "a"}, os.Stdin)
+			switch choise {
+			case "u":
+				output, err := deployment.ApplyPreview(dep)
+				cmd.Print(output)
+				if err != nil {
+					log.Fatalf("error %s deployment: %v, error: %v", action, dep, err)
+				}
+			case "s":
+				output, err = deployment.CancelPreview(dep)
+				if err != nil {
+					log.Fatalf("error cancel-preuvew action for deployment: %v, error: %v", dep, err)
+				}
+				log.Printf("canceled %s action for deployment: %v", action, dep)
+				if action == deployment.ActionCreate {
+					log.Printf("delete canceled creation for deployment: %v", dep)
+					deployment.Delete(dep, false)
+				}
+			case "a":
+				log.Print("Aborting deployment run!")
+				os.Exit(0)
+			}
 		}
 		// after create/update/apply actions - put deployment outputs to global map fro cross-deployment
 		// reference variables substitutions, after delete - remove deployment outputs from map, to avoid its usage
@@ -78,7 +117,7 @@ func listConfigs(args []string, errs map[string]error) (map[string]string, []str
 				}
 				resFiles = deployment.AppendMap(resFiles, configs)
 				if len(configs) == 0 {
-					errs[arg] = errors.New(fmt.Sprintf("No %s files found in directory: %s", strings.Join(supportedExt, ", "), arg))
+					errs[arg] = errors.New(fmt.Sprintf("no %s files found in directory: %s", strings.Join(supportedExt, ", "), arg))
 				}
 			} else {
 				data, err := ioutil.ReadFile(arg)
