@@ -6,6 +6,7 @@ locals {
     "roles/container.developer",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountUser",
+    "roles/cloudkms.admin",
   ]
 }
 
@@ -35,6 +36,7 @@ resource "google_project_services" "ci_kubernetes_engine" {
     "serviceusage.googleapis.com",
     "iamcredentials.googleapis.com",
     "cloudresourcemanager.googleapis.com",
+    "cloudkms.googleapis.com",
   ]
 }
 
