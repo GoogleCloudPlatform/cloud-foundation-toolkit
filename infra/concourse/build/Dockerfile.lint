@@ -3,6 +3,7 @@ FROM alpine:3.8
 RUN apk add --no-cache --update \
     bash \
     coreutils \
+    findutils \
     make \
     go=1.10.8-r0 \
     python=2.7.15-r1 \
