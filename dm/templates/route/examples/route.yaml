@@ -35,7 +35,6 @@ resources:
       network: <FIXME:network-name>
       routes:
         - name: test-ip-route
-          routeType: ipaddress
           nextHopIp: <FIXME:ip-address-within-vpc-example:10.118.8.12>
           priority: 20000
           destRange: 0.0.0.0/0
