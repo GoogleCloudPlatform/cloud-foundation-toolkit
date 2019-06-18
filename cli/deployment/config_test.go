@@ -18,36 +18,36 @@ func TestNewConfig(t *testing.T) {
 	}
 }
 
-var outRefTests = []struct {
-	name string
-	in   string
-	out  []string
-}{
-	{
-		"one refs",
-		"$(out.project1.deployment1.resource1.output1)",
-		[]string{
-			"project1.deployment1.resource1.output1",
-		},
-	},
-	{
-		"several refs",
-		`$(out.project1.deployment1.resource1.output1)
-                    $(out.deployment2.resource2.output2)`,
-		[]string{
-			"project1.deployment1.resource1.output1",
-			"deployment2.resource2.output2",
-		},
-	},
-	{"empty file", "", nil},
-	{"no refs", "name: myname", nil},
-	{"invalid delimiter", "${out1.account.project.resource.output}", nil},
-	{"missing closing delimiter", "$(out1.account.project.resource.output", nil},
-	{"no delimiter", "out1.account.project.resource.output", nil},
-}
-
 func TestFindAllOutRefs(t *testing.T) {
-	for _, tt := range outRefTests {
+	var tests = []struct {
+		name string
+		in   string
+		out  []string
+	}{
+		{
+			"one refs",
+			"$(out.project1.deployment1.resource1.output1)",
+			[]string{
+				"project1.deployment1.resource1.output1",
+			},
+		},
+		{
+			"several refs",
+			`$(out.project1.deployment1.resource1.output1)
+                    $(out.deployment2.resource2.output2)`,
+			[]string{
+				"project1.deployment1.resource1.output1",
+				"deployment2.resource2.output2",
+			},
+		},
+		{"empty file", "", nil},
+		{"no refs", "name: myname", nil},
+		{"invalid delimiter", "${out1.account.project.resource.output}", nil},
+		{"missing closing delimiter", "$(out1.account.project.resource.output", nil},
+		{"no delimiter", "out1.account.project.resource.output", nil},
+	}
+
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			config := &Config{data: tt.in}
 			actual := config.findAllOutRefs()
