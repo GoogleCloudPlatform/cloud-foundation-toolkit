@@ -9,24 +9,32 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// patern to parse $(project.deployment.resource.name) and $(deployment.resource.name)
+// Pattern to parse $(project.deployment.resource.name) and $(deployment.resource.name).
 var pattern = regexp.MustCompile(`\$\(out\.(?P<token>[-.a-zA-Z0-9]+)\)`)
 
-// Config struct keep config data parsed from passed config.yaml
+// Config struct keep config data parsed from passed config YAML.
 type Config struct {
-	Name        string
-	Project     string
+	// Name field contains Deployment Name it could be initialized from
+	// config YAML field and if it missing in YAML, from config YAML file name itself.
+	Name string
+	// Project field contains GCP Project Id it could be initialized from config YAML, env variable, gcloud default.
+	Project string
+	// Deployment string contains GCP Deployment description it not required and can be empty.
 	Description string
-	Imports     []struct {
+	// Imports struct contains all "import" entries from config YAML file.
+	Imports []struct {
+		// Name of the import statement.
 		Name string
+		// Path to import file, can be relative or absolute.
 		Path string
 	}
+	// Resources contains list of All Deployment Resources, listed in deployment config YAML file.
 	Resources []interface{}
 	file      string
 	data      string
 }
 
-// NewConfig creates new Config object from provided yaml file
+// The Config type represents configuration data parsed from YAML.
 func NewConfig(data string, file string) Config {
 	config := Config{
 		file: file,
@@ -40,19 +48,19 @@ func NewConfig(data string, file string) Config {
 	return config
 }
 
-// FullName returns name in form of ProjectName.DeploymentName, this name should be unique and it could be used as map key
-// for maps like map[string]Config
+// FullName returns a name for the configuration that is intended to be unique.
+// The name is in the format "ProjectName.DeploymentName" and may be used as a map key.
 func (c Config) FullName() string {
 	return c.Project + "." + c.Name
 }
 
+// String implements fmt.Stringer for the Config type.
 func (c Config) String() string {
 	return c.FullName()
 }
 
-// YAML function converts Config object to yaml
-// overrides all relative paths for imports to absolute form,
-// removes all custom elements gcloud deployment manager not aware of (name, project, description)
+// The YAML function marshals a Config object to YAML. It sets all relative import paths to absolute paths and removes
+// all custom elements that the gcloud deployment manager is not aware of, including name, project, and description.
 func (c Config) YAML() ([]byte, error) {
 	imports, typeMap := c.importsAbsolutePath()
 
@@ -66,8 +74,8 @@ func (c Config) YAML() ([]byte, error) {
 	return yaml.Marshal(tmp)
 }
 
-// findAllDependencies finds all dependencies base on cross-deployment references found in config yaml,
-// if no dependencies found, returns empty slice
+// Function findAllDependencies finds all dependencies base on cross-deployment references found in config YAML,
+// if no dependencies found, returns empty slice.
 func (c Config) findAllDependencies(configs map[string]Config) []Config {
 	var result []Config
 	refs := c.findAllOutRefs()

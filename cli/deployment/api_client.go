@@ -3,14 +3,16 @@ package deployment
 import (
 	"bytes"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
-// function exposed to variable in order to mock it inside api_client_test.go
+// The runGCloud function runs the gcloud tool with the specified arguments. It is implemented
+// as a variable so that it can be mocked in tests of its exported consumers.
 var runGCloud = func(args ...string) (result string, err error) {
 	args = append(args, "--format", "yaml")
 	log.Println("gcloud", strings.Join(args, " "))
@@ -35,8 +37,8 @@ var runGCloud = func(args ...string) (result string, err error) {
 	return outBuff.String(), err
 }
 
-// GetOutputs execute deployment-manager manifest describe call with gcloud tool and parse returned
-// resources.output yaml section. Returns map where "resourceName.propertyName" is key
+// GetOutputs retrive existing Deployment outputs using gcloud and store result in map[string]string
+// where "resourceName.propertyName" is key, and value is string representation of the output value.
 func GetOutputs(name string, project string) (map[string]string, error) {
 	data, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project)
 	if err != nil {
@@ -46,8 +48,7 @@ func GetOutputs(name string, project string) (map[string]string, error) {
 	return parseOutputs(data)
 }
 
-// Create deployment based on passed Deployment object
-// Returns Deployment with Outputs map in case of successful creation and error otherwise
+// Create creates a new Deployment based on a Deployment object passed into it.
 func Create(deployment *Deployment) (*Deployment, error) {
 	args := []string{
 		"deployment-manager",
@@ -100,7 +101,7 @@ func parseOutputs(data string) (map[string]string, error) {
 	result := make(map[string]string)
 	for _, resource := range res.Resources {
 		for _, output := range resource.Outputs {
-			key := resource.Name+"."+output.Name
+			key := resource.Name + "." + output.Name
 			switch value := output.Value.(type) {
 			case string:
 				result[key] = value

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 )
-// Order function receives map of configs with Config.FullName() string as a key,
-// find dependencies between them, and order them topologically using directed graph.
-// Returns array of ordered config's objects and error if configs have circle dependencies
+
+// The Order function receives a map of Configs keyed by each configuration's FullName,
+// resolves dependencies between them, and sorts them topologically.
+// It returns the sorted array of Configs, or an error if dependencies are cyclic.
 func Order(configs map[string]Config) ([]Config, error) {
 	size := len(configs)
 
@@ -15,12 +16,12 @@ func Order(configs map[string]Config) ([]Config, error) {
 	// we don't know number or dependencies, so initial size is 0
 	edges := make([]edge, 0)
 	for _, config := range configs {
-		nodes  = append(nodes, config.FullName())
+		nodes = append(nodes, config.FullName())
 		deps := config.findAllDependencies(configs)
 		for _, dep := range deps {
-			edges = append(edges, edge {
-					from:dep.FullName(),
-					to:config.FullName(),
+			edges = append(edges, edge{
+				from: dep.FullName(),
+				to:   config.FullName(),
 			})
 		}
 	}
@@ -43,18 +44,17 @@ func Order(configs map[string]Config) ([]Config, error) {
 	return res, nil
 }
 
-
-// directedGraph struct used to build graph of cross-config depencencies
-// and do topological sort to define ordering of deployment creation
+// directedGraph is a graph representation of Depoyment configs, each node in graph represent Deployment config object,
+// each edge of the graph reflects cross referenced dependency, for example A -> B, means B depends on A and A should be created first.
 type directedGraph struct {
 	nodes         []string
 	outgoingNodes map[string]map[string]int
 	incomingNodes map[string]int
 }
 
-// newDirectedGraph create and initialize new directedGraph instance
-// if nodes parameter will contain duplicate values, nil and error will be returned
-// if edges parameter will contain non existing from node, nil and erro will be returned
+// Function newDirectedGraph create and initialize new directedGraph instance.
+// If nodes parameter will contain duplicate values, nil and error will be returned.
+// If edges parameter will contain non existing from node, nil and erro will be returned.
 func newDirectedGraph(nodes []string, edges []edge) (*directedGraph, error) {
 	g := &directedGraph{
 		nodes:         make([]string, 0, len(nodes)),
@@ -85,7 +85,7 @@ func newDirectedGraph(nodes []string, edges []edge) (*directedGraph, error) {
 
 type edge struct {
 	from string
-	to string
+	to   string
 }
 
 func (g *directedGraph) unsafeRemoveEdge(from, to string) {
@@ -93,8 +93,8 @@ func (g *directedGraph) unsafeRemoveEdge(from, to string) {
 	g.incomingNodes[to]--
 }
 
-// main logic of topological search here is to find root nodes (no incoming nodes),
-// remove them from graph and repeat untill all grahp will be traversed
+// Function topologicalSort() contains core logic of topological search here is to find root nodes (no incoming nodes),
+// remove them from graph and repeat until all grahp will be traversed.
 func (g *directedGraph) topologicalSort() ([]string, error) {
 	sorted := make([]string, 0, len(g.nodes))
 	rootNodes := make([]string, 0, len(g.nodes))

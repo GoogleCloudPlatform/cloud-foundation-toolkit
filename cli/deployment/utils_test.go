@@ -44,7 +44,7 @@ func TestReparentPath(t *testing.T) {
 
 // GetTestData returns file content of PROJECT_ROOT/testdata sub folder or file.
 // Function suppose to call from test method, might not work otherwise
-// example GetTestData("myfolder", "file.yalm") will return content of testdata/myfolder/file.yaml
+// example GetTestData("myfolder", "file.yalm") will return content of testdata/myfolder/file.YAML
 func GetTestData(folder string, name string, t *testing.T) string {
 	path := filepath.Join("../testdata", folder, name)
 	buf, err := ioutil.ReadFile(path)
