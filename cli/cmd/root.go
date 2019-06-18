@@ -33,8 +33,9 @@ var flags struct {
 
 	// flags that correspond to subcommands:
 	scorecard struct {
-		policyPath string
-		refresh    bool
+		policyPath      string
+		refresh         bool
+		targetProjectID string
 	}
 }
 

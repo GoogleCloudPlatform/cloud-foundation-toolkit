@@ -27,21 +27,50 @@ import (
 
 // Inventory manages a CAI inventory
 type Inventory struct {
-	ProjectID string
-	Parent    string
-	GcsBucket string
-	GcsObject string
+	ProjectID      string
+	ControlProject string
+	OrganizationID string
+	GcsBucket      string
+	GcsObject      string
+}
+
+// Option for NewInventory
+type Option func(*Inventory)
+
+// ControlProject sets the project for storing inventory data
+func ControlProject(projectID string) Option {
+	return func(inventory *Inventory) {
+		inventory.ControlProject = projectID
+	}
+}
+
+// TargetProject sets the project for storing inventory data
+func TargetProject(projectID string) Option {
+	return func(inventory *Inventory) {
+		inventory.ProjectID = projectID
+	}
 }
 
 // NewInventory creates a new CAI inventory manager
-func NewInventory(projectID string) *Inventory {
+func NewInventory(projectID string, options ...Option) (*Inventory, error) {
 	inventory := new(Inventory)
-	inventory.ProjectID = projectID
-	inventory.Parent = "organizations/816421441114"
+	inventory.ControlProject = projectID
 	inventory.GcsBucket = "clf-gcp-inventory"
 	inventory.GcsObject = "inventory.json"
-	// inventory.GcsPath = "gs://clf-gcp-inventory/inventory.json"
-	return inventory
+
+	for _, option := range options {
+		option(inventory)
+	}
+
+	Log.Debug("Initializing inventory", "parent", getParent(inventory))
+	return inventory, nil
+}
+
+func getParent(inventory *Inventory) string {
+	if inventory.OrganizationID != "" {
+		return fmt.Sprintf("organizations/%v", inventory.OrganizationID)
+	}
+	return fmt.Sprintf("projects/%v", inventory.ProjectID)
 }
 
 func getGcsDestination(inventory *Inventory) *assetpb.GcsDestination_Uri {
@@ -59,7 +88,7 @@ func ExportInventory(inventory *Inventory) error {
 	}
 
 	req := &assetpb.ExportAssetsRequest{
-		Parent:      inventory.Parent,
+		Parent:      getParent(inventory),
 		ContentType: assetpb.ContentType_RESOURCE,
 		OutputConfig: &assetpb.OutputConfig{
 			Destination: &assetpb.OutputConfig_GcsDestination{
