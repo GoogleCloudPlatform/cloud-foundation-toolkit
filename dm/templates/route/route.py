@@ -31,7 +31,7 @@ def generate_config(context):
     for i, route in enumerate(properties['routes'], 1000):
         name = route.get('name')
         if not name:
-            name = '{}-{}'.format(context.env['name'], sha1(json.dumps(route)).hexdigest()[:10])
+            name = '%s-%s'.format(context.env['name'], sha1(json.dumps(route)).hexdigest()[:10])
 
         # Set the common route properties.
         properties = {
@@ -88,7 +88,7 @@ def generate_config(context):
         )
 
         out[name] = {
-            'selfLink': '$(ref.{}.selfLink)'.format(name),
+            'selfLink': '$(ref.' + name + '.selfLink)',
             'nextHopNetwork': network_name
         }
 

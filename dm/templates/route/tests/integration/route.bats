@@ -134,44 +134,44 @@ function teardown() {
 }
 
 @test "Verifying that resources were created in deployment ${DEPLOYMENT_NAME}" {
-    run gcloud compute routes list --filter="name:test-ip-route-* AND priority:1002" \
+    run gcloud compute routes list --filter="name:gateway-route-${RAND} AND priority:1002" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "${lines[1]}" =~ "test-ip-route-" ]]
+    [[ "${lines[1]}" =~ "gateway-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="name:test-ip-route-* AND priority:1001" \
+    run gcloud compute routes list --filter="name:instance-route-${RAND} AND priority:1001" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "${lines[1]}" =~ "test-ip-route-" ]]
+    [[ "${lines[1]}" =~ "instance-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="(name:test-ip-route-* AND priority:20000)" \
+    run gcloud compute routes list --filter="(name:ip-route-${RAND} AND priority:20000)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "${lines[1]}" =~ "test-ip-route-" ]]
+    [[ "${lines[1]}" =~ "ip-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="(name:test-ip-route-* AND priority:500)" \
+    run gcloud compute routes list --filter="(name:vpn-tunnel-route-${RAND} AND priority:500)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "${lines[1]}" =~ "test-ip-route-" ]]
+    [[ "${lines[1]}" =~ "vpn-tunnel-route-${RAND}" ]]
 }
 
 @test "Deleting deployment" {
     gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
 
-    run gcloud compute routes list --filter="name:test-ip-route-*" \
+    run gcloud compute routes list --filter="name:gateway-route-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-ip-route-" ]]
+    [[ ! "$output" =~ "gateway-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="name:test-ip-route-*" \
+    run gcloud compute routes list --filter="name:instance-route-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-ip-route-" ]]
+    [[ ! "$output" =~ "instance-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="name:test-ip-route-*" \
+    run gcloud compute routes list --filter="name:ip-route-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-ip-route-" ]]
+    [[ ! "$output" =~ "ip-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="name:test-ip-route-*" \
+    run gcloud compute routes list --filter="name:vpn-runnel-route-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-ip-route-" ]]
+    [[ ! "$output" =~ "vpn-tunnel-route-${RAND}" ]]
 }
