@@ -62,7 +62,7 @@ func NewInventory(projectID string, options ...Option) (*Inventory, error) {
 		option(inventory)
 	}
 
-	Log.Debug("Initializing inventory", "parent", getParent(inventory))
+	Log.Debug("Initializing inventory", "target", getParent(inventory), "control", inventory.ControlProject)
 	return inventory, nil
 }
 

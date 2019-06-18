@@ -42,7 +42,6 @@ func ScoreInventory(inventory *Inventory, config *ScoringConfig) error {
 				v.Message,
 			)
 			metadata, _ := json.Marshal(v.GetMetadata())
-			fmt.Println(string(metadata))
 		}
 	} else {
 		fmt.Println("No violations found.")

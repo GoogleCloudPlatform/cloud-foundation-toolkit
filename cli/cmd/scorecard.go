@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -18,6 +21,15 @@ func init() {
 
 }
 
+// getEnvProjectID finds the implict environment project
+func getEnvProjectID() (string, error) {
+	project := os.Getenv("GOOGLE_PROJECT")
+	if project == "" {
+		return project, fmt.Errorf("Please set $GOOGLE_PROJECT environment variable")
+	}
+	return project, nil
+}
+
 var scorecardCmd = &cobra.Command{
 	Use:   "scorecard",
 	Short: "Print a scorecard of your GCP environment",
@@ -26,7 +38,12 @@ var scorecardCmd = &cobra.Command{
 		cmd.Println("Generating CFT scorecard")
 		var err error
 
-		inventory, err := scorecard.NewInventory("gcp-foundation-shared-devops", scorecard.TargetProject(flags.scorecard.targetProjectID))
+		controlProjectID, err := getEnvProjectID()
+		if err != nil {
+			return err
+		}
+
+		inventory, err := scorecard.NewInventory(controlProjectID, scorecard.TargetProject(flags.scorecard.targetProjectID))
 		if err != nil {
 			return err
 		}
