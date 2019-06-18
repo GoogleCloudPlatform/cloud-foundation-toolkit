@@ -1,7 +1,3 @@
-/*
-Package Deployment implements GCP Deployment related functionality:
-sort deployment configs in dependency order,
-execute API calls to create, update, delete, describe deployment using gcloud tool
- */
+// The deployment packages implements functionality for deploying projects to GCP.
+// This includes sorting deployment configurations in dependency order, and executing GCP API calls through the gcloud tool.
 package deployment
-

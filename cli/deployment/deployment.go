@@ -8,17 +8,20 @@ import (
 	"strings"
 )
 
-// Deployment object represent real GCP Deployment entity that already created or have to be created
-// configFile field point to yaml file, generated from Config object with all cross-deployment references
-// overwritten with actual values
+// The Deployment type represents a real GCP Deployment entity that is either already created, or yet-to-be created.
 type Deployment struct {
-	Outputs    map[string]string
-	config     Config
+	// Outputs map contains deployment outputs values in form resourceName.proeprtyName: value, map filled with data
+	// after deployment update/create operation
+	Outputs map[string]string
+	// config object store config state parsed from config YAML as it is, no modification, cross-deployment reference values substitution etc
+	config Config
+	// configFile field point to YAML file, generated from Config object with all cross-deployment references
+	// overwritten with actual values.
 	configFile string
 }
 
-// NewDeployment creates Deployment object and override all out refs, this means all
-// deployments it depends to should exists in GCP project
+// NewDeployment creates a new Deployment object, overriding all outward references.
+// In effect, this means all deployment dependencies must exist in the GCP project.
 func NewDeployment(config Config, outputs map[string]map[string]string) *Deployment {
 	file, err := ioutil.TempFile("", config.Name)
 	defer file.Close()
@@ -39,12 +42,12 @@ func NewDeployment(config Config, outputs map[string]map[string]string) *Deploym
 	}
 }
 
-// String representation of Deployment instance
+// String implements fmt.Stringer for the Deployment type.
 func (d Deployment) String() string {
 	return fmt.Sprintf("Deployment[name=%s, config=%s]", d.config.FullName(), d.configFile)
 }
 
-// same as deployment.Config.FullName(), can be used in map[string]Deployment as a key
+// FullName function is the same as deployment.Config.FullName(), can be used in map[string]Deployment as a key.
 func (d Deployment) FullName() string {
 	return d.config.FullName()
 }

@@ -2,20 +2,13 @@ package deployment
 
 import (
 	"fmt"
-	"hash/fnv"
 	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
 
-func hash64(s string) int64 {
-	hash := fnv.New32()
-	hash.Write([]byte(s))
-	return int64(hash.Sum32())
-}
-
-// unmarshal arbitrary yaml to map
+// Function unmarshal arbitrary YAML to map.
 func unmarshal(data string) (map[string]interface{}, error) {
 	my := make(map[string]interface{})
 	err := yaml.Unmarshal([]byte(data), my)
@@ -26,6 +19,14 @@ func unmarshal(data string) (map[string]interface{}, error) {
 	return my, nil
 }
 
+// Function ReparentPath used to create absolute path for config "import" entries.
+// Absolute path composed by ReparentPath function from config file path base folder concatenated with
+// import statement value. This transformation needed to make deployment YAML config file location independent,
+// after import "absolutisation" deployment config might be copied to any location (as current CFT cli will copy its
+// copy to tmp folder.
+// Examples:
+//    /base/folder/config.YAML and ../script.py will concatenate to /base/script.py
+//    /base/folder/config.YAML and /base/folder/script.py will concatenate to /base/folder/script.py as long path already absolute
 func ReparentPath(parent string, child string) string {
 	// check if file already has absolute path
 	if child[0] == os.PathSeparator {
