@@ -15,13 +15,34 @@
 package scorecard
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/forseti-security/config-validator/pkg/api/validator"
 )
 
 // ScoringConfig holds settings for generating a score
 type ScoringConfig struct {
 	PolicyPath string
+	Categories map[string]*CategoryViolations
+}
+
+// CategoryViolations holds actual scores for a particular category
+type CategoryViolations struct {
+	Name       string
+	Violations []*validator.Violation `protobuf:"bytes,1,rep,name=violations,proto3" json:"violations,omitempty"`
+}
+
+var availableCategories = map[string]string{
+	"operational-efficiency": "Operational Efficiency",
+}
+
+// attachViolations puts violations into their appropriate categories
+func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) error {
+	for k, name := range availableCategories {
+		config.Categories[k] = &CategoryViolation{
+			Name: v
+		}
+	}
 }
 
 // ScoreInventory creates a Scorecard for an inventory
@@ -31,20 +52,18 @@ func ScoreInventory(inventory *Inventory, config *ScoringConfig) error {
 		return err
 	}
 
-	fmt.Println(auditResult.Violations)
-
 	if len(auditResult.Violations) > 0 {
-		fmt.Print("Found Violations:\n\n")
+		fmt.Print("\n\nFound %v issues:\n\n")
 		for _, v := range auditResult.Violations {
 			fmt.Printf("Constraint %v on resource %v: %v\n\n",
 				v.Constraint,
 				v.Resource,
 				v.Message,
 			)
-			metadata, _ := json.Marshal(v.GetMetadata())
+			Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 		}
 	} else {
-		fmt.Println("No violations found.")
+		fmt.Println("No issues found found! You have a perfect score.")
 	}
 
 	return nil
