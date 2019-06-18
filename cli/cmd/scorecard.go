@@ -10,6 +10,7 @@ func init() {
 	rootCmd.AddCommand(scorecardCmd)
 	scorecardCmd.Flags().StringVar(&flags.scorecard.policyPath, "policy-path", "", "Path to directory containing validation policies")
 	scorecardCmd.MarkFlagRequired("policy-path")
+	scorecardCmd.PersistentFlags().BoolVar(&flags.scorecard.refresh, "refresh", false, "Refresh CAI inventory")
 }
 
 var scorecardCmd = &cobra.Command{
@@ -22,7 +23,7 @@ var scorecardCmd = &cobra.Command{
 
 		inventory := scorecard.NewInventory("gcp-foundation-shared-devops")
 
-		if false {
+		if flags.scorecard.refresh {
 			err = scorecard.ExportInventory(inventory)
 			if err != nil {
 				return errors.Wrap(err, "Error exporting asset inventory")

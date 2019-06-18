@@ -3,10 +3,9 @@ package cmd
 import (
 	"os"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
-
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -20,12 +19,22 @@ var rootCmd = &cobra.Command{
 			cmd.HelpFunc()(cmd, args)
 		}
 	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if !flags.verbose {
+			// discard logs
+			scorecard.Log.SetHandler(log.DiscardHandler())
+		}
+	},
 }
 
 var flags struct {
+	// Common flags
+	verbose bool
+
 	// flags that correspond to subcommands:
 	scorecard struct {
 		policyPath string
+		refresh    bool
 	}
 }
 
@@ -57,8 +66,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 		rootCmd.SetArgs([]string{"-h"})
 	}
 
-	scorecard.Log.SetHandler(log.DiscardHandler())
-
+	rootCmd.PersistentFlags().BoolVar(&flags.verbose, "verbose", false, "Log output to stdout")
 }
 
 func Execute() {

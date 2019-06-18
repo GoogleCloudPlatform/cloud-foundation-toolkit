@@ -18,7 +18,6 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
-	"fmt"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -70,12 +69,6 @@ func GetViolations(inventory *Inventory, config *ScoringConfig) (*validator.Audi
 	if err != nil {
 		return nil, errors.Wrap(err, "auditing")
 	}
-
-	// fmt.Println(inventory)
-	// fmt.Println(client)
-	// fmt.Println(config)
-	// fmt.Println(v)
-	fmt.Println(auditResponse)
 
 	return auditResponse, nil
 }

@@ -15,6 +15,7 @@
 package scorecard
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -40,6 +41,8 @@ func ScoreInventory(inventory *Inventory, config *ScoringConfig) error {
 				v.Resource,
 				v.Message,
 			)
+			metadata, _ := json.Marshal(v.GetMetadata())
+			fmt.Println(string(metadata))
 		}
 	} else {
 		fmt.Println("No violations found.")
