@@ -10,6 +10,7 @@ require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.3.1
 	github.com/hashicorp/terraform v0.12.2
+	github.com/inconshreveable/log15 v0.0.0-20180818164646-67afb5ed74ec
 	github.com/kr/pty v1.1.3 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.4

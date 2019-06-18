@@ -87,7 +87,6 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Asset converted: %v\n", asset.Name)
 
 	pbAsset := &validator.Asset{}
 	err = protoViaJSON(asset, pbAsset)
@@ -100,7 +99,7 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset.Name)
 	}
 
-	fmt.Printf("Asset ancestry: %v\n", pbAsset.GetAncestryPath())
+	Log.Debug("Asset converted", "name", asset.Name, "ancestry", pbAsset.GetAncestryPath())
 
 	return pbAsset, nil
 }

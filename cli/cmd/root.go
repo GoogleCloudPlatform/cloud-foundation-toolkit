@@ -3,7 +3,10 @@ package cmd
 import (
 	"os"
 
+	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
+
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -53,6 +56,9 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	if os.Args == nil {
 		rootCmd.SetArgs([]string{"-h"})
 	}
+
+	scorecard.Log.SetHandler(log.DiscardHandler())
+
 }
 
 func Execute() {
