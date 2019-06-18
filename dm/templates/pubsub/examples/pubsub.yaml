@@ -11,7 +11,7 @@ resources:
   - name: test-pubsub
     type: pubsub.py
     properties:
-      topic: test-topic
+      name: test-topic
       accessControl:
         - role: roles/pubsub.subscriber
           members:
