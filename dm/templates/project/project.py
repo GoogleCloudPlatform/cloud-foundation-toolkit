@@ -245,6 +245,12 @@ def create_service_accounts(context, project_id):
     for service_account in context.properties['serviceAccounts']:
         account_id = service_account['accountId']
         display_name = service_account.get('displayName', account_id)
+
+        # Build a list of SA resources to be used as a dependency
+        # for permission granting.
+        name = '{}-service-account-{}'.format(context.env['name'], account_id)
+        service_account_dep.append(name)
+
         sa_name = 'serviceAccount:{}@{}.iam.gserviceaccount.com'.format(
             account_id,
             project_id
@@ -259,17 +265,22 @@ def create_service_accounts(context, project_id):
         for role in service_account['roles']:
             policies_to_add.append({'role': role, 'members': [sa_name]})
 
-        # Build a list of SA resources to be used as a dependency
-        # for permission granting.
-        name = '{}-service-account-{}'.format(context.env['name'], account_id)
-        service_account_dep.append(name)
-
         # Create the service account resource.
         resources.append(
             {
                 'name': name,
                 # https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/create
                 'type': 'gcp-types/iam-v1:projects.serviceAccounts',
+                'properties':
+                    {
+                        'accountId': account_id,
+                        'displayName': display_name,
+                        'name': 'projects/$(ref.{}-project.projectId)'.format(context.env['name'])
+                    }
+            # There is a bug in gcp type for IAM that ignores "name" field
+            } if False else {
+                'name': name,
+                'type': 'iam.v1.serviceAccount',
                 'properties':
                     {
                         'accountId': account_id,
