@@ -15,7 +15,16 @@
 info:
   title: SSL Certificate
   author: Sourced Group Inc.
-  description: Supports creation of the SSL certificate resource.
+  version: 1.0.0
+  description: |
+    Supports creation of the SSL certificate resource.
+
+    For more information on this resource:
+    https://cloud.google.com/load-balancing/docs/ssl-certificates
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:sslCertificates =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/sslCertificates
 
 additionalProperties: false
 
@@ -26,13 +35,25 @@ required:
 properties:
   name:
     type: string
-    description: The resource name.
+    description: |
+      Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long,
+      and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression
+      [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following
+      characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the SSL instance. The
+      Google apps domain is prefixed if applicable.
   description:
     type: string
-    description: The resource description (optional).
+    description: |
+      An optional description of this resource. Provide this property when you create the resource.
   privateKey:
     type: string
-    description: The write-only private key in the PEM format.
+    description: |
+      The write-only private key in the PEM format.
   certificate:
     type: string
     description: |
