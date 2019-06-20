@@ -5,9 +5,10 @@ imports:
     name: target_proxy.py
 
 resources:
-  - name: ${HTTPS_RES_NAME}
+  - name: test-proxy
     type: target_proxy.py
     properties:
+      name:  ${HTTPS_RES_NAME}
       protocol: HTTPS
       target: $(ref.${URL_MAP_RES_NAME}.selfLink)
       quicOverride: ${HTTPS_QUIC_OVERRIDE}

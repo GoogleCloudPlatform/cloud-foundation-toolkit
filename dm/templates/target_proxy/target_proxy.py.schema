@@ -15,6 +15,7 @@
 info:
   title: Target Proxy
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Depending on the configuration, supports creation of one of these proxy
     resources:
@@ -22,6 +23,19 @@ info:
       - targetHttpsProxy
       - targetTcpPProxy
       - targetSslProxy
+
+    For more information on this resource:
+    https://cloud.google.com/load-balancing/docs/target-proxies
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:targetSslProxies =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/targetSslProxies
+    - gcp-types/compute-v1:targetHttpProxies =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/targetHttpProxies
+    - gcp-types/compute-v1:targetHttpsProxies =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/targetHttpsProxies
+    - gcp-types/compute-v1:targetTcpProxies =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/targetTcpProxies
 
 imports:
   - path: ../ssl_certificate/ssl_certificate.py
@@ -36,7 +50,17 @@ required:
 properties:
   name:
     type: string
-    description: The resource name.
+    description: |
+      Must comply with RFC1035. Specifically, the name must be 1-63 characters long and match
+      the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter,
+      and all following characters must be a dash, lowercase letter, or digit, except the last character,
+      which cannot be a dash.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   description:
     type: string
     description: The resource description (optional).
@@ -59,9 +83,26 @@ properties:
     description: |
       Encryption settings for connections processed by the resource. Used for
       HTTPS and SSL proxies only.
-    required:
-      - certificate
+    oneOf:
+      - required:
+          - sslCertificates
+      - required:
+          - certificate
     properties:
+      sslCertificates:
+        type: array
+        uniqItems: true
+        description: |
+          URLs to SslCertificate resources that are used to authenticate connections to Backends.
+          At least one SSL certificate must be specified. Currently, you may specify up to 15 SSL certificates.
+
+          Authorization requires the following Google IAM permission on the specified resource sslCertificates:
+
+          compute.sslCertificates.get
+        minItems: 0
+        maxItems: 15
+        items:
+          type: string
       certificate:
         type: object
         description: SSL certificate settings.
