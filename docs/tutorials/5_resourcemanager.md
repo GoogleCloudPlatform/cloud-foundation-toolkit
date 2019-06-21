@@ -6,185 +6,68 @@
 
 This tutorial explains how to set up a hierarchy for managing resources in GCP.
 
-## Choose Project
+In conjunction with Cloud IAM, the Resource Manager (RM) service provides the foundation for security governance in GCP.
 
-<walkthrough-project-billing-setup billing="true"></walkthrough-project-billing-setup>
+Resource manager organizes GCP resources hierarchically.
 
-First select a project to install Forseti in.
-This can either be a dedicated Forseti project or an existing DevSecOps project.
+The tutorial assume you have Organizations Admin privileges to create folders.
 
-## Configure Forseti
-To install Forseti, you will need to update a few settings in the <walkthrough-editor-open-file filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars">terraform.tfvars</walkthrough-editor-open-file>.
+<!-- TODO: add overview/diagram -->
 
-## Activate APIs
+## Open Organization Resource Manager
 
-You will need to activate a few APIs on this project for Forseti to function:
-<walkthrough-enable-apis apis=
-  "cloudresourcemanager.googleapis.com,
-  serviceusage.googleapis.com,
-  compute.googleapis.com"></walkthrough-enable-apis>
+To get started, open the [Manage resources](https://console.cloud.google.com/cloud-resource-manager) page under the IAM section in the menu.
 
-### Set project
-On line 1, update the <walkthrough-editor-select-regex
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  regex="my-project-id">project ID</walkthrough-editor-select-regex>
-to match your chosen project (`{{project_id}}`).
+<walkthrough-menu-navigation sectionid="IAM_ADMIN_SECTION"></walkthrough-menu-navigation>
 
-### Set organization ID
-On line 2, update the <walkthrough-editor-select-regex
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  regex="11111111">organization ID</walkthrough-editor-select-regex>
-to match your organization ID, which can be found in the URL bar.
+## Create a folder
 
-### Set domain
-On line 3, update the <walkthrough-editor-select-regex
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  regex="mydomain.com">domain</walkthrough-editor-select-regex>
-to match your company Cloud Identity domain, which can be found in the URL bar.
+Ensure that your organization domain is shown in the top left of the page.
+If not, click the <walkthrough-spotlight-pointer cssSelector="cfc-purview-picker-org">dropdown</walkthrough-spotlight-pointer> to select it.
 
-### Choose region
-On line 5, update the <walkthrough-editor-select-regex
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  regex="us-east4">region</walkthrough-editor-select-regex>
-you wish to deploy Forseti in.
+### Create folder
 
-### Choose network
-On line 6, update the <walkthrough-editor-select-regex
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  regex="default">network</walkthrough-editor-select-regex>
-you wish to deploy Forseti in.
-You also need to update the <walkthrough-editor-select-line
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  startLine=6
-  endLine=6
-  startCharacterOffset=12
-  endCharacterOffset=19>subnetwork</walkthrough-editor-select-line>
-on line 7.
+Click the <walkthrough-spotlight-pointer cssSelector="#create-folder-button">Create Folder</walkthrough-spotlight-pointer> button at the top of the page.
 
-If you are deploying on a Shared VPC, you need to set the <walkthrough-editor-select-line
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  startLine=7
-  endLine=7
-  startCharacterOffset=17
-  endCharacterOffset=17>network project</walkthrough-editor-select-line>
-on line 8. Otherwise, you can leave this empty.
+### Name folder
 
-## Enable Optional Features
-There are additional settings which you can configure in the settings file to enable advanced Forseti functionality.
+Give your folder a <walkthrough-spotlight-pointer cssSelector="label[for='folderName']">name</walkthrough-spotlight-pointer> by typing it in form.
 
-If you don't need these features, you can skip these steps.
+Keep in mind these restrictions when creating the folder:
+- The name must be 30 characters or less.
+- The name must be distinct from all other folders that share its parent.
 
-### Configure G Suite
-On line 10, set the <walkthrough-editor-select-regex
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  regex="admin@mydomain.com">G Suite super admin email</walkthrough-editor-select-regex>.
-Ask your G Suite Admin if you don’t know the super admin email.
+**For your first folder, you might create it with the name `sandbox`.**
 
-This is part of the [G Suite data collection](https://forsetisecurity.org/docs/latest/configure/inventory/gsuite.html). The following functionalities will not work without G Suite integration:
+After entering the name, click <walkthrough-spotlight-pointer cssSelector="#createFolder">Create</walkthrough-spotlight-pointer>.
 
-- G Suite groups and users in Inventory
-- Group Scanner
-- Group expansion in Explain
+## Create additional folders
+To complete your folder hierarchy, continue the previous step for each folder you wish to create.
 
-### Configure email notifications
-Forseti can be configured to [send email notifications](https://forsetisecurity.org/docs/latest/configure/notifier/index.html#email-notifications).
+For example, you can start by creating folders for each environment:
 
-To enable this, you need to add a <walkthrough-editor-select-line
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  startLine=10
-  endLine=10
-  startCharacterOffset=18
-  endCharacterOffset=18>SendGrid API key</walkthrough-editor-select-line>
-on line 12 and update the <walkthrough-editor-select-line
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  startLine=11
-  endLine=11
-  startCharacterOffset=22
-  endCharacterOffset=22>sender</walkthrough-editor-select-line>
-and <walkthrough-editor-select-line
-  filePath="terraform-google-forseti/examples/install_simple/terraform.tfvars"
-  startLine=12
-  endLine=12
-  startCharacterOffset=25
-  endCharacterOffset=25>recipient</walkthrough-editor-select-line>
-settings.
+- `sandbox`
+- `dev`
+- `test`
+- `production`
 
-## Install Forseti
-Now that you have updated your configuration settings, you are ready to install Forseti.
-This will be done using Terraform, which comes preinstalled with this Cloud Shell.
+### Nesting Folders
+You might want to create additional folders to represent your organization hierarchy (such as folders for each business unit).
 
-### Initialize Terraform
-To download the Forseti module, you will need to initialize Terraform:
-```bash
-terraform init
-```
+To create a nested folder, change the **Destination** in the folder creation form to the parent folder.
 
-### Apply Terraform
-You are now ready to install Forseti with Terraform by running the apply command:
+## Move projects into folders
+Now that you have folders created, you can begin [moving your existing projects into folders](https://cloud.google.com/resource-manager/docs/creating-managing-folders#moving_a_project_into_a_folder).
 
-```bash
-terraform apply -auto-approve
-```
+### Select projects
+From the **Manage resources** page, select the <walkthrough-spotlight-pointer cssSelector=".mat-pseudo-checkbox:not(.cfctest-table-select-all-checkbox)">checkbox</walkthrough-spotlight-pointer>
+next to each project you would like to move into a folder.
 
-This can take a few minutes as all the necessary resources are provisioned.
 
-If you encounter errors during installation, you can check your configuration and permissions, then run `terraform apply` again.
+### Move projects
+Once you have selected the projects, click the <walkthrough-spotlight-pointer cssSelector="#move-button">Move</walkthrough-spotlight-pointer>
+button at the top of the page.
 
-## Save state to GCS
-Congratulations, you have now installed Forseti.
-As a final step, you will want to save your configuration so it can be used to upgrade Forseti in the future.
+In the dialogue, click the folder you would like to move the projects into then click Select.
 
-### Create Terraform state bucket
-Create a Google Cloud Storage bucket to [store your Terraform state](https://www.terraform.io/docs/state/).
-
-```bash
-gsutil mb gs://{{project_id}}-tfstate
-```
-
-### Update state configuration
-Open <walkthrough-editor-open-file filePath="terraform-google-forseti/examples/install_simple/backend.tf">backend.tf</walkthrough-editor-open-file> and uncomment the contents.
-
-On line 3, change the <walkthrough-editor-select-regex
-  filePath="terraform-google-forseti/examples/install_simple/backend.tf"
-  regex="my-project">project ID</walkthrough-editor-select-regex>
-project ID to match your project ID (`{{project_id}}`).
-
-Finally, re-initialize Terraform to upload your state to Cloud Storage:
-
-```bash
-terraform init
-```
-
-At the prompt, type `yes`.
-
-## Save configuration to git
-As a best practice, you should save your Terraform configuration to source control. This can be done using Cloud Source Repositories.
-
-### Create a repo
-```bash
-gcloud source repos create terraform-forseti
-```
-
-### Initalize git
-```bash
-git init
-```
-
-### Add and commit your files
-
-```bash
-git add -A
-```
-
-```bash
-git commit -m "Initial commit"
-```
-
-### Push your configuration
-```bash
-git remote add origin https://source.developers.google.com/p/{{project_id}}/r/terraform-forseti
-```
-
-```bash
-git push origin master
-```
+Repeat this process for all projects you would like to move.
