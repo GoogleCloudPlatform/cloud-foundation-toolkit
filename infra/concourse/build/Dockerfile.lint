@@ -8,7 +8,8 @@ RUN apk add --no-cache --update \
     python3 \
     py-pip=10.0.1-r0 \
     grep \
-    git
+    git \
+    perl
 
 RUN pip install flake8 jinja2
 
@@ -31,3 +32,7 @@ RUN wget https://github.com/hadolint/hadolint/releases/download/v1.15.0/hadolint
 RUN wget https://github.com/segmentio/terraform-docs/releases/download/v0.6.0/terraform-docs-v0.6.0-linux-amd64 && \
     mv terraform-docs* /usr/local/bin/terraform-docs && \
     chmod 0755 /usr/local/bin/terraform-docs
+
+RUN wget https://raw.githubusercontent.com/antonbabenko/pre-commit-terraform/master/terraform_docs.sh && \
+    mv terraform_docs.sh /usr/local/bin/terraform_docs.sh && \
+    chmod 0755 /usr/local/bin/terraform_docs.sh
