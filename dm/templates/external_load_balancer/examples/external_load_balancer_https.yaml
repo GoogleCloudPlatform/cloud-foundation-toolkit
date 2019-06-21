@@ -24,12 +24,12 @@ resources:
     properties:
       portRange: 443
       backendServices:
-        - name: static-backend-service
+        - resourceName: static-backend-service
           portName: https
           healthCheck: <FIXME:healthcheck>
           backends:
             - group: <FIXME:instanceGroup1>
-        - name: media-backend-service
+        - resourceName: media-backend-service
           portName: https
           healthCheck: <FIXME:healthcheck>
           backends:
