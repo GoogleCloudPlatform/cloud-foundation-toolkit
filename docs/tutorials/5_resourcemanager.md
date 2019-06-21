@@ -1,4 +1,4 @@
-#  Installation
+# Setup Resource Management
 
 ## Introduction
 
@@ -71,3 +71,11 @@ button at the top of the page.
 In the dialogue, click the folder you would like to move the projects into then click Select.
 
 Repeat this process for all projects you would like to move.
+
+## Congratulations
+
+<walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
+
+You have completed setting up your new folder hierarchy.
+
+You can now proceed to applying IAM policies in your organization hierarchy.
