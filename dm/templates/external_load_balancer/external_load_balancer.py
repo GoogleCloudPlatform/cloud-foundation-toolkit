@@ -14,6 +14,8 @@
 """ This template creates an external load balancer. """
 
 import copy
+from hashlib import sha1
+import json
 
 
 def set_optional_property(destination, source, prop_name):
@@ -23,17 +25,20 @@ def set_optional_property(destination, source, prop_name):
         destination[prop_name] = source[prop_name]
 
 
-def get_backend_service(properties, backend_spec):
+def get_backend_service(properties, backend_spec, res_name, project_id):
     """ Creates the backend service. """
 
+    name = backend_spec.get('resourceName', res_name)
+    backend_name = backend_spec.get('name', name)
     backend_properties = {
+        'name': backend_name,
+        'project': project_id,
         'loadBalancingScheme': 'EXTERNAL',
-        'protocol': get_protocol(properties)
+        'protocol': get_protocol(properties),
     }
 
-    backend_name = backend_spec['name']
     backend_resource = {
-        'name': backend_name,
+        'name': name,
         'type': 'backend_service.py',
         'properties': backend_properties
     }
@@ -61,18 +66,21 @@ def get_backend_service(properties, backend_spec):
         },
         {
             'name': 'backendServiceSelfLink',
-            'value': '$(ref.{}.selfLink)'.format(backend_name),
+            'value': '$(ref.{}.selfLink)'.format(name),
         },
     ]
 
 
-def get_forwarding_rule(properties, target, name):
+def get_forwarding_rule(properties, target, res_name, project_id):
     """ Creates the forwarding rule. """
 
+    name = '{}-forwarding-rule'.format(res_name)
     rule_properties = {
+        'name': properties.get('name', res_name),
+        'project': project_id,
         'loadBalancingScheme': 'EXTERNAL',
         'target': '$(ref.{}.selfLink)'.format(target['name']),
-        'IPProtocol': 'TCP'
+        'IPProtocol': 'TCP',
     }
 
     rule_resource = {
@@ -94,7 +102,7 @@ def get_forwarding_rule(properties, target, name):
     return [rule_resource], [
         {
             'name': 'forwardingRuleName',
-            'value': name,
+            'value': rule_properties['name'],
         },
         {
             'name': 'forwardingRuleSelfLink',
@@ -107,7 +115,7 @@ def get_forwarding_rule(properties, target, name):
     ]
 
 
-def get_backend_services(properties):
+def get_backend_services(properties, res_name, project_id):
     """ Creates all backend services to be used by the load balancer. """
 
     backend_resources = []
@@ -118,7 +126,8 @@ def get_backend_services(properties):
     backend_specs = properties['backendServices']
 
     for backend_spec in backend_specs:
-        resources, outputs = get_backend_service(properties, backend_spec)
+        backend_res_name = '{}-backend-service-{}'.format(res_name, sha1(json.dumps(backend_spec)).hexdigest()[:10])
+        resources, outputs = get_backend_service(properties, backend_spec, backend_res_name, project_id)
         backend_resources += resources
         # Merge outputs with the same name.
         for output in outputs:
@@ -154,14 +163,20 @@ def update_refs_recursively(properties):
                     update_refs_recursively(item)
 
 
-def get_url_map(properties, res_name):
+def get_url_map(properties, res_name, project_id):
     """ Creates a UrlMap resource. """
 
-    name = properties.get('name', res_name + '-url-map')
+    name = '{}-url-map'.format(res_name)
     spec = copy.deepcopy(properties)
+    spec['project'] = project_id
+    spec['name'] = properties.get('name', name)
     update_refs_recursively(spec)
 
-    resource = {'name': name, 'type': 'url_map.py', 'properties': spec}
+    resource = {
+        'name': name,
+        'type': 'url_map.py',
+        'properties': spec,
+    }
 
     self_link = '$(ref.{}.selfLink)'.format(name)
 
@@ -177,20 +192,22 @@ def get_url_map(properties, res_name):
     ]
 
 
-def get_target_proxy(properties, res_name):
+def get_target_proxy(properties, res_name, project_id, bs_resources):
     """ Creates a target proxy resource. """
 
     protocol = get_protocol(properties)
 
     if 'HTTP' in protocol:
+        urlMap = copy.deepcopy(properties['urlMap'])
+        if 'name' not in urlMap and 'name' in properties:
+            urlMap['name'] = properties['name']
         target, resources, outputs = get_url_map(
-            properties['urlMap'],
-            res_name
+            urlMap,
+            res_name,
+            project_id
         )
     else:
-        backend_services = properties['backendServices']
-        service_name = backend_services[0]['name']
-        target = get_ref(service_name)
+        target = get_ref(bs_resources[0]['name'])
         resources = []
         outputs = []
 
@@ -199,8 +216,10 @@ def get_target_proxy(properties, res_name):
         'name': name,
         'type': 'target_proxy.py',
         'properties': {
+            'name': properties.get('name', name),
+            'project': project_id,
             'protocol': protocol,
-            'target': target
+            'target': target,
         }
     }
 
@@ -265,18 +284,19 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     properties = context.properties
-    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
     # Forwarding rule + target proxy + backend service = ELB
-    bs_resources, bs_outputs = get_backend_services(properties)
-    target_resources, target_outputs = get_target_proxy(properties, name)
+    bs_resources, bs_outputs = get_backend_services(properties, context.env['name'], project_id)
+    target_resources, target_outputs = get_target_proxy(properties, context.env['name'], project_id, bs_resources)
     rule_resources, rule_outputs = get_forwarding_rule(
         properties,
         target_resources[0],
-        name
+        context.env['name'],
+        project_id
     )
 
     return {
         'resources': bs_resources + target_resources + rule_resources,
-        'outputs': bs_outputs + target_outputs + rule_outputs
+        'outputs': bs_outputs + target_outputs + rule_outputs,
     }
