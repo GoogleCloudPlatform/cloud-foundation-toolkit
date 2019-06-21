@@ -34,15 +34,19 @@ type CategoryViolations struct {
 
 var availableCategories = map[string]string{
 	"operational-efficiency": "Operational Efficiency",
+	"other":                  "Other",
 }
 
 // attachViolations puts violations into their appropriate categories
 func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) error {
+	// Build map of categories
 	for k, name := range availableCategories {
-		config.Categories[k] = &CategoryViolation{
-			Name: v
+		config.Categories[k] = &CategoryViolations{
+			Name: name,
 		}
 	}
+
+	return nil
 }
 
 // ScoreInventory creates a Scorecard for an inventory
