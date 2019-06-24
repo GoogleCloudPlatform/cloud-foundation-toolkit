@@ -25,22 +25,24 @@ resources:
         description: my awesome k8s cluster
         network: <FIXME:network_name>
         subnetwork: <FIXME:subnet_name>
-        intialNodeCount: 1
         initialClusterVersion: 1.10.6-gke.3
-        nodeConfig:
-          localSsdCount: 1
-          oauthScopes:
-            - https://www.googleapis.com/auth/compute
-            - https://www.googleapis.com/auth/devstorage.read_only
-            - https://www.googleapis.com/auth/logging.write
-            - https://www.googleapis.com/auth/monitoring
-          taints:
-            - key: mykey1
-              value: value1
-              effect: NO_SCHEDULE
-            - key: mykey2
-              value: value2
-              effect: NO_EXECUTE
+        nodePools:
+          - name: default
+            initialNodeCount: 1
+            config:
+              localSsdCount: 1
+              oauthScopes:
+                - https://www.googleapis.com/auth/compute
+                - https://www.googleapis.com/auth/devstorage.read_only
+                - https://www.googleapis.com/auth/logging.write
+                - https://www.googleapis.com/auth/monitoring
+              taints:
+                - key: mykey1
+                  value: value1
+                  effect: NO_SCHEDULE
+                - key: mykey2
+                  value: value2
+                  effect: NO_EXECUTE
         locations:
           - us-east1-c
           - us-east1-b
@@ -56,7 +58,8 @@ resources:
           password: <FIXME:password>
         loggingService: logging.googleapis.com
         monitoringService: monitoring.googleapis.com
-        privateCluster: True
+        privateClusterConfig:
+          enablePrivateNodes: True
         masterIpv4CidrBlock: 172.16.0.0/28
         clusterIpv4Cidr: 10.0.0.0/11
         ipAllocationPolicy:
