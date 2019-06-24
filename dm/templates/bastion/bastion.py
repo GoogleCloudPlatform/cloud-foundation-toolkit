@@ -65,7 +65,8 @@ def get_ssh_firewall_rule(
 
     ssh_rule = {
         'name': name,
-        'type': 'compute.v1.firewall',
+        # https://cloud.google.com/compute/docs/reference/rest/v1/firewalls
+        'type': 'gcp-types/compute-v1:firewalls',
         'properties': ssh_props
     }
 
@@ -85,7 +86,7 @@ def get_ssh_firewall_rule(
     ]
 
 
-def create_bastion_in_ssh_rule(bastion, firewall_settings):
+def create_bastion_in_ssh_rule(bastion, network, firewall_settings):
     """ Creates a firewall rule for inbound SSH traffic. """
 
     to_bastion_rule = firewall_settings.get('sshToBastion')
@@ -100,15 +101,16 @@ def create_bastion_in_ssh_rule(bastion, firewall_settings):
             bastion['properties']['tags'] = {'items': existing_tags}
 
         rule_setup = {
+            'name': to_bastion_rule['name'],
             'sourceTags': to_bastion_rule.get('sourceTags'),
             'targetTags': [bastion_host_tag],
             'sourceRanges': to_bastion_rule.get('sourceRanges'),
             'priority': to_bastion_rule.get('priority'),
-            'network': bastion['properties']['network']
+            'network': network
         }
 
         return get_ssh_firewall_rule(
-            to_bastion_rule['name'],
+            '{}-to'.format(bastion['name']),
             rule_setup,
             'sshToBastionRuleName',
             'sshToBastionRuleSelfLink'
@@ -117,7 +119,7 @@ def create_bastion_in_ssh_rule(bastion, firewall_settings):
     return [], []
 
 
-def create_bastion_out_ssh_rule(bastion, firewall_settings):
+def create_bastion_out_ssh_rule(bastion, network, firewall_settings):
     """ Creates a firewall rule for the Bastion outbound SSH traffic. """
 
     from_bastion_rule = firewall_settings.get('sshFromBastion')
@@ -138,14 +140,15 @@ def create_bastion_out_ssh_rule(bastion, firewall_settings):
                 raise ValueError(msg)
 
         rule_setup = {
+            'name': from_bastion_rule['name'],
             'sourceTags': bastion_host_tags,
             'targetTags': [bastion_target_tag],
             'priority': from_bastion_rule.get('priority'),
-            'network': bastion['properties']['network'],
+            'network': network,
         }
 
         return get_ssh_firewall_rule(
-            from_bastion_rule['name'],
+            '{}-from'.format(bastion['name']),
             rule_setup,
             'sshFromBastionRuleName',
             'sshFromBastionRuleSelfLink'
@@ -154,16 +157,18 @@ def create_bastion_out_ssh_rule(bastion, firewall_settings):
     return [], []
 
 
-def create_firewall_rules(bastion, firewall_settings):
+def create_firewall_rules(bastion, network, firewall_settings):
     """ Creates in/out SSH rules for the Bastion host. """
 
     ssh_in_resources, ssh_in_outputs = create_bastion_in_ssh_rule(
         bastion,
+        network,
         firewall_settings
     )
 
     ssh_out_resources, ssh_out_outputs = create_bastion_out_ssh_rule(
         bastion,
+        network,
         firewall_settings
     )
 
@@ -177,16 +182,29 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     properties = context.properties
+    project_id = properties.get('project', context.env['project'])
     name = properties.get('name', context.env['name'])
 
+    network = properties['network']
+    if not '$(ref' in network:
+        if not 'global/' in network:
+            network = 'global/networks/{}'.format(network)
+        if not 'project/' in network:
+            network = 'projects/{}/{}'.format(project_id, network)
+
     bastion_props = {
+        'project': project_id,
+        'name': name,
         'zone': properties['zone'],
-        'network': properties['network'],
+        'networks': [{
+            'network': network,
+            'accessConfigs': [{'type': 'ONE_TO_ONE_NAT'}]
+        }],
         'machineType': properties['machineType'],
-        'diskImage': IMAGE
+        'diskImage': IMAGE,
     }
 
-    bastion = {'name': name, 'type': 'instance.py', 'properties': bastion_props}
+    bastion = {'name': context.env['name'], 'type': 'instance.py', 'properties': bastion_props}
 
     optional_props = ['diskSizeGb', 'metadata', 'tags']
 
@@ -200,11 +218,16 @@ def generate_config(context):
     if firewall_settings:
         extra_resources, extra_outputs = create_firewall_rules(
             bastion,
+            network,
             firewall_settings
         )
     else:
         extra_resources = []
         extra_outputs = []
+
+    resources = [bastion] + extra_resources
+    for resource in resources:
+        resource['properties']['project'] = project_id
 
     outputs = [
         {
@@ -213,19 +236,19 @@ def generate_config(context):
         },
         {
             'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(name)
+            'value': '$(ref.{}.selfLink)'.format(context.env['name'])
         },
         {
             'name': 'internalIp',
-            'value': '$(ref.{}.internalIp)'.format(name)
+            'value': '$(ref.{}.internalIp)'.format(context.env['name'])
         },
         {
             'name': 'externalIp',
-            'value': '$(ref.{}.externalIp)'.format(name)
+            'value': '$(ref.{}.externalIp)'.format(context.env['name'])
         }
     ]
 
     return {
-        'resources': [bastion] + extra_resources,
+        'resources': resources,
         'outputs': outputs + extra_outputs
     }

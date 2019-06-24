@@ -143,4 +143,20 @@ def generate_config(context):
         }
     ]
 
+    if len(network_interfaces) == 1:
+        outputs.append({
+            'name': 'internalIp',
+            'value': '$(ref.{}.networkInterfaces[0].networkIP)'.format(context.env['name'])
+        })
+
+        accessConfigs = network_interfaces[0]['accessConfigs']
+        for i, row in enumerate(accessConfigs, 0):
+          if row['type'] == 'ONE_TO_ONE_NAT':
+            outputs.append({
+              'name': 'externalIp',
+              'value': '$(ref.{}.networkInterfaces[0].accessConfigs[{}].natIP)'.format(context.env['name'], i)
+            })
+            break
+
+
     return {'resources': [instance], 'outputs': outputs}
