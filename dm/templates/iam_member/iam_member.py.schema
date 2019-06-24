@@ -15,7 +15,16 @@
 info:
   title: IAM policy member
   author: Sourced Group Inc.
-  description: Manages an IAM policy member
+  version: 1.0.0
+  description: |
+    Manages an IAM policy member
+
+    For more information on this resource:
+    https://cloud.google.com/iam/docs/overview
+
+    APIs endpoints used by this template:
+    - gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding =>
+        TODO - Virtual type documentation needed
 
 imports:
   - path: iam_member.py
@@ -33,14 +42,18 @@ properties:
      a different project.
   roles:
     type: array
-    description: An array of roles and members.
+    uniqueItems: true
+    description: |
+      An array of roles and members.
     items:
       role:
         type: string
-        description: The role to grant to members.
+        description: |
+          The role to grant to members.
       members:
         type: array
-        description: A list of identities.
+        description: |
+          A list of identities.
         items:
           type: string
           description: |
