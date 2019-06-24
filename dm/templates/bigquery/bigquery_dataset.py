@@ -20,15 +20,18 @@ def generate_config(context):
     # You can modify the roles you wish to whitelist.
     whitelisted_roles = ['READER', 'WRITER', 'OWNER']
 
-    name = context.properties['name']
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
     properties = {
         'datasetReference':
             {
                 'datasetId': name,
-                'projectId': context.env['project']
+                'projectId': project_id
             },
-        'location': context.properties['location']
+        'location': context.properties['location'],
+        'projectId': project_id,
     }
 
     optional_properties = ['description', 'defaultTableExpirationMs']
@@ -68,8 +71,9 @@ def generate_config(context):
 
     resources = [
         {
-            'type': 'bigquery.v2.dataset',
-            'name': name,
+            # https://cloud.google.com/bigquery/docs/reference/rest/v2/datasets
+            'type': 'gcp-types/bigquery-v2:datasets',
+            'name': context.env['name'],
             'properties': properties
         }
     ]
@@ -77,7 +81,7 @@ def generate_config(context):
     outputs = [
         {
             'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(name)
+            'value': '$(ref.{}.selfLink)'.format(context.env['name'])
         },
         {
             'name': 'datasetId',
@@ -85,15 +89,15 @@ def generate_config(context):
         },
         {
             'name': 'etag',
-            'value': '$(ref.{}.etag)'.format(name)
+            'value': '$(ref.{}.etag)'.format(context.env['name'])
         },
         {
             'name': 'creationTime',
-            'value': '$(ref.{}.creationTime)'.format(name)
+            'value': '$(ref.{}.creationTime)'.format(context.env['name'])
         },
         {
             'name': 'lastModifiedTime',
-            'value': '$(ref.{}.lastModifiedTime)'.format(name)
+            'value': '$(ref.{}.lastModifiedTime)'.format(context.env['name'])
         }
     ]
 
