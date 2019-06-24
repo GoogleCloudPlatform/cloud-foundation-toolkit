@@ -27,35 +27,48 @@ def get_resource_type(ip_type):
     """ Return the address resource type. """
 
     if ip_type == 'GLOBAL':
-        return 'compute.v1.globalAddress'
+        # https://cloud.google.com/compute/docs/reference/rest/v1/globalAddresses
+        return 'gcp-types/compute-v1:globalAddresses'
 
-    return 'compute.v1.address'
+    # https://cloud.google.com/compute/docs/reference/rest/v1/addresses
+    return 'gcp-types/compute-v1:addresses'
 
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-
+    properties = context.properties
     resource_type = get_resource_type(context.properties['ipType'])
     address_type = get_address_type(context.properties['ipType'])
     name = context.properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
-    properties = {
+    res_properties = {
         'addressType': address_type,
         'resourceType': 'addresses',
+        'project': project_id,
     }
 
-    optional_properties = ['subnetwork', 'address', 'description', 'region']
+    optional_properties = [
+        'subnetwork',
+        'address',
+        'description',
+        'region',
+        'networkTier',
+        'prefixLength',
+        'ipVersion',
+        'purpose',
+    ]
 
     for prop in optional_properties:
         if prop in context.properties:
-            properties[prop] = str(context.properties[prop])
+            res_properties[prop] = str(context.properties[prop])
 
     resources = [
         {
             'name': name,
             'type': resource_type,
-            'properties': properties
+            'properties': res_properties
         }
     ]
 
