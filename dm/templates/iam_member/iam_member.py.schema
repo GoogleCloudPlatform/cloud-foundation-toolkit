@@ -24,7 +24,7 @@ info:
 
     APIs endpoints used by this template:
     - gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding =>
-        TODO
+        TODO - Virtual type documentation needed
 
 imports:
   - path: iam_member.py
