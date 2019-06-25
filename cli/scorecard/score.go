@@ -15,16 +15,23 @@
 package scorecard
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
+	"github.com/forseti-security/config-validator/pkg/gcv"
+	"github.com/pkg/errors"
 )
 
 // ScoringConfig holds settings for generating a score
 type ScoringConfig struct {
 	PolicyPath string
 	Categories map[string]*CategoryViolations
+	Validator  *gcv.Validator
+	ctx        context.Context
 }
+
+const otherCategoryKey = "other"
 
 // CategoryViolations holds actual scores for a particular category
 type CategoryViolations struct {
@@ -34,16 +41,40 @@ type CategoryViolations struct {
 
 var availableCategories = map[string]string{
 	"operational-efficiency": "Operational Efficiency",
-	"other":                  "Other",
+	otherCategoryKey:         "Other",
 }
 
 // attachViolations puts violations into their appropriate categories
 func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) error {
 	// Build map of categories
+	config.Categories = make(map[string]*CategoryViolations)
 	for k, name := range availableCategories {
 		config.Categories[k] = &CategoryViolations{
 			Name: name,
 		}
+	}
+
+	// Categorize violations
+	for _, v := range audit.Violations {
+		c, err := config.Validator.GetConstraint(config.ctx, &validator.GetConstraintRequest{
+			Name: v.GetConstraint(),
+		})
+		if err != nil {
+			return errors.Wrap(err, "Finding matching constraint")
+		}
+
+		annotations := c.GetConstraint().GetMetadata().GetAnnotations()
+		categoryKey, found := annotations["scorecard.cft.dev/category"]
+		if !found {
+			categoryKey = otherCategoryKey
+		}
+
+		category, found := config.Categories[categoryKey]
+		if !found {
+			return fmt.Errorf("Unknown constraint category %v for constraint %v", categoryKey, v.GetConstraint())
+		}
+
+		category.Violations = append(category.Violations, v)
 	}
 
 	return nil
@@ -51,10 +82,19 @@ func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) err
 
 // ScoreInventory creates a Scorecard for an inventory
 func ScoreInventory(inventory *Inventory, config *ScoringConfig) error {
+	config.ctx = context.Background()
+
+	err := AttachValidator(config)
+	if err != nil {
+		return errors.Wrap(err, "initializing gcv validator")
+	}
+
 	auditResult, err := GetViolations(inventory, config)
 	if err != nil {
 		return err
 	}
+
+	err = attachViolations(auditResult, config)
 
 	if len(auditResult.Violations) > 0 {
 		fmt.Print("\n\nFound %v issues:\n\n")
