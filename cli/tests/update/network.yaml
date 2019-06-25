@@ -29,17 +29,3 @@ resources:
     network: $(ref.cftcli-test-network.selfLink)
     region: us-east1
     ipCidrRange: 192.168.0.0/16
-- name: cftcli-test-subnetwork-3
-  type: subnetwork.py
-  properties:
-    name: cftcli-test-subnetwork-3
-    network: $(ref.cftcli-test-network.selfLink)
-    region: us-east1
-    ipCidrRange: 172.16.0.0/24
-    privateIpGoogleAccess: false
-    enableFlowLogs: true
-    secondaryIpRanges:
-    - rangeName: my-secondary-range-1
-      ipCidrRange: 172.16.1.0/24
-    - rangeName: my-secondary-range-2
-      ipCidrRange: 172.16.2.0/24
