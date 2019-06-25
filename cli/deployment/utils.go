@@ -37,7 +37,14 @@ func AbsolutePath(baseDir string, file string) string {
 	if file[0] == os.PathSeparator {
 		return file
 	}
-	return filepath.Clean(filepath.Join(baseDir, file))
+	baseDir, _ = filepath.Abs(baseDir)
+	relative := filepath.Clean(filepath.Join(baseDir, file))
+	result, err := filepath.Abs(relative)
+	if err != nil {
+		log.Fatalf("error creating absolute path, for file: %s, error: %v", relative, err)
+	}
+	log.Printf("base dir: %s, file: %s, result: %s", baseDir, file, result)
+	return result
 }
 
 // check if string is yaml
