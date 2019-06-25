@@ -25,6 +25,10 @@ info:
     APIs endpoints used by this template:
     - gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding =>
         TODO - Virtual type documentation needed
+    - gcp-types/cloudresourcemanager-v2:virtual.folders.iamMemberBinding =>
+        TODO - Virtual type documentation needed
+    - gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding =>
+        TODO - Virtual type documentation needed
 
 imports:
   - path: iam_member.py
@@ -35,40 +39,52 @@ required:
   - roles
 
 properties:
+  folderId:
+    type: string
+    description:  |
+     Folder ID to assign members to.
+  organizationId:
+    type: string
+    description:  |
+     Organization ID to assign members to.
   projectId:
     type: string
     description:  |
      Overwrite of project ID in case IAM bindings are referencing to
-     a different project.
+     a different project or if you need to assign members to folders/organizations as well.
   roles:
     type: array
     uniqueItems: true
+    minItems: 1
     description: |
       An array of roles and members.
     items:
-      role:
-        type: string
-        description: |
-          The role to grant to members.
-      members:
-        type: array
-        description: |
-          A list of identities.
-        items:
+      type: object
+      additionalProperties: false
+      properties:
+        role:
           type: string
           description: |
-            Specifies the identity requesting access to a Cloud Platform
-            resource. Can have the following values:
-              - user:{emailid} - An email address that represents a specific
-                IAM User account. For example, user:name@example.com
-              - serviceAccount:{emailid} - An email address that represents a
-                Service Account. For example,
-                serviceAccount:my-other-app@appspot.gserviceaccount.com
-              - group:{emailid} - An email address that represents a Google group.
-                For example, group:admins@example.com
-              - domain:{domain} - A Cloud Identity or G Suite domain name that 
-                represents all the users of that domain. For example, acme.com 
-                or example.com.
+            The role to grant to members.
+        members:
+          type: array
+          description: |
+            A list of identities.
+          items:
+            type: string
+            description: |
+              Specifies the identity requesting access to a Cloud Platform
+              resource. Can have the following values:
+                - user:{emailid} - An email address that represents a specific
+                  IAM User account. For example, user:name@example.com
+                - serviceAccount:{emailid} - An email address that represents a
+                  Service Account. For example,
+                  serviceAccount:my-other-app@appspot.gserviceaccount.com
+                - group:{emailid} - An email address that represents a Google group.
+                  For example, group:admins@example.com
+                - domain:{domain} - A Cloud Identity or G Suite domain name that
+                  represents all the users of that domain. For example, acme.com
+                  or example.com.
 
 documentation:
   - templates/iam_member/README.md
