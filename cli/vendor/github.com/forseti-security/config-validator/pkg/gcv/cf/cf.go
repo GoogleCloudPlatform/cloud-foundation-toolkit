@@ -27,7 +27,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Constraint model framework organizes constraints/templates/data and handles evaluation.
+// ConstraintFramework organizes constraints/templates/data and handles evaluation.
 type ConstraintFramework struct {
 	userInputData []interface{}
 	// map[userDefined]regoCode
@@ -230,4 +230,19 @@ func (cf *ConstraintFramework) Audit(ctx context.Context) (*validator.AuditRespo
 	response.Violations = violations
 
 	return response, nil
+}
+
+// GetConstraint returns a constraint by name
+func (cf *ConstraintFramework) GetConstraint(ctx context.Context, name string) (*validator.Constraint, error) {
+	for _, constraints := range cf.constraints {
+		constraint, ok := constraints[name]
+		if ok {
+			proto, err := constraint.AsProto()
+			if err != nil {
+				return nil, status.Error(codes.Internal, err.Error())
+			}
+			return proto, nil
+		}
+	}
+	return nil, status.Errorf(codes.NotFound, "Constraint not found.")
 }

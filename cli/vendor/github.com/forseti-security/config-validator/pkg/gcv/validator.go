@@ -26,6 +26,7 @@ import (
 	"github.com/forseti-security/config-validator/pkg/gcv/configs"
 	"github.com/golang/glog"
 	"github.com/golang/protobuf/jsonpb"
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -177,8 +178,10 @@ func NewValidator(options ...Option) (*Validator, error) {
 
 // AddData adds GCP resource metadata to be audited later.
 func (v *Validator) AddData(request *validator.AddDataRequest) error {
-
 	for i, asset := range request.Assets {
+		if err := validateAsset(asset); err != nil {
+			return status.Error(codes.InvalidArgument, errors.Wrapf(err, "index %d", i).Error())
+		}
 		f, err := convertResourceViaJSONToInterface(asset)
 		if err != nil {
 			return status.Error(codes.Internal, errors.Wrapf(err, "index %d", i).Error())
@@ -187,6 +190,23 @@ func (v *Validator) AddData(request *validator.AddDataRequest) error {
 	}
 
 	return nil
+}
+
+func validateAsset(asset *validator.Asset) error {
+	var result *multierror.Error
+	if asset.GetName() == "" {
+		result = multierror.Append(result, errors.New("missing asset name"))
+	}
+	if asset.GetAncestryPath() == "" {
+		result = multierror.Append(result, errors.Errorf("asset %q missing ancestry path", asset.GetName()))
+	}
+	if asset.GetAssetType() == "" {
+		result = multierror.Append(result, errors.Errorf("asset %q missing type", asset.GetName()))
+	}
+	if asset.GetResource() == nil && asset.GetIamPolicy() == nil {
+		result = multierror.Append(result, errors.Errorf("asset %q missing both resource and IAM policy", asset.GetName()))
+	}
+	return result.ErrorOrNil()
 }
 
 func convertResourceViaJSONToInterface(asset *validator.Asset) (interface{}, error) {
@@ -222,4 +242,16 @@ func (v *Validator) Reset() error {
 func (v *Validator) Audit(ctx context.Context) (*validator.AuditResponse, error) {
 	response, err := v.constraintFramework.Audit(ctx)
 	return response, err
+}
+
+// GetConstraint returns a constraint by name
+func (v *Validator) GetConstraint(ctx context.Context, request *validator.GetConstraintRequest) (*validator.GetConstraintResponse, error) {
+	constraint, err := v.constraintFramework.GetConstraint(ctx, request.GetName())
+	if err != nil {
+		return nil, err
+	}
+	response := &validator.GetConstraintResponse{
+		Constraint: constraint,
+	}
+	return response, nil
 }

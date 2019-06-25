@@ -14,6 +14,8 @@
 
 package cf
 
+// AuditRego contains the Rego snippet that implements matching logic
+// and applies constraints to assets.
 const AuditRego = `
 package validator.gcp.lib
 
@@ -25,14 +27,16 @@ audit[result] {
 
 	asset := inventory[_]
 	constraint := constraints[_]
+	spec := _get_default(constraint, "spec", {})
+	match := _get_default(spec, "match", {})
 	# Default matcher behavior is to match everything.
-	target := _get_default(constraint.spec.match, "target", ["organization/*"])
+	target := _get_default(match, "target", ["organization/*"])
 	# TODO: Retire the "gcp" wrapper.
 	# See https://github.com/forseti-security/config-validator/issues/42
-	gcp := _get_default(constraint.spec.match, "gcp", {})
+	gcp := _get_default(match, "gcp", {})
 	gcp_target := _get_default(gcp, "target", target)
 	re_match(gcp_target[_], asset.ancestry_path)
-	exclude := _get_default(constraint.spec.match, "exclude", [])
+	exclude := _get_default(match, "exclude", [])
 	gcp_exclude := _get_default(gcp, "exclude", exclude)
 	exclusion_match := {asset.ancestry_path | re_match(gcp_exclude[_], asset.ancestry_path)}
 	count(exclusion_match) == 0

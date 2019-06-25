@@ -26,6 +26,8 @@ import (
 	"github.com/smallfish/simpleyaml"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/forseti-security/config-validator/pkg/api/validator"
 )
 
 type yamlFile struct {
@@ -74,6 +76,16 @@ func (c *UnclassifiedConfig) AsInterface() (interface{}, error) {
 		return nil, errors.Wrap(err, "converting from yaml")
 	}
 	return f, nil
+}
+
+// AsProto returns the constraint a Kubernetes proto
+func (c *Constraint) AsProto() (*validator.Constraint, error) {
+	// Use yaml.Unmarshal to create a proper Kubernetes proto
+	var kc validator.Constraint
+	if err := yaml.Unmarshal([]byte(c.Confg.RawFile), &kc); err != nil {
+		return nil, errors.Wrap(err, "converting from yaml")
+	}
+	return &kc, nil
 }
 
 // asConstraint attempts to convert to constraint
