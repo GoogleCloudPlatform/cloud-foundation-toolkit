@@ -97,14 +97,18 @@ func ScoreInventory(inventory *Inventory, config *ScoringConfig) error {
 	err = attachViolations(auditResult, config)
 
 	if len(auditResult.Violations) > 0 {
-		fmt.Print("\n\nFound %v issues:\n\n")
-		for _, v := range auditResult.Violations {
-			fmt.Printf("Constraint %v on resource %v: %v\n\n",
-				v.Constraint,
-				v.Resource,
-				v.Message,
-			)
-			Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+		fmt.Printf("\n\n%v total issues found\n", len(auditResult.Violations))
+		for _, category := range config.Categories {
+			fmt.Printf("\n\n%v: %v issues found\n", category.Name, len(category.Violations))
+			fmt.Printf("----------\n")
+			for _, v := range category.Violations {
+				fmt.Printf("Constraint %v on resource %v: %v\n\n",
+					v.Constraint,
+					v.Resource,
+					v.Message,
+				)
+				Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+			}
 		}
 	} else {
 		fmt.Println("No issues found found! You have a perfect score.")
