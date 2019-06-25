@@ -38,6 +38,21 @@ additionalProperties: false
 required:
   - roles
 
+oneOf:
+  - required:
+      - folderId
+  - required:
+      - organizationId
+  - required:
+      - projectId
+  - allOf:
+      - not:
+          required:
+            - folderId
+      - not:
+          required:
+            - organizationId
+
 properties:
   folderId:
     type: string
