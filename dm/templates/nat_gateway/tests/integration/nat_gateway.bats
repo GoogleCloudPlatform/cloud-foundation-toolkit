@@ -20,7 +20,7 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     CONFIG=".${DEPLOYMENT_NAME}.yaml"
 fi
 
-export PROJECT_NUMBER=$(gcloud projects list | grep "${CLOUD_FOUNDATION_PROJECT_ID}" | awk {'print $NF'})
+export PROJECT_NUMBER=$(gcloud projects describe ${CLOUD_FOUNDATION_PROJECT_ID} | grep projectNumber | sed 's/[^0-9]*//g')
 
 ########## HELPER FUNCTIONS ##########
 
