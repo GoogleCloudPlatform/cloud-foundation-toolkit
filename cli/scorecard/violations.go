@@ -39,6 +39,30 @@ func attachValidator(config *ScoringConfig) error {
 	return err
 }
 
+func addDataFromBucket(config *ScoringConfig, bucket *storage.BucketHandle, objectName string) error {
+	ctx := context.Background()
+	reader, err := bucket.Object(objectName).NewReader(ctx)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		pbAsset, err := getAssetFromJSON(scanner.Bytes())
+
+		pbAssets := []*validator.Asset{pbAsset}
+
+		err = config.validator.AddData(&validator.AddDataRequest{
+			Assets: pbAssets,
+		})
+		if err != nil {
+			return errors.Wrap(err, "adding data to validator")
+		}
+	}
+	return nil
+}
+
 // getViolations finds all Config Validator violations for a given Inventory
 func getViolations(inventory *Inventory, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
@@ -49,23 +73,11 @@ func getViolations(inventory *Inventory, config *ScoringConfig) (*validator.Audi
 		return nil, err
 	}
 
-	reader, err := client.Bucket(inventory.GcsBucket).Object(inventory.GcsObject).NewReader(ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer reader.Close()
-
-	scanner := bufio.NewScanner(reader)
-	for scanner.Scan() {
-		pbAsset, err := getAssetFromJSON(scanner.Bytes())
-
-		pbAssets := []*validator.Asset{pbAsset}
-
-		err = v.AddData(&validator.AddDataRequest{
-			Assets: pbAssets,
-		})
+	bucket := client.Bucket(inventory.GcsBucket)
+	for _, objectName := range destinationObjectNames {
+		err = addDataFromBucket(config, bucket, objectName)
 		if err != nil {
-			return nil, errors.Wrap(err, "adding data to validator")
+			return nil, errors.Wrap(err, "Fetching inventory")
 		}
 	}
 

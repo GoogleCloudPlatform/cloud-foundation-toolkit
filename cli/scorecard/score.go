@@ -64,6 +64,8 @@ func (cv constraintViolations) GetName() string {
 
 var availableCategories = map[string]string{
 	"operational-efficiency": "Operational Efficiency",
+	"security":               "Security",
+	"reliability":            "Reliability",
 	otherCategoryKey:         "Other",
 }
 

@@ -56,7 +56,6 @@ func NewInventory(projectID string, options ...Option) (*Inventory, error) {
 	inventory := new(Inventory)
 	inventory.ControlProject = projectID
 	inventory.GcsBucket = "clf-gcp-inventory"
-	inventory.GcsObject = "inventory.json"
 
 	for _, option := range options {
 		option(inventory)
@@ -73,14 +72,19 @@ func getParent(inventory *Inventory) string {
 	return fmt.Sprintf("projects/%v", inventory.ProjectID)
 }
 
-func getGcsDestination(inventory *Inventory) *assetpb.GcsDestination_Uri {
+var destinationObjectNames = map[assetpb.ContentType]string{
+	assetpb.ContentType_RESOURCE:   "resource_inventory.json",
+	assetpb.ContentType_IAM_POLICY: "iam_inventory.json",
+}
+
+func (inventory Inventory) getGcsDestination(contentType assetpb.ContentType) *assetpb.GcsDestination_Uri {
+	objectName := destinationObjectNames[contentType]
 	return &assetpb.GcsDestination_Uri{
-		Uri: fmt.Sprintf("gs://%v/%v", inventory.GcsBucket, inventory.GcsObject),
+		Uri: fmt.Sprintf("gs://%v/%v", inventory.GcsBucket, objectName),
 	}
 }
 
-// ExportInventory creates a new inventory export
-func ExportInventory(inventory *Inventory) error {
+func exportInventoryToGcs(inventory *Inventory, contentType assetpb.ContentType) error {
 	ctx := context.Background()
 	c, err := asset.NewClient(ctx)
 	if err != nil {
@@ -89,11 +93,11 @@ func ExportInventory(inventory *Inventory) error {
 
 	req := &assetpb.ExportAssetsRequest{
 		Parent:      getParent(inventory),
-		ContentType: assetpb.ContentType_RESOURCE,
+		ContentType: contentType,
 		OutputConfig: &assetpb.OutputConfig{
 			Destination: &assetpb.OutputConfig_GcsDestination{
 				GcsDestination: &assetpb.GcsDestination{
-					ObjectUri: getGcsDestination(inventory),
+					ObjectUri: inventory.getGcsDestination(contentType),
 				},
 			},
 		},
@@ -104,10 +108,17 @@ func ExportInventory(inventory *Inventory) error {
 		return err
 	}
 
+	_, err = op.Wait(ctx)
+	return err
+}
+
+// ExportInventory creates a new inventory export
+func ExportInventory(inventory *Inventory) error {
 	s := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
 	s.Prefix = "Exporting Cloud Asset Inventory to GCS bucket... "
 	s.Start()
-	_, err = op.Wait(ctx)
+	err := exportInventoryToGcs(inventory, assetpb.ContentType_RESOURCE)
+	err = exportInventoryToGcs(inventory, assetpb.ContentType_IAM_POLICY)
 	s.Stop()
 
 	if err != nil {
