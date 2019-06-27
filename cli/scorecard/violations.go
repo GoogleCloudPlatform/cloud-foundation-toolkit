@@ -29,19 +29,19 @@ import (
 	"github.com/forseti-security/config-validator/pkg/gcv"
 )
 
-// AttachValidator attaches a Validator to the given config
-func AttachValidator(config *ScoringConfig) error {
+// attachValidator attaches a Validator to the given config
+func attachValidator(config *ScoringConfig) error {
 	v, err := gcv.NewValidator(
 		gcv.PolicyPath(filepath.Join(config.PolicyPath, "policies")),
 		gcv.PolicyLibraryDir(filepath.Join(config.PolicyPath, "lib")),
 	)
-	config.Validator = v
+	config.validator = v
 	return err
 }
 
-// GetViolations finds all Config Validator violations for a given Inventory
-func GetViolations(inventory *Inventory, config *ScoringConfig) (*validator.AuditResponse, error) {
-	v := config.Validator
+// getViolations finds all Config Validator violations for a given Inventory
+func getViolations(inventory *Inventory, config *ScoringConfig) (*validator.AuditResponse, error) {
+	v := config.validator
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
