@@ -19,6 +19,8 @@ func init() {
 
 	scorecardCmd.Flags().StringVar(&flags.scorecard.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
 
+	scorecardCmd.Flags().StringVar(&flags.scorecard.bucketName, "bucket", "", "GCS bucket name for storing inventory")
+	scorecardCmd.MarkFlagRequired("bucket")
 }
 
 // getEnvProjectID finds the implict environment project
@@ -43,7 +45,9 @@ var scorecardCmd = &cobra.Command{
 			return err
 		}
 
-		inventory, err := scorecard.NewInventory(controlProjectID, scorecard.TargetProject(flags.scorecard.targetProjectID))
+		inventory, err := scorecard.NewInventory(controlProjectID,
+			flags.scorecard.bucketName,
+			scorecard.TargetProject(flags.scorecard.targetProjectID))
 		if err != nil {
 			return err
 		}

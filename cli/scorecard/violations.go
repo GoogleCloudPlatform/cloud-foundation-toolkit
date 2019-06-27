@@ -117,5 +117,5 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 func getAncestryPath(pbAsset *validator.Asset) (string, error) {
 	// TODO(morgantep): make this fetch the actual asset path
 	// fmt.Printf("Asset parent: %v\n", pbAsset.GetResource().GetParent())
-	return "organization/816421441114/project/gcp-foundation-shared-devops", nil
+	return "organization/0/project/test", nil
 }

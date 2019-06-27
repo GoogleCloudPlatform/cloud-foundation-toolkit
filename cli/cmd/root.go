@@ -36,6 +36,7 @@ var flags struct {
 		policyPath      string
 		refresh         bool
 		targetProjectID string
+		bucketName      string
 	}
 }
 
