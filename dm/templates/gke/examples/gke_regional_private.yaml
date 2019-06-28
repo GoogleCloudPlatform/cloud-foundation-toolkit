@@ -18,17 +18,22 @@ resources:
   - name: myk8sregional
     type: gke.py
     properties:
-      clusterLocationType: Regional
       region: us-east1
       cluster:
         name: myk8sregional
         description: my awesome k8s cluster
         network: <FIXME:network_name>
         subnetwork: <FIXME:subnet_name>
-        initialClusterVersion: 1.10.6-gke.3
         nodePools:
           - name: default
             initialNodeCount: 1
+            autoscaling:
+              enabled: True
+              minNodeCount: 1
+              maxNodeCount: 2
+            management:
+              autoUpgrade: True
+              autoRepair: True
             config:
               localSsdCount: 1
               oauthScopes:
@@ -46,13 +51,6 @@ resources:
         locations:
           - us-east1-c
           - us-east1-b
-        autoScaling:
-          enabled: True
-          minNodeCount: 1
-          maxNodeCount: 2
-        management:
-          autoUpgrade: True
-          autoRepair: True
         masterAuth:
           username: <FIXME:user_name>
           password: <FIXME:password>
@@ -60,7 +58,7 @@ resources:
         monitoringService: monitoring.googleapis.com
         privateClusterConfig:
           enablePrivateNodes: True
-        masterIpv4CidrBlock: 172.16.0.0/28
+          masterIpv4CidrBlock: 172.16.0.0/28
         clusterIpv4Cidr: 10.0.0.0/11
         ipAllocationPolicy:
           useIpAliases: True

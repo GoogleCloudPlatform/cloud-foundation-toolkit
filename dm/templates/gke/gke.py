@@ -43,6 +43,8 @@ def generate_config(context):
     if properties.get('zone'):
         # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.zones.clusters
         gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.zones.clusters'
+        # TODO: remove, this is a bug
+        gke_cluster['properties']['zone'] = properties.get('zone')
     else:
         # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters
         gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.locations.clusters'
@@ -124,15 +126,12 @@ def generate_config(context):
         output_props.append('clientCertificate')
         output_props.append('clientKey')
 
-    if not propc.get('ipAllocationPolicy', {}).get('useIpAliases', False):
-        output_props.append('nodeIpv4CidrSize')
-
     for outprop in output_props:
         output_obj = {}
         output_obj['name'] = outprop
         ma_props = ['clusterCaCertificate', 'clientCertificate', 'clientKey']
         if outprop in ma_props:
-            output_obj['value'] = '$(ref.' + name + \
+            output_obj['value'] = '$(ref.' + context.env['name'] + \
                                   '.masterAuth.' + outprop + ')'
         elif outprop  == 'instanceGroupUrls':
             output_obj['value'] = '$(ref.' + context.env['name'] + \
