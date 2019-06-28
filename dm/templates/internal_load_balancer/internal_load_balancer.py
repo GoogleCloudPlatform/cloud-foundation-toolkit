@@ -21,19 +21,21 @@ def set_optional_property(destination, source, prop_name):
         destination[prop_name] = source[prop_name]
 
 
-def get_backend_service(properties, name):
+def get_backend_service(properties, project_id, res_name):
     """ Creates the backend service. """
 
+    backend_spec = properties['backendService']
+    name = '{}-bs'.format(res_name)
     backend_properties = {
+        'name': backend_spec.get('name', properties.get('name', name)),
+        'project': project_id,
         'loadBalancingScheme': 'INTERNAL',
         'protocol': properties['protocol'],
-        'region': properties['region']
+        'region': properties['region'],
     }
 
-    backend_spec = properties['backendService']
-    backend_name = backend_spec.get('name', name + '-bs')
     backend_resource = {
-        'name': backend_name,
+        'name': name,
         'type': 'backend_service.py',
         'properties': backend_properties
     }
@@ -54,29 +56,31 @@ def get_backend_service(properties, name):
     return [backend_resource], [
         {
             'name': 'backendServiceName',
-            'value': backend_name,
+            'value': backend_resource['properties']['name'],
         },
         {
             'name': 'backendServiceSelfLink',
-            'value': '$(ref.{}.selfLink)'.format(backend_name),
+            'value': '$(ref.{}.selfLink)'.format(name),
         },
     ]
 
 
-def get_forwarding_rule(properties, backend, name):
+def get_forwarding_rule(properties, backend, project_id, res_name):
     """ Creates the forwarding rule. """
 
     rule_properties = {
+        'name': properties.get('name', res_name),
+        'project': project_id,
         'loadBalancingScheme': 'INTERNAL',
         'IPProtocol': properties['protocol'],
         'backendService': '$(ref.{}.selfLink)'.format(backend['name']),
-        'region': properties['region']
+        'region': properties['region'],
     }
 
     rule_resource = {
-        'name': name,
+        'name': res_name,
         'type': 'forwarding_rule.py',
-        'properties': rule_properties
+        'properties': rule_properties,
     }
 
     optional_properties = [
@@ -94,15 +98,15 @@ def get_forwarding_rule(properties, backend, name):
     return [rule_resource], [
         {
             'name': 'forwardingRuleName',
-            'value': name,
+            'value': res_name,
         },
         {
             'name': 'forwardingRuleSelfLink',
-            'value': '$(ref.{}.selfLink)'.format(name),
+            'value': '$(ref.{}.selfLink)'.format(res_name),
         },
         {
             'name': 'IPAddress',
-            'value': '$(ref.{}.IPAddress)'.format(name),
+            'value': '$(ref.{}.IPAddress)'.format(res_name),
         },
         {
             'name': 'region',
@@ -115,13 +119,14 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     properties = context.properties
-    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
-    backend_resources, backend_outputs = get_backend_service(properties, name)
+    backend_resources, backend_outputs = get_backend_service(properties, project_id, context.env['name'])
     rule_resources, rule_outputs = get_forwarding_rule(
         properties,
         backend_resources[0],
-        name
+        project_id,
+        context.env['name']
     )
 
     return {
