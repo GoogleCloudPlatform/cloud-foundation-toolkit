@@ -14,8 +14,10 @@
 """ This template creates a forwarding rule. """
 
 REGIONAL_GLOBAL_TYPE_NAMES = {
-    True: 'compute.v1.forwardingRule',
-    False: 'compute.v1.globalForwardingRule'
+    # https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
+    True: 'gcp-types/compute-v1:forwardingRules',
+    # https://cloud.google.com/compute/docs/reference/rest/v1/globalForwardingRules
+    False: 'gcp-types/compute-v1:globalForwardingRules'
 }
 
 
@@ -55,12 +57,16 @@ def generate_config(context):
 
     properties = context.properties
     name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
     is_regional = 'region' in properties
     region = properties.get('region')
-    rule_properties = {'name': name}
+    rule_properties = {
+        'name': name,
+        'project': project_id,
+    }
 
     resource = {
-        'name': name,
+        'name': context.env['name'],
         'type': REGIONAL_GLOBAL_TYPE_NAMES[is_regional],
         'properties': rule_properties
     }
@@ -77,12 +83,15 @@ def generate_config(context):
         'subnetwork',
         'network',
         'backendService',
-        'ipVersion'
+        'ipVersion',
+        'serviceLabel',
+        'networkTier',
+        'allPorts',
     ]
 
     for prop in optional_properties:
         set_optional_property(rule_properties, properties, prop)
 
-    outputs = get_forwarding_rule_outputs(name, region)
+    outputs = get_forwarding_rule_outputs(context.env['name'], region)
 
     return {'resources': [resource], 'outputs': outputs}
