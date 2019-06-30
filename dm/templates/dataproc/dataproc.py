@@ -13,16 +13,12 @@
 # limitations under the License.
 """ This template creates a Dataproc cluster. """
 
-PRIMARY_GROUP_SCHEMA = {'numInstances': None, 'machineType': 'machineTypeUri'}
-
-SECONDARY_GROUP_SCHEMA = {'numInstances': None, 'isPreemptible': None}
-
-GROUP_SCHEMAS = {
-    'master': PRIMARY_GROUP_SCHEMA,
-    'worker': PRIMARY_GROUP_SCHEMA,
-    'secondaryWorker': SECONDARY_GROUP_SCHEMA
+NODES_SCHEMA = {
+    'numInstances': None,
+    'isPreemptible': None,
+    'machineType': 'machineTypeUri',
+    'accelerators': None,
 }
-
 
 def get_disk_config(properties):
     """ If any disk property is specified, creates the diskConfig section. """
@@ -100,7 +96,7 @@ def set_instance_group_config(properties, cluster, image, instance_group):
     """ Assign instance group config to the cluster. """
 
     group_spec = properties.get(instance_group)
-    group_schema = GROUP_SCHEMAS[instance_group]
+    group_schema = NODES_SCHEMA
     group_config = get_instance_group_config(group_spec, image, group_schema)
     config_name = instance_group + 'Config'
     cluster['properties']['config'][config_name] = group_config
@@ -117,15 +113,16 @@ def generate_config(context):
 
     properties = context.properties
     name = properties.get('name', context.env['name'])
-    project_id = context.env['project']
+    project_id = properties.get('project', context.env['project'])
     image = context.properties.get('image')
     region = properties['region']
 
     cluster_config = get_gce_cluster_config(properties)
 
     cluster = {
-        'name': name,
-        'type': 'dataproc.v1.cluster',
+        'name': context.env['name'],
+        # https://cloud.google.com/dataproc/docs/reference/rest/v1/projects.regions.clusters
+        'type': 'gcp-types/dataproc-v1:projects.regions.clusters',
         'properties':
             {
                 'clusterName': name,
@@ -137,8 +134,9 @@ def generate_config(context):
             }
     }
 
-    for prop in ['configBucket', 'softwareConfig', 'initializationActions']:
+    for prop in ['configBucket', 'softwareConfig', 'initializationActions', 'encryptionConfig']:
         add_optional_property(cluster['properties']['config'], properties, prop)
+    add_optional_property(cluster['properties'], properties, 'labels')
 
     outputs = [
         {
@@ -147,7 +145,7 @@ def generate_config(context):
         },
         {
             'name': 'configBucket',
-            'value': '$(ref.{}.config.configBucket)'.format(name)
+            'value': '$(ref.{}.config.configBucket)'.format(context.env['name'])
         }
     ]
 
