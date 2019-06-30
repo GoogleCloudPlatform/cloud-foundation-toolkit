@@ -13,7 +13,6 @@ resources:
   - name: myk8sregional
     type: gke.py
     properties:
-      clusterLocationType: Regional
       region: us-east1
       cluster:
         name: myk8sregional

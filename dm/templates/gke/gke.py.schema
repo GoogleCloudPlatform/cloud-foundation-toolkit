@@ -36,24 +36,6 @@ additionalProperties: false
 required:
   - cluster
 
-oneOf:
-  - allOf:
-      - properties:
-          clusterLocationType:
-            default: Regional
-            enum: ["Regional"]
-      - oneOf:
-          - required:
-              - location
-          - required:
-              - region
-  - allOf:
-      - properties:
-          clusterLocationType:
-            enum: ["Zonal"]
-      - required:
-          - zone
-
 definitions:
   locations:
     type: array
@@ -465,7 +447,7 @@ properties:
                   Issue a client certificate.
       initialClusterVersion:
         type: string
-        default: 1.9.7-gke.6
+        default: latest
         description: |
           The initial Kubernetes version for this cluster. Valid versions are those found in validMasterVersions
           returned by getServerConfig. The version can be upgraded over time; such upgrades are reflected
