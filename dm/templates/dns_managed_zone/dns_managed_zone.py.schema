@@ -15,42 +15,194 @@
 info:
   title: Cloud DNS Managed Zone
   author: Source Group Inc.
+  version: 1.0.0
   description: |
     Creates a managed zone in the Cloud DNS.
-    For more information on this resource
+
+    For more information on this resource:
     - https://cloud.google.com/dns/zones/
+
+    APIs endpoints used by this template:
+    - gcp-types/dns-v1:managedZones =>
+        https://cloud.google.com/dns/docs/reference/v1/managedZones
 
 imports:
   - path: dns_managed_zone.py
 
+required:
+  - dnsName
+  - name
+
 additionalProperties: false
 
-required:
-  - zoneName
-  - dnsName
-
 properties:
-  zoneName:
+  project:
     type: string
-    pattern: ^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$
     description: |
-      A user-assigned name for the managed zone.
-      This is required by the Cloud DNS.
-      Must be 1-63 characters long, must begin with a letter,
-      end with a letter or digit, and only contain lowercase letters, digits or dashes.
+      The project ID of for Managed Zone to be associated with.
+  description:
+    type: string
+    pattern: ^.{0,1023}
+    description: |
+      A description of the managed zone. A mutable string, max 1024 characters
+      long. Associated with the resource for users' convenience; does not affect
+      managed zone's function.
   dnsName:
     type: string
-    pattern: \.$
+    pattern: \.
     description: |
       The DNS name of the managed zone; for example, "example.com."
       Make sure that the value ends with a period "."
-  description:
+  dnssecConfig:
+    type: object
+    description: DNSSEC configuration.
+    additionalProperties: false
+    required:
+      - kind
+      - state
+      - defaultKeySpecs
+    proeprties:
+      defaultKeySpecs:
+        type: array
+        uniqueItems: true
+        description: |
+          Specifies parameters that will be used for generating initial DnsKeys
+          for this ManagedZone. Output only while state is not OFF.
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - kind
+            - algorithm
+            - keyType
+            - keyLength
+          properties:
+            algorithm:
+              oneOf:
+                - type: string
+                  pattern: ^ecdsap(256|384)sha(256|384)
+                - type: string
+                  pattern: ^rsasha(1|256|512)
+              description: |
+                String mnemonic specifying the DNSSEC algorithm of this key.
+                Acceptable values are:
+                  - "ecdsap256sha256"
+                  - "ecdsap384sha384"
+                  - "rsasha1"
+                  - "rsasha256"
+                  - "rsasha512"
+            keyLength:
+              type: integer
+              description: Length of the keys in bits.
+            keyType:
+              type: string
+              pattern: ^(key|zone)Signing
+              description: |
+                Specifies whether this is a key signing key (KSK) or a zone
+                signing key (ZSK). Key signing keys have the Secure Entry Point
+                flag set and, when active, will only be used to sign resource
+                record sets of type DNSKEY. Zone signing keys do not have the
+                Secure Entry Point flag set and will be used to sign all other
+                types of resource record sets.
+                Acceptable values are:
+                  - "keySigning"
+                  - "zoneSigning"
+            kind:
+              type: string
+              pattern: ^dns#managedZoneDnsSecConfig
+              default: "dns#managedZoneDnsSecConfig"
+              description: |
+                Identifies what kind of resource this is.
+                Value: the fixed string "dns#managedZoneDnsSecConfig".
+  nonExistence:
     type: string
-    pattern: ^.{0,1023}$
     description: |
-      A description of the managed zone. A mutable string, max 1024 characters 
-      long. Associated with the resource for users' convenience; does not affect 
-      managed zone's function.
+      Specifies the mechanism used to provide authenticated
+      denial-of-existence responses. Output only while state is not OFF.
+      Acceptable values are:
+        - "nsec"
+        - "nsec3"
+    pattern: ^nsec3?
+  state:
+    type: string
+    pattern: ^(on|off|transfer)
+    description: |
+      Specifies whether DNSSEC is enabled, and what mode it is in.
+      Acceptable values are:
+      - "off"
+      - "on"
+      - "transfer"
+  kind:
+    type: string
+    pattern: ^dns#managedZone
+    default: "dns#managedZone"
+    description: |
+      Identifies what kind of resource this is.
+      Value is the fixed string "dns#managedZone".
+  labels:
+    type: object
+    description: User labels.
+    propertyNames:
+      type: string
+  name:
+    type: string
+    pattern: ^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?
+    description: |
+      User assigned name for this resource. Must be unique within the project.
+      The name must be 1-63 characters long, must begin with a letter, end
+      with a letter or digit, and only contain lowercase letters, digits or dashes.
+  nameServerSet:
+    type: string
+    description: |
+      Optionally specifies the NameServerSet for this ManagedZone. A
+      NameServerSet is a set of DNS name servers that all host the same
+      ManagedZones. Most users will leave this field unset.
+  nameServers:
+    type: array
+    description: |
+      Delegate your managed_zone to these virtual name servers; defined by the
+      server (output only)
+  privateVisibilityConfig:
+    type: object
+    description: |
+      For privately visible zones, the set of Virtual Private Cloud resources
+      that the zone is visible from.
+    additionalProperties: false
+    properties:
+      kind:
+        type: string
+        pattern: ^dns#managedZonePrivateVisibilityConfig
+        description: |
+          Identifies what kind of resource this is.
+          Value: the fixed string "dns#managedZonePrivateVisibilityConfig"
+      networks:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - kind
+            - networkUrl
+          properties:
+            kind:
+              type: string
+              pattern: ^dns#managedZonePrivateVisibilityConfigNetwork
+              description: |
+                Identifies what kind of resource this is.
+                Value: the fixed string "dns#managedZonePrivateVisibilityConfigNetwork".
+            networkUrl:
+              type: string
+              pattern: ^https:\/\/www.googleapis.com\/compute\/v1\/projects\/[a-zA-Z0-9_-]+\/global\/networks\/[a-zA-Z0-9_-]+
+              description: |
+                The fully qualified URL of the VPC network to bind to. This should be formatted
+                like https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}
+  visibility:
+    type: string
+    pattern: ^(public|private)
+    description: |
+      The zone's visibility. Public zones are exposed to the Internet, while
+      private zones are visible only to Virtual Private Cloud resources.
+      Acceptable values are "private" and "public".
 
 outputs:
   properties:
@@ -67,9 +219,25 @@ outputs:
     - managedZoneName:
         type: string
         description: The managed zone's resource name.
-
+    - visibility:
+        type: string
+        description: |
+          The zone's visibility. Public zones are exposed to the Internet,
+          while private zones are visible only to Virtual Private Cloud
+          resources.
+    - privateVisibilityConfig:
+        type: object
+        description: |
+          For privately visible zones, the set of Virtual Private Cloud
+          resources that the zone is visible from.
+    - dnssecConfig:
+        type: object
+        description: DNSSEC configuration.
 documentation:
   - templates/dns_managed_zone/README.md
 
 examples:
   - templates/dns_managed_zone/examples/dns_managed_zone.yaml
+  - templates/dns_managed_zone/examples/dns_managed_zone_private.yaml
+  - templates/dns_managed_zone/examples/dns_managed_zone_private_visibility_config.yaml
+  - templates/dns_managed_zone/examples/dns_managed_zone_public.yaml
