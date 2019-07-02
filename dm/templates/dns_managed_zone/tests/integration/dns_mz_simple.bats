@@ -59,15 +59,15 @@ function teardown() {
 ########## TESTS ##########
 
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
-   gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
-       --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-   [[ "$status" -eq 0 ]]
+    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
+        --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
 }
 
 @test "Verify if a managed zone with name $CLOUDDNS_ZONE_NAME was created" {
-   run gcloud dns managed-zones list --format=flattened
-   [[ "$status" -eq 0 ]]
-   [[ "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
+    run gcloud dns managed-zones list --format=flattened
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
 }
 
 @test "Verify if a DNS named ${CLOUDDNS_DNS_NAME} was created" {
@@ -84,4 +84,3 @@ function teardown() {
     [[ "$status" -eq 0 ]]
     [[ ! "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
 }
-
