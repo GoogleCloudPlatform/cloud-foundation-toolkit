@@ -206,6 +206,12 @@ jobs:
       params:
         <<: *run-tests-params
 
+    - task: run-workload-metadata-config
+      image: integration-test-image
+      file: pull-request/test/ci/workload-metadata-config.yml
+      params:
+        <<: *run-tests-params
+
   on_success:
     put: notify-integration-test-success
     resource: pull-request
