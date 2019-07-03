@@ -1,5 +1,4 @@
-# Test of the DNS managed zone template.
-#
+# Test of the simplest DNS managed zone template.
 
 imports:
   - path: templates/dns_managed_zone/dns_managed_zone.py

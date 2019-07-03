@@ -60,12 +60,14 @@ See the `properties` section in the schema file(s):
 
 ## Examples
 - [Cloud DNS Managed Zone](examples/dns_managed_zone.yaml)
+- [Cloud DNS Managed Zone with legacy property](examples/dns_managed_zone_legacy.yaml)
 - [Managed Zone with `public visibility`](examples/dns_managed_zone_public.yaml)
 - [Managed Zone with `private visibility`](examples/dns_managed_zone_private.yaml)
 - [Managed Zone with `private visibility config`](examples/dns_managed_zone_private_visibility_config.yaml)
 
 ## Tests Cases
 - [Simple Managed Zone Test](tests/integration/dns_mz_simple.bats)
+- [Backward Compatibility Test](tests/integration/dns_mz_bkwrd_cmptb.bats)
 - [Managed Zone with `public visibility`](tests/integration/dns_mz_public.bats)
 - [Managed Zone with `private visibility`](tests/integration/dns_mz_private.bats)
 - [Managed Zone with `private visibility config`](tests/integration/dns_mz_prvt_vsblt_cfg.bats)

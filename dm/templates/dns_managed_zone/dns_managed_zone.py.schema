@@ -29,20 +29,33 @@ info:
 imports:
   - path: dns_managed_zone.py
 
-required:
-  - dnsName
-  - name
+# Note: Supported Backward Compatibility with the old property `zoneName`
+oneOf:
+  - required:
+    - dnsName
+    - zoneName
+  - required:
+    - dnsName
+    - name
 
 additionalProperties: false
 
 properties:
+  zoneName:
+    type: string
+    pattern: ^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?$
+    description: |
+      Old resource name to support backward compatablility.
+      Value is rescricted by API pattern for `resource.name`
+      The name must be 1-63 characters long, must begin with a letter, end
+      with a letter or digit, and only contain lowercase letters, digits or dashes.
   project:
     type: string
     description: |
       The project ID of for Managed Zone to be associated with.
   description:
     type: string
-    pattern: ^.{0,1023}
+    pattern: ^.{0,1023}$
     description: |
       A description of the managed zone. A mutable string, max 1024 characters
       long. Associated with the resource for users' convenience; does not affect
@@ -80,9 +93,9 @@ properties:
             algorithm:
               oneOf:
                 - type: string
-                  pattern: ^ecdsap(256|384)sha(256|384)
+                  pattern: ^ecdsap(256|384)sha(256|384)$
                 - type: string
-                  pattern: ^rsasha(1|256|512)
+                  pattern: ^rsasha(1|256|512)$
               description: |
                 String mnemonic specifying the DNSSEC algorithm of this key.
                 Acceptable values are:
@@ -96,7 +109,7 @@ properties:
               description: Length of the keys in bits.
             keyType:
               type: string
-              pattern: ^(key|zone)Signing
+              pattern: ^(key|zone)Signing$
               description: |
                 Specifies whether this is a key signing key (KSK) or a zone
                 signing key (ZSK). Key signing keys have the Secure Entry Point
@@ -109,7 +122,7 @@ properties:
                   - "zoneSigning"
             kind:
               type: string
-              pattern: ^dns#managedZoneDnsSecConfig
+              pattern: ^dns#managedZoneDnsSecConfig$
               default: "dns#managedZoneDnsSecConfig"
               description: |
                 Identifies what kind of resource this is.
@@ -122,10 +135,10 @@ properties:
       Acceptable values are:
         - "nsec"
         - "nsec3"
-    pattern: ^nsec3?
+    pattern: ^nsec3?$
   state:
     type: string
-    pattern: ^(on|off|transfer)
+    pattern: ^(on|off|transfer)$
     description: |
       Specifies whether DNSSEC is enabled, and what mode it is in.
       Acceptable values are:
@@ -134,7 +147,7 @@ properties:
       - "transfer"
   kind:
     type: string
-    pattern: ^dns#managedZone
+    pattern: ^dns#managedZone$
     default: "dns#managedZone"
     description: |
       Identifies what kind of resource this is.
@@ -146,7 +159,7 @@ properties:
       type: string
   name:
     type: string
-    pattern: ^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?
+    pattern: ^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?$
     description: |
       User assigned name for this resource. Must be unique within the project.
       The name must be 1-63 characters long, must begin with a letter, end
@@ -171,7 +184,7 @@ properties:
     properties:
       kind:
         type: string
-        pattern: ^dns#managedZonePrivateVisibilityConfig
+        pattern: ^dns#managedZonePrivateVisibilityConfig$
         description: |
           Identifies what kind of resource this is.
           Value: the fixed string "dns#managedZonePrivateVisibilityConfig"
@@ -186,19 +199,19 @@ properties:
           properties:
             kind:
               type: string
-              pattern: ^dns#managedZonePrivateVisibilityConfigNetwork
+              pattern: ^dns#managedZonePrivateVisibilityConfigNetwork$
               description: |
                 Identifies what kind of resource this is.
                 Value: the fixed string "dns#managedZonePrivateVisibilityConfigNetwork".
             networkUrl:
               type: string
-              pattern: ^https:\/\/www.googleapis.com\/compute\/v1\/projects\/[a-zA-Z0-9_-]+\/global\/networks\/[a-zA-Z0-9_-]+
+              pattern: ^https:\/\/www.googleapis.com\/compute\/v1\/projects\/[a-zA-Z0-9_-]+\/global\/networks\/[a-zA-Z0-9_-]+$
               description: |
                 The fully qualified URL of the VPC network to bind to. This should be formatted
                 like https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}
   visibility:
     type: string
-    pattern: ^(public|private)
+    pattern: ^(public|private)$
     description: |
       The zone's visibility. Public zones are exposed to the Internet, while
       private zones are visible only to Virtual Private Cloud resources.

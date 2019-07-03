@@ -22,8 +22,6 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     export CLOUDDNS_ZONE_NAME="test-managed-zone-${RAND}"
     export CLOUDDNS_DNS_NAME="${RAND}.com."
     export CLOUDDNS_DESCRIPTION="Managed DNS Zone for Testing"
-    export CLOUDDNS_VISIBILITY="private"
-    export CLOUDDNS_NETWORK_URL="https://www.googleapis.com/compute/v1/projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/networks/default"
 fi
 
 ########## HELPER FUNCTIONS ##########
@@ -77,20 +75,6 @@ function teardown() {
     run gcloud dns managed-zones list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${CLOUDDNS_DNS_NAME}" ]]
-}
-
-@test "Verify if visibility is ${CLOUDDNS_VISIBILITY}" {
-    run gcloud dns managed-zones describe ${CLOUDDNS_ZONE_NAME} \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ "$status" -eq 0 ]]
-    [[ "$output" =~ "visibility: ${CLOUDDNS_VISIBILITY}" ]]
-}
-
-@test "Verify if networkUrl is ${CLOUDDNS_NETWORK_URL}" {
-    run gcloud dns managed-zones describe ${CLOUDDNS_ZONE_NAME} \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ "$status" -eq 0 ]]
-    [[ "$output" =~ "networkUrl: ${CLOUDDNS_NETWORK_URL}" ]]
 }
 
 @test "Deleting deployment ${DEPLOYMENT_NAME}" {
