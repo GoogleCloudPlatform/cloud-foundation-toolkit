@@ -24,9 +24,9 @@ def generate_config(context):
     project_id = context.properties.get('projectId', context.env['project'])
 
     resources = []
-    for ii, role in  enumerate(context.properties['roles']):
-        for i, member in enumerate(role['members']):
-            suffix =  sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
+     for role in context.properties['roles']:
+         for member in role['members']:
+            suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
             if org_id:
