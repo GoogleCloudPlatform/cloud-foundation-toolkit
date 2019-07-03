@@ -21,29 +21,26 @@ def generate_config(context):
 
     folder_id = context.properties.get('folderId')
     org_id = context.properties.get('organizationId')
-    project_id = context.properties.get('projectId')
-    if not folder_id and not org_id:
-        project_id = context.env['project']
+    project_id = context.properties.get('projectId', context.env['project'])
 
     resources = []
-    for ii, role in  enumerate(context.properties['roles']):
-        for i, member in enumerate(role['members']):
-            suffix =  sha1('{}-{}-{}-{}'.format(role['role'], member, ii, i)).hexdigest()[:10]
+    for role in context.properties['roles']:
+        for member in role['members']:
+            suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
-            if project_id:
+            if org_id:
                 resources.append({
-                    'name': '{}-project'.format(policy_get_name),
+                    'name': '{}-organization'.format(policy_get_name),
                     # TODO - Virtual type documentation needed
-                    'type': 'gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding',
+                    'type': 'gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding',
                     'properties': {
-                        'resource': project_id,
+                        'resource': org_id,
                         'role': role['role'],
                         'member': member,
                     }
                 })
-
-            if folder_id:
+            elif folder_id:
                 resources.append({
                     'name': '{}-folder'.format(policy_get_name),
                     # TODO - Virtual type documentation needed
@@ -54,14 +51,13 @@ def generate_config(context):
                         'member': member,
                     }
                 })
-
-            if org_id:
+            else:
                 resources.append({
-                    'name': '{}-organization'.format(policy_get_name),
+                    'name': '{}-project'.format(policy_get_name),
                     # TODO - Virtual type documentation needed
-                    'type': 'gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding',
+                    'type': 'gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding',
                     'properties': {
-                        'resource': org_id,
+                        'resource': project_id,
                         'role': role['role'],
                         'member': member,
                     }
