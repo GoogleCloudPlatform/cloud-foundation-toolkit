@@ -1,5 +1,7 @@
-# Test of the DNS managed zone template.
-#
+# Test Case: Private Visibility
+# Use Case:
+#   You want to create a Private Managed Zone visible only for specific
+#   networks of your Virtual Private Cloud.
 
 imports:
   - path: templates/dns_managed_zone/dns_managed_zone.py
