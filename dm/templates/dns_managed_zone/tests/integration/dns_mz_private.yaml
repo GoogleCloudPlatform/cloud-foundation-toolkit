@@ -1,5 +1,7 @@
-# Test of the DNS managed zone template.
-#
+# Test Case: Private Visibility
+# Use Case:
+#   You want to create a Private Managed Zone, which is not exposed to Internet
+#   and visible only to Virtual Private Cloud resources.
 
 imports:
   - path: templates/dns_managed_zone/dns_managed_zone.py
@@ -13,7 +15,3 @@ resources:
       dnsName: ${CLOUDDNS_DNS_NAME}
       description: ${CLOUDDNS_DESCRIPTION}
       visibility: ${CLOUDDNS_VISIBILITY}
-      # nameServers: ${CLOUDDNS_NAME_SERVERS}
-      # nameServerSet: ${CLOUDDNS_NAME_SEVER_SET}
-      # privateVisibilityConfig: ${CLOUDDNS_PRIVATE_VISIBILITY_CONFIG}
-      # dnssecConfig: ${CLOUDDNS_DNS_SEC_CONFIG}

@@ -61,25 +61,27 @@ function teardown() {
 ########## TESTS ##########
 
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
-   gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
-       --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-   [[ "$status" -eq 0 ]]
+    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
+        --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
 }
 
 @test "Verify if a managed zone with name $CLOUDDNS_ZONE_NAME was created" {
-   run gcloud dns managed-zones list --format=flattened
-   [[ "$status" -eq 0 ]]
-   [[ "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
+    run gcloud dns managed-zones list --format=flattened \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
 }
 
 @test "Verify if a DNS named ${CLOUDDNS_DNS_NAME} was created" {
-    run gcloud dns managed-zones list
+    run gcloud dns managed-zones list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${CLOUDDNS_DNS_NAME}" ]]
 }
 
 @test "Verify if visibility is ${CLOUDDNS_VISIBILITY}" {
-    run gcloud dns managed-zones describe ${CLOUDDNS_ZONE_NAME}
+    run gcloud dns managed-zones describe ${CLOUDDNS_ZONE_NAME} \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "visibility: ${CLOUDDNS_VISIBILITY}" ]]
 }
@@ -87,7 +89,6 @@ function teardown() {
 @test "Deleting deployment ${DEPLOYMENT_NAME}" {
     gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
         -q --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-
     run gcloud dns managed-zones list
     [[ "$status" -eq 0 ]]
     [[ ! "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
