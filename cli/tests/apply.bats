@@ -22,42 +22,42 @@ function teardown() {
 
 ########## TESTS ##########
 
-@test "Creating deployments" {
-    ../bin/cft create ./create --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+@test "Creating deployments with apply command" {
+    ../bin/cft apply ./create --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 }
 
 
-@test "Verifying that resources were created in deployment" {
+@test "Verifying that resources were created by apply command in deployment" {
     run gcloud compute networks list --filter="name:cftcli-test-network" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$output" =~ "cftcli-test-network" ]]
 }
 
-@test "Verifying subnets were created" {
+@test "Verifying subnets were created by apply command" {
     run gcloud compute networks subnets list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$output" =~ "cftcli-test-subnetwork-1" ]]
     [[ "$output" =~ "cftcli-test-subnetwork-2" ]]
     [[ "$output" =~ "cftcli-test-subnetwork-3" ]]
 }
 
-@test "Verifying firewall rules were created" {
+@test "Verifying firewall rules were created by apply command" {
     run gcloud compute firewall-rules list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$output" =~ "allow-proxy-from-inside" ]]
     [[ "$output" =~ "443" ]]
     [[ "$output" =~ "allow-dns-from-inside" ]]
 }
 
-@test "Update deployments" {
-    ../bin/cft update ./update --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+@test "Update deployments with apply command" {
+    ../bin/cft apply ./update --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 }
 
-@test "Verifying one subnet was removed by update operation" {
+@test "Verifying one subnet was removed by update operation by apply command" {
     run gcloud compute networks subnets list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$output" =~ "cftcli-test-subnetwork-1" ]]
     [[ "$output" =~ "cftcli-test-subnetwork-2" ]]
     [[ ! "$output" =~ "cftcli-test-subnetwork-3" ]]
 }
 
-@test "Verifying one firewall rule was removed one updated" {
+@test "Verifying one firewall rule was removed one updated by apply command" {
     run gcloud compute firewall-rules list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$output" =~ "allow-proxy-from-inside" ]]
     [[ ! "$output" =~ "443" ]]
