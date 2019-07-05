@@ -26,7 +26,7 @@ resources:
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
-    tag: 1.0.1
+    tag: 1.2.0
     username: _json_key
     password: ((sa.google))
 
@@ -103,11 +103,10 @@ jobs:
       inputs:
       - name: pull-request
         path: terraform-google-cloud-nat
-      - name: integration-test-image
       run:
-        path: make
+        path: /bin/bash
         args:
-        - test_integration
+        - ./test/run_ci.sh
         dir: terraform-google-cloud-nat
       params:
         PROJECT_ID: ((cloud-nat.phoogle_project_id))
