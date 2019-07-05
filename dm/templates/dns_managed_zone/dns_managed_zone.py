@@ -11,13 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" This template creates a managed zone resource in the Cloud DNS. """
+"""This template creates a managed zone resource in the Cloud DNS."""
 
 
 def generate_config(context):
-    """ Entry point for the deployment resources. """
-
-    managed_zone_name = context.properties.get('name', context.env['name'])
+    """Entry point for the deployment resources."""
+    # Backward Compatibility with the old property `zoneName`
+    try:
+        managed_zone_name = context.properties['zoneName']
+    except KeyError:
+        managed_zone_name = context.properties.get('name', context.env['name'])
     dnsname = context.properties['dnsName']
     managed_zone_description = context.properties['description']
     name_servers = '$(ref.' + context.env['name'] + '.nameServers)'
