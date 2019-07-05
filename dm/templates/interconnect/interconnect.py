@@ -17,14 +17,20 @@
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
+
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
+
     resources = []
     intercon = {
         'name': context.env['name'],
-        'type': 'compute.v1.interconnects',
+        # https://cloud.google.com/compute/docs/reference/rest/v1/interconnects
+        'type': 'gcp-types/compute-v1:interconnects',
         'properties':
             {
-                'name':
-                    context.properties.get('name', context.env['name']),
+                'project': project_id,
+                'name': name,
                 'customerName':
                     context.properties['customerName'],
                 'interconnectType':
@@ -56,7 +62,7 @@ def generate_config(context):
             [
                 {
                     'name': 'name',
-                    'value': context.env['name']
+                    'value': name
                 },
                 {
                     'name': 'selfLink',
