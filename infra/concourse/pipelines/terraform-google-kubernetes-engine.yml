@@ -212,6 +212,18 @@ jobs:
       params:
         <<: *run-tests-params
 
+    - task: run-upstream-nameservers
+      image: integration-test-image
+      file: pull-request/test/ci/upstream-nameservers.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-stub-domains-upstream-nameservers
+      image: integration-test-image
+      file: pull-request/test/ci/stub-domains-upstream-nameservers.yml
+      params:
+        <<: *run-tests-params
+
   on_success:
     put: notify-integration-test-success
     resource: pull-request
