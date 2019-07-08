@@ -15,32 +15,57 @@
 info:
   title: Waiter
   author: Sourced Group Inc.
-  description: Supports creation of a RuntimeConfig Waiter resource.
+  version: 1.0.0
+  description: |
+    Supports creation of a RuntimeConfig Waiter resource.
+
     For more information on this resource, see
-    https://cloud.google.com/deployment-manager/runtime-configurator/creating-a-waiter.
+    https://cloud.google.com/deployment-manager/runtime-configurator/creating-a-waiter
+
+    APIs endpoints used by this template:
+    - gcp-types/runtimeconfig-v1beta1:projects.configs.waiters =>
+        https://cloud.google.com/deployment-manager/runtime-configurator/reference/rest/v1beta1/projects.configs.waiters
 
 additionalProperties: false
 
 required:
   - parent
-  - waiter
   - timeout
   - success
 
+oneOf:
+  - required:
+      - waiter
+  - required:
+      - name
+
 properties:
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   parent:
     type: string
     description: |
       The path to the configuration that will own the waiter.
       The configuration must exist beforehand; the path must be in the
       projects/[PROJECT_ID]/configs/[CONFIG_NAME] format.
-  waiter:
+  name:
     type: string
     description: |
       The name of the waiter resource, in the
       projects/[PROJECT_ID]/configs/[CONFIG_NAME]/waiters/[WAITER_NAME] format.
       Must match the RFC 1035 segment specification. Maximum length is 64
       bytes.
+  waiter:
+    type: string
+    description: |
+      DEPRECATED, please use "name"
+  config:
+    type: string
+    description: |
+      Config resource name (for dependency)
   timeout:
     type: string
     description: |
@@ -50,6 +75,7 @@ properties:
       the waiter fails and sets the error code to DEADLINE_EXCEEDED.
   failure:
     type: object
+    additionalProperties: false
     description: |
       The failure condition for the waiter. If this condition is met, done is
       set to True, and the error code is set to ABORTED. The failure
@@ -59,6 +85,7 @@ properties:
     properties:
       cardinality:
         type: object
+        additionalProperties: false
         description: The cardinality of the EndCondition.
         properties:
           path:
@@ -73,6 +100,7 @@ properties:
               this condition. If not specified, defaults to 1.
   success:
     type: object
+    additionalProperties: false
     description: |
       The success condition. If this condition is met, done is set to True,
       and the error value remains unset. The failure condition takes
@@ -81,6 +109,7 @@ properties:
     properties:
       cardinality:
         type: object
+        additionalProperties: false
         description: The cardinality of the EndCondition.
         properties:
           path:
