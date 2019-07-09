@@ -25,7 +25,7 @@ def generate_config(context):
     parent = 'projects/{}/locations/{}'.format(project_id, location)
 
     queue = {
-        'name': name,
+        'name': context.env['name'],
         'type': '{}/cloudtasks:projects.locations.queues'.format(project_id),
         'properties': {
             'name': '{}/queues/{}'.format(parent, name),
@@ -45,11 +45,11 @@ def generate_config(context):
     outputs = [
         {
             'name': 'name',
-            'value': '$(ref.{}.name)'.format(name)
+            'value': '$(ref.{}.name)'.format(context.env['name'])
         },
         {
             'name': 'state',
-            'value': '$(ref.{}.state)'.format(name)
+            'value': '$(ref.{}.state)'.format(context.env['name'])
         }
     ]
 
