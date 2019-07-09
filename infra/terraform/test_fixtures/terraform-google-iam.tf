@@ -12,8 +12,8 @@ locals {
 
 resource "google_project" "iam" {
   provider = "google.phoogle"
-  name = "ci-project-factory"
-  project_id = "ci-project-factory"
+  name = "ci-iam"
+  project_id = "ci-iam"
   folder_id = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account = "${module.variables.phoogle_billing_account}"
 }
@@ -38,8 +38,8 @@ resource "google_project_services" "iam" {
 resource "google_service_account" "iam" {
   provider = "google.phoogle"
   project      = "${google_project.iam.id}"
-  account_id   = "ci-project-factory"
-  display_name = "ci-project-factory"
+  account_id   = "ci-iam"
+  display_name = "ci-iam"
 }
 
 resource "google_folder_iam_member" "iam" {
@@ -62,7 +62,7 @@ resource "random_id" "iam_github_webhook_token" {
 data "template_file" "iam_github_webhook_url" {
   template = "https://concourse.infra.cft.tips/api/v1/teams/cft/pipelines/$${pipeline}/resources/pull-request/check/webhook?webhook_token=$${webhook_token}"
   vars {
-    pipeline = "terraform-google-project-factory"
+    pipeline = "terraform-google-iam"
     webhook_token = "${random_id.iam_github_webhook_token.hex}"
   }
 }
