@@ -19,10 +19,12 @@ def generate_config(context):
 
     resources = []
     properties = context.properties
-    peer_name = properties['name'] or context.env['name']
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
     peer_create = {
-        'name': peer_name + '-createPeer',
+        'name': context.env['name'] + '-create-peer',
+        # https://cloud.google.com/compute/docs/reference/rest/v1/networks/addPeering
         'action': 'gcp-types/compute-v1:compute.networks.addPeering',
         'metadata': {
             'runtimePolicy': ['CREATE',
@@ -30,14 +32,17 @@ def generate_config(context):
         },
         'properties':
             {
-                'name': peer_name,
+                'name': name,
+                'project': project_id,
                 'network': properties['network'],
                 'peerNetwork': properties['peerNetwork'],
                 'autoCreateRoutes': properties.get('autoCreateRoutes')
             }
     }
+
     peer_delete = {
-        'name': peer_name + '-deletePeer',
+        'name': context.env['name'] + '-delete-peer',
+        # https://cloud.google.com/compute/docs/reference/rest/v1/networks/removePeering
         'action': 'gcp-types/compute-v1:compute.networks.removePeering',
         'metadata': {
             'runtimePolicy': ['DELETE',
@@ -45,7 +50,8 @@ def generate_config(context):
         },
         'properties':
             {
-                'name': peer_name,
+                'name': name,
+                'project': project_id,
                 'network': properties['network'],
                 'peerNetwork': properties['peerNetwork']
             }
