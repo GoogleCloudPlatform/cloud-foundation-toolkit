@@ -24,26 +24,26 @@ func unmarshal(data string) (map[string]interface{}, error) {
 	return my, nil
 }
 
-// Function AbsolutePath used to create absolute path for config "import" entries.
+// Function ReparentPath used to create absolute path for config "import" entries.
 // Absolute path composed by ReparentPath function from config file path base folder concatenated with
 // import statement value. This transformation needed to make deployment YAML config file location independent,
 // after import "absolutisation" deployment config might be copied to any location (as current CFT cli will copy its
 // copy to tmp folder.
 // Examples:
-//    /base/folder/config.YAML and ../script.py will concatenate to /base/script.py
-//    /base/folder/config.YAML and /base/folder/script.py will concatenate to /base/folder/script.py as long path already absolute
-func AbsolutePath(baseDir string, file string) string {
+//    /base/folder/config.yaml and ../script.py will concatenate to /base/script.py
+//    /base/folder/config.yaml and /base/folder/script.py will concatenate to /base/folder/script.py as long path already absolute
+func ReparentPath(baseDir string, file string) string {
 	// check if import statement path already absolute
 	if file[0] == os.PathSeparator {
 		return file
 	}
 	baseDir, _ = filepath.Abs(baseDir)
+	baseDir = filepath.Dir(baseDir)
 	relative := filepath.Clean(filepath.Join(baseDir, file))
 	result, err := filepath.Abs(relative)
 	if err != nil {
 		log.Fatalf("error creating absolute path, for file: %s, error: %v", relative, err)
 	}
-	log.Printf("base dir: %s, file: %s, result: %s", baseDir, file, result)
 	return result
 }
 

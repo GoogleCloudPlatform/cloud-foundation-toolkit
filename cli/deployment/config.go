@@ -152,7 +152,7 @@ func (c Config) findAllDependencies(configs map[string]Config) []Config {
 func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]string) {
 	typeMap = map[string]string{}
 	for i, imp := range c.Imports {
-		newPath := AbsolutePath(c.dir, imp.Path)
+		newPath := ReparentPath(c.dir, imp.Path)
 		if newPath != c.Imports[i].Path {
 			typeMap[c.Imports[i].Path] = newPath
 		}

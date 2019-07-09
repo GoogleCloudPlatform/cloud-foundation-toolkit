@@ -27,7 +27,7 @@ var pathtests = []struct {
 	{"/base/folder/config.yaml", "script.py", "/base/folder/script.py"},
 	{"/base/folder/config.yaml", "./script.py", "/base/folder/script.py"},
 	{"/base/folder/config.yaml", "../script.py", "/base/script.py"},
-	{"/base/folder",             "/other/script.py", "/other/script.py"},
+	{"/base/folder", "/other/script.py", "/other/script.py"},
 	{"/base/folder/config.yaml", "templates/script.py", "/base/folder/templates/script.py"},
 	{"/base/folder/config.yaml", "../templates/script.py", "/base/templates/script.py"},
 }
@@ -35,7 +35,7 @@ var pathtests = []struct {
 func TestAbsolutePath(t *testing.T) {
 	for _, tt := range pathtests {
 		t.Run(tt.parent+"  "+tt.child, func(t *testing.T) {
-			actual := AbsolutePath(tt.parent, tt.child)
+			actual := ReparentPath(tt.parent, tt.child)
 			if actual != tt.out {
 				t.Errorf("got: %s, want: %s", actual, tt.out)
 			}
@@ -100,7 +100,7 @@ func TestGetUserInput(t *testing.T) {
 
 // GetTestData returns file content of PROJECT_ROOT/testdata sub folder or file.
 // Function suppose to call from test method, might not work otherwise
-// example GetTestData("myfolder", "file.yalm") will return content of testdata/myfolder/file.YAML
+// example GetTestData("myfolder", "file.yalm") will return content of testdata/myfolder/file.yaml
 func GetTestData(folder string, name string, t *testing.T) string {
 	path := filepath.Join("../testdata", folder, name)
 	buf, err := ioutil.ReadFile(path)
