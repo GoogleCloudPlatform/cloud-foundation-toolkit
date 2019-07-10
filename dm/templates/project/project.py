@@ -179,7 +179,8 @@ def create_project_iam(context, dependencies, role_member_list):
             'type': 'cft-iam_project_member.py',
             'properties': {
                 'projectId': '$(ref.{}-project.projectId)'.format(context.env['name']),
-                'roles': role_member_list
+                'roles': role_member_list,
+                'dependsOn': dependencies,
             },
             'metadata':
                 {

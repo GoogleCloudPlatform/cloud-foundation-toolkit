@@ -19,12 +19,13 @@ from hashlib import sha1
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    folder_id = context.properties.get('folderId')
-    org_id = context.properties.get('organizationId')
-    project_id = context.properties.get('projectId', context.env['project'])
+    properties = context.properties
+    folder_id = properties.get('folderId')
+    org_id = properties.get('organizationId')
+    project_id = properties.get('projectId', context.env['project'])
 
     resources = []
-    for role in context.properties['roles']:
+    for role in properties['roles']:
         for member in role['members']:
             suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
@@ -62,5 +63,10 @@ def generate_config(context):
                         'member': member,
                     }
                 })
+
+
+    if 'dependsOn' in properties:
+        for resource in resources:
+            resource['metadata'] = {'dependsOn': properties['dependsOn']}
 
     return {"resources": resources}
