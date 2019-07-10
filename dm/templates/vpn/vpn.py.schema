@@ -23,8 +23,8 @@ required:
   - network
   - region
   - peerAddress
-  - asn
   - sharedSecret
+  # asn and router is required when using dynamic routing
 
 properties:
   network:
@@ -48,6 +48,33 @@ properties:
     description: |
       The value is used to set the secure session between the Cloud VPN
       gateway and the peer VPN gateway.
+  router:
+    type: string
+    description: |
+      Name of the router resource to be used for dynamic routing.
+  localTrafficSelector:
+    type: array
+    description: |
+      Local traffic selector to use when establishing the VPN tunnel with the
+      peer VPN gateway. 
+    default: ["0.0.0.0/0"]
+    items:
+      type: string
+      description: "CIDR formatted string, for example: 192.168.0.0/16."
+  remoteTrafficSelector:
+    type: array
+    description: |
+      Remote traffic selectors to use when establishing the VPN tunnel with the
+      peer VPN gateway.
+    default: ["0.0.0.0/0"]
+    items:
+      type: string
+      description: "CIDR formatted string, for example: 192.168.0.0/16."
+  ipAddress:
+    type: string
+    description: |
+      Static IP address used by forwarding rules. When not specified, a new static
+      IP address will be created.
 
 outputs:
   properties:
