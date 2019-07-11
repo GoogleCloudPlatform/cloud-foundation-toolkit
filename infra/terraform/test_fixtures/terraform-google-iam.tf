@@ -6,6 +6,13 @@ locals {
     "roles/storage.admin",
     "roles/pubsub.admin",
     "roles/cloudkms.admin",
+    "roles/compute.admin",
+    "roles/compute.networkAdmin",
+    "roles/resourcemanager.folderAdmin",
+    "roles/resourcemanager.folderIamAdmin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/owner",
+    "roles/resourcemanager.projectIamAdmin",
   ]
 }
 
