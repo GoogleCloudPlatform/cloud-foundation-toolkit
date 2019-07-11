@@ -38,6 +38,9 @@ resource "google_project_services" "iam" {
     "iamcredentials.googleapis.com",
     "oslogin.googleapis.com",
     "serviceusage.googleapis.com",
+    "cloudkms.googleapis.com",
+    "pubsub.googleapis.com",
+    "storage-api.googleapis.com",
   ]
 }
 
