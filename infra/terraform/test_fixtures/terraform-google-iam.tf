@@ -110,6 +110,7 @@ resource "kubernetes_secret" "concourse_cft_iam" {
   data {
     github_webhook_token = "${random_id.iam_github_webhook_token.hex}"
     phoogle_project_id = "${google_project.iam.id}"
+    phoogle_folder_id = "${google_folder.iam.name}"
     phoogle_sa = "${base64decode(google_service_account_key.iam.private_key)}"
   }
 }

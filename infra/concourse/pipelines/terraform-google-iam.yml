@@ -109,6 +109,7 @@ jobs:
               - test_integration
             dir: terraform-google-iam
           params:
+            FOLDER_ID: ((iam.phoogle_folder_id))
             PROJECT_ID: ((iam.phoogle_project_id))
             BILLING_ACCOUNT_ID: ((phoogle.billing_account_id))
             ORG_ID: ((phoogle.org_id))
