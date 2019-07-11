@@ -14,12 +14,19 @@
 
 info:
   title: VPC Network Peering
+  version: 1.0.0
   author: Sourced Group Inc.
   description: |
     Creates peering between VPC networks.
 
-    For more information on this resource, see
-    https://cloud.google.com/compute/docs/reference/rest/beta/networks/addPeering.
+    For more information on this resource:
+    https://cloud.google.com/compute/docs/reference/rest/beta/networks/addPeering
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:compute.networks.addPeering =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/networks/addPeering
+    - gcp-types/compute-v1:compute.networks.removePeering =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/networks/removePeering
 
 imports:
   - path: network_peering.py
@@ -34,7 +41,14 @@ required:
 properties:
   name:
     type: string
-    description: The peering name. Must conform to RFC1035.
+    description: |
+      The peering name. Must conform to RFC1035.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   network:
     type: string
     description: |
