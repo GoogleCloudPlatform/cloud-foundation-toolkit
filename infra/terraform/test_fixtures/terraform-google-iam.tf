@@ -3,7 +3,6 @@ locals {
   // integration tests.
   iam_required_roles = [
     "roles/resourcemanager.organizationAdmin",
-    "roles/compute.xpnAdmin",
     "roles/storage.admin",
     "roles/pubsub.admin",
     "roles/cloudkms.admin",
