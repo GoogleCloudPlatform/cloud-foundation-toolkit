@@ -17,21 +17,28 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    name = context.properties.get('variable', context.env['name'])
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
     config_name = context.properties.get('config')
-    required_properties = ['parent', 'variable']
+
+    props = {
+        'variable': properties.get('name', properties.get('variable')),
+        'parent': properties['parent'],
+        # TODO: uncomment after gcp type is fixed
+        # 'project': project_id,
+    }
+
     optional_properties = ['text', 'value']
-    # Load the required properties, then the optional ones if specified.
-    properties = {p: context.properties[p] for p in required_properties}
-    properties.update({
-        p: context.properties[p]
-        for p in optional_properties if p in context.properties
+    props.update({
+        p: properties[p]
+        for p in optional_properties if p in properties
     })
 
     resources = [{
-        'name': name,
-        'type': 'runtimeconfig.v1beta1.variable',
-        'properties': properties,
+        'name': context.env['name'],
+        # https://cloud.google.com/deployment-manager/runtime-configurator/reference/rest/v1beta1/projects.configs.variables
+        'type': 'gcp-types/runtimeconfig-v1beta1:projects.configs.variables',
+        'properties': props,
         'metadata': {
             'dependsOn': [config_name]
         }
@@ -39,7 +46,7 @@ def generate_config(context):
 
     outputs = [{
         'name': 'updateTime',
-        'value': '$(ref.{}.updateTime)'.format(name)
+        'value': '$(ref.{}.updateTime)'.format(context.env['name'])
     }]
 
     return {'resources': resources, 'outputs': outputs}
