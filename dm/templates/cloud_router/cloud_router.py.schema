@@ -32,7 +32,7 @@ imports:
 additionalProperties: false
 
 required:
-  - network
+  # one of networkURL or networkName is required.
   - region
 
 oneOf:
@@ -62,7 +62,10 @@ properties:
   region:
     type: string
     description: The URI of the region where the Cloud Router resides.
-  network:
+  networkURL:
+    type: string
+    description: The URL (or URI) of the network to which the Cloud Router belongs.
+  networkName:
     type: string
     description: The name of the network to which the Cloud Router belongs (without project prefix).
   bgp:

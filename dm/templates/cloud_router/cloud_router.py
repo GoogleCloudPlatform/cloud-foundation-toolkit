@@ -45,10 +45,9 @@ def generate_config(context):
                     properties['region'],
                 'bgp': bgp,
                 'network':
-                    generate_network_url(
+                    properties.get('networkURL', generate_network_uri(
                         project_id,
-                        properties['network']
-                    ),
+                        properties.get('networkName', ''))),
             }
     }
 
@@ -84,8 +83,8 @@ def generate_config(context):
     }
 
 
-def generate_network_url(project_id, network):
-    """Format the resource name as a resource URI."""
+def generate_network_uri(project_id, network):
+    """Format the network name as a network URI."""
 
     return 'projects/{}/global/networks/{}'.format(
         project_id,
