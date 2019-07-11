@@ -14,6 +14,8 @@ locals {
   iam_required_folder_roles = [
     "roles/resourcemanager.folderAdmin",
     "roles/resourcemanager.folderIamAdmin",
+    // The integration tests creates projects inside of the parent folder.
+    "roles/resourcemanager.projectCreator",
   ]
   # NOTE: Org level roles are presently unused to verify integration tests
   # actually require oraganization admin, and if so evaluate if these tests
@@ -35,6 +37,11 @@ locals {
     "cloudkms.googleapis.com",
     "pubsub.googleapis.com",
     "storage-api.googleapis.com",
+  ]
+
+  iam_billing_account_roles = [
+    # Required to associate billing accounts to new projects
+    "roles/billing.user",
   ]
 }
 
@@ -100,6 +107,15 @@ data "template_file" "iam_github_webhook_url" {
     pipeline = "terraform-google-iam"
     webhook_token = "${random_id.iam_github_webhook_token.hex}"
   }
+}
+
+resource "google_billing_account_iam_member" "iam" {
+  provider = "google.phoogle"
+  count    = "${length(local.iam_billing_account_roles)}"
+
+  billing_account_id = "${module.variables.phoogle_billing_account}"
+  role               = "${element(local.iam_billing_account_roles, count.index)}"
+  member             = "serviceAccount:${google_service_account.iam.email}"
 }
 
 resource "kubernetes_secret" "concourse_cft_iam" {
