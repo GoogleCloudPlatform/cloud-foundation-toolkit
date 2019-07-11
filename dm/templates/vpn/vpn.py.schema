@@ -39,11 +39,12 @@ info:
 additionalProperties: false
 
 required:
-  - network
+  # One of "networkURL" and "networkName" must be specified.
   - region
   - peerAddress
-  - asn
   - sharedSecret
+  # asn and routerName are required when using dynamic routing
+  # Do not specify "router" when using static routing.
 
 properties:
   name:
@@ -56,13 +57,22 @@ properties:
     description: |
       The project ID of the project containing resources. The
       Google apps domain is prefixed if applicable.
-  router:
+  routerURL:
+    type: string
+    description: URL (or URI) of the Router resource. Used by vpnTunnels.
+  routerName:
     type: string
     description: |
       Name of the Router resource.
-  network:
+  networkURL:
     type: string
-    description: The URI of the network to which the VPN belongs.
+    description: |
+      The URL (or URI) of the network to which the VPN belongs.
+  networkName:
+    type: string
+    description: |
+      The name of the network to which the VPN belongs. Only use "networkName"
+      when it is impossible to get "networkURL".
   region:
     type: string
     description: The URI of the region where the VPN resides.
@@ -81,6 +91,27 @@ properties:
     description: |
       The value is used to set the secure session between the Cloud VPN
       gateway and the peer VPN gateway.
+  localTrafficSelector:
+    type: array
+    description: |
+      Used when establishing the VPN tunnel with the peer VPN gateway.
+    default: ["0.0.0.0/0"]
+    items:
+      type: string
+      description: "CIDR formatted string, for example: 192.168.0.0/16."
+  remoteTrafficSelector:
+    type: array
+    description: |
+      Used when establishing the VPN tunnel with the peer VPN gateway.
+    default: ["0.0.0.0/0"]
+    items:
+      type: string
+      description: "CIDR formatted string, for example: 192.168.0.0/16."
+  ipAddress:
+    type: string
+    description: |
+      Static IP address used by forwarding rules. When not specified, a new static
+      IP address will be created.
 
 outputs:
   properties:
