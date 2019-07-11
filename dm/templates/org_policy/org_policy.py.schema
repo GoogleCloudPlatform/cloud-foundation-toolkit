@@ -15,16 +15,27 @@
 info:
   title: Organization Policy
   author: Sourced Group Inc.
-  description: Creates organizational policies.
+  version: 1.0.0
+  description: |
+    Creates organizational policies.
+
+    For more information on this resource:
+    https://cloud.google.com/resource-manager/reference/rest/v1/Policy
+
+    APIs endpoints used by this template:
+      - gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.setOrgPolicy =>
+          https://cloud.google.com/resource-manager/reference/rest/v1/projects/setOrgPolicy
+      - gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.clearOrgPolicy =>
+          https://cloud.google.com/resource-manager/reference/rest/v1/projects/clearOrgPolicy
 
 imports:
   - path: org_policy.py
 
-additionalProperties: false
-
 required:
   - projectId
   - policies
+
+additionalProperties: false
 
 properties:
   projectId:
@@ -42,6 +53,74 @@ properties:
         - constraint: constraints/compute.disableNestedVirtualization
           booleanPolicy:
             enforced: true
+    uniqItems: true
+    items:
+      version:
+        type: integer
+        description: Version of the Policy. Default version is 0.
+        minimum: 1
+      constraint:
+        type: string
+        description: |
+          The name of the Constraint the Policy is configuring.
+          For example, `constraints/serviceuser.services`.
+          Immutable after creation.
+      listPolicy:
+        type: object
+        description: List of values either allowed or disallowed.
+        additionalProperties: false
+        properties:
+          allowedValues:
+            type: array
+            description: |
+              List of values allowed at this resource. Can only be set if
+              `allValues` is set to `ALL_VALUES_UNSPECIFIED`.
+            uniqItems: true
+            items:
+              type: string
+          deniedValues:
+            type: array
+            description: |
+              List of values allowed at this resource. Can only be set if
+              `allValues` is set to `ALL_VALUES_UNSPECIFIED`.
+            uniqItems: true
+            items:
+              type: string
+          allValues:
+            type: string
+            description: |
+              The policy allValues state.
+              https://cloud.google.com/resource-manager/reference/rest/v1/Policy#AllValues
+            pattern: ^(ALL_VALUES_UNSPECIFIED|ALLOW|DENY)$
+          suggestedValue:
+            type: string
+            description: |
+              Optional. The Google Cloud Console will try to default to a
+              configuration that matches the value specified in this Policy. If
+              suggestedValue is not set, it will inherit the value specified
+              higher in the hierarchy, unless inheritFromParent is false.
+          inheritFromParent:
+            type: boolean
+            description: |
+              Determines the inheritance behavior for this Policy.
+              For more details please look for `inheritFromParent` in the doc
+              https://cloud.google.com/resource-manager/reference/rest/v1/Policy
+      booleanPolicy:
+        type: object
+        description: |
+          For boolean Constraints, whether to enforce the Constraint or not.
+        additionalProperties: false
+        properties:
+          enforced:
+          type: boolean
+          description: |
+            If true, then the Policy is enforced. If false, then any
+            configuration is acceptable.
+      restoreDefault:
+        type: object
+        description: |
+          Restores the default behavior of the constraint.
+          Independent of Constraint type.
 
 documentation:
   - templates/org_policy/README.md
