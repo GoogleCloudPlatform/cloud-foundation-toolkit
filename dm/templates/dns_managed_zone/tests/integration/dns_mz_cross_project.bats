@@ -24,6 +24,11 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     export CLOUDDNS_DESCRIPTION="Managed DNS Zone for Testing"
 fi
 
+if [ -z "${CLOUDDNS_CROSS_PROJECT_ID}" ]; then
+    echo "CLOUDDNS_CROSS_PROJECT_ID is not set, nothing to test." >&2
+    exit 1
+fi
+
 ########## HELPER FUNCTIONS ##########
 
 function create_config() {
