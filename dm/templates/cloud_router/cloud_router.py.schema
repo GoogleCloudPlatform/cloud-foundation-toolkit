@@ -32,8 +32,13 @@ imports:
 additionalProperties: false
 
 required:
-  # one of networkURL or networkName is required.
   - region
+
+oneOf:
+  - required:
+      - networkURL
+  - required:
+      - networkName
 
 oneOf:
   - required:
