@@ -14,6 +14,7 @@
 """ This template creates a Google Kubernetes Engine cluster. """
 
 from packaging import version
+import re
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
@@ -116,15 +117,17 @@ def generate_config(context):
         'servicesIpv4Cidr'
     ]
 
-    if (
-        # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
-        propc.get('enableDefaultAuthOutput', False) and (
-            version.parse(propc.get('initialClusterVersion').split('-')[0]) < version.parse("1.12") or
-            propc.get('masterAuth', {}).get('clientCertificateConfig', False)
-        )
-    ):
-        output_props.append('clientCertificate')
-        output_props.append('clientKey')
+    initial_cluster_version = propc.get('initialClusterVersion')
+    if initial_cluster_version.lower() != 'latest':
+        if (
+            # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
+            propc.get('enableDefaultAuthOutput', False) and (
+                version.parse(initial_cluster_version.split('-')[0]) < version.parse("1.12") or
+                propc.get('masterAuth', {}).get('clientCertificateConfig', False)
+            )
+        ):
+            output_props.append('clientCertificate')
+            output_props.append('clientKey')
 
     for outprop in output_props:
         output_obj = {}
