@@ -4,6 +4,10 @@ locals {
     "roles/compute.networkAdmin",
     "roles/iam.serviceAccountUser",
   ]
+  vm_required_api_services = [
+    "compute.googleapis.com",
+    "iam.googleapis.com",
+  ]
 }
 
 resource "google_project" "vm" {
@@ -15,15 +19,11 @@ resource "google_project" "vm" {
   billing_account = "${module.variables.phoogle_billing_account}"
 }
 
-resource "google_project_services" "vm" {
+resource "google_project_service" "vm" {
   provider = "google.phoogle"
-
-  project = "${google_project.vm.id}"
-
-  services = [
-    "compute.googleapis.com",
-    "iam.googleapis.com",
-  ]
+  count    = "${length(local.vm_required_api_services)}"
+  service  = "${element(local.vm_required_api_services, count.index)}"
+  project  = "${google_project.vm.id}"
 }
 
 resource "google_service_account" "vm" {
@@ -39,7 +39,7 @@ resource "google_project_iam_member" "vm" {
 
   count = "${length(local.vm_required_roles)}"
 
-  project = "${google_project_services.vm.project}"
+  project = "${google_project.vm.project_id}"
   role    = "${element(local.vm_required_roles, count.index)}"
   member  = "serviceAccount:${google_service_account.vm.email}"
 }

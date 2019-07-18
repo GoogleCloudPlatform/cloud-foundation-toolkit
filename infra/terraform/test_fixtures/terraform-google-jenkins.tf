@@ -4,6 +4,10 @@ locals {
     "roles/compute.networkAdmin",
     "roles/iam.serviceAccountUser",
   ]
+  jenkins_required_api_services = [
+    "compute.googleapis.com",
+    "storage-api.googleapis.com",
+  ]
 }
 
 resource "google_project" "jenkins" {
@@ -15,15 +19,11 @@ resource "google_project" "jenkins" {
   billing_account = "${module.variables.phoogle_billing_account}"
 }
 
-resource "google_project_services" "jenkins" {
+resource "google_project_service" "jenkins" {
   provider = "google.phoogle"
-
-  project = "${google_project.jenkins.id}"
-
-  services = [
-    "compute.googleapis.com",
-    "storage-api.googleapis.com",
-  ]
+  count    = "${length(local.jenkins_required_api_services)}"
+  service  = "${element(local.jenkins_required_api_services, count.index)}"
+  project  = "${google_project.jenkins.id}"
 }
 
 resource "google_service_account" "jenkins" {
@@ -39,7 +39,7 @@ resource "google_project_iam_member" "jenkins" {
 
   count = "${length(local.jenkins_required_roles)}"
 
-  project = "${google_project_services.jenkins.project}"
+  project = "${google_project.jenkins.project_id}"
   role    = "${element(local.jenkins_required_roles, count.index)}"
   member  = "serviceAccount:${google_service_account.jenkins.email}"
 }
