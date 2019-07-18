@@ -47,7 +47,7 @@ def generate_config(context):
                 'network':
                     properties.get('networkURL', generate_network_uri(
                         project_id,
-                        properties.get('networkName', ''))),
+                        properties.get('network', ''))),
             }
     }
 
