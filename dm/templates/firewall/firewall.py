@@ -23,7 +23,7 @@ def generate_config(context):
     project_id = properties.get('project', context.env['project'])
     network = properties.get('network')
     if network:
-        if not '/' in network or '.' in network:
+        if not ('/' in network or '.' in network):
             network = 'global/networks/{}'.format(network)
     else:
         network = 'projects/{}/global/networks/{}'.format(
