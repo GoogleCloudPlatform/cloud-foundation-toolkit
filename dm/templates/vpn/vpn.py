@@ -43,6 +43,8 @@ def generate_config(context):
             # https://cloud.google.com/compute/docs/reference/rest/v1/addresses
             'type': 'gcp-types/compute-v1:addresses',
             'properties': {
+                'name': properties.get('name', static_ip),
+                'project': project_id,
                 'region': context.properties['region']
             }
         })
