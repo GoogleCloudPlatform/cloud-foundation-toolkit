@@ -69,7 +69,7 @@ ADD ./build/data/Gemfile.lock .
 ADD ./build/data/requirements.txt .
 RUN bundle install && pip3 install -r requirements.txt
 
-WORKDIR $APP_BASE_DIR/workdir
+WORKDIR /workspace
 
 RUN gcloud components install beta --quiet
 RUN gcloud components install alpha --quiet
