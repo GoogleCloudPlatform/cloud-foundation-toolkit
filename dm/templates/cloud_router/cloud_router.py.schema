@@ -31,19 +31,18 @@ imports:
 
 additionalProperties: false
 
-required:
-  - region
-
-oneOf:
+allOf:
   - required:
+      - region
+  - oneOf:
+    - required:
       - networkURL
-  - required:
+    - required:
       - network
-
-oneOf:
-  - required:
+  - oneOf:
+    - required:
       - asn
-  - required:
+    - required:
       - bgp
 
 properties:
