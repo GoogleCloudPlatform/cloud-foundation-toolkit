@@ -32,15 +32,15 @@ def generate_config(context):
     vpn_tunnel = context.env['name'] + '-vpn'
     router_vpn_binding = context.env['name'] + '-router-vpn-binding'
     resources = []
-    static_ip = ''
-    ip_address = ''
     if 'ipAddress' in context.properties:
         ip_address = context.properties['ipAddress']
+        static_ip = ''
     else:
         static_ip = context.env['name'] + '-ip'
         resources.append({
             # The reserved address resource.
             'name': static_ip,
+            # https://cloud.google.com/compute/docs/reference/rest/v1/addresses
             'type': 'gcp-types/compute-v1:addresses',
             'properties': {
                 'region': context.properties['region']
