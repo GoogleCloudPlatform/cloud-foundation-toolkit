@@ -47,3 +47,8 @@ RUN wget "https://github.com/DeviaVir/terraform-provider-gsuite/releases/downloa
     rm terraform-provider-gsuite_${PROVIDER_GSUITE_VERSION}_linux_amd64.tgz && \
     install -m 0755 -d ~/.terraform.d/plugins/ && \
     mv terraform-provider-gsuite_v${PROVIDER_GSUITE_VERSION} ~/.terraform.d/plugins/
+
+ADD ./build/scripts/entry_lint.sh /usr/local/bin/entry_lint.sh
+RUN chmod 0755 /usr/local/bin/entry_lint.sh
+
+CMD /usr/local/bin/entry_lint.sh
