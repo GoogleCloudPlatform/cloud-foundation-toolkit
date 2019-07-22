@@ -1,0 +1,17 @@
+#! /bin/bash
+
+if [[ "$#" == "0" ]]; then
+  echo "Usage $0 <file1> <file2> ... <fileN>"
+  exit 1
+fi
+
+rval=0
+while (( "$#" )); do
+  lc="$(tail -c 1 "$1")"
+  if [[ -n "${lc}" ]]; then
+    echo "Error: No newline at end of file ${1}" >&2
+    ((rval++))
+  fi
+  shift
+done
+exit "${rval}"
