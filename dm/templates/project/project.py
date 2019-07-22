@@ -37,8 +37,10 @@ def generate_config(context):
                     'projectId': project_id,
                     'parent': context.properties['parent']
                 }
-        },
-        {
+        }]
+        
+    if context.properties.get('billingAccountId'):
+        resources.append({
             'name': 'billing',
             'type': 'deploymentmanager.v2.virtual.projectBillingInfo',
             'properties':
@@ -49,8 +51,7 @@ def generate_config(context):
                         'billingAccounts/' +
                         context.properties['billingAccountId']
                 }
-        }
-    ]
+        })
 
     api_resources, api_names_list = activate_apis(context.properties)
     resources.extend(api_resources)

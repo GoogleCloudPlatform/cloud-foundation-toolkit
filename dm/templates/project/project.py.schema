@@ -26,9 +26,6 @@ imports:
 
 additionalProperties: false
 
-required:
-  - billingAccountId
-
 oneOf:
   - required:
       - sharedVPCHost
