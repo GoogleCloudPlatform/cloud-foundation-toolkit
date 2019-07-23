@@ -104,6 +104,7 @@ def generate_config(context):
     resources = [
         {
             'name': instance_name,
+            # https://cloud.google.com/compute/docs/reference/rest/v1/instances
             'type': 'gcp-types/compute-v1:instances',
             'properties':
                 {

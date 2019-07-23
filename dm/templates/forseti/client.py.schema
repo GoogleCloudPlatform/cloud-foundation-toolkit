@@ -15,8 +15,16 @@
 info:
   title: Forseti Security
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Forseti Security client instance.
+
+    For more information on this resource:
+    https://forsetisecurity.org/
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:instances =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/instances
 
 imports:
   - path: client.py
@@ -80,6 +88,7 @@ properties:
   serviceAccountScopes:
     type: array
     default: []
+    uniqItems: true
     description: |
       The list of scopes to be made available for the service account.
     items:
@@ -90,6 +99,7 @@ properties:
         for more details.
   tags:
     type: array
+    uniqItems: true
     default: []
     description: Network tags for the instance.
 
