@@ -67,7 +67,7 @@ resource "google_project_iam_binding" "ci_kubernetes_engine_kms_access" {
   role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = [
-    "serviceAccount:service-${google_project.ci_kubernetes_engine.id}@container-engine-robot.iam.gserviceaccount.com",
+    "serviceAccount:service-${google_project.ci_kubernetes_engine.number}@container-engine-robot.iam.gserviceaccount.com",
   ]
 }
 
