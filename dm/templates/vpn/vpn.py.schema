@@ -38,13 +38,29 @@ info:
 
 additionalProperties: false
 
-required:
-  # One of "networkURL" and "networkName" must be specified.
-  - region
-  - peerAddress
-  - sharedSecret
-  # asn and routerName are required when using dynamic routing
-  # Do not specify "router" when using static routing.
+allOf:
+  - required:
+    - region
+    - peerAddress
+    - sharedSecret
+  - oneOf:
+    - required:
+      - networkURL
+    - required:
+      - network
+  - oneOf:
+    # Use dynamic routing.
+    - required:
+      - asn
+      - router
+    # Use static routing.
+    - allOf:
+      - not:
+          required:
+          - router
+      - required:
+        - localTrafficSelector
+        - remoteTrafficSelector
 
 properties:
   name:
@@ -60,7 +76,7 @@ properties:
   routerURL:
     type: string
     description: URL (or URI) of the Router resource. Used by vpnTunnels.
-  routerName:
+  router:
     type: string
     description: |
       Name of the Router resource.
@@ -68,7 +84,7 @@ properties:
     type: string
     description: |
       The URL (or URI) of the network to which the VPN belongs.
-  networkName:
+  network:
     type: string
     description: |
       The name of the network to which the VPN belongs. Only use "networkName"

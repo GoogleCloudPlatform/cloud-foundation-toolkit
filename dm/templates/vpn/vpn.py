@@ -23,7 +23,7 @@ def generate_config(context):
 
     network = context.properties.get('networkURL', generate_network_uri(
         project_id,
-        context.properties.get('networkName','')
+        context.properties.get('network','')
     ))
     target_vpn_gateway = context.env['name'] + '-tvpng'
     esp_rule = context.env['name'] + '-esp-rule'
