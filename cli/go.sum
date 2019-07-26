@@ -98,6 +98,8 @@ github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5Kwzbycv
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
 github.com/forseti-security/config-validator v0.0.0-20190611184209-ce0fa1c12514 h1:mV6lXPu9Y6lLDVb9q6CNPJV/XadnaXNjiec3kbw+pLo=
 github.com/forseti-security/config-validator v0.0.0-20190611184209-ce0fa1c12514/go.mod h1:Vau5ih3z998VJAvBiKZZV+q8MHwVY7EAs+GAE1SDikE=
+github.com/forseti-security/config-validator v0.0.0-20190625031037-7a86a27d721e h1:jKN09NfKmav5ZBVRD5cA2ODoDR3SK35ZCItNo1D6yB8=
+github.com/forseti-security/config-validator v0.0.0-20190625031037-7a86a27d721e/go.mod h1:NpBPpqrMZeUAVdG3E959fY1rL+3P9I+rJOwsr3mmM1E=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/gammazero/deque v0.0.0-20180920172122-f6adf94963e4 h1:R+19WKQClnfMXS60cP5BmMe1wjZ4u0evY2p2Ar0ZTXo=
 github.com/gammazero/deque v0.0.0-20180920172122-f6adf94963e4/go.mod h1:GeIq9qoE43YdGnDXURnmKTnGg15pQz4mYkXSTChbneI=
