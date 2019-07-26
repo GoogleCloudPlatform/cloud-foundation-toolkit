@@ -40,8 +40,16 @@ FORSETI_APIS = [
 ]
 PROJECT_REMOVE_SA = True
 PROJECT_REMOVE_VPC = True
+# https://cloud.google.com/resource-manager/reference/rest/v1/projects/getIamPolicy
+# https://cloud.google.com/resource-manager/reference/rest/v1/projects/setIamPolicy
+# https://cloud.google.com/resource-manager/reference/rest/v1/organizations/getIamPolicy
+# https://cloud.google.com/resource-manager/reference/rest/v1/organizations/setIamPolicy
 CLOUD_MAN = 'gcp-types/cloudresourcemanager-v1:cloudresourcemanager'
+# https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/getIamPolicy
+# https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/setIamPolicy
 IAM = 'gcp-types/iam-v1:iam.projects'
+# https://cloud.google.com/storage/docs/json_api/v1/buckets/getIamPolicy
+# https://cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy
 STORAGE = 'gcp-types/storage-v1:storage'
 
 # If True, the organization and project policies that were previously added for
@@ -236,7 +244,8 @@ def get_service_account(
     sa_res_name = account_id
     sa_res = {
         'name': sa_res_name,
-        'type': 'iam.v1.serviceAccount',
+        # https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts
+        'type': 'gcp-types/iam-v1:iam.projects.serviceAccounts',
         'properties':
             {
                 'accountId': account_id,
@@ -501,6 +510,7 @@ def get_cloud_sql(properties, project_id):
 
     sql = {
         'name': instance_name,
+        # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances
         'type': 'gcp-types/sqladmin-v1beta4:instances',
         'properties': {
             'name': instance_name,
@@ -530,6 +540,7 @@ def get_cloud_sql(properties, project_id):
     db_name = instance_name + '-db'
     database = {
         'name': db_name,
+        # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases
         'type': 'gcp-types/sqladmin-v1beta4:databases',
         'properties':
             {
@@ -555,6 +566,7 @@ def get_firewall_rule(name, properties, project_id, network):
 
     resource = {
         'name': name,
+        # https://cloud.google.com/compute/docs/reference/rest/v1/firewalls
         'type': 'gcp-types/compute-v1:firewalls',
         'properties': copy.deepcopy(properties)
     }
@@ -612,6 +624,7 @@ def get_network(project_id):
 
     network = {
         'name': name,
+        # https://cloud.google.com/compute/docs/reference/rest/v1/networks
         'type': 'gcp-types/compute-v1:networks',
         'properties': {
             'name': name,

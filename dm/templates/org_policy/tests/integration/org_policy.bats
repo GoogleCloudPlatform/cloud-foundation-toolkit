@@ -54,19 +54,23 @@ function teardown() {
 
 
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
-    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" --config "${CONFIG}"
+    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
+        --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 }
 
 @test "Verifying that resources were created in deployment ${DEPLOYMENT_NAME}" {
-    run gcloud beta resource-manager org-policies list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    run gcloud beta resource-manager org-policies list \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$output" =~ "compute.vmExternalIpAccess" ]]
     [[ "$output" =~ "compute.disableNestedVirtualization" ]]
 }
 
 @test "Deleting deployment" {
-    gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q
+    gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
 
-    run gcloud beta resource-manager org-policies list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    run gcloud beta resource-manager org-policies list \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ ! "$output" =~ "compute.vmExternalIpAccess" ]]
     [[ ! "$output" =~ "compute.disableNestedVirtualization" ]]
 }

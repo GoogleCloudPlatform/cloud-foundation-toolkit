@@ -116,11 +116,16 @@ def generate_config(context):
         'servicesIpv4Cidr'
     ]
 
+    initial_cluster_version = propc.get('initialClusterVersion')
+    less_than_112 = (
+        initial_cluster_version.lower() != 'latest' and 
+        version.parse(initial_cluster_version.split('-')[0]) < version.parse("1.12")
+    )
+
     if (
         # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
         propc.get('enableDefaultAuthOutput', False) and (
-            version.parse(propc.get('initialClusterVersion').split('-')[0]) < version.parse("1.12") or
-            propc.get('masterAuth', {}).get('clientCertificateConfig', False)
+            less_than_112 or propc.get('masterAuth', {}).get('clientCertificateConfig', False)
         )
     ):
         output_props.append('clientCertificate')
