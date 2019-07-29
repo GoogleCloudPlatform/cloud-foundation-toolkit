@@ -32,64 +32,27 @@ def generate_config(context):
         name = route.get('name')
         if not name:
             name = '%s-%s'.format(context.env['name'], sha1(json.dumps(route)).hexdigest()[:10])
-
-        # Set the common route properties.
-        properties = {
+        
+        route_properties = {
+            'name': name,
             'network': network_name,
             'project': project_id,
-            'tags': route['tags'],
             'priority': route.get('priority', i),
-            'destRange': route['destRange']
         }
-
-        # Check the route type and fill out the following fields:
-        if route.get('routeType') == 'instance':
-            instance_name = route.get('instanceName')
-            zone = route.get('zone', '')
-            properties['nextHopInstance'] = generate_instance_url(
-                project_id,
-                zone,
-                instance_name
-            )
-        elif route.get('routeType') == 'gateway':
-            gateway_name = route.get('gatewayName')
-            properties['nextHopGateway'] = generate_gateway_url(
-                project_id,
-                gateway_name
-            )
-        elif route.get('routeType') == 'vpntunnel':
-            vpn_tunnel_name = route.get('vpnTunnelName')
-            region = route.get('region', '')
-            properties['nextHopVpnTunnel'] = generate_vpn_tunnel_url(
-                project_id,
-                region,
-                vpn_tunnel_name
-            )
-
-        optional_properties = [
-            'nextHopIp',
-            'nextHopInstance',
-            'nextHopNetwork',
-            'nextHopGateway',
-            'nextHopVpnTunnel',
-        ]
-
-        for prop in optional_properties:
-            if prop in route:
-                properties[prop] = route[prop]
+        for specified_properties in route:
+            route_properties[specified_properties] = route[specified_properties]
 
         resources.append(
             {
                 'name': name,
-                # https://cloud.google.com/compute/docs/reference/rest/v1/routes
-                'type': 'gcp-types/compute-v1:routes',
-                'properties': properties
+                'type': 'single_route.py',
+                'properties': route_properties
             }
         )
 
         out[name] = {
             'selfLink': '$(ref.' + name + '.selfLink)',
-            'nextHopNetwork': network_name
+            'nextHopNetwork': '$(ref.' + name + '.nextHopNetwork)',
         }
 
     outputs = [{'name': 'routes', 'value': out}]
@@ -109,31 +72,3 @@ def generate_network_url(properties):
         network_url = 'global/networks/{}'.format(network_name)
 
     return network_url
-
-
-def generate_instance_url(project, zone, instance):
-    """ Format the resource name as a resource URI. """
-
-    is_self_link = '/' in instance or '.' in instance
-
-    if is_self_link:
-        instance_url = instance
-    else:
-        instance_url = 'projects/{}/zones/{}/instances/{}'
-        instance_url = instance_url.format(project, zone, instance)
-
-    return instance_url
-
-
-def generate_gateway_url(project, gateway):
-    """ Format the resource name as a resource URI. """
-    return 'projects/{}/global/gateways/{}'.format(project, gateway)
-
-
-def generate_vpn_tunnel_url(project, region, vpn_tunnel):
-    """ Format the resource name as a resource URI. """
-    return 'projects/{}/regions/{}/vpnTunnels/{}'.format(
-        project,
-        region,
-        vpn_tunnel
-    )
