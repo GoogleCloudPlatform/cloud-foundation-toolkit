@@ -114,7 +114,7 @@ def generate_config(context):
         
     ])
     router_url_tag = 'routerURL'
-    router_name_tag = 'routerName'
+    router_name_tag = 'router'
 
     if router_name_tag in context.properties:
         router_url = context.properties.get(router_url_tag, generate_router_uri(
