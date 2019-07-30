@@ -108,8 +108,11 @@ def generate_gateway_url(project, gateway):
 
 def generate_vpn_tunnel_url(project, region, vpn_tunnel):
     """ Format the resource name as a resource URI. """
-    return 'projects/{}/regions/{}/vpnTunnels/{}'.format(
-        project,
-        region,
-        vpn_tunnel
-    )
+    is_self_link = '/' in vpn_tunnel or '.' in vpn_tunnel
+
+    if is_self_link:
+        tunnel_url = vpn_tunnel
+    else:
+        tunnel_url = 'projects/{}/regions/{}/vpnTunnels/{}'
+        tunnel_url = tunnel_url.format(project, region, vpn_tunnel)
+    return tunnel_url
