@@ -73,8 +73,3 @@ WORKDIR /workspace
 
 RUN gcloud components install beta --quiet
 RUN gcloud components install alpha --quiet
-
-# Authenticate gcloud with service account credentials key to allow gsutil authentication
-ADD ./build/scripts/gcloud_auth.sh $HOME/entrypoint_scripts/
-RUN chmod +x $HOME/entrypoint_scripts/gcloud_auth.sh
-ENTRYPOINT ["/cft/home/entrypoint_scripts/gcloud_auth.sh"]
