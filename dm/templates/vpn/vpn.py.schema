@@ -148,7 +148,10 @@ outputs:
         description: The name of the ForwardingRule resource for the UDP 500 traffic.
     - vpnTunnel:
         type: string
-        description: The mame of the VPN tunnel resource.
+        description: The name of the VPN tunnel resource.
+    - vpnTunnelUri:
+        type: string
+        description: The URI of the VPN tunnel resource.
 
 documentation:
   - templates/vpn/README.md

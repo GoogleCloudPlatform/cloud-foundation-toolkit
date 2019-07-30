@@ -111,7 +111,7 @@ def generate_config(context):
                     'target': '$(ref.' + target_vpn_gateway + '.selfLink)',
                 }
         },
-        
+
     ])
     router_url_tag = 'routerURL'
     router_name_tag = 'router'
@@ -243,6 +243,10 @@ def generate_config(context):
                 {
                     'name': 'vpnTunnel',
                     'value': vpn_tunnel
+                },
+                {
+                    'name': 'vpnTunnelUri',
+                    'value': '$(ref.'+vpn_tunnel+'.selfLink)'
                 }
             ]
     }
