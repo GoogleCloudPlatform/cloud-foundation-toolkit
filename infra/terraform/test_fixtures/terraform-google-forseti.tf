@@ -79,9 +79,32 @@ module "forseti-host-network-01" {
   ]
 }
 
-  secondary_ranges {
-    us-central1-01 = []
+resource "google_compute_router" "forseti_host" {
+  name    = "forseti-host"
+  network = "${module.forseti-host-network-01.network_self_link}"
+
+  bgp {
+    asn = "64514"
   }
+
+  region  = "us-central1"
+  project = "${module.forseti-host-project.project_id}"
+}
+
+resource "google_compute_router_nat" "forseti_host" {
+  name                               = "forseti-host"
+  router                             = "${google_compute_router.forseti_host.name}"
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
+
+  subnetwork {
+    name                    = "${module.forseti-host-network-01.subnets_self_links[0]}"
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
+
+  project = "${module.forseti-host-project.project_id}"
+  region  = "${google_compute_router.forseti_host.region}"
+}
 
   providers {
     "google"      = "google.phoogle"
