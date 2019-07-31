@@ -55,19 +55,29 @@ module "forseti-host-project" {
 // Define a shared VPC network within the Forseti host project.
 module "forseti-host-network-01" {
   source  = "terraform-google-modules/network/google"
-  version = "~> 0.6.0"
+  version = "0.8.0"
+
+  providers {
+    "google"      = "google.phoogle"
+    "google-beta" = "google-beta.phoogle"
+  }
 
   project_id      = "${module.forseti-host-project.project_id}"
-  network_name    = "network-01"
+  network_name    = "forseti-network"
   shared_vpc_host = "true"
+
+  secondary_ranges {
+    forseti-subnetwork = []
+  }
 
   subnets = [
     {
-      subnet_name   = "us-central1-01"
+      subnet_name   = "forseti-subnetwork"
       subnet_ip     = "10.128.0.0/20"
       subnet_region = "us-central1"
     },
   ]
+}
 
   secondary_ranges {
     us-central1-01 = []
