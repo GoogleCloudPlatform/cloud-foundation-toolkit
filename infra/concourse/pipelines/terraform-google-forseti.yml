@@ -109,6 +109,7 @@ jobs:
         SERVICE_ACCOUNT_JSON: ((forseti.phoogle_sa))
         NETWORK_PROJECT: ((forseti.phoogle_network_project))
         NETWORK: ((forseti.phoogle_network))
+        REGION: ((forseti.phoogle_region))
         SUBNETWORK: ((forseti.phoogle_subnetwork))
         ENFORCER_PROJECT: ((forseti.phoogle_enforcer_project))
 
