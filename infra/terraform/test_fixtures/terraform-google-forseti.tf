@@ -127,13 +127,56 @@ module "forseti-service-project" {
   shared_vpc_subnets = ["projects/ci-forseti-host-a1b2/regions/us-central1/subnetworks/forseti-subnetwork"]
 }
 
+module "forseti-service-network" {
+  source  = "terraform-google-modules/network/google"
+  version = "0.8.0"
 
+  providers {
+    "google"      = "google.phoogle"
+    "google-beta" = "google-beta.phoogle"
+  }
+
+  network_name = "forseti-network"
+  project_id   = "${module.forseti-service-project.project_id}"
+
+  secondary_ranges = {
+    forseti-subnetwork = []
+  }
+
+  subnets = [
+    {
+      subnet_name   = "forseti-subnetwork"
+      subnet_ip     = "10.129.0.0/20"
+      subnet_region = "us-central1"
+    },
+  ]
 }
 
+resource "google_compute_router" "forseti_service" {
+  name    = "forseti-service"
+  network = "${module.forseti-service-network.network_self_link}"
 
+  bgp {
+    asn = "64514"
+  }
+
+  region  = "us-central1"
+  project = "${module.forseti-service-project.project_id}"
 }
 
+resource "google_compute_router_nat" "forseti_service" {
+  name                               = "forseti-service"
+  router                             = "${google_compute_router.forseti_service.name}"
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
+  subnetwork {
+    name                    = "${module.forseti-service-network.subnets_self_links[0]}"
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
+
+  project = "${module.forseti-service-project.project_id}"
+  region  = "${google_compute_router.forseti_service.region}"
 }
 
 resource "google_organization_iam_member" "forseti" {
