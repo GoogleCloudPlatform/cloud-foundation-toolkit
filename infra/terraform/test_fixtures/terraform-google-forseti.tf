@@ -35,21 +35,21 @@ locals {
 // Define a host project for the Forseti shared VPC test suite.
 module "forseti-host-project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 2.0"
-
-  name              = "ci-forseti-host"
-  random_project_id = "true"
-  org_id            = "${var.phoogle_org_id}"
-  folder_id         = "${google_folder.phoogle_cloud_foundation_cicd.name}"
-  billing_account   = "${module.variables.phoogle_billing_account}"
-  credentials_path  = "${var.phoogle_credentials_path}"
-
-  activate_apis = "${local.forseti_required_apis}"
+  version = "2.4.1"
 
   providers {
     "google"      = "google.phoogle"
     "google-beta" = "google-beta.phoogle"
   }
+
+  billing_account = "${module.variables.phoogle_billing_account}"
+  name            = "ci-forseti-host"
+  org_id          = "${var.phoogle_org_id}"
+
+  activate_apis    = "${local.forseti_required_apis}"
+  credentials_path = "${var.phoogle_credentials_path}"
+  folder_id        = "${google_folder.phoogle_cloud_foundation_cicd.name}"
+  project_id       = "ci-forseti-host-a1b2"
 }
 
 // Define a shared VPC network within the Forseti host project.
