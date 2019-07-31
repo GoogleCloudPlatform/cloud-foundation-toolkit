@@ -106,52 +106,34 @@ resource "google_compute_router_nat" "forseti_host" {
   region  = "${google_compute_router.forseti_host.region}"
 }
 
+module "forseti-service-project" {
+  source  = "terraform-google-modules/project-factory/google"
+  version = "2.4.1"
+
   providers {
     "google"      = "google.phoogle"
     "google-beta" = "google-beta.phoogle"
   }
-}
 
-// Create a Forseti service project.
-//
-// Note: This project is both attached to the Forseti host project and has a
-//       network defined within this project. We use both the host project shared
-//       VPC and a network defined within this project in different test cases.
-//
-// Note: Because this isn't using the Project Factory we're using the default
-//       network and firewall rules. If this project is rebuilt we should switch
-//       to the Project Factory.
-resource "google_project" "forseti" {
-  provider = "google.phoogle"
-
-  name            = "ci-forseti"
-  project_id      = "ci-forseti"
-  folder_id       = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   billing_account = "${module.variables.phoogle_billing_account}"
+  name            = "ci-forseti"
+  org_id          = "${var.phoogle_org_id}"
+
+  activate_apis      = "${local.forseti_required_apis}"
+  credentials_path   = "${var.phoogle_credentials_path}"
+  folder_id          = "${google_folder.phoogle_cloud_foundation_cicd.name}"
+  random_project_id  = "true"
+  shared_vpc         = "${module.forseti-host-project.project_id}"
+  shared_vpc_subnets = ["projects/ci-forseti-host-a1b2/regions/us-central1/subnetworks/forseti-subnetwork"]
 }
 
-// Associate the forseti host project and forseti service project.
-resource "google_compute_shared_vpc_service_project" "shared_vpc_attachment" {
-  provider = "google.phoogle"
 
-  host_project    = "${module.forseti-host-project.project_id}"
-  service_project = "${google_project.forseti.project_id}"
 }
 
-resource "google_project_service" "forseti" {
-  provider = "google.phoogle"
 
-  count   = "${length(local.forseti_required_apis)}"
-  project = "${google_project.forseti.id}"
-  service = "${element(local.forseti_required_apis, count.index)}"
 }
 
-resource "google_service_account" "forseti" {
-  provider = "google.phoogle"
 
-  project      = "${google_project.forseti.id}"
-  account_id   = "ci-forseti"
-  display_name = "ci-forseti"
 }
 
 resource "google_organization_iam_member" "forseti" {
@@ -161,7 +143,7 @@ resource "google_organization_iam_member" "forseti" {
 
   org_id = "${var.phoogle_org_id}"
   role   = "${element(local.forseti_org_required_roles, count.index)}"
-  member = "serviceAccount:${google_service_account.forseti.email}"
+  member = "serviceAccount:${module.forseti-service-project.service_account_email}"
 }
 
 // Grant the forseti service account the rights to create GCE instances within
@@ -173,7 +155,7 @@ resource "google_project_iam_member" "forseti-host" {
 
   project = "${module.forseti-host-project.project_id}"
   role    = "${element(local.forseti_host_project_required_roles, count.index)}"
-  member  = "serviceAccount:${google_service_account.forseti.email}"
+  member  = "serviceAccount:${module.forseti-service-project.service_account_email}"
 }
 
 // Grant the forseti service account rights over the Forseti service project.
@@ -182,9 +164,9 @@ resource "google_project_iam_member" "forseti" {
 
   count = "${length(local.forseti_project_required_roles)}"
 
-  project = "${google_project.forseti.id}"
+  project = "${module.forseti-service-project.project_id}"
   role    = "${element(local.forseti_project_required_roles, count.index)}"
-  member  = "serviceAccount:${google_service_account.forseti.email}"
+  member  = "serviceAccount:${module.forseti-service-project.service_account_email}"
 }
 
 // Define a project for the Forseti real time enforcer.
@@ -224,7 +206,7 @@ resource "google_project_iam_member" "forseti-enforcer" {
 
   project = "${module.forseti-enforcer-project.project_id}"
   role    = "${element(local.forseti_enforcer_project_required_roles, count.index)}"
-  member  = "serviceAccount:${google_service_account.forseti.email}"
+  member  = "serviceAccount:${module.forseti-service-project.service_account_email}"
 }
 
 // Create the Forseti real time enforcer roles. We're using a vendored copy of the
@@ -254,7 +236,7 @@ module "real_time_enforcer_roles" {
 resource "google_service_account_key" "forseti" {
   provider = "google.phoogle"
 
-  service_account_id = "${google_service_account.forseti.id}"
+  service_account_id = "${module.forseti-service-project.service_account_id}"
 }
 
 resource "random_id" "forseti_github_webhook_token" {
@@ -278,7 +260,7 @@ resource "kubernetes_secret" "forseti" {
 
   data {
     github_webhook_token     = "${random_id.forseti_github_webhook_token.hex}"
-    phoogle_project_id       = "${google_project.forseti.id}"
+    phoogle_project_id       = "${module.forseti-service-project.project_id}"
     phoogle_network_project  = "${module.forseti-host-project.project_id}"
     phoogle_network          = "${module.forseti-host-network-01.network_name}"
     phoogle_region           = "${module.forseti-host-network-01.subnets_regions[0]}"
