@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2019 Google LLC
  *
@@ -14,30 +15,18 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 1.0"
+module "iam_binding" {
+  source = "terraform-google-modules/iam/google"
 
-  parent_id   = local.org_id
-  parent_type = "organization"
+  folders = [local.folders["ci"]]
 
-  names = [
-    "ci-projects"
-  ]
+  bindings = {
+    "roles/resourcemanager.projectCreator" = [
+      "group:cft-ci-robots@test.infra.cft.tips",
+    ]
 
-  set_roles = false
-}
-
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 1.0"
-
-  parent_id   = replace(local.folders["ci"], "folders/", "")
-  parent_type = "folder"
-
-  names = [
-    "ci-kms"
-  ]
-
-  set_roles = false
+    "roles/resourcemanager.folderViewer" = [
+      "group:cft-ci-robots@test.infra.cft.tips",
+    ]
+  }
 }
