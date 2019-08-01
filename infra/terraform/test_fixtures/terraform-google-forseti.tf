@@ -80,6 +80,8 @@ module "forseti-host-network-01" {
 }
 
 resource "google_compute_router" "forseti_host" {
+  provider = "google.phoogle"
+
   name    = "forseti-host"
   network = "${module.forseti-host-network-01.network_self_link}"
 
@@ -92,6 +94,8 @@ resource "google_compute_router" "forseti_host" {
 }
 
 resource "google_compute_router_nat" "forseti_host" {
+  provider = "google.phoogle"
+
   name                               = "forseti-host"
   router                             = "${google_compute_router.forseti_host.name}"
   nat_ip_allocate_option             = "AUTO_ONLY"
@@ -153,6 +157,8 @@ module "forseti-service-network" {
 }
 
 resource "google_compute_router" "forseti_service" {
+  provider = "google.phoogle"
+
   name    = "forseti-service"
   network = "${module.forseti-service-network.network_self_link}"
 
@@ -165,6 +171,8 @@ resource "google_compute_router" "forseti_service" {
 }
 
 resource "google_compute_router_nat" "forseti_service" {
+  provider = "google.phoogle"
+
   name                               = "forseti-service"
   router                             = "${google_compute_router.forseti_service.name}"
   nat_ip_allocate_option             = "AUTO_ONLY"
