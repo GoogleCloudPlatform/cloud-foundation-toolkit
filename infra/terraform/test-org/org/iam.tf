@@ -15,8 +15,22 @@
  * limitations under the License.
  */
 
-module "iam_binding" {
+module "org_bindings" {
   source = "terraform-google-modules/iam/google"
+  version = "~> 2.0"
+
+  organizations = [local.org_id]
+
+  bindings = {
+    "roles/resourcemanager.organizationViewer" = [
+      "group:cft-ci-robots@test.infra.cft.tips",
+    ]
+  }
+}
+
+module "ci_bindings" {
+  source = "terraform-google-modules/iam/google"
+  version = "~> 2.0"
 
   folders = [local.folders["ci"]]
 
