@@ -127,7 +127,7 @@ module "forseti-service-project" {
   credentials_path   = "${var.phoogle_credentials_path}"
   folder_id          = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   random_project_id  = "true"
-  shared_vpc         = "${module.forseti-host-project.project_id}"
+  shared_vpc         = "ci-forseti-host-a1b2"
   shared_vpc_subnets = ["projects/ci-forseti-host-a1b2/regions/us-central1/subnetworks/forseti-subnetwork"]
 }
 
