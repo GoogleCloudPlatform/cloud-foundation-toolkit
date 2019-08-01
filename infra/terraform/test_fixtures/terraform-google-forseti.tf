@@ -287,7 +287,7 @@ module "real_time_enforcer_roles" {
 resource "google_service_account_key" "forseti" {
   provider = "google.phoogle"
 
-  service_account_id = "${module.forseti-service-project.service_account_id}"
+  service_account_id = "${module.forseti-service-project.service_account_email}"
 }
 
 resource "random_id" "forseti_github_webhook_token" {
