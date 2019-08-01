@@ -29,6 +29,7 @@ locals {
     "compute.googleapis.com",
     "serviceusage.googleapis.com",
     "cloudresourcemanager.googleapis.com",
+    "iam.googleapis.com",
   ]
 }
 
