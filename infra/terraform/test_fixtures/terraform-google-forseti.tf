@@ -29,6 +29,7 @@ locals {
     "compute.googleapis.com",
     "serviceusage.googleapis.com",
     "cloudresourcemanager.googleapis.com",
+    "iam.googleapis.com",
   ]
 }
 
@@ -80,6 +81,8 @@ module "forseti-host-network-01" {
 }
 
 resource "google_compute_router" "forseti_host" {
+  provider = "google.phoogle"
+
   name    = "forseti-host"
   network = "${module.forseti-host-network-01.network_self_link}"
 
@@ -92,6 +95,8 @@ resource "google_compute_router" "forseti_host" {
 }
 
 resource "google_compute_router_nat" "forseti_host" {
+  provider = "google.phoogle"
+
   name                               = "forseti-host"
   router                             = "${google_compute_router.forseti_host.name}"
   nat_ip_allocate_option             = "AUTO_ONLY"
@@ -123,7 +128,7 @@ module "forseti-service-project" {
   credentials_path   = "${var.phoogle_credentials_path}"
   folder_id          = "${google_folder.phoogle_cloud_foundation_cicd.name}"
   random_project_id  = "true"
-  shared_vpc         = "${module.forseti-host-project.project_id}"
+  shared_vpc         = "ci-forseti-host-a1b2"
   shared_vpc_subnets = ["projects/ci-forseti-host-a1b2/regions/us-central1/subnetworks/forseti-subnetwork"]
 }
 
@@ -153,6 +158,8 @@ module "forseti-service-network" {
 }
 
 resource "google_compute_router" "forseti_service" {
+  provider = "google.phoogle"
+
   name    = "forseti-service"
   network = "${module.forseti-service-network.network_self_link}"
 
@@ -165,6 +172,8 @@ resource "google_compute_router" "forseti_service" {
 }
 
 resource "google_compute_router_nat" "forseti_service" {
+  provider = "google.phoogle"
+
   name                               = "forseti-service"
   router                             = "${google_compute_router.forseti_service.name}"
   nat_ip_allocate_option             = "AUTO_ONLY"
@@ -279,7 +288,7 @@ module "real_time_enforcer_roles" {
 resource "google_service_account_key" "forseti" {
   provider = "google.phoogle"
 
-  service_account_id = "${module.forseti-service-project.service_account_id}"
+  service_account_id = "${module.forseti-service-project.service_account_email}"
 }
 
 resource "random_id" "forseti_github_webhook_token" {
