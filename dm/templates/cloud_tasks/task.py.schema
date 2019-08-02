@@ -26,7 +26,6 @@ imports:
 required:
   - task
   - queueId
-  - appEngineHttpRequest
 
 properties:
   queueId:
@@ -55,6 +54,8 @@ properties:
       If `queueId` is the full name of the queue, this field is ignored.
   task:
     type: object
+    required:
+      - appEngineHttpRequest
     description: |
       The task to add. Task names have the following format: 
       projects/PROJECT_ID/locations/LOCATION_ID/queues/QUEUE_ID/tasks/TASK_ID.
