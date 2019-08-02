@@ -17,8 +17,12 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
+
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+
     network = generate_network_url(
-        context.env['project'],
+        project_id,
         context.properties['network']
     )
     target_vpn_gateway = context.env['name'] + '-tvpng'
@@ -33,65 +37,83 @@ def generate_config(context):
         {
             # The target VPN gateway resource.
             'name': target_vpn_gateway,
-            'type': 'compute.v1.targetVpnGateway',
+            # https://cloud.google.com/compute/docs/reference/rest/v1/targetVpnGateways
+            'type': 'gcp-types/compute-v1:targetVpnGateways',
             'properties':
                 {
+                    'name': properties.get('name', target_vpn_gateway),
+                    'project': project_id,
                     'network': network,
-                    'region': context.properties['region']
+                    'region': context.properties['region'],
                 }
         },
         {
             # The reserved address resource.
             'name': static_ip,
-            'type': 'compute.v1.address',
+            # https://cloud.google.com/compute/docs/reference/rest/v1/addresses
+            'type': 'gcp-types/compute-v1:addresses',
             'properties': {
-                'region': context.properties['region']
+                'name': properties.get('name', static_ip),
+                'project': project_id,
+                'region': context.properties['region'],
             }
         },
         {
             # The forwarding rule resource for the ESP traffic.
             'name': esp_rule,
-            'type': 'compute.v1.forwardingRule',
+            # https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
+            'type': 'gcp-types/compute-v1:forwardingRules',
             'properties':
                 {
+                    'name': '{}-esp'.format(properties.get('name')) if 'name' in properties else esp_rule,
+                    'project': project_id,
                     'IPAddress': '$(ref.' + static_ip + '.address)',
                     'IPProtocol': 'ESP',
                     'region': context.properties['region'],
-                    'target': '$(ref.' + target_vpn_gateway + '.selfLink)'
+                    'target': '$(ref.' + target_vpn_gateway + '.selfLink)',
                 }
         },
         {
             # The forwarding rule resource for the UDP traffic on port 4500.
             'name': udp_4500_rule,
-            'type': 'compute.v1.forwardingRule',
+            # https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
+            'type': 'gcp-types/compute-v1:forwardingRules',
             'properties':
                 {
+                    'name': '{}-udp-4500'.format(properties.get('name')) if 'name' in properties else udp_4500_rule,
+                    'project': project_id,
                     'IPAddress': '$(ref.' + static_ip + '.address)',
                     'IPProtocol': 'UDP',
                     'portRange': 4500,
                     'region': context.properties['region'],
-                    'target': '$(ref.' + target_vpn_gateway + '.selfLink)'
+                    'target': '$(ref.' + target_vpn_gateway + '.selfLink)',
                 }
         },
         {
             # The forwarding rule resource for the UDP traffic on port 500
             'name': udp_500_rule,
-            'type': 'compute.v1.forwardingRule',
+            # https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
+            'type': 'gcp-types/compute-v1:forwardingRules',
             'properties':
                 {
+                    'name': '{}-udp-500'.format(properties.get('name')) if 'name' in properties else udp_500_rule,
+                    'project': project_id,
                     'IPAddress': '$(ref.' + static_ip + '.address)',
                     'IPProtocol': 'UDP',
                     'portRange': 500,
                     'region': context.properties['region'],
-                    'target': '$(ref.' + target_vpn_gateway + '.selfLink)'
+                    'target': '$(ref.' + target_vpn_gateway + '.selfLink)',
                 }
         },
         {
             # The VPN tunnel resource.
             'name': vpn_tunnel,
-            'type': 'compute.v1.vpnTunnel',
+            # https://cloud.google.com/compute/docs/reference/rest/v1/vpnTunnels
+            'type': 'gcp-types/compute-v1:vpnTunnels',
             'properties':
                 {
+                    'name': properties.get('name', vpn_tunnel),
+                    'project': project_id,
                     'description':
                         'A vpn tunnel',
                     'ikeVersion':
@@ -120,17 +142,16 @@ def generate_config(context):
         {
             # An action that is executed after the vpn_tunnel function.
             # It calls the method patch by ID on the descriptor document
-            # https://www.googleapis.com/discovery/v1/apis/compute/v1/rest.
+            # https://cloud.google.com/compute/docs/reference/rest/v1/routers/patch
             'name': router_vpn_binding,
             'action': 'gcp-types/compute-v1:compute.routers.patch',
             'properties':
                 {
+                    'project': project_id,
                     'router':
                         context.properties['router'],
                     'region':
                         context.properties['region'],
-                    'project':
-                        context.env['project'],
                     'name':
                         context.properties['router'],
                     'asn':

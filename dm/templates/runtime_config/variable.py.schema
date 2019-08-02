@@ -15,35 +15,60 @@
 info:
   title: Variable
   author: Sourced Group Inc.
-  description: Creates a RuntimeConfig variable resource.
+  version: 1.0.0
+  description: |
+    Creates a RuntimeConfig variable resource.
+
     For more information on this resource, see
-    https://cloud.google.com/deployment-manager/runtime-configurator/.
+    https://cloud.google.com/deployment-manager/runtime-configurator/
+
+    APIs endpoints used by this template:
+    - gcp-types/runtimeconfig-v1beta1:projects.configs.variables =>
+        https://cloud.google.com/deployment-manager/runtime-configurator/reference/rest/v1beta1/projects.configs.variables
 
 additionalProperties: false
 
 required:
   - parent
-  - variable
 
-oneOf:
-  - required:
-      - text
-  - required:
-      - value
+allOf:
+  - oneOf:
+      - required:
+          - text
+      - required:
+          - value
+  - oneOf:
+      - required:
+          - variable
+      - required:
+          - name
 
 properties:
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   parent:
     type: string
     description: |
       The path to the configuration that will own the waiter.
       The configuration must exist beforehand; the path must be in the
       projects/[PROJECT_ID]/configs/[CONFIG_NAME] format.
-  variable:
+  name:
     type: string
     description: |
       The key (name) of the variable. For example, status and
       users/jane-smith/favorite_color are valid keys. Can contain digits,
       letters, dashes, and slashes. The max length is 256 characters.
+  variable:
+    type: string
+    description: |
+      DEPRECATED, please use "name"
+  config:
+    type: string
+    description: |
+      Config resource name (for dependency)
   text:
     type: string
     description: |

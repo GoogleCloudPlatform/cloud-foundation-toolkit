@@ -38,6 +38,21 @@ additionalProperties: false
 required:
   - roles
 
+oneOf:
+  - required:
+      - folderId
+  - required:
+      - organizationId
+  - required:
+      - projectId
+  - allOf:
+      - not:
+          required:
+            - folderId
+      - not:
+          required:
+            - organizationId
+
 properties:
   folderId:
     type: string
@@ -85,6 +100,13 @@ properties:
                 - domain:{domain} - A Cloud Identity or G Suite domain name that
                   represents all the users of that domain. For example, acme.com
                   or example.com.
+  dependsOn:
+    type: array
+    description: |
+      The list of the resources that must be created before this template is applied.
+    items:
+      type: string
+      description: The resource name.
 
 documentation:
   - templates/iam_member/README.md

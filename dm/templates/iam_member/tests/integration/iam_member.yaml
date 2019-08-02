@@ -10,7 +10,7 @@ imports:
     name: iam_member.py
 
 resources:
-  - name: iam-member-test-${RAND}
+  - name: iam-member-test-project-${RAND}
     type: iam_member.py
     properties:
       roles:
@@ -20,3 +20,21 @@ resources:
         - role: roles/viewer
           members:
             - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+  - name: iam-member-test-folder-${RAND}
+    type: iam_member.py
+    properties:
+      folderId: $(ref.test-folder-${RAND}.name)
+      roles:
+        - role: roles/editor
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+        - role: roles/viewer
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+
+  - name: test-folder-${RAND}
+    type: gcp-types/cloudresourcemanager-v2:folders
+    properties:
+      name: org-folder-${RAND}
+      parent: organizations/${CLOUD_FOUNDATION_ORGANIZATION_ID}
+      displayName: org-folder-${RAND}

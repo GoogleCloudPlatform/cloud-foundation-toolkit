@@ -15,7 +15,26 @@
 info:
   title: VPN
   author: Sourced Group
-  description: Creates a VPN tunnel, gateway, and fowarding rules.
+  version: 1.0.0
+  description: |
+    Creates a VPN tunnel, gateway, and fowarding rules.
+
+    For more information on this resource:
+    https://cloud.google.com/vpn/docs/concepts/overview
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:instances =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/instances
+    - gcp-types/compute-v1:forwardingRules =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
+    - gcp-types/compute-v1:addresses =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/addresses
+    - gcp-types/compute-v1:targetVpnGateways =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/targetVpnGateways
+    - gcp-types/compute-v1:vpnTunnels =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/vpnTunnels
+    - gcp-types/compute-v1:compute.routers.patch =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/routers/patch
 
 additionalProperties: false
 
@@ -27,6 +46,20 @@ required:
   - sharedSecret
 
 properties:
+  name:
+    type: string
+    description: |
+      Common name for all provisioned resources.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
+  router:
+    type: string
+    description: |
+      Name of the Router resource.
   network:
     type: string
     description: The URI of the network to which the VPN belongs.

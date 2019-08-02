@@ -67,7 +67,6 @@ properties:
     description: |
       URL of the network resource for this firewall rule. If not specified when creating a firewall rule,
       the default network is used.
-      This is deprecated and not compatible with setting "project", please use networkName
   networkName:
     type: string
     description: |

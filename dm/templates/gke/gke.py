@@ -43,6 +43,8 @@ def generate_config(context):
     if properties.get('zone'):
         # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.zones.clusters
         gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.zones.clusters'
+        # TODO: remove, this is a bug
+        gke_cluster['properties']['zone'] = properties.get('zone')
     else:
         # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters
         gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.locations.clusters'
@@ -114,25 +116,27 @@ def generate_config(context):
         'servicesIpv4Cidr'
     ]
 
+    initial_cluster_version = propc.get('initialClusterVersion')
+    less_than_112 = (
+        initial_cluster_version.lower() != 'latest' and 
+        version.parse(initial_cluster_version.split('-')[0]) < version.parse("1.12")
+    )
+
     if (
         # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
         propc.get('enableDefaultAuthOutput', False) and (
-            version.parse(propc.get('initialClusterVersion').split('-')[0]) < version.parse("1.12") or
-            propc.get('masterAuth', {}).get('clientCertificateConfig', False)
+            less_than_112 or propc.get('masterAuth', {}).get('clientCertificateConfig', False)
         )
     ):
         output_props.append('clientCertificate')
         output_props.append('clientKey')
-
-    if not propc.get('ipAllocationPolicy', {}).get('useIpAliases', False):
-        output_props.append('nodeIpv4CidrSize')
 
     for outprop in output_props:
         output_obj = {}
         output_obj['name'] = outprop
         ma_props = ['clusterCaCertificate', 'clientCertificate', 'clientKey']
         if outprop in ma_props:
-            output_obj['value'] = '$(ref.' + name + \
+            output_obj['value'] = '$(ref.' + context.env['name'] + \
                                   '.masterAuth.' + outprop + ')'
         elif outprop  == 'instanceGroupUrls':
             output_obj['value'] = '$(ref.' + context.env['name'] + \

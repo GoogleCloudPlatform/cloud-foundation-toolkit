@@ -17,9 +17,14 @@
 def create_pubsub(context, logsink_name):
     """ Create the pubsub destination. """
 
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+
     dest_properties = []
     if 'pubsubProperties' in context.properties:
         dest_prop = context.properties['pubsubProperties']
+        dest_prop['name'] = context.properties['destinationName']
+        dest_prop['project'] = project_id
         access_control = dest_prop.get('accessControl', [])
         access_control.append(
             {
@@ -31,7 +36,7 @@ def create_pubsub(context, logsink_name):
         dest_prop['accessControl'] = access_control
         dest_properties = [
             {
-                'name': context.properties['destinationName'],
+                'name': '{}-pubsub'.format(context.env['name']),
                 'type': 'pubsub.py',
                 'properties': dest_prop
             }
@@ -43,10 +48,14 @@ def create_pubsub(context, logsink_name):
 def create_bq_dataset(context, logsink_name):
     """ Create the BQ dataset destination. """
 
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+
     dest_properties = []
     if 'bqProperties' in context.properties:
         dest_prop = context.properties['bqProperties']
         dest_prop['name'] = context.properties['destinationName']
+        dest_prop['project'] = project_id
         access = dest_prop.get('access', [])
         access.append(
             {
@@ -58,7 +67,7 @@ def create_bq_dataset(context, logsink_name):
         dest_prop['access'] = access
         dest_properties = [
             {
-                'name': context.properties['destinationName'],
+                'name': '{}-bigquery-dataset'.format(context.env['name']),
                 'type': 'bigquery_dataset.py',
                 'properties': dest_prop
             }
@@ -70,11 +79,15 @@ def create_bq_dataset(context, logsink_name):
 def create_storage(context, logsink_name):
     """ Create the bucket destination. """
 
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+
     dest_properties = []
     if 'storageProperties' in context.properties:
         bucket_name = context.properties['destinationName']
         dest_prop = context.properties['storageProperties']
         dest_prop['name'] = bucket_name
+        dest_prop['project'] = project_id
         bindings = dest_prop.get('bindings', [])
         bindings.append(
             {
@@ -88,20 +101,22 @@ def create_storage(context, logsink_name):
         if 'bindings' in dest_prop:
             del dest_prop['bindings']
 
+        name = '{}-bucket'.format(context.env['name'])
         dest_properties = [
             {
                 # Create the GCS Bucket
-                'name': bucket_name,
+                'name': name,
                 'type': 'gcs_bucket.py',
                 'properties': dest_prop
             },
             {
                 # Give the logsink writerIdentity permissions to the bucket
-                'name': bucket_name + '-logging-storage-iampolicy',
+                'name': '{}-iampolicy'.format(name),
+                # https://cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy
                 'action': 'gcp-types/storage-v1:storage.buckets.setIamPolicy',
                 'properties':
                     {
-                        'bucket': '$(ref.' + bucket_name + '.name)',
+                        'bucket': '$(ref.{}.name)'.format(name),
                         'project': context.env['project'],
                         'bindings': bindings
                     }
@@ -114,13 +129,14 @@ def create_storage(context, logsink_name):
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    project_id = context.env['project']
-    name = context.properties.get('name', context.env['name'])
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
     properties = {
         'name': name,
         'uniqueWriterIdentity': context.properties['uniqueWriterIdentity'],
-        'sink': name
+        'sink': name,
     }
 
     if 'orgId' in context.properties:
@@ -169,9 +185,13 @@ def generate_config(context):
     if sink_filter:
         properties['filter'] = sink_filter
 
+    # https://cloud.google.com/logging/docs/reference/v2/rest/v2/folders.sinks
+    # https://cloud.google.com/logging/docs/reference/v2/rest/v2/billingAccounts.sinks
+    # https://cloud.google.com/logging/docs/reference/v2/rest/v2/projects.sinks
+    # https://cloud.google.com/logging/docs/reference/v2/rest/v2/organizations.sinks
     base_type = 'gcp-types/logging-v2:'
     resource = {
-        'name': name,
+        'name': context.env['name'],
         'type': base_type + source_type + '.sinks',
         'properties': properties
     }
@@ -184,7 +204,7 @@ def generate_config(context):
             # GCS Bucket needs to be created first before the sink whereas
             # pub/sub and BQ do not. This might change in the future.
             resource['metadata'] = {
-                'dependsOn': [context.properties['destinationName']]
+                'dependsOn': [dest_properties[0]['name']]
             }
 
     return {
@@ -194,7 +214,7 @@ def generate_config(context):
             [
                 {
                     'name': 'writerIdentity',
-                    'value': '$(ref.{}.writerIdentity)'.format(name)
+                    'value': '$(ref.{}.writerIdentity)'.format(context.env['name'])
                 }
             ]
     }
