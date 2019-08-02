@@ -19,4 +19,7 @@ locals {
     folders = {
         ci = module.folders-root.names_and_ids["ci-projects"]
     }
+    ci_folders = {
+        kms = module.folders-ci.names_and_ids["ci-kms"]
+    }
 }

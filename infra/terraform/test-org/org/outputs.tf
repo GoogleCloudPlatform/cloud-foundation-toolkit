@@ -15,5 +15,5 @@
  */
 
 output "folders" {
-    value = local.folders
+    value = merge(local.folders, local.ci_folders)
 }
