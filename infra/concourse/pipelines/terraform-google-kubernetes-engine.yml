@@ -161,6 +161,12 @@ jobs:
       params:
         <<: *run-tests-params
 
+    - task: run-tests-beta-cluster
+      image: integration-test-image
+      file: pull-request/test/ci/beta-cluster.yml
+      params:
+        <<: *run-tests-params
+
   on_success:
     put: notify-integration-test-success
     resource: pull-request

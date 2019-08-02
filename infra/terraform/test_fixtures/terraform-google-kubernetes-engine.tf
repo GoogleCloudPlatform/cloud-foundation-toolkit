@@ -25,16 +25,17 @@ resource "google_project_services" "ci_kubernetes_engine" {
 
   services = [
     "bigquery-json.googleapis.com",
+    "cloudkms.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "container.googleapis.com",
     "containerregistry.googleapis.com",
+    "iam.googleapis.com",
+    "iamcredentials.googleapis.com",
     "oslogin.googleapis.com",
     "pubsub.googleapis.com",
-    "storage-api.googleapis.com",
-    "iam.googleapis.com",
     "serviceusage.googleapis.com",
-    "iamcredentials.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
+    "storage-api.googleapis.com",
   ]
 }
 
@@ -56,6 +57,17 @@ resource "google_project_iam_binding" "ci_kubernetes_engine" {
 
   members = [
     "serviceAccount:${google_service_account.ci_kubernetes_engine.email}",
+  ]
+}
+
+resource "google_project_iam_binding" "ci_kubernetes_engine_kms_access" {
+  provider = "google.phoogle"
+
+  project = "${google_project_services.ci_kubernetes_engine.project}"
+  role    = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:service-${google_project.ci_kubernetes_engine.number}@container-engine-robot.iam.gserviceaccount.com",
   ]
 }
 
