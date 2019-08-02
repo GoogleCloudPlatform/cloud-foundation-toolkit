@@ -112,6 +112,7 @@ properties:
     description: |
       Used when establishing the VPN tunnel with the peer VPN gateway.
     default: ["0.0.0.0/0"]
+    uniqItems: true
     items:
       type: string
       description: "CIDR formatted string, for example: 192.168.0.0/16."
@@ -120,6 +121,7 @@ properties:
     description: |
       Used when establishing the VPN tunnel with the peer VPN gateway.
     default: ["0.0.0.0/0"]
+    uniqItems: true
     items:
       type: string
       description: "CIDR formatted string, for example: 192.168.0.0/16."
