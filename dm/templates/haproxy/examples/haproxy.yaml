@@ -6,8 +6,6 @@
 # * zones/us-east1-b/instanceGroups/instance-group-3
 
 imports:
-  - path: templates/instance/instance.py
-    name: instance.py
   - path: templates/haproxy/haproxy.py
     name: haproxy.py
 
