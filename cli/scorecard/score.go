@@ -87,7 +87,7 @@ func getConstraintForViolation(config *ScoringConfig, violation *validator.Viola
 		config.constraints[key] = cv
 
 		annotations := constraint.GetMetadata().GetAnnotations()
-		categoryKey, found := annotations["scorecard.cft.dev/category"]
+		categoryKey, found := annotations["bundles.validator.forsetisecurity.org/scorecard-v1"]
 		if !found {
 			categoryKey = otherCategoryKey
 		}
