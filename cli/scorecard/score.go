@@ -59,7 +59,7 @@ func (cv constraintViolations) Count() int {
 }
 
 func (cv constraintViolations) GetName() string {
-	return cv.constraint.GetMetadata().GetName()
+	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
 }
 
 var availableCategories = map[string]string{
@@ -73,23 +73,19 @@ func getConstraintForViolation(config *ScoringConfig, violation *validator.Viola
 	key := violation.GetConstraint()
 	cv, found := config.constraints[key]
 	if !found {
-		response, err := config.validator.GetConstraint(config.ctx, &validator.GetConstraintRequest{
-			Name: key,
-		})
-		if err != nil {
-			return nil, errors.Wrap(err, "Finding matching constraint")
-		}
-
-		constraint := response.GetConstraint()
+		constraint := violation.GetConstraintConfig()
 		cv = &constraintViolations{
-			constraint: response.GetConstraint(),
+			constraint: constraint,
 		}
 		config.constraints[key] = cv
 
-		annotations := constraint.GetMetadata().GetAnnotations()
-		categoryKey, found := annotations["bundles.validator.forsetisecurity.org/scorecard-v1"]
-		if !found {
-			categoryKey = otherCategoryKey
+		metadata := constraint.GetMetadata()
+		annotations := metadata.GetStructValue().GetFields()["annotations"].GetStructValue().GetFields()
+
+		categoryKey := otherCategoryKey
+		categoryValue, found := annotations["bundles.validator.forsetisecurity.org/scorecard-v1"]
+		if found {
+			categoryKey = categoryValue.GetStringValue()
 		}
 
 		category, found := config.categories[categoryKey]
