@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/pkg/errors"
 
 	asset "cloud.google.com/go/asset/apiv1"
 	assetpb "google.golang.org/genproto/googleapis/cloud/asset/v1"
@@ -90,13 +91,14 @@ func exportInventoryToGcs(inventory *Inventory, contentType assetpb.ContentType)
 		return err
 	}
 
+	destination := inventory.getGcsDestination(contentType)
 	req := &assetpb.ExportAssetsRequest{
 		Parent:      getParent(inventory),
 		ContentType: contentType,
 		OutputConfig: &assetpb.OutputConfig{
 			Destination: &assetpb.OutputConfig_GcsDestination{
 				GcsDestination: &assetpb.GcsDestination{
-					ObjectUri: inventory.getGcsDestination(contentType),
+					ObjectUri: destination,
 				},
 			},
 		},
@@ -104,7 +106,7 @@ func exportInventoryToGcs(inventory *Inventory, contentType assetpb.ContentType)
 
 	op, err := c.ExportAssets(ctx, req)
 	if err != nil {
-		return err
+		return errors.Wrap(err, fmt.Sprintf("destination = %v", destination))
 	}
 
 	_, err = op.Wait(ctx)
