@@ -16,6 +16,7 @@
 package configs
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -28,6 +29,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
+	"github.com/golang/protobuf/jsonpb"
+	pb "github.com/golang/protobuf/ptypes/struct"
 )
 
 type yamlFile struct {
@@ -78,16 +81,6 @@ func (c *UnclassifiedConfig) AsInterface() (interface{}, error) {
 	return f, nil
 }
 
-// AsProto returns the constraint a Kubernetes proto
-func (c *Constraint) AsProto() (*validator.Constraint, error) {
-	// Use yaml.Unmarshal to create a proper Kubernetes proto
-	var kc validator.Constraint
-	if err := yaml.Unmarshal([]byte(c.Confg.RawFile), &kc); err != nil {
-		return nil, errors.Wrap(err, "converting from yaml")
-	}
-	return &kc, nil
-}
-
 // asConstraint attempts to convert to constraint
 // Returns:
 //   *Constraint: only set if valid constraint
@@ -104,6 +97,23 @@ func asConstraint(data *UnclassifiedConfig) (*Constraint, error) {
 	return &Constraint{
 		Confg: data,
 	}, nil
+}
+
+// AsProto returns the constraint a Kubernetes proto
+func (c *Constraint) AsProto() (*validator.Constraint, error) {
+	ci, err := c.Confg.AsInterface()
+	if err != nil {
+		return nil, errors.Wrap(err, "converting to proto")
+	}
+	cp := &validator.Constraint{}
+
+	metadata, err := convertToProtoVal(ci.(map[string]interface{})["metadata"])
+	if err != nil {
+		return nil, errors.Wrap(err, "converting to proto")
+	}
+	cp.Metadata = metadata
+
+	return cp, nil
 }
 
 // asConstraintTemplate attempts to convert to template
@@ -259,4 +269,18 @@ func CategorizeYAMLFile(data []byte, dataSource string) (interface{}, error) {
 		return asConstraint(unclassified)
 	}
 	return nil, fmt.Errorf("unable to determine configuration type for data %s", dataSource)
+}
+
+func convertToProtoVal(from interface{}) (*pb.Value, error) {
+	to := &pb.Value{}
+	jsn, err := json.Marshal(from)
+	if err != nil {
+		return nil, errors.Wrap(err, "marshalling to json")
+	}
+
+	if err := jsonpb.UnmarshalString(string(jsn), to); err != nil {
+		return nil, errors.Wrap(err, "unmarshalling to proto")
+	}
+
+	return to, nil
 }

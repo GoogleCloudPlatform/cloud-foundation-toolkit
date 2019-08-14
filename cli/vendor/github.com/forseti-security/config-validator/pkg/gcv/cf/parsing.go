@@ -13,9 +13,10 @@ import (
 // expressionVal is patterned off of the response object provided by the audit script.
 // The purpose of this object is to be able to to parse the generic result provided by Rego using json parsing.
 type expressionVal struct {
-	Asset      string `json:"asset"`
-	Constraint string `json:"constraint"`
-	Violation  *struct {
+	Asset            string                 `json:"asset"`
+	Constraint       string                 `json:"constraint"`
+	ConstraintConfig map[string]interface{} `json:"constraint_config"`
+	Violation        *struct {
 		Msg      string                 `json:"msg"`
 		Metadata map[string]interface{} `json:"details"`
 	} `json:"violation"`
@@ -73,6 +74,16 @@ func convertToViolations(expression *rego.ExpressionValue) ([]*validator.Violati
 			}
 			violationToAdd.Metadata = convertedMetadata
 		}
+		if parsedExpression[i].ConstraintConfig != nil {
+			constraintMetadata, err := convertToProtoVal(parsedExpression[i].ConstraintConfig["metadata"])
+			if err != nil {
+				return nil, err
+			}
+			violationToAdd.ConstraintConfig = &validator.Constraint{
+				Metadata: constraintMetadata,
+			}
+		}
+
 		violations = append(violations, violationToAdd)
 	}
 	return violations, nil

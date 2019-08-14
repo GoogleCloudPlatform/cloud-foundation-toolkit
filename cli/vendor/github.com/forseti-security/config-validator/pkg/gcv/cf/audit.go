@@ -49,6 +49,7 @@ audit[result] {
 	result := {
 		"asset": asset.name,
 		"constraint": constraint.metadata.name,
+		"constraint_config": constraint,
 		"violation": violation,
 	}
 }

@@ -243,15 +243,3 @@ func (v *Validator) Audit(ctx context.Context) (*validator.AuditResponse, error)
 	response, err := v.constraintFramework.Audit(ctx)
 	return response, err
 }
-
-// GetConstraint returns a constraint by name
-func (v *Validator) GetConstraint(ctx context.Context, request *validator.GetConstraintRequest) (*validator.GetConstraintResponse, error) {
-	constraint, err := v.constraintFramework.GetConstraint(ctx, request.GetName())
-	if err != nil {
-		return nil, err
-	}
-	response := &validator.GetConstraintResponse{
-		Constraint: constraint,
-	}
-	return response, nil
-}
