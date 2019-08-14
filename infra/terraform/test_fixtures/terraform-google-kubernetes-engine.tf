@@ -71,6 +71,17 @@ resource "google_project_iam_binding" "ci_kubernetes_engine_kms_access" {
   ]
 }
 
+resource "google_project_iam_binding" "ci_kubernetes_engine_kms_admin_access" {
+  provider = "google.phoogle"
+
+  project = "${google_project_services.ci_kubernetes_engine.project}"
+  role    = "roles/cloudkms.admin"
+
+  members = [
+    "serviceAccount:service-${google_project.ci_kubernetes_engine.number}@container-engine-robot.iam.gserviceaccount.com",
+  ]
+}
+
 resource "google_service_account_key" "ci_kubernetes_engine" {
   provider = "google.phoogle"
 
