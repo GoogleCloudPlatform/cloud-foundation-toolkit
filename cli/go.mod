@@ -13,9 +13,8 @@ require (
 	github.com/kr/pty v1.1.3 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.4
-	golang.org/x/tools v0.0.0-20190612232758-d4e310b4a8a5 // indirect
+	golang.org/x/net v0.0.0-20190613194153-d28f0bde5980 // indirect
+	golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f // indirect
 	google.golang.org/api v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873
-	gopkg.in/inf.v0 v0.9.1 // indirect
-	k8s.io/apimachinery v0.0.0-20190813060636-0c17871ad6fd // indirect
 )
