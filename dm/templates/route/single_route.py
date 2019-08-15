@@ -69,7 +69,7 @@ def generate_config(context):
         if prop in properties:
             res_properties[prop] = properties[prop]
 
-    name = properties['name']
+    name = context.env['name']
     resources = [
         {
             'name': name,
