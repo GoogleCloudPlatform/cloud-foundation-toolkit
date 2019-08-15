@@ -36,7 +36,8 @@ module "folders-ci" {
   parent_type = "folder"
 
   names = [
-    "ci-kms"
+    "ci-kms",
+    "ci-network"
   ]
 
   set_roles = false
