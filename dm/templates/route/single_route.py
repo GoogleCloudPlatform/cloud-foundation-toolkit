@@ -23,9 +23,11 @@ def generate_config(context):
 
     properties = context.properties
     project_id = properties.get('project', context.env['project'])
+    name = context.env['name']
 
     # Set the common route properties.
     res_properties = {
+        'name': properties.get('name', name)
         'network': properties['network'],
         'project': project_id,
         'tags': properties['tags'],
@@ -69,7 +71,6 @@ def generate_config(context):
         if prop in properties:
             res_properties[prop] = properties[prop]
 
-    name = context.env['name']
     resources = [
         {
             'name': name,
