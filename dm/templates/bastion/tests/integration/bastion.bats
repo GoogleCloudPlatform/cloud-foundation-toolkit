@@ -78,6 +78,8 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config ${CONFIG} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
 }
 
@@ -85,6 +87,8 @@ function teardown() {
     run gcloud compute instances describe ${BASTION1_RES_NAME} \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "machineTypes/${BASTION1_MACHINE_TYPE}" ]]
     [[ "$output" =~ "zones/$(ZONE)" ]]
@@ -108,6 +112,8 @@ function teardown() {
     run gcloud compute ssh ${BASTION1_RES_NAME} --command "sudo whoami" \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "root" ]]
 }
@@ -116,6 +122,8 @@ function teardown() {
     run gcloud compute instances describe ${BASTION2_NAME} \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "machineTypes/${DEFAULT_MACHINE_TYPE}" ]]
     [[ "$output" =~ "zones/${ZONE}" ]]
@@ -128,6 +136,8 @@ function teardown() {
     run gcloud compute disks describe ${BASTION2_NAME} \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "sizeGb: '${BASTION2_DISK_SIZE}'" ]]
 }
@@ -148,6 +158,8 @@ function teardown() {
     run gcloud compute ssh ${BASTION2_NAME} --command "sudo -n whoami" \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ ! "$status" -eq 0 ]]
 }
 
@@ -156,6 +168,8 @@ function teardown() {
         --format "yaml(tags)" \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "- ${BASTION2_EXTRA_TAG}" ]]
     [[ "$output" =~ "- ${BASTION2_TAG}" ]]
@@ -164,6 +178,8 @@ function teardown() {
 @test "Verifying Bastion's inbound firewall rule" {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "IPProtocol: tcp" ]]
     [[ "$output" =~ "- '22'" ]]
@@ -177,6 +193,8 @@ function teardown() {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --format="yaml(sourceRanges)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${SSH_TO_BASTION_SOURCE_RANGE}" ]]
 }
@@ -185,6 +203,8 @@ function teardown() {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --format="yaml(sourceTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${SSH_TO_BASTION_SOURCE_TAG}" ]]
 }
@@ -193,6 +213,8 @@ function teardown() {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --format="yaml(targetTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${BASTION2_TAG}" ]]
 }
@@ -201,6 +223,8 @@ function teardown() {
     run gcloud compute firewall-rules describe \
         "${SSH_FROM_BASTION_DEFAULT_RULE_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "IPProtocol: tcp" ]]
     [[ "$output" =~ "- '22'" ]]
@@ -215,6 +239,8 @@ function teardown() {
         "${SSH_FROM_BASTION_DEFAULT_RULE_NAME}" \
         --format="yaml(sourceTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${BASTION2_TAG}" ]]
 }
@@ -224,6 +250,8 @@ function teardown() {
         "${SSH_FROM_BASTION_DEFAULT_RULE_NAME}" \
         --format="yaml(targetTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${SSH_FROM_BASTION_SOURCE_TAG}" ]]
 }
