@@ -16,8 +16,8 @@ func init() {
 
 	scorecardCmd.Flags().StringVar(&flags.scorecard.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
 
-	scorecardCmd.Flags().StringVar(&flags.scorecard.bucketName, "bucket", "", "GCS bucket name for storing inventory")
-	scorecardCmd.MarkFlagRequired("bucket")
+	scorecardCmd.Flags().StringVar(&flags.scorecard.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --local-path)")
+	scorecardCmd.Flags().StringVar(&flags.scorecard.dirName, "local-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
 }
 
 // getEnvProjectID finds the implict environment project
@@ -33,6 +33,13 @@ var scorecardCmd = &cobra.Command{
 	Use:   "scorecard",
 	Short: "Print a scorecard of your GCP environment",
 	Args:  cobra.NoArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if (flags.scorecard.bucketName == "" && flags.scorecard.dirName == "") ||
+			(flags.scorecard.bucketName != "" && flags.scorecard.dirName != "") {
+			return fmt.Errorf("Either bucket or local-path should be set")
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.Println("Generating CFT scorecard")
 		var err error
@@ -43,7 +50,7 @@ var scorecardCmd = &cobra.Command{
 		}
 
 		inventory, err := scorecard.NewInventory(controlProjectID,
-			flags.scorecard.bucketName,
+			flags.scorecard.bucketName, flags.scorecard.dirName,
 			scorecard.TargetProject(flags.scorecard.targetProjectID))
 		if err != nil {
 			return err

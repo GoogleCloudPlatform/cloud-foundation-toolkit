@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -39,15 +40,8 @@ func attachValidator(config *ScoringConfig) error {
 	return err
 }
 
-func addDataFromBucket(config *ScoringConfig, bucket *storage.BucketHandle, objectName string) error {
-	ctx := context.Background()
-	reader, err := bucket.Object(objectName).NewReader(ctx)
-	if err != nil {
-		return err
-	}
-	defer reader.Close()
+func addDataFromScanner(config *ScoringConfig, scanner *bufio.Scanner) error {
 
-	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
 
@@ -67,17 +61,38 @@ func addDataFromBucket(config *ScoringConfig, bucket *storage.BucketHandle, obje
 func getViolations(inventory *Inventory, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
 
-	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	bucket := client.Bucket(inventory.GcsBucket)
-	for _, objectName := range destinationObjectNames {
-		err = addDataFromBucket(config, bucket, objectName)
+	if inventory.GcsBucket != "" {
+		ctx := context.Background()
+		client, err := storage.NewClient(ctx)
 		if err != nil {
-			return nil, errors.Wrap(err, "Fetching inventory")
+			return nil, err
+		}
+		bucket := client.Bucket(inventory.GcsBucket)
+
+		for _, objectName := range destinationObjectNames {
+			reader, err := bucket.Object(objectName).NewReader(ctx)
+			if err != nil {
+				return nil, err
+			}
+			defer reader.Close()
+			scanner := bufio.NewScanner(reader)
+			err = addDataFromScanner(config, scanner)
+			if err != nil {
+				return nil, errors.Wrap(err, "Fetching inventory")
+			}
+		}
+	} else {
+		for _, objectName := range destinationObjectNames {
+			reader, err := os.Open(filepath.Join(inventory.DirName, objectName))
+			if err != nil {
+				return nil, err
+			}
+			defer reader.Close()
+			scanner := bufio.NewScanner(reader)
+			err = addDataFromScanner(config, scanner)
+			if err != nil {
+				return nil, errors.Wrap(err, "Fetching inventory")
+			}
 		}
 	}
 

@@ -32,6 +32,7 @@ type Inventory struct {
 	ControlProject string
 	OrganizationID string
 	GcsBucket      string
+	DirName		   string
 }
 
 // Option for NewInventory
@@ -52,10 +53,11 @@ func TargetProject(projectID string) Option {
 }
 
 // NewInventory creates a new CAI inventory manager
-func NewInventory(projectID string, bucketName string, options ...Option) (*Inventory, error) {
+func NewInventory(projectID string, bucketName string, dirName string, options ...Option) (*Inventory, error) {
 	inventory := new(Inventory)
 	inventory.ControlProject = projectID
 	inventory.GcsBucket = bucketName
+	inventory.DirName = dirName
 
 	for _, option := range options {
 		option(inventory)

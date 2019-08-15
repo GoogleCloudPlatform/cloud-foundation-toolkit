@@ -37,6 +37,7 @@ var flags struct {
 		policyPath      string
 		targetProjectID string
 		bucketName      string
+		dirName         string
 	}
 }
 
