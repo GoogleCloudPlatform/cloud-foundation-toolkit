@@ -12,7 +12,6 @@ output "github_webhook_urls" {
     terraform-google-jenkins           = "${data.template_file.jenkins_github_webhook_url.rendered}"
     terraform-google-kubernetes-engine = "${data.template_file.kubernetes_engine_github_webhook_url.rendered}"
     terraform-google-log-export        = "${data.template_file.log_export_github_webhook_url.rendered}"
-    terraform-google-network           = "${data.template_file.network_github_webhook_url.rendered}"
     terraform-google-project-factory   = "${data.template_file.project_factory_github_webhook_url.rendered}"
     terraform-google-service-accounts  = "${data.template_file.service_accounts_github_webhook_url.rendered}"
     terraform-google-sql-db            = "${data.template_file.sql_db_github_webhook_url.rendered}"
