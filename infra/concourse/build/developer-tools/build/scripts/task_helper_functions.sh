@@ -287,14 +287,68 @@ init_credentials() {
   echo "gs_service_key_file = ${tmpfile}" >> ~/.boto
 }
 
+init_credentials_if_found() {
+   if [[ -z "${SERVICE_ACCOUNT_JSON:-}" ]]; then
+    echo "Proceeding using application default credentials"
+  else
+    init_credentials
+  fi
+}
+
+# Prepare the setup environment
+prepare_environment() {
+  set -eu
+
+  init_credentials_if_found
+
+  cd test/setup/ || exit
+  terraform init
+  terraform apply -auto-approve
+  ./make_source.sh
+}
+
+ # Destroy the setup environment
+cleanup_environment() {
+  set -eu
+
+  init_credentials_if_found
+
+  cd test/setup/ || exit
+
+  terraform init
+  terraform destroy -auto-approve
+}
+
 setup_environment() {
   echo 'Warning: setup_environment is deprecated.  Use init_credentials instead.' >&2
   init_credentials
 }
 
+# Source environment variables from a file, if found
+source_test_env() {
+  if [ ! -f test/source.sh ]; then
+    echo "Warning: test/source.sh not found, assuming environment configured elsewhere."
+  else
+    # shellcheck disable=SC1091
+    source test/source.sh
+  fi
+}
+
+# Run kitchen tasks with sourced credentials
+kitchen_do() {
+  source_test_env
+  init_credentials
+
+  export CMD="$*"
+  kitchen "$CMD"
+}
+
 # This function is called by /usr/local/bin/test_integration.sh and can be
 # overridden on a per-module basis to implement additional steps.
 run_integration_tests() {
+  source_test_env
+
+  init_credentials
   kitchen create
   kitchen converge
   kitchen verify
