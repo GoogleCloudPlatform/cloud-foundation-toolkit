@@ -2,9 +2,23 @@ package launchpad
 // WARNING: Generated file, do not modify directly!
 
 var statics = map[string]string {
+	"static/tmpl/tf/_output.tf.tmpl": `output "{{ .Id }}" {
+  value = "{{ .Val }}"
+}
+`,
+	"static/tmpl/tf/_variable.tf.tmpl": `variable "{{ .Id }}" {
+  description = "{{ .Description }}"
+  default     = "{{ .Default }}"
+}
+`,
 	"static/tmpl/tf/google_folder.tf.tmpl": `resource "google_folder" "{{ .Id }}" {
   display_name = "{{ .DisplayName }}"
   parent       = "{{ .Parent }}"
+}
+`,
+	"static/tmpl/tf/google_provider.tf.tmpl": `provider "google" {
+  credentials = "{{ .Credentials }}"
+  version     = "{{ .Version }}"
 }
 `,
 	"static/tmpl/tf/license.tf.tmpl": `/**
@@ -22,5 +36,6 @@ var statics = map[string]string {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 `,
 }
