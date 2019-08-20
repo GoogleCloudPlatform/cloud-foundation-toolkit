@@ -1,19 +1,31 @@
 package launchpad
 
 import (
+	"gopkg.in/yaml.v2"
 	"log"
-	"path/filepath"
-	"strings"
 )
 
-const ExtensionYAML string = ".yaml"
+//go:generate go run static/includestatic.go
 
 func NewBootstrap() {
 	// TODO (@rjerrems) Bootstrap entry point
 }
 
 // `$ cft launchpad generate` entry point
-func NewGenerate(rawFilepath []string) {
+func NewGenerate(rawFilepath []string, outputFlavor string, outputDir string) {
+	gState.outputDirectory = outputDir
+	switch outputFlavor {
+	case outTf:
+		gState.outputFlavor = outTf
+	case outDm:
+		gState.outputFlavor = outDm
+		log.Println("Deployment Manager format not yet supported")
+		return
+	default:
+		log.Fatalln("Unrecognized output format")
+		return
+	}
+
 	fps, err := validateYAMLFilepath(rawFilepath)
 	if err != nil {
 		log.Fatalln(err)
@@ -21,27 +33,12 @@ func NewGenerate(rawFilepath []string) {
 	if fps == nil || len(fps) == 0 {
 		log.Fatalln("No valid YAML files given")
 	}
-	for _, conf := range fps {
-		// TODO (@wengm) Model loading .. etc
-		println(conf)
-	}
-}
-
-// Validates raw strings, including Glob patterns, and returns a validated list of
-// yaml filepath ready for consumption
-func validateYAMLFilepath(raw []string) ([]string, error) {
-	var fps []string
-	for _, pattern := range raw {
-		matches, err := filepath.Glob(pattern)
+	for _, conf := range fps { // Load all files into runtime
+		// TODO multiple yaml documents in one file
+		err := yaml.Unmarshal([]byte(loadFile(conf)), &configYAML{})
 		if err != nil {
-			return nil, err
-		}
-		for _, m := range matches { // Glob will return exist files
-			if strings.ToLower(filepath.Ext(m)) != ExtensionYAML {
-				continue
-			}
-			fps = append(fps, m)
+			log.Fatalln(err)
 		}
 	}
-	return fps, nil
+	generateOutput()
 }

@@ -7,11 +7,16 @@ import (
 )
 
 func init() {
+	launchpadGenerateCmd.Flags().StringVarP(&launchpadOutputFlavor, "flavor", "f", "tf", "Output Flavor: [tf]/dm")
+	launchpadGenerateCmd.Flags().StringVarP(&launchpadOutputDirectory, "directory", "d", "config", "Output Directory: [config]")
+
 	rootCmd.AddCommand(launchpadCmd)
 	launchpadCmd.AddCommand(launchpadGenerateCmd)
 	launchpadCmd.AddCommand(launchpadBootstrapCmd)
 }
 
+var launchpadOutputFlavor string
+var launchpadOutputDirectory string
 var launchpadCmd = &cobra.Command{
 	Use:     "launchpad",
 	Aliases: []string{"lp"},
@@ -37,7 +42,7 @@ var launchpadGenerateCmd = &cobra.Command{
 		if args == nil || len(args) == 0 {
 			cmd.HelpFunc()(cmd, args)
 		} else {
-			launchpad.NewGenerate(args)
+			launchpad.NewGenerate(args, launchpadOutputFlavor, launchpadOutputDirectory)
 		}
 	},
 }

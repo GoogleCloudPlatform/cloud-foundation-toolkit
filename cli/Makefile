@@ -9,6 +9,7 @@ GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
 build:
+	go generate launchpad/root.go
 	go build ${LDFLAGS} -o bin/cft
 
 .PHONY: test
