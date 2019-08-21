@@ -13,6 +13,7 @@ require (
 	github.com/kr/pty v1.1.3 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.4
+	github.com/spf13/viper v1.3.2
 	golang.org/x/net v0.0.0-20190613194153-d28f0bde5980 // indirect
 	golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f // indirect
 	google.golang.org/api v0.6.0 // indirect

@@ -1,19 +1,20 @@
 package scorecard
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var flags struct {
-	policyPath      string
-	targetProjectID string
-	bucketName      string
+	policyPath       string
+	targetProjectID  string
+	controlProjectID string
+	bucketName       string
 }
 
 func init() {
+	viper.AutomaticEnv()
+
 	Cmd.Flags().StringVar(&flags.policyPath, "policy-path", "", "Path to directory containing validation policies")
 	Cmd.MarkFlagRequired("policy-path")
 
@@ -21,15 +22,9 @@ func init() {
 
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory")
 	Cmd.MarkFlagRequired("bucket")
-}
 
-// getEnvProjectID finds the implict environment project
-func getEnvProjectID() (string, error) {
-	project := os.Getenv("GOOGLE_PROJECT")
-	if project == "" {
-		return project, fmt.Errorf("Please set $GOOGLE_PROJECT environment variable")
-	}
-	return project, nil
+	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
+	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
 }
 
 var Cmd = &cobra.Command{
@@ -40,9 +35,10 @@ var Cmd = &cobra.Command{
 		cmd.Println("Generating CFT scorecard")
 		var err error
 
-		controlProjectID, err := getEnvProjectID()
-		if err != nil {
-			return err
+		controlProjectID := viper.GetString("google_project")
+		if controlProjectID == "" {
+			controlProjectID = flags.targetProjectID
+			Log.Info("No control project specified, using target project", "project", controlProjectID)
 		}
 
 		inventory, err := NewInventory(controlProjectID,
