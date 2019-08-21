@@ -121,6 +121,10 @@ func (inventory *InventoryConfig) Export() error {
 	s.Prefix = "Exporting Cloud Asset Inventory to GCS bucket... "
 	s.Start()
 	err := inventory.exportToGcs(assetpb.ContentType_RESOURCE)
+	if err != nil {
+		s.Stop()
+		return err
+	}
 	err = inventory.exportToGcs(assetpb.ContentType_IAM_POLICY)
 	s.Stop()
 
