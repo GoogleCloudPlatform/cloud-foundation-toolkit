@@ -16,6 +16,7 @@ package scorecard
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
@@ -28,6 +29,24 @@ type ScoringConfig struct {
 	categories  map[string]*constraintCategory   // available constraint categories
 	constraints map[string]*constraintViolations // a map of constraints violated and their violations
 	validator   *gcv.Validator                   // the validator instance used for scoring
+}
+
+// NewScoringConfig creates a scoring engine for the given policy library
+func NewScoringConfig(policyPath string) (*ScoringConfig, error) {
+	config := &ScoringConfig{}
+
+	config.PolicyPath = policyPath
+
+	v, err := gcv.NewValidator(
+		gcv.PolicyPath(filepath.Join(config.PolicyPath, "policies")),
+		gcv.PolicyLibraryDir(filepath.Join(config.PolicyPath, "lib")),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "initializing gcv validator")
+	}
+	config.validator = v
+
+	return config, nil
 }
 
 const otherCategoryKey = "other"
@@ -121,11 +140,6 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 
 // Score creates a Scorecard for an inventory
 func (inventory *inventoryConfig) Score(config *ScoringConfig) error {
-	err := attachValidator(config)
-	if err != nil {
-		return errors.Wrap(err, "initializing gcv validator")
-	}
-
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err

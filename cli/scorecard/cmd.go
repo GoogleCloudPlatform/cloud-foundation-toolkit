@@ -49,8 +49,9 @@ var Cmd = &cobra.Command{
 			return err
 		}
 
-		config := &ScoringConfig{
-			PolicyPath: flags.policyPath,
+		config, err := NewScoringConfig(flags.policyPath)
+		if err != nil {
+			return err
 		}
 		err = inventory.Score(config)
 		if err != nil {
