@@ -30,13 +30,6 @@ var rootCmd = &cobra.Command{
 var flags struct {
 	// Common flags
 	verbose bool
-
-	// flags that correspond to subcommands:
-	scorecard struct {
-		policyPath      string
-		targetProjectID string
-		bucketName      string
-	}
 }
 
 func init() {
@@ -68,6 +61,8 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	}
 
 	rootCmd.PersistentFlags().BoolVar(&flags.verbose, "verbose", false, "Log output to stdout")
+
+	rootCmd.AddCommand(scorecard.Cmd)
 }
 
 func Execute() {
