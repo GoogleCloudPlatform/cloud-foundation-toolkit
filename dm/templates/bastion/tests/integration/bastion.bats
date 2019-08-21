@@ -28,7 +28,7 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     export ZONE="us-central1-c"
     export BASTION1_DISABLE_SUDO="false"
     export BASTION2_DISABLE_SUDO="true"
-    export BASTION2_DISK_SIZE="20"
+    export BASTION2_DISK_SIZE="10"
     export NETWORK_NAME="test-network-${RAND}"
     export PROVISION_COMPLETED_MARKER="provision-completed-marker"
     export BASTION2_STARTUP="echo '${PROVISION_COMPLETED_MARKER}'"
