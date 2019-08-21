@@ -27,6 +27,7 @@ func init() {
 	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
 }
 
+// Cmd represents the base scorecard command
 var Cmd = &cobra.Command{
 	Use:   "scorecard",
 	Short: "Print a scorecard of your GCP environment",

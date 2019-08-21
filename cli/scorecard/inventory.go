@@ -26,50 +26,50 @@ import (
 	assetpb "google.golang.org/genproto/googleapis/cloud/asset/v1"
 )
 
-// Inventory manages a CAI inventory
-type Inventory struct {
-	ProjectID      string
-	ControlProject string
-	OrganizationID string
-	GcsBucket      string
+// inventoryConfig manages a CAI inventory
+type inventoryConfig struct {
+	projectID        string
+	controlProjectID string
+	organizationID   string
+	gcsBucket        string
 }
 
 // Option for NewInventory
-type Option func(*Inventory)
+type Option func(*inventoryConfig)
 
 // ControlProject sets the project for storing inventory data
 func ControlProject(projectID string) Option {
-	return func(inventory *Inventory) {
-		inventory.ControlProject = projectID
+	return func(inventory *inventoryConfig) {
+		inventory.controlProjectID = projectID
 	}
 }
 
 // TargetProject sets the project for storing inventory data
 func TargetProject(projectID string) Option {
-	return func(inventory *Inventory) {
-		inventory.ProjectID = projectID
+	return func(inventory *inventoryConfig) {
+		inventory.projectID = projectID
 	}
 }
 
 // NewInventory creates a new CAI inventory manager
-func NewInventory(projectID string, bucketName string, options ...Option) (*Inventory, error) {
-	inventory := new(Inventory)
-	inventory.ControlProject = projectID
-	inventory.GcsBucket = bucketName
+func NewInventory(projectID string, bucketName string, options ...Option) (*inventoryConfig, error) {
+	inventory := new(inventoryConfig)
+	inventory.controlProjectID = projectID
+	inventory.gcsBucket = bucketName
 
 	for _, option := range options {
 		option(inventory)
 	}
 
-	Log.Debug("Initializing inventory", "target", getParent(inventory), "control", inventory.ControlProject)
+	Log.Debug("Initializing inventory", "target", getParent(inventory), "control", inventory.controlProjectID)
 	return inventory, nil
 }
 
-func getParent(inventory *Inventory) string {
-	if inventory.OrganizationID != "" {
-		return fmt.Sprintf("organizations/%v", inventory.OrganizationID)
+func getParent(inventory *inventoryConfig) string {
+	if inventory.organizationID != "" {
+		return fmt.Sprintf("organizations/%v", inventory.organizationID)
 	}
-	return fmt.Sprintf("projects/%v", inventory.ProjectID)
+	return fmt.Sprintf("projects/%v", inventory.projectID)
 }
 
 var destinationObjectNames = map[assetpb.ContentType]string{
@@ -77,14 +77,14 @@ var destinationObjectNames = map[assetpb.ContentType]string{
 	assetpb.ContentType_IAM_POLICY: "iam_inventory.json",
 }
 
-func (inventory Inventory) getGcsDestination(contentType assetpb.ContentType) *assetpb.GcsDestination_Uri {
+func (inventory inventoryConfig) getGcsDestination(contentType assetpb.ContentType) *assetpb.GcsDestination_Uri {
 	objectName := destinationObjectNames[contentType]
 	return &assetpb.GcsDestination_Uri{
-		Uri: fmt.Sprintf("gs://%v/%v", inventory.GcsBucket, objectName),
+		Uri: fmt.Sprintf("gs://%v/%v", inventory.gcsBucket, objectName),
 	}
 }
 
-func exportInventoryToGcs(inventory *Inventory, contentType assetpb.ContentType) error {
+func exportInventoryToGcs(inventory *inventoryConfig, contentType assetpb.ContentType) error {
 	ctx := context.Background()
 	c, err := asset.NewClient(ctx)
 	if err != nil {
@@ -114,7 +114,7 @@ func exportInventoryToGcs(inventory *Inventory, contentType assetpb.ContentType)
 }
 
 // ExportInventory creates a new inventory export
-func ExportInventory(inventory *Inventory) error {
+func ExportInventory(inventory *inventoryConfig) error {
 	s := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
 	s.Prefix = "Exporting Cloud Asset Inventory to GCS bucket... "
 	s.Start()

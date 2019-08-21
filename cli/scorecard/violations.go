@@ -64,7 +64,7 @@ func addDataFromBucket(config *ScoringConfig, bucket *storage.BucketHandle, obje
 }
 
 // getViolations finds all Config Validator violations for a given Inventory
-func getViolations(inventory *Inventory, config *ScoringConfig) (*validator.AuditResponse, error) {
+func getViolations(inventory *inventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
 
 	ctx := context.Background()
@@ -73,7 +73,7 @@ func getViolations(inventory *Inventory, config *ScoringConfig) (*validator.Audi
 		return nil, err
 	}
 
-	bucket := client.Bucket(inventory.GcsBucket)
+	bucket := client.Bucket(inventory.gcsBucket)
 	for _, objectName := range destinationObjectNames {
 		err = addDataFromBucket(config, bucket, objectName)
 		if err != nil {

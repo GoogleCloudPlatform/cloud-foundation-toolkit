@@ -122,7 +122,7 @@ func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) err
 }
 
 // ScoreInventory creates a Scorecard for an inventory
-func ScoreInventory(inventory *Inventory, config *ScoringConfig) error {
+func ScoreInventory(inventory *inventoryConfig, config *ScoringConfig) error {
 	config.ctx = context.Background()
 
 	err := attachValidator(config)
