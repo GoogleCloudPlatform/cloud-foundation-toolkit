@@ -139,7 +139,7 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 }
 
 // Score creates a Scorecard for an inventory
-func (inventory *inventoryConfig) Score(config *ScoringConfig) error {
+func (inventory *InventoryConfig) Score(config *ScoringConfig) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err

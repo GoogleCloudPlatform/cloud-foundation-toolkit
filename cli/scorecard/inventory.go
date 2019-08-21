@@ -26,8 +26,8 @@ import (
 	assetpb "google.golang.org/genproto/googleapis/cloud/asset/v1"
 )
 
-// inventoryConfig manages a CAI inventory
-type inventoryConfig struct {
+// InventoryConfig manages a CAI inventory
+type InventoryConfig struct {
 	projectID        string
 	controlProjectID string
 	organizationID   string
@@ -35,25 +35,25 @@ type inventoryConfig struct {
 }
 
 // Option for NewInventory
-type Option func(*inventoryConfig)
+type Option func(*InventoryConfig)
 
 // ControlProject sets the project for storing inventory data
 func ControlProject(projectID string) Option {
-	return func(inventory *inventoryConfig) {
+	return func(inventory *InventoryConfig) {
 		inventory.controlProjectID = projectID
 	}
 }
 
 // TargetProject sets the project for storing inventory data
 func TargetProject(projectID string) Option {
-	return func(inventory *inventoryConfig) {
+	return func(inventory *InventoryConfig) {
 		inventory.projectID = projectID
 	}
 }
 
 // NewInventory creates a new CAI inventory manager
-func NewInventory(projectID string, bucketName string, options ...Option) (*inventoryConfig, error) {
-	inventory := new(inventoryConfig)
+func NewInventory(projectID string, bucketName string, options ...Option) (*InventoryConfig, error) {
+	inventory := new(InventoryConfig)
 	inventory.controlProjectID = projectID
 	inventory.gcsBucket = bucketName
 
@@ -65,7 +65,7 @@ func NewInventory(projectID string, bucketName string, options ...Option) (*inve
 	return inventory, nil
 }
 
-func (inventory inventoryConfig) getParent() string {
+func (inventory InventoryConfig) getParent() string {
 	if inventory.organizationID != "" {
 		return fmt.Sprintf("organizations/%v", inventory.organizationID)
 	}
@@ -78,7 +78,7 @@ var destinationObjectNames = map[assetpb.ContentType]string{
 	assetpb.ContentType_IAM_POLICY: "iam_inventory.json",
 }
 
-func (inventory inventoryConfig) getGcsDestination(contentType assetpb.ContentType) *assetpb.GcsDestination_Uri {
+func (inventory InventoryConfig) getGcsDestination(contentType assetpb.ContentType) *assetpb.GcsDestination_Uri {
 	objectName := destinationObjectNames[contentType]
 	return &assetpb.GcsDestination_Uri{
 		Uri: fmt.Sprintf("gs://%v/%v", inventory.gcsBucket, objectName),
@@ -86,7 +86,7 @@ func (inventory inventoryConfig) getGcsDestination(contentType assetpb.ContentTy
 }
 
 // exportToGcs exports an inventory of the given resource type to GCS
-func (inventory inventoryConfig) exportToGcs(contentType assetpb.ContentType) error {
+func (inventory InventoryConfig) exportToGcs(contentType assetpb.ContentType) error {
 	ctx := context.Background()
 	c, err := asset.NewClient(ctx)
 	if err != nil {
@@ -116,7 +116,7 @@ func (inventory inventoryConfig) exportToGcs(contentType assetpb.ContentType) er
 }
 
 // Export creates a new inventory export
-func (inventory *inventoryConfig) Export() error {
+func (inventory *InventoryConfig) Export() error {
 	s := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
 	s.Prefix = "Exporting Cloud Asset Inventory to GCS bucket... "
 	s.Start()
