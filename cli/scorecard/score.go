@@ -67,7 +67,7 @@ var availableCategories = map[string]string{
 	otherCategoryKey:         "Other",
 }
 
-func getConstraintForViolation(config *ScoringConfig, violation *validator.Violation) (*constraintViolations, error) {
+func (config *ScoringConfig) getConstraintForViolation(violation *validator.Violation) (*constraintViolations, error) {
 	key := violation.GetConstraint()
 	cv, found := config.constraints[key]
 	if !found {
@@ -96,7 +96,7 @@ func getConstraintForViolation(config *ScoringConfig, violation *validator.Viola
 }
 
 // attachViolations puts violations into their appropriate categories
-func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) error {
+func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) error {
 	// Build map of categories
 	config.categories = make(map[string]*constraintCategory)
 	for k, name := range availableCategories {
@@ -108,7 +108,7 @@ func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) err
 	// Categorize violations
 	config.constraints = make(map[string]*constraintViolations)
 	for _, v := range audit.Violations {
-		cv, err := getConstraintForViolation(config, v)
+		cv, err := config.getConstraintForViolation(v)
 		if err != nil {
 			return errors.Wrap(err, "Categorizing violation")
 		}
@@ -119,8 +119,8 @@ func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) err
 	return nil
 }
 
-// ScoreInventory creates a Scorecard for an inventory
-func ScoreInventory(inventory *inventoryConfig, config *ScoringConfig) error {
+// Score creates a Scorecard for an inventory
+func (inventory *inventoryConfig) Score(config *ScoringConfig) error {
 	err := attachValidator(config)
 	if err != nil {
 		return errors.Wrap(err, "initializing gcv validator")
@@ -131,7 +131,7 @@ func ScoreInventory(inventory *inventoryConfig, config *ScoringConfig) error {
 		return err
 	}
 
-	err = attachViolations(auditResult, config)
+	err = config.attachViolations(auditResult)
 
 	if len(auditResult.Violations) > 0 {
 		fmt.Printf("\n\n%v total issues found\n", len(auditResult.Violations))
