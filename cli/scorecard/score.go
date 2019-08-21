@@ -15,7 +15,6 @@
 package scorecard
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
@@ -25,11 +24,10 @@ import (
 
 // ScoringConfig holds settings for generating a score
 type ScoringConfig struct {
-	PolicyPath  string
-	categories  map[string]*constraintCategory
-	constraints map[string]*constraintViolations
-	validator   *gcv.Validator
-	ctx         context.Context
+	PolicyPath  string                           // the directory path of a policy library to use
+	categories  map[string]*constraintCategory   // available constraint categories
+	constraints map[string]*constraintViolations // a map of constraints violated and their violations
+	validator   *gcv.Validator                   // the validator instance used for scoring
 }
 
 const otherCategoryKey = "other"
@@ -123,8 +121,6 @@ func attachViolations(audit *validator.AuditResponse, config *ScoringConfig) err
 
 // ScoreInventory creates a Scorecard for an inventory
 func ScoreInventory(inventory *inventoryConfig, config *ScoringConfig) error {
-	config.ctx = context.Background()
-
 	err := attachValidator(config)
 	if err != nil {
 		return errors.Wrap(err, "initializing gcv validator")
