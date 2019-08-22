@@ -11,6 +11,7 @@ NAME=cft
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
+.PHONY: build
 build:
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
