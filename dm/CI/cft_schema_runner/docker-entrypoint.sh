@@ -20,7 +20,7 @@ git checkout "${BRANCH_NAME}"
 
 echo_color 'Initializing CFT DM templates'
 
-cd templates
+cd dm/templates
 
 #  cat healthcheck/examples/healthcheck.yaml | yq .resources[0].properties > project.json; cat healthcheck/healthcheck.py.schema | yq . > project.py.schema.json; ajv validate -s project.py.schema.json -d project.json
 
