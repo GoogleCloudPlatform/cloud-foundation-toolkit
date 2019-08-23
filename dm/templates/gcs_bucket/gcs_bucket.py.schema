@@ -218,7 +218,6 @@ properties:
     additionalProperties: false
     required:
       - logBucket
-      - logObjectPrefix
     properties:
       logBucket:
         type: string
@@ -460,6 +459,10 @@ properties:
   labels:
     type: object
     description: User-provided labels in key/value pairs.
+  requesterPays:
+    type: boolean
+    description: |
+      When set to true, Requester Pays is enabled for this bucket.
   website:
     type: object
     additionalProperties: false

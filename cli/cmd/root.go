@@ -8,6 +8,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
+	Use:   "cft",
 	Short: "Google Cloud Foundation Toolkit CLI",
 	Long:  "Google Cloud Foundation Toolkit CLI",
 	Args:  cobra.NoArgs,
@@ -20,7 +21,8 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}{{.UseLine}}{{end}}
+	rootCmd.SetUsageTemplate(`Usage:
+  {{if .Runnable}}{{.UseLine}}{{end}}
   {{if .HasAvailableSubCommands}}{{.CommandPath}} [command] [flags]{{end}}{{if gt (len .Aliases) 0}}
 
 Aliases:

@@ -1,0 +1,12 @@
+name: my-networks-main
+description: my-networks-main
+project: gl-akopachevskyy-dm-seed
+
+imports:
+- path: templates/network/network.py
+
+resources:
+- type: templates/network/network.py
+  name: my-network
+  properties:
+    autoCreateSubnetworks: false
