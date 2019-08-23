@@ -4,7 +4,6 @@ set -eu
 readonly GIT_URL='https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit'
 readonly CLONE_DIRNAME="$(mktemp -d)"
 readonly BRANCH_NAME="cft-dm-dev"
-readonly DM_root="/cloud-foundation-toolkit/dm"
 
 readonly COLOR_RESET='\033[0m'
 readonly COLOR_BOLD='\033[1m'
@@ -21,9 +20,7 @@ git checkout "${BRANCH_NAME}"
 
 echo_color 'Initializing CFT DM templates'
 
-mv "${CLONE_DIRNAME}/dm/templates"  "${DM_root}"
-
-cd "${CLONE_DIRNAME}/dm"
+cd templates
 
 #  cat healthcheck/examples/healthcheck.yaml | yq .resources[0].properties > project.json; cat healthcheck/healthcheck.py.schema | yq . > project.py.schema.json; ajv validate -s project.py.schema.json -d project.json
 
