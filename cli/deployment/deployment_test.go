@@ -113,10 +113,9 @@ func TestDeploymentExecuteApply(t *testing.T) {
 						return strings.Replace(data, "%STATUS%", tt.statusStr, 1), nil
 					}
 				}
-
 				return GetTestData("deployment", "describe-manifest.yaml", t), nil
 			}
-			_, err := d.Execute(tt.name, false)
+			_, err := d.Execute(ActionApply, false)
 			if err != nil && !tt.err {
 				t.Errorf("expected no error, got: %v", err)
 			}

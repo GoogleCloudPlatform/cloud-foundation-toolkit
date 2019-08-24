@@ -1,7 +1,6 @@
 package deployment
 
 import (
-	"io/ioutil"
 	"reflect"
 	"strings"
 	"testing"
@@ -105,14 +104,13 @@ func TestYamlReplaceOutRefs(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to parse outputs: %v", err)
 	}
-	config := NewConfig(GetTestData("cross-ref", "dependent-with-refs.yaml", t), "/user/home/test.yaml")
+	config := NewConfig(GetTestData("cross-ref", "dependent-with-refs.yaml", t), "/home/test.yaml")
 	outputs := map[string]map[string]interface{}{}
 	outputs["prj1.name1"] = output
 	actual, err := config.YAML(outputs)
 	if err != nil {
 		t.Errorf("failed to export config YAML: %v", err)
 	}
-	ioutil.WriteFile("/1-prj/projects/google/cloud-foundation-toolkit/cli/testdata/cross-ref/test", actual, 0755)
 	expected := GetTestData("cross-ref", "dependent-final-expected.yaml", t)
 	if strings.TrimSpace(string(actual)) != strings.TrimSpace(expected) {
 		t.Errorf("got: \n%s, want: \n%s", actual, expected)

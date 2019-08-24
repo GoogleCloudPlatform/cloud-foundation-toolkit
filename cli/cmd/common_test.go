@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"reflect"
 	"strings"
 	"testing"
@@ -14,7 +13,7 @@ var tests = []struct {
 	input []string
 	files map[string]string
 	yamls string
-	errs  map[string]error
+	errs  bool
 }{
 	{name: "yaml", input: []string{"name: name1\nproject: prj"}, files: emptyMap, yamls: "name: name1\nproject: prj"},
 	{name: "dir",
@@ -32,17 +31,25 @@ var tests = []struct {
 			"../testdata/cmd/common/dir/config3.jinja": "config3",
 			"../testdata/cmd/common/dir/config4.txt":   "config4"},
 	},
-	{name: "yaml file", input: []string{"../testdata/cmd/common/dir/*.yaml"}, files: map[string]string{"../testdata/cmd/common/dir/config1.yaml": "config1"}},
-	{name: "yml file", input: []string{"../testdata/cmd/common/dir/*.yml"}, files: map[string]string{"../testdata/cmd/common/dir/config2.yml": "config2"}},
-	{name: "jinja file", input: []string{"../testdata/cmd/common/dir/*.jinja"}, files: map[string]string{"../testdata/cmd/common/dir/config3.jinja": "config3"}},
-	{name: "file", input: []string{"../testdata/cmd/common/dir/config1.yaml"}, files: map[string]string{"../testdata/cmd/common/dir/config1.yaml": "config1"}},
+	{name: "yaml file", input: []string{"../testdata/cmd/common/dir/*.yaml"},
+		files: map[string]string{
+			"../testdata/cmd/common/dir/config1.yaml": "config1",
+		},
+	},
+	{name: "yml file", input: []string{"../testdata/cmd/common/dir/*.yml"},
+		files: map[string]string{"../testdata/cmd/common/dir/config2.yml": "config2"}},
+	{name: "jinja file", input: []string{"../testdata/cmd/common/dir/*.jinja"},
+		files: map[string]string{"../testdata/cmd/common/dir/config3.jinja": "config3"}},
+	{name: "file", input: []string{"../testdata/cmd/common/dir/config1.yaml"},
+		files: map[string]string{"../testdata/cmd/common/dir/config1.yaml": "config1"}},
 	{name: "two files", input: []string{"../testdata/cmd/common/dir/config1.yaml", "../testdata/cmd/common/dir/config2.yml"},
-		files: map[string]string{"../testdata/cmd/common/dir/config1.yaml": "config1", "../testdata/cmd/common/dir/config2.yml": "config2"}},
-
-	{name: "file not exists", input: []string{"../testdata/cmd/common/dir/1.yaml"}, files: emptyMap,
-		errs: map[string]error{"../testdata/cmd/common/dir/1.yaml": errors.New("no file(s) exists or valid yaml for config param: ../testdata/cmd/common/dir/1.yaml")}},
-	{name: "empty dir", input: []string{"../testdata/cmd/common/emptydir"}, files: emptyMap,
-		errs: map[string]error{"../testdata/cmd/common/emptydir": errors.New("no *.yaml, *.yml, *.jinja files found in directory: ../testdata/cmd/common/emptydir")}},
+		files: map[string]string{
+			"../testdata/cmd/common/dir/config1.yaml": "config1",
+			"../testdata/cmd/common/dir/config2.yml":  "config2",
+		},
+	},
+	{name: "file not exists", input: []string{"../testdata/cmd/common/dir/1.yaml"}, files: emptyMap, errs: true},
+	{name: "empty dir", input: []string{"../testdata/cmd/common/dir/empty_dir"}, files: emptyMap, errs: true},
 }
 
 func TestListConfigs(t *testing.T) {
@@ -60,14 +67,9 @@ func TestListConfigs(t *testing.T) {
 				t.Errorf("got %v, want %v", yamls, tt.yamls)
 			}
 
-			for key, value := range tt.errs {
-				if actualValue, ok := tt.errs[key]; !ok {
-					t.Errorf("errors map should contain error for file: %s", key)
-				} else {
-					if !reflect.DeepEqual(actualValue, value) {
-						t.Errorf("error for file: %s, got: %v, expected %v", key, actualValue, value)
-					}
-				}
+			hasErrors := len(errs) > 0
+			if tt.errs != hasErrors {
+				t.Errorf("got errors: %t, want %t", hasErrors, tt.errs)
 			}
 		})
 	}

@@ -1,7 +1,6 @@
 package deployment
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -11,26 +10,35 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Status represent Deployment status in enum/numerical format
 type Status int
 
 const (
-	Done     Status = 0
-	Pending  Status = 1
-	Running  Status = 2
+	// Done Status represent successfully finished Deployment state.
+	Done Status = 0
+	// Pending Status means Deployment in "PENDING" state, means resource creation process not started yet.
+	Pending Status = 1
+	// Pending Status means Deployment in "RUNNING" state, means resource creation process started.
+	Running Status = 2
+	// NotFound Status means Deployment is not exists in any state.
 	NotFound Status = 3
-	Error    Status = -1
+	// Error Status means Deployment is failed or deployment describe operation itself completed with error.
+	Error Status = -1
 )
 
 const (
-	ActionApply  string = "apply"
+	// ApplyAction passed as "action" parameter value to cmd.execute(action string, ...) to apply Deployment created or updated in preview mode.
+	ActionApply string = "apply"
+	// ApplyAction passed as "action" parameter value to cmd.execute(action string, ...) to delete Deployment.
 	ActionDelete string = "delete"
+	// ApplyAction passed as "action" parameter value to cmd.execute(action string, ...) to update Deployment.
 	ActionCreate string = "create"
+	// ApplyAction passed as "action" parameter value to cmd.execute(action string, ...) to update Deployment.
 	ActionUpdate string = "update"
 )
 
 var actions = []string{ActionApply, ActionDelete, ActionCreate, ActionUpdate}
 
-// Function runGCloud exposed to variable in order to mock it inside api_client_test.go
 // The runGCloud function runs the gcloud tool with the specified arguments. It is implemented
 // as a variable so that it can be mocked in tests of its exported consumers.
 var runGCloud = func(args ...string) (result string, err error) {
@@ -49,8 +57,8 @@ var runGCloud = func(args ...string) (result string, err error) {
 	return string(output), err
 }
 
-// GetOutputs retrive existing Deployment outputs using gcloud and store result in map[string]string
-// where "resourceName.propertyName" is key, and value is string representation of the output value.
+// GetOutputs retrieves existing Deployment outputs using gcloud and store result in map[string]interface{}
+// where "resourceName.propertyName" is key, and value is string (in case of flat value) or JSON object.
 func GetOutputs(project string, name string) (map[string]interface{}, error) {
 	data, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project, "--format", "yaml")
 	if err != nil {
@@ -60,9 +68,7 @@ func GetOutputs(project string, name string) (map[string]interface{}, error) {
 	return parseOutputs(data)
 }
 
-/*
-returns project id taken from local gcloud configuration
-*/
+// GCloudDefaultProjectID returns the default project id taken from local gcloud configuration.
 func GCloudDefaultProjectID() (string, error) {
 	data, err := runGCloud("config", "list", "--format", "yaml")
 	if err != nil {
@@ -80,9 +86,23 @@ func GCloudDefaultProjectID() (string, error) {
 	return out.Core.Project, nil
 }
 
-// Create deployment based on passed Deployment object passed into it.
-// Initialize Deployment with Outputs map in case of successful creation and error otherwise.
-func CreateOrUpdate(action string, deployment *Deployment, preview bool) (string, error) {
+// Create creates deployment based on passed Deployment object passed into it.
+// Create initialize passed Deployment object with Outputs map in case of successful creation and return error otherwise.
+// preview parameter define if deployment should be created in 'Preview' mode.
+// Function returns gcloud cli raw output for debug purposes both in case of success and error.
+func Create(deployment *Deployment, preview bool) (string, error) {
+	return createOrUpdate(ActionCreate, deployment, preview)
+}
+
+// Update updates deployment based on passed Deployment object passed into it.
+// Update initialize passed Deployment object with Outputs map in case of successful creation and return error otherwise.
+// preview parameter define if deployment should be updated in 'Preview' mode.
+// Function returns gcloud cli raw output for debug purposes both in case of success and error.
+func Update(deployment *Deployment, preview bool) (string, error) {
+	return createOrUpdate(ActionUpdate, deployment, preview)
+}
+
+func createOrUpdate(action string, deployment *Deployment, preview bool) (string, error) {
 	if action != ActionCreate && action != ActionUpdate {
 		log.Fatalf("action %s not in [%s,%s] for deployment: %v", action, ActionCreate, ActionUpdate, deployment)
 	}
@@ -119,10 +139,9 @@ func CreateOrUpdate(action string, deployment *Deployment, preview bool) (string
 	return output, nil
 }
 
-/*
-cancel update/create/delete preview with gcloud deployments cancel-preview command,
-in case of cancel preview of create action, need to clean deployment and run Delete() after CancelPreview()
-*/
+// CancelPreview cancels update/create/delete action, created with review flag.
+// Function uses gcloud deployments cancel-preview command.
+// In case of cancellation of preview of create action, required deployment and run Delete() after CancelPreview() for cleanup.
 func CancelPreview(deployment *Deployment) (string, error) {
 	args := []string{
 		"deployment-manager",
@@ -183,6 +202,7 @@ func Delete(deployment *Deployment, preview bool) (string, error) {
 	return output, nil
 }
 
+// GetStatus retrives Deployment status using gcloud cli, see deployment.Status type for details.
 func GetStatus(deployment *Deployment) (Status, error) {
 	args := []string{
 		"deployment-manager",
@@ -229,8 +249,8 @@ func GetStatus(deployment *Deployment) (Status, error) {
 	case "PENDING":
 		return Pending, nil
 	default:
-		return Error, errors.New(fmt.Sprintf("Unknown status %s, for deployment %s",
-			deployment.config.FullName(), status))
+		return Error, fmt.Errorf("Unknown status %s, for deployment %s",
+			deployment.config.FullName(), status)
 	}
 }
 

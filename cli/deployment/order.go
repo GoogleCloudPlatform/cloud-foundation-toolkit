@@ -68,7 +68,7 @@ func newDirectedGraph(nodes []string, edges []edge) (*directedGraph, error) {
 	for _, node := range nodes {
 		g.nodes = append(g.nodes, node)
 		if _, ok := g.outgoingNodes[node]; ok {
-			return nil, errors.New(fmt.Sprintf("node %s already added to graph", node))
+			return nil, fmt.Errorf("node %s already added to graph", node)
 		}
 		g.outgoingNodes[node] = make(map[string]int)
 		g.incomingNodes[node] = 0
@@ -77,7 +77,7 @@ func newDirectedGraph(nodes []string, edges []edge) (*directedGraph, error) {
 	for _, edge := range edges {
 		node, ok := g.outgoingNodes[edge.from]
 		if !ok {
-			return nil, errors.New(fmt.Sprintf("no node %s exists in graph", edge.from))
+			return nil, fmt.Errorf("no node %s exists in graph", edge.from)
 		}
 
 		node[edge.to] = len(node) + 1

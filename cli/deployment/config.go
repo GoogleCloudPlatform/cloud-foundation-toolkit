@@ -11,6 +11,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// DefaultProjectID holds default GCP project ID, it used in case project ID not provided in configuration file,
+// see common.setDefaultProjectID for variable initialization details.
 var DefaultProjectID string
 
 // Pattern to parse $(project.deployment.resource.name) and $(deployment.resource.name).
@@ -22,7 +24,7 @@ type Config struct {
 	// config YAML field and if it missing in YAML, from config YAML file name itself.
 	Name string
 	// Project field contains GCP Project Id it could be initialized from config YAML, env variable, gcloud default.
-	// Node: don't use this varible directly, use GetProjectID instead!!!
+	// Note: don't access this member directly, use GetProjectID instead.
 	Project string
 	// Deployment string contains GCP Deployment description it not required and can be empty.
 	Description string
@@ -52,7 +54,7 @@ func NewConfig(data string, file string) Config {
 		config.file = filepath.Clean(file)
 		config.dir = filepath.Dir(file)
 	} else {
-		// yaml passed as sting through parameter
+		// YAML passed as string through parameter
 		dir, err := os.Getwd()
 		if err != nil {
 			log.Fatalf("could not get current folder path: %v", err)
@@ -88,7 +90,7 @@ func (c Config) GetProject() string {
 	}
 }
 
-// returns file path in case of file source or yaml string in case of yaml source
+// Source returns the the path of the file for a file-backed configuration, or a YAML string for YAML configurations.
 func (c Config) Source() string {
 	if len(c.file) > 0 {
 		return c.file
@@ -108,8 +110,11 @@ func (c Config) String() string {
 	return c.FullName()
 }
 
-// The YAML function marshals a Config object to YAML. It sets all relative import paths to absolute paths and removes
+// YAML function marshals a Config object to YAML. It sets all relative import paths to absolute paths and removes
 // all custom elements that the gcloud deployment manager is not aware of, including name, project, and description.
+// output param contains map of map with Outputs variables of all Deployments created/updated by current cli run,
+// where key of first map is project.deployment names and map[string]interface{} - map of Deployment output properties names->values.
+// YAML returns byte array of config with output references substituted by real values from outputs parameter map.
 func (c Config) YAML(outputs map[string]map[string]interface{}) ([]byte, error) {
 	imports, typeMap := c.importsAbsolutePath()
 	resources := c.resources(typeMap)
@@ -189,14 +194,14 @@ func getOutRefValue(ref string, outputs map[string]map[string]interface{}) inter
 		var err error
 		outputsMap, err = GetOutputs(arr[0], arr[1])
 		if err != nil {
-			log.Fatalf("Erorr getting outputs for deployment: %s, error: %v", fullName, err)
+			log.Fatalf("Error getting outputs for deployment: %s, error: %v", fullName, err)
 		}
 		outputs[fullName] = outputsMap
 	}
 	value, ok := outputsMap[res+"."+name]
 	fullRef := fmt.Sprintf("$(out.%s)", ref)
 	if !ok {
-		log.Fatalf("Unresolved dependency: %s. Deployment: %s , on whichother resources depended, neither was specifiedin the submitted congigs nor existed inDeployment Manager", fullRef, fullName)
+		log.Fatalf("Unresolved dependency: %s. Deployment: %s , on which other resources depended, was neither specified in the submitted configs nor existed in Deployment Manager", fullRef, fullName)
 	}
 	return value
 }
