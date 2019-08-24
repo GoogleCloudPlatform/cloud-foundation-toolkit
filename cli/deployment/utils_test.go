@@ -24,20 +24,21 @@ var pathtests = []struct {
 	child  string
 	out    string
 }{
-	{"/base/folder/config.yaml", "script.py", "/base/folder/script.py"},
-	{"/base/folder/config.yaml", "./script.py", "/base/folder/script.py"},
-	{"/base/folder/config.yaml", "../script.py", "/base/script.py"},
-	{"/base/folder", "/other/script.py", "/other/script.py"},
-	{"/base/folder/config.yaml", "templates/script.py", "/base/folder/templates/script.py"},
-	{"/base/folder/config.yaml", "../templates/script.py", "/base/templates/script.py"},
+	{"../testdata/reparent_path/folder1/config.yaml", "script1.py", "testdata/reparent_path/folder1/script1.py"},
+	{"../testdata/reparent_path/folder1/config.yaml", "./script1.py", "testdata/reparent_path/folder1/script1.py"},
+	{"../testdata/reparent_path/folder1/config.yaml", "../script4.py", "testdata/reparent_path/script4.py"},
+	{"../testdata/reparent_path/folder1/config.yaml", "templates/script3.py", "testdata/reparent_path/folder1/templates/script3.py"},
+	{"../testdata/reparent_path/folder1/config.yaml", "../folder2/script2.py", "testdata/reparent_path/folder2/script2.py"},
 }
 
-func TestAbsolutePath(t *testing.T) {
+func TestReparentPath(t *testing.T) {
+	basePath, _ := filepath.Abs("..")
 	for _, tt := range pathtests {
 		t.Run(tt.parent+"  "+tt.child, func(t *testing.T) {
+			path := filepath.Join(basePath, tt.out)
 			actual := ReparentPath(tt.parent, tt.child)
-			if actual != tt.out {
-				t.Errorf("got: %s, want: %s", actual, tt.out)
+			if actual != path {
+				t.Errorf("got: %s,\n want: %s", actual, path)
 			}
 		})
 	}
@@ -60,6 +61,9 @@ var fileNameTests = []struct {
 	{"--double-dash.yaml", "double-dash"},
 	{"last-dash-.yaml", "last-dash"},
 	{"last-dobule-dash--.yaml", "last-dobule-dash"},
+	{"space in name.yaml", "spaceinname"},
+	{"my.config.yaml", "myconfig"},
+	{"forbidden chars,.?\\)(*&^%$#@@!\\!`\";<>.yaml", "forbiddenchars"},
 	{"more-than-63-chars--------------------------------63-ends-here-----.yaml", "more-than-63-chars--------------------------------63-ends-here"},
 }
 

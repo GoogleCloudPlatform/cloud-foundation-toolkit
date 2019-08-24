@@ -22,6 +22,8 @@ type Deployment struct {
 
 // NewDeployment creates a new Deployment object, overriding all outward references.
 // In effect, this means all deployment dependencies must exist in the GCP project.
+// output parameter is map of maps where key is Deployment full name (project_name.deployment_name), and value is map
+// of corresponding Deployment outputs properties.
 func NewDeployment(config Config, outputs map[string]map[string]interface{}, processConfig bool) *Deployment {
 	file, err := ioutil.TempFile("", config.Name)
 	defer func() {
@@ -60,16 +62,20 @@ func (d Deployment) FullName() string {
 	return d.config.FullName()
 }
 
+// Executes executes create/update/delete actions and returns Deployment status.
 func (d *Deployment) Execute(action string, preview bool) (output string, error error) {
 	if sort.SearchStrings(actions, action) == len(actions) {
 		log.Fatalf("action: %s not in %v for deployment: %v", actions, actions, d)
 	}
 
-	if action == ActionCreate || action == ActionUpdate {
-		return CreateOrUpdate(action, d, preview)
-	} else if action == ActionDelete {
+	switch action {
+	case ActionCreate:
+		return Create(d, preview)
+	case ActionUpdate:
+		return Update(d, preview)
+	case ActionDelete:
 		return Delete(d, preview)
-	} else {
+	case ActionApply:
 		status, err := GetStatus(d)
 		if err != nil {
 			log.Printf("Apply action for deployment: %s, break error: %v", d, err)
@@ -77,20 +83,23 @@ func (d *Deployment) Execute(action string, preview bool) (output string, error 
 		switch status {
 		case Done:
 			log.Printf("Deployment %v exists, run Update()", d)
-			return CreateOrUpdate(ActionUpdate, d, preview)
+			return Update(d, preview)
 		case NotFound:
 			log.Printf("Deployment %v does not exists, run Create()", d)
-			return CreateOrUpdate(ActionCreate, d, preview)
+			return Create(d, preview)
 		case Pending:
 			log.Printf("Deployment %v is in pending state, break", d)
-			return "", errors.New(fmt.Sprintf("Deployment %v is in PENDING state", d))
+			return "", fmt.Errorf("deployment %v is in PENDING state", d)
 		case Error:
 			message := fmt.Sprintf("Could not get state of deployment: %v", d)
 			log.Print(message)
 			return "", errors.New(message)
 		}
-		return "", errors.New(fmt.Sprintf("Error during Apply command for deployment: %v", d))
+		return "", fmt.Errorf("error during Apply command for deployment: %v", d)
+	default:
+		log.Fatalf("unrecognized action %s", action)
 	}
+	return "", nil
 }
 
 func replaceOutRefs(config Config, outputs map[string]map[string]interface{}) []byte {

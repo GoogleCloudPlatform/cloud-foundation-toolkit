@@ -1,6 +1,6 @@
 imports:
 - name: ""
-  path: /user/home/templates/network/network.py
+  path: /home/templates/network/network.py
 resources:
 - list:
   - string1
@@ -12,4 +12,4 @@ resources:
     name: someName
     value: someValue
   string: stringValue
-  type: /user/home/templates/network/network.py
+  type: /home/templates/network/network.py

@@ -13,6 +13,15 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// forbiddenCharRegexp searches all chars except allowed in deployment name.
+var forbiddenCharRegexp = regexp.MustCompile("[^-a-z0-9]")
+
+// firstCharRegexp is regexp that used to find number or dash at the beginning of the string
+var firstCharRegexp = regexp.MustCompile("^[-0-9]*")
+
+// lastCharRegexp is regexp that used to find trailing dash
+var lastCharRegexp = regexp.MustCompile("-*$")
+
 // Function unmarshal arbitrary YAML to map.
 func unmarshal(data string) (map[string]interface{}, error) {
 	my := make(map[string]interface{})
@@ -38,7 +47,15 @@ func ReparentPath(baseDir string, file string) string {
 		return file
 	}
 	baseDir, _ = filepath.Abs(baseDir)
-	baseDir = filepath.Dir(baseDir)
+	baseDirStat, err := os.Stat(baseDir)
+	if err != nil {
+		log.Fatalf("error set stat for path: %s, error: %v", baseDir, err)
+	}
+
+	if !baseDirStat.Mode().IsDir() {
+		baseDir = filepath.Dir(baseDir)
+	}
+
 	relative := filepath.Clean(filepath.Join(baseDir, file))
 	result, err := filepath.Abs(relative)
 	if err != nil {
@@ -47,14 +64,14 @@ func ReparentPath(baseDir string, file string) string {
 	return result
 }
 
-// check if string is yaml
+// IsYAML checks if text parameter passed if YAML string.
 func IsYAML(text string) bool {
 	obj := struct{}{}
 	err := yaml.Unmarshal([]byte(text), obj)
 	return err == nil
 }
 
-// append string map B to map A, returns A
+// AppendMap appends string map B to map A, returns A
 func AppendMap(a map[string]string, b map[string]string) map[string]string {
 	for k, v := range b {
 		a[k] = v
@@ -62,32 +79,29 @@ func AppendMap(a map[string]string, b map[string]string) map[string]string {
 	return a
 }
 
-/*
-creates valid deployment name from file path satisfied Deployment resource "name" field requirements:
-Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?
-which means the first character must be a lowercase letter,
-and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
-see more https://cloud.google.com/deployment-manager/docs/reference/latest/deployments#resource
-*/
+// DeploymentNameFromFile creates valid deployment name from file path satisfied Deployment resource "name" field requirements:
+// Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?
+// which means the first character must be a lowercase letter,
+// and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
+// Function cuts forbidden characters at the end and start of a name also it truncates name up to 63 characters.
+// see more https://cloud.google.com/deployment-manager/docs/reference/latest/deployments#resource
 func DeploymentNameFromFile(path string) string {
 	_, file := filepath.Split(path)
-	name := strings.TrimSuffix(file, filepath.Ext(file))
+	ext := filepath.Ext(file)
+	name := strings.TrimSuffix(file, ext)
 	name = strings.ToLower(name)
+	name = strings.ReplaceAll(name, "_", "-")
+	name = firstCharRegexp.ReplaceAllString(name, "")
+	name = lastCharRegexp.ReplaceAllString(name, "")
+	name = forbiddenCharRegexp.ReplaceAllString(name, "")
 	if len(name) > 63 {
 		name = name[0:63]
 	}
-	name = strings.ReplaceAll(name, "_", "-")
-	firstChar := regexp.MustCompile("^[-0-9]*")
-	lastChar := regexp.MustCompile("-*$")
-	name = firstChar.ReplaceAllString(name, "")
-	name = lastChar.ReplaceAllString(name, "")
 	return name
 }
 
-/*
-As for user input and validate entered value is equal to one of the provided options.
-Returns validated option string
-*/
+// GetUserInput asks for user input and validate entered value is equal to one of the provided options.
+// Returns validated option string
 func GetUserInput(message string, options []string, rd io.Reader) string {
 	reader := bufio.NewReader(rd)
 	var input string
@@ -103,9 +117,7 @@ func GetUserInput(message string, options []string, rd io.Reader) string {
 	return input
 }
 
-/*
-Checks if string a in slice
-*/
+// Checks if string a in slice
 func stringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
