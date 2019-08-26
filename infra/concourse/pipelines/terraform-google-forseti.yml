@@ -17,7 +17,7 @@ resources:
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/lint
-    tag: 1.0.0
+    tag: 2.4.0
     username: _json_key
     password: ((sa.google))
 
@@ -25,7 +25,7 @@ resources:
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
-    tag: 1.1.0
+    tag: 2.3.0
     username: _json_key
     password: ((sa.google))
 
@@ -109,6 +109,7 @@ jobs:
         SERVICE_ACCOUNT_JSON: ((forseti.phoogle_sa))
         NETWORK_PROJECT: ((forseti.phoogle_network_project))
         NETWORK: ((forseti.phoogle_network))
+        REGION: ((forseti.phoogle_region))
         SUBNETWORK: ((forseti.phoogle_subnetwork))
         ENFORCER_PROJECT: ((forseti.phoogle_enforcer_project))
 

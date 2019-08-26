@@ -18,16 +18,17 @@ resources:
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/lint
-    tag: 1.0.0
+    tag: 2.3.0
     username: _json_key
     password: ((sa.google))
 
 - name: integration-test-image
   type: docker-image
   source:
+    repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
+    tag: 2.3.0
     username: _json_key
     password: ((sa.google))
-    repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform_terraform-google-kubernetes-engine
 
 jobs:
 
@@ -77,72 +78,10 @@ jobs:
       path: pull-request
       context: lint-tests
       status: error
-
-- name: build-integration-test-image
-  public: true
-  plan:
-  - get: pull-request
-    trigger: true
-    version: every
-  - put: notify-build-integration-test-image-pending
-    resource: pull-request
-    params:
-      path: pull-request
-      context: build-integration-test-image
-      status: pending
-  - task: build-and-push
-    privileged: true
-    config:
-      platform: linux
-      inputs:
-      - name: pull-request
-        path: terraform-google-kubernetes-engine
-      image_resource:
-        type: docker-image
-        source:
-          repository: karlkfi/concourse-dcind
-      run:
-        path: entrypoint.sh
-        args:
-        - bash
-        - -exc
-        - |
-          apk add --update make git
-          set +x
-          echo $SA | docker login -u _json_key --password-stdin https://gcr.io
-          set -x
-          make docker_build_kitchen_terraform DOCKER_TAG_KITCHEN_TERRAFORM=`git rev-parse --verify HEAD`
-          make docker_push_kitchen_terraform DOCKER_TAG_KITCHEN_TERRAFORM=`git rev-parse --verify HEAD`
-        dir: terraform-google-kubernetes-engine
-      params:
-        SA: ((sa.google))
-  on_success:
-    put: notify-build-integration-test-success
-    resource: pull-request
-    params:
-      path: pull-request
-      context: build-integration-test-image
-      status: success
-  on_failure:
-    put: notify-build-integration-test-failure
-    resource: pull-request
-    params:
-      path: pull-request
-      context: build-integration-test-image
-      status: failure
-  on_abort:
-    put: notify-build-integration-test-error
-    resource: pull-request
-    params:
-      path: pull-request
-      context: build-integration-test-image
-      status: error
-
 - name: integration-tests
   public: true
   plan:
   - get: pull-request
-    passed: [build-integration-test-image]
     trigger: true
     version: every
   - put: notify-integration-test-pending
@@ -153,8 +92,6 @@ jobs:
       status: pending
   - get: integration-test-image
     trigger: true
-    params:
-      tag: [pull-request/commit]
   - aggregate:
 
     - task: run-tests-deploy-service
@@ -206,6 +143,30 @@ jobs:
       params:
         <<: *run-tests-params
 
+    - task: run-workload-metadata-config
+      image: integration-test-image
+      file: pull-request/test/ci/workload-metadata-config.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-upstream-nameservers
+      image: integration-test-image
+      file: pull-request/test/ci/upstream-nameservers.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-stub-domains-upstream-nameservers
+      image: integration-test-image
+      file: pull-request/test/ci/stub-domains-upstream-nameservers.yml
+      params:
+        <<: *run-tests-params
+
+    - task: run-tests-beta-cluster
+      image: integration-test-image
+      file: pull-request/test/ci/beta-cluster.yml
+      params:
+        <<: *run-tests-params
+
   on_success:
     put: notify-integration-test-success
     resource: pull-request
@@ -227,35 +188,3 @@ jobs:
       path: pull-request
       context: integration-tests
       status: error
-
-- name: delete-integration-test-image
-  public: true
-  plan:
-  - get: pull-request
-    trigger: true
-    passed: [integration-tests]
-  - task: delete-image
-    config:
-      platform: linux
-      inputs:
-      - name: pull-request
-        path: terraform-google-kubernetes-engine
-      image_resource:
-        type: docker-image
-        source:
-          repository: google/cloud-sdk
-          tag: alpine
-      run:
-        path: /bin/bash
-        args:
-        - -exc
-        - |
-          set +x
-          echo $SA > $GOOGLE_APPLICATION_CREDENTIALS
-          set -x
-          TAG=`git rev-parse --verify HEAD`
-          echo "Y" | gcloud container images delete gcr.io/cloud-foundation-cicd/cft/kitchen-terraform_terraform-google-kubernetes-engine:$TAG --force-delete-tags
-        dir: terraform-google-kubernetes-engine
-      params:
-        GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json
-        SA: ((sa.google))

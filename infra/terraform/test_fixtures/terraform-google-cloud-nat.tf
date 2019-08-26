@@ -3,6 +3,9 @@ locals {
     "roles/compute.networkAdmin",
     "roles/iam.serviceAccountUser",
   ]
+  cloud_nat_required_api_services = [
+    "compute.googleapis.com",
+  ]
 }
 
 resource "google_project" "cloud_nat" {
@@ -13,13 +16,11 @@ resource "google_project" "cloud_nat" {
   billing_account = "${module.variables.phoogle_billing_account}"
 }
 
-resource "google_project_services" "cloud_nat" {
+resource "google_project_service" "cloud_nat" {
   provider = "google.phoogle"
+  count    = "${length(local.cloud_nat_required_api_services)}"
+  service  = "${element(local.cloud_nat_required_api_services, count.index)}"
   project  = "${google_project.cloud_nat.id}"
-
-  services = [
-    "compute.googleapis.com",
-  ]
 }
 
 resource "google_service_account" "cloud_nat" {
@@ -32,7 +33,7 @@ resource "google_service_account" "cloud_nat" {
 resource "google_project_iam_binding" "cloud_nat" {
   provider = "google.phoogle"
   count    = "${length(local.cloud_nat_required_roles)}"
-  project  = "${google_project_services.cloud_nat.project}"
+  project  = "${google_project.cloud_nat.project_id}"
   role     = "${element(local.cloud_nat_required_roles, count.index)}"
 
   members = [

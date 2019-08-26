@@ -10,6 +10,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
+	Use:   "cft",
 	Short: "Google Cloud Formation Toolkit CLI",
 	Long:  "Google Cloud Formation Toolkit CLI",
 	Args:  cobra.NoArgs,
@@ -33,7 +34,8 @@ var flags struct {
 }
 
 func init() {
-	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}{{.UseLine}}{{end}}
+	rootCmd.SetUsageTemplate(`Usage:
+  {{if .Runnable}}{{.UseLine}}{{end}}
   {{if .HasAvailableSubCommands}}{{.CommandPath}} [command] [flags]{{end}}{{if gt (len .Aliases) 0}}
 
 Aliases:
