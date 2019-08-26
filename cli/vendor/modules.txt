@@ -78,6 +78,8 @@ github.com/forseti-security/config-validator/pkg/api/validator
 github.com/forseti-security/config-validator/pkg/gcv
 github.com/forseti-security/config-validator/pkg/gcv/cf
 github.com/forseti-security/config-validator/pkg/gcv/configs
+# github.com/fsnotify/fsnotify v1.4.7
+github.com/fsnotify/fsnotify
 # github.com/gammazero/deque v0.0.0-20180920172122-f6adf94963e4
 github.com/gammazero/deque
 # github.com/gammazero/workerpool v0.0.0-20181230203049-86a96b5d5d92
@@ -142,6 +144,7 @@ github.com/hashicorp/go-version
 github.com/hashicorp/golang-lru/simplelru
 # github.com/hashicorp/hcl v1.0.0
 github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/printer
 github.com/hashicorp/hcl/hcl/ast
 github.com/hashicorp/hcl/hcl/parser
 github.com/hashicorp/hcl/hcl/token
@@ -248,6 +251,8 @@ github.com/keybase/go-crypto/ed25519
 github.com/keybase/go-crypto/openpgp/ecdh
 github.com/keybase/go-crypto/openpgp/elgamal
 github.com/keybase/go-crypto/ed25519/internal/edwards25519
+# github.com/magiconair/properties v1.8.0
+github.com/magiconair/properties
 # github.com/mattn/go-colorable v0.1.2
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.8
@@ -294,6 +299,8 @@ github.com/open-policy-agent/opa/internal/wasm/constant
 github.com/open-policy-agent/opa/internal/wasm/opcode
 github.com/open-policy-agent/opa/topdown/builtins
 github.com/open-policy-agent/opa/topdown/copypropagation
+# github.com/pelletier/go-toml v1.2.0
+github.com/pelletier/go-toml
 # github.com/pierrec/lz4 v2.0.5+incompatible
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32
@@ -313,10 +320,16 @@ github.com/smallfish/simpleyaml
 # github.com/spf13/afero v1.2.1
 github.com/spf13/afero
 github.com/spf13/afero/mem
+# github.com/spf13/cast v1.3.0
+github.com/spf13/cast
 # github.com/spf13/cobra v0.0.4
 github.com/spf13/cobra
+# github.com/spf13/jwalterweatherman v1.0.0
+github.com/spf13/jwalterweatherman
 # github.com/spf13/pflag v1.0.3
 github.com/spf13/pflag
+# github.com/spf13/viper v1.3.2
+github.com/spf13/viper
 # github.com/stoewer/go-strcase v1.0.2
 github.com/stoewer/go-strcase
 # github.com/terraform-providers/terraform-provider-google v2.0.0+incompatible
@@ -389,8 +402,8 @@ golang.org/x/oauth2/jws
 # golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2
-golang.org/x/text/unicode/norm
 golang.org/x/text/transform
+golang.org/x/text/unicode/norm
 golang.org/x/text/secure/bidirule
 golang.org/x/text/unicode/bidi
 # google.golang.org/api v0.6.0
