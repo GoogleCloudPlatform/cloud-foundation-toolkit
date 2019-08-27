@@ -104,7 +104,7 @@ function teardown() {
      done
 
     # Verify VM serial output
-    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a \
+    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
         --command "sudo tail -n 15 /etc/haproxy/haproxy.cfg" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     echo "Status: $status"
@@ -119,7 +119,7 @@ function teardown() {
 }
 
 @test "Verifying that update interval was set" {
-    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a \
+    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
         --command "sudo crontab -l" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 
