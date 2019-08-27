@@ -142,26 +142,29 @@ function teardown() {
     [[ "$output" =~ "sizeGb: '${BASTION2_DISK_SIZE}'" ]]
 }
 
-@test "Verifying the second Bastion's sudo is OFF" {
-    # Wait until VM provisioning finishes
-    i=0
-    until gcloud compute instances get-serial-port-output ${BASTION2_NAME} \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
-        --zone ${ZONE} | grep ${PROVISION_COMPLETED_MARKER}; do
 
-        sleep 5;
-        i=$(($i+1))
-
-        if [[ $i > 10 ]]; then break; fi
-    done
-
-    run gcloud compute ssh ${BASTION2_NAME} --command "sudo -n whoami" \
-        --zone ${ZONE} \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    echo "status = ${status}"
-    echo "output = ${output}"
-    [[ ! "$status" -eq 0 ]]
-}
+### Invalida test because Compute OS Login Admin IAM role adds sudoers ###
+#
+#@test "Verifying the second Bastion's sudo is OFF" {
+#    # Wait until VM provisioning finishes
+#    i=0
+#    until gcloud compute instances get-serial-port-output ${BASTION2_NAME} \
+#        --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
+#        --zone ${ZONE} | grep ${PROVISION_COMPLETED_MARKER}; do
+#
+#        sleep 5;
+#        i=$(($i+1))
+#
+#        if [[ $i > 10 ]]; then break; fi
+#    done
+#
+#    run gcloud compute ssh ${BASTION2_NAME} --command "sudo -n whoami" \
+#        --zone ${ZONE} \
+#        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+#    echo "status = ${status}"
+#    echo "output = ${output}"
+#    [[ ! "$status" -eq 0 ]]
+#}
 
 @test "Verifying the second Bastion's tags" {
     run gcloud compute instances describe ${BASTION2_NAME} \
