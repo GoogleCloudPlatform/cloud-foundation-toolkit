@@ -80,11 +80,15 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that the HAProxy instance was created in deployment ${DEPLOYMENT_NAME}" {
     run gcloud compute instances list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "ilb-proxy-${RAND}" ]]
 }
@@ -94,6 +98,7 @@ function teardown() {
      until gcloud compute instances get-serial-port-output "ilb-proxy-${RAND}" \
             --zone us-central1-a \
             --project "${CLOUD_FOUNDATION_PROJECT_ID}" | grep /etc/haproxy/haproxy.cfg; do
+            echo "sleeping 10"
 
             sleep 10;
      done
@@ -102,6 +107,8 @@ function teardown() {
     run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a \
         --command "sudo tail -n 15 /etc/haproxy/haproxy.cfg" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "group-${RAND}-1" ]]   # has instances from group 1
     [[ "$output" =~ "group-${RAND}-2" ]]   # has instances from group 2
@@ -116,6 +123,8 @@ function teardown() {
         --command "sudo crontab -l" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
     [[ "$output" = "*/15 * * * * /sbin/haproxy-conf-updater" ]]
 }
@@ -123,5 +132,7 @@ function teardown() {
 @test "Deleting deployment" {
     run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
 }
