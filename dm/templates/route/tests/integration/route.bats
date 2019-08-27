@@ -139,7 +139,7 @@ function teardown() {
 }
 
 @test "Verifying that resources were created in deployment ${DEPLOYMENT_NAME}" {
-    run gcloud compute routes list --filter="name:gateway-route-${RAND} AND priority:1000" \
+    run gcloud compute routes list --filter="name:gateway-route-${RAND} AND priority:1002" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
         
     echo "status = ${status}"
@@ -149,7 +149,7 @@ function teardown() {
     [ "$status" -eq 0 ]
     [[ "${lines[1]}" =~ "gateway-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="name:instance-route-${RAND} AND priority:1000" \
+    run gcloud compute routes list --filter="name:instance-route-${RAND} AND priority:1001" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"   
         
     echo "status = ${status}"
