@@ -36,7 +36,6 @@ required:
 - network
 - tags
 - destRange
-- priority
 
 allOf:
   - oneOf:
