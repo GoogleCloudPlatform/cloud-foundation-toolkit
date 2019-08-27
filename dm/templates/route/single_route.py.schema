@@ -135,6 +135,14 @@ properties:
         type: string
         description: |
             An optional description of this resource. Provide this property when you create the resource.
+    network:
+        type: string
+        description: |
+            Name of the network the route applies to.
+    project:
+        type: string
+        description: |
+            The project ID of the project containing the Route.
     routeType:
         type: string
         description: |
