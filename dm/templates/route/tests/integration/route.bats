@@ -128,7 +128,7 @@ function teardown() {
 
 
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
-    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
+    run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
         --config "${CONFIG}"
                 
