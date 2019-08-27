@@ -27,7 +27,7 @@ def generate_config(context):
 
     # Set the common route properties.
     res_properties = {
-        'name': properties.get('name', name)
+        'name': properties.get('name', name),
         'network': properties['network'],
         'project': project_id,
         'tags': properties['tags'],
