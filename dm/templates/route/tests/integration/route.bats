@@ -128,29 +128,54 @@ function teardown() {
 
 
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
-    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
+    run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
         --config "${CONFIG}"
+                
+    echo "status = ${status}"
+    echo "output = ${output}"
+    
+    [ "$status" -eq 0 ]
 }
 
 @test "Verifying that resources were created in deployment ${DEPLOYMENT_NAME}" {
-    run gcloud compute routes list --filter="name:gateway-route-${RAND} AND priority:1002" \
+    run gcloud compute routes list --filter="name:gateway-route-${RAND} AND priority:1000" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+        
+    echo "status = ${status}"
+    echo "output = ${output}"
+    echo "lines1 = ${lines[1]}"
+    
     [ "$status" -eq 0 ]
     [[ "${lines[1]}" =~ "gateway-route-${RAND}" ]]
 
-    run gcloud compute routes list --filter="name:instance-route-${RAND} AND priority:1001" \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    run gcloud compute routes list --filter="name:instance-route-${RAND} AND priority:1000" \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"   
+        
+    echo "status = ${status}"
+    echo "output = ${output}"
+    echo "lines1 = ${lines[1]}"
+    
     [ "$status" -eq 0 ]
     [[ "${lines[1]}" =~ "instance-route-${RAND}" ]]
 
     run gcloud compute routes list --filter="(name:ip-route-${RAND} AND priority:20000)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+                
+    echo "status = ${status}"
+    echo "output = ${output}"
+    echo "lines1 = ${lines[1]}"
+    
     [ "$status" -eq 0 ]
     [[ "${lines[1]}" =~ "ip-route-${RAND}" ]]
 
     run gcloud compute routes list --filter="(name:vpn-tunnel-route-${RAND} AND priority:500)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+                
+    echo "status = ${status}"
+    echo "output = ${output}"
+    echo "lines1 = ${lines[1]}"
+    
     [ "$status" -eq 0 ]
     [[ "${lines[1]}" =~ "vpn-tunnel-route-${RAND}" ]]
 }

@@ -17,6 +17,7 @@ resources:
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/lint
+    tag: 1.0.0
     username: _json_key
     password: ((sa.google))
 - name: integration-test-image

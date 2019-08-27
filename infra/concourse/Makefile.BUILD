@@ -1,9 +1,9 @@
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 
-BUILD_TERRAFORM_VERSION := 0.11.13
+BUILD_TERRAFORM_VERSION := 0.12.3
 BUILD_CLOUD_SDK_VERSION := 239.0.0
-BUILD_PROVIDER_GOOGLE_VERSION := 1.19.1
-BUILD_PROVIDER_GSUITE_VERSION := 0.1.10
+BUILD_PROVIDER_GOOGLE_VERSION := 2.7.0
+BUILD_PROVIDER_GSUITE_VERSION := 0.1.22
 BUILD_RUBY_VERSION := 2.6.3
 # Make sure you update DOCKER_TAG_VERSION_TERRAFORM or DOCKER_TAG_VERSION_KITCHEN_TERRAFORM independently:
 # If you make changes to the Docker.terraform file, update DOCKER_TAG_VERSION_TERRAFORM
@@ -13,13 +13,13 @@ BUILD_RUBY_VERSION := 2.6.3
 # Adding a component or upgrading a component to a backwards compatible release should constitute a minor release.
 # Fixing bugs or making trivial changes should be considered a patch release.
 
-DOCKER_TAG_VERSION_TERRAFORM := 1.0.0
-DOCKER_TAG_VERSION_KITCHEN_TERRAFORM := 1.2.0
+DOCKER_TAG_VERSION_TERRAFORM := 2.1.0
+DOCKER_TAG_VERSION_KITCHEN_TERRAFORM := 2.3.0
 
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
 DOCKER_IMAGE_LINT := cft/lint
-DOCKER_TAG_LINT := latest
+DOCKER_TAG_LINT := 2.4.0
 
 DOCKER_IMAGE_UNIT := cft/unit
 DOCKER_TAG_UNIT := latest
@@ -30,6 +30,8 @@ DOCKER_IMAGE_KITCHEN_TERRAFORM := cft/kitchen-terraform
 .PHONY: build-image-lint
 build-image-lint:
 	docker build -f build/Dockerfile.lint \
+		--build-arg BUILD_TERRAFORM_VERSION=${BUILD_TERRAFORM_VERSION} \
+		--build-arg BUILD_PROVIDER_GSUITE_VERSION=${BUILD_PROVIDER_GSUITE_VERSION} \
 		-t ${DOCKER_IMAGE_LINT}:${DOCKER_TAG_LINT} .
 
 .PHONY: build-image-unit

@@ -31,7 +31,7 @@ def generate_config(context):
     for i, route in enumerate(properties['routes'], 1000):
         name = route.get('name')
         if not name:
-            name = '%s-%s'.format(context.env['name'], sha1(json.dumps(route)).hexdigest()[:10])
+            name = '{}-{}'.format(context.env['name'], sha1(json.dumps(route)).hexdigest()[:10])
         
         route_properties = {
             'name': name,

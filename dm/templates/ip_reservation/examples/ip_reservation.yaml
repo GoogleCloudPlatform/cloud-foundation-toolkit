@@ -17,14 +17,14 @@ resources:
     properties:
       ipAddresses:
         - name: myglobal
-          ipType: global
+          ipType: GLOBAL
           description: 'my global ip'
         - name: myregionalexternal
-          ipType: regional
+          ipType: REGIONAL
           region: <FIXME:region>
           description: 'my static external ip'
         - name: myinternal
-          ipType: internal
+          ipType: INTERNAL
           # This IP address must be within the subnet range.
           address: 10.128.1.111
           subnetwork: projects/<FIXME:project_id>/regions/<FIXME:region>/subnetworks/<FIXME:subnet>

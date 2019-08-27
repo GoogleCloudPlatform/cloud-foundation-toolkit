@@ -51,7 +51,7 @@ function setup() {
             --organization="${CLOUD_FOUNDATION_ORGANIZATION_ID}"
         get_test_folder_id
         create_config
-        gcloud pubsub topics create test-topic-${RAND}
+        gcloud pubsub topics create test-${RAND}
         gsutil mb -l us-east1 gs://test-bucket-${RAND}/
         bq mk test_dataset_${RAND}
     fi
@@ -125,7 +125,7 @@ function teardown() {
     [[ "$output" =~ "test-logsink-project-storage-create-${RAND}" ]]
 
     run gcloud beta pubsub topics get-iam-policy \
-        "test-logsink-project-pubsub-topic-dest-${RAND}"
+        "test-logsink-project-pubsub-dest-${RAND}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "@gcp-sa-logging.iam.gserviceaccount.com" ]]
     [[ "$output" =~ "user:${CLOUD_FOUNDATION_USER_ACCOUNT}" ]]
@@ -149,7 +149,7 @@ function teardown() {
     [[ "$output" =~ "test-logsink-org-pubsub-create-${RAND}" ]]
     [[ "$output" =~ "test-logsink-org-storage-create-${RAND}" ]]
 
-    run gcloud beta pubsub topics get-iam-policy "test-logsink-org-pubsub-topic-dest-${RAND}"
+    run gcloud beta pubsub topics get-iam-policy "test-logsink-org-pubsub-dest-${RAND}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "@gcp-sa-logging.iam.gserviceaccount.com" ]]
     [[ "$output" =~ "user:${CLOUD_FOUNDATION_USER_ACCOUNT}" ]]
@@ -174,7 +174,7 @@ function teardown() {
     [[ "$output" =~ "test-logsink-billing-storage-create-${RAND}" ]]
 
     run gcloud beta pubsub topics get-iam-policy \
-        "test-logsink-billing-pubsub-topic-dest-${RAND}"
+        "test-logsink-billing-pubsub-dest-${RAND}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "@gcp-sa-logging.iam.gserviceaccount.com" ]]
     [[ "$output" =~ "user:${CLOUD_FOUNDATION_USER_ACCOUNT}" ]]
@@ -198,7 +198,7 @@ function teardown() {
     [[ "$output" =~ "test-logsink-folder-storage-create-${RAND}" ]]
 
     run gcloud beta pubsub topics get-iam-policy \
-        "test-logsink-folder-pubsub-topic-dest-${RAND}"
+        "test-logsink-folder-pubsub-dest-${RAND}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "@gcp-sa-logging.iam.gserviceaccount.com" ]]
     [[ "$output" =~ "user:${CLOUD_FOUNDATION_USER_ACCOUNT}" ]]

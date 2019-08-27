@@ -28,7 +28,7 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     export ZONE="us-central1-c"
     export BASTION1_DISABLE_SUDO="false"
     export BASTION2_DISABLE_SUDO="true"
-    export BASTION2_DISK_SIZE="20"
+    export BASTION2_DISK_SIZE="10"
     export NETWORK_NAME="test-network-${RAND}"
     export PROVISION_COMPLETED_MARKER="provision-completed-marker"
     export BASTION2_STARTUP="echo '${PROVISION_COMPLETED_MARKER}'"
@@ -78,6 +78,8 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config ${CONFIG} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
 }
 
@@ -85,6 +87,8 @@ function teardown() {
     run gcloud compute instances describe ${BASTION1_RES_NAME} \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "machineTypes/${BASTION1_MACHINE_TYPE}" ]]
     [[ "$output" =~ "zones/$(ZONE)" ]]
@@ -108,6 +112,8 @@ function teardown() {
     run gcloud compute ssh ${BASTION1_RES_NAME} --command "sudo whoami" \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "root" ]]
 }
@@ -116,6 +122,8 @@ function teardown() {
     run gcloud compute instances describe ${BASTION2_NAME} \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "machineTypes/${DEFAULT_MACHINE_TYPE}" ]]
     [[ "$output" =~ "zones/${ZONE}" ]]
@@ -128,34 +136,43 @@ function teardown() {
     run gcloud compute disks describe ${BASTION2_NAME} \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "sizeGb: '${BASTION2_DISK_SIZE}'" ]]
 }
 
-@test "Verifying the second Bastion's sudo is OFF" {
-    # Wait until VM provisioning finishes
-    i=0
-    until gcloud compute instances get-serial-port-output ${BASTION2_NAME} \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
-        --zone ${ZONE} | grep ${PROVISION_COMPLETED_MARKER}; do
 
-        sleep 5;
-        i=$(($i+1))
-
-        if [[ $i > 10 ]]; then break; fi
-    done
-
-    run gcloud compute ssh ${BASTION2_NAME} --command "sudo -n whoami" \
-        --zone ${ZONE} \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$status" -eq 0 ]]
-}
+### Invalida test because Compute OS Login Admin IAM role adds sudoers ###
+#
+#@test "Verifying the second Bastion's sudo is OFF" {
+#    # Wait until VM provisioning finishes
+#    i=0
+#    until gcloud compute instances get-serial-port-output ${BASTION2_NAME} \
+#        --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
+#        --zone ${ZONE} | grep ${PROVISION_COMPLETED_MARKER}; do
+#
+#        sleep 5;
+#        i=$(($i+1))
+#
+#        if [[ $i > 10 ]]; then break; fi
+#    done
+#
+#    run gcloud compute ssh ${BASTION2_NAME} --command "sudo -n whoami" \
+#        --zone ${ZONE} \
+#        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+#    echo "status = ${status}"
+#    echo "output = ${output}"
+#    [[ ! "$status" -eq 0 ]]
+#}
 
 @test "Verifying the second Bastion's tags" {
     run gcloud compute instances describe ${BASTION2_NAME} \
         --format "yaml(tags)" \
         --zone ${ZONE} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "- ${BASTION2_EXTRA_TAG}" ]]
     [[ "$output" =~ "- ${BASTION2_TAG}" ]]
@@ -164,6 +181,8 @@ function teardown() {
 @test "Verifying Bastion's inbound firewall rule" {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "IPProtocol: tcp" ]]
     [[ "$output" =~ "- '22'" ]]
@@ -177,6 +196,8 @@ function teardown() {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --format="yaml(sourceRanges)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${SSH_TO_BASTION_SOURCE_RANGE}" ]]
 }
@@ -185,6 +206,8 @@ function teardown() {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --format="yaml(sourceTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${SSH_TO_BASTION_SOURCE_TAG}" ]]
 }
@@ -193,6 +216,8 @@ function teardown() {
     run gcloud compute firewall-rules describe "${SSH_TO_BASTION_RULE_NAME}" \
         --format="yaml(targetTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${BASTION2_TAG}" ]]
 }
@@ -201,6 +226,8 @@ function teardown() {
     run gcloud compute firewall-rules describe \
         "${SSH_FROM_BASTION_DEFAULT_RULE_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "IPProtocol: tcp" ]]
     [[ "$output" =~ "- '22'" ]]
@@ -215,6 +242,8 @@ function teardown() {
         "${SSH_FROM_BASTION_DEFAULT_RULE_NAME}" \
         --format="yaml(sourceTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${BASTION2_TAG}" ]]
 }
@@ -224,6 +253,8 @@ function teardown() {
         "${SSH_FROM_BASTION_DEFAULT_RULE_NAME}" \
         --format="yaml(targetTags)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${SSH_FROM_BASTION_SOURCE_TAG}" ]]
 }

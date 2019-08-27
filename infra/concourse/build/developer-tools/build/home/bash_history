@@ -1,0 +1,3 @@
+source /usr/local/bin/task_helper_functions.sh && init_credentials
+source /usr/local/bin/task_helper_functions.sh
+init_credentials

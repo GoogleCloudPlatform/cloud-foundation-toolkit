@@ -18,7 +18,8 @@ resources:
       networks:
         - network: $(ref.test-network-${RAND}.selfLink)
           accessConfigs:
-            - type: ONE_TO_ONE_NAT
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
       diskImage: ${IMAGE}
       machineType: f1-micro
       canIpForward: true

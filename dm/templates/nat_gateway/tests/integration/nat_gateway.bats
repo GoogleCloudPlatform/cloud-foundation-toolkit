@@ -129,6 +129,10 @@ function teardown() {
             --internal-ip --command 'wget google.com' --zone 'us-east1-b' \
             --quiet" \
         --quiet
+        
+    echo "status = ${status}"
+    echo "output = ${output}"
+    
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "HTTP request sent, awaiting response... 200 OK" ]]
 
@@ -141,6 +145,10 @@ function teardown() {
             --command 'wget google.com --timeout=5' --zone 'us-east1-b' \
             --quiet" \
         --quiet
+        
+    echo "status = ${status}"
+    echo "output = ${output}"
+    
     [[ "$output" =~ "failed: Network is unreachable" ]]
 }
 
