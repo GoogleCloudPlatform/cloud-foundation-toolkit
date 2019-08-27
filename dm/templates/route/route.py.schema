@@ -58,7 +58,6 @@ properties:
       required:
         - tags
         - destRange
-        - priority
 
 outputs:
   properties:
