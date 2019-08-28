@@ -93,7 +93,11 @@ function teardown() {
     [[ "$output" =~ "ilb-proxy-${RAND}" ]]
     
     # Enabling OS login for the next tests
-    run gcloud compute instances add-metadata "ilb-proxy-${RAND}" --metadata enable-oslogin=TRUE
+    run gcloud compute instances add-metadata "ilb-proxy-${RAND}" \
+            --metadata enable-oslogin=TRUE \
+            --zone us-central1-a \
+            --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+            
     echo "Pre-run Status: $status"
     echo "Pre-run Output: $output"
     
