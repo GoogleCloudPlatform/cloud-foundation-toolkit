@@ -104,7 +104,8 @@ function teardown() {
     run gcloud auth list
     echo "Auth-run Status: $status"
     echo "Auth-run Output: $output"
-
+     
+    sleep 60;
      # Wait for the HAProxy instance to be configured.
      until gcloud compute instances get-serial-port-output "ilb-proxy-${RAND}" \
             --zone us-central1-a \
