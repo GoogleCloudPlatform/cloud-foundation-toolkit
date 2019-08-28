@@ -84,7 +84,6 @@ function teardown() {
     [[ "$status" -eq 0 ]]
     
     run gcloud compute ssh "test-inst-has-ext-ip-${RAND}" --zone "us-east1-b" \
-        --tunnel-through-iap \
         --command "echo 'OK' " \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     echo "SSH Status: $status"
@@ -148,7 +147,7 @@ function teardown() {
     # an external IP that is using the NAT gateway and successfully execute
     # wget on a site.
     run gcloud compute ssh "test-inst-has-ext-ip-${RAND}" --zone "us-east1-b" \
-        --ssh-flag="-q" --tunnel-through-iap \
+        --ssh-flag="-q" \
         --command "gcloud compute ssh test-inst-nat-no-ext-ip-${RAND} \
             --internal-ip --command 'wget google.com' --zone 'us-east1-b' \
             --quiet" \
@@ -164,7 +163,7 @@ function teardown() {
     # an external IP that is not using the NAT gateway. The wget command will
     # fail.
     run gcloud compute ssh "test-inst-has-ext-ip-${RAND}" --zone "us-east1-b" \
-        --ssh-flag="-q" --tunnel-through-iap \
+        --ssh-flag="-q" \
         --command "gcloud compute ssh test-inst-no-ext-ip-${RAND} --internal-ip \
             --command 'wget google.com --timeout=5' --zone 'us-east1-b' \
             --quiet" \
