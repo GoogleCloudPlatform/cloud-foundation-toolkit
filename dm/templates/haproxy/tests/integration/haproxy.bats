@@ -97,6 +97,8 @@ function teardown() {
     echo "Pre-run Status: $status"
     echo "Pre-run Output: $output"
     
+    [[ "$status" -eq 0 ]]
+    
     run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
         --command "echo 'OK' " \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
@@ -105,6 +107,8 @@ function teardown() {
     
     echo "sleeping 30"
     sleep 30
+    
+    [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that haproxy.cfg was populated with instances and had all properties set" {
