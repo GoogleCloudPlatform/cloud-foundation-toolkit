@@ -96,6 +96,15 @@ function teardown() {
     run gcloud compute instances add-metadata "ilb-proxy-${RAND}" --metadata enable-oslogin=TRUE
     echo "Pre-run Status: $status"
     echo "Pre-run Output: $output"
+    
+    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
+        --command "echo 'OK' " \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "SSH Status: $status"
+    echo "SSH Output: $output"
+    
+    echo "sleeping 30"
+    sleep 30
 }
 
 @test "Verifying that haproxy.cfg was populated with instances and had all properties set" {
