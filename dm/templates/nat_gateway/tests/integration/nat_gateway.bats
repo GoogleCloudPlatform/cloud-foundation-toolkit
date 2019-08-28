@@ -70,6 +70,30 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
+    
+    
+    # Enabling OS login for the next tests
+    run gcloud compute instances add-metadata "test-inst-has-ext-ip-${RAND}" \
+            --metadata enable-oslogin=TRUE \
+            --zone "us-east1-b" \
+            --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+            
+    echo "Pre-run Status: $status"
+    echo "Pre-run Output: $output"
+    
+    [[ "$status" -eq 0 ]]
+    
+    run gcloud compute ssh "test-inst-has-ext-ip-${RAND}" --zone "us-east1-b" \ 
+        --tunnel-through-iap \
+        --command "echo 'OK' " \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "SSH Status: $status"
+    echo "SSH Output: $output"
+    
+    echo "sleeping 30"
+    sleep 30
+    
+    [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that resources were created in deployment ${DEPLOYMENT_NAME}" {
