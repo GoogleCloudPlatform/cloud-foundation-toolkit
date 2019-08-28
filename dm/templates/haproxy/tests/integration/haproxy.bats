@@ -94,6 +94,13 @@ function teardown() {
 }
 
 @test "Verifying that haproxy.cfg was populated with instances and had all properties set" {
+
+    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
+        --command "sudo tail -n 15 /etc/haproxy/haproxy.cfg" \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Pre-run Status: $status"
+    echo "Pre-run Output: $output"
+
      # Wait for the HAProxy instance to be configured.
      until gcloud compute instances get-serial-port-output "ilb-proxy-${RAND}" \
             --zone us-central1-a \
