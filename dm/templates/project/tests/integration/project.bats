@@ -106,6 +106,9 @@ function teardown() {
 }
 
 @test "Deleting deployment" {
+    ## TODO project creation should work without disabling XPN hosts.
+    gcloud compute shared-vpc disable "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
     gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q
 
     run gcloud projects list
