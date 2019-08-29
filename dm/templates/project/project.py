@@ -136,7 +136,7 @@ def activate_apis(context):
             apis.append('compute.googleapis.com')
 
     resources = []
-    api_names_list = ['billing']
+    api_names_list = ['{}-billing'.format(context.env['name'])]
     for api in apis:
         depends_on = ['{}-billing'.format(context.env['name'])]
         # Serialize activation of all APIs by making apis[n]
