@@ -146,7 +146,11 @@ function teardown() {
     echo "Output: $output"
     [[ "$status" -eq 0 ]]
     
-    gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q
+    run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    [[ "$status" -eq 0 ]]
 
     run gcloud projects list
     [[ ! "$output" =~ "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" ]]
