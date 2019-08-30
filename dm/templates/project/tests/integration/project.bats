@@ -140,7 +140,20 @@ function teardown() {
 
 @test "Deleting deployment" {
     ## TODO project creation should work without disabling XPN hosts.
+    
+    run gcloud alpha resource-manager liens list --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    [[ "$status" -eq 0 ]]
+    
     run gcloud compute shared-vpc disable "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    [[ "$status" -eq 0 ]]
+    
+    run gcloud alpha resource-manager liens list --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
     
     echo "Status: $status"
     echo "Output: $output"
