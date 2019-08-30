@@ -14,7 +14,7 @@ steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/bastion/examples/bastion.yaml']
 # Skip, complex example
-#- name: gcr.io/$PROJECT_ID/cft-schema
+# - name: gcr.io/$PROJECT_ID/cft-schema
 #  args: ['./templates/bigquery/examples/bigquery.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/cloudbuild/examples/cloudbuild_reposource.yaml']
