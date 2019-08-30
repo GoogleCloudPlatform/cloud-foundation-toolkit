@@ -8,7 +8,7 @@ steps:
   args: ['./templates/autoscaler/examples/autoscaler_zonal.yaml']
 # bug 
 #- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/backend_service/examples/backend_service_global.yaml']
+#   args: ['./templates/backend_service/examples/backend_service_global.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/backend_service/examples/backend_service_regional.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
