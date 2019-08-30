@@ -143,7 +143,7 @@ function teardown() {
 }
 
 
-### Invalida test because Compute OS Login Admin IAM role adds sudoers ###
+### Invalid test because Compute OS Login Admin IAM role adds sudoers ###
 #
 #@test "Verifying the second Bastion's sudo is OFF" {
 #    # Wait until VM provisioning finishes
