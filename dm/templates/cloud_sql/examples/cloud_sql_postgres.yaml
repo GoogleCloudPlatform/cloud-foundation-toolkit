@@ -10,14 +10,13 @@ resources:
     type: cloud_sql.py
     properties:
       region: us-central1
-      databaseVersion: POSTGRES_0_6
+      databaseVersion: POSTGRES_9_6
       instanceType: CLOUD_SQL_INSTANCE
       settings:
         tier: db-f1-micro
         backupConfiguration:
           startTime: '02:00'
           enabled: true
-          binaryLogEnabled: true
         locationPreference:
           zone: us-central1-c
       users:
