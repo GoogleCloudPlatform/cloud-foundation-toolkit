@@ -15,6 +15,7 @@
 This template creates a Runtime Configurator with the associated resources.
 """
 
+
 from hashlib import sha1
 
 

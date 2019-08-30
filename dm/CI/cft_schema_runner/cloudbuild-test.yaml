@@ -1,4 +1,3 @@
-
 # find . -name "*.yam"l | grep examples| sort -n | awk '{print "- name: 'gcr.io/\$PROJECT_ID/cft-schema'\n  args: [`"$1"`]"}' | sed "s/\`/'/g"
 
 steps:
@@ -7,7 +6,7 @@ steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/autoscaler/examples/autoscaler_zonal.yaml']
 # bug 
-#- name: gcr.io/$PROJECT_ID/cft-schema
+# - name: gcr.io/$PROJECT_ID/cft-schema
 #   args: ['./templates/backend_service/examples/backend_service_global.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/backend_service/examples/backend_service_regional.yaml']
@@ -15,14 +14,14 @@ steps:
   args: ['./templates/bastion/examples/bastion.yaml']
 # Skip, complex example
 # - name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/bigquery/examples/bigquery.yaml']
+#   args: ['./templates/bigquery/examples/bigquery.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/cloudbuild/examples/cloudbuild_reposource.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/cloudbuild/examples/cloudbuild_storagesource.yaml']
 # FAILING
 # - name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/cloudbuild/examples/cloudbuild_trigger.yaml']
+#   args: ['./templates/cloudbuild/examples/cloudbuild_trigger.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/cloudbuild/examples/cloudbuild.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
@@ -45,9 +44,9 @@ steps:
   args: ['./templates/dataproc/examples/dataproc.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/dns_managed_zone/examples/dns_managed_zone_legacy.yaml']
-  # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/dns_managed_zone/examples/dns_managed_zone_private_visibility_config.yaml']
+# FIXME
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/dns_managed_zone/examples/dns_managed_zone_private_visibility_config.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/dns_managed_zone/examples/dns_managed_zone_private.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
@@ -67,24 +66,24 @@ steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/firewall/examples/firewall.yaml']
 # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/folder/examples/folder.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/folder/examples/folder.yaml']
 # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/forseti/examples/forseti.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/forseti/examples/forseti.yaml']
 # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/forwarding_rule/examples/forwarding_rule_global.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/forwarding_rule/examples/forwarding_rule_global.yaml']
 # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/forwarding_rule/examples/forwarding_rule_regional.yaml']
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/gcs_bucket/examples/gcs_bucket_iam_bindings.yaml']
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/gcs_bucket/examples/gcs_bucket_lifecycle.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/forwarding_rule/examples/forwarding_rule_regional.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/gcs_bucket/examples/gcs_bucket_iam_bindings.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/gcs_bucket/examples/gcs_bucket_lifecycle.yaml']
 # SCHEMA version issue
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/gcs_bucket/examples/gcs_bucket.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/gcs_bucket/examples/gcs_bucket.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/gke/examples/gke_regional_private.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
@@ -96,8 +95,8 @@ steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/healthcheck/examples/healthcheck.yaml']
 # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/iam_custom_role/examples/iam_custom_role.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/iam_custom_role/examples/iam_custom_role.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/iam_member/examples/iam_member.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
@@ -105,17 +104,17 @@ steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/instance_template/examples/instance_template.yaml']
 # Schema faulty?
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/interconnect_attachment/examples/interconnect_attachment_dedicated.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/interconnect_attachment/examples/interconnect_attachment_dedicated.yaml']
 # Schema faulty?
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/interconnect_attachment/examples/interconnect_attachment_partner.yaml']
-#- name: gcr.io/$PROJECT_ID/cft-schema
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/interconnect_attachment/examples/interconnect_attachment_partner.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
 # FIXME
-#  args: ['./templates/interconnect/examples/interconnect_dedicated.yaml']
+#   args: ['./templates/interconnect/examples/interconnect_dedicated.yaml']
 # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/internal_load_balancer/examples/internal_load_balancer.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/internal_load_balancer/examples/internal_load_balancer.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/ip_reservation/examples/ip_reservation.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
@@ -143,8 +142,8 @@ steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/org_policy/examples/org_policy.yaml']
 # FIXME
-#- name: gcr.io/$PROJECT_ID/cft-schema
-#  args: ['./templates/project/examples/project.yaml']
+# - name: gcr.io/$PROJECT_ID/cft-schema
+#   args: ['./templates/project/examples/project.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/pubsub/examples/pubsub_push.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
@@ -175,6 +174,4 @@ steps:
   args: ['./templates/url_map/examples/url_map.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/vpn/examples/vpn.yaml']
-
-
 tags: ['cft-dm-schema-runner']

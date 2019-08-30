@@ -138,7 +138,7 @@ def generate_config(context):
         if outprop in ma_props:
             output_obj['value'] = '$(ref.' + context.env['name'] + \
                                   '.masterAuth.' + outprop + ')'
-        elif outprop  == 'instanceGroupUrls':
+        elif outprop == 'instanceGroupUrls':
             output_obj['value'] = '$(ref.' + context.env['name'] + \
                 '.nodePools[0].' + outprop + ')'
         else:

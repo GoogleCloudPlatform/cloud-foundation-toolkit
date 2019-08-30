@@ -2,7 +2,6 @@
 # Replace 'your-vpc-network-name' with the name of the vpc
 # in which the Cloud SQL instance will be deployed.
 
-
 imports:
   - path: templates/cloud_sql/cloud_sql.py
     name: cloud_sql.py

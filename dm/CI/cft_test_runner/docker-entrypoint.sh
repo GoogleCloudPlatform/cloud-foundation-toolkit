@@ -18,7 +18,7 @@ echo_color 'Activating venv for testing'
 
 cd "${DM_root}"
 
-set +u # Turn off because virtualenv uses undefined variables
+set +u  # Turn off because virtualenv uses undefined variables
 . venv/bin/activate \
 ./src/cftenv 
 set -u
