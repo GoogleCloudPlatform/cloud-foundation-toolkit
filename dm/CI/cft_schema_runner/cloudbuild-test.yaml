@@ -1,5 +1,5 @@
 
-#find . -name "*.yam"l | grep examples| sort -n | awk '{print "- name: 'gcr.io/\$PROJECT_ID/cft-schema'\n  args: [`"$1"`]"}' | sed "s/\`/'/g"
+# find . -name "*.yam"l | grep examples| sort -n | awk '{print "- name: 'gcr.io/\$PROJECT_ID/cft-schema'\n  args: [`"$1"`]"}' | sed "s/\`/'/g"
 
 steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
