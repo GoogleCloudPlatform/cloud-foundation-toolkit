@@ -21,7 +21,7 @@ steps:
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/cloudbuild/examples/cloudbuild_storagesource.yaml']
 # FAILING
-#- name: gcr.io/$PROJECT_ID/cft-schema
+# - name: gcr.io/$PROJECT_ID/cft-schema
 #  args: ['./templates/cloudbuild/examples/cloudbuild_trigger.yaml']
 - name: gcr.io/$PROJECT_ID/cft-schema
   args: ['./templates/cloudbuild/examples/cloudbuild.yaml']
