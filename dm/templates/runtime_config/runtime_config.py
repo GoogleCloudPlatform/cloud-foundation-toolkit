@@ -16,21 +16,27 @@ This template creates a Runtime Configurator with the associated resources.
 """
 
 
+from hashlib import sha1
+
+
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
     resources = []
     properties = context.properties
     project_id = properties.get('projectId', context.env['project'])
-    name = properties.get('config', context.env['name'])
+    name = properties.get('name', properties.get('config', context.env['name']))
     parent = 'projects/{}/configs/{}'.format(project_id, name)
 
     # The runtimeconfig resource.
     runtime_config = {
         'name': name,
-        'type': 'runtimeconfig.v1beta1.config',
+        # https://cloud.google.com/deployment-manager/runtime-configurator/reference/rest/v1beta1/projects.configs
+        'type': 'gcp-types/runtimeconfig-v1beta1:projects.configs',
         'properties': {
             'config': name,
+            # TODO: uncomment after gcp type is fixed
+            # 'project': project_id,
             'description': properties['description']
         }
     }
@@ -39,10 +45,12 @@ def generate_config(context):
 
     # The runtimeconfig variable resources.
     for variable in properties.get('variables', []):
+        suffix = sha1('{}-{}'.format(context.env['name'], variable.get('name', variable.get('variable')))).hexdigest()[:10]
+        variable['project'] = project_id
         variable['parent'] = parent
         variable['config'] = name
         variable_res = {
-            'name': variable['variable'],
+            'name': '{}-{}'.format(context.env['name'], suffix),
             'type': 'variable.py',
             'properties': variable
         }
@@ -50,10 +58,12 @@ def generate_config(context):
 
     # The runtimeconfig waiter resources.
     for waiter in properties.get('waiters', []):
+        suffix = sha1('{}-{}'.format(context.env['name'], waiter.get('name', waiter.get('waiter')))).hexdigest()[:10]
+        waiter['project'] = project_id
         waiter['parent'] = parent
         waiter['config'] = name
         waiter_res = {
-            'name': waiter['waiter'],
+            'name': '{}-{}'.format(context.env['name'], suffix),
             'type': 'waiter.py',
             'properties': waiter
         }

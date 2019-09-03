@@ -1,0 +1,32 @@
+# Example of the Cloud SQL template usage.
+# Replace 'your-vpc-network-name' with the name of the vpc
+# in which the Cloud SQL instance will be deployed.
+
+imports:
+  - path: templates/cloud_sql/cloud_sql.py
+    name: cloud_sql.py
+
+resources:
+  - name: cloud-sql-instance
+    type: cloud_sql.py
+    properties:
+      region: us-central1
+      settings:
+        tier: db-n1-standard-1
+        backupConfiguration:
+          startTime: '02:00'
+          enabled: true
+          binaryLogEnabled: true
+        locationPreference:
+          zone: us-central1-c
+        ipConfiguration:
+          ipv4Enabled: false
+          privateNetwork: 'your-vpc-network-name'
+      users:
+        - name: user-1
+          host: 10.1.1.1
+        - name: user-2
+          host: 10.1.1.2
+      databases:
+        - name: db-1
+        - name: db-2

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+
+### 23.08.2019
+
+- Adding container images for test automation
+- Finalizing 'cft-dm-dev' branch for merge to master
+
 ### 21.03.2019
 
 - *Templates/iam_member*: The template is now using virtual.projects.iamMemberBinding which is and advanced

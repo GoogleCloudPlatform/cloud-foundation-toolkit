@@ -15,8 +15,24 @@
 info:
   title: Logging Sink
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Creates a logging sink to export entries to a desired destination.
+
+    For more information on this resource:
+      - https://cloud.google.com/logging/docs/reference/v2/rest/
+
+    APIs endpoints used by this template:
+    - gcp-types/storage-v1:storage.buckets.setIamPolicy =>
+        https://cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy
+    - gcp-types/logging-v2:folders.sinks =>
+        https://cloud.google.com/logging/docs/reference/v2/rest/v2/folders.sinks
+    - gcp-types/logging-v2:billingAccounts.sinks =>
+        https://cloud.google.com/logging/docs/reference/v2/rest/v2/billingAccounts.sinks
+    - gcp-types/logging-v2:projects.sinks =>
+        https://cloud.google.com/logging/docs/reference/v2/rest/v2/projects.sinks
+    - gcp-types/logging-v2:organizations.sinks =>
+        https://cloud.google.com/logging/docs/reference/v2/rest/v2/organizations.sinks
 
 imports:
   - path: ../pubsub/pubsub.py
@@ -32,10 +48,26 @@ required:
   - destinationType
   - destinationName
 
+oneOf:
+  - required:
+      - projectId
+  - required:
+      - orgId
+  - required:
+      - billingAccountId
+  - required:
+      - folderId
+
 properties:
   name:
     type: string
-    description: Name of the sink resource.
+    description: |
+      Name of the sink. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   destinationName:
     type: string
     description: |
@@ -123,6 +155,30 @@ properties:
               access:
                 - role: OWNER
                   userByEmail: my-email@email.com
+  projectId:
+    type:
+      - string
+      - number
+    description: |
+      Project ID to add sink to
+  orgId:
+    type:
+      - string
+      - number
+    description: |
+      Org ID to add sink to
+  billingAccountId:
+    type:
+      - string
+      - number
+    description: |
+      Billing account ID to add sink to
+  folderId:
+    type:
+      - string
+      - number
+    description: |
+      Folder ID to add sink to
 
 documentation:
   - templates/logsink/README.md

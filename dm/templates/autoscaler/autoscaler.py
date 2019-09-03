@@ -14,8 +14,10 @@
 """ This template creates an autoscaler. """
 
 REGIONAL_LOCAL_AUTOSCALER_TYPES = {
-    True: 'compute.v1.regionAutoscaler',
-    False: 'compute.v1.autoscaler'
+    # https://cloud.google.com/compute/docs/reference/rest/v1/regionAutoscalers
+    True: 'gcp-types/compute-v1:regionAutoscalers',
+    # https://cloud.google.com/compute/docs/reference/rest/v1/autoscalers
+    False: 'gcp-types/compute-v1:autoscalers'
 }
 
 def set_optional_property(receiver, source, property_name):
@@ -44,14 +46,17 @@ def generate_config(context):
 
     properties = context.properties
     name = properties.get('name', context.env['name'])
+    project = properties.get('project', context.env['project'])
     target = properties['target']
 
     policy = {}
 
     autoscaler = {
         'type': None, # Will be set up at a later stage.
-        'name': name,
+        'name': context.env['name'],
         'properties': {
+            'name': name,
+            'project': project,
             'autoscalingPolicy': policy,
             'target': target
         }
@@ -82,7 +87,7 @@ def generate_config(context):
             },
             {
                 'name': 'selfLink',
-                'value': '$(ref.{}.selfLink)'.format(name)
+                'value': '$(ref.{}.selfLink)'.format(context.env['name'])
             }
         ] + [location_output]
     }

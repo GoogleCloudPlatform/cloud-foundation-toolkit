@@ -15,10 +15,15 @@
 info:
   title: Interconnect (Dedicated)
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of an Interconnect resource.
     For more information on this resource:
     https://cloud.google.com/compute/docs/reference/rest/v1/interconnects.
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:interconnects =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/interconnects
 
 imports:
   - path: interconnect.py
@@ -32,6 +37,13 @@ required:
   - requestedLinkCount
 
 properties:
+  name:
+    type: string
+    description: The name of the Interconnect resource. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the instance.
   adminEnabled:
     type: boolean
     description: |
@@ -55,7 +67,6 @@ properties:
     enum:
       - DEDICATED
       - PARTNER
-      - PARTNER_PROVIDER
   linkType:
     type: string
     description: |
@@ -64,14 +75,11 @@ properties:
       allowed for a dedicated Interconnect. Options: Ethernet_10G_LR.
     enum:
       - LINK_TYPE_ETHERNET_10G_LR
-  location:
-    type: string
+      - LINK_TYPE_ETHERNET_100G_LR
+  requestedLinkCount:
+    type: number
     description: |
-      The URL of the InterconnectLocation object that defines where the
-      connection is to be provisioned.
-  name:
-    type: string
-    description: The Interconnect name.
+      Target number of physical links in the link bundle, as requested by the customer.
   location:
     type: string
     description: |

@@ -53,7 +53,11 @@ Following are the prerequisites for creating a project via Deployment Manager. Y
     projects, create that node following [these instructions](https://cloud.google.com/resource-manager/docs/creating-managing-organization).
 
 6.  Grant the *DM Service Account* the following permissions on the Organization node:
-`roles/resourcemanager.projectCreator`. This is visible in the Cloud Console's IAM permissions in *Resource Manager -> Project Creator*. See https://cloud.google.com/resource-manager/docs/access-control-proj.
+
+    - `roles/resourcemanager.projectCreator`
+    - `roles/serviceusage.serviceUsageAdmin`
+ 
+    This is visible in the Cloud Console's IAM permissions in *Resource Manager -> Project Creator* and *Resource Manager -> Service Usage Admin*. See https://cloud.google.com/resource-manager/docs/access-control-proj.
 
 7.  Create/find the *Billing Account* associated with the Organization. See: https://cloud.google.com/support/billing/. Take note of the *Billing Account*'s ID, which is formatted as follows:`00E12A-0AB8B2-078CE8`.
 

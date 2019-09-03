@@ -20,11 +20,15 @@ def generate_config(context):
     resources = []
     outputs = []
     properties = context.properties
-    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
     metric_descriptor = {
-        'name': name,
+        'name': context.env['name'],
+        # https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors
         'type': 'gcp-types/monitoring-v3:projects.metricDescriptors',
-        'properties': {}
+        'properties': {
+            'name': properties.get('name', context.env['name']),
+            # 'project': project_id,
+        }
     }
 
     required_properties = [
@@ -39,7 +43,7 @@ def generate_config(context):
             metric_descriptor['properties'][prop] = properties[prop]
 
     # Optional properties:
-    optional_properties = ['displayName', 'labels', 'description', 'metadata']
+    optional_properties = ['displayName', 'labels', 'description', 'metadata', 'launchStage']
 
     for prop in optional_properties:
         if prop in properties:
@@ -64,7 +68,7 @@ def generate_config(context):
         output = {}
         if outprop in properties:
             output['name'] = outprop
-            output['value'] = '$(ref.{}.{})'.format(name, outprop)
+            output['value'] = '$(ref.{}.{})'.format(context.env['name'], outprop)
             outputs.append(output)
 
     return {'resources': resources, 'outputs': outputs}

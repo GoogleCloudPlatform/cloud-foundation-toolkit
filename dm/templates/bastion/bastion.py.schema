@@ -15,9 +15,19 @@
 info:
   title: Bastion Host
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Bastion host - a jump host for SSHing into those
     instances that have no external IP address.
+
+    For more information on this resource:
+    https://cloud.google.com/solutions/connecting-securely
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:firewalls =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/firewalls
+    - gcp-types/compute-v1:instances =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/instances
 
 imports:
   - path: ../instance/instance.py
@@ -32,7 +42,12 @@ required:
 properties:
   name:
     type: string
-    description: The name of the Bastion host.
+    description: |
+      The name of the Bastion host. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the instance.
   network:
     type: string
     description: |
@@ -57,10 +72,14 @@ properties:
     type: boolean
     default: true
     description: |
+      !!! WARNING !!! This feature does not stop the GCP deamon addig 
+      Cloud Identity users to sudoers based on Compute OS Login Admin IAM.
+      
       When Trues (default), disables `sudo` on the Bastion host for tighter
       security.
   metadata:
     type: object
+    additionalProperties: false
     description: |
       The Bastion host metadata. If the 'disableSudo' property is True, this
       is the only place where you can configure the Bastion host using
@@ -73,9 +92,11 @@ properties:
     properties:
       items:
         type: array
+        uniqueItems: True
         description: A collection of metadata key-value pairs.
         items:
           type: object
+          additionalProperties: false
           properties:
             key:
               type: string
@@ -83,6 +104,7 @@ properties:
               type: [string, number, boolean]
   createFirewallRules:
     type: object
+    additionalProperties: false
     description: |
       If set, creates the firewall rules for the SSH traffic coming in an out
       of the Bastion host.
@@ -94,6 +116,7 @@ properties:
     properties:
       sshToBastion:
         type: object
+        additionalProperties: false
         description: |
           Configures the firewall rule that controls the SSH traffic flow to
           the Bastion host. If none of the other SSH firewall rules exist, this
@@ -118,6 +141,7 @@ properties:
             description: The name of the firewall rule.
           sourceTags:
             type: array
+            uniqueItems: True
             description: |
               If source tags are specified, the firewall rule applies only to
               the traffic with source IPs that match the primary network
@@ -127,6 +151,7 @@ properties:
               type: string
           sourceRanges:
             type: array
+            uniqueItems: True
             description: |
               If source ranges are specified, the firewall applies only to the
               traffic that has source IP address in these ranges. These ranges
@@ -140,6 +165,7 @@ properties:
             maximum: 65535
       sshFromBastion:
         type: object
+        additionalProperties: false
         description: |
           Creates a firewall rule that allows the SSH traffic from the Bastion
           host to any instance within the same network with a particular tag.
@@ -166,12 +192,14 @@ properties:
             maximum: 65535
   tags:
     type: object
+    additionalProperties: false
     required:
       - items
     description: Tags to apply to the instance.
     properties:
       items:
         type: array
+        uniqueItems: True
         description: An array of tags.
         items:
           type: string

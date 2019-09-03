@@ -17,31 +17,33 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    org_id = str(context.properties['orgId'])
-    included_permissions = context.properties['includedPermissions']
+    properties = context.properties
+    org_id = str(properties['orgId'])
+    included_permissions = properties['includedPermissions']
 
     role = {
         'includedPermissions': included_permissions,
         # Default the stage to General Availability.
-        'stage': 'GA'
+        'stage': properties.get('stage')
     }
 
-    title = context.properties.get('title')
+    title = properties.get('title')
     if title:
         role['title'] = title
 
-    description = context.properties.get('description')
+    description = properties.get('description')
     if description:
         role['description'] = description
 
     resources = [
         {
             'name': context.env['name'],
+            # https://cloud.google.com/iam/reference/rest/v1/organizations.roles
             'type': 'gcp-types/iam-v1:organizations.roles',
             'properties':
                 {
                     'parent': 'organizations/' + org_id,
-                    'roleId': context.properties['roleId'],
+                    'roleId': properties['roleId'],
                     'role': role
                 }
         }

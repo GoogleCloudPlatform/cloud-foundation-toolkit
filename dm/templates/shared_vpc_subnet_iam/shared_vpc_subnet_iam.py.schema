@@ -15,44 +15,176 @@
 info:
   title: Shared VPC Subnet IAM
   author: Sourced Group Inc.
-  description: Grants IAM roles to a user on a shared VPC subnetwork
+  version: 1.0.0
+  description: |
+    Grants IAM roles to a user on a shared VPC subnetwork
+
+    For more information on this resource:
+    https://cloud.google.com/compute/docs/reference/rest/beta/subnetworks
+
+    APIs endpoints used by this template:
+      - gcp-types/compute-beta:compute.subnetworks.setIamPolicy =>
+          https://cloud.google.com/compute/docs/reference/rest/beta/subnetworks/setIamPolicy
+
+imports:
+  - path: shared_vpc_subnet_iam.py
+
+oneOf:
+- required:
+  - bindings
+- required:
+  - policy
+- required:
+  - subnets # Legacy
 
 additionalProperties: false
 
-required:
-  - subnets
+project:
+  type: string
+  description: The Project ID.
+
+definitions:
+  policy:
+    type: object
+    description: |
+      REQUIRED: The complete policy to be applied to the 'resource'.
+      The size of the policy is limited to a few 10s of KB. An empty policy is
+      in general a valid policy but certain services (like Projects) might
+      reject them.
+    additionalProperties: false
+    properties:
+      version:
+        type: integer
+        description: Deprecated
+      bindings:
+        type: array
+        description: |
+          Associates a list of members to a role. bindings with no members will
+          result in an error.
+        uniqItems: true
+        items:
+          subnetId: # legacy
+            type: string
+            description: The subnet ID.
+          requestId:
+            type: string
+            description: Name or id of the resource for this request.
+          role:
+            type: string
+            description: |
+              Role that is assigned to members. For example,
+              roles/viewer, roles/editor, or roles/owner.
+          members:
+            type: array
+            description: A list of member identities.
+            uniqItems: true
+            items:
+              type: string
+              description: |
+                Specifies the identities requesting access for a Cloud Platform
+                resource. `members` can have the following values:
+                  - allUsers: A special identifier that represents anyone who
+                    is on the internet; with or without a Google account.
+                  - allAuthenticatedUsers: A special identifier that represents
+                    anyone who is authenticated with a Google account or a
+                    service account.
+                  - user:{emailid} - An email address that represents a
+                    specific Google account. For example, user:name@example.com
+                  - serviceAccount:{emailid} - An email address that represents
+                    a service account. For example,
+                    serviceAccount:my-other-app@appspot.gserviceaccount.com
+                  - group:{emailid} - An email address that represents a Google
+                    group. For example, group:admins@example.com
+                  - domain:{domain} - A Google Apps domain name that represents
+                    all the users of that domain. For example,
+                    google.com or example.com.
+          condition:
+            type: object
+            description: |
+              The condition that is associated with this binding. NOTE: An
+              unsatisfied condition will not allow user access via current
+              binding. Different bindings, including their conditions, are
+              examined independently.
+            additionalProperties: false
+            properties:
+              expression:
+                type: string
+                description: |
+                  Textual representation of an expression in Common Expression
+                  Language syntax. The application context of the containing
+                  message determines which well-known feature set of CEL is
+                  supported.
+              title:
+                type: string
+                description: |
+                  An optional title for the expression, i.e. a short string
+                  describing its purpose. This can be used e.g. in UIs which
+                  allow to enter the expression.
+              description:
+                type: string
+                description: |
+                  An optional description of the expression. This is a longer
+                  text which describes the expression, e.g. when hovered over
+                  it in a UI.
+              location:
+                type: string
+                description: |
+                  An optional string indicating the location of the expression
+                  for error reporting, e.g. a file name and a position in the
+                  file.
+      auditConfigs:
+        type: object
+        description: |
+          Specifies cloud audit logging configuration for this policy.
+        additionalProperties: false
+        properties:
+          service:
+            type: string
+            description: |
+              Specifies a service that will be enabled for audit logging.
+              For example, storage.googleapis.com, cloudsql.googleapis.com.
+              allServices is a special value that covers all services.
+          auditLogConfigs:
+            type: object
+            description: |
+              The configuration for logging of each type of permission.
+            additionalProperties: false
+            properties:
+              logType:
+                type: string
+                description: The log type that this config enables.
+              exemptedMembers:
+                type: array
+                description: |
+                  Specifies the identities that do not cause logging for this
+                  type of permission. Follows the same format of
+                  Binding.members.
+                uniqItems: true
+                items:
+                  type: string
+      etag:
+        type: string
+        description: |
+          etag is used for optimistic concurrency control as a way to help
+          prevent simultaneous updates of a policy from overwriting each other.
+          It is strongly suggested that systems make use of the etag in the
+          read-modify-write cycle to perform policy updates in order to avoid
+          race conditions: An etag is returned in the response to getIamPolicy,
+          and systems are expected to put that etag in the request to
+          setIamPolicy to ensure that their change will be applied to the same
+          version of the policy. If no etag is provided in the call to
+          setIamPolicy, then the existing policy is overwritten blindly.
+          A base64-encoded string.
 
 properties:
-  subnets:
-    type: array
-    description: An array of subnetworks and members to grant IAM roles to.
-    items:
-      subnetId:
-        type: string
-        description: The subnet ID.
-      region:
-        type: string
-        description: The region the subnetId resides in.
-      role:
-        type: string
-        description: The role to grant.
-      members:
-        type: array
-        description: A list of member identities.
-        items:
-          type: string
-          description: |
-            The identity of a member requesting access for a Cloud Platform
-            resource. Can have the following values:
-              - user:{emailid} - An email address that represents a specific
-                Google account. For example, user:name@example.com
-              - serviceAccount:{emailid} - An email address that represents a
-                service account. For example,
-                serviceAccount:my-other-app@appspot.gserviceaccount.com
-              - group:{emailid} - An email address that represents a Google group.
-                For example, group:admins@example.com
-              - domain:{domain} - A Google Apps domain name that represents all
-                the users of that domain. For example, google.com or example.com.
+  policy:
+    $ref: '#/definitions/policy'
+  bindings:
+    $ref: '#/definitions/policy/properties/bindings'
+  subnets: # legacy
+    $ref: '#/definitions/policy/properties/bindings'
+  etag:
+    $ref: '#/definitions/policy/properties/etag'
 
 outputs:
   properties:

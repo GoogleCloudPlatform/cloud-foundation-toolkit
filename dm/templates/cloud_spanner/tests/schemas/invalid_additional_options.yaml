@@ -1,0 +1,4 @@
+displayName: "Spanner Cluster 1"
+nodeCount: 2
+instanceConfig: nam3
+foo: bar

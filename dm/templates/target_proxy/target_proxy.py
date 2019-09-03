@@ -26,7 +26,7 @@ def set_optional_property(destination, source, prop_name):
         destination[prop_name] = source[prop_name]
 
 
-def get_certificate(properties, res_name):
+def get_certificate(properties, project_id, res_name):
     """
     Gets a link to an existing or newly created SSL Certificate
     resource.
@@ -35,13 +35,15 @@ def get_certificate(properties, res_name):
     if 'url' in properties:
         return properties['url'], [], []
 
-    name = properties.get('name', '{}-ssl-cert'.format(res_name))
+    name = '{}-ssl-cert'.format(res_name)
 
     resource = {
         'name': name,
         'type': 'ssl_certificate.py',
         'properties': copy.copy(properties)
     }
+    resource['properties']['name'] = properties.get('name', name)
+    resource['properties']['project'] = project_id
 
     self_link = '$(ref.{}.selfLink)'.format(name)
     outputs = [
@@ -58,18 +60,23 @@ def get_certificate(properties, res_name):
     return self_link, [resource], outputs
 
 
-def get_insecure_proxy(is_http, name, properties, optional_properties):
+def get_insecure_proxy(is_http, res_name, project_id, properties, optional_properties):
     """ Creates a TCP or HTTP Proxy resource. """
 
     if is_http:
-        type_name = 'compute.v1.targetHttpProxy'
+        # https://cloud.google.com/compute/docs/reference/rest/v1/targetHttpProxies
+        type_name = 'gcp-types/compute-v1:targetHttpProxies'
         target_prop = 'urlMap'
     else:
-        type_name = 'compute.alpha.targetTcpProxy'
+        # https://cloud.google.com/compute/docs/reference/rest/v1/targetTcpProxies
+        type_name = 'gcp-types/compute-v1:targetTcpProxies'
         target_prop = 'service'
 
-    resource_props = {}
-    resource = {'type': type_name, 'name': name, 'properties': resource_props}
+    resource_props = {
+        'name': properties.get('name', res_name),
+        'project': project_id,
+    }
+    resource = {'type': type_name, 'name': res_name, 'properties': resource_props}
 
     resource_props[target_prop] = properties['target']
 
@@ -79,18 +86,20 @@ def get_insecure_proxy(is_http, name, properties, optional_properties):
     return [resource], []
 
 
-def get_secure_proxy(is_http, name, properties, optional_properties):
+def get_secure_proxy(is_http, res_name, project_id, properties, optional_properties):
     """ Creates an SSL or HTTPS Proxy resource. """
 
     if is_http:
         create_base_proxy = get_http_proxy
-        target_type = 'compute.v1.targetHttpsProxy'
+        # https://cloud.google.com/compute/docs/reference/rest/v1/targetHttpsProxies
+        target_type = 'gcp-types/compute-v1:targetHttpsProxies'
     else:
         create_base_proxy = get_tcp_proxy
-        target_type = 'compute.v1.targetSslProxy'
+        # https://cloud.google.com/compute/docs/reference/rest/v1/targetSslProxies
+        target_type = 'gcp-types/compute-v1:targetSslProxies'
 
     # Base proxy settings:
-    resources, outputs = create_base_proxy(properties, name)
+    resources, outputs = create_base_proxy(properties, res_name, project_id)
     resource = resources[0]
     resource['type'] = target_type
     resource_prop = resource['properties']
@@ -98,37 +107,40 @@ def get_secure_proxy(is_http, name, properties, optional_properties):
         set_optional_property(resource_prop, properties, prop)
 
     # SSL settings:
-    ssl = properties['ssl']
-    url, ssl_resources, ssl_outputs = get_certificate(ssl['certificate'], name)
-    resource_prop['sslCertificates'] = [url]
-    set_optional_property(resource_prop, ssl, 'sslPolicy')
+    ssl_resources = []
+    ssl_outputs = []
+    if 'sslCertificates' not in resource_prop:
+        ssl = properties['ssl']
+        url, ssl_resources, ssl_outputs = get_certificate(ssl['certificate'], project_id, res_name)
+        resource_prop['sslCertificates'] = [url]
+        set_optional_property(resource_prop, ssl, 'sslPolicy')
 
     return resources + ssl_resources, outputs + ssl_outputs
 
 
-def get_http_proxy(properties, name):
+def get_http_proxy(properties, res_name, project_id):
     """ Creates the HTTP Proxy resource. """
 
-    return get_insecure_proxy(HTTP_BASE, name, properties, ['description'])
+    return get_insecure_proxy(HTTP_BASE, res_name, project_id, properties, ['description'])
 
 
-def get_tcp_proxy(properties, name):
+def get_tcp_proxy(properties, res_name, project_id):
     """ Creates the TCP Proxy resource. """
 
     optional_properties = ['description', 'proxyHeader']
-    return get_insecure_proxy(TCP_BASE, name, properties, optional_properties)
+    return get_insecure_proxy(TCP_BASE, res_name, project_id, properties, optional_properties)
 
 
-def get_https_proxy(properties, name):
+def get_https_proxy(properties, res_name, project_id):
     """ Creates the HTTPS Proxy resource. """
 
-    return get_secure_proxy(HTTP_BASE, name, properties, ['quicOverride'])
+    return get_secure_proxy(HTTP_BASE, res_name, project_id, properties, ['quicOverride'])
 
 
-def get_ssl_proxy(properties, name):
+def get_ssl_proxy(properties, res_name, project_id):
     """ Creates the SSL Proxy resource. """
 
-    return get_secure_proxy(TCP_BASE, name, properties, [])
+    return get_secure_proxy(TCP_BASE, res_name, project_id, properties, [])
 
 
 def generate_config(context):
@@ -136,16 +148,17 @@ def generate_config(context):
 
     properties = context.properties
     name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
     protocol = properties['protocol']
 
     if protocol == 'SSL':
-        resources, outputs = get_ssl_proxy(properties, name)
+        resources, outputs = get_ssl_proxy(properties, context.env['name'], project_id)
     elif protocol == 'TCP':
-        resources, outputs = get_tcp_proxy(properties, name)
+        resources, outputs = get_tcp_proxy(properties, context.env['name'], project_id)
     elif protocol == 'HTTPS':
-        resources, outputs = get_https_proxy(properties, name)
+        resources, outputs = get_https_proxy(properties, context.env['name'], project_id)
     else:
-        resources, outputs = get_http_proxy(properties, name)
+        resources, outputs = get_http_proxy(properties, context.env['name'], project_id)
 
     return {
         'resources':
@@ -158,11 +171,11 @@ def generate_config(context):
                 },
                 {
                     'name': 'selfLink',
-                    'value': '$(ref.{}.selfLink)'.format(name)
+                    'value': '$(ref.{}.selfLink)'.format(context.env['name'])
                 },
                 {
                     'name': 'kind',
-                    'value': '$(ref.{}.kind)'.format(name)
+                    'value': '$(ref.{}.kind)'.format(context.env['name'])
                 },
             ]
     }

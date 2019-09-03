@@ -17,28 +17,31 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    name = context.properties.get('name', context.env['name'])
-    required_properties = ['network', 'ipCidrRange', 'region']
+    props = context.properties
+    props['name'] = props.get('name', context.env['name'])
+    required_properties = ['name', 'network', 'ipCidrRange', 'region']
     optional_properties = [
+        'project',
         'enableFlowLogs',
         'privateIpGoogleAccess',
         'secondaryIpRanges'
     ]
 
     # Load the mandatory properties, then the optional ones (if specified).
-    properties = {p: context.properties[p] for p in required_properties}
+    properties = {p: props[p] for p in required_properties}
     properties.update(
         {
-            p: context.properties[p]
+            p: props[p]
             for p in optional_properties
-            if p in context.properties
+            if p in props
         }
     )
 
     resources = [
         {
-            'type': 'compute.v1.subnetwork',
-            'name': name,
+            # https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/insert
+            'type': 'gcp-types/compute-v1:subnetworks',
+            'name': context.env['name'],
             'properties': properties
         }
     ]
@@ -46,27 +49,27 @@ def generate_config(context):
     output = [
         {
             'name': 'name',
-            'value': name
+            'value': properties['name']
         },
         {
             'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(name)
+            'value': '$(ref.{}.selfLink)'.format(context.env['name'])
         },
         {
             'name': 'ipCidrRange',
-            'value': '$(ref.{}.ipCidrRange)'.format(name)
+            'value': '$(ref.{}.ipCidrRange)'.format(context.env['name'])
         },
         {
             'name': 'region',
-            'value': '$(ref.{}.region)'.format(name)
+            'value': '$(ref.{}.region)'.format(context.env['name'])
         },
         {
             'name': 'network',
-            'value': '$(ref.{}.network)'.format(name)
+            'value': '$(ref.{}.network)'.format(context.env['name'])
         },
         {
             'name': 'gatewayAddress',
-            'value': '$(ref.{}.gatewayAddress)'.format(name)
+            'value': '$(ref.{}.gatewayAddress)'.format(context.env['name'])
         }
     ]
 

@@ -20,57 +20,55 @@ def generate_config(context):
 
     resources = []
     outputs = []
-    project_id = context.env['project']
     properties = context.properties
-    cluster_type = properties.get('clusterLocationType')
+    name = properties['cluster'].get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
     propc = properties['cluster']
-    name = propc.get('name') or context.env['name']
     gke_cluster = {
-        'name': name,
+        'name': context.env['name'],
         'type': '',
         'properties':
             {
+                'parent': 'projects/{}/locations/{}'.format(
+                    project_id,
+                    properties.get('zone', properties.get('location', properties.get('region')))
+                ),
                 'cluster':
                     {
-                        'name':
-                            name + '-cluster',
-                        'initialNodeCount':
-                            propc.get('initialNodeCount'),
-                        'initialClusterVersion':
-                            propc.get('initialClusterVersion')
+                        'name': name,
                     }
             }
     }
 
-    if cluster_type == 'Regional':
-        provider = 'gcp-types/container-v1beta1:projects.locations.clusters'
-        if not properties.get('region'):
-            raise KeyError(
-                "region is a required property for a {} Cluster."
-                .format(cluster_type)
-            )
-        parent = 'projects/{}/locations/{}'.format(
-            project_id,
-            properties.get('region')
-        )
-        gke_cluster['properties']['parent'] = parent
-
-    elif cluster_type == 'Zonal':
-        provider = 'container.v1.cluster'
-        if not properties.get('zone'):
-            raise KeyError(
-                "zone is a required property for a {} Cluster."
-                .format(cluster_type)
-            )
+    if properties.get('zone'):
+        # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.zones.clusters
+        gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.zones.clusters'
+        # TODO: remove, this is a bug
         gke_cluster['properties']['zone'] = properties.get('zone')
-
-    gke_cluster['type'] = provider
+    else:
+        # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters
+        gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.locations.clusters'
 
     req_props = ['network', 'subnetwork']
 
     optional_props = [
+        'initialNodeCount',
+        'initialClusterVersion',
         'description',
         'nodeConfig',
+        'nodePools',
+        'privateClusterConfig',
+        'binaryAuthorization',
+        'binaryAuthorization',
+        'networkConfig',
+        'defaultMaxPodsConstraint',
+        'resourceUsageExportConfig',
+        'authenticatorGroupsConfig',
+        'verticalPodAutoscaling',
+        'tierSettings',
+        'enableTpu',
+        'databaseEncryption',
+        'workloadIdentityConfig',
         'masterAuth',
         'loggingService',
         'monitoringService',
@@ -118,28 +116,33 @@ def generate_config(context):
         'servicesIpv4Cidr'
     ]
 
+    initial_cluster_version = propc.get('initialClusterVersion')
+    less_than_112 = (
+        initial_cluster_version.lower() != 'latest' and 
+        version.parse(initial_cluster_version.split('-')[0]) < version.parse("1.12")
+    )
+
     if (
-        version.parse(propc.get('initialClusterVersion').split('-')[0]) < version.parse("1.12") or
-        propc.get('masterAuth', {}).get('clientCertificateConfig', False)
+        # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
+        propc.get('enableDefaultAuthOutput', False) and (
+            less_than_112 or propc.get('masterAuth', {}).get('clientCertificateConfig', False)
+        )
     ):
         output_props.append('clientCertificate')
         output_props.append('clientKey')
-        
-    if not propc.get('ipAllocationPolicy', {}).get('useIpAliases', False):
-        output_props.append('nodeIpv4CidrSize')
 
     for outprop in output_props:
         output_obj = {}
         output_obj['name'] = outprop
         ma_props = ['clusterCaCertificate', 'clientCertificate', 'clientKey']
         if outprop in ma_props:
-            output_obj['value'] = '$(ref.' + name + \
-                '.masterAuth.' + outprop + ')'
+            output_obj['value'] = '$(ref.' + context.env['name'] + \
+                                  '.masterAuth.' + outprop + ')'
         elif outprop == 'instanceGroupUrls':
-            output_obj['value'] = '$(ref.' + name + \
+            output_obj['value'] = '$(ref.' + context.env['name'] + \
                 '.nodePools[0].' + outprop + ')'
         else:
-            output_obj['value'] = '$(ref.' + name + '.' + outprop + ')'
+            output_obj['value'] = '$(ref.' + context.env['name'] + '.' + outprop + ')'
 
         outputs.append(output_obj)
 

@@ -11,8 +11,8 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cft",
-	Short: "Google Cloud Formation Toolkit CLI",
-	Long:  "Google Cloud Formation Toolkit CLI",
+	Short: "Google Cloud Foundation Toolkit CLI",
+	Long:  "Google Cloud Foundation Toolkit CLI",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		// no params means same as -h flag

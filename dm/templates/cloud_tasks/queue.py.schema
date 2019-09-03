@@ -15,8 +15,10 @@
 info:
   title: Cloud Tasks Queue
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Cloud Tasks Queue resource.
+
     For more information on this resource, see
     https://cloud.google.com/tasks/docs/dual-overview
 
@@ -51,6 +53,7 @@ properties:
       https://cloud.google.com/about/locations/.
   rateLimits:
     type: object
+    additionalProperties: false
     description: |
       Rate limits for task dispatches. Controls the total rate of dispatches
       from a queue (i.e., all traffic dispatched from the queue,
@@ -78,6 +81,7 @@ properties:
         maximum: 5000
   retryConfig:
     type: object
+    additionalProperties: false
     description: |
       Settings that determine the retry behavior. For tasks created using
       Cloud Tasks: the queue-level retry settings apply to all tasks in the
@@ -153,10 +157,12 @@ properties:
           Tasks will pick the default.
   appEngineHttpQueue:
     type: object
+    additionalProperties: false
     description: The App Engine HTTP queue.
     properties:
       appEngineRoutingOverride:
         type: object
+        additionalProperties: false
         description: |
           Overrides for the task-level appEngineRouting. If set,
           appEngineRoutingOverride is used for all tasks in the queue,

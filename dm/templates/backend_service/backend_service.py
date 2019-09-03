@@ -14,8 +14,10 @@
 """ This template creates a backend service. """
 
 REGIONAL_GLOBAL_TYPE_NAMES = {
-    True: 'compute.v1.regionBackendService',
-    False: 'compute.v1.backendService'
+    # https://cloud.google.com/compute/docs/reference/rest/v1/regionBackendServices
+    True: 'gcp-types/compute-v1:regionBackendServices',
+    # https://cloud.google.com/compute/docs/reference/rest/v1/backendServices
+    False: 'gcp-types/compute-v1:backendServices'
 }
 
 
@@ -52,19 +54,24 @@ def generate_config(context):
     properties = context.properties
     res_name = context.env['name']
     name = properties.get('name', res_name)
+    project_id = properties.get('project', context.env['project'])
     is_regional = 'region' in properties
     region = properties.get('region')
-    backend_properties = {'name': name}
+    backend_properties = {
+        'name': name,
+        'project': project_id,
+    }
 
     resource = {
         'name': res_name,
         'type': REGIONAL_GLOBAL_TYPE_NAMES[is_regional],
-        'properties': backend_properties
+        'properties': backend_properties,
     }
 
     optional_properties = [
         'description',
         'backends',
+        'iap',
         'timeoutSec',
         'protocol',
         'region',
@@ -74,6 +81,7 @@ def generate_config(context):
         'affinityCookieTtlSec',
         'loadBalancingScheme',
         'connectionDraining',
+        'healthChecks',
         'cdnPolicy'
     ]
 

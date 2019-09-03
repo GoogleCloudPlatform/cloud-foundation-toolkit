@@ -49,36 +49,32 @@ def get_network_interfaces(properties):
     """
     network_interfaces = []
 
-    networks = properties.get('networks', [{
-        "name": properties.get('network'),
-        "hasExternalIp": properties.get('hasExternalIp'),
-        "natIP": properties.get('natIP'),
-        "subnetwork": properties.get('subnetwork'),
-        "networkIP": properties.get('networkIP'),
-    }])
+    networks = properties.get('networks', [])
+    if len(networks) == 0 and properties.get('network'):
+        network = {
+            "network": properties.get('network'),
+            "subnetwork": properties.get('subnetwork'),
+            "networkIP": properties.get('networkIP'),
+        }
+        networks.append(network)
+        if (properties.get('hasExternalIp')):
+            network['accessConfigs'] = [{
+                "type": "ONE_TO_ONE_NAT",
+            }]
+        if properties.get('natIP'):
+          network['accessConfigs'][0]["natIp"] = properties.get('natIP')
 
     for network in networks:
-        if not '.' in network['name'] and not '/' in network['name']:
-            network_name = 'global/networks/{}'.format(network['name'])
+        if not '.' in network['network'] and not '/' in network['network']:
+            network_name = 'global/networks/{}'.format(network['network'])
         else:
-            network_name = network['name']
+            network_name = network['network']
 
         network_interface = {
             'network': network_name,
         }
 
-        if network['hasExternalIp']:
-            access_configs = {
-                'name': 'External NAT',
-                'type': 'ONE_TO_ONE_NAT'
-            }
-
-            if network.get('natIP'):
-                access_configs['natIP'] = network['natIP']
-
-            network_interface['accessConfigs'] = [access_configs]
-
-        netif_optional_props = ['subnetwork', 'networkIP']
+        netif_optional_props = ['subnetwork', 'networkIP', 'aliasIpRanges', 'accessConfigs']
         for prop in netif_optional_props:
             if network.get(prop):
                 network_interface[prop] = network[prop]
@@ -93,17 +89,19 @@ def generate_config(context):
     properties = context.properties
     name = properties.get('name', context.env['name'])
     machine_type = properties['machineType']
-    boot_disk = create_boot_disk(properties)
     network_interfaces = get_network_interfaces(context.properties)
+    project_id = properties.get('project', context.env['project'])
     instance_template = {
-        'name': name,
-        'type': 'compute.v1.instanceTemplate',
+        'name': context.env['name'],
+        # https://cloud.google.com/compute/docs/reference/rest/v1/instanceTemplates
+        'type': 'gcp-types/compute-v1:instanceTemplates',
         'properties':
             {
+                'name': name,
+                'project': project_id,
                 'properties':
                     {
                         'machineType': machine_type,
-                        'disks': [boot_disk],
                         'networkInterfaces': network_interfaces
                     }
             }
@@ -113,15 +111,22 @@ def generate_config(context):
 
     optional_props = [
         'metadata',
+        'disks',
+        'scheduling',
         'tags',
         'canIpForward',
         'labels',
         'serviceAccounts',
-        'scheduling'
+        'scheduling',
+        'shieldedInstanceConfig',
+        'minCpuPlatform',
+        'guestAccelerators',
     ]
 
     for prop in optional_props:
         set_optional_property(template_spec, properties, prop)
+    if not template_spec.get('disks'):
+        template_spec['disks'] = [create_boot_disk(properties)]
 
     set_optional_property(
         template_spec,
@@ -137,6 +142,18 @@ def generate_config(context):
         'description'
     )
 
+    set_optional_property(
+        instance_template['properties'],
+        properties,
+        'sourceInstance'
+    )
+
+    set_optional_property(
+        instance_template['properties'],
+        properties,
+        'sourceInstanceParams'
+    )
+
     return {
         'resources': [instance_template],
         'outputs':
@@ -147,7 +164,7 @@ def generate_config(context):
                 },
                 {
                     'name': 'selfLink',
-                    'value': '$(ref.{}.selfLink)'.format(name)
+                    'value': '$(ref.{}.selfLink)'.format(context.env['name'])
                 }
             ]
     }

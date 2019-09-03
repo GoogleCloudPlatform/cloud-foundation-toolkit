@@ -18,7 +18,7 @@ resources:
     properties:
       portRange: 443
       backendServices:
-        - name: backend-service
+        - resourceName: backend-service
           portName: https
           healthCheck: <FIXME:healthcheck>
           backends:

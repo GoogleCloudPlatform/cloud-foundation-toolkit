@@ -24,6 +24,11 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     export CLOUDDNS_DESCRIPTION="Managed DNS Zone for Testing"
 fi
 
+if [ -z "${CLOUDDNS_CROSS_PROJECT_ID}" ]; then
+    echo "CLOUDDNS_CROSS_PROJECT_ID is not set, nothing to test." >&2
+    exit 1
+fi
+
 ########## HELPER FUNCTIONS ##########
 
 function create_config() {
@@ -59,19 +64,20 @@ function teardown() {
 ########## TESTS ##########
 
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
-   gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
-       --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-   [[ "$status" -eq 0 ]]
+    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
+        --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
 }
 
 @test "Verify if a managed zone with name $CLOUDDNS_ZONE_NAME was created" {
-   run gcloud dns managed-zones list --format=flattened
-   [[ "$status" -eq 0 ]]
-   [[ "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
+    run gcloud dns managed-zones list --format=flattened \
+        --project "${CLOUDDNS_CROSS_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
 }
 
 @test "Verify if a DNS named ${CLOUDDNS_DNS_NAME} was created" {
-    run gcloud dns managed-zones list
+    run gcloud dns managed-zones list --project "${CLOUDDNS_CROSS_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${CLOUDDNS_DNS_NAME}" ]]
 }
@@ -79,9 +85,7 @@ function teardown() {
 @test "Deleting deployment ${DEPLOYMENT_NAME}" {
     gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
         -q --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-
     run gcloud dns managed-zones list
     [[ "$status" -eq 0 ]]
     [[ ! "$output" =~ "${CLOUDDNS_ZONE_NAME}" ]]
 }
-

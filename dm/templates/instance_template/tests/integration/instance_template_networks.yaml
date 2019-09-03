@@ -9,17 +9,23 @@ imports:
     name: instance_template.py
 
 resources:
-  - name: instance-template-${RAND}
+  - name: it-${RAND}
     type: instance_template.py
     properties:
       name: it-${RAND}
       instanceDescription: Instance description
       templateDescription: Template description
       networks:
-        - name: $(ref.test-network-0-${RAND}.selfLink)
+        - network: $(ref.test-network-0-${RAND}.selfLink)
           subnetwork: $(ref.test-subnetwork-0-${RAND}.selfLink)
-        - name: $(ref.test-network-1-${RAND}.selfLink)
+          accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
+        - network: $(ref.test-network-1-${RAND}.selfLink)
           subnetwork: $(ref.test-subnetwork-1-${RAND}.selfLink)
+          accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
       diskImage: ${IMAGE}
       machineType: f1-micro
       canIpForward: true

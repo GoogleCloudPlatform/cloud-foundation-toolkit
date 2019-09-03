@@ -29,36 +29,37 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     resources = []
-    outputs = []
-    healthcheck = {}
     properties = context.properties
-    healthcheck_name = context.env['name']
+    healthcheck_name = properties.get('name', context.env['name'])
     healthcheck_type = properties['healthcheckType']
     healthcheck_version = properties.get('version', 'v1')
+
+    project_id = properties.get('project', context.env['project'])
+
     # Deployment Manager resource types per healthcheck type.
     healthcheck_type_dictionary = {
         'HTTP':
             {
-                'v1': 'compute.v1.httpHealthCheck',
-                'beta': 'compute.beta.httpHealthCheck'
+                'v1': 'gcp-types/compute-v1:httpHealthChecks',
+                'beta': 'gcp-types/compute-beta:httpHealthChecks'
             },
         'HTTPS':
             {
-                'v1': 'compute.v1.httpsHealthCheck',
-                'beta': 'compute.beta.httpsHealthCheck'
+                'v1': 'gcp-types/compute-v1:httpsHealthChecks',
+                'beta': 'gcp-types/compute-beta:httpsHealthChecks'
             },
         'SSL':
             {
-                'v1': 'compute.v1.healthCheck',
-                'beta': 'compute.beta.healthCheck'
+                'v1': 'gcp-types/compute-v1:healthChecks',
+                'beta': 'gcp-types/compute-beta:healthChecks'
             },
         'TCP':
             {
-                'v1': 'compute.v1.healthCheck',
-                'beta': 'compute.beta.healthCheck'
+                'v1': 'gcp-types/compute-v1:healthChecks',
+                'beta': 'gcp-types/compute-beta:healthChecks'
             },
         'HTTP2': {
-            'beta': 'compute.beta.healthCheck'
+            'beta': 'gcp-types/compute-beta:healthChecks'
         }
     }
 
@@ -74,22 +75,24 @@ def generate_config(context):
     # Create a generic healthcheck object.
     healthcheck = {
         'name':
-            healthcheck_name,
+            context.env['name'],
         'type':
             healthcheck_type_dictionary[healthcheck_type][healthcheck_version]
     }
 
     # Create the generic healthcheck properties separately.
     healthcheck_properties = {
-        'description': properties.get('description',
-                                      ''),
         'checkIntervalSec': properties['checkIntervalSec'],
         'timeoutSec': properties['timeoutSec'],
         'unhealthyThreshold': properties['unhealthyThreshold'],
         'healthyThreshold': properties['healthyThreshold'],
         'kind': 'compute#healthCheck',
-        'type': healthcheck_type
+        'type': healthcheck_type,
+        'project': project_id,
+        'name': healthcheck_name,
     }
+
+    set_if_exists(healthcheck_properties, properties, 'description')
 
     # Create a specific healthcheck object.
     specific_healthcheck_type = healthcheck_object_dictionary[healthcheck_type]
@@ -125,15 +128,15 @@ def generate_config(context):
     outputs = [
         {
             'name': 'name',
-            'value': '$(ref.{}.name)'.format(healthcheck_name)
+            'value': '$(ref.{}.name)'.format(context.env['name'])
         },
         {
             'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(healthcheck_name)
+            'value': '$(ref.{}.selfLink)'.format(context.env['name'])
         },
         {
             'name': 'creationTimestamp',
-            'value': '$(ref.{}.creationTimestamp)'.format(healthcheck_name)
+            'value': '$(ref.{}.creationTimestamp)'.format(context.env['name'])
         }
     ]
 

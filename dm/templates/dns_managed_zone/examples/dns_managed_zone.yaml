@@ -1,7 +1,7 @@
 # Example of the DNS managed zone template usage.
 #
 # In this example, a DNS managed zone is created with the use of
-# the `zoneName` and `dnsName` properties. 
+# the `name` and `dnsName` properties.
 
 imports:
   - path: templates/dns_managed_zone/dns_managed_zone.py
@@ -11,6 +11,6 @@ resources:
   - name: test-managed-zone
     type: dns_managed_zone.py
     properties:
-      zoneName: test-managed-zone
+      name: test-managed-zone
       dnsName: foobar.local.
       description: 'My foobar DNS Managed Zone'

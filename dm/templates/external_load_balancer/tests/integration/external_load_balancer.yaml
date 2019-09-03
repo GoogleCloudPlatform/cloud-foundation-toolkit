@@ -27,7 +27,7 @@ resources:
       description: ${HTTP_DESCRIPTION}
       portRange: ${HTTP_PORT_RANGE}
       backendServices:
-        - name: ${HTTP_FIRST_BACKEND_NAME}
+        - resourceName: ${HTTP_FIRST_BACKEND_NAME}
           description: ${HTTP_FIRST_BACKEND_DESC}
           timeoutSec: ${TIMEOUT_SEC}
           sessionAffinity: ${SESSION_AFFINITY}
@@ -39,7 +39,7 @@ resources:
           healthCheck: $(ref.${HTTP_HEALTHCHECK_NAME}.selfLink)
           backends:
             - group: $(ref.${HTTP_IGM_NAME}.instanceGroup)
-        - name: ${HTTP_SECOND_BACKEND_NAME}
+        - resourceName: ${HTTP_SECOND_BACKEND_NAME}
           healthCheck: $(ref.${HTTP_HEALTHCHECK_NAME}.selfLink)
           backends:
             - group: $(ref.${HTTP_IGM_NAME}.instanceGroup)
@@ -59,7 +59,7 @@ resources:
       portRange: ${HTTPS_PORT_RANGE}
       quicOverride: ${QUIC_OVERRIDE}
       backendServices:
-        - name: ${HTTPS_FIRST_BACKEND_NAME}
+        - resourceName: ${HTTPS_FIRST_BACKEND_NAME}
           healthCheck: $(ref.${HTTPS_HEALTHCHECK_NAME}.selfLink)
           portName: ${HTTPS_PORT_NAME}
           backends:
