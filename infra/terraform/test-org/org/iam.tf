@@ -16,7 +16,7 @@
  */
 
 module "org_bindings" {
-  source = "terraform-google-modules/iam/google"
+  source  = "terraform-google-modules/iam/google"
   version = "~> 2.0"
 
   organizations = [local.org_id]
@@ -29,7 +29,7 @@ module "org_bindings" {
 }
 
 module "ci_bindings" {
-  source = "terraform-google-modules/iam/google"
+  source  = "terraform-google-modules/iam/google"
   version = "~> 2.0"
 
   folders = [local.folders["ci"]]
@@ -40,6 +40,19 @@ module "ci_bindings" {
     ]
 
     "roles/resourcemanager.folderViewer" = [
+      "group:cft-ci-robots@test.infra.cft.tips",
+    ]
+  }
+}
+
+module "ci_folders_folder_bindings" {
+  source  = "terraform-google-modules/iam/google"
+  version = "~> 2.0"
+
+  folders = [local.ci_folders["ci-folders"]]
+
+  bindings = {
+    "roles/resourcemanager.folderIamAdmin" = [
       "group:cft-ci-robots@test.infra.cft.tips",
     ]
   }
