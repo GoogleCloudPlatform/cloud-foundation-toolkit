@@ -1,0 +1,12 @@
+apiVersion: cft.dev/v1alpha1
+kind: CloudFoundation
+metadata:
+  name: my-foundation
+  outputDirectory: "config"
+spec:
+  organization:
+    id: 12345678 #ORGANIZATION_ID
+    displayName: "my-org"
+    folders:
+      - id: "group1_2"
+        displayName: "Group 1-2"

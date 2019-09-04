@@ -1,6 +1,8 @@
 package launchpad
 
 import (
+	"errors"
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"log"
 )
@@ -12,9 +14,10 @@ func NewBootstrap() {
 }
 
 // `$ cft launchpad generate` entry point
-func NewGenerate(rawFilepath []string, outputFlavor string, outputDir string) {
+func NewGenerate(rawFilepath []string, outFlavor string, outputDir string) {
 	gState.outputDirectory = outputDir
-	switch outputFlavor {
+
+	switch outputFlavor(outFlavor) {
 	case outTf:
 		gState.outputFlavor = outTf
 	case outDm:
@@ -26,19 +29,27 @@ func NewGenerate(rawFilepath []string, outputFlavor string, outputDir string) {
 		return
 	}
 
-	fps, err := validateYAMLFilepath(rawFilepath)
+	err := loadAllYAMLs(rawFilepath)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	generateOutput()
+}
+
+func loadAllYAMLs(rawFilepath []string) error {
+	fps, err := validateYAMLFilepath(rawFilepath)
+	if err != nil {
+		return err
+	}
 	if fps == nil || len(fps) == 0 {
-		log.Fatalln("No valid YAML files given")
+		return errors.New("no valid YAML files given")
 	}
 	for _, conf := range fps { // Load all files into runtime
 		// TODO multiple yaml documents in one file
 		err := yaml.Unmarshal([]byte(loadFile(conf)), &configYAML{})
 		if err != nil {
-			log.Fatalln(err)
+			return errors.New(fmt.Sprintf("%s %s", conf, err.Error()))
 		}
 	}
-	generateOutput()
+	return nil
 }

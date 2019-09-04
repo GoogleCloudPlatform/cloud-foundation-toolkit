@@ -117,7 +117,16 @@ type tfGoogleFolder struct {
 
 func (t *tfGoogleFolder) tfTemplate() string       { return "launchpad/static/tmpl/tf/google_folder.tf.tmpl" }
 func (t *tfGoogleFolder) tfArguments() interface{} { return *t }
-func newTfGoogleFolder(id string, name string, parent string) *tfGoogleFolder {
+func newTfGoogleFolder(id string, name string, parentPtr *parentRefYAML) *tfGoogleFolder {
+	parent := ""
+	switch parentPtr.ParentType {
+	case KindOrganization:
+		parent = fmt.Sprintf("organizations/%s", parentPtr.ParentId)
+	case KindFolder:
+		parent = fmt.Sprintf("${google_folder.%s.name}", parentPtr.ParentId)
+	default:
+		log.Fatalln("folder contained in non folder or org")
+	}
 	return &tfGoogleFolder{
 		Id:          id,
 		DisplayName: name,

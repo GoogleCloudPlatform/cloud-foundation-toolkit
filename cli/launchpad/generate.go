@@ -55,7 +55,7 @@ func (l *outputDirectory) componentName() string { return "outputDirectory" }
 
 // ==== Components ====
 type folders struct {
-	YAMLs   map[string]*folderYAML
+	YAMLs   map[string]*folderSpecYAML
 	dirname string
 	dirProperty *directoryProperty
 }
@@ -75,8 +75,8 @@ func (f *folders) files() (fs []file) {
 		var outputCons, varCons []tfConstruct
 		mainCons := []tfConstruct{newTfGoogleProvider()}
 		for _, y := range f.YAMLs {
-			mainCons = append(mainCons, newTfGoogleFolder(y.Spec.Id, y.Spec.DisplayName, y.Spec.ParentRef.ParentId))
-			outputCons = append(outputCons, newTfOutput(y.Spec.Id, fmt.Sprintf("${google_folder.%s.name}", y.Spec.Id)))
+			mainCons = append(mainCons, newTfGoogleFolder(y.Id, y.DisplayName, &y.ParentRef))
+			outputCons = append(outputCons, newTfOutput(y.Id, fmt.Sprintf("${google_folder.%s.name}", y.Id)))
 		}
 		varCons = append(
 			varCons,
