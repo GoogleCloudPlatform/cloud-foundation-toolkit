@@ -19,9 +19,47 @@ locals {
     folders = {
         ci = module.folders-root.names_and_ids["ci-projects"]
     }
-    ci_folders = {
-        kms = module.folders-ci.names_and_ids["ci-kms"]
-        ci-network = module.folders-ci.names_and_ids["ci-network"]
-        ci-folders = module.folders-ci.names_and_ids["ci-folders"]
-    }
+    ci_folders = module.folders-ci.names_and_ids
+    modules = [
+        "kms",
+        "network",
+        "folders",
+        "slo",
+        "sap",
+        "iam",
+        "event-function",
+        "kubernetes-engine",
+        "vpn",
+        "project-factory",
+        "pubsub",
+        "migrate",
+        "bootstrap",
+        "redis",
+        "datalab",
+        "mariadb",
+        "jenkins",
+        "container-vm",
+        "lb",
+        "vm",
+        "memorystore",
+        "airflow",
+        "service-accounts",
+        "cloud-storage",
+        "sql-db",
+        "vpc-service-controls",
+        "cloud-datastore",
+        "dataflow",
+        "cloud-nat",
+        "startup-scripts",
+        "scheduled-function",
+        "address",
+        "bigquery",
+        "bastion-host",
+        "org-policy",
+        "log-export",
+        "on-prem",
+        "cloud-dns",
+        "gsuite-export",
+        "secret"
+    ]
 }

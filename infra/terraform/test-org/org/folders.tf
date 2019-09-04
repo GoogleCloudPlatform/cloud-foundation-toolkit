@@ -35,11 +35,7 @@ module "folders-ci" {
   parent_id   = replace(local.folders["ci"], "folders/", "")
   parent_type = "folder"
 
-  names = [
-    "ci-kms",
-    "ci-network",
-    "ci-folders"
-  ]
+  names = [for module in local.modules: "ci-${module}"]
 
   set_roles = false
 }
