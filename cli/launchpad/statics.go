@@ -8,7 +8,9 @@ var statics = map[string]string {
 `,
 	"static/tmpl/tf/_variable.tf.tmpl": `variable "{{ .Id }}" {
   description = "{{ .Description }}"
+  {{- if .Default }}
   default     = "{{ .Default }}"
+  {{- end }}
 }
 `,
 	"static/tmpl/tf/google_folder.tf.tmpl": `resource "google_folder" "{{ .Id }}" {

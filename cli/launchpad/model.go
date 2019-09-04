@@ -1,4 +1,10 @@
-// Model contains YAML parsing & validation.
+// Package launchpad file model.go contains all supported CustomResourceDefinition (CRD)
+//
+// Every CRD should have a `{kind}YAML` to denote the full CRD representation,
+// and a `{kind}SpecYAML` to denote the spec map inside the CRD
+//
+// Each `{kind}SpecYAML` should also implement stackable interface (synonymous to yaml.Unmarshaler)
+// to allow a stack like evaluation
 package launchpad
 
 import (
@@ -7,20 +13,7 @@ import (
 	"log"
 )
 
-// Launchpad Supported CRD type
-type crdKind string
-
-// Supported CRD definition
-const (
-	KindCloudFoundation crdKind = "CloudFoundation"
-	KindFolder          crdKind = "Folder"
-	KindOrganization    crdKind = "Organization"
-)
-
-// ==== Shared Structure ====
-
-// All Configuration YAML should start with CRD style
-// This structure also serve as evaluation point for each kind of CRD
+// configYAML represents fully qualified CRD that can be of any supported Kind.
 type configYAML struct {
 	APIVersion string      `yaml:"apiVersion"`
 	Kind       crdKind     `yaml:"kind"`
@@ -32,9 +25,10 @@ type configYAML struct {
 	rawYAML string
 }
 
-// Abstraction of common YAML for others to use
+// Abstraction of common YAML attributes
 type commonConfigYAML configYAML
 
+// UnmarshalYAML evaluates the common attributes and dynamically parse the specified Kind.
 func (c *configYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
 	type raw configYAML
 	if err := unmarshal((*raw)(c)); err != nil {
@@ -62,20 +56,29 @@ func (c *configYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error
 	return err
 }
 
+// parentRefYAML represents ownership reference inside a CRD.
 type parentRefYAML struct {
 	ParentType crdKind `yaml:"type"`
 	ParentId   string  `yaml:"id"`
 }
 
 // ==== CloudFoundation ====
+
+// cloudFoundationYAML represents CloudFoundation CRD.
 type cloudFoundationYAML struct {
 	commonConfigYAML
 	Spec cloudFoundationSpecYAML `yaml:"spec"`
 }
+
+// cloudFoundationSpecYAML defines CloudFoundation Kind's spec.
 type cloudFoundationSpecYAML struct {
 	Org orgSpecYAML `yaml:"organization"`
 }
 
+// UnmarshalYAML evaluates cloudFoundationSpecYAML.
+//
+// UnmarshalYAML will have side effect to push CloudFoundation onto its stack while nested
+// evaluation is ongoing.
 func (c *cloudFoundationSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	gState.push(KindCloudFoundation, c)
 	defer gState.popSilent()
@@ -87,16 +90,24 @@ func (c *cloudFoundationSpecYAML) UnmarshalYAML(unmarshal func(interface{}) erro
 }
 
 // ==== Organization ====
-type orgYAML struct { // Dedicated CRD
+
+// orgYAML represents Organization CRD.
+type orgYAML struct {
 	commonConfigYAML
 	Spec orgSpecYAML `yaml:"spec"`
 }
+
+// orgSpecYAML defines Organization Kind's spec.
 type orgSpecYAML struct {
 	Id          string            `yaml:"id"`
 	DisplayName string            `yaml:"displayName"`
 	Folders     []*folderSpecYAML `yaml:"folders"`
 }
 
+// UnmarshalYAML evaluates orgSpecYAML.
+//
+// UnmarshalYAML will have side effect to push Organization onto its stack while nested
+// evaluation is ongoing.
 func (o *orgSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	gState.push(KindOrganization, o)
 	defer gState.popSilent()
@@ -109,11 +120,14 @@ func (o *orgSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 }
 
 // ==== Folder ====
-type folderYAML struct { // Dedicated CRD
+
+// folderYAML represents Folder CRD.
+type folderYAML struct {
 	commonConfigYAML
 	Spec folderSpecYAML `yaml:"spec"`
 }
 
+// folderSpecYAML defines Folder Kind's spec.
 type folderSpecYAML struct { // Inner mappings
 	Id          string                 `yaml:"id"`
 	DisplayName string                 `yaml:"displayName"`
@@ -122,6 +136,10 @@ type folderSpecYAML struct { // Inner mappings
 	Undefined   map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior1
 }
 
+// UnmarshalYAML evaluates folderSpecYAML.
+//
+// UnmarshalYAML will have side effect to push Folder onto its stack while nested
+// evaluation is ongoing. In addition, storing validated folder onto gState for tracking.
 func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	top := gState.peek()
 	gState.push(KindFolder, f)
@@ -132,20 +150,29 @@ func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error 
 		return err
 	}
 
+	// ParentRef can be default value if it is nested under others
+	//
+	//   kind: Folder
+	//   spec:
+	//     id: X
+	//     folders:
+	//       - id: Y
+	//
+	// During evaluation of Y, ParentRef will not be set, however, stack
+	// will retain its owner X and hold its reference
 	if f.ParentRef.ParentId == "" {
-		// Infer from stack
 		if top == nil {
+			// ParentRef is not provided, and there are no ownership mappings
 			log.Printf("warning, cannot infer parents, output will need to be manually filled in")
 		} else {
 			switch parent := top.stackPtr.(type) {
 			case *folderSpecYAML:
-				f.ParentRef.ParentId = parent.Id
 				f.ParentRef.ParentType = KindFolder
+				f.ParentRef.ParentId = parent.Id
 			case *orgSpecYAML:
 				f.ParentRef.ParentType = KindOrganization
 				f.ParentRef.ParentId = parent.Id
 			}
-
 		}
 	}
 	// TODO (wengm) check undefined

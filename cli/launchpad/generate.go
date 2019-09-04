@@ -1,3 +1,12 @@
+// Package launchpad file generate.go contains all output generation logic
+//
+// A component is a set of related scripts that generally resides under the same
+// folder beneath outputDirectory root. A functionality is a particular action
+// that can be applied to a component to achieve some purpose.
+//
+// Output generation depends on evaluated gState, and looping through components
+// in specified order to apply functionality in sequence to generate output
+// based on defined outputFlavor.
 package launchpad
 
 import (
@@ -7,31 +16,25 @@ import (
 	"os/exec"
 )
 
-// Whomever implements component can be processed by the functionality loop
+// component interface allows implementer to be put onto the generate processing loop
 type component interface {
 	componentName() string
 }
 
-var activeComponents []component
-
-func init() {
-	activeComponents = []component{
+// generateOutput loops through components and applies functionality in sequence
+func generateOutput() {
+	activeComponents := []component{
 		newOutputDirectory(), // Create Top Level Output Directory for all Launchpad configs
 		newFolders(),         // GCP Folder Generation
 	}
-}
 
-// Entry point for output generation
-// Treating each component as separate entity, and each component is processed via a loop of functionality in sequence
-// If a component wishes to be processed by a functionality, it has too implement required interface
-func generateOutput() {
 	for _, c := range activeComponents {
 		// Apply Functionality to each component
 		withDirectory(c)
 		withFiles(c)
 	}
 
-	// Run terraform fmt to re-indent
+	// re-indent with terraform fmt
 	if gState.outputFlavor == outTf {
 		_, err := exec.Command("terraform", "fmt", gState.outputDirectory).Output()
 		if err != nil {
@@ -42,9 +45,11 @@ func generateOutput() {
 }
 
 // ==== Core Components ===
+
+// outputDirectory serves as the top level output directory
 type outputDirectory struct{}
 
-// implement directoryOwner to generate top level directory
+// directoryProperty to implement directoryOwner
 func (l *outputDirectory) directoryProperty() *directoryProperty {
 	return newDirectoryProperty(
 		gState.outputDirectory,
@@ -54,9 +59,11 @@ func newOutputDirectory() *outputDirectory       { return &outputDirectory{} }
 func (l *outputDirectory) componentName() string { return "outputDirectory" }
 
 // ==== Components ====
+
+// folders component allows generation of sub-directory under outputDirectory for GCP Folder scripts
 type folders struct {
-	YAMLs   map[string]*folderSpecYAML
-	dirname string
+	YAMLs       map[string]*folderSpecYAML
+	dirname     string
 	dirProperty *directoryProperty
 }
 

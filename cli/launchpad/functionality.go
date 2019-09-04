@@ -1,3 +1,4 @@
+// Package launchpad file functionality.go contains all functionality for output generation.
 package launchpad
 
 import (
@@ -8,24 +9,34 @@ import (
 	"path/filepath"
 )
 
-// Any component implements directoryOwner will be able to create a directory
+// directoryOwner interface allows implementers to specify directory creation.
 type directoryOwner interface {
 	directoryProperty() *directoryProperty
 }
 
+// directoryProperty defines directory to be created.
 type directoryProperty struct {
 	basename string // Directory name
 	dirname  string // ParentId directory name
 	backup   bool   // Backup directory during re-creation
 }
 
+// path generates the full path of the directory
 func (d *directoryProperty) path() string { return filepath.Join(d.dirname, d.basename) }
+
+// directoryPropertyBackup sets directoryProperty backup property.
 func directoryPropertyBackup(backup bool) func(*directoryProperty) error {
 	return func(c *directoryProperty) error { c.backup = backup; return nil }
 }
+
+// directoryPropertyDirname sets directoryProperty dirname property.
 func directoryPropertyDirname(dirname string) func(*directoryProperty) error {
 	return func(c *directoryProperty) error { c.dirname = dirname; return nil }
 }
+
+// newDirectoryProperty initializes directoryProperty defaulting to current directly with backup.
+//
+// newDirectoryProperty allows users to specify setter functions to modify default output.
 func newDirectoryProperty(dirname string, options ...func(*directoryProperty) error) *directoryProperty {
 	c := &directoryProperty{
 		basename: dirname,
@@ -41,6 +52,7 @@ func newDirectoryProperty(dirname string, options ...func(*directoryProperty) er
 	return c
 }
 
+// withDirectory actions on components implements directoryOwner interface and creates directory as specified.
 func withDirectory(comp component) {
 	do, ok := comp.(directoryOwner)
 	if !ok {
@@ -67,16 +79,18 @@ func withDirectory(comp component) {
 	}
 }
 
-// Any component implements filesOwner will be able to create files
+// filesOwner interface allows implementers to specify file creation.
 type filesOwner interface {
 	files() []file
 }
 
+// file interface allows implementers to specify specific file operations for their type.
 type file interface {
 	path() string
 	render() string
 }
 
+// withFiles actions on components implements filesOwner interface and creates files as specified.
 func withFiles(comp component) {
 	fo, ok := comp.(filesOwner)
 	if !ok {
@@ -90,6 +104,7 @@ func withFiles(comp component) {
 	}
 }
 
+// writeFile creates or replace a file based path and content provided.
 func writeFile(fp string, content string) error {
 	if _, err := os.Stat(fp); err == nil {
 		err := os.Remove(fp)

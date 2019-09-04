@@ -12,7 +12,6 @@ func init() {
 
 	rootCmd.AddCommand(launchpadCmd)
 	launchpadCmd.AddCommand(launchpadGenerateCmd)
-	launchpadCmd.AddCommand(launchpadBootstrapCmd)
 }
 
 var launchpadOutputFlavor string
@@ -43,22 +42,6 @@ var launchpadGenerateCmd = &cobra.Command{
 			cmd.HelpFunc()(cmd, args)
 		} else {
 			launchpad.NewGenerate(args, launchpadOutputFlavor, launchpadOutputDirectory)
-		}
-	},
-}
-
-var launchpadBootstrapCmd = &cobra.Command{
-	Use:     "bootstrap",
-	Aliases: []string{"b"},
-	Short:   "bootstrap (g)",
-	Long:    `Bootstrap initial seed project`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if args == nil || len(args) == 0 {
-			cmd.HelpFunc()(cmd, args)
-		} else {
-			// TODO (@rjerrems) Bootstrap entry point
-			print("Bootstrapping... (NYI)")
-			launchpad.NewBootstrap()
 		}
 	},
 }

@@ -1,3 +1,5 @@
+// Package launchpad file runtime.go contains runtime related support for
+// evaluation hierarchy and evaluated object tracking.
 package launchpad
 
 import (
@@ -5,27 +7,10 @@ import (
 	"fmt"
 )
 
-type outputFlavor string
-
-func conv(f string) outputFlavor {
-	return outputFlavor(f)
-}
-
-const (
-	outDm outputFlavor = "dm"
-	outTf outputFlavor = "tf"
-)
-
-var gState globalState
-
-func init() {
-	gState.evaluated.folders.YAMLs = make(map[string]*folderSpecYAML)
-}
-
+// globalState keeps track of evaluation order while parsing YAML and stores
+// metadata like configurations.
 type globalState struct {
-	// A simple stack implementation
-	stack []stackFrame
-
+	stack           []stackFrame
 	outputDirectory string
 	outputFlavor    outputFlavor
 	evaluated       struct {
@@ -33,15 +18,22 @@ type globalState struct {
 	}
 }
 
-// ==== Stack Implementation ====
+// ==== Evaluation Stack ====
+
+// stackable interface determines what can be pushed onto the stack.
+//
+// stackable is also synonymous to yaml.Unmarshaler.
 type stackable interface {
 	UnmarshalYAML(unmarshal func(interface{}) error) error
 }
+
+// stackFrame defines a single evaluation hierarchy.
 type stackFrame struct {
 	stackType crdKind
 	stackPtr  stackable
 }
 
+// push pushes a new stackFrame onto current stack.
 func (g *globalState) push(stackType crdKind, stackPtr stackable) {
 	g.stack = append(g.stack, stackFrame{
 		stackType: stackType,
@@ -49,6 +41,7 @@ func (g *globalState) push(stackType crdKind, stackPtr stackable) {
 	})
 }
 
+// pop ejects top of stack's stackFrame.
 func (g *globalState) pop() (stackFrame, error) {
 	l := len(g.stack)
 	if l == 0 {
@@ -59,6 +52,7 @@ func (g *globalState) pop() (stackFrame, error) {
 	return r, nil
 }
 
+// popSilent ejects top of stack's stackFrame ignoring errors.
 func (g *globalState) popSilent() {
 	_, err := g.pop()
 	if err != nil {
@@ -66,7 +60,7 @@ func (g *globalState) popSilent() {
 	}
 }
 
-// Lookup the top most recent stack frame
+// peek returns top stackFrame without removing it from the stack.
 func (g *globalState) peek() *stackFrame {
 	l := len(g.stack)
 	if l == 0 {
@@ -75,7 +69,11 @@ func (g *globalState) peek() *stackFrame {
 	return &g.stack[l-1]
 }
 
-// ==== Constructors for runtime state ====
+// ==== Evaluated Objects ====
+
+// newFolder takes a parsed folder YAML object and stores in for later processing.
+//
+// newFolder will ignore duplicated object based on the specified id.
 func newFolder(f *folderSpecYAML) error {
 	if _, ok := gState.evaluated.folders.YAMLs[f.Id]; ok {
 		return errors.New("duplicated definition of folder")

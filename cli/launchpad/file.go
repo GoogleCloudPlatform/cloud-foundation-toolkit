@@ -11,8 +11,7 @@ import (
 
 const ExtensionYAML string = ".yaml"
 
-// Validates raw strings, including Glob patterns, and returns a validated list of
-// yaml filepath ready for consumption
+// validateYAMLFilepath returns .yaml suffix files based on filepath.Glob patterns.
 func validateYAMLFilepath(raw []string) ([]string, error) {
 	var fps []string
 	for _, pattern := range raw {
@@ -30,12 +29,12 @@ func validateYAMLFilepath(raw []string) ([]string, error) {
 	return fps, nil
 }
 
-// Given a filepath relative to `pwd`, attempt to load from filesystem. If failed, load from statics variable
-// populated from `$ go generate`. We can embed static file into the golang binary
-// and use this method to load efficiently.
+// loadFile return the file content with the specified relative path to current location.
 //
-// Filesystem as priority enables efficient development time, and also easy to overwrite if user do so choose.
-//
+// loadFile will attempt to load from filesystem directly first, a not found will attempt
+// to load from statics variable generated from `$ go generate`. A user using output binary
+// can in theory place their own file in matching relative path and overwrite the binary
+// default.
 func loadFile(fp string) string {
 	_, err := os.Stat(fp)
 	if err == nil { // file exist
