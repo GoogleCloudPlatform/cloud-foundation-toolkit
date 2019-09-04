@@ -28,6 +28,9 @@ module "org_bindings" {
     "roles/resourcemanager.organizationAdmin" = [
       "group:cft-ci-robots@test.infra.cft.tips",
     ]
+    "roles/compute.xpnAdmin" = [
+      "group:cft-ci-robots@test.infra.cft.tips",
+    ]
   }
 }
 
