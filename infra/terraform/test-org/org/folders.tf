@@ -37,7 +37,8 @@ module "folders-ci" {
 
   names = [
     "ci-kms",
-    "ci-network"
+    "ci-network",
+    "ci-folders"
   ]
 
   set_roles = false

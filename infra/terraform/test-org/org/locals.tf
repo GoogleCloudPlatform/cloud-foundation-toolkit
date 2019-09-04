@@ -22,5 +22,6 @@ locals {
     ci_folders = {
         kms = module.folders-ci.names_and_ids["ci-kms"]
         ci-network = module.folders-ci.names_and_ids["ci-network"]
+        ci-folders = module.folders-ci.names_and_ids["ci-folders"]
     }
 }
