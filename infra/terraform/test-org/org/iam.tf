@@ -25,6 +25,9 @@ module "org_bindings" {
     "roles/resourcemanager.organizationViewer" = [
       "group:cft-ci-robots@test.infra.cft.tips",
     ]
+    "roles/resourcemanager.organizationAdmin" = [
+      "group:cft-ci-robots@test.infra.cft.tips",
+    ]
   }
 }
 
