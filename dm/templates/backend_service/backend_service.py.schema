@@ -15,16 +15,91 @@
 info:
   title: Backend Service
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
-    Creates a backend service. For details, visit
+    Creates a backend service.
+
+    For more information on this resource:
     https://cloud.google.com/load-balancing/docs/backend-service.
 
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:backendServices =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/backendServices
+    - gcp-types/compute-v1:regionBackendServices =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/regionBackendServices
+
 additionalProperties: false
+
+
+allOf:
+  - oneOf:
+      - required:
+          - healthCheck
+      - required:
+          - healthChecks
+      - allOf:
+          - not:
+              required:
+                - healthCheck
+          - not:
+              required:
+                - healthChecks
+  - oneOf:
+      - allOf:
+          - properties:
+              loadBalancingScheme:
+                enum: ["INTERNAL"]
+              sessionAffinity:
+                enum:
+                  - NONE
+                  - CLIENT_IP
+                  - CLIENT_IP_PROTO
+                  - CLIENT_IP_PORT_PROTO
+              protocol:
+                default: TCP
+                enum:
+                  - UDP
+                  - TCP
+              backends:
+                items:
+                  balancingMode:
+                    enum: ["CONNECTION"]
+          - not:
+              required:
+                - affinityCookieTtlSec
+          - not:
+              required:
+                - enableCDN
+          - not:
+              required:
+                - portName
+      - allOf:
+          - properties:
+              loadBalancingScheme:
+                enum: ["EXTERNAL"]
+              sessionAffinity:
+                enum:
+                  - NONE
+                  - CLIENT_IP
+                  - GENERATED_COOKIE
+              protocol:
+                default: HTTP
+                enum:
+                  - HTTP
+                  - HTTPS
+                  - TCP
+                  - SSL
+          - required:
+              - portName
 
 properties:
   name:
     type: string
-    description: The backend service name.
+    description: The backend service name. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the service.
   description:
     type: string
     description: An optional description of the resource.
@@ -34,13 +109,45 @@ properties:
       The URL of the region where the regional backend service resides.
   backends:
     type: array
+    uniqueItems: true
     description: |
       The list of backends (instance groups) to which the backend service
       distributes traffic.
     items:
       type: object
+      additionalProperties: false
       required:
         - group
+      oneOf:
+        - allOf:
+            - properties:
+                balancingMode:
+                  enum: ["RATE"]
+            - not:
+                required:
+                  - maxUtilization
+            - not:
+                required:
+                  - maxConnections
+            - not:
+                required:
+                  - maxConnectionsPerInstance
+            - not:
+                required:
+                  - maxConnectionsPerEndpoint
+        - allOf:
+            - properties:
+                balancingMode:
+                  enum: ["CONNECTION"]
+            - not:
+                required:
+                  - maxUtilization
+            - not:
+                required:
+                  - maxRate
+        - properties:
+            balancingMode:
+              enum: ["UTILIZATION"]
       properties:
         description:
           type: string
@@ -83,6 +190,14 @@ properties:
             Can be used with any balancing mode. For the RATE mode, either maxRate or
             maxRatePerInstance must be set. Cannot be used for INTERNAL load 
             balancing.
+        maxRatePerEndpoint:
+          type: number
+          description: |
+            The max requests per second (RPS) that a single backend network endpoint can handle.
+            This is used to calculate the capacity of the group. Can be used in either balancing mode.
+            For RATE mode, either maxRate or maxRatePerEndpoint must be set.
+
+            This cannot be used for internal load balancing.
         maxConnections:
           type: number
           description: |
@@ -98,6 +213,15 @@ properties:
             group. Can be used in either CONNECTION or UTILIZATION balancing
             modes. For the CONNECTION mode, either maxConnections or
             maxConnectionsPerInstance must be set. Cannot be used for INTERNAL load balancing.
+        maxConnectionsPerEndpoint:
+          type: number
+          description: |
+            The max number of simultaneous connections that a single backend network endpoint can handle.
+            This is used to calculate the capacity of the group. Can be used in either
+            CONNECTION or UTILIZATION balancing modes.
+            For CONNECTION mode, either maxConnections or maxConnectionsPerEndpoint must be set.
+
+            This cannot be used for internal load balancing.
         capacityScaler:
           type: number
           minimum: 0
@@ -111,6 +235,15 @@ properties:
     description: |
       The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck resource
       for healthchecking the backend service.
+  healthChecks:
+    type: array
+    uniqueItems: true
+    maxItems: 1
+    description: |
+      The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck resource
+      for healthchecking the backend service.
+    items:
+      type: string
   timeoutSec:
     type: number
     default: 30
@@ -170,11 +303,13 @@ properties:
       Defines whether the backend service is used with INTERNAL or
       EXTERNAL load balancing schema. Backend service created for one type of load
       balancing cannot be used with the other.
+    default: EXTERNAL
     enum:
       - INTERNAL
       - EXTERNAL
   connectionDraining:
     type: object
+    additionalProperties: false
     description: the connection draining settings.
     properties:
       drainingTimeoutSec:
@@ -182,12 +317,31 @@ properties:
         description: |
           The time period during which the instance is drained (not accepting 
           new connections but still procedding the ones accepted earlier).
+  customRequestHeaders:
+    type: array
+    uniqueItems: true
+    description: |
+      Headers that the HTTP/S load balancer should add to proxied requests.
+    items:
+      type: string
+  iap:
+    type: object
+    additionalProperties: false
+    properties:
+      enabled:
+        type: boolean
+      oauth2ClientId:
+        type: string
+      oauth2ClientSecret:
+        type: string
   cdnPolicy:
     type: object
+    additionalProperties: false
     description: The cloud CDN configuration for the backend service.
     properties:
       cacheKeyPolicy:
         type: object
+        additionalProperties: false
         description: The CacheKeyPolicy for the CdnPolicy.
         properties:
           includeProtocol:
@@ -207,6 +361,7 @@ properties:
               False, the query string is excluded from the cache key entirely.
           queryStringWhitelist:
             type: array
+            uniqueItems: true
             description: |
               The names of the query string parameters to include in cache keys. 
               All other parameters are excluded. Specify either
@@ -216,6 +371,7 @@ properties:
               type: string
           queryStringBlacklist:
             type: array
+            uniqueItems: true
             description: |
               The names of query string parameters to exclude from cache keys. 
               All other parameters are included. Specify either

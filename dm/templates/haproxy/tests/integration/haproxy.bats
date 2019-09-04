@@ -80,28 +80,58 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that the HAProxy instance was created in deployment ${DEPLOYMENT_NAME}" {
     run gcloud compute instances list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "ilb-proxy-${RAND}" ]]
+    
+    # Enabling OS login for the next tests
+    run gcloud compute instances add-metadata "ilb-proxy-${RAND}" \
+            --metadata enable-oslogin=TRUE \
+            --zone us-central1-a \
+            --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+            
+    echo "Pre-run Status: $status"
+    echo "Pre-run Output: $output"
+    
+    [[ "$status" -eq 0 ]]
+    
+    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
+        --command "echo 'OK' " \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "SSH Status: $status"
+    echo "SSH Output: $output"
+    
+    echo "sleeping 30"
+    sleep 30
+    
+    [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that haproxy.cfg was populated with instances and had all properties set" {
+
      # Wait for the HAProxy instance to be configured.
      until gcloud compute instances get-serial-port-output "ilb-proxy-${RAND}" \
             --zone us-central1-a \
             --project "${CLOUD_FOUNDATION_PROJECT_ID}" | grep /etc/haproxy/haproxy.cfg; do
+            echo "sleeping 10"
 
             sleep 10;
      done
 
     # Verify VM serial output
-    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a \
+    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
         --command "sudo tail -n 15 /etc/haproxy/haproxy.cfg" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "SSH Status: $status"
+    echo "SSH Output: $output"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "group-${RAND}-1" ]]   # has instances from group 1
     [[ "$output" =~ "group-${RAND}-2" ]]   # has instances from group 2
@@ -112,10 +142,12 @@ function teardown() {
 }
 
 @test "Verifying that update interval was set" {
-    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a \
+    run gcloud compute ssh "ilb-proxy-${RAND}" --zone us-central1-a --tunnel-through-iap \
         --command "sudo crontab -l" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
     [[ "$output" = "*/15 * * * * /sbin/haproxy-conf-updater" ]]
 }
@@ -123,5 +155,7 @@ function teardown() {
 @test "Deleting deployment" {
     run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "Status: $status"
+    echo "Output: $output"
     [[ "$status" -eq 0 ]]
 }

@@ -17,7 +17,7 @@ After build find binary at bin/cft location
 Follow cft --help instructions
 
 
-Google Cloud Formation Toolkit CLI
+Google Cloud Foundation Toolkit CLI
 
 ```bash
 Usage:

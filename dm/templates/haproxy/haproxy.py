@@ -156,7 +156,7 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     properties = context.properties
-    lb_name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
     zone = properties['zone']
     metadata = properties.get('metadata', {'items':[]})
 
@@ -167,10 +167,12 @@ def generate_config(context):
     service_account = properties['serviceAccountEmail']
 
     load_balancer = {
-        'name': lb_name,
+        'name': context.env['name'],
         'type': 'instance.py',
         'properties':
             {
+                'name': properties.get('name', context.env['name']),
+                'project': project_id,
                 'machineType': properties['machineType'],
                 'diskImage': DISK_IMAGE,
                 'zone': zone,
@@ -192,19 +194,19 @@ def generate_config(context):
         'outputs': [
             {
                 'name': 'internalIp',
-                'value': '$(ref.{}.internalIp)'.format(lb_name)
+                'value': '$(ref.{}.internalIp)'.format(context.env['name'])
             },
             {
                 'name': 'externalIp',
-                'value': '$(ref.{}.externalIp)'.format(lb_name)
+                'value': '$(ref.{}.externalIp)'.format(context.env['name'])
             },
             {
                 'name': 'name',
-                'value': '$(ref.{}.name)'.format(lb_name)
+                'value': '$(ref.{}.name)'.format(context.env['name'])
             },
             {
                 'name': 'selfLink',
-                'value': '$(ref.{}.selfLink)'.format(lb_name)
+                'value': '$(ref.{}.selfLink)'.format(context.env['name'])
             },
             {
                 'name': 'port',

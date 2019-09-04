@@ -17,21 +17,38 @@ info:
   author: Sourced Group Inc.
   description: |
     Supports creation of an automated Cloud Build trigger.
+
     For more information on this resource, see
-    https://cloud.google.com/cloud-build/docs/running-builds/automate-builds.
+    https://cloud.google.com/cloud-build/docs/running-builds/automate-builds
+
+    APIs endpoints used by this template:
+    - gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.create =>
+        https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers/create
+    - gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.patch =>
+        https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers/patch
+    - gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.delete =>
+        https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers/delete
 
 imports:
   - path: trigger.py
+
+additionalProperties: false
 
 required:
   - triggerTemplate
 
 properties:
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   description:
     type: string
     description: The human-readable trigger description.
   triggerTemplate:
     type: object
+    additionalProperties: false
     description: |
       The template describing the types of source changes that trigger a build.
       Branch and tag names in the trigger templates are interpreted as regular
@@ -59,6 +76,7 @@ properties:
         oneOf:
           - "$ref": "#/definitions/branchName"
           - "$ref": "#/definitions/tagName"
+          - "$ref": "#/definitions/commitSha"
   disabled:
     type: boolean
     default: False
@@ -70,6 +88,7 @@ properties:
       Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
   ignoredFiles:
     type: array
+    uniqItems: true
     description: |
       A file glob match using http://godoc/pkg/path/filepath#Match extended 
       with support for "**". If both ignoredFiles and changed files are empty, 
@@ -81,6 +100,7 @@ properties:
       type: string
   includedFiles:
     type: array
+    uniqItems: true
     description: |
       A file glob match using http://godoc/pkg/path/filepath#Match extended
       with support for "**". If any of the files altered in the commit pass
@@ -95,10 +115,18 @@ properties:
     oneOf:
       - "$ref": "#/definitions/build"
       - "$ref": "#/definitions/filename"
+  tags:
+    type: array
+    uniqItems: true
+    description: |
+      Tags for annotation of a BuildTrigger
+    items:
+      type: string
 
 definitions:
   storageSource:
     type: object
+    additionalProperties: false
     description: |
       The location of the source in an archive file on Google Cloud Storage.
     properties:
@@ -117,6 +145,7 @@ definitions:
           the latest generation is used.
   repoSource:
     type: object
+    additionalProperties: false
     description: The source location in the Google Cloud Source repository.
     properties:
       projectId:
@@ -140,6 +169,9 @@ definitions:
           - "$ref": "#/definitions/branchName"
           - "$ref": "#/definitions/tagName"
           - "$ref": "#/definitions/commitSha"
+  commitSha:
+    type: string
+    description: Explicit commit SHA to build.
   branchName:
     type: string
     description: The name of the branch to build.
@@ -153,19 +185,23 @@ definitions:
       the template.
   build:
     type: object
+    additionalProperties: false
     description: The contents of the build template.
     properties:
       source:
         type: object
+        additionalProperties: false
         description: The location of the source files to build.
         oneOf:
           - "$ref": "#/definitions/storageSource"
           - "$ref": "#/definitions/repoSource"
       steps:
         type: array
+        uniqItems: true
         description: The list of the steps in the build pipeline.
         items:
           type: object
+          additionalProperties: false
           description: A step in the build pipeline.
           required:
             - name
@@ -176,6 +212,7 @@ definitions:
                 The name of the container image that runs the build step.
             env:
               type: array
+              uniqItems: true
               description: |
                 The list of environment variable definitions to be used when
                 running a step. The elements are in the "KEY=VALUE" form,
@@ -213,6 +250,7 @@ definitions:
                 reference this build step as a dependency.
             waitFor:
               type: array
+              uniqItems: true
               description: |
                 The ID(s) of the step(s) this build step depends on.
                 The build step will not start until all the build steps in 
@@ -229,6 +267,7 @@ definitions:
                 point is used.
             secretEnv:
               type: array
+              uniqItems: true
               description: |
                 The list of environment variables are encrypted using the
                 Cloud Key Management Service crypto key. These values must be
@@ -237,9 +276,11 @@ definitions:
                 type: string
             volumes:
               type: array
+              uniqItems: true
               description: The list of volumes to mount into the build step.
               items:
                 type: object
+                additionalProperties: false
                 properties:
                   name:
                     type: string
@@ -273,6 +314,7 @@ definitions:
           by 's'. Example: "3.5s".
       images:
         type: array
+        uniqItems: true
         description: |
           The list of images to be pushed upon successful completion of all
           build steps. The images are pushed using the Builder service
@@ -283,12 +325,14 @@ definitions:
           type: string
       artifacts:
         type: object
+        additionalProperties: false
         description: |
           Artifacts produced by the build that must be uploaded upon successful
           completion of all build steps.
         properties:
           images:
             type: array
+            uniqItems: true
             description: |
               The list of images to be pushed upon successful completion of all
               build steps. The images are pushed using the Builder service
@@ -299,31 +343,27 @@ definitions:
               type: string
           objects:
             type: object
+            additionalProperties: false
             description: |
               The list of objects to be uploaded to Cloud Storage upon
               successful completion of all build steps. Files in the
               workspace matching specified paths globs are uploaded using
               the Builder service account's credentials.
             properties:
-              artifactObjects:
-                type: object
+              location:
+                type: string
                 description: |
-                  Files in the workspace to upload to Cloud Storage upon
-                  successful completion of all build steps.
-                properties:
-                  location:
-                    type: string
-                    description: |
-                      The Cloud Storage bucket, with an optional object path,
-                      in the "gs://bucket/path/to/somewhere/" form. Files in
-                      the workspace matching any pattern under that path are
-                      uploaded to Cloud Storage with this location as a prefix.
-                  paths:
-                    type: array
-                    description: |
-                      Path globs used to match files in the build's workspace.
-                    items:
-                      type: string
+                  The Cloud Storage bucket, with an optional object path,
+                  in the "gs://bucket/path/to/somewhere/" form. Files in
+                  the workspace matching any pattern under that path are
+                  uploaded to Cloud Storage with this location as a prefix.
+              paths:
+                type: array
+                uniqItems: true
+                description: |
+                  Path globs used to match files in the build's workspace.
+                items:
+                  type: string
       logsBucket:
         type: string
         description: |
@@ -332,10 +372,12 @@ definitions:
           format.
       options:
         type: object
+        additionalProperties: false
         description: Special options for this build.
         properties:
           sourceProvenanceHash:
             type: array
+            uniqItems: true
             items:
               type: string
               enum:
@@ -388,22 +430,73 @@ definitions:
               - LOGGING_UNSPECIFIED
               - LEGACY
               - GCS_ONLY
+          env:
+            type: array
+            uniqItems: true
+            description: |
+              A list of global environment variable definitions that will exist for all build steps in this build.
+              If a variable is defined in both globally and in a build step, the variable will use the build step value.
+
+              The elements are of the form "KEY=VALUE" for the environment variable "KEY" being given the value "VALUE".
+            items:
+              type: string
+          secretEnv:
+            type: array
+            uniqItems: true
+            description: |
+              A list of global environment variables, which are encrypted using a Cloud Key Management Service crypto key.
+              These values must be specified in the build's Secret. These variables will be available to
+              all build steps in this build.
+            items:
+              type: string
+          volumes:
+            type: array
+            uniqItems: true
+            description: |
+              Global list of volumes to mount for ALL build steps
+
+              Each volume is created as an empty volume prior to starting the build process. Upon completion of the build,
+              volumes and their contents are discarded. Global volume names and paths cannot conflict with the volumes
+              defined a build step.
+
+              Using a global volume in a build with only one step is not valid as it is indicative of a build request
+              with an incorrect configuration.
+            items:
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  description: |
+                    The name of the volume to mount. Volume names must be unique
+                    per build step, and must be valid names for Docker volumes.
+                    Each named volume must be used by at least two build steps.
+                path:
+                  type: string
+                  description: |
+                    The path to mount the volume at. Paths must be absolute.
+                    They cannot conflict with other volume paths on the same
+                    build step or with certain reserved volume paths.
       substitutions:
         type: object
+        additionalProperties: false
         description: |
           Substitution data for the build resource. A list of key-value items.
           Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
       tags:
         type: array
+        uniqItems: true
         description: Build annotation tags. These are NOT Docker tags.
         items:
           type: string
       secrets:
         type: object
+        additionalProperties: false
         description: Secrets to decrypt using Cloud Key Management Service.
         properties:
           secret:
             type: object
+            additionalProperties: false
             properties:
               kmsKeyName:
                 type: string
@@ -412,6 +505,7 @@ definitions:
                   variables.
               secretEnv:
                 type: object
+                additionalProperties: false
                 description: |
                   Maps of the environment variable names to their encrypted
                   values. 

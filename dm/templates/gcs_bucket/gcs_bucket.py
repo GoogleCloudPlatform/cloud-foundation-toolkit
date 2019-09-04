@@ -18,16 +18,18 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     resources = []
-    project_id = context.env['project']
-    bucket_name = context.properties.get('name', context.env['name'])
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+    bucket_name = properties.get('name', context.env['name'])
 
     # output variables
-    bucket_selflink = '$(ref.{}.selfLink)'.format(bucket_name)
+    bucket_selflink = '$(ref.{}.selfLink)'.format(context.env['name'])
     bucket_uri = 'gs://' + bucket_name + '/'
 
     bucket = {
-        'name': bucket_name,
-        'type': 'storage.v1.bucket',
+        'name': context.env['name'],
+        # https://cloud.google.com/storage/docs/json_api/v1/buckets
+        'type': 'gcp-types/storage-v1:buckets',
         'properties': {
             'project': project_id,
             'name': bucket_name
@@ -39,6 +41,14 @@ def generate_config(context):
       bucket['properties']['billing'] = {'requesterPays': requesterPays}
 
     optional_props = [
+        'acl',
+        'iamConfiguration',
+        'retentionPolicy',
+        'encryption',
+        'defaultEventBasedHold',
+        'cors',
+        'defaultObjectAcl',
+        'billing',
         'location',
         'versioning',
         'storageClass',
@@ -51,26 +61,31 @@ def generate_config(context):
     ]
 
     for prop in optional_props:
-        if prop in context.properties:
-            bucket['properties'][prop] = context.properties[prop]
+        if prop in properties:
+            bucket['properties'][prop] = properties[prop]
 
     resources.append(bucket)
 
     # If IAM policy bindings are defined, apply these bindings.
+    # https://cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy
     storage_provider_type = 'gcp-types/storage-v1:storage.buckets.setIamPolicy'
-    bindings = context.properties.get('bindings', [])
+    bindings = properties.get('bindings', [])
     if bindings:
         iam_policy = {
-            'name': bucket_name + '-iampolicy',
+            'name': '{}-iampolicy'.format(context.env['name']),
             'action': (storage_provider_type),
             'properties':
                 {
-                    'bucket': '$(ref.' + bucket_name + '.name)',
+                    'bucket': '$(ref.{}.name)'.format(context.env['name']),
                     'project': project_id,
                     'bindings': bindings
                 }
         }
         resources.append(iam_policy)
+
+    if properties.get('billing', {}).get('requesterPays'):
+        for resource in resources:
+            resource['properties']['userProject'] = properties.get('userProject', context.env['project'])
 
     return {
         'resources':

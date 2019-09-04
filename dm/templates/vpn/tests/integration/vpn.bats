@@ -94,57 +94,58 @@ function teardown() {
 
 @test "Verifying the the static address was created in deployment ${DEPLOYMENT_NAME}" {
 
-    run gcloud compute addresses list --filter="name:test-vpn-${RAND}-ip" \
+    run gcloud compute addresses list --filter="name:test-vpn-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "$output" =~ "test-vpn-${RAND}-ip  us-east1" ]]
+    [[ "$output" =~ "test-vpn-${RAND}" ]]
+    [[ "$output" =~ "us-east1" ]]
 }
 
 @test "Verifying that the target VPN gateway was created in deployment ${DEPLOYMENT_NAME}" {
 
     run gcloud compute target-vpn-gateways list \
-        --filter="name:test-vpn-${RAND}-tvpng" \
+        --filter="name:test-vpn-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "$output" =~ "test-vpn-${RAND}-tvpng  network-${RAND}  us-east1" ]]
+    [[ "$output" =~ "test-vpn-${RAND}  network-${RAND}  us-east1" ]]
 }
 
 @test "Verifying that the VPN tunnel was created in deployment ${DEPLOYMENT_NAME}" {
 
-    run gcloud compute vpn-tunnels list --filter="name:test-vpn-${RAND}-vpn" \
+    run gcloud compute vpn-tunnels list --filter="name:test-vpn-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "$output" =~ "test-vpn-${RAND}-vpn  us-east1  test-vpn-${RAND}-tvpng  1.2.3.4" ]]
+    [[ "$output" =~ "test-vpn-${RAND}  us-east1  test-vpn-${RAND}  1.2.3.4" ]]
 }
 
 @test "Verifying that the forwarding rules were created in deployment ${DEPLOYMENT_NAME}" {
 
     run gcloud compute forwarding-rules list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [ "$status" -eq 0 ]
-    [[ "$output" =~ "test-vpn-${RAND}-esp-rule       us-east1" ]]
-    [[ "$output" =~ "test-vpn-${RAND}-udp-4500-rule  us-east1" ]]
-    [[ "$output" =~ "test-vpn-${RAND}-udp-500-rule   us-east1" ]]
+    [[ "$output" =~ "test-vpn-${RAND}-esp       us-east1" ]]
+    [[ "$output" =~ "test-vpn-${RAND}-udp-4500  us-east1" ]]
+    [[ "$output" =~ "test-vpn-${RAND}-udp-500   us-east1" ]]
 }
 
 @test "Deleting deployment" {
     gcloud deployment-manager deployments delete ${DEPLOYMENT_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
 
-    run gcloud compute addresses list --filter="name:test-vpn-${RAND}-ip" \
+    run gcloud compute addresses list --filter="name:test-vpn-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-vpn-${RAND}-ip" ]]
+    [[ ! "$output" =~ "test-vpn-${RAND}" ]]
 
     run gcloud compute target-vpn-gateways list \
-        --filter="name:test-vpn-${RAND}-tvpng" \
+        --filter="name:test-vpn-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-vpn-${RAND}-tvpng" ]]
+    [[ ! "$output" =~ "test-vpn-${RAND}" ]]
 
-    run gcloud compute vpn-tunnels list --filter="name:test-vpn-${RAND}-vpn" \
+    run gcloud compute vpn-tunnels list --filter="name:test-vpn-${RAND}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-vpn-${RAND}-vpn" ]]
+    [[ ! "$output" =~ "test-vpn-${RAND}" ]]
 
     run gcloud compute forwarding-rules list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
-    [[ ! "$output" =~ "test-vpn-${RAND}-esp-rule" ]]
-    [[ ! "$output" =~ "test-vpn-${RAND}-udp-4500-rule" ]]
-    [[ ! "$output" =~ "test-vpn-${RAND}-udp-500-rule" ]]
+    [[ ! "$output" =~ "test-vpn-${RAND}-esp" ]]
+    [[ ! "$output" =~ "test-vpn-${RAND}-udp-4500" ]]
+    [[ ! "$output" =~ "test-vpn-${RAND}-udp-500" ]]
 }

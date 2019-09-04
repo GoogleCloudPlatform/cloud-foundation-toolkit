@@ -17,21 +17,30 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    name = context.properties.get('name', context.env['name'])
-    config_name = context.properties.get('config')
-    required_properties = ['waiter', 'parent', 'timeout', 'success']
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+    config_name = properties.get('config')
+
+    props = {
+        'waiter': properties.get('name', properties.get('waiter')),
+        'parent': properties['parent'],
+        'timeout': properties['timeout'],
+        'success': properties['success'],
+        # TODO: uncomment after gcp type is fixed
+        # 'project': project_id,
+    }
+
     optional_properties = ['failure']
-    # Load the required properties, then the optional ones if specified.
-    properties = {p: context.properties[p] for p in required_properties}
-    properties.update({
-        p: context.properties[p]
-        for p in optional_properties if p in context.properties
+    props.update({
+        p: properties[p]
+        for p in optional_properties if p in properties
     })
 
     resources = [{
-        'name': name,
-        'type': 'runtimeconfig.v1beta1.waiter',
-        'properties': properties,
+        'name': context.env['name'],
+        # https://cloud.google.com/deployment-manager/runtime-configurator/reference/rest/v1beta1/projects.configs.waiters
+        'type': 'gcp-types/runtimeconfig-v1beta1:projects.configs.waiters',
+        'properties': props,
         'metadata': {
             'dependsOn': [config_name]
         }
@@ -39,7 +48,7 @@ def generate_config(context):
 
     outputs = [{
         'name': 'createTime',
-        'value': '$(ref.{}.createTime)'.format(name)
+        'value': '$(ref.{}.createTime)'.format(context.env['name'])
     }]
 
     return {'resources': resources, 'outputs': outputs}

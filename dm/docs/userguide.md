@@ -370,7 +370,7 @@ Proceed as follows:
 
 ```shell
 cd dm
-sudo make prerequisites        # Installs prerequisites in system python
+sudo make cft-prerequisites    # Installs prerequisites in system python
 make build                     # builds the package
 sudo make install              # installs the package in /usr/local
 ```
@@ -390,7 +390,7 @@ To update CFT to a newer version, proceed as follows:
 ```shell
 cd dm
 make clean
-sudo make prerequisites
+sudo make cft-prerequisites
 make build
 sudo make uninstall
 sudo make install

@@ -15,21 +15,80 @@
 info:
   title: VPN
   author: Sourced Group
-  description: Creates a VPN tunnel, gateway, and fowarding rules.
+  version: 1.0.0
+  description: |
+    Creates a VPN tunnel, gateway, and fowarding rules.
+
+    For more information on this resource:
+    https://cloud.google.com/vpn/docs/concepts/overview
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:instances =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/instances
+    - gcp-types/compute-v1:forwardingRules =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
+    - gcp-types/compute-v1:addresses =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/addresses
+    - gcp-types/compute-v1:targetVpnGateways =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/targetVpnGateways
+    - gcp-types/compute-v1:vpnTunnels =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/vpnTunnels
+    - gcp-types/compute-v1:compute.routers.patch =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/routers/patch
 
 additionalProperties: false
 
-required:
-  - network
-  - region
-  - peerAddress
-  - asn
-  - sharedSecret
+allOf:
+  - required:
+    - region
+    - peerAddress
+    - sharedSecret
+  - oneOf:
+    - required:
+      - networkURL
+    - required:
+      - network
+  - oneOf:
+    # Use dynamic routing.
+    - required:
+      - asn
+      - router
+    # Use static routing.
+    - allOf:
+      - not:
+          required:
+          - router
+      - required:
+        - localTrafficSelector
+        - remoteTrafficSelector
 
 properties:
+  name:
+    type: string
+    description: |
+      Common name for all provisioned resources.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
+  routerURL:
+    type: string
+    description: URL (or URI) of the Router resource. Used by vpnTunnels.
+  router:
+    type: string
+    description: |
+      Name of the Router resource.
+  networkURL:
+    type: string
+    description: |
+      The URL (or URI) of the network to which the VPN belongs.
   network:
     type: string
-    description: The URI of the network to which the VPN belongs.
+    description: |
+      The name of the network to which the VPN belongs. Only use "networkName"
+      when it is impossible to get "networkURL".
   region:
     type: string
     description: The URI of the region where the VPN resides.
@@ -48,6 +107,29 @@ properties:
     description: |
       The value is used to set the secure session between the Cloud VPN
       gateway and the peer VPN gateway.
+  localTrafficSelector:
+    type: array
+    description: |
+      Used when establishing the VPN tunnel with the peer VPN gateway.
+    default: ["0.0.0.0/0"]
+    uniqItems: true
+    items:
+      type: string
+      description: "CIDR formatted string, for example: 192.168.0.0/16."
+  remoteTrafficSelector:
+    type: array
+    description: |
+      Used when establishing the VPN tunnel with the peer VPN gateway.
+    default: ["0.0.0.0/0"]
+    uniqItems: true
+    items:
+      type: string
+      description: "CIDR formatted string, for example: 192.168.0.0/16."
+  ipAddress:
+    type: string
+    description: |
+      Static IP address used by forwarding rules. When not specified, a new static
+      IP address will be created.
 
 outputs:
   properties:
@@ -68,7 +150,10 @@ outputs:
         description: The name of the ForwardingRule resource for the UDP 500 traffic.
     - vpnTunnel:
         type: string
-        description: The mame of the VPN tunnel resource.
+        description: The name of the VPN tunnel resource.
+    - vpnTunnelUri:
+        type: string
+        description: The URI of the VPN tunnel resource.
 
 documentation:
   - templates/vpn/README.md

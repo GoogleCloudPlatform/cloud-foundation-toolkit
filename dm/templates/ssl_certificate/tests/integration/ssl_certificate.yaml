@@ -5,9 +5,10 @@ imports:
     name: ssl_certificate.py
 
 resources:
-  - name: ${CERT_NAME}
+  - name: test-cert
     type: ssl_certificate.py
     properties:
+      name: ${CERT_NAME}
       description: ${CERT_DESCRIPTION}
       certificate: |
         -----BEGIN CERTIFICATE-----

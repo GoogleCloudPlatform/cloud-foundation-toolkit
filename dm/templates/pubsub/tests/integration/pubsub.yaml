@@ -11,7 +11,7 @@ resources:
   - name: test-pubsub-${RAND}
     type: pubsub.py
     properties:
-      topic: test-topic-${RAND}
+      name: test-topic-${RAND}
       accessControl:
         - role: roles/pubsub.subscriber
           members:

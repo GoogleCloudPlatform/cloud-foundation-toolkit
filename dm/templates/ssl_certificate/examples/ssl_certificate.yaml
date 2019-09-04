@@ -5,7 +5,7 @@
 #   <FIXME:privateKeyContents>: contents of the private key file
 
 imports:
-  - path: templates/ssl_cerficate/ssl_cerficate.py
+  - path: templates/ssl_certificate/ssl_certificate.py
     name: ssl_certificate.py
 
 resources:

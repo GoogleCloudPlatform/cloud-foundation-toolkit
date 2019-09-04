@@ -13,28 +13,60 @@
 # limitations under the License.
 """ This template creates an IAM policy member. """
 
+from hashlib import sha1
+
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    project_id = context.properties.get('projectId', context.env['project'])
+    properties = context.properties
+    folder_id = properties.get('folderId')
+    org_id = properties.get('organizationId')
+    project_id = properties.get('projectId', context.env['project'])
 
     resources = []
-    for ii, role in  enumerate(context.properties['roles']):
-        for i, member in enumerate(role['members']):
-            policy_get_name = 'get-iam-policy-{}-{}-{}'.format(context.env['name'], ii, i)
+    for role in properties['roles']:
+        for member in role['members']:
+            suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
+            policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
-            resources.append(
-                {
-                    'name': policy_get_name,
+            if org_id:
+                resources.append({
+                    'name': '{}-organization'.format(policy_get_name),
+                    # TODO - Virtual type documentation needed
+                    'type': 'gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding',
+                    'properties': {
+                        'resource': org_id,
+                        'role': role['role'],
+                        'member': member,
+                    }
+                })
+            elif folder_id:
+                resources.append({
+                    'name': '{}-folder'.format(policy_get_name),
+                    # TODO - Virtual type documentation needed
+                    'type': 'gcp-types/cloudresourcemanager-v2:virtual.folders.iamMemberBinding',
+                    'properties': {
+                        'resource': folder_id,
+                        'role': role['role'],
+                        'member': member,
+                    }
+                })
+            else:
+                resources.append({
+                    'name': '{}-project'.format(policy_get_name),
+                    # TODO - Virtual type documentation needed
                     'type': 'gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding',
-                    'properties':
-                    {
+                    'properties': {
                         'resource': project_id,
                         'role': role['role'],
-                        'member': member
+                        'member': member,
                     }
-                }
-            )
+                })
+
+
+    if 'dependsOn' in properties:
+        for resource in resources:
+            resource['metadata'] = {'dependsOn': properties['dependsOn']}
 
     return {"resources": resources}

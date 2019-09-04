@@ -15,6 +15,7 @@
 info:
   title: Custom IAM Role (Organization Level)
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Creates a custom organization-level IAM role under the specified organization ID.
     For more information on this resource:
@@ -32,6 +33,10 @@ info:
     with the same role ID. After the role has been permanently deleted -- which 
     takes 37 days from the initial deletion request -- a new role can be created using 
     the deleted role's ID.
+
+    APIs endpoints used by this template:
+    - gcp-types/iam-v1:organizations.roles =>
+        https://cloud.google.com/iam/reference/rest/v1/organizations.roles
 
 imports:
   - path: organization_custom_role.py
@@ -53,17 +58,35 @@ properties:
   roleId:
     type: string
     pattern: ^[a-zA-Z][0-9a-zA-Z]{7,63}$
-    description: A unique ID of the custom role.
+    description: |
+      A unique ID of the custom role.
   title:
     type: string
-    description: The title of the custom role.
+    description: |
+      The title of the custom role.
   description:
     type: string
-    description: Description of the custom role.
+    description: |
+      Description of the custom role.
+  stage:
+    type: string
+    description: |
+      The current launch stage of the role. If the ALPHA launch stage has been selected for a role,
+      the stage field will not be included in the returned definition for the role.
+    default: GA
+    enum:
+      - ALPHA
+      - BETA
+      - GA
+      - DEPRECATED
+      - DISABLED
+      - EAP
   includedPermissions:
     type: array
+    uniqueItems: true
     default: []
-    description: Permissions that the custom role includes.
+    description: |
+      Permissions that the custom role includes.
 
 documentation:
   - templates/iam_custom_role/README.md

@@ -1,0 +1,5 @@
+region: us-central1
+settings:
+  tier: db-n1-standard-1
+name: foo
+project: foo

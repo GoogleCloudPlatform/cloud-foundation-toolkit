@@ -15,20 +15,21 @@
 
 
 def generate_config(context):
-    """ 
-        Entry point for the deployment resources.
-        DNS RecordSet is natively supported since 2019.
+    """
+    Entry point for the deployment resources.
+
+    DNS RecordSet is natively supported since 2019.
     """
 
     recordset = {
         'name': context.env['name'],
+        # https://cloud.google.com/dns/docs/reference/v1/resourceRecordSets
         'type': 'gcp-types/dns-v1:resourceRecordSets',
-        'properties':
-            {
-                'name': context.properties['dnsName'],
-                'managedZone': context.properties['zoneName'],
-                'records': context.properties['resourceRecordSets']
-            }
+        'properties': {
+            'name': context.properties['dnsName'],
+            'managedZone': context.properties['zoneName'],
+            'records': context.properties['resourceRecordSets'],
+        }
     }
 
     return {'resources': [recordset]}

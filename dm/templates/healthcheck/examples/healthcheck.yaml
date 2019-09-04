@@ -15,7 +15,7 @@ resources:
     healthyThreshold: 2
     host: my-host.testing
     port: 80
-    healthcheck_type: HTTP
+    healthcheckType: HTTP
 - name: my-legacy-https-healthcheck-local
   type: healthcheck.py
   properties:
@@ -25,7 +25,7 @@ resources:
     unhealthyThreshold: 2
     healthyThreshold: 2
     port: 80
-    healthcheck_type: HTTPS
+    healthcheckType: HTTPS
 - name: my-beta-http-healthcheck-local
   type: healthcheck.py
   properties:
@@ -36,7 +36,7 @@ resources:
     healthyThreshold: 2
     host: my-host.testing
     port: 80
-    healthcheck_type: HTTP
+    healthcheckType: HTTP
     response: my-response
     version: beta
 - name: my-beta-https-healthcheck-local
@@ -49,7 +49,7 @@ resources:
     healthyThreshold: 2
     host: my-host.testing
     port: 80
-    healthcheck_type: HTTPS
+    healthcheckType: HTTPS
     response: my-response
     version: beta
 - name: my-beta-http2-healthcheck-local
@@ -61,7 +61,7 @@ resources:
     unhealthyThreshold: 2
     healthyThreshold: 2
     port: 80
-    healthcheck_type: HTTP2
+    healthcheckType: HTTP2
     version: beta
 - name: my-tcp-healthcheck-local
   type: healthcheck.py
@@ -72,7 +72,7 @@ resources:
     unhealthyThreshold: 2
     healthyThreshold: 2
     port: 80
-    healthcheck_type: TCP
+    healthcheckType: TCP
 - name: my-ssl-healthcheck-local
   type: healthcheck.py
   properties:
@@ -82,7 +82,7 @@ resources:
     unhealthyThreshold: 2
     healthyThreshold: 2
     port: 80
-    healthcheck_type: SSL
+    healthcheckType: SSL
 - name: my-beta-tcp-healthcheck
   type: healthcheck.py
   properties:
@@ -92,7 +92,7 @@ resources:
     unhealthyThreshold: 2
     healthyThreshold: 2
     port: 80
-    healthcheck_type: TCP
+    healthcheckType: TCP
 - name: my-beta-ssl-healthcheck
   type: healthcheck.py
   properties:
@@ -102,7 +102,7 @@ resources:
     unhealthyThreshold: 2
     healthyThreshold: 2
     port: 80
-    healthcheck_type: SSL
+    healthcheckType: SSL
 - name: my-requestpath-healthcheck-local
   type: healthcheck.py
   properties:
@@ -113,7 +113,7 @@ resources:
     healthyThreshold: 2
     proxyHeader: PROXY_V1
     requestPath: /health.html
-    healthcheck_type: HTTPS
+    healthcheckType: HTTPS
 - name: my-response-healthcheck-local
   type: healthcheck.py
   properties:
@@ -123,6 +123,6 @@ resources:
     unhealthyThreshold: 2
     healthyThreshold: 2
     proxyHeader: PROXY_V1
-    healthcheck_type: TCP
+    healthcheckType: TCP
     request: request-data
     response: response-data

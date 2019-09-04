@@ -21,4 +21,6 @@ resources:
       loadBalancingScheme: INTERNAL
       backends:
         - group: <FIXME:instanceGroup>
-      healthCheck: <FIXME:healthcheck>
+          balancingMode: CONNECTION
+      healthChecks:
+        - <FIXME:healthcheck>
