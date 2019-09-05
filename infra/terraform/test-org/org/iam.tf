@@ -70,6 +70,6 @@ module "ci_folders_folder_bindings" {
 
 resource "google_billing_account_iam_member" "ci-billing-user" {
   billing_account_id = local.billing_account
-  role               = "roles/billing.user"
+  role               = "roles/billing.admin"
   member             = "group:cft-ci-robots@test.infra.cft.tips"
 }
