@@ -45,7 +45,11 @@ module "ci_bindings" {
       "group:cft-ci-robots@test.infra.cft.tips",
     ]
 
-    "roles/resourcemanager.folderViewer" = [
+    "roles/resourcemanager.folderAdmin" = [
+      "group:cft-ci-robots@test.infra.cft.tips",
+    ]
+
+    "roles/billing.projectManager" = [
       "group:cft-ci-robots@test.infra.cft.tips",
     ]
   }
@@ -62,4 +66,10 @@ module "ci_folders_folder_bindings" {
       "group:cft-ci-robots@test.infra.cft.tips",
     ]
   }
+}
+
+resource "google_billing_account_iam_member" "ci-billing-user" {
+  billing_account_id = local.billing_account
+  role               = "roles/billing.user"
+  member             = "group:cft-ci-robots@test.infra.cft.tips"
 }
