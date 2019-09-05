@@ -37,7 +37,8 @@ def generate_config(context):
         },
         'properties': {
             'projectId': project_id,
-            'triggerTemplate': properties['triggerTemplate']
+            'triggerTemplate': properties['triggerTemplate'],
+            'github': properties['github']
         }
     }
 
@@ -53,7 +54,8 @@ def generate_config(context):
             'projectId': project_id,
             'id': build_trigger_id,
             'triggerId': build_trigger_id,
-            'triggerTemplate': properties['triggerTemplate']
+            'triggerTemplate': properties['triggerTemplate'],
+            'github': properties['github']
         }
     }
 
