@@ -50,6 +50,14 @@ func init() {
 var Cmd = &cobra.Command{
 	Use:   "report",
 	Short: "Generate inventory reports based on CAI outputs in a directory.",
+	Long: `Generate inventory reports for resources in Cloud Asset Inventory (CAI) output files, with reports defined in rego (in 'samplereports' folder).
+	
+	Example:
+	  cft report --query-path ./path/to/cloud-foundation-toolkit/cli/samplereports \
+		--local-cai-path ./path/to/cai-export-directory \
+		--report-path ./path/to/report-output-directory \
+	`,
+	
 	Args:  cobra.NoArgs,
 	PreRunE: func(c *cobra.Command, args []string) error {
 		if !flags.listReports {
