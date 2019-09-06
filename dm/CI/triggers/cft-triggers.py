@@ -12,7 +12,6 @@ def generate_config(context):
         if '../../templates/' in test:
             tests.append(test[16:-10])
 
-    # tests = ['autoscaler', 'backend_service', 'bastion']
     resources = []
     for test in tests:
         props = copy.deepcopy(context.properties)
