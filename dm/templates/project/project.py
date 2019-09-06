@@ -218,7 +218,7 @@ def create_shared_vpc_subnet_iam(context, dependencies, members_list):
                         'name': subnet['subnetId'],
                         'project': context.properties['sharedVPC'],
                         'region': subnet['region'],
-                        'policy' : {
+                        'policy': {
                             'bindings': [
                                 {
                                     'role': 'roles/compute.networkUser',
