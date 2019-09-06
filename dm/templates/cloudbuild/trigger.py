@@ -26,7 +26,7 @@ def generate_config(context):
     build_trigger_template = properties.get('triggerTemplate')
     build_github = properties.get('github')
     build_trigger_id = '$(ref.' + name + '.id)'
-    build_trigger_createTime = '$(ref.' + name + '.createTime)'
+    build_trigger_createtime = '$(ref.' + name + '.createTime)'
 
     # build trigger create action
     build_trigger_create = {
@@ -111,7 +111,7 @@ def generate_config(context):
         },
         {
             'name': 'createTime',
-            'value': build_trigger_createTime
+            'value': build_trigger_createtime
         }
     ]
 

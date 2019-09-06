@@ -7,13 +7,13 @@
 # Currently the repo is hardcoded.
 
 imports:
-  - path: cft-triggers.py
-    name: cft-triggers.py
+  - path: cft_triggers.py
+    name: cft_triggers.py
   - path: ../../templates/**/*.md
 
 resources:
-  - name: cft-triggers
-    type: cft-triggers.py
+  - name: cft_triggers
+    type: cft_triggers.py
     properties:
       description: CFT-DM-#template# PR trigger
       github:
