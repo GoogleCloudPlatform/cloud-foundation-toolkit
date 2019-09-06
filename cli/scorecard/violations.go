@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -27,6 +28,7 @@ import (
 	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
+	"google.golang.org/api/iterator"
 )
 
 // attachValidator attaches a Validator to the given config
@@ -48,6 +50,32 @@ func addDataFromBucket(config *ScoringConfig, bucket *storage.BucketHandle, obje
 	defer reader.Close()
 
 	scanner := bufio.NewScanner(reader)
+	err = addDataFromScanner(config, scanner)
+	if err != nil {
+		return errors.Wrap(err, "Fetching inventory")
+	}
+
+	return nil
+}
+
+func addDataFromFile(config *ScoringConfig, objectName string) error {
+	reader, err := os.Open(objectName)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	scanner := bufio.NewScanner(reader)
+	err = addDataFromScanner(config, scanner)
+	if err != nil {
+		return errors.Wrap(err, "Fetching inventory")
+	}
+
+	return nil
+}
+
+func addDataFromScanner(config *ScoringConfig, scanner *bufio.Scanner) error {
+
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
 
@@ -67,20 +95,40 @@ func addDataFromBucket(config *ScoringConfig, bucket *storage.BucketHandle, obje
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
 
-	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	bucket := client.Bucket(inventory.gcsBucket)
-	for _, objectName := range destinationObjectNames {
-		err = addDataFromBucket(config, bucket, objectName)
+	if inventory.gcsBucket != "" {
+		ctx := context.Background()
+		client, err := storage.NewClient(ctx)
 		if err != nil {
-			return nil, errors.Wrap(err, "Fetching inventory")
+			return nil, err
+		}
+
+		bucket := client.Bucket(inventory.gcsBucket)
+		it := bucket.Objects(ctx, nil)
+		for {
+			attrs, err := it.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				return nil, err
+			}
+			err = addDataFromBucket(config, bucket, attrs.Name)
+			if err != nil {
+				return nil, errors.Wrap(err, "Fetching inventory")
+			}
+		}
+	} else {
+		files, err := listFiles(inventory.caiDirName)
+		if err != nil {
+			return nil, err
+		}
+		for _, objectName := range files {
+			err = addDataFromFile(config, objectName)
+			if err != nil {
+				return nil, errors.Wrap(err, "Fetching inventory")
+			}
 		}
 	}
-
 	auditResponse, err := v.Audit(context.Background())
 	if err != nil {
 		return nil, errors.Wrap(err, "auditing")
@@ -118,4 +166,24 @@ func getAncestryPath(pbAsset *validator.Asset) (string, error) {
 	// TODO(morgantep): make this fetch the actual asset path
 	// fmt.Printf("Asset parent: %v\n", pbAsset.GetResource().GetParent())
 	return "organization/0/project/test", nil
+}
+
+// listFiles returns a list of files under a dir. Errors will be grpc errors.
+func listFiles(dir string) ([]string, error) {
+	files := []string{}
+	visit := func(path string, f os.FileInfo, err error) error {
+		if err != nil {
+			return errors.Wrapf(err, "error visiting path %s", path)
+		}
+		if !f.IsDir() {
+			files = append(files, path)
+		}
+		return nil
+	}
+
+	err := filepath.Walk(dir, visit)
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
 }
