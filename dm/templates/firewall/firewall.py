@@ -25,11 +25,11 @@ def generate_config(context):
     if network:
         if not ('/' in network or '.' in network):
             network = 'global/networks/{}'.format(network)
-    else:xvb
+    else:
         network = 'projects/{}/global/networks/{}'.format(
             project_id,
             properties.get('networkName', 'default')
-        )xvb
+        )
     resources = []
     out = {}
     for i, rule in enumerate(properties['rules'], 1000):
@@ -39,7 +39,7 @@ def generate_config(context):
         rule['priority'] = rule.get('priority', i)
         rule['project'] = project_id
         resources.append(
-            {xvb
+            {
                 'name': res_name,
                 'type': 'gcp-types/compute-v1:firewalls',
                 'properties': rule
@@ -47,7 +47,7 @@ def generate_config(context):
         )
 
         out[res_name] = {
-            'selfLink': '$(ref.xvb' + res_name + '.selfLink)',
+            'selfLink': '$(ref.' + res_name + '.selfLink)',
             'creationTimestamp': '$(ref.' + res_name
                                  + '.creationTimestamp)',
         }
