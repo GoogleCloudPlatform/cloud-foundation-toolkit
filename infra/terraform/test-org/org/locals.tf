@@ -16,6 +16,7 @@
 
 locals {
     org_id = "943740911108"
+    billing_account = "01D904-DAF6EC-F34EF7"
     folders = {
         ci = module.folders-root.names_and_ids["ci-projects"]
     }
