@@ -24,3 +24,5 @@ resources:
                 - user:demo@user.com
         - name: second-subscription-${RAND}
           ackDeadlineSeconds: 15
+          expirationPolicy:
+            ttl: 86400s
