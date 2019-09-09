@@ -23,7 +23,7 @@ def generate_config(context):
     project_id = properties.get('project', context.env['project'])
     # set projectId in triggerTemplate
     properties['triggerTemplate']['projectId'] = project_id
-    build_def = properties.get('build')
+    build_def = properties.get('buildTemplate')
     build_filename = properties.get('filename')
     build_trigger_id = '$(ref.{}.id)'.format(name)
 
