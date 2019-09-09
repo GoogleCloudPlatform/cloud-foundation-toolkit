@@ -48,6 +48,9 @@ def delete_project(project):
         liens_deleted = delete_liens(project.project_id)
         if liens_deleted >= 1:
             delete_project(project)
+        else:
+            print("Bad request and no liens found.")
+            print(e)
     except (google.api_core.exceptions.Forbidden) as e:
         print("Failed to delete {}".format(project.project_id))
         print(e)
