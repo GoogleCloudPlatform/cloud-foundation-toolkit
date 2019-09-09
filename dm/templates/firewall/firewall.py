@@ -54,5 +54,5 @@ def generate_config(context):
         }
 
     outputs = [{'name': 'rules', 'value': out}]
-
+ 
     return {'resources': resources, 'outputs': outputs}
