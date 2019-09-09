@@ -26,8 +26,17 @@ def generate_config(context):
 
     properties = context.properties
     name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
-    resource = {'name': name, 'type': 'compute.v1.urlMap', 'properties': {}}
+    resource = {
+        'name': context.env['name'],
+        # https://cloud.google.com/compute/docs/reference/rest/v1/urlMaps
+        'type': 'gcp-types/compute-v1:urlMaps',
+        'properties': {
+            'name': name,
+            'project': project_id,
+        },
+    }
 
     optional_properties = [
         'defaultService',
@@ -50,7 +59,7 @@ def generate_config(context):
                 },
                 {
                     'name': 'selfLink',
-                    'value': '$(ref.{}.selfLink)'.format(name)
+                    'value': '$(ref.{}.selfLink)'.format(context.env['name'])
                 }
             ]
     }

@@ -15,11 +15,14 @@
 info:
   title: HAProxy load balancer template
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Deploys a Compute instance, with an HAProxy installed and configured to
     load-balance traffic between instance groups.
 
 imports:
+  - path: ../instance/instance.py
+    name: instance.py
   - path: haproxy.py
 
 additionalProperties: false
@@ -33,7 +36,11 @@ required:
 properties:
   name:
     type: string
-    description: A name of a load balancer instance
+    description: A name of a load balancer instance. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the service.
   network:
     type: string
     description: |
@@ -56,6 +63,7 @@ properties:
       instanceGroups instances.
   loadBalancer:
     type: object
+    additionalProperties: false
     description: Front-end settings for the HAProxy load balancer.
     required:
       - port
@@ -81,6 +89,7 @@ properties:
           - tcp
   instances:
     type: object
+    additionalProperties: false
     description: Back-end settings of the HAProxy load balancer.
     required:
       - port
@@ -92,6 +101,7 @@ properties:
           Number of the port at which instances will accept requests.
       groups:
         type: array
+        uniqItems: true
         description: A list of instanceGroups that will be load-balanced.
         items:
           type: string

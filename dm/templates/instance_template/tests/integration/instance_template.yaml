@@ -15,7 +15,11 @@ resources:
       name: it-${RAND}
       instanceDescription: Instance description
       templateDescription: Template description
-      network: $(ref.test-network-${RAND}.selfLink)
+      networks:
+        - network: $(ref.test-network-${RAND}.selfLink)
+          accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
       diskImage: ${IMAGE}
       machineType: f1-micro
       canIpForward: true

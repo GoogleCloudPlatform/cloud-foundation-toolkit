@@ -18,7 +18,7 @@ help:
 .ONESHELL:
 .PHONY: cft-prerequisites cft-venv cft-clean-venv cft-test cft-test-venv template-prerequisites
 
-prerequisites:
+cft-prerequisites:
 	${PYTHON} -m pip install -r requirements/prerequisites.txt
 
 cft-venv:

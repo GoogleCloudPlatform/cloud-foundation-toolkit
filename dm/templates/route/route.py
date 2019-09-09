@@ -14,61 +14,45 @@
 """This template creates a custom route."""
 
 
+from hashlib import sha1
+import json
+
+
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    network_name = generate_network_url(context.properties)
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+
+    network_name = generate_network_url(properties)
 
     resources = []
     out = {}
-    for i, route in enumerate(context.properties['routes'], 1000):
-
-        # Set the common route properties.
-        properties = {
+    for i, route in enumerate(properties['routes'], 1000):
+        name = route.get('name')
+        if not name:
+            name = '{}-{}'.format(context.env['name'], sha1(json.dumps(route)).hexdigest()[:10])
+        
+        route_properties = {
+            'name': name,
             'network': network_name,
-            'tags': route['tags'],
-            'priority': route.get('priority',
-                                  i),
-            'destRange': route['destRange']
+            'project': project_id,
+            'priority': route.get('priority', i),
         }
-
-        # Check the route type and fill out the following fields:
-        if route['routeType'] == 'ipaddress':
-            properties['nextHopIp'] = route.get('nextHopIp')
-        elif route['routeType'] == 'instance':
-            instance_name = route.get('instanceName')
-            zone = route.get('zone', '')
-            properties['nextHopInstance'] = generate_instance_url(
-                context.env['project'],
-                zone,
-                instance_name
-            )
-        elif route['routeType'] == 'gateway':
-            gateway_name = route.get('gatewayName')
-            properties['nextHopGateway'] = generate_gateway_url(
-                context.env['project'],
-                gateway_name
-            )
-        elif route['routeType'] == 'vpntunnel':
-            vpn_tunnel_name = route.get('vpnTunnelName')
-            region = route.get('region', '')
-            properties['nextHopVpnTunnel'] = generate_vpn_tunnel_url(
-                context.env['project'],
-                region,
-                vpn_tunnel_name
-            )
+        for specified_properties in route:
+            route_properties[specified_properties] = route[specified_properties]
 
         resources.append(
             {
-                'name': route['name'],
-                'type': 'compute.v1.route',
-                'properties': properties
+                'name': name,
+                'type': 'single_route.py',
+                'properties': route_properties
             }
         )
 
-        out[route['name']] = {
-            'selfLink': '$(ref.' + route['name'] + '.selfLink)',
-            'nextHopNetwork': network_name
+        out[name] = {
+            'selfLink': '$(ref.' + name + '.selfLink)',
+            'nextHopNetwork': '$(ref.' + name + '.nextHopNetwork)',
         }
 
     outputs = [{'name': 'routes', 'value': out}]
@@ -88,31 +72,3 @@ def generate_network_url(properties):
         network_url = 'global/networks/{}'.format(network_name)
 
     return network_url
-
-
-def generate_instance_url(project, zone, instance):
-    """ Format the resource name as a resource URI. """
-
-    is_self_link = '/' in instance or '.' in instance
-
-    if is_self_link:
-        instance_url = instance
-    else:
-        instance_url = 'projects/{}/zones/{}/instances/{}'
-        instance_url = instance_url.format(project, zone, instance)
-
-    return instance_url
-
-
-def generate_gateway_url(project, gateway):
-    """ Format the resource name as a resource URI. """
-    return 'projects/{}/global/gateways/{}'.format(project, gateway)
-
-
-def generate_vpn_tunnel_url(project, region, vpn_tunnel):
-    """ Format the resource name as a resource URI. """
-    return 'projects/{}/regions/{}/vpnTunnels/{}'.format(
-        project,
-        region,
-        vpn_tunnel
-    )

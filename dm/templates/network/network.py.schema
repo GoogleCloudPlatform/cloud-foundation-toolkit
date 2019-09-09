@@ -15,24 +15,65 @@
 info:
   title: Network
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Creates a network.
 
     For more information on this resource:
-      - https://cloud.google.com/compute/docs/reference/rest/v1/networks
+      - https://cloud.google.com/vpc/docs/vpc
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:networks =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert
 
 imports:
   - path: subnetwork.py
 
 additionalProperties: false
 
-# required:
-#  - name
+oneOf:
+  - properties:
+      autoCreateSubnetworks:
+        enum:
+         - true
+  - properties:
+      subnetworks:
+        type: array
+        default: []
+        minItems: 1
 
 properties:
   name:
     type: string
-    description: Name of the network resource.
+    description: |
+      Name of the network resource. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the Cloud Router instance. The
+      Google apps domain is prefixed if applicable.
+  description:
+    type: string
+    description: |
+      An optional description of this resource. Provide this property when you create the resource.
+  routingConfig:
+    type: object
+    additionalProperties: false
+    description: |
+      The network-level routing configuration for this network. Used by Cloud Router to determine what type
+      of network-wide routing behavior to enforce.
+    required:
+      - routingMode
+    properties:
+      routingMode:
+        type: string
+        description: |
+          The network-wide routing mode to use. If set to REGIONAL, this network's cloud routers will only advertise
+          routes with subnets of this network in the same region as the router. If set to GLOBAL, this network's
+          cloud routers will advertise routes with all subnets of this network, across regions.
+        enum:
+          - GLOBAL
+          - REGIONAL
   autoCreateSubnetworks:
     type: boolean
     default: false
@@ -41,6 +82,7 @@ properties:
       10.128.0.0/9; and (b) one subnetwork per region is created automatically.
   subnetworks:
     type: array
+    default: []
     description: |
       An array of subnetworks, as defined in the `subnetwork.py` template.
       Example:
@@ -54,6 +96,15 @@ properties:
               ipCidrRange: 172.16.0.0/24
             - rangeName: my-secondary-range-2
               ipCidrRange: 172.16.1.0/24
+    items:
+      type: object
+      allOf:
+        - not:
+            required:
+              - project
+        - not:
+            required:
+              - network
 
 outputs:
   properties:

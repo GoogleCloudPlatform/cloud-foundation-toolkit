@@ -57,16 +57,29 @@ function teardown() {
 ########## TESTS ##########
 
 @test "Deploying project $DEPLOYMENT_NAME" {
-    gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" --config "${CONFIG}"
+    run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" --config "${CONFIG}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    
+    [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that project $CLOUD_FOUNDATION_PROJECT_ID was created" {
     run gcloud projects list
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ "$output" =~ "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" ]]
 }
 
 @test "Verifying that APIs were activated for project ${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" {
     run gcloud services list --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ "$output" =~ "compute.googleapis.com" ]]
     [[ "$output" =~ "deploymentmanager.googleapis.com" ]]
     [[ "$output" =~ "pubsub.googleapis.com" ]]
@@ -78,21 +91,37 @@ function teardown() {
 @test "Verifying that usage report export to the bucket was created for project ${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" {
     run gcloud compute project-info describe --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" \
         --format="flattened[no-pad](usageExportLocation)"
+        
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ "$output" =~ "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}-usage-export" ]]
 }
 
 @test "Verifying that the project is a shared vpc host project for project ${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" {
     run gcloud compute shared-vpc organizations list-host-projects "${CLOUD_FOUNDATION_ORGANIZATION_ID}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ "$output" =~ "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" ]]
 }
 
 @test "Verifying that the default VPC was deleted for project ${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" {
     run gcloud compute networks list --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ ! "$output" =~ "default" ]]
 }
 
 @test "Verifying that the default Compute Engine SA was removed for project ${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" {
     run gcloud iam service-accounts list --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ ! "$output" =~ "Compute Engine default service account" ]]
 }
 
@@ -101,12 +130,40 @@ function teardown() {
         --flatten="bindings[].members" \
         --format='table(bindings.role)' \
         --filter="bindings.members:sa-${RAND}@${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}.iam.gserviceaccount.com"
+        
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ "$output" =~ "roles/editor" ]]
     [[ "$output" =~ "roles/viewer" ]]
 }
 
 @test "Deleting deployment" {
-    gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q
+    ## TODO project creation should work without disabling XPN hosts.
+    
+    run gcloud alpha resource-manager liens list --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    [[ "$status" -eq 0 ]]
+    
+    run gcloud compute shared-vpc disable "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    [[ "$status" -eq 0 ]]
+    
+    run gcloud alpha resource-manager liens list --project "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}"
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    [[ "$status" -eq 0 ]]
+    
+    run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q
+    
+    echo "Status: $status"
+    echo "Output: $output"
+    [[ "$status" -eq 0 ]]
 
     run gcloud projects list
     [[ ! "$output" =~ "${CLOUD_FOUNDATION_PROJECT_ID}-${RAND}" ]]

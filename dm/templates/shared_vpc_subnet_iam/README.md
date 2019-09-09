@@ -62,5 +62,11 @@ See `properties` section in the schema file(s):
 ```
 
 ## Examples
+- [Shared VPC Subnet IAM Bindings syntax](examples/shared_vpc_subnet_iam_bindings.yaml)
+- [Shared VPC Subnet IAM Policy syntax](examples/shared_vpc_subnet_iam_policy.yaml)
+- [Shared VPC Subnet IAM Legacy](examples/shared_vpc_subnet_iam_legacy.yaml)
 
-- [Shared VPC Subnet IAM](examples/shared_vpc_subnet_iam.yaml)
+## Tests Cases
+- [Shared VPC Subnet IAM Bindings syntax](tests/integration/bindings.bats)
+- [Shared VPC Subnet IAM Policy syntax](tests/integration/policy.bats)
+- [Shared VPC Subnet IAM Legacy syntax](tests/integration/legacy.bats)

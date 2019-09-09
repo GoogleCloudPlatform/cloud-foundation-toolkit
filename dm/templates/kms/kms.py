@@ -21,16 +21,18 @@ def generate_config(context):
 
     resources = []
     properties = context.properties
+    project_id = properties.get('project', context.env['project'])
     parent = 'projects/{}/locations/{}'.format(
-        context.env['project'],
+        project_id,
         properties.get('region')
     )
-    keyring_name = properties.get('keyRingName') or context.env['name'].lower()
+    keyring_name = properties.get('keyRingName', context.env['name'])
     keyring_id = '{}/keyRings/{}'.format(parent, keyring_name)
+    # https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings
     provider = 'gcp-types/cloudkms-v1:projects.locations.keyRings'
     # keyring resource
     keyring = {
-        'name': keyring_name,
+        'name': context.env['name'],
         'type': provider,
         'properties': {
             'parent': parent,
@@ -42,8 +44,9 @@ def generate_config(context):
     # cryptographic key resources
     for key in properties.get('keys', []):
         key_name = key['cryptoKeyName'].lower()
+        key_resource = '{}-{}'.format(context.env['name'], key_name)
         crypto_key = {
-            'name': key_name,
+            'name': key_resource,
             'type': provider + '.cryptoKeys',
             'properties':
                 {
@@ -54,7 +57,7 @@ def generate_config(context):
                                       {})
                 },
             'metadata': {
-                'dependsOn': [keyring_name]
+                'dependsOn': [context.env['name']]
             }
         }
 
@@ -66,11 +69,13 @@ def generate_config(context):
 
         # IAM policy bindings for the crypto key
         if 'iamPolicyBinding' in key:
+            provider = 'gcp-types/cloudkms-v1:cloudkms.projects.locations.keyRings'
             key_resource_name = '{}/cryptoKeys/{}'.format(keyring_id, key_name)
-            action_type = 'gcp-types/cloudkms-v1:cloudkms.projects.locations'
             crypto_key_iam = {
-                'name': '{}-iamPolicy'.format(key_name),
-                'action': action_type + '.keyRings.cryptoKeys.setIamPolicy',
+                'name': '{}-iamPolicy'.format(key_resource),
+                # https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings.cryptoKeys/setIamPolicy
+                # https://cloudkms.googleapis.com/$discovery/rest?version=v1
+                'action': provider + '.cryptoKeys.setIamPolicy',
                 'properties':
                     {
                         'resource': key_resource_name,
@@ -79,7 +84,7 @@ def generate_config(context):
                         }
                     },
                 'metadata': {
-                    'dependsOn': [key_name]
+                    'dependsOn': [key_resource]
                 }
             }
             resources.append(crypto_key_iam)
@@ -91,7 +96,7 @@ def generate_config(context):
             [
                 {
                     'name': 'keyRing',
-                    'value': '$(ref.{}.name)'.format(keyring_name)
+                    'value': '$(ref.{}.name)'.format(context.env['name'])
                 }
             ]
     }

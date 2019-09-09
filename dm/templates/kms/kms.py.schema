@@ -14,11 +14,19 @@
 
 info:
   title: Google Cloud KMS KeyRing and Keys
+  version: 1.0.0
   author: Sourced Group Inc.
   description: |
     Creates a Cloud KMS KeyRing and cryptographic keys.
-    For more information on this resource,
+
+    For more information on this resource:
     https://cloud.google.com/kms/docs/reference/rest.
+
+    APIs endpoints used by this template:
+    - gcp-types/cloudkms-v1:projects.locations.keyRings =>
+        https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings
+    - gcp-types/cloudkms-v1:cloudkms.projects.locations =>
+        https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings
 
 imports:
   - path: kms.py
@@ -34,14 +42,20 @@ properties:
     pattern: ^[a-zA-Z0-9_-]{1,63}
     description: |
       The name for the KeyRing. Must be unique within a location.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the keyring.
   region:
     type: string
     default: global
     description: The KeyRing location.
   keys:
     type: array
+    uniqueItems: True
     items:
       type: object
+      additionalProperties: false
       description: The CryptoKey object.
       required:
         - cryptoKeyName
@@ -82,6 +96,7 @@ properties:
             with up to nine fractional digits, terminated by 's'. Example '3.5s'
         versionTemplate:
           type: object
+          additionalProperties: false
           description: |
             The template that controls properties of new CryptoKeyVersion 
             instances created by either cryptoKeyVersions.create or 
@@ -109,11 +124,15 @@ properties:
                 - RSA_SIGN_PSS_2048_SHA256
                 - RSA_SIGN_PSS_3072_SHA256
                 - RSA_SIGN_PSS_4096_SHA256
+                - RSA_SIGN_PSS_4096_SHA512
                 - RSA_SIGN_PKCS1_2048_SHA256
                 - RSA_SIGN_PKCS1_3072_SHA256
                 - RSA_SIGN_PKCS1_4096_SHA256
+                - RSA_SIGN_PKCS1_4096_SHA512
                 - RSA_DECRYPT_OAEP_2048_SHA256
                 - RSA_DECRYPT_OAEP_3072_SHA256
+                - RSA_DECRYPT_OAEP_4096_SHA256
+                - RSA_DECRYPT_OAEP_4096_SHA512
                 - EC_SIGN_P256_SHA256
                 - EC_SIGN_P384_SHA384
         labels:
@@ -123,9 +142,11 @@ properties:
             https://cloud.google.com/kms/docs/labeling-keys.
         iamPolicyBinding:
           type: array
+          uniqueItems: True
           description: The IAM bindings for the CryptoKey.
           items:
             type: object
+            additionalProperties: false
             required:
               - role
               - members

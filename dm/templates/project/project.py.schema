@@ -15,10 +15,40 @@
 info:
   title: Project
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a single project. The project is created with a
-    billing account attached, permissions altered, APIs activated, and 
+    billing account attached, permissions altered, APIs activated, and
     service accounts created.
+
+    For more information on this resource:
+    https://cloud.google.com/resource-manager/
+
+    APIs endpoints used by this template:
+    - gcp-types/cloudresourcemanager-v1:projects =>
+        https://cloud.google.com/resource-manager/reference/rest/v1/projects/create
+    - deploymentmanager.v2.virtual.projectBillingInfo =>
+        https://cloud.google.com/billing/reference/rest/v1/projects/updateBillingInfo
+    - gcp-types/servicemanagement-v1:servicemanagement.services.enable =>
+        https://cloud.google.com/service-infrastructure/docs/service-management/reference/rest/v1/services/enable
+    - gcp-types/compute-v1:compute.subnetworks.setIamPolicy =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/setIamPolicy
+    - gcp-types/compute-v1:compute.projects.enableXpnHost =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnHost
+    - gcp-types/compute-v1:compute.projects.enableXpnResource =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnResource
+    - gcp-types/compute-v1:compute.networks.delete =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/networks/delete
+    - gcp-types/compute-v1:compute.firewalls.delete =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/firewalls/delete
+    - gcp-types/iam-v1:iam.projects.serviceAccounts.delete =>
+        https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/delete
+    - gcp-types/compute-v1:compute.projects.setUsageExportBucket =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/projects/setUsageExportBucket
+    - gcp-types/storage-v1:buckets =>
+        https://cloud.google.com/storage/docs/json_api/v1/buckets/insert
+    - gcp-types/iam-v1:projects.serviceAccounts =>
+        https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/create
 
 imports:
 - path: ../iam_member/iam_member.py
@@ -30,12 +60,15 @@ required:
   - billingAccountId
 
 oneOf:
-  - required:
-      - sharedVPCHost
-    not:
-      required:
-        - sharedVPC
-        - sharedVPCSubnets
+  - allOf:
+      - required:
+          - sharedVPCHost
+      - not:
+          required:
+            - sharedVPC
+      - not:
+          required:
+            - sharedVPCSubnets
   - required:
       - sharedVPC
     not:
@@ -61,6 +94,13 @@ allOf:
   - $ref: '#/definitions/networkAccess-requires-sharedVPCSubnets'
 
 definitions:
+  usageExportBucket-enabled:
+    type: boolean
+    description: |
+      Defines whether a usage export bucket must be created.
+      False by default so as to not inadvertently incur
+      costs to the user. It is strongly suggested to be enabled
+      (set to True).
   networkAccess-requires-sharedVPCSubnets:
     oneOf:
       - $ref: '#/definitions/no-sharedVPCSubnets'
@@ -119,7 +159,11 @@ properties:
       Example: tokyo-rain-123
   parent:
     type: object
+    additionalProperties: false
     description: The parent of the project.
+    required:
+      - type
+      - id
     properties:
       type:
         type: string
@@ -131,7 +175,16 @@ properties:
       id:
         type: [integer, string]
         description: |
-          The ID of the projects' parent.
+          The ID of the project's parent.
+        pattern: ^[0-9]{8,25}$
+  labels:
+    type: object
+    description: |
+      Map of labels associated with this Project.
+      Example:
+        name: wrench
+        mass: 1.3kg
+        count: 3
   billingAccountId:
     type: string
     description: |
@@ -144,12 +197,25 @@ properties:
       type: string
     description: The list of APIs to enable for each project.
   usageExportBucket:
-    type: boolean
-    description: |
-      Defines whether a usage export bucket must be created.
-      False by default so as to not inadvertently incur
-      costs to the user. It is strongly suggested to be enabled
-      (set to True).
+    oneOf:
+      - $ref: '#/definitions/usageExportBucket-enabled'
+      - type: object
+        additionalProperties: false
+        description: |
+          Defines usage export bucket config.
+        required:
+          - enabled
+        properties:
+          enabled:
+            $ref: '#/definitions/usageExportBucket-enabled'
+          reportNamePrefix:
+            type: string
+            description: |
+              An optional prefix for the name of the usage report object stored in bucketName. If not supplied,
+              defaults to usage. The report is stored as a CSV file named report_name_prefix_gce_YYYYMMDD.csv
+              where YYYYMMDD is the day of the usage according to Pacific Time. If you supply a prefix,
+              it should conform to Cloud Storage object naming conventions.
+
   serviceAccounts:
     type: array
     uniqueItems: True

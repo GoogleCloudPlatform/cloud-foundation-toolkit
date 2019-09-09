@@ -11,43 +11,57 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" This template grants IAM roles to a user on a shared VPC subnetwork. """
+"""This template grants IAM roles to a user on a shared VPC subnetwork."""
 
 
-def generate_config(context):
-    """ Entry point for the deployment resources. """
-
+def _append_resource(subnets, project, name_id):
+    """Append subnets to resources."""
     resources = []
     out = {}
-    for subnet in context.properties['subnets']:
-        subnet_id = subnet['subnetId']
-        policy_name = 'iam-subnet-policy-{}'.format(subnet_id)
-
-        policies_to_add = [
-            {
-                'role': subnet['role'],
-                'members': subnet['members']
+    for subnet in subnets:
+        policy_name = 'iam-subnet-policy-{}'.format(subnet[name_id])
+        resources.append({
+            'name': policy_name,
+            # https://cloud.google.com/compute/docs/reference/rest/beta/subnetworks/setIamPolicy
+            'type': 'gcp-types/compute-beta:compute.subnetworks.setIamPolicy',
+            'properties': {
+                'name': subnet[name_id],
+                'project': project,
+                'region': subnet['region'],
+                'bindings': [{
+                    'role': subnet['role'],
+                    'members': subnet['members']
+                }]
             }
-        ]
-
-        resources.append(
-            {
-                'name': policy_name,
-                'type': 'gcp-types/compute-beta:compute.subnetworks.setIamPolicy',  # pylint: disable=line-too-long
-                'properties':
-                    {
-                        'name': subnet_id,
-                        'project': context.env['project'],
-                        'region': subnet['region'],
-                        'bindings': policies_to_add
-                    }
-            }
-        )
+        })
 
         out[policy_name] = {
             'etag': '$(ref.' + policy_name + '.etag)'
         }
+    return resources, out
 
+
+def generate_config(context):
+    """Entry point for the deployment resources."""
+    try:
+        resources, out = _append_resource(
+            context.properties['subnets'],  # Legacy syntax
+            context.env['project'],
+            'subnetId'
+        )
+    except KeyError:
+        try:
+            resources, out = _append_resource(
+                context.properties['policy']['bindings'],  # Policy syntax
+                context.env['project'],
+                'resourceId'
+            )
+        except KeyError:
+            resources, out = _append_resource(
+                context.properties['bindings'],  # Bindings syntax
+                context.env['project'],
+                'resourceId'
+            )
     outputs = [{'name': 'policies', 'value': out}]
 
     return {'resources': resources, 'outputs': outputs}

@@ -44,7 +44,7 @@ def generate_config(context):
 
     task = {
         'name':
-            name,
+            context.env['name'],
         'type':
             '{}/cloudtasks:projects.locations.queues.tasks'.format(project_id),
         'properties':
@@ -74,19 +74,19 @@ def generate_config(context):
         'outputs': [
             {
                 'name':'name',
-                'value': '$(ref.{}.name)'.format(name)
+                'value': '$(ref.{}.name)'.format(context.env['name'])
             },
             {
                 'name':'createTime',
-                'value': '$(ref.{}.createTime)'.format(name)
+                'value': '$(ref.{}.createTime)'.format(context.env['name'])
             },
             {
                 'name':'view',
-                'value': '$(ref.{}.view)'.format(name)
+                'value': '$(ref.{}.view)'.format(context.env['name'])
             },
             {
                 'name':'scheduleTime',
-                'value': '$(ref.{}.scheduleTime)'.format(name)
+                'value': '$(ref.{}.scheduleTime)'.format(context.env['name'])
             }
         ]
     }

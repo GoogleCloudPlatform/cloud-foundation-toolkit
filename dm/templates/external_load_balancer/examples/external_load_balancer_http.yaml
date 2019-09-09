@@ -17,7 +17,7 @@ resources:
     properties:
       portRange: 80
       backendServices:
-        - name: default-backend-service
+        - resourceName: default-backend-service
           sessionAffinity: GENERATED_COOKIE
           affinityCookieTtlSec: 1000
           portName: http

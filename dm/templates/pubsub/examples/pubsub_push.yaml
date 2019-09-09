@@ -12,7 +12,7 @@ resources:
   - name: test-push-pubsub
     type: pubsub.py
     properties:
-      topic: test-topic
+      name: test-topic
       subscriptions:
         - name: push-subscription
           pushEndpoint: <FIXME:pushEndpointUrl>

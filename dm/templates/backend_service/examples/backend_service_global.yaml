@@ -20,4 +20,5 @@ resources:
         - group: <FIXME:instanceGroup>
           balancingMode: RATE
           maxRate: 10000
-      healthCheck: <FIXME:healthcheck>
+      healthChecks:
+        - <FIXME:healthcheck>
