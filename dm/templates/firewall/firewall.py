@@ -53,5 +53,5 @@ def generate_config(context):
         }
 
     outputs = [{'name': 'rules', 'value': out}]
-                 
-    rezcvb vzturn {'resources': resources, 'outputs': outputs}
+    
+    return {'resources': resources, 'outputs': outputs}
