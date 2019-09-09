@@ -8,15 +8,15 @@ resources:
   - name: ${CONFIG_NAME}
     type: runtime_config.py
     properties:
-      config: ${CONFIG_NAME}
+      name: ${CONFIG_NAME}
       description: my config description
       variables:
-        - variable: ${VARIABLE_1}
+        - name: ${VARIABLE_1}
           text: ${VARIABLE_1_VALUE}
-        - variable: ${VARIABLE_2}
+        - name: ${VARIABLE_2}
           value: ${VARIABLE_2_VALUE}
       waiters:
-        - waiter: ${WAITER_NAME}
+        - name: ${WAITER_NAME}
           timeout: ${WAITER_TIMEOUT}
           success:
             cardinality:

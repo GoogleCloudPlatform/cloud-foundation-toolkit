@@ -1,0 +1,4 @@
+steps:
+- name: gcr.io/$PROJECT_ID/cft-schema
+  args: ['./templates/healthcheck/examples/healthcheck.yaml']
+tags: ['cft-dm-schema-runner']

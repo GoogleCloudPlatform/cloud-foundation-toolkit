@@ -15,6 +15,7 @@
 info:
   title: Highly Available NAT Gateway
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of an HA NAT gateway. Internal network address
     translation (NAT) gateway instances can route traffic from internal-only
@@ -22,6 +23,10 @@ info:
     number of external IP address to send traffic from multiple virtual machine
     instances while exposing a small set of NAT gateway virtual machines to the
     Internet.
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:instanceGroupManagers =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroupManagers
 
 imports:
   - path: ../healthcheck/healthcheck.py
@@ -47,6 +52,11 @@ required:
   - nattedVmTag
 
 properties:
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the NAT instance. The
+      Google apps domain is prefixed if applicable.
   network:
     type: string
     description: The VPC network to connect the NAT gateway VMs to.

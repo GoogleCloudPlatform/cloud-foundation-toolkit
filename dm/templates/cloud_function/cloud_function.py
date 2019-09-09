@@ -19,16 +19,16 @@
 
 NO_RESOURCES_OR_OUTPUTS = [], []
 
-def get_source_url_output(function_name):
+def get_source_url_output(function_name, context):
     """ Generates the Cloud Function output with a link to the source archive.
     """
 
     return {
         'name':  'sourceArchiveUrl',
-        'value': '$(ref.{}.sourceArchiveUrl)'.format(function_name)
+        'value': '$(ref.{}.sourceArchiveUrl)'.format(function_name, context.env['name'])
     }
 
-def append_cloud_storage_sources(function, context):
+def append_cloud_storage_sources(function, project, context):
     """ Adds source code from the Cloud Storage. """
 
     properties = context.properties
@@ -36,14 +36,14 @@ def append_cloud_storage_sources(function, context):
     local_path = properties.get('localUploadPath')
 
     resources = []
-    outputs = [get_source_url_output(function['name'])]
+    outputs = [get_source_url_output(function['name'], context)]
 
     if local_path:
         # The 'upload.py' file must be imported into the YAML file first.
         from upload import generate_upload_path, upload_source
 
         upload_path = upload_path or generate_upload_path()
-        res = upload_source(function, context.imports, local_path, upload_path)
+        res = upload_source(context.env['name'], project, function, context.imports, local_path, upload_path)
         source_resources, source_outputs = res
         resources += source_resources
         outputs += source_outputs
@@ -58,32 +58,35 @@ def append_cloud_storage_sources(function, context):
 def append_cloud_repository_sources(function, context):
     """ Adds the source code from the cloud repository. """
 
-    append_optional_property(function,
-                             context.properties,
-                             'sourceRepositoryUrl')
+    repo = context.properties.get('sourceRepository', {
+        'url': context.properties.get('sourceRepositoryUrl')
+    })
+    function['properties']['sourceRepository'] = repo
 
     name = function['name']
     output = {
         'name': 'sourceRepositoryUrl',
-        'value': '$(ref.{}.sourceRepository.repositoryUrl)'.format(name)
+        'value': '$(ref.{}.sourceRepository.deployedUrl)'.format(context.env['name'])
     }
 
     return [], [output]
 
-def append_source_code(function, context):
+def append_source_code(function, project, context):
     """ Append a reference to the Cloud Function's source code. """
 
     properties = context.properties
-    if 'sourceArchiveUrl' in properties or 'localUploadPath' in properties:
-        return append_cloud_storage_sources(function, context)
-    elif 'sourceRepositoryUrl' in properties:
+
+    if 'sourceRepository' in properties or 'sourceRepositoryUrl' in properties:
         return append_cloud_repository_sources(function, context)
 
-    msg = """At least one of the following properties must be provided:
-        - sourceRepositoryUrl
-        - localUploadPath
-        - sourceArchiveUrl"""
-    raise ValueError(msg)
+    if 'sourceUploadUrl' in properties:
+        append_optional_property(function, properties, 'sourceUploadUrl')
+        return [], []
+
+    if 'sourceArchiveUrl' in properties or 'localUploadPath' in properties:
+        return append_cloud_storage_sources(function, project, context)
+
+    raise ValueError('At least one of source properties must be provided')
 
 def append_trigger_topic(function, properties):
     """ Appends the Pub/Sub event trigger. """
@@ -97,13 +100,13 @@ def append_trigger_topic(function, properties):
 
     return NO_RESOURCES_OR_OUTPUTS
 
-def append_trigger_http(function):
+def append_trigger_http(function, context):
     """ Appends the HTTPS trigger and returns the generated URL. """
 
     function['properties']['httpsTrigger'] = {}
     output = {
         'name': 'httpsTriggerUrl',
-        'value': '$(ref.{}.httpsTrigger.url)'.format(function['name'])
+        'value': '$(ref.{}.httpsTrigger.url)'.format(context.env['name'])
     }
 
     return [], [output]
@@ -132,7 +135,7 @@ def append_trigger(function, context):
     elif 'triggerStorage' in context.properties:
         return append_trigger_storage(function, context)
 
-    return append_trigger_http(function)
+    return append_trigger_http(function, context)
 
 def append_optional_property(function, properties, prop_name):
     """ If the property is set, it is added to the function body. """
@@ -142,26 +145,32 @@ def append_optional_property(function, properties, prop_name):
         function['properties'][prop_name] = val
     return
 
-def create_function_resource(resource_name, context):
+def create_function_resource(context):
     """ Creates the Cloud Function resource. """
 
     properties = context.properties
-    region = properties['region']
-    function_name = properties.get('name', resource_name)
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
+    location = properties.get('location', properties.get('region'))
 
     function = {
-        'type': 'cloudfunctions.v1beta2.function',
-        'name': function_name,
+        # https://cloud.google.com/functions/docs/reference/rest/v1/projects.locations.functions
+        'type': 'gcp-types/cloudfunctions-v1:projects.locations.functions',
+        'name': context.env['name'],
         'properties':
             {
-                'location': region,
-                'function': function_name,
+                'parent': 'projects/{}/locations/{}'.format(project_id, location),
+                'function': name,
+                # 'name': 'projects/{}/locations/{}/functions/{}'.format(project_id, location, name),
             },
     }
 
     optional_properties = ['entryPoint',
+                           'labels',
+                           'environmentVariables',
                            'timeout',
                            'runtime',
+                           'maxInstances',
                            'availableMemoryMb',
                            'description']
 
@@ -169,7 +178,7 @@ def create_function_resource(resource_name, context):
         append_optional_property(function, properties, prop)
 
     trigger_resources, trigger_outputs = append_trigger(function, context)
-    code_resources, code_outputs = append_source_code(function, context)
+    code_resources, code_outputs = append_source_code(function, project_id, context)
 
     if code_resources:
         function['metadata'] = {
@@ -184,15 +193,14 @@ def create_function_resource(resource_name, context):
                 },
                 {
                     'name': 'name',
-                    'value': '$(ref.{}.name)'.format(function_name)
+                    'value': '$(ref.{}.name)'.format(context.env['name'])
                 }
             ])
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    resource_name = context.env['name']
-    resources, outputs = create_function_resource(resource_name, context)
+    resources, outputs = create_function_resource(context)
 
     return {
         'resources': resources,

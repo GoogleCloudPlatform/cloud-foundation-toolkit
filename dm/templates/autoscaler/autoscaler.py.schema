@@ -15,9 +15,19 @@
 info:
   title: Autoscaler
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Creates an autoscaler.
-    See https://cloud.google.com/compute/docs/autoscaler/ for more details.
+
+    For more information on this resource:
+    https://cloud.google.com/compute/docs/autoscaler/
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:autoscalers =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/autoscalers
+    - gcp-types/compute-v1:regionAutoscalers =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/regionAutoscalers
+
 
 additionalProperties: false
 
@@ -42,7 +52,11 @@ oneOf:
 properties:
   name:
     type: string
-    description: The resource name.
+    description: The function name. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the autoscaler.
   description:
     type: string
     description: The resource description.
@@ -78,6 +92,7 @@ properties:
       The maximum number of replicas the autoscaler can scale up to.
   cpuUtilization:
     type: object
+    additionalProperties: false
     description: |
       Defines the CPU utilization policy that allows the autoscaler to
       scale based on the average CPU utilization of a managed instance group.
@@ -92,6 +107,7 @@ properties:
           The CPU utilization the autoscaler must maintain (as a target value).
   loadBalancingUtilization:
     type: object
+    additionalProperties: false
     required:
       - utilizationTarget
     description: |
@@ -108,6 +124,7 @@ properties:
       Configuration parameters for autoscaling based on a custom metric.
     items:
       type: object
+      additionalProperties: false
       required:
         - metric
         - utilizationTarget

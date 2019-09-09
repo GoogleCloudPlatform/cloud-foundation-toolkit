@@ -20,7 +20,7 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     CONFIG=".${DEPLOYMENT_NAME}.yaml"
 fi
 
-export PROJECT_NUMBER=$(gcloud projects list | grep "${CLOUD_FOUNDATION_PROJECT_ID}" | awk {'print $NF'})
+export PROJECT_NUMBER=$(gcloud projects describe ${CLOUD_FOUNDATION_PROJECT_ID} | grep projectNumber | sed 's/[^0-9]*//g')
 
 ########## HELPER FUNCTIONS ##########
 
@@ -69,6 +69,29 @@ function teardown() {
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    
+    
+    # Enabling OS login for the next tests
+    run gcloud compute instances add-metadata "test-inst-has-ext-ip-${RAND}" \
+            --metadata enable-oslogin=TRUE \
+            --zone "us-east1-b" \
+            --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+            
+    echo "Pre-run Status: $status"
+    echo "Pre-run Output: $output"
+    
+    [[ "$status" -eq 0 ]]
+    
+    run gcloud compute ssh "test-inst-has-ext-ip-${RAND}" --zone "us-east1-b" \
+        --command "echo 'OK' " \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "SSH Status: $status"
+    echo "SSH Output: $output"
+    
+    echo "sleeping 30"
+    sleep 30
+    
     [[ "$status" -eq 0 ]]
 }
 
@@ -129,6 +152,10 @@ function teardown() {
             --internal-ip --command 'wget google.com' --zone 'us-east1-b' \
             --quiet" \
         --quiet
+        
+    echo "status = ${status}"
+    echo "output = ${output}"
+    
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "HTTP request sent, awaiting response... 200 OK" ]]
 
@@ -141,6 +168,10 @@ function teardown() {
             --command 'wget google.com --timeout=5' --zone 'us-east1-b' \
             --quiet" \
         --quiet
+        
+    echo "status = ${status}"
+    echo "output = ${output}"
+    
     [[ "$output" =~ "failed: Network is unreachable" ]]
 }
 

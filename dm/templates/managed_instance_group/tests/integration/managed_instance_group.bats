@@ -79,12 +79,14 @@ function teardown() {
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "$output"
     [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that a zonal intance group was created" {
     run gcloud compute instance-groups managed list \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "$output"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${ZONAL_MIG_NAME}" ]]
     [[ "$output" =~ "${ZONE}" ]]

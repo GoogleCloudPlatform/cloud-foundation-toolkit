@@ -15,7 +15,6 @@ resources:
       network: network-${RAND}
       routes:
       - name: ip-route-${RAND}
-        routeType: ipaddress
         nextHopIp: 10.118.8.12
         priority: 20000
         destRange: 0.0.0.0/0
@@ -42,3 +41,7 @@ resources:
         destRange: 0.0.0.0/0
         tags:
           - my-vpntunnelroute-tag
+      - nextHopIp: 10.118.8.13
+        destRange: 0.0.0.0/0
+        tags:
+          - my-iproute-tag

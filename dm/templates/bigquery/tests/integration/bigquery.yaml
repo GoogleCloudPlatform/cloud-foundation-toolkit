@@ -28,6 +28,8 @@ resources:
     properties:
       name: test_bq_table_${RAND}
       datasetId: $(ref.test-bq-dataset-${RAND}.datasetId)
+      dependsOn:
+        - test-bq-dataset-${RAND}
       schema:
         - name: firstname
           type: STRING

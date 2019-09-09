@@ -142,7 +142,7 @@ function teardown() {
     [[ "$output" =~ "response: response-data" ]]
 }
 
-@test "HTTP healthcheck was created" {
+@test "HTTP beta healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-http
     run gcloud beta compute http-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
@@ -154,7 +154,7 @@ function teardown() {
     [[ "$output" =~ "port: ${PORT_80}" ]]
 }
 
-@test "HTTPS healthcheck was created" {
+@test "HTTPS beta healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-https
     run gcloud beta compute https-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
@@ -166,9 +166,9 @@ function teardown() {
     [[ "$output" =~ "port: 443" ]]
 }
 
-@test "HTTPS healthcheck was created" {
+@test "HTTPS beta http2 healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-http2
-    run gcloud beta compute health-checks describe ${RESOURCE_NAME}\
+    run gcloud beta compute health-checks describe --global ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
@@ -178,9 +178,9 @@ function teardown() {
     [[ "$output" =~ "port: ${PORT_80}" ]]
 }
 
-@test "TCP healthcheck was created" {
+@test "TCP beta healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-tcp
-    run gcloud beta compute health-checks describe ${RESOURCE_NAME} \
+    run gcloud beta compute health-checks describe --global ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
@@ -191,9 +191,9 @@ function teardown() {
     [[ "$output" =~ "type: TCP" ]]
 }
 
-@test "SSL healthcheck was created" {
+@test "SSL beta healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-ssl
-    run gcloud beta compute health-checks describe ${RESOURCE_NAME} \
+    run gcloud beta compute health-checks describe --global ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]

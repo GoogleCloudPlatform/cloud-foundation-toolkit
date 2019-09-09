@@ -15,26 +15,86 @@
 info:
   title: Stackdriver Metric Descriptor
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Stackdriver Metric Descriptor.
+
     For more information on this resource, see
-    https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors.
+    https://cloud.google.com/monitoring/
+
+    APIs endpoints used by this template:
+    - gcp-types/monitoring-v3:projects.metricDescriptors =>
+        https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors
 
 imports:
   - path: stackdriver_metric_descriptor.py
 
 additionalProperties: false
 
-required:
-  - type
-  - metricKind
-  - valueType
-  - unit
+allOf:
+  - required:
+      - type
+      - metricKind
+      - valueType
+  - oneOf:
+      - required:
+          - launchStage
+      - allOf:
+          - required:
+              - metadata
+          - properties:
+              metadata:
+                required:
+                  - launchStage
+      - allOf:
+          - not:
+              required:
+                - launchStage
+          - oneOf:
+              - not:
+                  required:
+                    - metadata
+              - properties:
+                  metadata:
+                    not:
+                      required:
+                        - launchStage
+
+  - oneOf:
+      - valueType:
+          enum:
+            - INT64
+            - DOUBLE
+            - DISTRIBUTION
+      - not:
+          required:
+            - unit
+
+definitions:
+  launchStage:
+    type: string
+    description: |
+      The launch stage as defined by Google Cloud Platform Launch Stages:
+      http://cloud.google.com/terms/launch-stages.
+    enum:
+      - LAUNCH_STAGE_UNSPECIFIED
+      - EARLY_ACCESS
+      - ALPHA
+      - BETA
+      - GA
+      - DEPRECATED
 
 properties:
   name:
     type: string
-    description: The resource name of the Metric Descriptor.
+    description: |
+      The name of the Metric Descriptor.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   type:
     type: string
     description: |
@@ -120,23 +180,15 @@ properties:
       case without the ending period; for example, "Request count".
       Optional but recommended to be set for any metrics associated with
       user-visible concepts, such as Quota.
+  launchStage:
+    $ref: '#/definitions/launchStage'
   metadata:
     type: object
     description: |
       Additional annotations that can be used to guide the usage of a metric.
     properties:
       launchStage:
-        type: string
-        description: |
-          The launch stage as defined by Google Cloud Platform Launch Stages:
-          http://cloud.google.com/terms/launch-stages.
-        enum:
-          - LAUNCH_STAGE_UNSPECIFIED
-          - EARLY_ACCESS
-          - ALPHA
-          - BETA
-          - GA
-          - DEPRECATED
+        $ref: '#/definitions/launchStage'
       samplePeriod:
         type: string
         description: |

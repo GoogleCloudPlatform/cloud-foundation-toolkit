@@ -15,35 +15,69 @@
 info:
   title: URL Map
   author: Sourced Group Inc.
-  description: Supports creation of the URL Map resource.
+  version: 1.0.0
+  description: |
+    Supports creation of the URL Map resource.
+
+    For more information on this resource:
+    https://cloud.google.com/load-balancing/docs/https/url-map-concepts
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:urlMaps =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/urlMaps
 
 additionalProperties: false
 
 properties:
   name:
     type: string
-    description: The resource name.
+    description: |
+      Must comply with RFC1035. Specifically, the name must be 1-63 characters long and match
+      the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter,
+      and all following characters must be a dash, lowercase letter, or digit, except the last character,
+      which cannot be a dash.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the Cloud Router instance. The
+      Google apps domain is prefixed if applicable.
   description:
     type: string
     description: The resource description (optional).
   defaultService:
     type: string
     description: |
-      The URL of the BackendService resource if none of the hostRules match.
+      The full or partial URL of the defaultService resource to which traffic is directed if none of the
+      hostRules match. If defaultRouteAction is additionally specified, advanced routing actions like URL Rewrites,
+      etc. take effect prior to sending the request to the backend. However, if defaultService is specified,
+      defaultRouteAction cannot contain any weightedBackendServices. Conversely, if routeAction specifies any
+      weightedBackendServices, service must not be specified.
+
+      Only one of defaultService, defaultUrlRedirect or defaultRouteAction.weightedBackendService must be set.
+
+      Authorization requires one or more of the following Google IAM permissions on the specified resource defaultService:
+      - compute.backendBuckets.use
+      - compute.backendServices.use
   hostRules:
     type: array
-    description: The list of HostRules to use against the URL.
+    uniqItems: true
+    description: |
+      The list of HostRules to use against the URL.
     items:
       type: object
+      additionalProperties: false
       properties:
         description:
           type: string
-          description: The resource description (optional).
+          description: |
+            The resource description (optional).
         hosts:
           type: array
           description: |
-            The list of host patterns to match. They must be valid hostnames;
-            asterisk (*) matches any string of ([a-z0-9-.]*).
+            The list of host patterns to match. They must be valid hostnames, except * will match any string of
+            ([a-z0-9-.]*). In that case, * must be the first character and must be followed
+            in the pattern by either - or ..
           items:
             type: string
         pathMatcher:
@@ -53,9 +87,12 @@ properties:
             the URL if the hostRule matches the URL's host portion.
   pathMatchers:
     type: array
-    description: The list of the named PathMatchers to use against the URL.
+    uniqItems: true
+    description: |
+      The list of the named PathMatchers to use against the URL.
     items:
       type: object
+      additionalProperties: false
       properties:
         name:
           type: string
@@ -63,30 +100,57 @@ properties:
             The name to which the PathMatcher is referred by the HostRule.
         description:
           type: string
-          description: The resource description (optional).
+          description: |
+            The resource description (optional).
         defaultService:
           type: string
           description: |
-            The full or partial URL to the BackendService resource. Used if
-            none of the pathRules defined by the PathMatcher are matched by
-            the URL's path portion. For example, the following are valid URLs
-            for the BackendService resource:
-              - https://www.googleapis.com/compute/v1/projects/PROJECT/global/backendServices/BACKENDSERVICE
-              - compute/v1/projects/project/global/backendServices/BACKENDSERVICE
-              - global/backendServices/BACKENDSERVICE
+            The full or partial URL to the BackendService resource. This will be used if none of the pathRules or
+            routeRules defined by this PathMatcher are matched. For example, the following are
+            all valid URLs to a BackendService resource:
+            - https://www.googleapis.com/compute/v1/projects/project/global/backendServices/backendService
+            - compute/v1/projects/project/global/backendServices/backendService
+            - global/backendServices/backendService
+
+            If defaultRouteAction is additionally specified, advanced routing actions like URL Rewrites, etc. take
+            effect prior to sending the request to the backend. However, if defaultService is specified,
+            defaultRouteAction cannot contain any weightedBackendServices.
+            Conversely, if defaultRouteAction specifies any weightedBackendServices, defaultService must not be specified.
+            Only one of defaultService, defaultUrlRedirect or defaultRouteAction.weightedBackendService must be set.
+
+            Authorization requires one or more of the following Google IAM permissions on the specified resource defaultService:
+            - compute.backendBuckets.use
+            - compute.backendServices.use
+
+            Authorization requires one or more of the following Google IAM permissions on the specified resource defaultService:
+            - compute.backendBuckets.use
+            - compute.backendServices.use
         pathRules:
           type: array
-          description: The list of path rules.
+          uniqItems: true
+          description: |
+            The list of path rules.
           items:
             type: object
+            additionalProperties: false
             properties:
               service:
                 type: string
                 description: |
-                  The URL of the BackendService resource if the rule is
-                  matched.
+                  The full or partial URL of the backend service resource to which traffic is directed if this
+                  rule is matched. If routeAction is additionally specified, advanced routing actions like
+                  URL Rewrites, etc. take effect prior to sending the request to the backend. However, if service
+                  is specified, routeAction cannot contain any weightedBackendService s. Conversely, if routeAction
+                  specifies any weightedBackendServices, service must not be specified.
+
+                  Only one of urlRedirect, service or routeAction.weightedBackendService must be set.
+
+                  Authorization requires one or more of the following Google IAM permissions on the specified resource service:
+                  - compute.backendBuckets.use
+                  - compute.backendServices.use
               paths:
                 type: array
+                uniqItems: true
                 description: |
                   The list of the path patterns to match. Each pattern must
                   start with /. Asterisks (*) are allowed only at the end,
@@ -97,22 +161,27 @@ properties:
                   type: string
   tests:
     type: array
+    uniqItems: true
     description: |
       The list of the expected URL mapping tests. Request to update this UrlMap
       succeed only if all of the test cases pass. You can specify a maximum of
       100 tests per UrlMap.
     items:
       type: object
+      additionalProperties: false
       properties:
         description:
           type: string
-          description: The test case description.
+          description: |
+            The test case description.
         host:
           type: string
-          description: The host portion of the URL.
+          description: |
+            The host portion of the URL.
         path:
           type: string
-          description: The path portion of the URL.
+          description: |
+            The path portion of the URL.
         service:
           type: string
           description: |

@@ -16,7 +16,7 @@ imports:
     name: metric_descriptor.py
 
 resources:
-  - name: ${METRIC_NAME}
+  - name: metric
     type: metric_descriptor.py
     properties:
       name: ${METRIC_NAME}
@@ -26,7 +26,7 @@ resources:
       metricKind: ${METRIC_KIND}
       valueType: ${VALUE_TYPE}
       unit: "${UNIT}"
+      launchStage: ${LAUNCH_STAGE}
       metadata:
-        launchStage: ${LAUNCH_STAGE}
         samplePeriod: "${SAMPLE_PERIOD}"
         ingestDelay: "${INGEST_DELAY}"

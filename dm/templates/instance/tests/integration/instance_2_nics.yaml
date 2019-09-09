@@ -18,9 +18,9 @@ resources:
       diskType: pd-ssd
       canIpForward: true
       networks:
-        - name: $(ref.test-network-0-${RAND}.selfLink)
+        - network: $(ref.test-network-0-${RAND}.selfLink)
           subnetwork: $(ref.test-subnetwork-0-${RAND}.selfLink)
-        - name: $(ref.test-network-1-${RAND}.selfLink)
+        - network: $(ref.test-network-1-${RAND}.selfLink)
           subnetwork: $(ref.test-subnetwork-1-${RAND}.selfLink)
       metadata:
         items:

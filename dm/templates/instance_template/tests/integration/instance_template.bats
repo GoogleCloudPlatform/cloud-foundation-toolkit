@@ -111,7 +111,6 @@ function teardown() {
         --format "yaml(properties.networkInterfaces[0])" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
-    [[ "$output" =~ "name: External NAT" ]]
     [[ "$output" =~ "type: ONE_TO_ONE_NAT" ]]
     [[ "$output" =~ "network: ${NET}" ]]
 }

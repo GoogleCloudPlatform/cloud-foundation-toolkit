@@ -20,7 +20,7 @@ resources:
     properties:
       portRange: 80
       backendServices:
-        - name: backend-service
+        - resourceName: backend-service
           portName: http
           healthCheck: <FIXME:healthcheck>
           backends:

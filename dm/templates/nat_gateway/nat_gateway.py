@@ -58,7 +58,7 @@ VARIABLE_NAME=$(curl http://metadata.google.internal/computeMetadata/v1/instance
 gcloud beta runtime-config configs variables set $VARIABLE_NAME 1 --config-name $CONFIG_NAME 
 """
 
-def get_network(properties):
+def get_network(project_id, properties):
     """ Gets a network name. """
 
     network_name = properties.get('network')
@@ -67,12 +67,12 @@ def get_network(properties):
     if is_self_link:
         network_url = network_name
     else:
-        network_url = 'global/networks/{}'.format(network_name)
+        network_url = 'projects/{}/global/networks/{}'.format(project_id, network_name)
 
     return network_url
 
 
-def get_subnetwork(context):
+def get_subnetwork(project_id, context):
     """ Gets a subnetwork name. """
 
     subnet_name = context.properties.get('subnetwork')
@@ -83,7 +83,7 @@ def get_subnetwork(context):
     else:
         subnet_url = 'projects/{}/regions/{}/subnetworks/{}'
         subnet_url = subnet_url.format(
-            context.env['project'],
+            project_id,
             context.properties['region'],
             subnet_name
         )
@@ -91,7 +91,7 @@ def get_subnetwork(context):
     return subnet_url
 
 
-def get_healthcheck(name):
+def get_healthcheck(project_id, name):
     """ Generate a healthcheck resource. """
 
     resource = {
@@ -104,14 +104,15 @@ def get_healthcheck(name):
                 'requestPath': '/health-check',
                 'healthyThreshold': 1,
                 'unhealthyThreshold': 5,
-                'checkIntervalSec': 30
+                'checkIntervalSec': 30,
+                'project': project_id,
             }
     }
 
     return resource
 
 
-def get_firewall(context, network):
+def get_firewall(context, project_id, network):
     """ Generate a firewall rule for the healthcheck. """
 
     # pylint: disable=line-too-long
@@ -122,7 +123,8 @@ def get_firewall(context, network):
         'type': 'firewall.py',
         'properties':
             {
-                'network': network,
+                'project': project_id,
+                'networkName': network,
                 'rules':
                     [
                         {
@@ -146,7 +148,8 @@ def get_firewall(context, network):
     return resource
 
 
-def get_external_internal_ip(ip_name,
+def get_external_internal_ip(project_id,
+                             ip_name,
                              external_ip_name,
                              internal_ip_name,
                              region,
@@ -163,11 +166,13 @@ def get_external_internal_ip(ip_name,
                     [
                         {
                             'name': external_ip_name,
+                            'project': project_id,
                             'ipType': 'REGIONAL',
                             'region': region
                         },
                         {
                             'name': internal_ip_name,
+                            'project': project_id,
                             'ipType': 'INTERNAL',
                             'region': region,
                             'subnetwork': subnet
@@ -179,7 +184,8 @@ def get_external_internal_ip(ip_name,
     return resource
 
 
-def get_instance_template(context,
+def get_instance_template(project_id,
+                          context,
                           instance_template_name,
                           external_ip,
                           internal_ip,
@@ -193,6 +199,7 @@ def get_instance_template(context,
         'type': 'instance_template.py',
         'properties':
             {
+                'project': project_id,
                 'natIP': external_ip,
                 'network': network,
                 'subnetwork': subnet,
@@ -221,7 +228,7 @@ def get_instance_template(context,
     return resource
 
 
-def get_route(context, route_name, internal_ip, network):
+def get_route(project_id, context, route_name, internal_ip, network):
     """ Generate a route resource. """
 
     resource = {
@@ -229,6 +236,7 @@ def get_route(context, route_name, internal_ip, network):
         'type': 'route.py',
         'properties':
             {
+                'project': project_id,
                 'network': network,
                 'routes':
                     [
@@ -247,7 +255,8 @@ def get_route(context, route_name, internal_ip, network):
     return resource
 
 
-def get_managed_instance_group(name,
+def get_managed_instance_group(project_id,
+                               name,
                                healthcheck,
                                instance_template_name,
                                base_instance_name,
@@ -256,9 +265,11 @@ def get_managed_instance_group(name,
 
     resource = {
         'name': name,
-        'type': 'compute.v1.instanceGroupManager',
+        # https://cloud.google.com/compute/docs/reference/rest/v1/instanceGroupManagers
+        'type': 'gcp-types/compute-v1:instanceGroupManagers',
         'properties':
             {
+                'project': project_id,
                 'instanceTemplate':
                     '$(ref.' + instance_template_name + '.selfLink)',
                 'baseInstanceName': base_instance_name,
@@ -285,14 +296,15 @@ def generate_config(context):
     prefix = context.env['name']
     hc_name = prefix + '-healthcheck'
     region = context.properties['region']
-    network_name = get_network(context.properties)
-    subnet_name = get_subnetwork(context)
+    project_id = context.properties.get('project', context.env['project'])
+    network_name = get_network(project_id, context.properties)
+    subnet_name = get_subnetwork(project_id, context)
 
     # Health check to be used by the managed instance groups.
-    resources.append(get_healthcheck(hc_name))
+    resources.append(get_healthcheck(project_id, hc_name))
 
     # Firewall rule that allows the healthcheck to work.
-    resources.append(get_firewall(context, network_name))
+    resources.append(get_firewall(context, project_id, context.properties.get('network')))
 
     # Outputs:
     out = {}
@@ -306,6 +318,7 @@ def generate_config(context):
         internal_ip_name = prefix + '-ip-internal-' + zone
         resources.append(
             get_external_internal_ip(
+                project_id,
                 ip_name,
                 external_ip_name,
                 internal_ip_name,
@@ -328,6 +341,7 @@ def generate_config(context):
         instance_template_name = prefix + '-insttempl-' + zone
         resources.append(
             get_instance_template(
+                project_id,
                 context,
                 instance_template_name,
                 external_ip,
@@ -342,6 +356,7 @@ def generate_config(context):
         base_instance_name = prefix + '-gateway-' + zone
         resources.append(
             get_managed_instance_group(
+                project_id,
                 instance_group_manager_name,
                 hc_name,
                 instance_template_name,
@@ -354,7 +369,8 @@ def generate_config(context):
         # next hop.
         route_name = prefix + '-route-' + zone
         resources.append(
-            get_route(context,
+            get_route(project_id,
+                      context,
                       route_name,
                       internal_ip,
                       network_name)
