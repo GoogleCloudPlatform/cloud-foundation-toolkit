@@ -15,6 +15,7 @@
 
 from hashlib import sha1
 import json
+import six
 
 
 def set_optional_property(destination, source, prop_name):
@@ -26,7 +27,10 @@ def set_optional_property(destination, source, prop_name):
 def create_subscription(resource_name, project_id, spec):
     """ Create a pull/push subscription from the simplified spec. """
 
-    suffix = 'subscription-{}'.format(sha1(resource_name + json.dumps(spec)).hexdigest()[:10])
+    if six.PY2:
+        suffix = 'subscription-{}'.format(sha1(resource_name + json.dumps(spec)).hexdigest()[:10])
+    else:
+        suffix = 'subscription-{}'.format(sha1((resource_name + json.dumps(spec)).encode('utf-8')).hexdigest()[:10])
 
     subscription = {
         'name': '{}-{}'.format(resource_name, suffix),
