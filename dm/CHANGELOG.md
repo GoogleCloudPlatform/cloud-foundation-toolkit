@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - Locking down schemas:
   - Tight check on invalid properties to catch typos instead of ignoring them
   - Tight check on combination of properties. ( For example a project can't be
-  a host and a guest (VPC) porject at the same time.)
+  a host and a guest (VPC) project at the same time.)
   
 #### CI improvements:
 - Our CI environment is running tests on the current master and dev branch

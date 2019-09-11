@@ -135,8 +135,6 @@ properties:
                 Regexes matching tags to build.
                 
                 The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax
-
-
   disabled:
     type: boolean
     default: False

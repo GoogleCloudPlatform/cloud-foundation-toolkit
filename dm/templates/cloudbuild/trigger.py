@@ -78,6 +78,7 @@ def generate_config(context):
         build_trigger_update['properties']['filename'] = build_filename
 
     if build_trigger_template:
+        build_trigger_template['projectId'] = project_id
         build_trigger_create['properties']['triggerTemplate'] = build_trigger_template
         build_trigger_update['properties']['triggerTemplate'] = build_trigger_template
     elif build_github:
