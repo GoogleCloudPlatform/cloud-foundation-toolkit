@@ -21,7 +21,7 @@ resources:
           zone: us-central1-c
         ipConfiguration:
           ipv4Enabled: false
-          privateNetwork: 'your-vpc-network-name'
+          privateNetwork: <FIXME:VPCNetworkName>
       users:
         - name: user-1
           host: 10.1.1.1
