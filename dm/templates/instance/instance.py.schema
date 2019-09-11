@@ -534,8 +534,8 @@ properties:
     description: |
       The source image for the disk. To create the disk with one of the
       public operating system images, specify the image by its family name.
-      For example, specify family/debian-9 to use the latest Debian 9 image
-      projects/debian-cloud/global/images/family/debian-9.
+      For example, use "projects/debian-cloud/global/images/family/debian-9" 
+      to install the latest Debian 9 image.
       To create a disk with a custom image (that you created), specify the image
       name in the following format: global/images/my-custom-image.
       See https://cloud.google.com/compute/docs/images for details.

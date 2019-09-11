@@ -4,7 +4,7 @@
 
 ### Requirements 
 
- * go 1.12
+ * go 1.12 and above 
 
 ### Build and Run 
 

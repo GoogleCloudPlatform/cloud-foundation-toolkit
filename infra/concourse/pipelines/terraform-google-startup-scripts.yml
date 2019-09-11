@@ -17,13 +17,14 @@ resources:
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/lint
+    tag: 2.3.0
     username: _json_key
     password: ((sa.google))
 - name: integration-test-image
   type: docker-image
   source:
     repository: gcr.io/cloud-foundation-cicd/cft/kitchen-terraform
-    tag: 0.11.10_216.0.0_1.19.1_0.1.10
+    tag: 2.3.0
     username: _json_key
     password: ((sa.google))
 
@@ -50,8 +51,8 @@ jobs:
         path: terraform-google-startup-scripts
       - name: lint-test-image
       run:
-        path: /bin/bash
-        args: ['test/ci_lint.sh']
+        path: make
+        args: ['-s']
         dir: terraform-google-startup-scripts
   on_success:
     put: notify-lint-test-success

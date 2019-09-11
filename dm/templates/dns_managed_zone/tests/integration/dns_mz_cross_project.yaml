@@ -7,6 +7,7 @@
 #
 #   Please note: you should grant Editor permission on the cross-referenced
 #   Project to your current Google APIs account <PROJECT_ID>@cloudservices.gserviceaccount.com
+
 imports:
   - path: templates/dns_managed_zone/dns_managed_zone.py
     name: dns_managed_zone.py

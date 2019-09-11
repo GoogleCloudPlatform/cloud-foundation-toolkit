@@ -43,7 +43,7 @@ function setup() {
 }
 
 function teardown() {
-    Global teardown; this is executed once per test file.
+    # Global teardown; this is executed once per test file.
     if [[ "$BATS_TEST_NUMBER" -eq "${#BATS_TEST_NAMES[@]}" ]]; then
         delete_config
     fi
@@ -97,6 +97,13 @@ function teardown() {
     run gcloud pubsub subscriptions describe second-subscription-${RAND} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$output" =~ "ackDeadlineSeconds: 15" ]]
+}
+
+@test "Verifying that second-subscription-${RAND}'s expiration policy was set" {
+    run gcloud pubsub subscriptions describe second-subscription-${RAND} \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$output" =~ "expirationPolicy:" ]]
+    [[ "$output" =~ "ttl: 86400s" ]]
 }
 
 @test "Deleting deployment" {

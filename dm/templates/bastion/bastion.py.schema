@@ -72,6 +72,9 @@ properties:
     type: boolean
     default: true
     description: |
+      !!! WARNING !!! This feature does not stop the GCP deamon addig 
+      Cloud Identity users to sudoers based on Compute OS Login Admin IAM.
+      
       When Trues (default), disables `sudo` on the Bastion host for tighter
       security.
   metadata:

@@ -66,7 +66,7 @@ def generate_config(context):
         }
     if (
         properties.get('usageExportBucket', {}).get('enabled', True) and
-        'api-compute.googleapis.com' in api_names_list
+        "{}-api-compute.googleapis.com".format(context.env['name']) in api_names_list
     ):
         resources.extend(create_bucket(context))
 
@@ -74,13 +74,13 @@ def generate_config(context):
 
     if (
         properties.get('removeDefaultVPC', True) and
-        'api-compute.googleapis.com' in api_names_list
+        "{}-api-compute.googleapis.com".format(context.env['name']) in api_names_list
     ):
         resources.extend(delete_default_network(context, api_names_list))
 
     if (
         properties.get('removeDefaultSA', True) and
-        'api-compute.googleapis.com' in api_names_list
+        "{}-api-compute.googleapis.com".format(context.env['name']) in api_names_list
     ):
         resources.extend(delete_default_service_account(context, api_names_list))
 
@@ -136,7 +136,7 @@ def activate_apis(context):
             apis.append('compute.googleapis.com')
 
     resources = []
-    api_names_list = ['billing']
+    api_names_list = ['{}-billing'.format(context.env['name'])]
     for api in apis:
         depends_on = ['{}-billing'.format(context.env['name'])]
         # Serialize activation of all APIs by making apis[n]
@@ -218,7 +218,7 @@ def create_shared_vpc_subnet_iam(context, dependencies, members_list):
                         'name': subnet['subnetId'],
                         'project': context.properties['sharedVPC'],
                         'region': subnet['region'],
-                        'policy' : {
+                        'policy': {
                             'bindings': [
                                 {
                                     'role': 'roles/compute.networkUser',
@@ -344,7 +344,7 @@ def create_bucket(context):
             },
         'metadata':
             {
-                'dependsOn': ['api-storage-component.googleapis.com']
+                'dependsOn': ['{}-api-storage-component.googleapis.com'.format(context.env['name'])]
             }
     })
 

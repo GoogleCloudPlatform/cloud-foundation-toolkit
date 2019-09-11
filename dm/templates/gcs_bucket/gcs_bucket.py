@@ -36,6 +36,10 @@ def generate_config(context):
         }
     }
 
+    requesterPays = context.properties.get('requesterPays')
+    if requesterPays is not None:
+      bucket['properties']['billing'] = {'requesterPays': requesterPays}
+
     optional_props = [
         'acl',
         'iamConfiguration',

@@ -3,11 +3,14 @@ package cmd
 import (
 	"os"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
+	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
+	Use:   "cft",
 	Short: "Google Cloud Foundation Toolkit CLI",
 	Long:  "Google Cloud Foundation Toolkit CLI",
 	Args:  cobra.NoArgs,
@@ -17,10 +20,22 @@ var rootCmd = &cobra.Command{
 			cmd.HelpFunc()(cmd, args)
 		}
 	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if !flags.verbose {
+			// discard logs
+			scorecard.Log.SetHandler(log.DiscardHandler())
+		}
+	},
+}
+
+var flags struct {
+	// Common flags
+	verbose bool
 }
 
 func init() {
-	rootCmd.SetUsageTemplate(`Usage:{{if .Runnable}}{{.UseLine}}{{end}}
+	rootCmd.SetUsageTemplate(`Usage:
+  {{if .Runnable}}{{.UseLine}}{{end}}
   {{if .HasAvailableSubCommands}}{{.CommandPath}} [command] [flags]{{end}}{{if gt (len .Aliases) 0}}
 
 Aliases:
@@ -46,6 +61,10 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	if os.Args == nil {
 		rootCmd.SetArgs([]string{"-h"})
 	}
+
+	rootCmd.PersistentFlags().BoolVar(&flags.verbose, "verbose", false, "Log output to stdout")
+
+	rootCmd.AddCommand(scorecard.Cmd)
 }
 
 func Execute() {
