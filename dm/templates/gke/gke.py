@@ -15,6 +15,7 @@
 
 from packaging import version
 
+
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
@@ -28,16 +29,17 @@ def generate_config(context):
         'name': context.env['name'],
         'type': '',
         'properties':
+        {
+            'parent': 'projects/{}/locations/{}'.format(
+                project_id,
+                properties.get('zone', properties.get(
+                    'location', properties.get('region')))
+            ),
+            'cluster':
             {
-                'parent': 'projects/{}/locations/{}'.format(
-                    project_id,
-                    properties.get('zone', properties.get('location', properties.get('region')))
-                ),
-                'cluster':
-                    {
-                        'name': name,
-                    }
+                'name': name,
             }
+        }
     }
 
     if properties.get('zone'):
@@ -96,7 +98,7 @@ def generate_config(context):
             raise KeyError(
                 "{} is a required cluster property for a {} Cluster."
                 .format(prop,
-                        cluster_type)
+                        gke_cluster['type'])
             )
 
     for oprop in optional_props:
@@ -118,16 +120,18 @@ def generate_config(context):
 
     initial_cluster_version = propc.get('initialClusterVersion')
     less_than_112 = (
-        initial_cluster_version.lower() != 'latest' and 
-        version.parse(initial_cluster_version.split('-')[0]) < version.parse("1.12")
+        initial_cluster_version.lower() != 'latest' and
+        version.parse(initial_cluster_version.split('-')
+                      [0]) < version.parse("1.12")
     )
 
     if (
-        # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
-        propc.get('enableDefaultAuthOutput', False) and (
-            less_than_112 or propc.get('masterAuth', {}).get('clientCertificateConfig', False)
-        )
-    ):
+            # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
+            propc.get('enableDefaultAuthOutput', False) and (
+                less_than_112 or propc.get('masterAuth', {}).get(
+                    'clientCertificateConfig', False)
+            )
+        ):
         output_props.append('clientCertificate')
         output_props.append('clientKey')
 
@@ -142,7 +146,8 @@ def generate_config(context):
             output_obj['value'] = '$(ref.' + context.env['name'] + \
                 '.nodePools[0].' + outprop + ')'
         else:
-            output_obj['value'] = '$(ref.' + context.env['name'] + '.' + outprop + ')'
+            output_obj['value'] = '$(ref.' + \
+                context.env['name'] + '.' + outprop + ')'
 
         outputs.append(output_obj)
 

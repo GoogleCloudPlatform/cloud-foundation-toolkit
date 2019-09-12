@@ -43,7 +43,9 @@ def append_cloud_storage_sources(function, project, context):
         from upload import generate_upload_path, upload_source
 
         upload_path = upload_path or generate_upload_path()
-        res = upload_source(context.env['name'], project, function, context.imports, local_path, upload_path)
+        res = upload_source(
+            context.env['name'], project, function,
+            context.imports, local_path, upload_path)
         source_resources, source_outputs = res
         resources += source_resources
         outputs += source_outputs
@@ -63,7 +65,7 @@ def append_cloud_repository_sources(function, context):
     })
     function['properties']['sourceRepository'] = repo
 
-    name = function['name']
+    # name = function['name']
     output = {
         'name': 'sourceRepositoryUrl',
         'value': '$(ref.{}.sourceRepository.deployedUrl)'.format(context.env['name'])
@@ -161,7 +163,7 @@ def create_function_resource(context):
             {
                 'parent': 'projects/{}/locations/{}'.format(project_id, location),
                 'function': name,
-                # 'name': 'projects/{}/locations/{}/functions/{}'.format(project_id, location, name),
+                # 'name': 'projects/{}/locations/{}/functions/{}'.format(project_id, location, name),  # pylint: disable=line-too-long
             },
     }
 

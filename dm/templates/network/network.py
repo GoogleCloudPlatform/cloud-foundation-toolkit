@@ -51,9 +51,7 @@ def generate_config(context):
 
     # Subnetworks:
     out = {}
-    for i, subnetwork in enumerate(
-        properties.get('subnetworks', []), 1
-    ):
+    for i, subnetwork in enumerate(properties.get('subnetworks', []), 1):
         subnetwork['network'] = network_self_link
         if properties.get('project'):
             subnetwork['project'] = properties.get('project')

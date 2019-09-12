@@ -57,12 +57,12 @@ def get_network_interfaces(properties):
             "networkIP": properties.get('networkIP'),
         }
         networks.append(network)
-        if (properties.get('hasExternalIp')):
+        if properties.get('hasExternalIp'):
             network['accessConfigs'] = [{
                 "type": "ONE_TO_ONE_NAT",
             }]
         if properties.get('natIP'):
-          network['accessConfigs'][0]["natIp"] = properties.get('natIP')
+            network['accessConfigs'][0]["natIp"] = properties.get('natIP')
 
     for network in networks:
         if not '.' in network['network'] and not '/' in network['network']:

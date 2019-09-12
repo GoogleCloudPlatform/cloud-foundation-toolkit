@@ -32,7 +32,7 @@ def generate_config(context):
         name = route.get('name')
         if not name:
             name = '{}-{}'.format(context.env['name'], sha1(json.dumps(route)).hexdigest()[:10])
-        
+
         route_properties = {
             'name': name,
             'network': network_name,

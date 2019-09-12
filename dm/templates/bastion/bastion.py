@@ -186,10 +186,10 @@ def generate_config(context):
     name = properties.get('name', context.env['name'])
 
     network = properties['network']
-    if not '$(ref' in network:
-        if not 'global/' in network:
+    if '$(ref' not in network:
+        if 'global/' not in network:
             network = 'global/networks/{}'.format(network)
-        if not 'project/' in network:
+        if 'project/' not in network:
             network = 'projects/{}/{}'.format(project_id, network)
 
     bastion_props = {

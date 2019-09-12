@@ -17,13 +17,12 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-
     properties = context.properties
     project_id = properties.get('project', context.env['project'])
 
     network = context.properties.get('networkURL', generate_network_uri(
         project_id,
-        context.properties.get('network','')
+        context.properties.get('network', '')
     ))
     target_vpn_gateway = context.env['name'] + '-tvpng'
     esp_rule = context.env['name'] + '-esp-rule'
@@ -71,7 +70,8 @@ def generate_config(context):
             'type': 'gcp-types/compute-v1:forwardingRules',
             'properties':
                 {
-                    'name': '{}-esp'.format(properties.get('name')) if 'name' in properties else esp_rule,
+                    'name': '{}-esp'.format(
+                        properties.get('name')) if 'name' in properties else esp_rule,
                     'project': project_id,
                     'IPAddress': ip_address,
                     'IPProtocol': 'ESP',
@@ -86,7 +86,8 @@ def generate_config(context):
             'type': 'gcp-types/compute-v1:forwardingRules',
             'properties':
                 {
-                    'name': '{}-udp-4500'.format(properties.get('name')) if 'name' in properties else udp_4500_rule,
+                    'name': '{}-udp-4500'.format(
+                        properties.get('name')) if 'name' in properties else udp_4500_rule,
                     'project': project_id,
                     'IPAddress': ip_address,
                     'IPProtocol': 'UDP',
@@ -102,7 +103,8 @@ def generate_config(context):
             'type': 'gcp-types/compute-v1:forwardingRules',
             'properties':
                 {
-                    'name': '{}-udp-500'.format(properties.get('name')) if 'name' in properties else udp_500_rule,
+                    'name': '{}-udp-500'.format(
+                        properties.get('name')) if 'name' in properties else udp_500_rule,
                     'project': project_id,
                     'IPAddress': ip_address,
                     'IPProtocol': 'UDP',
@@ -148,9 +150,9 @@ def generate_config(context):
                     },
                 'metadata': {
                     'dependsOn': [esp_rule,
-                                udp_500_rule,
-                                udp_4500_rule]
-                }
+                                  udp_500_rule,
+                                  udp_4500_rule]
+                    }
             },
             {
                 # An action that is executed after the vpn_tunnel function.
@@ -251,9 +253,11 @@ def generate_config(context):
             ]
     }
 
+
 def generate_network_uri(project_id, network):
     """Format the resource name as a resource URI."""
     return 'projects/{}/global/networks/{}'.format(project_id, network)
+
 
 def generate_router_uri(project_id, region, router_name):
     """Format the router name as a router URI."""

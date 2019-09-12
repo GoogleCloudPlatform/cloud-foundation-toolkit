@@ -20,7 +20,7 @@ def generate_config(context):
     resources = []
     outputs = []
     properties = context.properties
-    project_id = properties.get('project', context.env['project'])
+    # project_id = properties.get('project', context.env['project'])
     metric_descriptor = {
         'name': context.env['name'],
         # https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors

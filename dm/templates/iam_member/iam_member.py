@@ -27,14 +27,16 @@ def generate_config(context):
     resources = []
     for role in properties['roles']:
         for member in role['members']:
-            suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
+            suffix = sha1(
+                '{}-{}'.format(role['role'], member)).hexdigest()[:10]
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
             if org_id:
                 resources.append({
                     'name': '{}-organization'.format(policy_get_name),
                     # TODO - Virtual type documentation needed
-                    'type': 'gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding',
+                    'type':
+                        'gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding',
                     'properties': {
                         'resource': org_id,
                         'role': role['role'],
@@ -63,7 +65,6 @@ def generate_config(context):
                         'member': member,
                     }
                 })
-
 
     if 'dependsOn' in properties:
         for resource in resources:

@@ -121,7 +121,8 @@ def generate_config(context):
     properties = context.properties
     project_id = properties.get('project', context.env['project'])
 
-    backend_resources, backend_outputs = get_backend_service(properties, project_id, context.env['name'])
+    backend_resources, backend_outputs = get_backend_service(
+        properties, project_id, context.env['name'])
     rule_resources, rule_outputs = get_forwarding_rule(
         properties,
         backend_resources[0],

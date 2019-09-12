@@ -129,8 +129,10 @@ def get_backend_services(properties, res_name, project_id):
     backend_specs = properties['backendServices']
 
     for backend_spec in backend_specs:
-        backend_res_name = '{}-backend-service-{}'.format(res_name, sha1(json.dumps(backend_spec)).hexdigest()[:10])
-        resources, outputs = get_backend_service(properties, backend_spec, backend_res_name, project_id)
+        backend_res_name = '{}-backend-service-{}'.format(
+            res_name, sha1(json.dumps(backend_spec)).hexdigest()[:10])
+        resources, outputs = get_backend_service(
+            properties, backend_spec, backend_res_name, project_id)
         backend_resources += resources
         # Merge outputs with the same name.
         for output in outputs:
@@ -201,11 +203,11 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
 
     depends = []
     if 'HTTP' in protocol:
-        urlMap = copy.deepcopy(properties['urlMap'])
-        if 'name' not in urlMap and 'name' in properties:
-            urlMap['name'] = '{}-url-map'.format(properties['name'])
+        url_map = copy.deepcopy(properties['urlMap'])
+        if 'name' not in url_map and 'name' in properties:
+            url_map['name'] = '{}-url-map'.format(properties['name'])
         target, resources, outputs = get_url_map(
-            urlMap,
+            url_map,
             '{}-url-map'.format(res_name),
             project_id
         )
@@ -295,8 +297,10 @@ def generate_config(context):
     project_id = properties.get('project', context.env['project'])
 
     # Forwarding rule + target proxy + backend service = ELB
-    bs_resources, bs_outputs = get_backend_services(properties, context.env['name'], project_id)
-    target_resources, target_outputs = get_target_proxy(properties, context.env['name'], project_id, bs_resources)
+    bs_resources, bs_outputs = get_backend_services(
+        properties, context.env['name'], project_id)
+    target_resources, target_outputs = get_target_proxy(
+        properties, context.env['name'], project_id, bs_resources)
     rule_resources, rule_outputs = get_forwarding_rule(
         properties,
         target_resources[0],

@@ -36,9 +36,9 @@ def generate_config(context):
         }
     }
 
-    requesterPays = context.properties.get('requesterPays')
-    if requesterPays is not None:
-      bucket['properties']['billing'] = {'requesterPays': requesterPays}
+    requester_pays = context.properties.get('requesterPays')
+    if requester_pays is not None:
+        bucket['properties']['billing'] = {'requesterPays': requester_pays}
 
     optional_props = [
         'acl',
@@ -75,17 +75,18 @@ def generate_config(context):
             'name': '{}-iampolicy'.format(context.env['name']),
             'action': (storage_provider_type),
             'properties':
-                {
-                    'bucket': '$(ref.{}.name)'.format(context.env['name']),
-                    'project': project_id,
-                    'bindings': bindings
-                }
+            {
+                'bucket': '$(ref.{}.name)'.format(context.env['name']),
+                'project': project_id,
+                'bindings': bindings
+            }
         }
         resources.append(iam_policy)
 
     if properties.get('billing', {}).get('requesterPays'):
         for resource in resources:
-            resource['properties']['userProject'] = properties.get('userProject', context.env['project'])
+            resource['properties']['userProject'] = properties.get(
+                'userProject', context.env['project'])
 
     return {
         'resources':

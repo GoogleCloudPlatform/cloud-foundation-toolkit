@@ -18,7 +18,7 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     properties = context.properties
-    project_id = properties.get('project', context.env['project'])
+    # project_id = properties.get('project', context.env['project'])
     config_name = context.properties.get('config')
 
     props = {

@@ -13,11 +13,13 @@
 # limitations under the License.
 """ This template creates a Compute Instance."""
 
+
 def set_optional_property(receiver, source, property_name):
     """ If set, copies the given property value from one object to another. """
 
     if property_name in source:
         receiver[property_name] = source[property_name]
+
 
 def create_boot_disk(properties, zone, instance_name):
     """ Create a boot disk configuration. """
@@ -43,6 +45,7 @@ def create_boot_disk(properties, zone, instance_name):
 
     return boot_disk
 
+
 def get_network_interfaces(properties):
     """ Get the configuration that connects the instance to an existing network
         and assigns to it an ephemeral public IP if specified.
@@ -57,7 +60,7 @@ def get_network_interfaces(properties):
             "networkIP": properties.get('networkIP'),
         }
         networks.append(network)
-        if (properties.get('hasExternalIp')):
+        if properties.get('hasExternalIp'):
             network['accessConfigs'] = [{
                 "type": "ONE_TO_ONE_NAT",
             }]
@@ -74,7 +77,8 @@ def get_network_interfaces(properties):
             'network': network_name,
         }
 
-        netif_optional_props = ['subnetwork', 'networkIP', 'aliasIpRanges', 'accessConfigs']
+        netif_optional_props = ['subnetwork',
+                                'networkIP', 'aliasIpRanges', 'accessConfigs']
         for prop in netif_optional_props:
             if network.get(prop):
                 network_interface[prop] = network[prop]
@@ -97,7 +101,7 @@ def generate_config(context):
         'name': context.env['name'],
         # https://cloud.google.com/compute/docs/reference/rest/v1/instances
         'type': 'gcp-types/compute-v1:instances',
-        'properties':{
+        'properties': {
             'name': vm_name,
             'zone': zone,
             'project': project_id,
@@ -107,7 +111,7 @@ def generate_config(context):
         }
     }
 
-    optionalProperties = [
+    optional_properties = [
         'description',
         'scheduling',
         'disks',
@@ -123,11 +127,12 @@ def generate_config(context):
         'canIpForward',
         'tags',
     ]
-    for name in optionalProperties:
+    for name in optional_properties:
         set_optional_property(instance['properties'], properties, name)
 
     if not properties.get('disks'):
-        instance['properties']['disks'] = [create_boot_disk(properties, zone, vm_name)]
+        instance['properties']['disks'] = [
+            create_boot_disk(properties, zone, vm_name)]
 
     outputs = [
         {
@@ -151,14 +156,15 @@ def generate_config(context):
         })
 
         if 'accessConfigs' in network_interfaces[0]:
-            accessConfigs = network_interfaces[0]['accessConfigs']
-            for i, row in enumerate(accessConfigs, 0):
-              if row['type'] == 'ONE_TO_ONE_NAT':
-                outputs.append({
-                  'name': 'externalIp',
-                  'value': '$(ref.{}.networkInterfaces[0].accessConfigs[{}].natIP)'.format(context.env['name'], i)
-                })
-                break
-
+            access_configs = network_interfaces[0]['accessConfigs']
+            for i, row in enumerate(access_configs, 0):
+                if row['type'] == 'ONE_TO_ONE_NAT':
+                    outputs.append({
+                        'name': 'externalIp',
+                        'value':
+                            '$(ref.{}.networkInterfaces[0].accessConfigs[{}].natIP)'.format(
+                                context.env['name'], i)
+                    })
+                    break
 
     return {'resources': [instance], 'outputs': outputs}
