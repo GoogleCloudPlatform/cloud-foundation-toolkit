@@ -51,9 +51,9 @@ docker_run:
 		-e SERVICE_ACCOUNT_JSON \
 		-v $(CURDIR):/workspace \
 		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
-		/bin/bash 
+		/bin/bash
 
-# Execute integration tests within the docker containerT
+# Execute integration tests within the docker container
 .PHONY: docker_test_integration
 docker_test_integration:
 	docker run --rm -it \
