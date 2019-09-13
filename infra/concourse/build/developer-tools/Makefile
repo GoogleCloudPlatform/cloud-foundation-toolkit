@@ -19,7 +19,7 @@ GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.6.0
 RUBY_VERSION := 2.6.3
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 0.1.0
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 0.2.0
 DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
@@ -51,9 +51,9 @@ docker_run:
 		-e SERVICE_ACCOUNT_JSON \
 		-v $(CURDIR):/workspace \
 		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
-		/bin/bash
+		/bin/bash 
 
-# Execute integration tests within the docker container
+# Execute integration tests within the docker containerT
 .PHONY: docker_test_integration
 docker_test_integration:
 	docker run --rm -it \
