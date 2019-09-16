@@ -382,7 +382,7 @@ kitchen_do() {
   init_credentials
 
   export CMD="$*"
-  kitchen "$CMD"
+  kitchen "$CMD" --test-base-path="$KITCHEN_TEST_BASE_PATH"
 }
 
 # This function is called by /usr/local/bin/test_integration.sh and can be
@@ -391,16 +391,16 @@ run_integration_tests() {
   source_test_env
 
   init_credentials
-  kitchen create
-  kitchen converge
-  kitchen verify
+  kitchen create --test-base-path="$KITCHEN_TEST_BASE_PATH"
+  kitchen converge --test-base-path="$KITCHEN_TEST_BASE_PATH"
+  kitchen verify --test-base-path="$KITCHEN_TEST_BASE_PATH"
 }
 
 # Integration testing requires `kitchen destroy` to be called up before the
 # environment is cleaned up.
 finish_integration() {
   local rv=$?
-  kitchen destroy
+  kitchen destroy --test-base-path="$KITCHEN_TEST_BASE_PATH"
   finish
   exit "${rv}"
 }

@@ -16,9 +16,12 @@ resources:
     type: backend_service.py
     properties:
       protocol: HTTP
+      loadBalancingScheme: EXTERNAL
+      sessionAffinity: CLIENT_IP
       backends:
         - group: <FIXME:instanceGroup>
-          balancingMode: RATE
-          maxRate: 10000
+          balancingMode: UTILIZATION
+          maxUtilization: 0.8
       healthChecks:
         - <FIXME:healthcheck>
+      portName: http
