@@ -14,7 +14,7 @@
 
 info:
   title: Unmanaged Instance Group
-  author: Sourced Group Inc.
+  author: Google Cloud PSO and partners
   version: 1.0.0
   description: |
     Creates a unmanaged instance group.
