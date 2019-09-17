@@ -31,34 +31,39 @@ imports:
 
 required:
   - zone
-  - machineType
-  - diskImage
 
 oneOf:
   - allOf:
     - required:
-        - networks
-    - properties:
-        networks:
-          minItems: 1
-    - not:
-        required:
-          - network
-    - not:
-        required:
-          - natIP
-    - not:
-        required:
-          - subnetwork
-    - not:
-        required:
-          - networkIP
-  - allOf:
-    - required:
-        - network
-    - not:
-       required:
-         - networks
+        - machineType
+        - diskImage
+    oneOf:
+      - allOf:
+        - required:
+            - networks
+        - properties:
+            networks:
+              minItems: 1
+        - not:
+            required:
+              - network
+        - not:
+            required:
+              - natIP
+        - not:
+            required:
+              - subnetwork
+        - not:
+            required:
+              - networkIP
+      - allOf:
+        - required:
+            - network
+        - not:
+           required:
+             - networks
+  - required:
+    - sourceInstanceTemplate
 
 additionalProperties: false
 
@@ -717,7 +722,12 @@ properties:
           type: integer
           description: |
             The number of the guest accelerator cards exposed to this instance.
-
+  sourceInstanceTemplate:
+    type: string
+    description: |
+      Specifies instance template to create the instance.
+      This field is optional. It can be a full or partial URL.
+      See https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert for details.
 outputs:
   properties:
     - networkInterfaces:
