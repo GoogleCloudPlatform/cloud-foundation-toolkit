@@ -38,5 +38,5 @@ do
     echo_color "Schema validation"
     ajv validate -s example.py.schema.json -d example.json
     EXAMPLE_COUNT=$(($EXAMPLE_COUNT-1))
-
+ 
 done

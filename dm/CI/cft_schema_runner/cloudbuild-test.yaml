@@ -2,49 +2,49 @@
 #find . -name "*.yam"l | grep examples| sort -n | awk '{print "- name: 'gcr.io/\$PROJECT_ID/cft-schema'\n  args: [`"$1"`]"}' | sed "s/\`/'/g"
 
 steps:
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/autoscaler/examples/autoscaler_regional.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/autoscaler/examples/autoscaler_zonal.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/autoscaler/examples/autoscaler_regional.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/autoscaler/examples/autoscaler_zonal.yaml']
 # bug 
 #- name: gcr.io/$PROJECT_ID/cft-schema
 #  args: ['./templates/backend_service/examples/backend_service_global.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/backend_service/examples/backend_service_regional.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/bastion/examples/bastion.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/backend_service/examples/backend_service_regional.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/bastion/examples/bastion.yaml']
 # Skip, complex example
 #- name: gcr.io/$PROJECT_ID/cft-schema
 #  args: ['./templates/bigquery/examples/bigquery.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloudbuild/examples/cloudbuild_reposource.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloudbuild/examples/cloudbuild_storagesource.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloudbuild/examples/cloudbuild_reposource.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloudbuild/examples/cloudbuild_storagesource.yaml']
 # FAILING
 #- name: gcr.io/$PROJECT_ID/cft-schema
 #  args: ['./templates/cloudbuild/examples/cloudbuild_trigger.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloudbuild/examples/cloudbuild.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_function/examples/cloud_function_upload.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_function/examples/cloud_function.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_router/examples/cloud_router.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_spanner/examples/cloud_spanner.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_sql/examples/cloud_sql_read_replica.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_sql/examples/cloud_sql.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_tasks/examples/cloud_tasks_queue.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/cloud_tasks/examples/cloud_tasks_task.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/dataproc/examples/dataproc.yaml']
-- name: gcr.io/$PROJECT_ID/cft-schema
-  args: ['./templates/dns_managed_zone/examples/dns_managed_zone_legacy.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloudbuild/examples/cloudbuild.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_function/examples/cloud_function_upload.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_function/examples/cloud_function.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_router/examples/cloud_router.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_spanner/examples/cloud_spanner.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_sql/examples/cloud_sql_read_replica.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_sql/examples/cloud_sql.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_tasks/examples/cloud_tasks_queue.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/cloud_tasks/examples/cloud_tasks_task.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/dataproc/examples/dataproc.yaml']
+#- name: gcr.io/$PROJECT_ID/cft-schema
+#  args: ['./templates/dns_managed_zone/examples/dns_managed_zone_legacy.yaml']
   # FIXME
 #- name: gcr.io/$PROJECT_ID/cft-schema
 #  args: ['./templates/dns_managed_zone/examples/dns_managed_zone_private_visibility_config.yaml']
