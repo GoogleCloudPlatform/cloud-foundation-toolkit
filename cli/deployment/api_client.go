@@ -201,7 +201,7 @@ func Delete(deployment *Deployment, preview bool) (string, error) {
 	return output, nil
 }
 
-// GetStatus retrives Deployment status using gcloud cli, see deployment.Status type for details.
+// GetStatus retrieves Deployment status using gcloud cli, see deployment.Status type for details.
 func GetStatus(deployment *Deployment) (Status, error) {
 	args := []string{
 		"deployment-manager",
