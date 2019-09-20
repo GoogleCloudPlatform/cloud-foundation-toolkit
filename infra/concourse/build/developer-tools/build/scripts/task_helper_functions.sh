@@ -381,8 +381,9 @@ kitchen_do() {
   source_test_env
   init_credentials
 
-  export CMD="$*"
-  kitchen "$CMD" --test-base-path="$KITCHEN_TEST_BASE_PATH"
+  local command="$1"
+  shift
+  kitchen "$command" "$@" --test-base-path="$KITCHEN_TEST_BASE_PATH"
 }
 
 # This function is called by /usr/local/bin/test_integration.sh and can be
