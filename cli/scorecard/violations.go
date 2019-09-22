@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -41,46 +42,11 @@ func attachValidator(config *ScoringConfig) error {
 	return err
 }
 
-func addDataFromBucket(config *ScoringConfig, bucket *storage.BucketHandle, objectName string) error {
-	ctx := context.Background()
-	reader, err := bucket.Object(objectName).NewReader(ctx)
-	if err != nil {
-		return err
-	}
-	defer reader.Close()
-
+func addDataFromReader(config *ScoringConfig, reader io.Reader) error {
 	scanner := bufio.NewScanner(reader)
-	err = addDataFromScanner(config, scanner)
-	if err != nil {
-		return errors.Wrap(err, "Fetching inventory")
-	}
-
-	return nil
-}
-
-func addDataFromFile(config *ScoringConfig, objectName string) error {
-	reader, err := os.Open(objectName)
-	if err != nil {
-		return err
-	}
-	defer reader.Close()
-
-	scanner := bufio.NewScanner(reader)
-	err = addDataFromScanner(config, scanner)
-	if err != nil {
-		return errors.Wrap(err, "Fetching inventory")
-	}
-
-	return nil
-}
-
-func addDataFromScanner(config *ScoringConfig, scanner *bufio.Scanner) error {
-
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
-
 		pbAssets := []*validator.Asset{pbAsset}
-
 		err = config.validator.AddData(&validator.AddDataRequest{
 			Assets: pbAssets,
 		})
@@ -91,42 +57,69 @@ func addDataFromScanner(config *ScoringConfig, scanner *bufio.Scanner) error {
 	return nil
 }
 
+func addDataFromBucket(config *ScoringConfig, bucketName string) error {
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		return err
+	}
+
+	bucket := client.Bucket(bucketName)
+	it := bucket.Objects(ctx, nil)
+	for {
+		attrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		reader, err := bucket.Object(attrs.Name).NewReader(ctx)
+		if err != nil {
+			return err
+		}
+		defer reader.Close()
+		err = addDataFromReader(config, reader)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func addDataFromFile(config *ScoringConfig, caiDirName string) error {
+	files, err := listFiles(caiDirName)
+	if err != nil {
+		return err
+	}
+
+	for _, objectName := range files {
+		reader, err := os.Open(objectName)
+		if err != nil {
+			return err
+		}
+		defer reader.Close()
+		err = addDataFromReader(config, reader)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // getViolations finds all Config Validator violations for a given Inventory
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
 
 	if !inventory.inputLocal {
-		ctx := context.Background()
-		client, err := storage.NewClient(ctx)
+		err := addDataFromBucket(config, inventory.inputPath)
 		if err != nil {
-			return nil, err
-		}
-
-		bucket := client.Bucket(inventory.inputPath)
-		it := bucket.Objects(ctx, nil)
-		for {
-			attrs, err := it.Next()
-			if err == iterator.Done {
-				break
-			}
-			if err != nil {
-				return nil, err
-			}
-			err = addDataFromBucket(config, bucket, attrs.Name)
-			if err != nil {
-				return nil, errors.Wrap(err, "Fetching inventory")
-			}
+			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
 		}
 	} else {
-		files, err := listFiles(inventory.inputPath)
+		err := addDataFromFile(config, inventory.inputPath)
 		if err != nil {
-			return nil, err
-		}
-		for _, objectName := range files {
-			err = addDataFromFile(config, objectName)
-			if err != nil {
-				return nil, errors.Wrap(err, "Fetching inventory")
-			}
+			return nil, errors.Wrap(err, "Fetching inventory from local directory")
 		}
 	}
 	auditResponse, err := v.Audit(context.Background())
