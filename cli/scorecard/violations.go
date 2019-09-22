@@ -29,7 +29,6 @@ import (
 	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
-	"google.golang.org/api/iterator"
 )
 
 // attachValidator attaches a Validator to the given config
@@ -65,16 +64,8 @@ func addDataFromBucket(config *ScoringConfig, bucketName string) error {
 	}
 
 	bucket := client.Bucket(bucketName)
-	it := bucket.Objects(ctx, nil)
-	for {
-		attrs, err := it.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return err
-		}
-		reader, err := bucket.Object(attrs.Name).NewReader(ctx)
+	for _, objectName := range destinationObjectNames {
+		reader, err := bucket.Object(objectName).NewReader(ctx)
 		if err != nil {
 			return err
 		}
@@ -88,13 +79,8 @@ func addDataFromBucket(config *ScoringConfig, bucketName string) error {
 }
 
 func addDataFromFile(config *ScoringConfig, caiDirName string) error {
-	files, err := listFiles(caiDirName)
-	if err != nil {
-		return err
-	}
-
-	for _, objectName := range files {
-		reader, err := os.Open(objectName)
+	for _, objectName := range destinationObjectNames {
+		reader, err := os.Open(filepath.Join(caiDirName, objectName))
 		if err != nil {
 			return err
 		}
