@@ -1,8 +1,6 @@
 package scorecard
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -11,8 +9,8 @@ var flags struct {
 	policyPath       string
 	targetProjectID  string
 	controlProjectID string
-	bucketName       string
-	caiDirName       string
+	inputPath        string
+	inputLocal       bool
 }
 
 func init() {
@@ -23,12 +21,14 @@ func init() {
 
 	Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
 
-	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --local-path)")
-
-	Cmd.Flags().StringVar(&flags.caiDirName, "local-cai-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
+	Cmd.Flags().StringVar(&flags.inputPath, "input-path", "", "GCS bucket name (by default) OR local directory path (with --input-local option), for storing inventory")
+	Cmd.MarkFlagRequired("input-path")
 
 	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
 	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
+
+	Cmd.Flags().BoolVar(&flags.inputLocal, "input-local", false, "Takes inventory input from local directory")
+
 }
 
 // Cmd represents the base scorecard command
@@ -36,13 +36,6 @@ var Cmd = &cobra.Command{
 	Use:   "scorecard",
 	Short: "Print a scorecard of your GCP environment",
 	Args:  cobra.NoArgs,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if (flags.bucketName == "" && flags.caiDirName == "") ||
-			(flags.bucketName != "" && flags.caiDirName != "") {
-			return fmt.Errorf("Either bucket or local-cai-path should be set")
-		}
-		return nil
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.Println("Generating CFT scorecard")
 		var err error
@@ -54,7 +47,7 @@ var Cmd = &cobra.Command{
 		}
 
 		inventory, err := NewInventory(controlProjectID,
-			flags.bucketName, flags.caiDirName,
+			flags.inputPath, flags.inputLocal,
 			TargetProject(flags.targetProjectID))
 		if err != nil {
 			return err

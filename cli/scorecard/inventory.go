@@ -31,8 +31,8 @@ type InventoryConfig struct {
 	projectID        string
 	controlProjectID string
 	organizationID   string
-	gcsBucket        string
-	caiDirName       string
+	inputPath        string
+	inputLocal       bool
 }
 
 // Option for NewInventory
@@ -53,11 +53,11 @@ func TargetProject(projectID string) Option {
 }
 
 // NewInventory creates a new CAI inventory manager
-func NewInventory(projectID string, bucketName string, caiDirName string, options ...Option) (*InventoryConfig, error) {
+func NewInventory(projectID string, inputPath string, inputLocal bool, options ...Option) (*InventoryConfig, error) {
 	inventory := new(InventoryConfig)
 	inventory.controlProjectID = projectID
-	inventory.gcsBucket = bucketName
-	inventory.caiDirName = caiDirName
+	inventory.inputPath = inputPath
+	inventory.inputLocal = inputLocal
 
 	for _, option := range options {
 		option(inventory)
@@ -83,7 +83,7 @@ var destinationObjectNames = map[assetpb.ContentType]string{
 func (inventory InventoryConfig) getGcsDestination(contentType assetpb.ContentType) *assetpb.GcsDestination_Uri {
 	objectName := destinationObjectNames[contentType]
 	return &assetpb.GcsDestination_Uri{
-		Uri: fmt.Sprintf("gs://%v/%v", inventory.gcsBucket, objectName),
+		Uri: fmt.Sprintf("gs://%v/%v", inventory.inputPath, objectName),
 	}
 }
 

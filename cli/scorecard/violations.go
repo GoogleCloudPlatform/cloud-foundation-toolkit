@@ -95,14 +95,14 @@ func addDataFromScanner(config *ScoringConfig, scanner *bufio.Scanner) error {
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
 
-	if inventory.gcsBucket != "" {
+	if !inventory.inputLocal {
 		ctx := context.Background()
 		client, err := storage.NewClient(ctx)
 		if err != nil {
 			return nil, err
 		}
 
-		bucket := client.Bucket(inventory.gcsBucket)
+		bucket := client.Bucket(inventory.inputPath)
 		it := bucket.Objects(ctx, nil)
 		for {
 			attrs, err := it.Next()
@@ -118,7 +118,7 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 			}
 		}
 	} else {
-		files, err := listFiles(inventory.caiDirName)
+		files, err := listFiles(inventory.inputPath)
 		if err != nil {
 			return nil, err
 		}
