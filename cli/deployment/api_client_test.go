@@ -7,12 +7,12 @@ import (
 
 func TestGetOutputs(t *testing.T) {
 	runGCloud = func(args ...string) (result string, err error) {
-		expected := "deployment-manager manifests describe --deployment myproject --project mydeployment"
+		expected := "deployment-manager manifests describe --deployment mydeployment --project myproject --format yaml"
 		actual := strings.Join(args, " ")
 		if expected != actual {
 			t.Errorf("expected %v, got %v", expected, actual)
 		}
-		return GetTestData("deployment", "api-describe-manifest.yaml", t), nil
+		return GetTestData("deployment", "describe-manifest.yaml", t), nil
 	}
 
 	outputs, err := GetOutputs("myproject", "mydeployment")

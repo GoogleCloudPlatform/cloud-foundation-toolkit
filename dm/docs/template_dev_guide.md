@@ -57,7 +57,8 @@ To install Bats:
 
 #### Using the Cloud Foundation Config File
 
-To run tests, you need to modify the organization, project, and
+
+To run tests, you need to modify the organization, project, and 
 account-specific values in the configuration file. Proceed as follows:
 
 1. Copy `tests/cloud-foundation-tests.conf.example` to
@@ -100,6 +101,42 @@ Always run the test from the root of the `cloud-foundation` project:
 
 For the sake of consistency, keep the test files similar, as much as possible,
 to the *example configs* available in each template's `examples/` directory.
+
+
+### Running Bats tests with docker image
+
+You can use Developer Tools docker image with Bats and other needed tools installed. 
+Check cloud-foundation-toolkit/infra/concourse/build/developer-tools/Makefile for DOCKER_TAG_VERSION_DEVELOPER_TOOLS version.
+
+    export DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 0.2.0
+ 
+Create GCloud project and Service Account with permissions needed to run tests (they listed in README.md)
+Export Service Account as json file and export corresponding ENV variable, for example:
+
+    export SERVICE_ACCOUNT_JSON=$(< my-service-account.json)
+
+Go to cloud-foundation-toolkit/md folder
+    
+    cd cloud-foundation-toolkit/md
+
+#### Run Docker container
+
+If you followed [Using the Cloud Foundation Config File](#using-the-cloud-foundation-config-file), you can mount config file on docker run:
+
+    docker run -it -e SERVICE_ACCOUNT_JSON=${SERVICE_ACCOUNT_JSON} -v `pwd`:/workspace -v ~/.cloud-foundation-tests.conf:/root/.cloud-foundation-tests.conf cft/developer-tools:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} bash
+    
+Alternatively if you can set config variables following way (assuming you did export all needed variables before running command):
+
+    docker run -it -e SERVICE_ACCOUNT_JSON \
+                   -e CLOUD_FOUNDATION_ORGANIZATION_ID \
+                   -e CLOUD_FOUNDATION_PROJECT_ID \
+                   -e CLOUD_FOUNDATION_BILLING_ACCOUNT_ID \
+                   -e CLOUD_FOUNDATION_USER_ACCOUNT="andriy.kopachevskyy@dev.infra.cft.tips"  -v `pwd`:/workspace cft/developer-tools:0.1.0 bash
+
+Run tests:
+    
+     bats ./templates/network/tests/integration/network.bats
+      
 
 #### Unit Tests
 
