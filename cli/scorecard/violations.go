@@ -97,13 +97,13 @@ func addDataFromFile(config *ScoringConfig, caiDirName string) error {
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
 
-	if !inventory.inputLocal {
-		err := addDataFromBucket(config, inventory.inputPath)
+	if inventory.bucketName != "" {
+		err := addDataFromBucket(config, inventory.bucketName)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
 		}
 	} else {
-		err := addDataFromFile(config, inventory.inputPath)
+		err := addDataFromFile(config, inventory.dirPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from local directory")
 		}
