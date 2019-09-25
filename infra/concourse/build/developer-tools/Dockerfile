@@ -35,6 +35,10 @@ ENV CLOUD_SDK_VERSION ${CLOUD_SDK_VERSION}
 ARG KITCHEN_TEST_BASE_PATH="test/integration"
 ENV KITCHEN_TEST_BASE_PATH ${KITCHEN_TEST_BASE_PATH}
 
+# Required to download and install Bats
+ARG BATS_VERSION
+ENV BATS_VERSION ${BATS_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -65,6 +69,9 @@ RUN /build/install_hadolint.sh
 
 ADD ./build/install_terraform_docs.sh /build/
 RUN /build/install_terraform_docs.sh ${TERRAFORM_DOCS_VERSION}
+
+ADD ./build/install_bats.sh /build/
+RUN /build/install_bats.sh ${BATS_VERSION}
 
 ADD ./build/install_kubectl.sh /build/
 RUN /build/install_kubectl.sh
