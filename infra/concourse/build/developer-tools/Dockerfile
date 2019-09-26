@@ -39,6 +39,18 @@ ENV KITCHEN_TEST_BASE_PATH ${KITCHEN_TEST_BASE_PATH}
 ARG BATS_VERSION
 ENV BATS_VERSION ${BATS_VERSION}
 
+# Required to download and install Bats-support
+ARG BATS_SUPPORT_VERSION
+ENV BATS_SUPPORT_VERSION ${BATS_SUPPORT_VERSION}
+
+# Required to download and install Bats-assert
+ARG BATS_ASSERT_VERSION
+ENV BATS_ASSERT_VERSION ${BATS_ASSERT_VERSION}
+
+# Required to download and install Bats-mock
+ARG BATS_MOCK_VERSION
+ENV BATS_MOCK_VERSION ${BATS_MOCK_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -72,6 +84,15 @@ RUN /build/install_terraform_docs.sh ${TERRAFORM_DOCS_VERSION}
 
 ADD ./build/install_bats.sh /build/
 RUN /build/install_bats.sh ${BATS_VERSION}
+
+ADD ./build/install_bats_support.sh /build/
+RUN /build/install_bats_support.sh ${BATS_SUPPORT_VERSION}
+
+ADD ./build/install_bats_assert.sh /build/
+RUN /build/install_bats_assert.sh ${BATS_ASSERT_VERSION}
+
+ADD ./build/install_bats_mock.sh /build/
+RUN /build/install_bats_mock.sh ${BATS_MOCK_VERSION}
 
 ADD ./build/install_kubectl.sh /build/
 RUN /build/install_kubectl.sh
