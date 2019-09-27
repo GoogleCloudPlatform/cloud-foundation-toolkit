@@ -33,7 +33,7 @@ See the `properties` section in the schema file(s):
 2. Go to the [dm](../../) directory:
 
 ```shell
-    cd dm
+    cd cloud-foundation-toolkit/dm
 ```
 
 3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/cloud\_filestore.yaml](examples/cloud_filestore.yaml):
