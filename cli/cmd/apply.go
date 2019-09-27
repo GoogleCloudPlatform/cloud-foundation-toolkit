@@ -7,14 +7,14 @@ import (
 )
 
 func init() {
-	initCommon(createCmd)
+	initCommon(applyCmd)
 }
 
-var createCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create deployment(s)",
-	Long:  `Create deployment(s)`,
+var applyCmd = &cobra.Command{
+	Use:   "apply",
+	Short: "Apply deployment(s)",
+	Long:  `Apply deployment(s)`,
 	Run: func(cmd *cobra.Command, args []string) {
-		execute(deployment.ActionCreate, cmd, args)
+		execute(deployment.ActionApply, cmd, args)
 	},
 }

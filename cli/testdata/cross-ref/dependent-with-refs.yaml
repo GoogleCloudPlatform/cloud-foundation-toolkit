@@ -1,0 +1,9 @@
+imports:
+- path: templates/network/network.py
+
+resources:
+- type: templates/network/network.py
+  string: $(out.prj1.name1.res1.string)
+  map: $(out.prj1.name1.res1.map)
+  list: $(out.prj1.name1.res1.list)
+  listOfMaps: $(out.prj1.name1.res1.listOfMaps)
