@@ -83,16 +83,7 @@ ADD ./build/install_terraform_docs.sh /build/
 RUN /build/install_terraform_docs.sh ${TERRAFORM_DOCS_VERSION}
 
 ADD ./build/install_bats.sh /build/
-RUN /build/install_bats.sh ${BATS_VERSION}
-
-ADD ./build/install_bats_support.sh /build/
-RUN /build/install_bats_support.sh ${BATS_SUPPORT_VERSION}
-
-ADD ./build/install_bats_assert.sh /build/
-RUN /build/install_bats_assert.sh ${BATS_ASSERT_VERSION}
-
-ADD ./build/install_bats_mock.sh /build/
-RUN /build/install_bats_mock.sh ${BATS_MOCK_VERSION}
+RUN /build/install_bats.sh ${BATS_VERSION} ${BATS_SUPPORT_VERSION} ${BATS_ASSERT_VERSION} ${BATS_MOCK_VERSION}
 
 ADD ./build/install_kubectl.sh /build/
 RUN /build/install_kubectl.sh
