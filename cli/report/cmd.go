@@ -46,9 +46,14 @@ func init() {
 	viper.BindPFlag("report-format", Cmd.Flags().Lookup("report-format"))
 
 	Cmd.Flags().BoolVar(&flags.listReports, "list-available-reports", false, "List available inventory report queries")
+
+	Cmd.AddCommand(listCmd)
+	listCmd.Flags().StringVar(&flags.queryPath, "query-path", "", "Path to directory containing inventory queries")
+	listCmd.MarkFlagRequired("query-path")
+
 }
 
-// Cmd represents the base scorecard command
+// Cmd represents the base report command
 var Cmd = &cobra.Command{
 	Use:   "report",
 	Short: "Generate inventory reports based on CAI outputs in a directory.",
@@ -74,16 +79,28 @@ var Cmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if !flags.listReports {
-			err := GenerateReports(flags.dirName, flags.queryPath, flags.reportPath, viper.GetString("report-format"))
-			if err != nil {
-				return err
-			}
-		} else {
-			err := ListAvailableReports(flags.queryPath)
-			if err != nil {
-				return err
-			}
+		err := GenerateReports(flags.dirName, flags.queryPath, flags.reportPath, viper.GetString("report-format"))
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list-available-reports",
+	Short: "List available inventory report queries.",
+	Long: `List available inventory report queries for resources in Cloud Asset Inventory (CAI).
+	
+	Example:
+	  cft report list-available-reports
+	`,
+
+	Args: cobra.NoArgs,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := ListAvailableReports(flags.queryPath)
+		if err != nil {
+			return err
 		}
 		return nil
 	},
