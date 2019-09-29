@@ -69,10 +69,10 @@ func showStages(stages [][]deployment.Config) {
 		}
 		log.Printf("------------------------------")
 	case "yaml":
-		output, _ := yaml.Marshal(formatedConfig(stages))
+		output, _ := yaml.Marshal(formattedConfig(stages))
 		log.Println("\n" + string(output))
 	case "json":
-		output, _ := json.MarshalIndent(formatedConfig(stages), "", "    ")
+		output, _ := json.MarshalIndent(formattedConfig(stages), "", "    ")
 		log.Println("\n" + string(output))
 	}
 }
@@ -234,14 +234,14 @@ func setDefaultProjectID() {
 			log.Fatalf("error getting gcloud default project: %v", err)
 		}
 		if len(gcloudDefault) == 0 {
-			log.Fatalf("can't get project id from --project arg, CLOUD_FOUNDATION_PROJECT_ID env variable and gcloud default")
+			log.Print("warning: can't set default project ID from --project arg, CLOUD_FOUNDATION_PROJECT_ID env variable and gcloud default")
 		}
 		deployment.DefaultProjectID = gcloudDefault
 	}
 }
 
 // returns anonymous struct suitable for pretty print of JSON and YAML objects
-func formatedConfig(stages [][]deployment.Config) interface{} {
+func formattedConfig(stages [][]deployment.Config) interface{} {
 	type formattedConfig struct {
 		Project    string
 		Deployment string
