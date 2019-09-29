@@ -32,7 +32,7 @@ import (
 
 // GenerateReports takes CAI output and generate inventory report content based on report queries
 func GenerateReports(caiPath string, reportQueryPath string, reportOutputPath string, reportFormat string) error {
-	fileSuffix := time.Now().Format("20060102150405")
+	fileSuffix := time.Now().Format("2006.01.02-15.04.05")
 	rawAssetFileName, err := convertAndGenerateTempAssetFile(caiPath, reportOutputPath, fileSuffix)
 	if err != nil {
 		return err
