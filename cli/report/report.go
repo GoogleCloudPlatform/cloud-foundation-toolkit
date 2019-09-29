@@ -96,7 +96,7 @@ func printReports(results interface{}, reportOutputPath string, format string, f
 		for reportName, content := range reportsMap {
 			if strings.HasSuffix(reportName, "_report") {
 				reportFileName := group + "." + reportName + "_" + fileSuffix
-				fmt.Println("Printing " + group + "." + reportName)
+				fmt.Printf("Generating %v.%v\n", group, reportName)
 				if format == "json" {
 					reportFileName = reportFileName + ".json"
 					fileContent, err := json.MarshalIndent(content, "", "  ")
