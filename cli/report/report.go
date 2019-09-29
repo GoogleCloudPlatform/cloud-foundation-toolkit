@@ -30,15 +30,17 @@ import (
 	"github.com/open-policy-agent/opa/rego"
 )
 
-// GenerateReports takes CAI output and generate inventory report content based on report queries
-func GenerateReports(caiPath string, reportQueryPath string, reportOutputPath string, reportFormat string) error {
+// GenerateReports takes raw CAI exports from <dirPath> directory,
+// run rego queries defined <queryPath> directory,
+// and generate output of <reportFormat> in <outputPath> directory
+func GenerateReports(dirPath string, queryPath string, outputPath string, reportFormat string) error {
 	fileSuffix := time.Now().Format("2006.01.02-15.04.05")
-	rawAssetFileName, err := convertAndGenerateTempAssetFile(caiPath, reportOutputPath, fileSuffix)
+	rawAssetFileName, err := convertAndGenerateTempAssetFile(dirPath, outputPath, fileSuffix)
 	if err != nil {
 		return err
 	}
-	results, err := generateReportData(rawAssetFileName, reportQueryPath, reportOutputPath)
-	printReports(results, reportOutputPath, reportFormat, fileSuffix)
+	results, err := generateReportData(rawAssetFileName, queryPath, outputPath)
+	printReports(results, outputPath, reportFormat, fileSuffix)
 	return nil
 }
 
