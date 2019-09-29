@@ -44,7 +44,7 @@ func GenerateReports(dirPath string, queryPath string, outputPath string, report
 	return nil
 }
 
-func convertAndGenerateTempAssetFile(caiPath string, reportOutputPath string, fileMidName string) (rawAssetFileName string, err error) {
+func convertAndGenerateTempAssetFile(caiPath string, outputPath string, fileMidName string) (rawAssetFileName string, err error) {
 	results, err := ReadFilesAndConcat(caiPath)
 	if err != nil {
 		return "", err
@@ -54,16 +54,16 @@ func convertAndGenerateTempAssetFile(caiPath string, reportOutputPath string, fi
 	}
 	outJSON, _ := json.MarshalIndent(wrapped, "", "  ")
 	rawAssetFileName = "raw_assets_" + fileMidName + ".json"
-	err = ioutil.WriteFile(filepath.Join(reportOutputPath, rawAssetFileName), outJSON, 0644)
+	err = ioutil.WriteFile(filepath.Join(outputPath, rawAssetFileName), outJSON, 0644)
 	if err != nil {
 		return "", err
 	}
 	return
 }
 
-func generateReportData(rawAssetFileName string, reportQueryPath string, reportOutputPath string) (results interface{}, err error) {
+func findReports(paths []string) (results interface{}, err error) {
 	// Load resources from json and rego files
-	resources, err := loader.All([]string{filepath.Join(reportOutputPath, rawAssetFileName), reportQueryPath})
+	resources, err := loader.All(paths)
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +85,11 @@ func generateReportData(rawAssetFileName string, reportQueryPath string, reportO
 		return nil, err
 	}
 	results = rs[0].Expressions[0].Value
+	return results, err
+}
+
+func generateReportData(rawAssetFileName string, queryPath string, outputPath string) (results interface{}, err error) {
+	results, err = findReports([]string{filepath.Join(outputPath, rawAssetFileName), queryPath})
 
 	return results, nil
 }
@@ -141,30 +146,9 @@ func printReports(results interface{}, reportOutputPath string, format string, f
 	return nil
 }
 
-func ListAvailableReports(reportQueryPath string) error {
-	// Load resources from json and rego files
-	resources, err := loader.All([]string{reportQueryPath})
-	if err != nil {
-		return err
-	}
-	compiler, err := resources.Compiler()
-	if err != nil {
-		return err
-	}
-	store, err := resources.Store()
-	if err != nil {
-		return err
-	}
-	r := rego.New(
-		rego.Query(`data.reports`),
-		rego.Compiler(compiler),
-		rego.Store(store),
-	)
-	rs, err := r.Eval(context.Background())
-	if err != nil {
-		return err
-	}
-	results := rs[0].Expressions[0].Value
+// ListAvailableReports lists the names of available reports in queryPath
+func ListAvailableReports(queryPath string) error {
+	results, error := findReports([]string{queryPath})
 
 	resultsMap := results.(map[string]interface{})
 	for group, reports := range resultsMap {
@@ -176,5 +160,5 @@ func ListAvailableReports(reportQueryPath string) error {
 		}
 	}
 
-	return nil
+	return error
 }
