@@ -41,7 +41,9 @@ func init() {
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
 	Cmd.Flags().StringVar(&flags.dirName, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
 
-	Cmd.Flags().StringVar(&flags.reportFormat, "format", "", "Format of inventory report outputs, can be json or csv, default is csv")
+	Cmd.Flags().StringVar(&flags.reportFormat, "report-format", "", "Format of inventory report outputs, can be json or csv, default is csv")
+	viper.SetDefault("report-format", "csv")
+	viper.BindPFlag("report-format", Cmd.Flags().Lookup("report-format"))
 
 	Cmd.Flags().BoolVar(&flags.listReports, "list-available-reports", false, "List available inventory report queries")
 }
@@ -73,7 +75,7 @@ var Cmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !flags.listReports {
-			err := GenerateReports(flags.dirName, flags.queryPath, flags.reportPath, flags.reportFormat)
+			err := GenerateReports(flags.dirName, flags.queryPath, flags.reportPath, viper.GetString("report-format"))
 			if err != nil {
 				return err
 			}
