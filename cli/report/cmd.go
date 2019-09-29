@@ -27,7 +27,6 @@ var flags struct {
 	reportFormat string
 	bucketName   string
 	dirName      string
-	listReports  bool
 }
 
 func init() {
@@ -44,8 +43,6 @@ func init() {
 	Cmd.Flags().StringVar(&flags.reportFormat, "report-format", "", "Format of inventory report outputs, can be json or csv, default is csv")
 	viper.SetDefault("report-format", "csv")
 	viper.BindPFlag("report-format", Cmd.Flags().Lookup("report-format"))
-
-	Cmd.Flags().BoolVar(&flags.listReports, "list-available-reports", false, "List available inventory report queries")
 
 	Cmd.AddCommand(listCmd)
 	listCmd.Flags().StringVar(&flags.queryPath, "query-path", "", "Path to directory containing inventory queries")
@@ -67,14 +64,12 @@ var Cmd = &cobra.Command{
 
 	Args: cobra.NoArgs,
 	PreRunE: func(c *cobra.Command, args []string) error {
-		if !flags.listReports {
-			if flags.reportPath == "" {
-				return errors.New("missing required argument --report-path")
-			}
-			if (flags.bucketName == "" && flags.dirName == "") ||
-				(flags.bucketName != "" && flags.dirName != "") {
-				return errors.New("Either bucket or dir-path should be set")
-			}
+		if flags.reportPath == "" {
+			return errors.New("missing required argument --report-path")
+		}
+		if (flags.bucketName == "" && flags.dirName == "") ||
+			(flags.bucketName != "" && flags.dirName != "") {
+			return errors.New("Either bucket or dir-path should be set")
 		}
 		return nil
 	},
@@ -93,7 +88,7 @@ var listCmd = &cobra.Command{
 	Long: `List available inventory report queries for resources in Cloud Asset Inventory (CAI).
 	
 	Example:
-	  cft report list-available-reports
+	  cft report list-available-reports --query-path ./path/to/cloud-foundation-toolkit/cli/samplereports
 	`,
 
 	Args: cobra.NoArgs,
