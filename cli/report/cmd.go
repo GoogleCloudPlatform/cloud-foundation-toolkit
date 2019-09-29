@@ -26,7 +26,7 @@ var flags struct {
 	reportPath   string
 	reportFormat string
 	bucketName   string
-	dirPath      string
+	caiDirName   string
 	listReports  bool
 }
 
@@ -38,11 +38,11 @@ func init() {
 
 	Cmd.Flags().StringVar(&flags.reportPath, "report-path", "", "Path to directory to contain report outputs")
 
-	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
-	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
+	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --local-cai-path)")
+	Cmd.Flags().StringVar(&flags.caiDirName, "local-cai-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
 
 	Cmd.Flags().StringVar(&flags.reportFormat, "format", "", "Format of inventory report outputs, can be json or csv, default is csv")
-
+	
 	Cmd.Flags().BoolVar(&flags.listReports, "list-available-reports", false, "List available inventory report queries")
 }
 
@@ -57,23 +57,23 @@ var Cmd = &cobra.Command{
 		--local-cai-path ./path/to/cai-export-directory \
 		--report-path ./path/to/report-output-directory \
 	`,
-
-	Args: cobra.NoArgs,
+	
+	Args:  cobra.NoArgs,
 	PreRunE: func(c *cobra.Command, args []string) error {
 		if !flags.listReports {
 			if flags.reportPath == "" {
 				return errors.New("missing required argument --report-path")
 			}
-			if (flags.bucketName == "" && flags.dirPath == "") ||
-				(flags.bucketName != "" && flags.dirPath != "") {
-				return errors.New("Either bucket or dir-path should be set")
+			if (flags.bucketName == "" && flags.caiDirName == "") ||
+			    (flags.bucketName != "" && flags.caiDirName != "") {
+				return errors.New("Either bucket or local-cai-path should be set")
 			}
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if !flags.listReports {
-			err := GenerateReports(flags.dirPath, flags.queryPath, flags.reportPath, flags.reportFormat)
+			err := GenerateReports(flags.caiDirName, flags.queryPath, flags.reportPath, flags.reportFormat)
 			if err != nil {
 				return err
 			}
