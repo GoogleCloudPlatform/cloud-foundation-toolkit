@@ -55,12 +55,12 @@ func init() {
 var Cmd = &cobra.Command{
 	Use:   "report",
 	Short: "Generate inventory reports based on CAI outputs in a directory.",
-	Long: `Generate inventory reports for resources in Cloud Asset Inventory (CAI) output files, with reports defined in rego (in 'samplereports' folder).
+	Long: `Generate inventory reports for resources in Cloud Asset Inventory (CAI) output files, with reports defined in rego (in '<path_to_cloud-foundation-toolkit>/reports/sample' folder).
 	
 	Example:
-	  cft report --query-path ./path/to/cloud-foundation-toolkit/cli/samplereports \
-		--dir-path ./path/to/cai-export-directory \
-		--report-path ./path/to/report-output-directory \
+	  cft report --query-path <path_to_cloud-foundation-toolkit>/reports/sample \
+		--dir-path <path-to-directory-containing-cai-export> \
+		--report-path <path-to-directory-for-report-output>
 	`,
 
 	Args: cobra.NoArgs,
@@ -86,7 +86,7 @@ var listCmd = &cobra.Command{
 	Long: `List available inventory report queries for resources in Cloud Asset Inventory (CAI).
 	
 	Example:
-	  cft report list-available-reports --query-path ./path/to/cloud-foundation-toolkit/cli/samplereports
+	  cft report list-available-reports --query-path <path_to_cloud-foundation-toolkit>/reports/sample
 	`,
 
 	Args: cobra.NoArgs,
