@@ -133,12 +133,6 @@ func printReports(results interface{}, reportOutputPath string, format string, f
 							w.Write(record)
 						}
 						w.Flush()
-					} else {
-						f, err := os.Create(filepath.Join(reportOutputPath, reportFileName))
-						if err != nil {
-							return err
-						}
-						defer f.Close()
 					}
 				}
 			}
