@@ -23,11 +23,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ReadFilesAndConcat reads json files in a directory that are one object per row,
-// and concats all objects into one single array
 func ReadFilesAndConcat(dir string) (results []interface{}, err error) {
 	files, err := listFiles(dir)
-	const maxCapacity = 1024*1024
+	const maxCapacity = 1024 * 1024
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +39,7 @@ func ReadFilesAndConcat(dir string) (results []interface{}, err error) {
 		s := bufio.NewScanner(f)
 		buf := make([]byte, maxCapacity)
 		s.Buffer(buf, maxCapacity)
-		
+
 		for s.Scan() {
 			var row map[string]interface{}
 			err = json.Unmarshal(s.Bytes(), &row)
