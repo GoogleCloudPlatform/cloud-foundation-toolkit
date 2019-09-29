@@ -23,7 +23,7 @@ import (
 
 var flags struct {
 	queryPath    string
-	reportPath   string
+	outputPath   string
 	reportFormat string
 	bucketName   string
 	dirName      string
@@ -35,7 +35,8 @@ func init() {
 	Cmd.Flags().StringVar(&flags.queryPath, "query-path", "", "Path to directory containing inventory queries")
 	Cmd.MarkFlagRequired("query-path")
 
-	Cmd.Flags().StringVar(&flags.reportPath, "report-path", "", "Path to directory to contain report outputs")
+	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain report outputs")
+	Cmd.MarkFlagRequired("output-path")
 
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
 	Cmd.Flags().StringVar(&flags.dirName, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
@@ -64,9 +65,6 @@ var Cmd = &cobra.Command{
 
 	Args: cobra.NoArgs,
 	PreRunE: func(c *cobra.Command, args []string) error {
-		if flags.reportPath == "" {
-			return errors.New("missing required argument --report-path")
-		}
 		if (flags.bucketName == "" && flags.dirName == "") ||
 			(flags.bucketName != "" && flags.dirName != "") {
 			return errors.New("Either bucket or dir-path should be set")
@@ -74,7 +72,7 @@ var Cmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := GenerateReports(flags.dirName, flags.queryPath, flags.reportPath, viper.GetString("report-format"))
+		err := GenerateReports(flags.dirName, flags.queryPath, flags.outputPath, viper.GetString("report-format"))
 		if err != nil {
 			return err
 		}
