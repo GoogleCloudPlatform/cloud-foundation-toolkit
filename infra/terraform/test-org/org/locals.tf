@@ -61,6 +61,7 @@ locals {
         "on-prem",
         "cloud-dns",
         "gsuite-export",
-        "secret"
+        "secret",
+        "terraform-validator"
     ]
 }

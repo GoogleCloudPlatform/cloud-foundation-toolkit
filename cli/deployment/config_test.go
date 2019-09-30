@@ -104,6 +104,7 @@ func TestYamlReplaceOutRefs(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to parse outputs: %v", err)
 	}
+	DefaultProjectID = "my-project"
 	config := NewConfig(GetTestData("cross-ref", "dependent-with-refs.yaml", t), "/home/test.yaml")
 	outputs := map[string]map[string]interface{}{}
 	outputs["prj1.name1"] = output

@@ -66,10 +66,7 @@ func NewConfig(data string, file string) Config {
 	if err != nil {
 		log.Fatalf("failed unmarshal config yaml %s, error: %v", file, err)
 	}
-	// check project id and deployment name
-	if len(config.Project) == 0 {
-		config.Project = DefaultProjectID
-	}
+	// check deployment name
 	if len(config.Name) == 0 {
 		if len(config.file) == 0 {
 			// if file empty, than yaml string as a parameter was passed, it SHOULD contain name field
@@ -85,8 +82,11 @@ func NewConfig(data string, file string) Config {
 func (c Config) GetProject() string {
 	if len(c.Project) > 0 {
 		return c.Project
-	} else {
+	} else if len(DefaultProjectID) > 0 {
 		return DefaultProjectID
+	} else {
+		log.Fatal("warning: can't set default project ID from --project arg, CLOUD_FOUNDATION_PROJECT_ID env variable and gcloud default")
+		return ""
 	}
 }
 
@@ -119,7 +119,7 @@ func (c Config) YAML(outputs map[string]map[string]interface{}) ([]byte, error) 
 	imports, typeMap := c.importsAbsolutePath()
 	resources := c.resources(typeMap)
 	for _, value := range resources {
-		replaceOutRefsResource(value, outputs)
+		c.replaceOutRefsResource(value, outputs)
 	}
 
 	tmp := struct {
@@ -139,7 +139,7 @@ func (c Config) findAllDependencies(configs map[string]Config) []Config {
 	refs := c.findAllOutRefs()
 	dependencies := map[string]Config{}
 	for _, ref := range refs {
-		fullName, _, _ := parseOutRef(ref)
+		fullName, _, _ := c.parseOutRef(ref)
 		dependency, found := configs[fullName]
 		if !found {
 			log.Fatalf("Could not find config for deployment = %s", fullName)
@@ -186,8 +186,8 @@ func (c Config) findAllOutRefs() []string {
 	return result
 }
 
-func getOutRefValue(ref string, outputs map[string]map[string]interface{}) interface{} {
-	fullName, res, name := parseOutRef(ref)
+func (c Config) getOutRefValue(ref string, outputs map[string]map[string]interface{}) interface{} {
+	fullName, res, name := c.parseOutRef(ref)
 	outputsMap := outputs[fullName]
 	if outputsMap == nil {
 		arr := strings.Split(fullName, ".")
@@ -206,16 +206,16 @@ func getOutRefValue(ref string, outputs map[string]map[string]interface{}) inter
 	return value
 }
 
-func parseOutRef(text string) (fullName string, resource string, property string) {
+func (c Config) parseOutRef(text string) (fullName string, resource string, property string) {
 	array := strings.Split(text, ".")
-	project, deploymentName, resource, property := DefaultProjectID, array[0], array[1], array[2]
+	project, deploymentName, resource, property := c.GetProject(), array[0], array[1], array[2]
 	if len(array) == 4 {
 		project, deploymentName, resource, property = array[0], array[1], array[2], array[3]
 	}
 	return project + "." + deploymentName, resource, property
 }
 
-func replaceOutRefsResource(resource interface{}, outputs map[string]map[string]interface{}) interface{} {
+func (c Config) replaceOutRefsResource(resource interface{}, outputs map[string]map[string]interface{}) interface{} {
 	switch t := resource.(type) {
 	case string:
 		value := resource.(string)
@@ -223,25 +223,25 @@ func replaceOutRefsResource(resource interface{}, outputs map[string]map[string]
 		if match == nil {
 			return value
 		} else {
-			return getOutRefValue(match[1], outputs)
+			return c.getOutRefValue(match[1], outputs)
 		}
 	case map[string]interface{}:
 		values := resource.(map[string]interface{})
 		for key, value := range values {
-			values[key] = replaceOutRefsResource(value, outputs)
+			values[key] = c.replaceOutRefsResource(value, outputs)
 		}
 		return values
 	case map[interface{}]interface{}:
 		values := resource.(map[interface{}]interface{})
 		for key, value := range values {
-			values[key] = replaceOutRefsResource(value, outputs)
+			values[key] = c.replaceOutRefsResource(value, outputs)
 		}
 		return values
 	case []interface{}:
 		values := resource.([]interface{})
 		var result = []interface{}{}
 		for _, value := range values {
-			result = append(result, replaceOutRefsResource(value, outputs))
+			result = append(result, c.replaceOutRefsResource(value, outputs))
 		}
 		return result
 	case bool:
