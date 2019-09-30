@@ -50,7 +50,6 @@ var runGCloud = func(args ...string) (result string, err error) {
 	output, err := cmd.CombinedOutput()
 
 	if err != nil {
-		log.Printf("failed to start cmd: %v, output: %v", err, string(output))
 		return string(output), err
 	}
 
@@ -60,12 +59,12 @@ var runGCloud = func(args ...string) (result string, err error) {
 // GetOutputs retrieves existing Deployment outputs using gcloud and store result in map[string]interface{}
 // where "resourceName.propertyName" is key, and value is string (in case of flat value) or JSON object.
 func GetOutputs(project string, name string) (map[string]interface{}, error) {
-	data, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project, "--format", "yaml")
+	output, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project, "--format", "yaml")
 	if err != nil {
-		log.Printf("Failed to get deployment manifest: %v", err)
+		log.Printf("failed to describe deployment manifest for deployment: %s.%s, error: %v, output: %s", project, name, err, output)
 		return nil, err
 	}
-	return parseOutputs(data)
+	return parseOutputs(output)
 }
 
 // GCloudDefaultProjectID returns the default project id taken from local gcloud configuration.
@@ -124,14 +123,14 @@ func createOrUpdate(action string, deployment *Deployment, preview bool) (string
 
 	output, err := runGCloud(args...)
 	if err != nil {
-		log.Printf("failed to %s deployment: %v, error: %v", action, deployment, err)
+		log.Printf("failed to %s deployment: %v, error: %v, output: %s", action, deployment, err, output)
 		return output, err
 	}
 
 	if !preview {
 		outputs, err := GetOutputs(deployment.config.GetProject(), deployment.config.Name)
 		if err != nil {
-			log.Printf("on %s action, failed to get outputs for deployment: %v, error: %v", action, deployment, err)
+			log.Printf("on %s action, failed to get outputs for deployment: %v, error: %v, output: %s", action, deployment, err, output)
 			return output, err
 		}
 		deployment.Outputs = outputs
@@ -154,7 +153,7 @@ func CancelPreview(deployment *Deployment) (string, error) {
 	}
 	output, err := runGCloud(args...)
 	if err != nil {
-		log.Printf("failed to cancel preview, error: %v", err)
+		log.Printf("failed to cancel preview deployment: %v, error: %v, output: %s", deployment, err, output)
 		return output, err
 	}
 	return output, nil
@@ -173,7 +172,7 @@ func ApplyPreview(deployment *Deployment) (string, error) {
 	}
 	output, err := runGCloud(args...)
 	if err != nil {
-		log.Printf("failed to apply preview, error: %v", err)
+		log.Printf("failed to apply preview for deployment: %v, error: %v, output: %s", deployment, err, output)
 		return output, err
 	}
 	return output, nil
@@ -196,7 +195,7 @@ func Delete(deployment *Deployment, preview bool) (string, error) {
 	}
 	output, err := runGCloud(args...)
 	if err != nil {
-		log.Printf("failed to get deployment manifest: %v", err)
+		log.Printf("failed to delete deployment: %v, error: %v, output: %s", deployment, err, output)
 		return output, err
 	}
 	return output, nil
@@ -218,7 +217,6 @@ func GetStatus(deployment *Deployment) (Status, error) {
 		if strings.Contains(response, "code=404") {
 			return NotFound, nil
 		} else {
-			log.Printf("failed to get status for deployment: %s, \n error: %v", deployment.config.FullName(), err)
 			return Error, err
 		}
 	}
