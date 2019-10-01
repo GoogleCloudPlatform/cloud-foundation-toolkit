@@ -11,6 +11,7 @@ require (
 	github.com/hashicorp/terraform v0.12.2 // indirect
 	github.com/inconshreveable/log15 v0.0.0-20180818164646-67afb5ed74ec
 	github.com/kr/pty v1.1.3 // indirect
+	github.com/open-policy-agent/opa v0.11.0
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.4
 	github.com/spf13/viper v1.3.2

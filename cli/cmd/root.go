@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
 )
@@ -65,6 +66,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.PersistentFlags().BoolVar(&flags.verbose, "verbose", false, "Log output to stdout")
 
 	rootCmd.AddCommand(scorecard.Cmd)
+	rootCmd.AddCommand(report.Cmd)
 }
 
 func Execute() {
