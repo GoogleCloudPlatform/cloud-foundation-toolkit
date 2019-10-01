@@ -1,7 +1,5 @@
 FROM gcr.io/cloud-builders/gcloud
 
-
-
 RUN set -ex && apt-get update && apt-get -y install make \
     && apt-get -y install gettext-base \
     && pip install --upgrade pip \
@@ -22,6 +20,5 @@ RUN set -ex && apt-get update && apt-get -y install make \
     && cft --version \
     && bats -v \
     && which bats
-
 
 WORKDIR /cloud-foundation-toolkit/dm
