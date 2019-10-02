@@ -37,6 +37,16 @@ const (
 	ActionUpdate string = "update"
 )
 
+// Resource struct used to parse deployment manifest yaml received with 'gcloud deployment-manager manifests describe' command.
+type Resources struct {
+	Name    string
+	Outputs []struct {
+		Value interface{} `yaml:"finalValue"`
+		Name  string
+	}
+	Resources []Resources
+}
+
 var actions = []string{ActionApply, ActionDelete, ActionCreate, ActionUpdate}
 
 // The runGCloud function runs the gcloud tool with the specified arguments. It is implemented
@@ -262,13 +272,7 @@ func parseOutputs(data string) (map[string]interface{}, error) {
 	layoutData := describe["layout"].(string)
 
 	res := &struct {
-		Resources []struct {
-			Name    string
-			Outputs []struct {
-				Value interface{} `yaml:"finalValue"`
-				Name  string
-			}
-		}
+		Resources []Resources
 	}{}
 	err = yaml.Unmarshal([]byte(layoutData), res)
 	if err != nil {
@@ -277,7 +281,9 @@ func parseOutputs(data string) (map[string]interface{}, error) {
 	}
 
 	result := make(map[string]interface{})
-	for _, resource := range res.Resources {
+
+	resources := flattenResources(res.Resources)
+	for _, resource := range resources {
 		for _, output := range resource.Outputs {
 			key := resource.Name + "." + output.Name
 			value := output.Value
@@ -289,4 +295,19 @@ func parseOutputs(data string) (map[string]interface{}, error) {
 		return nil, nil
 	}
 	return result, nil
+}
+
+// flattenResources iterate over passed slice of Resources object, iterates over all sub-resources recursively and add all
+// resources to result array. In simple worlds flattenResources extracts all resouces and sub-resources with non empty Outputs field.
+func flattenResources(source []Resources) []Resources {
+	var result []Resources
+	for _, resource := range source {
+		if len(resource.Outputs) > 0 {
+			result = append(result, resource)
+		}
+		if len(resource.Resources) > 0 {
+			result = append(result, flattenResources(resource.Resources)...)
+		}
+	}
+	return result
 }
