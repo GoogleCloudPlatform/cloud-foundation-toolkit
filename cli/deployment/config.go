@@ -165,7 +165,7 @@ func (c Config) findAllDependencies(configs map[string]Config) ([]Config, error)
 				log.Print(message)
 				return nil, errors.New(message)
 			case Pending, Error, Running:
-				message := fmt.Sprintf("Dependency deployment = %s is in PENDING, RUNNING or ERROR state", fullName)
+				message := fmt.Sprintf("Dependency deployment = %sis in %v state", fullName, status)
 				log.Print(message)
 				return nil, errors.New(message)
 			}
