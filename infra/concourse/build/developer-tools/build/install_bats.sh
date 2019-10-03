@@ -17,6 +17,9 @@ set -e
 set -u
 
 BATS_VERSION=$1
+BATS_SUPPORT_VERSION=$2
+BATS_ASSERT_VERSION=$3
+BATS_MOCK_VERSION=$4
 
 # bats required envsubst missing in Alpine by default
 apk add gettext libintl
@@ -28,3 +31,17 @@ cd "bats-${BATS_VERSION}"
 ./install.sh /usr/local
 rm -rf "v${BATS_VERSION}" "bats-${BATS_VERSION}"
 
+wget "https://github.com/ztombol/bats-support/archive/v${BATS_SUPPORT_VERSION}.zip"
+unzip "v${BATS_SUPPORT_VERSION}.zip"
+cp -r "bats-support-${BATS_SUPPORT_VERSION}" /usr/local/bats-support
+rm -rf "v${BATS_SUPPORT_VERSION}.zip" "bats-support-${BATS_SUPPORT_VERSION}"
+
+wget "https://github.com/jasonkarns/bats-assert-1/archive/v${BATS_ASSERT_VERSION}.zip"
+unzip "v${BATS_ASSERT_VERSION}.zip"
+cp -r "bats-assert-1-${BATS_ASSERT_VERSION}" /usr/local/bats-assert
+rm -rf "v${BATS_ASSERT_VERSION}.zip" "bats-assert-1-${BATS_ASSERT_VERSION}"
+
+wget "https://github.com/jasonkarns/bats-mock/archive/v${BATS_MOCK_VERSION}.zip"
+unzip "v${BATS_MOCK_VERSION}.zip"
+cp -r "bats-mock-${BATS_MOCK_VERSION}" /usr/local/bats-mock
+rm -rf "v${BATS_MOCK_VERSION}.zip" "bats-mock-${BATS_MOCK_VERSION}"

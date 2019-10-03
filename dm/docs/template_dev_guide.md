@@ -105,38 +105,28 @@ to the *example configs* available in each template's `examples/` directory.
 
 ### Running Bats tests with docker image
 
-You can use Developer Tools docker image with Bats and other needed tools installed. 
-Check cloud-foundation-toolkit/infra/concourse/build/developer-tools/Makefile for DOCKER_TAG_VERSION_DEVELOPER_TOOLS version.
+#### Prepare environment
 
-    export DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 0.2.0
- 
-Create GCloud project and Service Account with permissions needed to run tests (they listed in README.md)
-Export Service Account as json file and export corresponding ENV variable, for example:
+Authenticate your local gcloud tool with your personal user account https://cloud.google.com/sdk/gcloud/reference/auth/login or
+using service account json https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account
 
-    export SERVICE_ACCOUNT_JSON=$(< my-service-account.json)
+Create test config file by following [Using the Cloud Foundation Config File](#using-the-cloud-foundation-config-file)
 
-Go to cloud-foundation-toolkit/md folder
+Build test dcocker image:
+
+    cd cloud-foundation-toolkit/dm
+    make cft-build-base-image
+
+#### Run test
+
+To run templates/instance/tests/integration/instance.bats file, run:
+
+    make cft-test-bats TEST=templates/instance/tests/integration/instance.bats
     
-    cd cloud-foundation-toolkit/md
+Or, if you have config file not in ~/.cloud-foundation-tests.conf:
 
-#### Run Docker container
+    make cft-test-bats TEST=templates/instance/tests/integration/instance.bats  CLOUD_FOUNDATION_CONF=/conf/file/location.json
 
-If you followed [Using the Cloud Foundation Config File](#using-the-cloud-foundation-config-file), you can mount config file on docker run:
-
-    docker run -it -e SERVICE_ACCOUNT_JSON=${SERVICE_ACCOUNT_JSON} -v `pwd`:/workspace -v ~/.cloud-foundation-tests.conf:/root/.cloud-foundation-tests.conf cft/developer-tools:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} bash
-    
-Alternatively if you can set config variables following way (assuming you did export all needed variables before running command):
-
-    docker run -it -e SERVICE_ACCOUNT_JSON \
-                   -e CLOUD_FOUNDATION_ORGANIZATION_ID \
-                   -e CLOUD_FOUNDATION_PROJECT_ID \
-                   -e CLOUD_FOUNDATION_BILLING_ACCOUNT_ID \
-                   -e CLOUD_FOUNDATION_USER_ACCOUNT="andriy.kopachevskyy@dev.infra.cft.tips"  -v `pwd`:/workspace cft/developer-tools:0.1.0 bash
-
-Run tests:
-    
-     bats ./templates/network/tests/integration/network.bats
-      
 
 #### Unit Tests
 
