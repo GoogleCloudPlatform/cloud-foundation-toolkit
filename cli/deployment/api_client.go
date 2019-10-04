@@ -23,7 +23,7 @@ const (
 	// NotFound Status means Deployment is not exists in any state.
 	NotFound Status = 3
 	// Error Status means Deployment is failed or deployment describe operation itself completed with error.
-	Error Status = -1
+	Error Status = 4
 )
 
 const (
@@ -48,6 +48,11 @@ type Resources struct {
 }
 
 var actions = []string{ActionApply, ActionDelete, ActionCreate, ActionUpdate}
+
+// String returns human readable string representation of Deployment Status.
+func (s Status) String() string {
+	return [...]string{"DONE", "PENDING", "RUNNING", "NOT_FOUND", "ERROR"}[s]
+}
 
 // The runGCloud function runs the gcloud tool with the specified arguments. It is implemented
 // as a variable so that it can be mocked in tests of its exported consumers.

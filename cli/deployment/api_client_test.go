@@ -1,6 +1,7 @@
 package deployment
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -22,5 +23,27 @@ func TestGetOutputs(t *testing.T) {
 	expected := "my-network-prod"
 	if expected != outputs["my-network-prod.name"] {
 		t.Errorf("expected: %s, got: %s", expected, outputs["my-network-prod.name"])
+	}
+}
+
+func TestStatus_String(t *testing.T) {
+	var inputTests = []struct {
+		status   Status
+		expected string
+	}{
+		{Done, "DONE"},
+		{Pending, "PENDING"},
+		{Running, "RUNNING"},
+		{NotFound, "NOT_FOUND"},
+		{Error, "ERROR"},
+	}
+
+	for _, tt := range inputTests {
+		t.Run(tt.expected, func(t *testing.T) {
+			var actual string = fmt.Sprintf("%v", tt.status)
+			if actual != tt.expected {
+				t.Errorf("got: %s, want: %s", actual, tt.expected)
+			}
+		})
 	}
 }
