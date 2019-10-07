@@ -406,6 +406,17 @@ finish_integration() {
   exit "${rv}"
 }
 
+# Delete any exisiting oragization AccessPolicy
+# shellcheck disable=SC2154
+remove_gcloud_org_accesspolicy() {
+  local policy
+  policy=$(gcloud access-context-manager policies list --organization="${TF_VAR_org_id}" | grep "${TF_VAR_org_id}" | awk '{print $1}')
+  if [[ -n "${policy}" ]]; then
+    echo "Removing Access Policy ${policy}"
+    gcloud access-context-manager policies delete "${policy}" --quiet
+  fi
+}
+
 # Intended to allow a module to customize a particular check or behavior.  For
 # example, the pubsub module runs "kitchen converge" twice instead of the
 # default one time.
