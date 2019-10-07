@@ -389,7 +389,14 @@ kitchen_do() {
 
   local command="$1"
   shift
-  kitchen "$command" "$@" --test-base-path="$KITCHEN_TEST_BASE_PATH"
+  case "$command" in
+    create | converge | destroy | setup | test | verify)
+      kitchen "$command" "$@" --test-base-path="$KITCHEN_TEST_BASE_PATH"
+      ;;
+    *)
+      kitchen "$command" "$@"
+      ;;
+  esac
 }
 
 # This function is called by /usr/local/bin/test_integration.sh and can be
