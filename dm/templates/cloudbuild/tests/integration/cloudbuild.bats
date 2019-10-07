@@ -66,6 +66,7 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "$output"
     [[ "$status" -eq 0 ]]
 }
 
