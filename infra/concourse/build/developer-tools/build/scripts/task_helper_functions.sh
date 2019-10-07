@@ -64,7 +64,10 @@ find_files() {
   find "${pth}" '(' \
     -path '*/.git' -o \
     -path '*/.terraform' -o \
-    -path '*/.kitchen' ')' \
+    -path '*/.kitchen' -o \
+    -path '*/*.png' -o \
+    -path '*/*.jpg' -o \
+    -path '*/*.jpeg' ')' \
     -prune -o -type f "$@"
 }
 
