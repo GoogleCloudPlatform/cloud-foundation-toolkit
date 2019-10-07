@@ -6,18 +6,20 @@ import (
 	"log"
 )
 
-// The Order function receives a map of Configs keyed by each configuration's FullName,
-// resolves dependencies between them, and sorts them topologically.
-// It returns the sorted array of Configs, or an error if dependencies are cyclic.
-func Order(configs map[string]Config) ([]Config, error) {
-	size := len(configs)
-
-	nodes := make([]string, 0)
+// Order function receives map of configs with Config.FullName() string as a key,
+// find dependencies between them, and order them topologically using directed graph.
+// Returns array of arrays of config, each inner array represent configs that could be created in parallel
+// each next level depends on previous
+func Order(configs map[string]Config) ([][]Config, error) {
+	var nodes []string
 	// we don't know number or dependencies, so initial size is 0
 	edges := make([]edge, 0)
 	for _, config := range configs {
 		nodes = append(nodes, config.FullName())
-		deps := config.findAllDependencies(configs)
+		deps, err := config.findAllDependencies(configs)
+		if err != nil {
+			log.Fatalf("Failed to find dependencies for config = %v", config)
+		}
 		for _, dep := range deps {
 			edges = append(edges, edge{
 				from: dep.FullName(),
@@ -37,9 +39,13 @@ func Order(configs map[string]Config) ([]Config, error) {
 		log.Printf("error ordering configs: %v", err)
 		return nil, err
 	}
-	res := make([]Config, size)
-	for i, name := range sorted {
-		res[i] = configs[name]
+	var res [][]Config
+	for _, level := range sorted {
+		var resLevel []Config
+		for _, name := range level {
+			resLevel = append(resLevel, configs[name])
+		}
+		res = append(res, resLevel)
 	}
 	return res, nil
 }
@@ -65,7 +71,7 @@ func newDirectedGraph(nodes []string, edges []edge) (*directedGraph, error) {
 	for _, node := range nodes {
 		g.nodes = append(g.nodes, node)
 		if _, ok := g.outgoingNodes[node]; ok {
-			return nil, errors.New(fmt.Sprintf("node %s already added to graph", node))
+			return nil, fmt.Errorf("node %s already added to graph", node)
 		}
 		g.outgoingNodes[node] = make(map[string]int)
 		g.incomingNodes[node] = 0
@@ -74,7 +80,7 @@ func newDirectedGraph(nodes []string, edges []edge) (*directedGraph, error) {
 	for _, edge := range edges {
 		node, ok := g.outgoingNodes[edge.from]
 		if !ok {
-			return nil, errors.New(fmt.Sprintf("no node %s exists in graph", edge.from))
+			return nil, fmt.Errorf("no node %s exists in graph", edge.from)
 		}
 
 		node[edge.to] = len(node) + 1
@@ -95,20 +101,21 @@ func (g *directedGraph) unsafeRemoveEdge(from, to string) {
 
 // Function topologicalSort() contains core logic of topological search here is to find root nodes (no incoming nodes),
 // remove them from graph and repeat until all grahp will be traversed.
-func (g *directedGraph) topologicalSort() ([]string, error) {
-	sorted := make([]string, 0, len(g.nodes))
-	rootNodes := make([]string, 0, len(g.nodes))
+func (g *directedGraph) topologicalSort() ([][]string, error) {
+	var result [][]string
 
+	rootNodes := make([]string, 0, len(g.nodes))
 	for _, n := range g.nodes {
 		if g.incomingNodes[n] == 0 {
 			rootNodes = append(rootNodes, n)
 		}
 	}
+	result = append(result, rootNodes)
 
+	var nextLevel []string
 	for len(rootNodes) > 0 {
 		var current string
 		current, rootNodes = rootNodes[0], rootNodes[1:]
-		sorted = append(sorted, current)
 
 		outgoingNodes := make([]string, len(g.outgoingNodes[current]))
 		for outgoingNode, i := range g.outgoingNodes[current] {
@@ -119,8 +126,16 @@ func (g *directedGraph) topologicalSort() ([]string, error) {
 			g.unsafeRemoveEdge(current, outgoingNode)
 
 			if g.incomingNodes[outgoingNode] == 0 {
-				rootNodes = append(rootNodes, outgoingNode)
+				nextLevel = append(nextLevel, outgoingNode)
 			}
+		}
+
+		if len(rootNodes) == 0 && len(nextLevel) > 0 {
+			for _, next := range nextLevel {
+				rootNodes = append(rootNodes, next)
+			}
+			result = append(result, nextLevel)
+			nextLevel = nil
 		}
 	}
 
@@ -132,6 +147,5 @@ func (g *directedGraph) topologicalSort() ([]string, error) {
 	if outgoingCount > 0 {
 		return nil, errors.New("cycle detected in graph")
 	}
-
-	return sorted, nil
+	return result, nil
 }
