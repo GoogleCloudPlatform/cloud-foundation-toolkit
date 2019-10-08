@@ -2,6 +2,10 @@ PYTHON  ?= python
 SHELL   := /bin/bash
 PACKAGE =  cloud_foundation_toolkit
 
+ifndef CLOUD_FOUNDATION_CONF
+override CLOUD_FOUNDATION_CONF = ~/.cloud-foundation-tests.conf
+endif
+
 help:
 	@echo "cft-prerequisites         Installs prerequisites for CFT python utility development"
 	@echo "cft-venv                  Creates the virtual environment called 'venv' for development"
@@ -16,7 +20,7 @@ help:
 
 
 .ONESHELL:
-.PHONY: cft-prerequisites cft-venv cft-clean-venv cft-test cft-test-venv template-prerequisites
+.PHONY: cft-prerequisites cft-venv cft-clean-venv cft-test cft-test-venv template-prerequisites cft-build-base-image
 
 cft-prerequisites:
 	${PYTHON} -m pip install -r requirements/prerequisites.txt
@@ -35,6 +39,18 @@ cft-test-templates:
 
 cft-test-venv:
 	${PYTHON} -m pytest -v
+
+cft-build-base-image:
+	docker build -f CI/cft_base_container/Dockerfile -t cft_base_image CI/cft_base_container/
+
+cft-test-bats:
+	docker run  -it --rm \
+	 -v `pwd`:/workspace \
+	 --entrypoint "/bin/bash" \
+	 -v ~/.config/:/root/.config \
+	 -v $(CLOUD_FOUNDATION_CONF):/root/.cloud-foundation-tests.conf \
+	 cft_base_image \
+	 -c "cd /workspace && /cloud-foundation-toolkit/dm/venv/bin/bats /workspace/$(TEST)"
 
 template-prerequisites:
 	rm -rf bats && git clone https://github.com/sstephenson/bats.git && ./bats/install.sh venv && rm -rf bats

@@ -75,14 +75,68 @@ func TestFindAllDependencies(t *testing.T) {
 		configA.FullName(): configA,
 	}
 
-	actual := configA.findAllDependencies(configs)
+	actual, err := configA.findAllDependencies(configs)
+	if err != nil {
+		t.Errorf("want nil, got %v", err)
+	}
 	if len(actual) != 0 {
 		t.Errorf("want %d, got %v", 0, len(actual))
 	}
 
-	actual = configB.findAllDependencies(configs)
+	actual, err = configB.findAllDependencies(configs)
+	if err != nil {
+		t.Errorf("want nil, got %v", err)
+	}
 	if !reflect.DeepEqual(actual, []Config{configA}) {
 		t.Errorf("want %v, got %v", []Config{configA}, actual)
+	}
+}
+
+func TestFindAllDependencies_corner_cases(t *testing.T) {
+	var tests = []struct {
+		name          string
+		describeFile  string
+		errorExpected bool
+	}{
+		{"done", "done.yaml", false},
+		{"running", "running.yaml", true},
+		{"pending", "pending.yaml", true},
+		{"error", "error.yaml", true},
+		{"not_found", "not-found.txt", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			runGCloud = func(args ...string) (result string, err error) {
+				expected := "deployment-manager deployments describe deploymentA --project projectA --format yaml"
+				actual := strings.Join(args, " ")
+				if expected != actual {
+					t.Errorf("expected %v, got %v", expected, actual)
+				}
+				return GetTestData("deployment/describe", tt.describeFile, t), nil
+			}
+
+			configB := Config{
+				data:    "network: $(out.projectA.deploymentA.resourceA.nameA)",
+				Project: "projectB",
+				Name:    "deploymentB",
+			}
+
+			configs := map[string]Config{
+				configB.FullName(): configB,
+			}
+
+			res, err := configB.findAllDependencies(configs)
+
+			if tt.errorExpected {
+				if res != nil {
+					t.Errorf("expected %v, got %v", nil, res)
+				}
+				if err == nil {
+					t.Errorf("expected error")
+				}
+			}
+		})
 	}
 }
 
@@ -104,6 +158,7 @@ func TestYamlReplaceOutRefs(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to parse outputs: %v", err)
 	}
+	DefaultProjectID = "my-project"
 	config := NewConfig(GetTestData("cross-ref", "dependent-with-refs.yaml", t), "/home/test.yaml")
 	outputs := map[string]map[string]interface{}{}
 	outputs["prj1.name1"] = output

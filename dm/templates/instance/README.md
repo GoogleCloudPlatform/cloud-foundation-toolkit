@@ -62,3 +62,4 @@ See the `properties` section in the schema file(s):
 ## Examples
 
 - [Compute Instance](examples/instance.yaml)
+- [Compute Instance with private IP](examples/instance_private.yaml)
