@@ -67,7 +67,10 @@ find_files() {
     -path '*/.kitchen' -o \
     -path '*/*.png' -o \
     -path '*/*.jpg' -o \
-    -path '*/*.jpeg' ')' \
+    -path '*/*.jpeg' -o \
+    -path './autogen' -o \
+    -path './test/fixtures/all_examples' -o \
+    -path './test/fixtures/shared' ')' \
     -prune -o -type f "$@"
 }
 
