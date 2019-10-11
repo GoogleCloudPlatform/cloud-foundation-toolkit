@@ -15,105 +15,104 @@
 package scorecard
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"io"
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-
 	"cloud.google.com/go/storage"
-
 	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
+	"github.com/forseti-security/config-validator/pkg/multierror"
+	"github.com/golang/glog"
+	"github.com/pkg/errors"
 )
 
 // attachValidator attaches a Validator to the given config
-func attachValidator(config *ScoringConfig) error {
+func attachValidator(stopCh chan struct{}, config *ScoringConfig) error {
 	v, err := gcv.NewValidator(
-		gcv.PolicyPath(filepath.Join(config.PolicyPath, "policies")),
-		gcv.PolicyLibraryDir(filepath.Join(config.PolicyPath, "lib")),
+		stopCh,
+		filepath.Join(config.PolicyPath, "policies"),
+		filepath.Join(config.PolicyPath, "lib"),
 	)
 	config.validator = v
 	return err
 }
 
-func addDataFromReader(config *ScoringConfig, reader io.Reader) error {
-	scanner := bufio.NewScanner(reader)
-	for scanner.Scan() {
-		pbAsset, err := getAssetFromJSON(scanner.Bytes())
-		pbAssets := []*validator.Asset{pbAsset}
-		err = config.validator.AddData(&validator.AddDataRequest{
-			Assets: pbAssets,
-		})
-		if err != nil {
-			return errors.Wrap(err, "adding data to validator")
-		}
-	}
-	return nil
-}
-
-func addDataFromBucket(config *ScoringConfig, bucketName string) error {
+func getReadersForBucket(bucketName string) ([]io.ReadCloser, error) {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	var readers []io.ReadCloser
 	bucket := client.Bucket(bucketName)
 	for _, objectName := range destinationObjectNames {
 		reader, err := bucket.Object(objectName).NewReader(ctx)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		defer reader.Close()
-		err = addDataFromReader(config, reader)
-		if err != nil {
-			return err
-		}
+		readers = append(readers, reader)
 	}
-	return nil
+	return readers, nil
 }
 
-func addDataFromFile(config *ScoringConfig, caiDirName string) error {
+func getReadersForFile(caiDirName string) ([]io.ReadCloser, error) {
+	var readers []io.ReadCloser
 	for _, objectName := range destinationObjectNames {
-		reader, err := os.Open(filepath.Join(caiDirName, objectName))
+		path := filepath.Join(caiDirName, objectName)
+		glog.Infof("creating reader for %s", path)
+		reader, err := os.Open(path)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		defer reader.Close()
-		err = addDataFromReader(config, reader)
-		if err != nil {
-			return err
-		}
+		readers = append(readers, reader)
 	}
-	return nil
+	return readers, nil
 }
 
 // getViolations finds all Config Validator violations for a given Inventory
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
-	v := config.validator
-
+	glog.Info("getting violations")
+	var err error
+	var readers []io.ReadCloser
+	pipeline := NewPipeline(config.validator)
 	if inventory.bucketName != "" {
-		err := addDataFromBucket(config, inventory.bucketName)
+		readers, err = getReadersForBucket(inventory.bucketName)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
 		}
 	} else {
-		err := addDataFromFile(config, inventory.dirPath)
+		readers, err = getReadersForFile(inventory.dirPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from local directory")
 		}
 	}
-	auditResponse, err := v.Audit(context.Background())
-	if err != nil {
-		return nil, errors.Wrap(err, "auditing")
-	}
 
-	return auditResponse, nil
+	go func() {
+		for _, r := range readers {
+			pipeline.AddInput(r)
+		}
+		pipeline.CloseInput()
+	}()
+
+	var count int
+	var errs multierror.Errors
+	var violations []*validator.Violation
+	for result := range pipeline.Results() {
+		count++
+		for _, err := range result.Errs {
+			errs.Add(err)
+		}
+		violations = append(violations, result.Violations...)
+	}
+	auditResponse := &validator.AuditResponse{
+		Violations: violations,
+	}
+	return auditResponse, errs.ToError()
 }
 
 // converts raw JSON into Asset proto

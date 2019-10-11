@@ -3,6 +3,7 @@ package scorecard
 import (
 	"fmt"
 
+	"github.com/pkg/profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -13,6 +14,8 @@ var flags struct {
 	controlProjectID string
 	bucketName       string
 	dirPath          string
+	blockProfiler    bool
+	cpuProfiler      bool
 }
 
 func init() {
@@ -27,6 +30,8 @@ func init() {
 	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
 	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
 
+	Cmd.Flags().BoolVar(&flags.blockProfiler, "blockProfiler", false, "run the block profiler.")
+	Cmd.Flags().BoolVar(&flags.cpuProfiler, "cpuProfiler", false, "run the cpu profiler.")
 }
 
 // Cmd represents the base scorecard command
@@ -42,6 +47,18 @@ var Cmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		var profilerOpts []func(*profile.Profile)
+		if flags.blockProfiler {
+			profilerOpts = append(profilerOpts, profile.BlockProfile)
+		}
+		if flags.cpuProfiler {
+			profilerOpts = append(profilerOpts, profile.CPUProfile)
+		}
+		if len(profilerOpts) != 0 {
+			profilerOpts = append(profilerOpts, profile.ProfilePath("."))
+			defer profile.Start(profilerOpts...).Stop()
+		}
+
 		cmd.Println("Generating CFT scorecard")
 		var err error
 
@@ -58,7 +75,9 @@ var Cmd = &cobra.Command{
 			return err
 		}
 
-		config, err := NewScoringConfig(flags.policyPath)
+		stopCh := make(chan struct{})
+		defer close(stopCh)
+		config, err := NewScoringConfig(stopCh, flags.policyPath)
 		if err != nil {
 			return err
 		}

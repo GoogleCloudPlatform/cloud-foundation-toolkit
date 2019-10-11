@@ -1,12 +1,14 @@
 package cmd
 
 import (
+	"flag"
 	"os"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -67,9 +69,13 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 
 	rootCmd.AddCommand(scorecard.Cmd)
 	rootCmd.AddCommand(report.Cmd)
+
+	// Add go flags
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 }
 
 func Execute() {
+	_ = flag.CommandLine.Parse([]string{})
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}

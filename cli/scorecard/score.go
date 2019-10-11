@@ -17,6 +17,7 @@ package scorecard
 import (
 	"fmt"
 	"path/filepath"
+	"time"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
@@ -32,14 +33,15 @@ type ScoringConfig struct {
 }
 
 // NewScoringConfig creates a scoring engine for the given policy library
-func NewScoringConfig(policyPath string) (*ScoringConfig, error) {
+func NewScoringConfig(stopCh chan struct{}, policyPath string) (*ScoringConfig, error) {
 	config := &ScoringConfig{}
 
 	config.PolicyPath = policyPath
 
 	v, err := gcv.NewValidator(
-		gcv.PolicyPath(filepath.Join(config.PolicyPath, "policies")),
-		gcv.PolicyLibraryDir(filepath.Join(config.PolicyPath, "lib")),
+		stopCh,
+		filepath.Join(config.PolicyPath, "policies"),
+		filepath.Join(config.PolicyPath, "lib"),
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "initializing gcv validator")
@@ -140,10 +142,12 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 
 // Score creates a Scorecard for an inventory
 func (inventory *InventoryConfig) Score(config *ScoringConfig) error {
+	start := time.Now()
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
 	}
+	end := time.Now()
 
 	err = config.attachViolations(auditResult)
 
@@ -166,5 +170,6 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig) error {
 		fmt.Println("No issues found found! You have a perfect score.")
 	}
 
+	fmt.Printf("Reviewing assets took %s\n", end.Sub(start))
 	return nil
 }
