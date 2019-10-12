@@ -17,3 +17,7 @@
 output "folders" {
     value = merge(local.folders, local.ci_folders)
 }
+
+output "terraform_validator_test_project_id" {
+    value = module.terraform_validator_test_project.project_id
+}
