@@ -62,6 +62,7 @@ locals {
         "cloud-dns",
         "gsuite-export",
         "secret",
-        "terraform-validator"
+        "terraform-validator",
+        "lb-http"
     ]
 }
