@@ -205,6 +205,7 @@ terraform_docs_awk() {
     if (blockDefStart == 1) {
       blockDefStart = 0
     } else {
+      gsub(/[[:space:]]null[[:space:]]*$/, " \"null\"")
       print $0
     }
   }
