@@ -15,8 +15,6 @@
 package report
 
 import (
-	"errors"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -38,8 +36,9 @@ func init() {
 	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain report outputs")
 	Cmd.MarkFlagRequired("output-path")
 
-	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
-	Cmd.Flags().StringVar(&flags.dirName, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
+	//Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
+	Cmd.Flags().StringVar(&flags.dirName, "dir-path", "", "Local directory path for storing inventory ")
+	Cmd.MarkFlagRequired("dir-path")
 
 	Cmd.Flags().StringVar(&flags.reportFormat, "report-format", "", "Format of inventory report outputs, can be json or csv, default is csv")
 	viper.SetDefault("report-format", "csv")
@@ -64,13 +63,15 @@ var Cmd = &cobra.Command{
 	`,
 
 	Args: cobra.NoArgs,
-	PreRunE: func(c *cobra.Command, args []string) error {
-		if (flags.bucketName == "" && flags.dirName == "") ||
-			(flags.bucketName != "" && flags.dirName != "") {
-			return errors.New("Either bucket or dir-path should be set")
-		}
-		return nil
-	},
+	/*
+		PreRunE: func(c *cobra.Command, args []string) error {
+			if (flags.bucketName == "" && flags.dirName == "") ||
+				(flags.bucketName != "" && flags.dirName != "") {
+				return errors.New("Either bucket or dir-path should be set")
+			}
+			return nil
+		},
+	*/
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := GenerateReports(flags.dirName, flags.queryPath, flags.outputPath, viper.GetString("report-format"))
 		if err != nil {

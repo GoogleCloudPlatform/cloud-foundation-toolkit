@@ -64,7 +64,13 @@ find_files() {
   find "${pth}" '(' \
     -path '*/.git' -o \
     -path '*/.terraform' -o \
-    -path '*/.kitchen' ')' \
+    -path '*/.kitchen' -o \
+    -path '*/*.png' -o \
+    -path '*/*.jpg' -o \
+    -path '*/*.jpeg' -o \
+    -path './autogen' -o \
+    -path './test/fixtures/all_examples' -o \
+    -path './test/fixtures/shared' ')' \
     -prune -o -type f "$@"
 }
 
@@ -103,6 +109,7 @@ function lint_docker() {
 # directory paths which contain *.tf files.
 function check_terraform() {
   set -e
+  local rval
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
@@ -139,7 +146,6 @@ function golang() {
 function check_python() {
   echo "Running flake8"
   find_files . -name "*.py" -print0 | compat_xargs -0 flake8
-  return 0
 }
 
 # This function runs the shellcheck linter on every
@@ -198,7 +204,7 @@ function replace_doc_generator {
   old_script_path=$(find . -name 'combine_docfiles.py')
   if [ -n "${old_script_path}" ]; then
     rm -rf "${old_script_path}"
-    cd "$(dirname "${old_script_path}")"
+    cd "$(dirname "${old_script_path}")" || exit
     wget https://raw.githubusercontent.com/terraform-google-modules/terraform-google-project-factory/master/helpers/terraform_{docs,validate} &>/dev/null
     rc=$?
     if [ $rc -ne 0 ]; then
@@ -327,6 +333,9 @@ init_credentials() {
   gcloud config set pass_credentials_to_gsutil false
   echo "[Credentials]" > ~/.boto
   echo "gs_service_key_file = ${tmpfile}" >> ~/.boto
+
+  # Login to GCP for using bq-script
+  gcloud auth activate-service-account --key-file="${GOOGLE_APPLICATION_CREDENTIALS}"
 }
 
 init_credentials_if_found() {
@@ -383,7 +392,14 @@ kitchen_do() {
 
   local command="$1"
   shift
-  kitchen "$command" "$@" --test-base-path="$KITCHEN_TEST_BASE_PATH"
+  case "$command" in
+    create | converge | destroy | setup | test | verify)
+      kitchen "$command" "$@" --test-base-path="$KITCHEN_TEST_BASE_PATH"
+      ;;
+    *)
+      kitchen "$command" "$@"
+      ;;
+  esac
 }
 
 # This function is called by /usr/local/bin/test_integration.sh and can be

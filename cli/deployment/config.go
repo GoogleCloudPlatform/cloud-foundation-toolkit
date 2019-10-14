@@ -1,6 +1,7 @@
 package deployment
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -134,24 +135,52 @@ func (c Config) YAML(outputs map[string]map[string]interface{}) ([]byte, error) 
 
 // Function findAllDependencies finds all dependencies base on cross-deployment references found in config YAML,
 // if no dependencies found, returns empty slice.
-func (c Config) findAllDependencies(configs map[string]Config) []Config {
+func (c Config) findAllDependencies(configs map[string]Config) ([]Config, error) {
 	var result []Config
 	refs := c.findAllOutRefs()
 	dependencies := map[string]Config{}
 	for _, ref := range refs {
 		fullName, _, _ := c.parseOutRef(ref)
 		dependency, found := configs[fullName]
+		exists := false
 		if !found {
-			log.Fatalf("Could not find config for deployment = %s", fullName)
+			projectAndName := strings.Split(fullName, ".")
+			deployment := &Deployment{
+				config: Config{
+					Project: projectAndName[0],
+					Name:    projectAndName[1],
+				},
+			}
+			status, err := GetStatus(deployment)
+
+			if err != nil {
+				log.Printf("GetStatus for deployment = %s", fullName)
+				return nil, err
+			}
+			switch status {
+			case Done:
+				exists = true
+			case NotFound:
+				message := fmt.Sprintf("Could not find config or existing deployment = %s", fullName)
+				log.Print(message)
+				return nil, errors.New(message)
+			case Pending, Error, Running:
+				message := fmt.Sprintf("Dependency deployment = %sis in %v state", fullName, status)
+				log.Print(message)
+				return nil, errors.New(message)
+			}
 		}
-		dependencies[fullName] = dependency
+		if !exists {
+			// if dependency already exists no need to count during creation ordering
+			dependencies[fullName] = dependency
+		}
 	}
 
 	for _, dependency := range dependencies {
 		log.Printf("Adding dependency %s -> %s\n", c.FullName(), dependency.FullName())
 		result = append(result, dependency)
 	}
-	return result
+	return result, nil
 }
 
 func (c Config) importsAbsolutePath() (imports interface{}, typeMap map[string]string) {

@@ -12,4 +12,6 @@ resources:
     name: someName
     value: someValue
   string: stringValue
+  sub-resource: sub-property-value
+  sub-sub-resource: sub-sub-property-value
   type: /home/templates/network/network.py

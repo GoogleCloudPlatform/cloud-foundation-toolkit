@@ -21,3 +21,14 @@ layout: |
       finalValue:
         - string1
         - string2
+  - name: sub-resource
+    resources:
+      - name: sub-resource
+        outputs:
+        - finalValue: sub-property-value
+          name: sub-property
+        resources:
+          - name: sub-sub-resource
+            outputs:
+            - finalValue: sub-sub-property-value
+              name: sub-sub-property

@@ -16,7 +16,10 @@ func Order(configs map[string]Config) ([][]Config, error) {
 	edges := make([]edge, 0)
 	for _, config := range configs {
 		nodes = append(nodes, config.FullName())
-		deps := config.findAllDependencies(configs)
+		deps, err := config.findAllDependencies(configs)
+		if err != nil {
+			log.Fatalf("Failed to find dependencies for config = %v", config)
+		}
 		for _, dep := range deps {
 			edges = append(edges, edge{
 				from: dep.FullName(),
