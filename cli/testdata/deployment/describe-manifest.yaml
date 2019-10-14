@@ -27,7 +27,9 @@ layout: |
       value: $(ref.my-network-prod.selfLink)
     - finalValue: {}
       name: subnetworks
-      value: {}
+      value:
+        - name: subnet1
+        - name: subnet2
     properties:
       autoCreateSubnetworks: true
     resources:

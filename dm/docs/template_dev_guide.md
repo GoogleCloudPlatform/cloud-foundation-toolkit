@@ -57,7 +57,8 @@ To install Bats:
 
 #### Using the Cloud Foundation Config File
 
-To run tests, you need to modify the organization, project, and
+
+To run tests, you need to modify the organization, project, and 
 account-specific values in the configuration file. Proceed as follows:
 
 1. Copy `tests/cloud-foundation-tests.conf.example` to
@@ -100,6 +101,32 @@ Always run the test from the root of the `cloud-foundation` project:
 
 For the sake of consistency, keep the test files similar, as much as possible,
 to the *example configs* available in each template's `examples/` directory.
+
+
+### Running Bats tests with docker image
+
+#### Prepare environment
+
+Authenticate your local gcloud tool with your personal user account https://cloud.google.com/sdk/gcloud/reference/auth/login or
+using service account json https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account
+
+Create test config file by following [Using the Cloud Foundation Config File](#using-the-cloud-foundation-config-file)
+
+Build test dcocker image:
+
+    cd cloud-foundation-toolkit/dm
+    make cft-build-base-image
+
+#### Run test
+
+To run templates/instance/tests/integration/instance.bats file, run:
+
+    make cft-test-bats TEST=templates/instance/tests/integration/instance.bats
+    
+Or, if you have config file not in ~/.cloud-foundation-tests.conf:
+
+    make cft-test-bats TEST=templates/instance/tests/integration/instance.bats  CLOUD_FOUNDATION_CONF=/conf/file/location.json
+
 
 #### Unit Tests
 
