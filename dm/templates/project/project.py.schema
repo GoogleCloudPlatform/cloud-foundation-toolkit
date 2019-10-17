@@ -313,6 +313,16 @@ properties:
       host project for Shared VPC networks.
       The `sharedVPC` and `sharedVPCSubnets` properties cannot be set if this
       property is set.
+  enableGKEToUseSharedVPC:
+    type: boolean
+    default: False
+    description: |
+      If this project is a SharedVPC Guest project the 
+      *service-PROJECTNUMBER@container-engine-robot.iam.gserviceaccount.com* 
+      ServiceAccount needs to be added to the shared subnets with the 
+      roles/compute.networkUser IAM binding.
+      If true, *container.googleapis.com* will be enabled.
+      If this project is *NOT* a guest project, this value is ignored. 
   removeDefaultVPC:
     type: boolean
     default: True
