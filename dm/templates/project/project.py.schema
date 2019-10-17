@@ -344,6 +344,9 @@ outputs:
     - projectNumber:
         type: string
         description: The number uniquely identifying the project.
+    - containerSA:
+        type: string
+        description: The built-in ServieAccount name for container services. ( Only exists if container.googleapis.com is enabled.)
     - usageExportBucketName:
         type: string
         description: The usage export bucket name.
