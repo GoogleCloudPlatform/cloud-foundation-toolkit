@@ -68,6 +68,7 @@ find_files() {
     -path '*/*.png' -o \
     -path '*/*.jpg' -o \
     -path '*/*.jpeg' -o \
+    -path '*/*.svg' -o \
     -path './autogen' -o \
     -path './test/fixtures/all_examples' -o \
     -path './test/fixtures/shared' ')' \
