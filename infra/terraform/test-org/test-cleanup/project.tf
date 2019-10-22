@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-output "folders" {
-    value = merge(local.folders, local.ci_folders)
-}
 
-output "org_id" {
-  value = local.org_id
-}
+module "project" {
+  source  = "terraform-google-modules/project-factory/google"
+  version = "~> 3.0"
 
-output "billing_account" {
-  value = local.billing_account
+  name              = "cft-project-manager"
+  random_project_id = false
+  org_id            = local.org_id
+  folder_id         = local.folder_id
+  billing_account   = local.billing_account
+
+  activate_apis = [
+    "cloudresourcemanager.googleapis.com"
+  ]
 }

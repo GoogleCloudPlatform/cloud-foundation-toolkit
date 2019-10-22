@@ -22,7 +22,8 @@ module "folders-root" {
   parent_type = "organization"
 
   names = [
-    "ci-projects"
+    "ci-projects",
+    "ci-shared"
   ]
 
   set_roles = false
@@ -32,7 +33,7 @@ module "folders-ci" {
   source  = "terraform-google-modules/folders/google"
   version = "~> 1.0"
 
-  parent_id   = replace(local.folders["ci"], "folders/", "")
+  parent_id   = replace(local.folders["ci-projects"], "folders/", "")
   parent_type = "folder"
 
   names = [for module in local.modules: "ci-${module}"]

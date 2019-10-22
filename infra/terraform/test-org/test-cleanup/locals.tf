@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-output "folders" {
-    value = merge(local.folders, local.ci_folders)
-}
-
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
+locals {
+  folder_id           = data.terraform_remote_state.org.outputs.folders["ci-shared"]
+  org_id              = data.terraform_remote_state.org.outputs.org_id
+  billing_account     = data.terraform_remote_state.org.outputs.billing_account
 }

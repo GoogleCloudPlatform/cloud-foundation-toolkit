@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-output "folders" {
-    value = merge(local.folders, local.ci_folders)
+terraform {
+  backend "gcs" {
+    bucket = "cft-infra-test-tfstate"
+    prefix = "state/test-cleanup"
+  }
 }
 
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
+data "terraform_remote_state" "org" {
+  backend = "gcs"
+  config = {
+    bucket = "cft-infra-test-tfstate"
+    prefix = "state/org"
+  }
 }

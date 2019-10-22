@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2019 Google LLC
  *
@@ -12,16 +13,5 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
-output "folders" {
-    value = merge(local.folders, local.ci_folders)
-}
-
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
-}

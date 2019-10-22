@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-output "folders" {
-    value = merge(local.folders, local.ci_folders)
-}
-
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
+output "project_id" {
+  value = module.project.project_id
 }

@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-output "folders" {
-    value = merge(local.folders, local.ci_folders)
-}
-
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
+terraform {
+  required_version = ">= 0.12"
 }
