@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-output "folders" {
-  value = merge(local.folders, local.ci_folders)
-}
 
-output "org_id" {
-  value = local.org_id
-}
+// Since testing TFV doesn't actually require creating any resources,
+// there are no reason to create an ephemeral test project + service account each build.
+module "terraform_validator_test_project" {
+  source  = "terraform-google-modules/project-factory/google"
+  version = "~> 3.0"
 
-output "billing_account" {
-  value = local.billing_account
-}
+  name              = local.terraform_validator_project_name
+  random_project_id = false
+  org_id            = local.org_id
+  folder_id         = local.folder_id
+  billing_account   = local.billing_account
 
-output "cft_ci_group" {
-    value = local.cft_ci_group
+  activate_apis = [
+    "cloudresourcemanager.googleapis.com"
+  ]
 }
