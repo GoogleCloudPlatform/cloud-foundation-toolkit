@@ -63,6 +63,7 @@ locals {
         "gsuite-export",
         "secret",
         "terraform-validator",
-        "lb-http"
+        "lb-http",
+        "gcloud"
     ]
 }
