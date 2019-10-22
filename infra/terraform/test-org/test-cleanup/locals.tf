@@ -14,27 +14,8 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "organizations/${local.org_id}"
-
-  names = [
-    "ci-projects",
-    "ci-shared"
-  ]
-
-  set_roles = false
-}
-
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "folders/${replace(local.folders["ci"], "folders/", "")}"
-
-  names = [for module in local.modules : "ci-${module}"]
-
-  set_roles = false
+locals {
+  folder_id           = data.terraform_remote_state.org.outputs.folders["ci-shared"]
+  org_id              = data.terraform_remote_state.org.outputs.org_id
+  billing_account     = data.terraform_remote_state.org.outputs.billing_account
 }

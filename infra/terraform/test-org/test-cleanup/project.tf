@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
 
-  parent      = "organizations/${local.org_id}"
+module "project" {
+  source  = "terraform-google-modules/project-factory/google"
+  version = "~> 3.0"
 
-  names = [
-    "ci-projects",
-    "ci-shared"
+  name              = "cft-project-manager"
+  random_project_id = false
+  org_id            = local.org_id
+  folder_id         = local.folder_id
+  billing_account   = local.billing_account
+
+  activate_apis = [
+    "cloudresourcemanager.googleapis.com"
   ]
-
-  set_roles = false
-}
-
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "folders/${replace(local.folders["ci"], "folders/", "")}"
-
-  names = [for module in local.modules : "ci-${module}"]
-
-  set_roles = false
 }

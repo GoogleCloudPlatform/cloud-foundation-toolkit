@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2019 Google LLC
  *
@@ -12,29 +13,5 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "organizations/${local.org_id}"
-
-  names = [
-    "ci-projects",
-    "ci-shared"
-  ]
-
-  set_roles = false
-}
-
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "folders/${replace(local.folders["ci"], "folders/", "")}"
-
-  names = [for module in local.modules : "ci-${module}"]
-
-  set_roles = false
-}
