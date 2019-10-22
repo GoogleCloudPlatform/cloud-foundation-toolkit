@@ -67,5 +67,6 @@ locals {
         "secret",
         "terraform-validator",
         "lb-http",
+        "gcloud"
   ]
 }
