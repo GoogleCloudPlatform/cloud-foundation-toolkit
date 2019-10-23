@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+
+### 17.09.2019
+
+- New template: [Unamanged Instance Group](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/dm/templates/unmanaged_instance_group)
+- CFT Instance (DM) template support sourceInstanceTemplate property instead of properties of the instance [#330](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/330)
+- New examples for CloudSQL with [private IP](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/dm/templates/cloud_sql/examples/cloud_sql_private_network.yaml)
+- The [pubsub template](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/dm/templates/pubsub) supports subscription expiration
+- Github PRs are now automatically [triggering](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/312) CloudBuild based tests
+
 ### 03.09.2019
 
  **cft-dm-dev branch merged to master**
@@ -22,7 +31,7 @@ All notable changes to this project will be documented in this file.
 - Locking down schemas:
   - Tight check on invalid properties to catch typos instead of ignoring them
   - Tight check on combination of properties. ( For example a project can't be
-  a host and a guest (VPC) porject at the same time.)
+  a host and a guest (VPC) project at the same time.)
   
 #### CI improvements:
 - Our CI environment is running tests on the current master and dev branch

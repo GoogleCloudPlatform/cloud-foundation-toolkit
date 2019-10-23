@@ -16,31 +16,60 @@
  */
 
 module "org_bindings" {
-  source = "terraform-google-modules/iam/google"
+  source  = "terraform-google-modules/iam/google"
   version = "~> 2.0"
 
   organizations = [local.org_id]
 
   bindings = {
     "roles/resourcemanager.organizationViewer" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
+    ]
+    "roles/resourcemanager.organizationAdmin" = [
+      "group:${local.cft_ci_group}",
+    ]
+    "roles/compute.xpnAdmin" = [
+      "group:${local.cft_ci_group}",
     ]
   }
 }
 
 module "ci_bindings" {
-  source = "terraform-google-modules/iam/google"
+  source  = "terraform-google-modules/iam/google"
   version = "~> 2.0"
 
   folders = [local.folders["ci"]]
 
   bindings = {
     "roles/resourcemanager.projectCreator" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
     ]
 
-    "roles/resourcemanager.folderViewer" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+    "roles/resourcemanager.folderAdmin" = [
+      "group:${local.cft_ci_group}",
+    ]
+
+    "roles/billing.projectManager" = [
+      "group:${local.cft_ci_group}",
     ]
   }
+}
+
+module "ci_folders_folder_bindings" {
+  source  = "terraform-google-modules/iam/google"
+  version = "~> 2.0"
+
+  folders = [local.ci_folders["ci-folders"]]
+
+  bindings = {
+    "roles/resourcemanager.folderIamAdmin" = [
+      "group:${local.cft_ci_group}",
+    ]
+  }
+}
+
+resource "google_billing_account_iam_member" "ci-billing-user" {
+  billing_account_id = local.billing_account
+  role               = "roles/billing.admin"
+  member             = "group:${local.cft_ci_group}"
 }

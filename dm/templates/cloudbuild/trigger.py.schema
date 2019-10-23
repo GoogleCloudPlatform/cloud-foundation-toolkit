@@ -54,6 +54,13 @@ properties:
       Branch and tag names in the trigger templates are interpreted as regular
       expressions. Any branch or tag change that matches that regular
       expression triggers a build.
+    oneOf:
+      - required:
+          - branchName
+      - required:
+          - tagName
+      - required:
+          - commitSha
     properties:
       projectId:
         type: string
@@ -71,12 +78,12 @@ properties:
           The directory to run the build in (path relative to the source root).
           If a step's dir value is specified as an absolute path, this value
           is ignored for that step's execution.
-      revision:
-        type: string
-        oneOf:
-          - "$ref": "#/definitions/branchName"
-          - "$ref": "#/definitions/tagName"
-          - "$ref": "#/definitions/commitSha"
+      branchName:
+        $ref: "#/definitions/branchName"
+      tagName:
+        $ref: "#/definitions/tagName"
+      commitSha:
+        $ref: "#/definitions/commitSha"
   disabled:
     type: boolean
     default: False
@@ -111,10 +118,10 @@ properties:
       the includedFiles glob. If not, we do not trigger a build.
     items:
       type: string
-  build_template:
+  buildTemplate:
     oneOf:
-      - "$ref": "#/definitions/build"
-      - "$ref": "#/definitions/filename"
+      - $ref: "#/definitions/build"
+      - $ref: "#/definitions/filename"
   tags:
     type: array
     uniqItems: true
@@ -165,10 +172,10 @@ definitions:
           ignored for that step's execution.
       revision:
         type: string
-        oneOf:
-          - "$ref": "#/definitions/branchName"
-          - "$ref": "#/definitions/tagName"
-          - "$ref": "#/definitions/commitSha"
+        anyOf:
+          - $ref: "#/definitions/branchName"
+          - $ref: "#/definitions/tagName"
+          - $ref: "#/definitions/commitSha"
   commitSha:
     type: string
     description: Explicit commit SHA to build.
@@ -193,8 +200,8 @@ definitions:
         additionalProperties: false
         description: The location of the source files to build.
         oneOf:
-          - "$ref": "#/definitions/storageSource"
-          - "$ref": "#/definitions/repoSource"
+          - $ref: "#/definitions/storageSource"
+          - $ref: "#/definitions/repoSource"
       steps:
         type: array
         uniqItems: true
@@ -479,7 +486,6 @@ definitions:
                     build step or with certain reserved volume paths.
       substitutions:
         type: object
-        additionalProperties: false
         description: |
           Substitution data for the build resource. A list of key-value items.
           Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
@@ -505,7 +511,6 @@ definitions:
                   variables.
               secretEnv:
                 type: object
-                additionalProperties: false
                 description: |
                   Maps of the environment variable names to their encrypted
                   values. 

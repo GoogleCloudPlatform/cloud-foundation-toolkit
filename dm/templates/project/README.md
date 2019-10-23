@@ -7,7 +7,7 @@ This template:
 3. Sets IAM permissions in the new project
 4. Turns on a set of APIs in the new project
 5. Creates service accounts for the new project
-6. Creates an usage export Cloud Storage bucket for the new project
+6. Creates a usage export Cloud Storage bucket for the new project
 7. Removed default networks, firewalls
 8. Removes default Service Account
 9. Creates VPC host or attached VPC service project
@@ -103,10 +103,10 @@ See the `properties` section in the schema file(s):
     cd dm
 ```
 
-3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/project.yaml](examples/project.yaml):
+3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/project_standalone.yaml](examples/project_standalone.yaml):
 
 ```shell
-    cp templates/project/examples/project.yaml my_project.yaml
+    cp templates/project/examples/project_standalone.yaml my_project.yaml
 ```
 
 4. Change the values in the config file to match your specific GCP setup (for properties, refer to the schema files listed above):
@@ -130,4 +130,6 @@ See the `properties` section in the schema file(s):
 
 ## Examples
 
-- [Project](examples/project.yaml)
+- [Standalone project](examples/project_standalone.yaml)
+- [VPC host project](examples/project_vpc_host.yaml)
+- [VPC consumer project](examples/project_vpc_consumer.yaml)

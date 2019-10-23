@@ -1,0 +1,39 @@
+deployment:
+  fingerprint: 8ZQt_kQqUwEqOVWzYmfHvg==
+  id: '4238679999428106342'
+  insertTime: '2019-05-14T04:29:13.502-07:00'
+  manifest: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/gl-akopachevsky-test/manifests/manifest-1557834776234
+  name: gl-akopachevsky-test
+  operation:
+    endTime: '2019-05-14T04:53:13.827-07:00'
+    id: '0'
+    insertTime: '1969-12-31T16:00:00.000-08:00'
+    kind: deploymentmanager#operation
+    name: operation-1557834775909-588d7ac6fd4ae-67848fbd-81211e9a
+    operationType: update
+    progress: 100
+    selfLink: https://www.googleapis.com/deploymentmanager/v2/projects/0/global/operations/operation-1557834775909-588d7ac6fd4ae-67848fbd-81211e9a
+    startTime: '2019-05-14T04:52:56.302-07:00'
+    status: PENDING
+    targetId: '4238679999428106342'
+    targetLink: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/gl-akopachevsky-test
+    user: andriy.kopachevskyy@phoogle.net
+  selfLink: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/gl-akopachevsky-test
+  updateTime: '2019-05-14T04:53:13.697-07:00'
+outputs: []
+resources:
+- finalProperties: |
+    description: My foobar DNS Managed Zone
+    dnsName: foobar.local.
+    name: test-managed-zone-prop-ak
+  id: '290286632588219790'
+  insertTime: '2019-05-14T04:49:53.683-07:00'
+  manifest: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/gl-akopachevsky-test/manifests/manifest-1557834776234
+  name: test-managed-zone-ak
+  properties: |
+    description: My foobar DNS Managed Zone
+    dnsName: foobar.local.
+    name: test-managed-zone-prop-ak
+  type: dns.v1.managedZone
+  updateTime: '2019-05-14T04:53:11.878-07:00'
+  url: https://www.googleapis.com/dns/v1/projects/gl-akopachevskyy-dm-seed/managedZones/test-managed-zone-prop-ak
