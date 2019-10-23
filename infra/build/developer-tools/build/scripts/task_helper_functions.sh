@@ -67,7 +67,11 @@ find_files() {
     -path '*/.kitchen' -o \
     -path '*/*.png' -o \
     -path '*/*.jpg' -o \
-    -path '*/*.jpeg' ')' \
+    -path '*/*.jpeg' -o \
+    -path '*/*.svg' -o \
+    -path './autogen' -o \
+    -path './test/fixtures/all_examples' -o \
+    -path './test/fixtures/shared' ')' \
     -prune -o -type f "$@"
 }
 
@@ -106,6 +110,7 @@ function lint_docker() {
 # directory paths which contain *.tf files.
 function check_terraform() {
   set -e
+  local rval
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
@@ -142,7 +147,6 @@ function golang() {
 function check_python() {
   echo "Running flake8"
   find_files . -name "*.py" -print0 | compat_xargs -0 flake8
-  return 0
 }
 
 # This function runs the shellcheck linter on every
@@ -165,7 +169,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png)$' \
+    | grep -v -E '\.(pyc|png|gz)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -176,6 +180,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
+    | grep -v -E '\.(png|gz)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
@@ -251,6 +256,7 @@ function check_documentation() {
     --exclude '*/.terraform' \
     --exclude '*/.kitchen' \
     --exclude '*/.git' \
+    --exclude 'autogen' \
     /workspace "${tempdir}" >/dev/null 2>/dev/null
   cd "${tempdir}"
   generate_docs >/dev/null 2>/dev/null
@@ -258,6 +264,7 @@ function check_documentation() {
     --exclude=".terraform" \
     --exclude=".kitchen" \
     --exclude=".git" \
+    --exclude 'autogen' \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then

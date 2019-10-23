@@ -21,7 +21,7 @@ func init() {
 	Cmd.Flags().StringVar(&flags.policyPath, "policy-path", "", "Path to directory containing validation policies")
 	Cmd.MarkFlagRequired("policy-path")
 
-	Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
+	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
 	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
 	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
@@ -33,7 +33,19 @@ func init() {
 var Cmd = &cobra.Command{
 	Use:   "scorecard",
 	Short: "Print a scorecard of your GCP environment",
-	Args:  cobra.NoArgs,
+	Long: `Print a scorecard of your GCP environment, for resources and IAM policies in Cloud Asset Inventory (CAI) exports, and constraints and constraint templates from Config Validator policy library.
+
+	Example:
+		  cft scorecard --policy-path <path-to>/policy-library \
+			  --bucket <name-of-bucket-containing-cai-export>
+	Or:
+		  cft scorecard --policy-path <path-to>/policy-library \
+			  --dir-path <path-to-directory-containing-cai-export>
+
+	As of now, CAI export file names need to be resource_inventory.json and/or iam_inventory.json
+
+	`,
+	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if (flags.bucketName == "" && flags.dirPath == "") ||
 			(flags.bucketName != "" && flags.dirPath != "") {

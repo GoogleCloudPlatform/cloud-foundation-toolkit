@@ -52,6 +52,9 @@ oneOf:
       - not:
           required:
             - organizationId
+      - not:
+          required:
+            - projectId
 
 properties:
   folderId:
