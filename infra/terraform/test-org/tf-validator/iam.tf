@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2019 Google LLC
  *
@@ -12,20 +13,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
-output "folders" {
-  value = merge(local.folders, local.ci_folders)
-}
+resource "google_project_iam_member" "int_test" {
+  count = length(local.terraform_validator_int_required_roles)
 
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
-}
-
-output "cft_ci_group" {
-    value = local.cft_ci_group
+  project = module.terraform_validator_test_project.project_id
+  role    = local.terraform_validator_int_required_roles[count.index]
+  member  = "group:${local.cft_ci_group}"
 }

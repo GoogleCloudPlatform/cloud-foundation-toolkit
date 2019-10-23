@@ -331,6 +331,9 @@ outputs:
     - projectId:
         type: string
         description: The unique, user-assigned ID of the Project.
+    - projectNumber:
+        type: string
+        description: The number uniquely identifying the project.
     - usageExportBucketName:
         type: string
         description: The usage export bucket name.

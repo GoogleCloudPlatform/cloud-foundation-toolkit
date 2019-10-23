@@ -94,6 +94,10 @@ def generate_config(context):
                     'value': '$(ref.{}-project.projectId)'.format(context.env['name'])
                 },
                 {
+                    'name': 'projectNumber',
+                    'value': '$(ref.{}-project.projectNumber)'.format(context.env['name'])
+                },
+                {
                     'name': 'usageExportBucketName',
                     'value': '$(ref.{}-project.projectId)-usage-export'.format(context.env['name'])
                 },

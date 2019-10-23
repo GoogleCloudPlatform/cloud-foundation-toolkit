@@ -68,6 +68,7 @@ find_files() {
     -path '*/*.png' -o \
     -path '*/*.jpg' -o \
     -path '*/*.jpeg' -o \
+    -path '*/*.svg' -o \
     -path './autogen' -o \
     -path './test/fixtures/all_examples' -o \
     -path './test/fixtures/shared' ')' \
@@ -254,6 +255,7 @@ function check_documentation() {
     --exclude '*/.terraform' \
     --exclude '*/.kitchen' \
     --exclude '*/.git' \
+    --exclude 'autogen' \
     /workspace "${tempdir}" >/dev/null 2>/dev/null
   cd "${tempdir}"
   generate_docs >/dev/null 2>/dev/null
@@ -261,6 +263,7 @@ function check_documentation() {
     --exclude=".terraform" \
     --exclude=".kitchen" \
     --exclude=".git" \
+    --exclude 'autogen' \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then
