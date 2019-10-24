@@ -18,6 +18,9 @@ Following are the prerequisites for creating a project via Deployment Manager. Y
 
 `Note:` Permission changes can take up to 20 minutes to propagate. If you run commands before the propagation is completed, you may receive errors regarding the user not having permissions.
 
+`Note:` "If you have [Shared VPC Admin role](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#enable-shared-vpc-host) at the folder level, you need to use gcloud beta or the beta API." Some version of the Project Factory is using the GA API, which means SharedVPC features may result a permission error. See [Issue #403](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/403)
+
+
 1. Install [gcloud](https://cloud.google.com/sdk).
 
 2.  Create a project that will create and own the deployments (henceforth referred to as *DM Creation Project*). See:  https://cloud.google.com/resource-manager/docs/creating-managing-organization.
