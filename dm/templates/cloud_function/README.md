@@ -17,7 +17,7 @@ has **default** permissions, or had been granted the [CloudFunctions.ServiceAgen
 
 ### Resources
 
-- [cloudfunctions.v1beta2.function](https://cloud.google.com/functions/docs/reference/rest/v1beta2/projects.locations.functions)
+- [cloudfunctions.v1.function](https://cloud.google.com/functions/docs/reference/rest/v1/projects.locations.functions)
 - [storage.v1.bucket](https://cloud.google.com/storage/docs/json_api/v1/buckets)
 
 ### Properties
