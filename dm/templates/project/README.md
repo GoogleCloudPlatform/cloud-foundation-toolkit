@@ -66,7 +66,7 @@ Following are the prerequisites for creating a project via Deployment Manager. Y
 
 8.  Give the *DM Service Account* the following permissions on the *Billing Account*: `roles/billing.user`. This is visible in Cloud Console's IAM permissions in *Billing -> Billing Account User*.
 
-9.  If the project is a VPC host project, give the *DM Service Account* the following permissions: `roles/compute.xpnAdmin`.
+9.  If the project is a VPC host or guest project, give the *DM Service Account* the following permissions: `roles/compute.xpnAdmin`.
 
 ## Deployment
 
@@ -76,14 +76,14 @@ Following are the prerequisites for creating a project via Deployment Manager. Y
 - [deploymentmanager.v2.virtual.projectBillingInfo](https://cloud.google.com/billing/reference/rest/v1/projects/updateBillingInfo)
 - [iam.v1.serviceAccount](https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts)
 - [deploymentmanager.v2.virtual.enableService](https://cloud.google.com/service-management/reference/rest/v1/services/enable)
-- [../iam_member CFT temaplet](../iam_member/README.md)
+- [../iam_member CFT template](../iam_member/README.md)
 - [gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.setIamPolicy](https://cloud.google.com/deployment-manager/docs/configuration/supported-gcp-types)
 - [gcp-types/storage-v1:buckets](https://cloud.google.com/deployment-manager/docs/configuration/supported-gcp-types)
 - [gcp-types/compute-v1:compute.projects.setUsageExportBucket](https://cloud.google.com/deployment-manager/docs/configuration/supported-gcp-types)
 - [compute.beta.xpnResource](https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnResource)
 - [compute.beta.xpnHost](https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnHost)
-- [gcp-types/compute-beta:compute.firewalls.delete](https://cloud.google.com/compute/docs/reference/rest/beta/firewalls)
-- [gcp-types/compute-beta:compute.networks.delete](https://cloud.google.com/compute/docs/reference/rest/beta/networks)
+- [gcp-types/compute-v1:compute.firewalls.delete](https://cloud.google.com/compute/docs/reference/rest/v1/firewalls)
+- [gcp-types/compute-v1:compute.networks.delete](https://cloud.google.com/compute/docs/reference/rest/v1/networks)
 - [gcp-types/iam-v1:iam.projects.serviceAccounts.delete](https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts)
 
 ### Properties
