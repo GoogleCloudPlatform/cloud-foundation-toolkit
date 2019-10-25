@@ -29,11 +29,15 @@ resources:
           healthCheck: <FIXME:healthcheck>
           backends:
             - group: <FIXME:instanceGroup1>
+              balancingMode: UTILIZATION
+              maxUtilization: 0.8
         - resourceName: media-backend-service
           portName: https
           healthCheck: <FIXME:healthcheck>
           backends:
             - group: <FIXME:instanceGroup2>
+              balancingMode: UTILIZATION
+              maxUtilization: 0.8
       urlMap:
         defaultService: static-backend-service
         hostRules:
