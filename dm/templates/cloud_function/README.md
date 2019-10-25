@@ -2,6 +2,9 @@
 
 This template creates a Cloud Function.
 
+| Warning: As of November 1, 2019, newly created Functions are private-by-default and will require [appropriate IAM permissions](https://cloud.google.com/functions/docs/reference/iam/roles) to be invoked. |
+|---|
+
 ## Prerequisites
 
 - Install [gcloud](https://cloud.google.com/sdk)
@@ -17,7 +20,7 @@ has **default** permissions, or had been granted the [CloudFunctions.ServiceAgen
 
 ### Resources
 
-- [cloudfunctions.v1beta2.function](https://cloud.google.com/functions/docs/reference/rest/v1beta2/projects.locations.functions)
+- [cloudfunctions.v1.function](https://cloud.google.com/functions/docs/reference/rest/v1/projects.locations.functions)
 - [storage.v1.bucket](https://cloud.google.com/storage/docs/json_api/v1/buckets)
 
 ### Properties
@@ -38,6 +41,7 @@ See the `properties` section in the schema file(s):
 ```shell
     cd dm
 ```
+
 
 3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/cloud\_function.yaml](examples/cloud_function.yaml):
 

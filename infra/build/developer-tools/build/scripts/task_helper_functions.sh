@@ -169,7 +169,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png)$' \
+    | grep -v -E '\.(pyc|png|gz)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -180,6 +180,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
+    | grep -v -E '\.(png|gz)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
@@ -255,6 +256,7 @@ function check_documentation() {
     --exclude '*/.terraform' \
     --exclude '*/.kitchen' \
     --exclude '*/.git' \
+    --exclude 'autogen' \
     /workspace "${tempdir}" >/dev/null 2>/dev/null
   cd "${tempdir}"
   generate_docs >/dev/null 2>/dev/null
@@ -262,6 +264,7 @@ function check_documentation() {
     --exclude=".terraform" \
     --exclude=".kitchen" \
     --exclude=".git" \
+    --exclude 'autogen' \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then

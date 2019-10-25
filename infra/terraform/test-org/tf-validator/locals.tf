@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-output "folders" {
-  value = merge(local.folders, local.ci_folders)
-}
+locals {
+  terraform_validator_project_name = "ci-terraform-validator"
+  terraform_validator_int_required_roles = [
+    "roles/editor"
+  ]
 
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
-}
-
-output "cft_ci_group" {
-    value = local.cft_ci_group
+  folder_id           = data.terraform_remote_state.org.outputs.folders["ci-terraform-validator"]
+  org_id              = data.terraform_remote_state.org.outputs.org_id
+  billing_account     = data.terraform_remote_state.org.outputs.billing_account
+  cft_ci_group        = data.terraform_remote_state.org.outputs.cft_ci_group
 }
