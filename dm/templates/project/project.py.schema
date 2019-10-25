@@ -15,7 +15,7 @@
 info:
   title: Project
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.1.1
   description: |
     Supports creation of a single project. The project is created with a
     billing account attached, permissions altered, APIs activated, and
@@ -33,10 +33,10 @@ info:
         https://cloud.google.com/service-infrastructure/docs/service-management/reference/rest/v1/services/enable
     - gcp-types/compute-v1:compute.subnetworks.setIamPolicy =>
         https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/setIamPolicy
-    - gcp-types/compute-v1:compute.projects.enableXpnHost =>
-        https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnHost
-    - gcp-types/compute-v1:compute.projects.enableXpnResource =>
-        https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnResource
+    - compute.beta.xpnHost =>
+        https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnHost
+    - compute.beta.xpnResource =>
+        https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnResource
     - gcp-types/compute-v1:compute.networks.delete =>
         https://cloud.google.com/compute/docs/reference/rest/v1/networks/delete
     - gcp-types/compute-v1:compute.firewalls.delete =>
