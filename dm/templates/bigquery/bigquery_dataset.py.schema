@@ -62,7 +62,21 @@ properties:
     enum:
       - Asia
       - EU
-      - US
+      - us-west2
+      - northamerica-northeast1
+      - us-east4
+      - southamerica-east1
+      - europe-north1
+      - europe-west2
+      - europe-west3
+      - europe-west6
+      - asia-east2
+      - asia-south1
+      - asia-northeast2
+      - asia-east1
+      - asia-northeast1
+      - asia-southeast1
+      - australia-southeast1
   access:
     type: array
     uniqueItems: true
