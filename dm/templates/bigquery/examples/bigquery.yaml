@@ -22,6 +22,8 @@ resources:
     type: bigquery_table.py
     properties:
       name: test_bq_table
+      dependsOn:
+        - test-bq-dataset
       datasetId: $(ref.test-bq-dataset.datasetId)
       schema:
         - name: firstname
