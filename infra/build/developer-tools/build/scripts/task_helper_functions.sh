@@ -71,7 +71,8 @@ find_files() {
     -path '*/*.svg' -o \
     -path './autogen' -o \
     -path './test/fixtures/all_examples' -o \
-    -path './test/fixtures/shared' ')' \
+    -path './test/fixtures/shared' -o \
+    -path './test/source.sh' ')' \
     -prune -o -type f "$@"
 }
 
