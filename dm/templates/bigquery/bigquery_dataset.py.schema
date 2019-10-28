@@ -62,6 +62,7 @@ properties:
     enum:
       - Asia
       - EU
+      - US
       - us-west2
       - northamerica-northeast1
       - us-east4
