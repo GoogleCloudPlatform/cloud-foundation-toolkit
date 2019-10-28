@@ -411,8 +411,8 @@ def create_shared_vpc(context):
         resources.append(
             {
                 'name': '{}-attach-xpn-service-{}'.format(context.env['name'], service_project),
-                # https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnResource
-                'type': 'gcp-types/compute-v1:compute.projects.enableXpnResource',
+                # https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnResource
+                'type': 'compute.beta.xpnResource',
                 'metadata': {
                     'dependsOn': ['{}-api-compute.googleapis.com'.format(context.env['name'])]
                 },
@@ -431,8 +431,8 @@ def create_shared_vpc(context):
         resources.append(
             {
                 'name': '{}-xpn-host'.format(context.env['name']),
-                # https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnHost
-                'type': 'gcp-types/compute-v1:compute.projects.enableXpnHost',
+                # https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnHost
+                'type': 'compute.beta.xpnHost',
                 'metadata': {
                     'dependsOn': ['{}-api-compute.googleapis.com'.format(context.env['name'])]
                 },
