@@ -9,27 +9,25 @@ import (
 	"text/template"
 )
 
+// tfConstruct represents a segment of Terraform code.
+//
+// A tfFile is expected to consist of multiple tfConstructs.
+type tfConstruct interface {
+	tfTemplate() string
+	tfArguments() interface{}
+}
+
+// tfFile represents a single Terraform File.
 type tfFile struct {
 	filename   string // Filename without suffix
 	dirname    string // ParentId directory name
 	constructs []tfConstruct
 }
 
-type tfConstruct interface {
-	tfTemplate() string
-	tfArguments() interface{}
-}
+// path generates the full filepath for a tfFile.
+func (f *tfFile) path() string { return filepath.Join(f.dirname, fmt.Sprintf("%s.tf", f.filename)) }
 
-func newTfFile(filename string, dirname string, constructs []tfConstruct) *tfFile {
-	// All new files should have license attached
-	constructs = append([]tfConstruct{&tfLicense{}}, constructs...)
-	return &tfFile{filename: filename, dirname: dirname, constructs: constructs}
-}
-
-func (f *tfFile) path() string {
-	return filepath.Join(f.dirname, fmt.Sprintf("%s.tf", f.filename))
-}
-
+// render produces Terraform code based on tfConstruct's template and arguments.
 func (f *tfFile) render() string {
 	var buff strings.Builder
 	for _, tfc := range f.constructs {
@@ -38,26 +36,38 @@ func (f *tfFile) render() string {
 	return buff.String()
 }
 
+// newTfFile generates a tfFile with license attached.
+func newTfFile(filename string, dirname string, constructs []tfConstruct) *tfFile {
+	constructs = append([]tfConstruct{&tfLicense{}}, constructs...) // Auto prepend license
+	return &tfFile{filename: filename, dirname: dirname, constructs: constructs}
+}
+
+// renderTFTemplate renders a given Terraform template and produces segment of Terraform code.
 func renderTFTemplate(tmplfp string, data interface{}) string {
-	var buff bytes.Buffer
-	tmpl := template.New(tmplfp)
-	tmpl, err := tmpl.Parse(loadFile(tmplfp))
+	tmplString, err := loadFile(tmplfp)
 	if err != nil {
 		log.Fatalln("Unable to load template", tmplfp, err)
 	}
-	err = tmpl.Execute(&buff, data)
+	var buff bytes.Buffer
+	tmpl, err := template.New(tmplfp).Parse(tmplString)
 	if err != nil {
+		log.Fatalln("Unable to parse template", tmplfp, err)
+	}
+	if err := tmpl.Execute(&buff, data); err != nil {
 		log.Fatalln("Unable to render template", tmplfp, err)
 	}
 	return buff.String()
 }
 
 // ==== Resources ====
+
+// tfLicense is a tfConstruct license representation.
 type tfLicense struct{}
 
 func (t *tfLicense) tfTemplate() string       { return "launchpad/static/tmpl/tf/license.tf.tmpl" }
 func (t *tfLicense) tfArguments() interface{} { return nil }
 
+// tfOutput represents a single Terraform "output".
 type tfOutput struct {
 	Id  string
 	Val string
@@ -72,6 +82,7 @@ func newTfOutput(id string, val string) *tfOutput {
 	}
 }
 
+// tfVariable represents a single Terraform "var"/"variable".
 type tfVariable struct {
 	Id          string
 	Description string
@@ -86,6 +97,7 @@ func newTfVariable(id string, desc string, def string) *tfVariable {
 	return v
 }
 
+// tfGoogleProvider represents any Google related Terraform "provider".
 type tfGoogleProvider struct {
 	Credentials string
 	Version     string
@@ -101,14 +113,14 @@ func newTfGoogleProvider(options ...func(*tfGoogleProvider) error) *tfGoogleProv
 		Version:     "~> 1.19",
 	}
 	for _, op := range options {
-		err := op(p)
-		if err != nil {
+		if err := op(p); err != nil {
 			log.Fatalln("unable to process Google provider options")
 		}
 	}
 	return p
 }
 
+// tfGoogleFolder represents a single GCP Folder in Terraform resource as "google_folder".
 type tfGoogleFolder struct {
 	Id          string
 	DisplayName string

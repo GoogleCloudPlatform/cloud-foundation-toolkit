@@ -1,10 +1,10 @@
-// Package launchpad file model.go contains all supported CustomResourceDefinition (CRD)
+// Package launchpad file model.go contains all supported CustomResourceDefinition (CRD).
 //
 // Every CRD should have a `{kind}YAML` to denote the full CRD representation,
 // and a `{kind}SpecYAML` to denote the spec map inside the CRD
 //
 // Each `{kind}SpecYAML` should also implement stackable interface (synonymous to yaml.Unmarshaler)
-// to allow a stack like evaluation
+// to allow a stack like evaluation.
 package launchpad
 
 import (
@@ -13,7 +13,9 @@ import (
 	"log"
 )
 
-// configYAML represents fully qualified CRD that can be of any supported Kind.
+// configYAML represents a fully qualified CRD that can be of any supported Kind.
+//
+// All CRDs are expected to have the following properties.
 type configYAML struct {
 	APIVersion string      `yaml:"apiVersion"`
 	Kind       crdKind     `yaml:"kind"`
@@ -25,10 +27,10 @@ type configYAML struct {
 	rawYAML string
 }
 
-// Abstraction of common YAML attributes
+// commonConfigYAML alias configYAML for all CRDs to implement common properties.
 type commonConfigYAML configYAML
 
-// UnmarshalYAML evaluates the common attributes and dynamically parse the specified Kind.
+// UnmarshalYAML evaluates common CRD attributes and dynamically parse the CRDs based on Kind field value.
 func (c *configYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
 	type raw configYAML
 	if err := unmarshal((*raw)(c)); err != nil {
@@ -57,6 +59,9 @@ func (c *configYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error
 }
 
 // parentRefYAML represents ownership reference inside a CRD.
+//
+// Among different types of CRDs, it is common to have parent-children relationship, ex: Projects belong to
+// a folder, Network belong to a project. parentRefYAML is a relationship identifier between these objects.
 type parentRefYAML struct {
 	ParentType crdKind `yaml:"type"`
 	ParentId   string  `yaml:"id"`
@@ -64,13 +69,18 @@ type parentRefYAML struct {
 
 // ==== CloudFoundation ====
 
-// cloudFoundationYAML represents CloudFoundation CRD.
+// cloudFoundationYAML represents a CloudFoundation CRD.
+//
+// A CloudFoundation CRD can represent a birds-eye view of the entire organization's GCP environment.
+// The CRD can be further broken down into small CRDs (ex: Project, Folder, Org) to represent the same.
 type cloudFoundationYAML struct {
 	commonConfigYAML
 	Spec cloudFoundationSpecYAML `yaml:"spec"`
 }
 
 // cloudFoundationSpecYAML defines CloudFoundation Kind's spec.
+//
+// It is assumed that one CloudFoundation will host at most one Organization.
 type cloudFoundationSpecYAML struct {
 	Org orgSpecYAML `yaml:"organization"`
 }
@@ -82,6 +92,7 @@ type cloudFoundationSpecYAML struct {
 func (c *cloudFoundationSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	gState.push(KindCloudFoundation, c)
 	defer gState.popSilent()
+
 	type raw cloudFoundationSpecYAML
 	if err := unmarshal((*raw)(c)); err != nil {
 		return err
@@ -92,6 +103,8 @@ func (c *cloudFoundationSpecYAML) UnmarshalYAML(unmarshal func(interface{}) erro
 // ==== Organization ====
 
 // orgYAML represents Organization CRD.
+//
+// orgYAML defines a single GCP Organization
 type orgYAML struct {
 	commonConfigYAML
 	Spec orgSpecYAML `yaml:"spec"`

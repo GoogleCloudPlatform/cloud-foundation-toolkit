@@ -1,14 +1,26 @@
 // Package launchpad file runtime.go contains runtime related support for
 // evaluation hierarchy and evaluated object tracking.
+//
+// In the global state, a evaluation stack is needed to support YAML evaluation. During evaluation, a
+// depth-first search approach is employed. For example,
+//
+//   kind: Folder
+//   spec:
+//     id: X
+//     folders:
+//       - id: Y
+//
+// folder Y will be evaluated first, then folder X. In this case, a stack can help infer parent's attribute
+// during the evaluation of folder Y.
 package launchpad
 
 import (
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v2"
 )
 
-// globalState keeps track of evaluation order while parsing YAML and stores
-// metadata like configurations.
+// globalState stores metadata such as stack and evaluated objects to facilitate output generation.
 type globalState struct {
 	stack           []stackFrame
 	outputDirectory string
@@ -22,10 +34,9 @@ type globalState struct {
 
 // stackable interface determines what can be pushed onto the stack.
 //
-// stackable is also synonymous to yaml.Unmarshaler.
-type stackable interface {
-	UnmarshalYAML(unmarshal func(interface{}) error) error
-}
+// stackable is synonymous to yaml.Unmarshaler since every CRD's Spec is the target of a stack reference, and
+// all Specs implements Unmarshaler to validate input.
+type stackable yaml.Unmarshaler
 
 // stackFrame defines a single evaluation hierarchy.
 type stackFrame struct {
@@ -33,7 +44,7 @@ type stackFrame struct {
 	stackPtr  stackable
 }
 
-// push pushes a new stackFrame onto current stack.
+// push pushes a new stackFrame onto the current stack.
 func (g *globalState) push(stackType crdKind, stackPtr stackable) {
 	g.stack = append(g.stack, stackFrame{
 		stackType: stackType,
@@ -42,20 +53,19 @@ func (g *globalState) push(stackType crdKind, stackPtr stackable) {
 }
 
 // pop ejects top of stack's stackFrame.
-func (g *globalState) pop() (stackFrame, error) {
+func (g *globalState) pop() (*stackFrame, error) {
 	l := len(g.stack)
 	if l == 0 {
-		return stackFrame{}, errors.New("empty stack")
+		return nil, errors.New("empty stack")
 	}
 	r := g.stack[l-1]
 	g.stack = g.stack[:l-1]
-	return r, nil
+	return &r, nil
 }
 
 // popSilent ejects top of stack's stackFrame ignoring errors.
 func (g *globalState) popSilent() {
-	_, err := g.pop()
-	if err != nil {
+	if _, err := g.pop(); err != nil {
 		fmt.Println(err)
 	}
 }

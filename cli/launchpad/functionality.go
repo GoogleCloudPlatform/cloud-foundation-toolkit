@@ -2,8 +2,8 @@
 package launchpad
 
 import (
-	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -21,7 +21,7 @@ type directoryProperty struct {
 	backup   bool   // Backup directory during re-creation
 }
 
-// path generates the full path of the directory
+// path generates the full path of the directory.
 func (d *directoryProperty) path() string { return filepath.Join(d.dirname, d.basename) }
 
 // directoryPropertyBackup sets directoryProperty backup property.
@@ -34,9 +34,9 @@ func directoryPropertyDirname(dirname string) func(*directoryProperty) error {
 	return func(c *directoryProperty) error { c.dirname = dirname; return nil }
 }
 
-// newDirectoryProperty initializes directoryProperty defaulting to current directly with backup.
+// newDirectoryProperty initializes directoryProperty defaulting to current directory with backup turned on.
 //
-// newDirectoryProperty allows users to specify setter functions to modify default output.
+// newDirectoryProperty allows users to specify setter functions to modify output properties.
 func newDirectoryProperty(dirname string, options ...func(*directoryProperty) error) *directoryProperty {
 	c := &directoryProperty{
 		basename: dirname,
@@ -44,15 +44,16 @@ func newDirectoryProperty(dirname string, options ...func(*directoryProperty) er
 		backup:   true,
 	}
 	for _, op := range options {
-		err := op(c)
-		if err != nil {
-			log.Fatalln("Unable to process directory property", err)
+		if err := op(c); err != nil {
+			log.Fatalln("Unable to apply directory property modifier", err)
 		}
 	}
 	return c
 }
 
-// withDirectory actions on components implements directoryOwner interface and creates directory as specified.
+// withDirectory actions on directoryOwner component and creates directory based on directoryProperty.
+//
+// Backup turned on will rename existing directory with last modify time as postfix.
 func withDirectory(comp component) {
 	do, ok := comp.(directoryOwner)
 	if !ok {
@@ -73,56 +74,31 @@ func withDirectory(comp component) {
 		}
 	}
 	log.Printf("Creating directory `%s`", fp)
-	err := os.MkdirAll(fp, 0755)
-	if err != nil {
+	if err := os.MkdirAll(fp, 0755); err != nil {
 		log.Fatalf("Failed to create folder %s\n", fp)
 	}
 }
 
-// filesOwner interface allows implementers to specify file creation.
+// filesOwner interface allows implementers to specify files creation.
 type filesOwner interface {
 	files() []file
 }
 
-// file interface allows implementers to specify specific file operations for their type.
+// file interface allows implementers to specify operations for a given file type.
 type file interface {
 	path() string
 	render() string
 }
 
-// withFiles actions on components implements filesOwner interface and creates files as specified.
+// withFiles processes filesOwner components to creates files.
 func withFiles(comp component) {
 	fo, ok := comp.(filesOwner)
 	if !ok {
 		return
 	}
 	for _, f := range fo.files() {
-		err := writeFile(f.path(), f.render())
-		if err != nil {
+		if err := ioutil.WriteFile(f.path(), []byte(f.render()), 0644); err != nil {
 			log.Fatalln("Failed to generate output", f.path(), err)
 		}
 	}
-}
-
-// writeFile creates or replace a file based path and content provided.
-func writeFile(fp string, content string) error {
-	if _, err := os.Stat(fp); err == nil {
-		err := os.Remove(fp)
-		if err != nil {
-			return errors.New(fmt.Sprintln("Unable to remove file", fp))
-		}
-	}
-	fd, err := os.Create(fp)
-	if err != nil {
-		return errors.New(fmt.Sprintln("Unable to create file", fp))
-	}
-	_, err = fd.WriteString(content)
-	if err != nil {
-		return errors.New(fmt.Sprintln("Unable to write to file", fp))
-	}
-	err = fd.Close()
-	if err != nil {
-		return errors.New(fmt.Sprintln("Unable to close file", fp))
-	}
-	return nil
 }

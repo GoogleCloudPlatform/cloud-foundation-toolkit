@@ -1,4 +1,4 @@
-// Package launchpad file generate.go contains all output generation logic
+// Package launchpad file generate.go contains all output generation logic.
 //
 // A component is a set of related scripts that generally resides under the same
 // folder beneath outputDirectory root. A functionality is a particular action
@@ -16,28 +16,25 @@ import (
 	"os/exec"
 )
 
-// component interface allows implementer to be put onto the generate processing loop
+// component interface allows implementer to be processed by general processing loop in generateOutput.
 type component interface {
 	componentName() string
 }
 
-// generateOutput loops through components and applies functionality in sequence
+// generateOutput cycles through components and applies functionality in sequence.
 func generateOutput() {
 	activeComponents := []component{
 		newOutputDirectory(), // Create Top Level Output Directory for all Launchpad configs
 		newFolders(),         // GCP Folder Generation
 	}
 
-	for _, c := range activeComponents {
-		// Apply Functionality to each component
+	for _, c := range activeComponents { // Apply Functionality to each component
 		withDirectory(c)
 		withFiles(c)
 	}
 
-	// re-indent with terraform fmt
-	if gState.outputFlavor == outTf {
-		_, err := exec.Command("terraform", "fmt", gState.outputDirectory).Output()
-		if err != nil {
+	if gState.outputFlavor == outTf { // re-indent with terraform fmt
+		if _, err := exec.Command("terraform", "fmt", gState.outputDirectory).Output(); err != nil {
 			// Only warning user since output terraform files are technically able to execute, just not indented properly
 			log.Printf("Failed to format terraform output")
 		}
@@ -46,10 +43,10 @@ func generateOutput() {
 
 // ==== Core Components ===
 
-// outputDirectory serves as the top level output directory
+// outputDirectory serves as the top level output directory.
 type outputDirectory struct{}
 
-// directoryProperty to implement directoryOwner
+// directoryProperty specified output root's location and backup property.
 func (l *outputDirectory) directoryProperty() *directoryProperty {
 	return newDirectoryProperty(
 		gState.outputDirectory,
@@ -60,7 +57,7 @@ func (l *outputDirectory) componentName() string { return "outputDirectory" }
 
 // ==== Components ====
 
-// folders component allows generation of sub-directory under outputDirectory for GCP Folder scripts
+// folders component allows sub-directory generation under outputDirectory for GCP Folder related code.
 type folders struct {
 	YAMLs       map[string]*folderSpecYAML
 	dirname     string

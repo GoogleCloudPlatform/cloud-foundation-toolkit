@@ -9,13 +9,13 @@ import (
 
 //go:generate go run static/includestatic.go
 
-// CustomResourceDefinition Kind specifies the Kind key-value found in YAML config
+// crdKind is the CustomResourceDefinition (CRD) which is indicated YAML's Kind value.
 type crdKind string
 
-// Output Flavor supported
+// outputFlavor defines launchpad's generated output language.
 type outputFlavor string
 
-// Supported CustomResourceDefinition Kind
+// Supported crdKind and outputFlavor.
 const (
 	KindCloudFoundation crdKind      = "CloudFoundation"
 	KindFolder          crdKind      = "Folder"
@@ -24,7 +24,7 @@ const (
 	outTf               outputFlavor = "tf"
 )
 
-// Global State facilitates evaluation and evaluated objects
+// gState is a global scoped state to facilitate evaluation and output generation.
 var gState globalState
 
 // init initialize tracking for evaluated objects
@@ -52,14 +52,13 @@ func NewGenerate(rawFilepath []string, outFlavor string, outputDir string) {
 		return
 	}
 
-	err := loadAllYAMLs(rawFilepath)
-	if err != nil {
+	if err := loadAllYAMLs(rawFilepath); err != nil {
 		log.Fatalln(err)
 	}
 	generateOutput()
 }
 
-// loadAllYAMLs parses input YAMLs and stores evaluated objects in gState
+// loadAllYAMLs parses input YAMLs and stores evaluated objects in gState.
 func loadAllYAMLs(rawFilepath []string) error {
 	fps, err := validateYAMLFilepath(rawFilepath)
 	if err != nil {
@@ -70,9 +69,12 @@ func loadAllYAMLs(rawFilepath []string) error {
 	}
 	for _, conf := range fps { // Load all files into runtime
 		// TODO multiple yaml documents in one file
-		err := yaml.Unmarshal([]byte(loadFile(conf)), &configYAML{})
-		if err != nil {
-			return errors.New(fmt.Sprintf("%s %s", conf, err.Error()))
+		if content, err := loadFile(conf); err != nil {
+			return err
+		} else {
+			if err := yaml.Unmarshal([]byte(content), &configYAML{}); err != nil {
+				return errors.New(fmt.Sprintf("%s %s", conf, err.Error()))
+			}
 		}
 	}
 	return nil

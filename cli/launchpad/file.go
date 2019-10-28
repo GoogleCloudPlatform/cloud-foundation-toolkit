@@ -1,7 +1,6 @@
 package launchpad
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -9,7 +8,7 @@ import (
 	"strings"
 )
 
-const ExtensionYAML string = ".yaml"
+const extensionYAML = ".yaml"
 
 // validateYAMLFilepath returns .yaml suffix files based on filepath.Glob patterns.
 func validateYAMLFilepath(raw []string) ([]string, error) {
@@ -20,7 +19,7 @@ func validateYAMLFilepath(raw []string) ([]string, error) {
 			return nil, err
 		}
 		for _, m := range matches {
-			if strings.ToLower(filepath.Ext(m)) != ExtensionYAML {
+			if strings.ToLower(filepath.Ext(m)) != extensionYAML {
 				continue
 			}
 			fps = append(fps, m)
@@ -35,22 +34,18 @@ func validateYAMLFilepath(raw []string) ([]string, error) {
 // to load from statics variable generated from `$ go generate`. A user using output binary
 // can in theory place their own file in matching relative path and overwrite the binary
 // default.
-func loadFile(fp string) string {
-	_, err := os.Stat(fp)
-	if err == nil { // file exist
-		content, err := ioutil.ReadFile(fp)
-		if err != nil {
-			panic(err)
-		}
-		return string(content)
-	} else if os.IsNotExist(err) { // file does not exist
-		if content, ok := statics[fp]; ok {
-			return content
-		} else {
-			fmt.Printf("Requested file does not exist in filesystem nor generated binary %s\n", fp)
-			panic(errors.New("file not found"))
-		}
+func loadFile(fp string) (string, error) {
+	if content, err := ioutil.ReadFile(fp); err == nil {
+		return string(content), nil
 	} else {
-		panic(err)
+		if !os.IsNotExist(err) {
+			fmt.Printf("Request file %s exists but cannot be read\n", fp)
+			return "", err
+		}
+		if content, ok := statics[fp]; ok { // attempt to load from binary statics
+			return content, nil
+		}
+		fmt.Printf("Requested file does not exist in filesystem nor generated binary %s\n", fp)
+		return "", os.ErrNotExist
 	}
 }
