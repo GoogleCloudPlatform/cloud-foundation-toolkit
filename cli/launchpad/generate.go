@@ -36,7 +36,8 @@ func generateOutput() {
 	if gState.outputFlavor == outTf { // re-indent with terraform fmt
 		if _, err := exec.Command("terraform", "fmt", gState.outputDirectory).Output(); err != nil {
 			// Only warning user since output terraform files are technically able to execute, just not indented properly
-			log.Printf("Failed to format terraform output")
+			// TODO consider warning terraform version lower then 0.12
+			log.Println("Failed to format terraform output")
 		}
 	}
 }
@@ -56,7 +57,6 @@ func newOutputDirectory() *outputDirectory       { return &outputDirectory{} }
 func (l *outputDirectory) componentName() string { return "outputDirectory" }
 
 // ==== Components ====
-
 // folders component allows sub-directory generation under outputDirectory for GCP Folder related code.
 type folders struct {
 	YAMLs       map[string]*folderSpecYAML
@@ -77,14 +77,14 @@ func (f *folders) files() (fs []file) {
 	switch gState.outputFlavor {
 	case outTf:
 		var outputCons, varCons []tfConstruct
-		mainCons := []tfConstruct{newTfGoogleProvider()}
+		mainCons := []tfConstruct{newTfTerraform(tfTerraformVer), newTfGoogleProvider()}
 		for _, y := range f.YAMLs {
 			mainCons = append(mainCons, newTfGoogleFolder(y.Id, y.DisplayName, &y.ParentRef))
-			outputCons = append(outputCons, newTfOutput(y.Id, fmt.Sprintf("${google_folder.%s.name}", y.Id)))
+			outputCons = append(outputCons, newTfOutput(y.Id, fmt.Sprintf("google_folder.%s.name", y.Id)))
 		}
 		varCons = append(
 			varCons,
-			newTfVariable("organization_id", "GCP Organization ID", ""),
+			newTfVariable("organization_id", "GCP Organization ID", gState.evaluated.orgId),
 			newTfVariable("credentials_file_path", "Service account key path", "credentials.json"),
 		)
 

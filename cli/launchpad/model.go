@@ -11,6 +11,17 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
+)
+
+const (
+	folderNameMin = 3
+	folderNameMax = 30
+)
+
+var (
+	errValidationFailed = errors.New("validation failed")
+	tfNameRegex         = regexp.MustCompile("^[a-zA-Z][a-zA-Z\\d\\-\\_]*$")
 )
 
 // configYAML represents a fully qualified CRD that can be of any supported Kind.
@@ -62,9 +73,30 @@ func (c *configYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error
 //
 // Among different types of CRDs, it is common to have parent-children relationship, ex: Projects belong to
 // a folder, Network belong to a project. parentRefYAML is a relationship identifier between these objects.
+//
+// With explicit definition of ParentRef is possible
 type parentRefYAML struct {
 	ParentType crdKind `yaml:"type"`
 	ParentId   string  `yaml:"id"`
+}
+
+// UnmarshalYAML evaluates parentRefYAML.
+//
+// UnmarshalYAML will have side effect to set organization ID if reference type is Organization. And will store the
+// references as this represents an explicit reference.
+func (p *parentRefYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
+	type raw parentRefYAML
+	if err := unmarshal((*raw)(p)); err != nil {
+		return err
+	}
+	switch p.ParentType {
+	case KindOrganization:
+		if err := gState.setOrg(p.ParentId); err != nil {
+			return err
+		}
+	}
+	gState.storeReference(p) // retain explicit reference to check if reference exist
+	return nil
 }
 
 // ==== CloudFoundation ====
@@ -129,6 +161,9 @@ func (o *orgSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal((*raw)(o)); err != nil {
 		return err
 	}
+	if err := gState.setOrg(o.Id); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -153,6 +188,8 @@ type folderSpecYAML struct { // Inner mappings
 //
 // UnmarshalYAML will have side effect to push Folder onto its stack while nested
 // evaluation is ongoing. In addition, storing validated folder onto gState for tracking.
+//
+// GCP Folder names required to be in between 3 to 30 characters
 func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	top := gState.peek()
 	gState.push(KindFolder, f)
@@ -163,7 +200,7 @@ func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error 
 		return err
 	}
 
-	// ParentRef can be default value if it is nested under others
+	// Implicit ParentRef can be default value if it is nested under others
 	//
 	//   kind: Folder
 	//   spec:
@@ -171,8 +208,8 @@ func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error 
 	//     folders:
 	//       - id: Y
 	//
-	// During evaluation of Y, ParentRef will not be set, however, stack
-	// will retain its owner X and hold its reference
+	// During evaluation of Y, ParentRef could be undefined, however, stack
+	// will retain owner X reference and infer it as parent
 	if f.ParentRef.ParentId == "" {
 		if top == nil {
 			// ParentRef is not provided, and there are no ownership mappings
@@ -180,19 +217,31 @@ func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error 
 		} else {
 			switch parent := top.stackPtr.(type) {
 			case *folderSpecYAML:
+				// implicit reference does not need to state since it is guaranteed that parent is resolved
 				f.ParentRef.ParentType = KindFolder
 				f.ParentRef.ParentId = parent.Id
 			case *orgSpecYAML:
 				f.ParentRef.ParentType = KindOrganization
 				f.ParentRef.ParentId = parent.Id
+				if err := gState.setOrg(parent.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
-	// TODO (wengm) check undefined
 
-	// TODO validate folder ID format
-	// TODO validate folder displayName format
-	if err := newFolder(f); err != nil {
+	// TODO (wengm) warn undefined
+	if ind := tfNameRegex.FindStringIndex(f.Id); ind == nil {
+		log.Printf("GCP Folder [%s] ID does not conform to Terraform standard", f.DisplayName)
+		return errValidationFailed
+	}
+
+	if len(f.DisplayName) < folderNameMin || len(f.DisplayName) > folderNameMax {
+		log.Printf("GCP Folder Name [%s] needs to be between %d and %d", f.DisplayName, folderNameMin, folderNameMax)
+		return errValidationFailed
+	}
+
+	if err := gState.storeFolder(f); err != nil {
 		log.Println("warning: ignoring duplicated definition of folder", f.Id)
 	}
 	return nil

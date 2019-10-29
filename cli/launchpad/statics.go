@@ -3,7 +3,11 @@ package launchpad
 
 var statics = map[string]string {
 	"static/tmpl/tf/_output.tf.tmpl": `output "{{ .Id }}" {
-  value = "{{ .Val }}"
+  value = {{ .Val }}
+}
+`,
+	"static/tmpl/tf/_terraform.tf.tmpl": `terraform {
+  required_version = "{{ .RequiredVersion }}"
 }
 `,
 	"static/tmpl/tf/_variable.tf.tmpl": `variable "{{ .Id }}" {
@@ -15,11 +19,11 @@ var statics = map[string]string {
 `,
 	"static/tmpl/tf/google_folder.tf.tmpl": `resource "google_folder" "{{ .Id }}" {
   display_name = "{{ .DisplayName }}"
-  parent       = "{{ .Parent }}"
+  parent       = {{ .Parent }}
 }
 `,
 	"static/tmpl/tf/google_provider.tf.tmpl": `provider "google" {
-  credentials = "{{ .Credentials }}"
+  credentials = {{ .Credentials }}
   version     = "{{ .Version }}"
 }
 `,

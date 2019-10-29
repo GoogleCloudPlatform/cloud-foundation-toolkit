@@ -9,6 +9,12 @@ import (
 	"text/template"
 )
 
+const (
+	tfTerraformVer          = ">= 0.12"
+	tfProviderGoogleVer     = "~> 2.1"
+	tfProviderGoogleBetaVer = "~> 2.1"
+)
+
 // tfConstruct represents a segment of Terraform code.
 //
 // A tfFile is expected to consist of multiple tfConstructs.
@@ -67,6 +73,18 @@ type tfLicense struct{}
 func (t *tfLicense) tfTemplate() string       { return "launchpad/static/tmpl/tf/license.tf.tmpl" }
 func (t *tfLicense) tfArguments() interface{} { return nil }
 
+//
+type tfTerraform struct {
+	RequiredVersion string
+}
+
+func (t *tfTerraform) tfTemplate() string       { return "launchpad/static/tmpl/tf/_terraform.tf.tmpl" }
+func (t *tfTerraform) tfArguments() interface{} { return t }
+func newTfTerraform(requiredVer string) *tfTerraform {
+	// TODO Default!
+	return &tfTerraform{RequiredVersion: requiredVer}
+}
+
 // tfOutput represents a single Terraform "output".
 type tfOutput struct {
 	Id  string
@@ -109,8 +127,8 @@ func (tf *tfGoogleProvider) tfTemplate() string {
 func (tf *tfGoogleProvider) tfArguments() interface{} { return tf }
 func newTfGoogleProvider(options ...func(*tfGoogleProvider) error) *tfGoogleProvider {
 	p := &tfGoogleProvider{
-		Credentials: "${file(var.credentials_file_path)}",
-		Version:     "~> 1.19",
+		Credentials: "var.credentials_file_path",
+		Version:     tfProviderGoogleVer,
 	}
 	for _, op := range options {
 		if err := op(p); err != nil {
@@ -133,9 +151,9 @@ func newTfGoogleFolder(id string, name string, parentPtr *parentRefYAML) *tfGoog
 	parent := ""
 	switch parentPtr.ParentType {
 	case KindOrganization:
-		parent = fmt.Sprintf("organizations/%s", parentPtr.ParentId)
+		parent = fmt.Sprintf("\"organizations/${var.organization_id}\"")
 	case KindFolder:
-		parent = fmt.Sprintf("${google_folder.%s.name}", parentPtr.ParentId)
+		parent = fmt.Sprintf("google_folder.%s.name", parentPtr.ParentId)
 	default:
 		log.Fatalln("folder contained in non folder or org")
 	}

@@ -18,6 +18,13 @@ import (
 	"errors"
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"log"
+)
+
+var (
+	errDuplicatedDefinition = errors.New("duplicated definition")
+	errOrgIdConflict        = errors.New("conflicted organization definition")
+	errUndefinedReference   = errors.New("undefined references")
 )
 
 // globalState stores metadata such as stack and evaluated objects to facilitate output generation.
@@ -25,7 +32,9 @@ type globalState struct {
 	stack           []stackFrame
 	outputDirectory string
 	outputFlavor    outputFlavor
+	references      map[string]*parentRefYAML
 	evaluated       struct {
+		orgId   string
 		folders folders
 	}
 }
@@ -79,14 +88,66 @@ func (g *globalState) peek() *stackFrame {
 	return &g.stack[l-1]
 }
 
-// ==== Evaluated Objects ====
+// ==== CRD References ====
 
-// newFolder takes a parsed folder YAML object and stores in for later processing.
+// storeReference takes a given reference and preserve it for validation later.
 //
-// newFolder will ignore duplicated object based on the specified id.
-func newFolder(f *folderSpecYAML) error {
+// Some CRD will specify explicit references, such as which organization/folder current project belongs.
+// In the case where user specifies a resource ID that does not exist, storeReference and checkReferences
+// works in conjunction to help prevent unknown reference error.
+func (g *globalState) storeReference(r *parentRefYAML) {
+	refId := string(r.ParentType) + "." + r.ParentId
+	if _, ok := g.references[refId]; ok {
+		return
+	}
+	g.references[refId] = r
+}
+
+// checkReferences validates all the explicit reference processed from CRDs and report error on undefined references.
+func (g *globalState) checkReferences() error {
+	for _, p := range g.references {
+		switch p.ParentType {
+		case KindFolder:
+			if _, ok := gState.evaluated.folders.YAMLs[p.ParentId]; !ok {
+				log.Printf("Folder reference [%s] undefined\n", p.ParentId)
+				return errUndefinedReference
+			}
+		case KindOrganization:
+			if gState.evaluated.orgId != p.ParentId {
+				log.Printf("Organization reference [%s] conflicted\n", p.ParentId)
+				return errOrgIdConflict
+			}
+		default:
+			log.Println("Unknown Reference Type", p.ParentType)
+			return errUndefinedReference
+		}
+	}
+	return nil
+}
+
+// ==== Evaluated Resources ====
+
+// setOrg takes a organization id and verify it is not conflict with previous definitions.
+//
+// Multiple CRDs can be processed at a given time, and Launchpad only allows generation
+// of one organization. Therefore, all organization IDs in CRDs must be the same.
+func (g *globalState) setOrg(orgId string) error {
+	if g.evaluated.orgId == "" {
+		g.evaluated.orgId = orgId
+		return nil
+	}
+	if g.evaluated.orgId == orgId {
+		return nil
+	}
+	return errOrgIdConflict
+}
+
+// storeFolder takes a parsed folder YAML object and stores in for later processing.
+//
+// storeFolder will ignore duplicated object based on the specified id.
+func (g *globalState) storeFolder(f *folderSpecYAML) error {
 	if _, ok := gState.evaluated.folders.YAMLs[f.Id]; ok {
-		return errors.New("duplicated definition of folder")
+		return errDuplicatedDefinition
 	}
 	gState.evaluated.folders.YAMLs[f.Id] = f
 	return nil

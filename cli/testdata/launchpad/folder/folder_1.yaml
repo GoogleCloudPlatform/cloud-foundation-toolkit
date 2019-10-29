@@ -1,0 +1,10 @@
+apiVersion: cft.dev/v1alpha1
+kind: Folder
+metadata:
+  name: group1
+spec:
+  id: "group1"
+  displayName: "Group 1"
+  parentRef:
+    type: Organization
+    id: 12345678
