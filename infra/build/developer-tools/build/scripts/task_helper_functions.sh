@@ -265,8 +265,8 @@ function check_documentation() {
     --exclude=".terraform" \
     --exclude=".kitchen" \
     --exclude=".git" \
-    --exclude 'autogen' \
-    --exclude '.tfvars' \
+    --exclude="autogen" \
+    --exclude="*.tfvars" \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then
