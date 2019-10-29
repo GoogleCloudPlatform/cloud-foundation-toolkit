@@ -257,6 +257,7 @@ function check_documentation() {
     --exclude '*/.kitchen' \
     --exclude '*/.git' \
     --exclude 'autogen' \
+    --exclude '*/.tfvars' \
     /workspace "${tempdir}" >/dev/null 2>/dev/null
   cd "${tempdir}"
   generate_docs >/dev/null 2>/dev/null
@@ -265,6 +266,7 @@ function check_documentation() {
     --exclude=".kitchen" \
     --exclude=".git" \
     --exclude 'autogen' \
+    --exclude '.tfvars' \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then
