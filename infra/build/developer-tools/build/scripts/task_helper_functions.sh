@@ -115,7 +115,7 @@ function check_terraform() {
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
-  find_files . -name "*.tf" | while read -r file; do
+  find_files . -name "*.tf" -print | while read -r file; do
     terraform fmt -diff -check=true -write=false "$file"
     rval="$?"
     if [[ "${rval}" -gt 0 ]]; then
