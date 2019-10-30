@@ -13,7 +13,7 @@
 # limitations under the License.
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
-TERRAFORM_VERSION := 0.12.6
+TERRAFORM_VERSION := 0.12.12
 CLOUD_SDK_VERSION := 255.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.6.0
