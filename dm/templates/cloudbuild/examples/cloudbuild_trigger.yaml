@@ -6,13 +6,14 @@
 # Pre-requisites steps for creating this trigger: 
 # Step1: Login to github and fork the following github repo
 #        https://github.com/GoogleCloudBuild/gcbapp-example
-# Step2: Create a Cloud Source repo named gcbapp-example
-#        After the repo is created successfully do the following     
+# Step2: Create a Cloud Source repo:
 #        - Select "Automatically mirror from Github/Bitbucket" option
 #        - Select "Hosting Service", Choose "Github" from dropdown then Connect
 #        - Follow steps to Authenticate your Github repo
 #        - Once authenticated, select the repo (from Step1) from the list
 #        - Select, "I consent .." checkbox then Click "connect"
+#        - Copy new repo name
+# <FIXME:repo_name>: Connected repo name
 #
 
 imports:
@@ -25,9 +26,9 @@ resources:
     properties:
       description: Cloud Build example app
       triggerTemplate:
-        repoName: 'gcbapp-example'
+        repoName: '<FIXME:repo_name>'
         branchName: 'master'
-      build:
+      buildTemplate:
         steps:
           - name: 'gcr.io/cloud-builders/docker'
             args:

@@ -41,9 +41,17 @@ properties:
       Google apps domain is prefixed if applicable.
   source:
     description: The location of the source files to build.
+    additionalProperties: false
     oneOf:
-      - "$ref": "#/definitions/storageSource"
-      - "$ref": "#/definitions/repoSource"
+      - required:
+          - storageSource
+      - required:
+          - repoSource
+    properties:
+      storageSource:
+        $ref: "#/definitions/storageSource"
+      repoSource:
+        $ref: "#/definitions/repoSource"
   steps:
     type: array
     uniqItems: true
@@ -396,6 +404,13 @@ definitions:
     type: object
     description: |
       The location of the source in the Google Cloud Source repository.
+    oneOf:
+      - required:
+          - branchName
+      - required:
+          - tagName
+      - required:
+          - commitSha
     properties:
       projectId:
         type: string
@@ -412,12 +427,12 @@ definitions:
           The directory to run the build in (relative to the source root).
           If a step's dir is specified as an absolute path, the value is
           ignored for that step's execution.
-      revision:
-        type: string
-        oneOf:
-          - "$ref": "#/definitions/branchName"
-          - "$ref": "#/definitions/tagName"
-          - "$ref": "#/definitions/commitSha"
+      branchName:
+        $ref: "#/definitions/branchName"
+      tagName:
+        $ref: "#/definitions/tagName"
+      commitSha:
+        $ref: "#/definitions/commitSha"
   branchName:
     type: string
     description: The name of the branch to build.

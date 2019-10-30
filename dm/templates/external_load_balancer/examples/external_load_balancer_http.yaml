@@ -24,5 +24,7 @@ resources:
           healthCheck: <FIXME:healthcheck>
           backends:
             - group: <FIXME:instanceGroup>
+              balancingMode: UTILIZATION
+              maxUtilization: 0.8
       urlMap:
         defaultService: default-backend-service

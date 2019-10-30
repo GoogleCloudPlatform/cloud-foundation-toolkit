@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+
+### 29.10.2019
+
+- Bigquery template schema supports single region as location
+
+### 25.10.2019
+
+- Fixed examples for ELB to pass the new (strict) schema validation [#392] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/392)
+- Added support for GKE on SharedVPC for the Project Factory and better visibility for the GKE Service Accounts [#385] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/385)
+- Fixed IAM member binding schema to truly support the lack of project property. [#384] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/384)
+- The CFT CLI (go version) support complex cross deployment references [#359] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/359)
+- Added a Docker container for running bats tests on your local source code for template developers [#355] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/355)
+- New exapmle: [Instance with a private IP](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/dm/templates/instance/examples/instance_private.yaml) [#346] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/346)
+- New template: [Cloud Filestore](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/dm/templates/cloud_filestore) [#348] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/348)
+
+### 17.09.2019
+
+- New template: [Unamanged Instance Group](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/dm/templates/unmanaged_instance_group)
+- CFT Instance (DM) template support sourceInstanceTemplate property instead of properties of the instance [#330](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/330)
+- New examples for CloudSQL with [private IP](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/dm/templates/cloud_sql/examples/cloud_sql_private_network.yaml)
+- The [pubsub template](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/dm/templates/pubsub) supports subscription expiration
+- Github PRs are now automatically [triggering](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/312) CloudBuild based tests
+
 ### 03.09.2019
 
  **cft-dm-dev branch merged to master**

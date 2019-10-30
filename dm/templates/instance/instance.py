@@ -90,44 +90,45 @@ def generate_config(context):
     zone = properties['zone']
     vm_name = properties.get('name', context.env['name'])
     project_id = properties.get('project', context.env['project'])
-    machine_type = properties['machineType']
-
     network_interfaces = get_network_interfaces(properties)
+
     instance = {
         'name': context.env['name'],
         # https://cloud.google.com/compute/docs/reference/rest/v1/instances
         'type': 'gcp-types/compute-v1:instances',
-        'properties':{
+        'properties': {
             'name': vm_name,
             'zone': zone,
-            'project': project_id,
-            'machineType': 'zones/{}/machineTypes/{}'.format(zone,
-                                                             machine_type),
-            'networkInterfaces': network_interfaces
+            'project': project_id
         }
     }
 
-    optionalProperties = [
-        'description',
-        'scheduling',
-        'disks',
-        'minCpuPlatform',
-        'guestAccelerators',
-        'deletionProtection',
-        'hostname',
-        'shieldedInstanceConfig',
-        'shieldedInstanceIntegrityPolicy',
-        'labels',
-        'metadata',
-        'serviceAccounts',
-        'canIpForward',
-        'tags',
-    ]
-    for name in optionalProperties:
-        set_optional_property(instance['properties'], properties, name)
+    if not properties.get('sourceInstanceTemplate'):
+        instance['properties']['machineType'] = 'zones/{}/machineTypes/{}'.format(zone, properties['machineType'])
+        instance['properties']['networkInterfaces'] = network_interfaces
+        optional_properties = [
+            'description',
+            'scheduling',
+            'disks',
+            'minCpuPlatform',
+            'guestAccelerators',
+            'deletionProtection',
+            'hostname',
+            'shieldedInstanceConfig',
+            'shieldedInstanceIntegrityPolicy',
+            'labels',
+            'metadata',
+            'serviceAccounts',
+            'canIpForward',
+            'tags',
+        ]
+        for name in optional_properties:
+            set_optional_property(instance['properties'], properties, name)
 
-    if not properties.get('disks'):
-        instance['properties']['disks'] = [create_boot_disk(properties, zone, vm_name)]
+        if not properties.get('disks'):
+            instance['properties']['disks'] = [create_boot_disk(properties, zone, vm_name)]
+    else:
+        instance['properties']['sourceInstanceTemplate'] = properties['sourceInstanceTemplate']
 
     outputs = [
         {
@@ -144,7 +145,7 @@ def generate_config(context):
         }
     ]
 
-    if len(network_interfaces) == 1:
+    if not properties.get('sourceInstanceTemplate') and len(network_interfaces) == 1:
         outputs.append({
             'name': 'internalIp',
             'value': '$(ref.{}.networkInterfaces[0].networkIP)'.format(context.env['name'])
@@ -159,6 +160,8 @@ def generate_config(context):
                   'value': '$(ref.{}.networkInterfaces[0].accessConfigs[{}].natIP)'.format(context.env['name'], i)
                 })
                 break
+
+    print(instance)
 
 
     return {'resources': [instance], 'outputs': outputs}
