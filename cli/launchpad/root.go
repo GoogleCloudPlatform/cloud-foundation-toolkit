@@ -28,10 +28,7 @@ const (
 var gState globalState
 
 // init initialize tracking for evaluated objects
-func init() {
-	gState.references = make(map[string]*parentRefYAML)
-	gState.evaluated.folders.YAMLs = make(map[string]*folderSpecYAML)
-}
+func init() { gState.init() }
 
 // NewGenerate takes file patterns as input YAMLs and output Infrastructure as
 // Code ready scripts based on specified output flavor.

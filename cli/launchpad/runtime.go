@@ -25,6 +25,7 @@ var (
 	errDuplicatedDefinition = errors.New("duplicated definition")
 	errOrgIdConflict        = errors.New("conflicted organization definition")
 	errUndefinedReference   = errors.New("undefined references")
+	errUnsupportedReference = errors.New("unsupported reference type")
 )
 
 // globalState stores metadata such as stack and evaluated objects to facilitate output generation.
@@ -32,11 +33,33 @@ type globalState struct {
 	stack           []stackFrame
 	outputDirectory string
 	outputFlavor    outputFlavor
-	references      map[string]*parentRefYAML
+	references      map[string][]reference
 	evaluated       struct {
 		orgId   string
 		folders folders
 	}
+}
+
+// init resets globalState to initialized state.
+func (g *globalState) init() {
+	g.stack = []stackFrame{}
+	g.outputDirectory = ""
+	g.outputFlavor = ""
+	g.references = make(map[string][]reference)
+	g.evaluated.orgId = ""
+	g.evaluated.folders.YAMLs = make(map[string]*folderSpecYAML)
+}
+
+// reference is an explicit reference specified by the CRD.
+//
+// An explicit reference can be of any type from the CRD to reference
+// to another resource. Source is the origin of the reference, and destination
+// is the targeted resource, which may or may not exist.
+type reference struct {
+	srcType crdKind
+	srcPtr  stackable
+	dstType crdKind
+	dstId   string
 }
 
 // ==== Evaluation Stack ====
@@ -95,31 +118,35 @@ func (g *globalState) peek() *stackFrame {
 // Some CRD will specify explicit references, such as which organization/folder current project belongs.
 // In the case where user specifies a resource ID that does not exist, storeReference and checkReferences
 // works in conjunction to help prevent unknown reference error.
-func (g *globalState) storeReference(r *parentRefYAML) {
+func (g *globalState) storeReference(origin stackFrame, r *parentRefYAML) {
 	refId := string(r.ParentType) + "." + r.ParentId
-	if _, ok := g.references[refId]; ok {
-		return
-	}
-	g.references[refId] = r
+	ref := reference{origin.stackType, origin.stackPtr, r.ParentType, r.ParentId}
+	g.references[refId] = append(g.references[refId], ref)
 }
 
 // checkReferences validates all the explicit reference processed from CRDs and report error on undefined references.
 func (g *globalState) checkReferences() error {
-	for _, p := range g.references {
-		switch p.ParentType {
-		case KindFolder:
-			if _, ok := gState.evaluated.folders.YAMLs[p.ParentId]; !ok {
-				log.Printf("Folder reference [%s] undefined\n", p.ParentId)
-				return errUndefinedReference
+	for _, refs := range g.references {
+		for _, ref := range refs {
+			switch ref.dstType {
+			case KindFolder:
+				if refFolder, ok := gState.evaluated.folders.YAMLs[ref.dstId]; !ok {
+					log.Printf("Folder reference [%s] undefined\n", ref.dstId)
+					return errUndefinedReference
+				} else {
+					if err := refFolder.resolveReference(ref); err != nil {
+						return err
+					}
+				}
+			case KindOrganization:
+				if gState.evaluated.orgId != ref.dstId {
+					log.Printf("Organization reference [%s] conflicted\n", ref.dstId)
+					return errOrgIdConflict
+				}
+			default:
+				log.Println("Unknown Reference Type", ref.dstType)
+				return errUnsupportedReference
 			}
-		case KindOrganization:
-			if gState.evaluated.orgId != p.ParentId {
-				log.Printf("Organization reference [%s] conflicted\n", p.ParentId)
-				return errOrgIdConflict
-			}
-		default:
-			log.Println("Unknown Reference Type", p.ParentType)
-			return errUndefinedReference
 		}
 	}
 	return nil

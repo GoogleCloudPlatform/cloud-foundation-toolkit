@@ -17,69 +17,32 @@ func testdataFiles(relativeFilepath ...string) []string {
 	return ret
 }
 
-func TestFolderLoad(tt *testing.T) {
-	folderG12 := &folderYAML{
-		commonConfigYAML{
-			APIVersion: "cft.dev/v1alpha1",
-			Kind:       "Folder",
-		},
+func testFolder(id string, name string, parentType crdKind, parentId string) *folderYAML {
+	return &folderYAML{
+		commonConfigYAML{APIVersion: "cft.dev/v1alpha1", Kind: "Folder"},
 		folderSpecYAML{
-			Id:          "group1_2",
-			DisplayName: "Group 1-2",
-			ParentRef: parentRefYAML{
-				"Folder",
-				"group1",
-			},
+			Id:          id,
+			DisplayName: name,
+			ParentRef:   parentRefYAML{parentType, parentId},
 		},
 	}
-	//folderG21 := &folderYAML{
-	//	commonConfigYAML{
-	//		APIVersion: "cft.dev/v1alpha1",
-	//		Kind:       "Folder",
-	//	},
-	//	folderSpecYAML{
-	//		Id:          "group2_1",
-	//		DisplayName: "Group 2-1",
-	//		ParentRef: parentRefYAML{
-	//			"folder",
-	//			"group2",
-	//		},
-	//	},
-	//}
-	folderG121Spec := folderSpecYAML{
-		Id:          "group1_2_1",
-		DisplayName: "Group 1-2-1",
-		ParentRef: parentRefYAML{
-			"Folder",
-			"group1_2",
-		},
-	}
-	folderG121 := &folderYAML{
-		commonConfigYAML{
-			APIVersion: "cft.dev/v1alpha1",
-			Kind:       "Folder",
-		},
-		folderG121Spec,
-	}
-	//folderG212 := &folderYAML{
-	//	commonConfigYAML{
-	//		APIVersion: "cft.dev/v1alpha1",
-	//		Kind:       "Folder",
-	//	},
-	//	folderSpecYAML{
-	//		Id:          "group2_1_2",
-	//		DisplayName: "Group 2-1-2",
-	//		ParentRef: parentRefYAML{
-	//			"folder",
-	//			"group2_1",
-	//		},
-	//	},
-	//}
-	folderG12G121 := *folderG12
-	folderG12G121.Spec.Folders = append(folderG12G121.Spec.Folders, &folderG121Spec)
-	folderOrgG12 := *folderG12
-	folderOrgG12.Spec.ParentRef.ParentType = KindOrganization
-	folderOrgG12.Spec.ParentRef.ParentId = "12345678"
+}
+
+func TestFolderLoad(tt *testing.T) {
+	fG1 := testFolder("group1", "Group 1", "Organization", "12345678")
+	fG12 := testFolder("group1_2", "Group 1-2", "Folder", "group1")
+	fG121 := testFolder("group1_2_1", "Group 1-2-1", "Folder", "group1_2")
+
+	// Folder Group 1-2 under Org directly
+	fG12Org := *fG12
+	fG12Org.Spec.ParentRef.ParentId = "12345678"
+	fG12Org.Spec.ParentRef.ParentType = "Organization"
+
+	// Expected relationship
+	nestG12 := *fG12
+	nestG12.Spec.Folders = append(nestG12.Spec.Folders, &fG121.Spec)
+	nestG1 := *fG1
+	nestG1.Spec.Folders = append(nestG1.Spec.Folders, &nestG12.Spec)
 
 	var testCases = []struct {
 		name         string
@@ -92,17 +55,17 @@ func TestFolderLoad(tt *testing.T) {
 		[]string{"dummy.txt"},
 		make(map[string]*folderYAML),
 	}, {
-		"multiple_files_of_one_document",
+		"multiple_files_construct_to_full_org",
 		errors.New("test"),
-		testdataFiles("folder/folder_12.yaml", "folder/folder_121.yaml"),
-		map[string]*folderYAML{"group1_2_1": folderG121, "group1_2": folderG12},
+		testdataFiles("folder/folder_1.yaml", "folder/folder_12.yaml", "folder/folder_121.yaml"),
+		map[string]*folderYAML{"group1_2": &nestG12, "group1_2_1": fG121, "group1": &nestG1},
 	}, {
 		"same_document_multiple_load",
 		nil,
-		testdataFiles("folder/folder_12.yaml", "folder/folder_12.yaml"),
-		map[string]*folderYAML{"group1_2": folderG12},
-		// TODO (wengm@) support multi document in a file
+		testdataFiles("folder/folder_1.yaml", "folder/folder_1.yaml"),
+		map[string]*folderYAML{"group1": fG1},
 		//}, {
+		// TODO (wengm@) support multi document in a file
 		//	"one_file_multiple_objects",
 		//	nil,
 		//	testdataFiles("folder/folder_21_212.yaml"),
@@ -113,25 +76,25 @@ func TestFolderLoad(tt *testing.T) {
 	}, {
 		"nested_folders",
 		nil,
-		testdataFiles("folder/folder_12_121.yaml"),
-		map[string]*folderYAML{"group1_2": &folderG12G121, "group1_2_1": folderG121},
+		testdataFiles("folder/folder_1.yaml", "folder/folder_12_121.yaml"),
+		map[string]*folderYAML{"group1_2": &nestG12, "group1_2_1": fG121, "group1": &nestG1},
 	}, {
 		"folder_under_cloudfoundation_CRD",
 		nil,
 		testdataFiles("folder/cft_1.yaml"),
-		map[string]*folderYAML{"group1_2": &folderOrgG12},
+		map[string]*folderYAML{"group1_2": &fG12Org},
 	}, {
 		"folder_under_org_CRD",
 		nil,
 		testdataFiles("folder/org_1.yaml"),
-		map[string]*folderYAML{"group1_2": &folderOrgG12},
+		map[string]*folderYAML{"group1_2": &fG12Org},
 	}}
 
 	for _, tc := range testCases {
 		tt.Run(tc.name, func(t *testing.T) {
 			evalYAMLs := &gState.evaluated.folders.YAMLs // Evaluated YAMLs
 
-			defer func() { *evalYAMLs = make(map[string]*folderSpecYAML) }()
+			defer func() { gState.init() }()
 			err := loadAllYAMLs(tc.filePatterns)
 
 			if err != nil && tc.loadErr != nil && err.Error() != tc.loadErr.Error() {

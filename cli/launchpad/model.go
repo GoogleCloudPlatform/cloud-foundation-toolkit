@@ -85,6 +85,7 @@ type parentRefYAML struct {
 // UnmarshalYAML will have side effect to set organization ID if reference type is Organization. And will store the
 // references as this represents an explicit reference.
 func (p *parentRefYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
+	top := gState.peek()
 	type raw parentRefYAML
 	if err := unmarshal((*raw)(p)); err != nil {
 		return err
@@ -95,7 +96,7 @@ func (p *parentRefYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err er
 			return err
 		}
 	}
-	gState.storeReference(p) // retain explicit reference to check if reference exist
+	gState.storeReference(*top, p) // retain explicit reference to check if reference exist
 	return nil
 }
 
@@ -243,6 +244,28 @@ func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error 
 
 	if err := gState.storeFolder(f); err != nil {
 		log.Println("warning: ignoring duplicated definition of folder", f.Id)
+	}
+	return nil
+}
+
+// resolveReference processes reference to this folder and merge source under it's
+// Folders attribute if valid.
+//
+// An explicit reference specified current folder as parent. Caller can be of any type,
+// however, only supported resources can be a children of this folder.
+func (f *folderSpecYAML) resolveReference(ref reference) error {
+	switch src := ref.srcPtr.(type) {
+	case *folderSpecYAML: // sub folder relationship
+		for _, f := range f.Folders {
+			if src.Id != f.Id {
+				continue
+			}
+			log.Println("Ignore existing reference within folders", f.Id)
+			return nil
+		}
+		f.Folders = append(f.Folders, src)
+	default:
+		return errUnsupportedReference
 	}
 	return nil
 }
