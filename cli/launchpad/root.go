@@ -1,9 +1,10 @@
 package launchpad
 
 import (
+	"bytes"
 	"errors"
-	"fmt"
 	"gopkg.in/yaml.v2"
+	"io"
 	"log"
 )
 
@@ -66,12 +67,14 @@ func loadAllYAMLs(rawFilepath []string) error {
 		return errors.New("no valid YAML files given")
 	}
 	for _, conf := range fps { // Load all files into runtime
-		// TODO multiple yaml documents in one file
 		if content, err := loadFile(conf); err != nil {
 			return err
 		} else {
-			if err := yaml.Unmarshal([]byte(content), &configYAML{}); err != nil {
-				return errors.New(fmt.Sprintf("%s %s", conf, err.Error()))
+			decoder := yaml.NewDecoder(bytes.NewReader([]byte(content)))
+			for err := decoder.Decode(&configYAML{}); err != io.EOF; err = decoder.Decode(&configYAML{}) {
+				if err != nil { // sub document processing error
+					return err
+				}
 			}
 		}
 	}
