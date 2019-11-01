@@ -121,6 +121,7 @@ def has_valid_header(filename, refs, regexs):
     elif extension == "sh" or extension == "py":
         she = regexs["shebang"]
         (data, found) = she.subn("", data, 1)
+    data = data.sub("Google", "GOOG")
     data = data.splitlines()
     # if our test file is smaller than the reference it surely fails!
     if len(ref) > len(data):
