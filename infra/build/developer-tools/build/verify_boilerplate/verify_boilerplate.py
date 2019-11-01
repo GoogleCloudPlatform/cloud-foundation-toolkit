@@ -83,8 +83,21 @@ def get_refs(ARGS):
     return refs
 
 
+def list_to_string(list, separator = ""):
+  """Converts a list of strings into a string
+
+  Args:
+    list: list of strings
+    separator: string, the separator between list elements
+
+  Returns:
+    A string which is the concatenation of the strings in the list
+  """
+  return separator.join(list)
+
+
 # pylint: disable=too-many-locals
-def has_valid_header(filename, refs, regexs):
+def has_valid_header(filename, refs):
     """Test whether a file has the correct boilerplate header.
 
     Tests each file against the boilerplate stored in refs for that file type
@@ -95,7 +108,6 @@ def has_valid_header(filename, refs, regexs):
     Args:
         filename: A string containing the name of the file to test
         refs: A map of boilerplate headers, keyed by file extension
-        regexs: a map of compiled regex objects used in verifying boilerplate
 
     Returns:
         True if the file has the correct boilerplate header, otherwise returns
@@ -113,30 +125,16 @@ def has_valid_header(filename, refs, regexs):
         ref = refs[extension]
     else:
         ref = refs[basename]
-    # remove build tags from the top of Go files
-    if extension == "go":
-        con = regexs["go_build_constraints"]
-        (data, found) = con.subn("", data, 1)
-    # remove shebang
-    elif extension == "sh" or extension == "py":
-        she = regexs["shebang"]
-        (data, found) = she.subn("", data, 1)
     data = data.splitlines()
     # if our test file is smaller than the reference it surely fails!
     if len(ref) > len(data):
         return False
-    # trim our file to the same number of lines as the reference file
-    data = data[:len(ref)]
-    year = regexs["year"]
-    for datum in data:
-        if year.search(datum):
-            return False
-    # replace the actual year (e.g. 2019) with "YYYY" used in the reference
-    data = [regexs["date"].sub("YYYY", datum) for datum in data]
-    # if we don't match the reference at this point, fail
-    if ref != data:
-        return False
-    return True
+    year_regex = re.compile("Copyright 20\\d\\d Google LLC")
+    # Replace "Copyright 2019 Google LLC" with "Copyright YYYY Google LLC"
+    data = year_regex.sub("Copyright YYYY Google LLC", list_to_string(data), 1)
+
+    # Check if license header is present in a file
+    return list_to_string(ref) in data
 
 
 def get_file_extension(filename):
@@ -230,33 +228,6 @@ def get_files(extensions, ARGS):
     return outfiles
 
 
-def get_regexs():
-    """Builds a map of regular expressions used in boilerplate validation.
-
-    There are two scenarios where these regexes are used. The first is in
-    validating the date referenced is the boilerplate, by ensuring it is an
-    acceptable year. The second is in identifying non-boilerplate elements,
-    like shebangs and compiler hints that should be ignored when validating
-    headers.
-
-    Returns:
-        A map of compiled regular expression objects, keyed by mnemonic.
-    """
-    regexs = {}
-    # Search for "YEAR" which exists in the boilerplate, but shouldn't in the
-    # real thing
-    regexs["year"] = re.compile('YEAR')
-    # dates can be 2014, 2015, 2016 or 2017, company holder names can be
-    # anything
-    regexs["date"] = re.compile('(20\\d\\d)')
-    # strip // +build \n\n build constraints
-    regexs["go_build_constraints"] = re.compile(r"^(// \+build.*\n)+\n",
-                                                re.MULTILINE)
-    # strip #!.* from shell/python scripts
-    regexs["shebang"] = re.compile(r"^(#!.*\n)\n*", re.MULTILINE)
-    return regexs
-
-
 def main(args):
     """Identifies and verifies files that should have the desired boilerplate.
 
@@ -265,12 +236,11 @@ def main(args):
     normally. Otherwise it prints the name of each non-conforming file and
     exists with a non-zero status code.
     """
-    regexs = get_regexs()
     refs = get_refs(args)
     filenames = get_files(refs.keys(), args)
     nonconforming_files = []
     for filename in filenames:
-        if not has_valid_header(filename, refs, regexs):
+        if not has_valid_header(filename, refs):
             nonconforming_files.append(filename)
     if nonconforming_files:
         print('%d files have incorrect boilerplate headers:' % len(
