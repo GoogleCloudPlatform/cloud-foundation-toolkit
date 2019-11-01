@@ -9,6 +9,8 @@ layout: |
     outputs:
     - name: string
       finalValue: stringValue
+    - name: string2
+      finalValue: stringValue2
     - name: map
       finalValue:
          name: someName

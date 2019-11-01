@@ -1,5 +1,4 @@
 name: cftcli-test-firewall-dpl
-project: gl-akopachevskyy-dm-seed
 
 imports:
 - path: ../../../dm/templates/firewall/firewall.py
@@ -9,7 +8,7 @@ resources:
 - name: cftcli-test-firewall
   type: firewall.py
   properties:
-    network: $(out.gl-akopachevskyy-dm-seed.cftcli-test-network-dpl.cftcli-test-network.name)
+    network: $(out.cftcli-test-network-dpl.cftcli-test-network.name)
     rules:
     - name: allow-proxy-from-inside
       allowed:
