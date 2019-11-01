@@ -87,11 +87,11 @@ def list_to_string(list, separator = ""):
   """Converts a list of strings into a string
 
   Args:
-    list: list of strings
-    separator: string, the separator between list elements
+      list: list of strings
+      separator: string, the separator between list elements
 
   Returns:
-    A string which is the concatenation of the strings in the list
+      A string which is the concatenation of the strings in the list
   """
   return separator.join(list)
 
