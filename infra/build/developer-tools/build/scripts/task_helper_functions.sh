@@ -360,7 +360,11 @@ prepare_environment() {
   cd test/setup/ || exit
   terraform init
   terraform apply -auto-approve
-  ./make_source.sh
+
+  if [ -f make_source.sh ]; then
+    echo "Found test/setup/make_source.sh. Using it for additional explicit environment configuration."
+    ./make_source.sh
+  fi
 }
 
  # Destroy the setup environment
@@ -380,11 +384,20 @@ setup_environment() {
   init_credentials
 }
 
-# Source environment variables from a file, if found
+# Source environment variables with tf outputs from the setup folder and/or a source file, if found
 source_test_env() {
-  if [ ! -f test/source.sh ]; then
-    echo "Warning: test/source.sh not found, assuming environment configured elsewhere."
+  if [ -d test/setup ]; then
+    # shellcheck disable=SC1091
+    source <(python /usr/local/bin/export_tf_outputs.py --path=test/setup)
   else
+    if [ -f test/source.sh ]; then
+      echo "Warning: test/setup not found. Will only use test/source.sh to configure environment."
+    else
+      echo "Warning: Neither test/setup or test/source.sh found. Assuming environment configured elsewhere."
+    fi
+  fi
+  if [ -f test/source.sh ]; then
+    echo "Found test/source.sh. Using it for additional explicit environment configuration."
     # shellcheck disable=SC1091
     source test/source.sh
   fi

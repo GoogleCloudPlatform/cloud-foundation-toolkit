@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 31.10.2019
+
+- New helper template to use firewall with Google important IP ranges, stored in YAML [#370] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/370)
+
+### 29.10.2019
+
+- Bigquery template schema supports single region as location
 
 ### 25.10.2019
 
