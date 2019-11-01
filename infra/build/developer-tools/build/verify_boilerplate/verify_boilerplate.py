@@ -132,7 +132,7 @@ def has_valid_header(filename, refs, regexs):
         if year.search(datum):
             return False
     # replace the actual year (e.g. 2019) with "YYYY" used in the reference
-    data = [regexs["date"].sub("YYYY", datum) for datum in data]
+    # data = [regexs["date"].sub("YYYY", datum) for datum in data]
     # if we don't match the reference at this point, fail
     if ref != data:
         return False
