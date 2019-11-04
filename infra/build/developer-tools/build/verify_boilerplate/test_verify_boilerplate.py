@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2018 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,9 +30,8 @@ from copy import deepcopy
 from tempfile import mkdtemp
 from shutil import rmtree
 import unittest
-from verify_boilerplate import has_valid_header, get_refs, get_regexs, \
-    get_args, get_files
-
+from verify_boilerplate import has_valid_header, get_refs, get_args, get_files
+import re
 
 class AllTestCase(unittest.TestCase):
     """
@@ -75,14 +74,23 @@ class AllTestCase(unittest.TestCase):
         """
 
         content = "\n...blah \ncould be code or could be garbage\n"
+        content_before_header = "\n...arbitrary\ncontent\nbefore\nheader\n"
         special_cases = ["Dockerfile", "Makefile"]
         header_template = deepcopy(header)
         valid_filename = tmp_path + extension
+        current_year = "2019"
+        year_placeholder = "YYYY"
+        for i, datum in enumerate(header_template):
+            if year_placeholder in datum:
+                header_template[i] = \
+                    re.compile(year_placeholder).sub(current_year, datum)
+                break
+        header_template.insert(0, content_before_header)
         valid_content = header_template.append(content)
+
         if extension not in special_cases:
             # Invalid test cases for non-*file files (.tf|.py|.sh|.yaml|.xml..)
             invalid_header = "\n".join(header_template)
-            invalid_header.replace(' YYYY ', ' 2019 ')
             invalid_header += content
             invalid_content = invalid_header
             invalid_filename = tmp_path + "invalid." + extension
@@ -101,7 +109,6 @@ class AllTestCase(unittest.TestCase):
         self.tmp_path = mkdtemp() + "/"
         self.my_args = get_args()
         self.my_refs = get_refs(self.my_args)
-        self.my_regex = get_regexs()
         self.prexisting_file_count = len(
             get_files(self.my_refs.keys(), self.my_args))
         for key in self.my_refs:
@@ -118,11 +125,9 @@ class AllTestCase(unittest.TestCase):
         """
         for case in self.cases:
             if self.cases[case]:
-                self.assertTrue(has_valid_header(case, self.my_refs,
-                                                 self.my_regex))
+                self.assertTrue(has_valid_header(case, self.my_refs))
             else:
-                self.assertFalse(has_valid_header(case, self.my_refs,
-                                                  self.my_regex))
+                self.assertFalse(has_valid_header(case, self.my_refs))
 
     def test_invalid_count(self):
         """

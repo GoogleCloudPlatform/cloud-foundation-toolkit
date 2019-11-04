@@ -83,19 +83,6 @@ def get_refs(ARGS):
     return refs
 
 
-def list_to_string(list, separator = ""):
-  """Converts a list of strings into a string
-
-  Args:
-      list: list of strings
-      separator: string, the separator between list elements
-
-  Returns:
-      A string which is the concatenation of the strings in the list
-  """
-  return separator.join(list)
-
-
 # pylint: disable=too-many-locals
 def has_valid_header(filename, refs):
     """Test whether a file has the correct boilerplate header.
@@ -126,15 +113,28 @@ def has_valid_header(filename, refs):
     else:
         ref = refs[basename]
     data = data.splitlines()
+    pattern_len = len(ref)
     # if our test file is smaller than the reference it surely fails!
-    if len(ref) > len(data):
+    if pattern_len > len(data):
         return False
-    year_regex = re.compile("Copyright 20\\d\\d Google LLC")
-    # Replace "Copyright 2019 Google LLC" with "Copyright YYYY Google LLC"
-    data = year_regex.sub("Copyright YYYY Google LLC", list_to_string(data), 1)
-
-    # Check if license header is present in a file
-    return list_to_string(ref) in data
+    copyright_regex = re.compile("Copyright 20\\d\\d")
+    substitute_string = "Copyright YYYY"
+    copyright_is_found = False
+    j = 0
+    for datum in data:
+        # if it's a copyright line
+        if not copyright_is_found and copyright_regex.search(datum):
+            copyright_is_found = True
+            # replace the actual year (e.g. 2019) with "YYYY" placeholder
+            # used in a boilerplate
+            datum = copyright_regex.sub(substitute_string, datum)
+        if datum == ref[j]:
+            j = j + 1
+        else:
+            j = 0
+        if j == pattern_len:
+            return copyright_is_found
+    return copyright_is_found and j == pattern_len
 
 
 def get_file_extension(filename):
