@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
   version = "~> 3.0"
@@ -24,8 +23,17 @@ module "project" {
   org_id            = local.org_id
   folder_id         = local.folder_id
   billing_account   = local.billing_account
+  labels            = local.exclude_labels
 
   activate_apis = [
-    "cloudresourcemanager.googleapis.com"
+    "cloudresourcemanager.googleapis.com",
+    "cloudscheduler.googleapis.com",
+    "cloudfunctions.googleapis.com",
+    "pubsub.googleapis.com",
+    "storage-api.googleapis.com",
+    "serviceusage.googleapis.com",
+    "storage-component.googleapis.com",
+    "appengine.googleapis.com"
   ]
 }
+

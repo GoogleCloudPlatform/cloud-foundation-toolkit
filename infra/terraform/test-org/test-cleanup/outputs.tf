@@ -17,3 +17,8 @@
 output "project_id" {
   value = module.project.project_id
 }
+
+output "excluded_labels" {
+  value = local.exclude_labels
+}
+

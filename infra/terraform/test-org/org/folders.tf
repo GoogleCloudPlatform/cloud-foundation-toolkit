@@ -32,7 +32,7 @@ module "folders-ci" {
   source  = "terraform-google-modules/folders/google"
   version = "~> 2.0"
 
-  parent      = "folders/${replace(local.folders["ci"], "folders/", "")}"
+  parent      = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
 
   names = [for module in local.modules : "ci-${module}"]
 
