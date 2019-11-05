@@ -13,7 +13,7 @@
 # limitations under the License.
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
-TERRAFORM_VERSION := 0.12.6
+TERRAFORM_VERSION := 0.12.12
 CLOUD_SDK_VERSION := 255.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.6.0
@@ -24,7 +24,7 @@ BATS_ASSERT_VERSION := 2.0.0
 BATS_MOCK_VERSION := 1.0.1
 PACKER_VERSION := 1.4.4
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 0.5.1
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 0.5.2
 DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
 DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS := cft/developer-tools-jenkins
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
