@@ -115,16 +115,15 @@ function check_terraform() {
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
-  find_files . -name "*.tf" -print0 \
-    | compat_xargs -0 -n1 dirname \
-    | sort -u \
-    | compat_xargs -t -n1 terraform fmt -diff -check=true -write=false
-  rval="$?"
-  if [[ "${rval}" -gt 0 ]]; then
-    echo "Error: terraform fmt failed with exit code ${rval}" >&2
-    echo "Check the output for diffs and correct using terraform fmt <dir>" >&2
-    return "${rval}"
-  fi
+  find_files . -name "*.tf" -print | while read -r file; do
+    terraform fmt -diff -check=true -write=false "$file"
+    rval="$?"
+    if [[ "${rval}" -gt 0 ]]; then
+      echo "Error: terraform fmt failed with exit code ${rval}" >&2
+      echo "Check the output for diffs and correct using terraform fmt <dir>" >&2
+      return "${rval}"
+    fi
+  done
   echo "Running terraform validate"
   # Change to a temporary directory to avoid re-initializing terraform init
   # over and over in the root of the repository.
@@ -170,7 +169,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png|gz)$' \
+    | grep -v -E '\.(pyc|png|gz|tfvars)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -181,7 +180,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
-    | grep -v -E '\.(png|gz)$' \
+    | grep -v -E '\.(png|gz|tfvars)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
@@ -258,6 +257,7 @@ function check_documentation() {
     --exclude '*/.kitchen' \
     --exclude '*/.git' \
     --exclude 'autogen' \
+    --exclude '*/.tfvars' \
     /workspace "${tempdir}" >/dev/null 2>/dev/null
   cd "${tempdir}"
   generate_docs >/dev/null 2>/dev/null
@@ -265,7 +265,8 @@ function check_documentation() {
     --exclude=".terraform" \
     --exclude=".kitchen" \
     --exclude=".git" \
-    --exclude 'autogen' \
+    --exclude="autogen" \
+    --exclude="*.tfvars" \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then
