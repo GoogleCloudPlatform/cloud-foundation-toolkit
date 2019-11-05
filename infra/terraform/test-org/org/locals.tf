@@ -20,10 +20,10 @@ locals {
   cft_ci_group        = "cft-ci-robots@test.infra.cft.tips"
 
   folders = {
-    ci = module.folders-root.names_and_ids["ci-projects"]
+    ci = module.folders-root.ids["ci-projects"]
   }
 
-  ci_folders = module.folders-ci.names_and_ids
+  ci_folders = module.folders-ci.ids
   modules = [
         "kms",
         "network",
