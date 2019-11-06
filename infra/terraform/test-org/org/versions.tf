@@ -17,3 +17,16 @@
 terraform {
   required_version = ">= 0.12"
 }
+
+provider "external" {
+  version = "~> 1.2"
+}
+
+provider "google" {
+  version = "~> 2.19"
+}
+
+provider "google-beta" {
+  version = "~> 2.19"
+}
+
