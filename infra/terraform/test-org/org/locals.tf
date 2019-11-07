@@ -15,9 +15,9 @@
  */
 
 locals {
-  org_id              = "943740911108"
-  billing_account     = "01D904-DAF6EC-F34EF7"
-  cft_ci_group        = "cft-ci-robots@test.infra.cft.tips"
+  org_id          = "943740911108"
+  billing_account = "01D904-DAF6EC-F34EF7"
+  cft_ci_group    = "cft-ci-robots@test.infra.cft.tips"
   cft_dev_group   = "cft-developers@dev.infra.cft.tips"
 
   folders = {
@@ -26,48 +26,48 @@ locals {
 
   ci_folders = module.folders-ci.names_and_ids
   modules = [
-        "kms",
-        "network",
-        "folders",
-        "slo",
-        "sap",
-        "iam",
-        "event-function",
-        "kubernetes-engine",
-        "vpn",
-        "project-factory",
-        "pubsub",
-        "migrate",
-        "bootstrap",
-        "redis",
-        "datalab",
-        "mariadb",
-        "jenkins",
-        "container-vm",
-        "lb",
-        "vm",
-        "memorystore",
-        "airflow",
-        "service-accounts",
-        "cloud-storage",
-        "sql-db",
-        "vpc-service-controls",
-        "cloud-datastore",
-        "dataflow",
-        "cloud-nat",
-        "startup-scripts",
-        "scheduled-function",
-        "address",
-        "bigquery",
-        "bastion-host",
-        "org-policy",
-        "log-export",
-        "on-prem",
-        "cloud-dns",
-        "gsuite-export",
-        "secret",
-        "terraform-validator",
-        "lb-http",
-        "gcloud"
+    "kms",
+    "network",
+    "folders",
+    "slo",
+    "sap",
+    "iam",
+    "event-function",
+    "kubernetes-engine",
+    "vpn",
+    "project-factory",
+    "pubsub",
+    "migrate",
+    "bootstrap",
+    "redis",
+    "datalab",
+    "mariadb",
+    "jenkins",
+    "container-vm",
+    "lb",
+    "vm",
+    "memorystore",
+    "airflow",
+    "service-accounts",
+    "cloud-storage",
+    "sql-db",
+    "vpc-service-controls",
+    "cloud-datastore",
+    "dataflow",
+    "cloud-nat",
+    "startup-scripts",
+    "scheduled-function",
+    "address",
+    "bigquery",
+    "bastion-host",
+    "org-policy",
+    "log-export",
+    "on-prem",
+    "cloud-dns",
+    "gsuite-export",
+    "secret",
+    "terraform-validator",
+    "lb-http",
+    "gcloud"
   ]
 }
