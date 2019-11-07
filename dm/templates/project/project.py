@@ -102,10 +102,17 @@ def generate_config(context):
                     'value': '$(ref.{}-project.projectId)-usage-export'.format(context.env['name'])
                 },
                 {
-                    'name':
-                        'serviceAccountDisplayName',
+                    'name': 'serviceAccountDisplayName',
                     'value':
                         '$(ref.{}-project.projectNumber)@cloudservices.gserviceaccount.com'.format(context.env['name'])  # pylint: disable=line-too-long
+                },
+                {## This is a workaround to avoid the need of string concatenation in case of referenving to this output.
+                    'name': 'containerSA',
+                    'value': 'serviceAccount:service-$(ref.{}-project.projectNumber)@container-engine-robot.iam.gserviceaccount.com'.format(context.env['name'])
+                },
+                {
+                    'name': 'containerSADisplayName',
+                    'value': 'service-$(ref.{}-project.projectNumber)@container-engine-robot.iam.gserviceaccount.com'.format(context.env['name'])
                 },
                 {
                     'name':
@@ -136,6 +143,13 @@ def activate_apis(context):
             properties.get('sharedVPCHost') or
             properties.get('sharedVPC') or
             properties.get('sharedVPCSubnets')
+        ):
+            apis.append('compute.googleapis.com')
+            
+    if 'container.googleapis.com' not in apis:
+        if (
+            properties.get('enableGKEToUseSharedVPC') and
+            properties.get('sharedVPC')
         ):
             apis.append('compute.googleapis.com')
 
@@ -244,6 +258,13 @@ def create_service_accounts(context, project_id):
     network_list = [
         'serviceAccount:$(ref.{}-project.projectNumber)@cloudservices.gserviceaccount.com'.format(context.env['name'])
     ]
+    
+    if context.properties.get('enableGKEToUseSharedVPC') and context.properties.get('sharedVPC'):
+        network_list.append(
+        'serviceAccount:service-$(ref.{}-project.projectNumber)@container-engine-robot.iam.gserviceaccount.com'.format(context.env['name'])
+        )
+        service_account_dep = ["{}-api-container.googleapis.com".format(context.env['name'])]
+        
     service_account_dep = ["{}-api-compute.googleapis.com".format(context.env['name'])]
     policies_to_add = []
 
@@ -390,8 +411,8 @@ def create_shared_vpc(context):
         resources.append(
             {
                 'name': '{}-attach-xpn-service-{}'.format(context.env['name'], service_project),
-                # https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnResource
-                'type': 'gcp-types/compute-v1:compute.projects.enableXpnResource',
+                # https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnResource
+                'type': 'compute.beta.xpnResource',
                 'metadata': {
                     'dependsOn': ['{}-api-compute.googleapis.com'.format(context.env['name'])]
                 },
@@ -410,8 +431,8 @@ def create_shared_vpc(context):
         resources.append(
             {
                 'name': '{}-xpn-host'.format(context.env['name']),
-                # https://cloud.google.com/compute/docs/reference/rest/v1/projects/enableXpnHost
-                'type': 'gcp-types/compute-v1:compute.projects.enableXpnHost',
+                # https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnHost
+                'type': 'compute.beta.xpnHost',
                 'metadata': {
                     'dependsOn': ['{}-api-compute.googleapis.com'.format(context.env['name'])]
                 },

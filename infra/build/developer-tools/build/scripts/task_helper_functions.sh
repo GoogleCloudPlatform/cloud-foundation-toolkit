@@ -71,7 +71,8 @@ find_files() {
     -path '*/*.svg' -o \
     -path './autogen' -o \
     -path './test/fixtures/all_examples' -o \
-    -path './test/fixtures/shared' ')' \
+    -path './test/fixtures/shared' -o \
+    -path './test/source.sh' ')' \
     -prune -o -type f "$@"
 }
 
@@ -114,16 +115,15 @@ function check_terraform() {
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
-  find_files . -name "*.tf" -print0 \
-    | compat_xargs -0 -n1 dirname \
-    | sort -u \
-    | compat_xargs -t -n1 terraform fmt -diff -check=true -write=false
-  rval="$?"
-  if [[ "${rval}" -gt 0 ]]; then
-    echo "Error: terraform fmt failed with exit code ${rval}" >&2
-    echo "Check the output for diffs and correct using terraform fmt <dir>" >&2
-    return "${rval}"
-  fi
+  find_files . -name "*.tf" -print | while read -r file; do
+    terraform fmt -diff -check=true -write=false "$file"
+    rval="$?"
+    if [[ "${rval}" -gt 0 ]]; then
+      echo "Error: terraform fmt failed with exit code ${rval}" >&2
+      echo "Check the output for diffs and correct using terraform fmt <dir>" >&2
+      return "${rval}"
+    fi
+  done
   echo "Running terraform validate"
   # Change to a temporary directory to avoid re-initializing terraform init
   # over and over in the root of the repository.
@@ -169,7 +169,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png)$' \
+    | grep -v -E '\.(pyc|png|gz|tfvars)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -180,6 +180,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
+    | grep -v -E '\.(png|gz|tfvars)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
@@ -255,6 +256,8 @@ function check_documentation() {
     --exclude '*/.terraform' \
     --exclude '*/.kitchen' \
     --exclude '*/.git' \
+    --exclude 'autogen' \
+    --exclude '*/.tfvars' \
     /workspace "${tempdir}" >/dev/null 2>/dev/null
   cd "${tempdir}"
   generate_docs >/dev/null 2>/dev/null
@@ -262,6 +265,8 @@ function check_documentation() {
     --exclude=".terraform" \
     --exclude=".kitchen" \
     --exclude=".git" \
+    --exclude="autogen" \
+    --exclude="*.tfvars" \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then
@@ -356,7 +361,11 @@ prepare_environment() {
   cd test/setup/ || exit
   terraform init
   terraform apply -auto-approve
-  ./make_source.sh
+
+  if [ -f make_source.sh ]; then
+    echo "Found test/setup/make_source.sh. Using it for additional explicit environment configuration."
+    ./make_source.sh
+  fi
 }
 
  # Destroy the setup environment
@@ -376,11 +385,20 @@ setup_environment() {
   init_credentials
 }
 
-# Source environment variables from a file, if found
+# Source environment variables with tf outputs from the setup folder and/or a source file, if found
 source_test_env() {
-  if [ ! -f test/source.sh ]; then
-    echo "Warning: test/source.sh not found, assuming environment configured elsewhere."
+  if [ -d test/setup ]; then
+    # shellcheck disable=SC1091
+    source <(python /usr/local/bin/export_tf_outputs.py --path=test/setup)
   else
+    if [ -f test/source.sh ]; then
+      echo "Warning: test/setup not found. Will only use test/source.sh to configure environment."
+    else
+      echo "Warning: Neither test/setup or test/source.sh found. Assuming environment configured elsewhere."
+    fi
+  fi
+  if [ -f test/source.sh ]; then
+    echo "Found test/source.sh. Using it for additional explicit environment configuration."
     # shellcheck disable=SC1091
     source test/source.sh
   fi

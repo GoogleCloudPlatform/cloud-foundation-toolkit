@@ -113,7 +113,7 @@ outputs:
       items:
         description: |
           The name of the folder resource. For example, the output can be
-          referenced as: $(ref.<my-folder>.rules.<folder-name>.parent)
+          referenced as: $(ref.<my-folder>.folders.<folder-name>.parent)
         patternProperties:
           ".*":
             type: object

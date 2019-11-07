@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 1.0"
-
-  parent_id   = local.org_id
-  parent_type = "organization"
-
-  names = [
-    "ci-projects"
+locals {
+  terraform_validator_project_name = "ci-terraform-validator"
+  terraform_validator_int_required_roles = [
+    "roles/editor"
   ]
 
-  set_roles = false
-}
-
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 1.0"
-
-  parent_id   = replace(local.folders["ci"], "folders/", "")
-  parent_type = "folder"
-
-  names = [for module in local.modules : "ci-${module}"]
-
-  set_roles = false
+  folder_id           = data.terraform_remote_state.org.outputs.folders["ci-terraform-validator"]
+  org_id              = data.terraform_remote_state.org.outputs.org_id
+  billing_account     = data.terraform_remote_state.org.outputs.billing_account
+  cft_ci_group        = data.terraform_remote_state.org.outputs.cft_ci_group
 }

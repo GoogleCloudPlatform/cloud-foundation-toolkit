@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 1.0"
-
-  parent_id   = local.org_id
-  parent_type = "organization"
-
-  names = [
-    "ci-projects"
-  ]
-
-  set_roles = false
+terraform {
+  backend "gcs" {
+    bucket = "cft-infra-test-tfstate"
+    prefix = "state/tf-validator"
+  }
 }
 
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 1.0"
-
-  parent_id   = replace(local.folders["ci"], "folders/", "")
-  parent_type = "folder"
-
-  names = [for module in local.modules : "ci-${module}"]
-
-  set_roles = false
+data "terraform_remote_state" "org" {
+  backend = "gcs"
+  config = {
+    bucket = "cft-infra-test-tfstate"
+    prefix = "state/org"
+  }
 }

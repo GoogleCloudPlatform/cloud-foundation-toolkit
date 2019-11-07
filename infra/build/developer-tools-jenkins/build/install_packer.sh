@@ -1,4 +1,5 @@
-# Copyright 2018 Google LLC
+#! /bin/bash
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 4.9"
-  gem "kubeclient", "~> 4.0"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.8'
-end
+set -e
+set -u
+
+PACKER_VERSION=$1
+
+cd /build
+
+wget "https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip"
+unzip "packer_${PACKER_VERSION}_linux_amd64.zip"
+rm "packer_${PACKER_VERSION}_linux_amd64.zip"
+install -o 0 -g 0 -m 0755 packer /usr/local/bin/

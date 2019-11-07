@@ -23,13 +23,16 @@ module "org_bindings" {
 
   bindings = {
     "roles/resourcemanager.organizationViewer" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
     ]
     "roles/resourcemanager.organizationAdmin" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
     ]
     "roles/compute.xpnAdmin" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
+    ]
+    "roles/viewer" = [
+      "group:${local.cft_dev_group}"
     ]
   }
 }
@@ -42,15 +45,15 @@ module "ci_bindings" {
 
   bindings = {
     "roles/resourcemanager.projectCreator" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
     ]
 
     "roles/resourcemanager.folderAdmin" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
     ]
 
     "roles/billing.projectManager" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
     ]
   }
 }
@@ -63,7 +66,7 @@ module "ci_folders_folder_bindings" {
 
   bindings = {
     "roles/resourcemanager.folderIamAdmin" = [
-      "group:cft-ci-robots@test.infra.cft.tips",
+      "group:${local.cft_ci_group}",
     ]
   }
 }
@@ -71,5 +74,5 @@ module "ci_folders_folder_bindings" {
 resource "google_billing_account_iam_member" "ci-billing-user" {
   billing_account_id = local.billing_account
   role               = "roles/billing.admin"
-  member             = "group:cft-ci-robots@test.infra.cft.tips"
+  member             = "group:${local.cft_ci_group}"
 }
