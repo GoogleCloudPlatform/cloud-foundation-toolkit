@@ -27,5 +27,5 @@ output "billing_account" {
 }
 
 output "cft_ci_group" {
-    value = local.cft_ci_group
+  value = local.cft_ci_group
 }
