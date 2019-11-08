@@ -21,10 +21,10 @@ locals {
   cft_dev_group   = "cft-developers@dev.infra.cft.tips"
 
   folders = {
-    ci = module.folders-root.names_and_ids["ci-projects"]
+    ci = module.folders-root.ids["ci-projects"]
   }
 
-  ci_folders = module.folders-ci.names_and_ids
+  ci_folders = module.folders-ci.ids
   modules = [
     "kms",
     "network",
