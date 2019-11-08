@@ -33,7 +33,7 @@ module "folders-ci" {
 
   parent      = "folders/${replace(local.folders["ci"], "folders/", "")}"
 
-  names = [for module in local.modules: "ci-${module}"]
+  names = [for module in local.modules : "ci-${module}"]
 
   set_roles = false
 }
