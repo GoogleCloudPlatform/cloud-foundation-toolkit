@@ -69,8 +69,14 @@ func TestFindAllDependencies(t *testing.T) {
 		Project: "projectB",
 		Name:    "deploymentB",
 	}
+	configC := Config{
+		data:    "network: $(out.projectA.deploymentA.resourceA.nameA)-$(out.projectB.deploymentB.resourceB.nameB)",
+		Project: "projectC",
+		Name:    "deploymentC",
+	}
 
 	configs := map[string]Config{
+		configC.FullName(): configC,
 		configB.FullName(): configB,
 		configA.FullName(): configA,
 	}
@@ -89,6 +95,14 @@ func TestFindAllDependencies(t *testing.T) {
 	}
 	if !reflect.DeepEqual(actual, []Config{configA}) {
 		t.Errorf("want %v, got %v", []Config{configA}, actual)
+	}
+
+	actual, err = configC.findAllDependencies(configs)
+	if err != nil {
+		t.Errorf("want nil, got %v", err)
+	}
+	if !reflect.DeepEqual(actual, []Config{configA, configB}) {
+		t.Errorf("want %v, got %v", []Config{configA, configB}, actual)
 	}
 }
 

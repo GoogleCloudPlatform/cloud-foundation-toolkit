@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"strings"
 
@@ -228,8 +229,8 @@ func (c Config) getOutRefValue(ref string, outputs map[string]map[string]interfa
 		outputs[fullName] = outputsMap
 	}
 	value, ok := outputsMap[res+"."+name]
-	fullRef := fmt.Sprintf("$(out.%s)", ref)
 	if !ok {
+		fullRef := fmt.Sprintf("$(out.%s)", ref)
 		log.Fatalf("Unresolved dependency: %s. Deployment: %s , on which other resources depended, was neither specified in the submitted configs nor existed in Deployment Manager", fullRef, fullName)
 	}
 	return value
@@ -252,7 +253,13 @@ func (c Config) replaceOutRefsResource(resource interface{}, outputs map[string]
 		if match == nil {
 			return value
 		} else {
-			return c.getOutRefValue(match[1], outputs)
+			result := c.getOutRefValue(match[1], outputs)
+			if reflect.TypeOf(result).Kind() == reflect.String {
+				value = strings.Replace(value, match[0], result.(string), 1);
+				return c.replaceOutRefsResource(value, outputs)
+			} else {
+				return result
+			}
 		}
 	case map[string]interface{}:
 		values := resource.(map[string]interface{})

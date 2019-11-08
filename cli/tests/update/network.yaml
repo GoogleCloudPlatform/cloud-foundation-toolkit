@@ -1,5 +1,4 @@
 name: cftcli-test-network-dpl
-project: gl-akopachevskyy-dm-seed
 
 imports:
 - path: ../../../dm/templates/network/network.py
