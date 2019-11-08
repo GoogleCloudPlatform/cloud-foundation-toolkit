@@ -1,20 +1,25 @@
-# Copyright 2018 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+ARG BASE_IMAGE_VERSION
+FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 4.9"
-  gem "kubeclient", "~> 4.0"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.8'
-end
+# Required to download and install Packer
+ARG PACKER_VERSION
+ENV PACKER_VERSION ${PACKER_VERSION}
+
+ADD ./build/install_packer.sh /build/
+RUN /build/install_packer.sh ${PACKER_VERSION}
+
+# Cleanup intermediate build artifacts
+RUN rm -rf /build
