@@ -22,7 +22,9 @@ module "app-engine" {
 }
 
 module "projects_cleanup" {
-  source                   = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
+  source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
+  version = "~> 1.1"
+
   job_schedule             = "17 * * * *"
   max_project_age_in_hours = "6"
   organization_id          = local.org_id
