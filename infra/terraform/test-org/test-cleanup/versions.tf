@@ -17,3 +17,23 @@
 terraform {
   required_version = ">= 0.12"
 }
+
+provider "archive" {
+  version = "~> 1.3"
+}
+
+provider "google" {
+  version = "~> 2.19"
+}
+
+provider "google-beta" {
+  version = "~> 2.19"
+}
+
+provider "null" {
+  version = "~> 2.1"
+}
+
+provider "random" {
+  version = "~> 2.2"
+}
