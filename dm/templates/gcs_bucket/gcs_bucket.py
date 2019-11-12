@@ -13,6 +13,8 @@
 # limitations under the License.
 """ This template creates a Google Cloud Storage bucket. """
 
+from hashlib import sha1
+
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
@@ -67,21 +69,36 @@ def generate_config(context):
     resources.append(bucket)
 
     # If IAM policy bindings are defined, apply these bindings.
-    # https://cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy
-    storage_provider_type = 'gcp-types/storage-v1:storage.buckets.setIamPolicy'
+    storage_provider_type = 'gcp-types/storage-v1:virtual.buckets.iamMemberBinding'
     bindings = properties.get('bindings', [])
+    
+    if 'dependsOn' in properties:
+        dependson = { 'metadata': { 'dependsOn': properties['dependsOn'] } }
+        dependson_root = properties['dependsOn']
+    else:
+        dependson = {}
+        dependson_root = []
+
     if bindings:
-        iam_policy = {
-            'name': '{}-iampolicy'.format(context.env['name']),
-            'action': (storage_provider_type),
-            'properties':
-                {
-                    'bucket': '$(ref.{}.name)'.format(context.env['name']),
-                    'project': project_id,
-                    'bindings': bindings
+        for role in bindings:
+            for member in role['members']:
+                suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
+                policy_get_name = '{}-{}'.format(context.env['name'], suffix)
+                policy_name = '{}-iampolicy'.format(policy_get_name)
+                iam_policy_resource = {
+                    'name': policy_name,
+                    # TODO - Virtual type documentation needed
+                    'type': (storage_provider_type),
+                    'properties':
+                        {
+                            'bucket': '$(ref.{}.name)'.format(context.env['name']),
+                            'role': role['role'],
+                            'member': member,
+                        }
                 }
-        }
-        resources.append(iam_policy)
+                iam_policy_resource.update(dependson)
+                resources.append(iam_policy_resource)
+                dependson = { 'metadata': { 'dependsOn': [policy_name] + dependson_root } }
 
     if properties.get('billing', {}).get('requesterPays'):
         for resource in resources:
