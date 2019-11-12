@@ -29,11 +29,3 @@ output "billing_account" {
 output "cft_ci_group" {
   value = local.cft_ci_group
 }
-
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
-}
