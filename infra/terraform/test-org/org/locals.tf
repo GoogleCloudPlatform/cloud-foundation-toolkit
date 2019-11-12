@@ -21,7 +21,8 @@ locals {
   cft_dev_group   = "cft-developers@dev.infra.cft.tips"
 
   folders = {
-    ci = module.folders-root.ids["ci-projects"]
+    "ci-projects" = module.folders-root.ids["ci-projects"]
+    "ci-shared"   = module.folders-root.ids["ci-shared"]
   }
 
   ci_folders = module.folders-ci.ids

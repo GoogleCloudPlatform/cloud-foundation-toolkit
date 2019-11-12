@@ -19,7 +19,7 @@ locals {
   org_id          = data.terraform_remote_state.org.outputs.org_id
   billing_account = data.terraform_remote_state.org.outputs.billing_account
   cleanup_folder  = replace(data.terraform_remote_state.org.outputs.folders["ci-projects"], "folders/", "")
-  exclude_labels  = { "ctf-ci" = "permanent" }
+  exclude_labels  = { "cft-ci" = "permanent" }
   region          = "us-central1"
   app_location    = "us-central"
 }
