@@ -19,7 +19,7 @@ module "project" {
   version = "~> 3.0"
 
   name              = "cft-project-manager"
-  random_project_id = false
+  random_project_id = true
   org_id            = local.org_id
   folder_id         = local.folder_id
   billing_account   = local.billing_account
@@ -36,4 +36,3 @@ module "project" {
     "appengine.googleapis.com"
   ]
 }
-
