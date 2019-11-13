@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "organizations/${local.org_id}"
-
-  names = [
-    "ci-projects",
-    "ci-shared"
-  ]
-
-  set_roles = false
+terraform {
+  required_version = ">= 0.12"
 }
 
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
+provider "archive" {
+  version = "~> 1.3"
+}
 
-  parent      = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
+provider "google" {
+  version = "~> 2.19"
+}
 
-  names = [for module in local.modules : "ci-${module}"]
+provider "google-beta" {
+  version = "~> 2.19"
+}
 
-  set_roles = false
+provider "null" {
+  version = "~> 2.1"
+}
+
+provider "random" {
+  version = "~> 2.2"
 }

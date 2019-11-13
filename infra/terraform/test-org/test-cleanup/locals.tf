@@ -14,27 +14,13 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "organizations/${local.org_id}"
-
-  names = [
-    "ci-projects",
-    "ci-shared"
-  ]
-
-  set_roles = false
+locals {
+  folder_id       = data.terraform_remote_state.org.outputs.folders["ci-shared"]
+  org_id          = data.terraform_remote_state.org.outputs.org_id
+  billing_account = data.terraform_remote_state.org.outputs.billing_account
+  cleanup_folder  = replace(data.terraform_remote_state.org.outputs.folders["ci-projects"], "folders/", "")
+  exclude_labels  = { "cft-ci" = "permanent" }
+  region          = "us-central1"
+  app_location    = "us-central"
 }
 
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
-
-  names = [for module in local.modules : "ci-${module}"]
-
-  set_roles = false
-}

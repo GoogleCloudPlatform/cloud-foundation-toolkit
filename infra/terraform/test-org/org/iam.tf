@@ -41,7 +41,7 @@ module "ci_bindings" {
   source  = "terraform-google-modules/iam/google"
   version = "~> 2.0"
 
-  folders = [local.folders["ci"]]
+  folders = [local.folders["ci-projects"]]
 
   bindings = {
     "roles/resourcemanager.projectCreator" = [
