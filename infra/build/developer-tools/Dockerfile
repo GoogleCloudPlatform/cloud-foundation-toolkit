@@ -11,12 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# Download and verify the integrity of the download first
 ARG RUBY_VERSION
-FROM ruby:$RUBY_VERSION-alpine
 
+FROM sethvargo/hashicorp-installer:0.1.3 AS installer
 # Required to download and install Terraform
 ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
+RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
+
+FROM ruby:$RUBY_VERSION-alpine
 
 # Required to download and install terraform-docs
 ARG TERRAFORM_DOCS_VERSION
@@ -70,8 +74,9 @@ RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 ADD ./build/install_gsuite_terraform_provider.sh /build/
 RUN /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION}
 
-ADD ./build/install_terraform.sh /build/
-RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
+#ADD ./build/install_terraform.sh /build/
+#RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
+COPY --from=installer /software/terraform /usr/local/bin/terraform
 
 ADD ./build/install_shellcheck.sh /build/
 RUN /build/install_shellcheck.sh
