@@ -23,6 +23,8 @@ def generate_config(context):
     optional_properties = [
         'project',
         'enableFlowLogs',
+        'purpose',
+        'role',
         'privateIpGoogleAccess',
         'secondaryIpRanges'
     ]
