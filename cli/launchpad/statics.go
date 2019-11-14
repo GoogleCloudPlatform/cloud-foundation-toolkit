@@ -2,31 +2,6 @@ package launchpad
 // WARNING: Generated file, do not modify directly!
 
 var statics = map[string]string {
-	"static/tmpl/tf/_output.tf.tmpl": `output "{{ .Id }}" {
-  value = {{ .Val }}
-}
-`,
-	"static/tmpl/tf/_terraform.tf.tmpl": `terraform {
-  required_version = "{{ .RequiredVersion }}"
-}
-`,
-	"static/tmpl/tf/_variable.tf.tmpl": `variable "{{ .Id }}" {
-  description = "{{ .Description }}"
-  {{- if .Default }}
-  default     = "{{ .Default }}"
-  {{- end }}
-}
-`,
-	"static/tmpl/tf/google_folder.tf.tmpl": `resource "google_folder" "{{ .Id }}" {
-  display_name = "{{ .DisplayName }}"
-  parent       = {{ .Parent }}
-}
-`,
-	"static/tmpl/tf/google_provider.tf.tmpl": `provider "google" {
-  credentials = {{ .Credentials }}
-  version     = "{{ .Version }}"
-}
-`,
 	"static/tmpl/tf/license.tf.tmpl": `/**
  * Copyright 2019 Google LLC
  *

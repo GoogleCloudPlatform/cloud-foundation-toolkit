@@ -2,28 +2,13 @@ package launchpad
 
 import (
 	"bytes"
-	"errors"
 	"gopkg.in/yaml.v2"
 	"io"
 	"log"
+	"path/filepath"
 )
 
 //go:generate go run static/includestatic.go
-
-// crdKind is the CustomResourceDefinition (CRD) which is indicated YAML's Kind value.
-type crdKind string
-
-// outputFlavor defines launchpad's generated output language.
-type outputFlavor string
-
-// Supported crdKind and outputFlavor.
-const (
-	KindCloudFoundation crdKind      = "CloudFoundation"
-	KindFolder          crdKind      = "Folder"
-	KindOrganization    crdKind      = "Organization"
-	outDm               outputFlavor = "dm"
-	outTf               outputFlavor = "tf"
-)
 
 // gState is a global scoped state to facilitate evaluation and output generation.
 var gState globalState
@@ -36,50 +21,39 @@ func init() { gState.init() }
 //
 // NewGenerate can be triggered by
 //   $ cft launchpad generate
-func NewGenerate(rawFilepath []string, outFlavor string, outputDir string) {
+func NewGenerate(rawPaths []string, outputFlavorString string, outputDir string) {
 	gState.outputDirectory = outputDir
+	gState.outputFlavor = newOutputFlavor(outputFlavorString)
 
-	switch outputFlavor(outFlavor) {
-	case outTf:
-		gState.outputFlavor = outTf
-	case outDm:
-		gState.outputFlavor = outDm
-		log.Println("Deployment Manager format not yet supported")
-		return
-	default:
-		log.Fatalln("Unrecognized output format")
-		return
-	}
-
-	if err := loadAllYAMLs(rawFilepath); err != nil {
-		log.Fatalln(err)
-	}
-	generateOutput()
-}
-
-// loadAllYAMLs parses input YAMLs and stores evaluated objects in gState.
-func loadAllYAMLs(rawFilepath []string) error {
-	fps, err := validateYAMLFilepath(rawFilepath)
-	if err != nil {
-		return err
-	}
-	if fps == nil || len(fps) == 0 {
-		return errors.New("no valid YAML files given")
-	}
-	for _, conf := range fps { // Load all files into runtime
-		if content, err := loadFile(conf); err != nil {
-			return err
-		} else {
+	// attempt to load all configs with best effort
+	lenYAMLDocs := 0
+	for _, pathPattern := range rawPaths {
+		matches, err := filepath.Glob(pathPattern)
+		if err != nil {
+			log.Println("Warning: Invalid file path pattern", pathPattern)
+			continue
+		}
+		for _, fp := range matches {
+			content, err := loadFile(fp)
+			if err != nil {
+				log.Println("Warning: Unable to load requested file", fp)
+				continue
+			}
+			// Multiple YAML doc can exist within one file
 			decoder := yaml.NewDecoder(bytes.NewReader([]byte(content)))
-			for err := decoder.Decode(&configYAML{}); err != io.EOF; err = decoder.Decode(&configYAML{}) {
+			for err := decoder.Decode(&genericYAML{}); err != io.EOF; err = decoder.Decode(&genericYAML{}) {
 				if err != nil { // sub document processing error
-					return err
+					log.Fatalln("Unable to process a YAML document within", fp, err.Error())
 				}
+				lenYAMLDocs += 1
 			}
 		}
 	}
-	if err := gState.checkReferences(); err != nil {
-		return err
+	log.Println(lenYAMLDocs, "YAML documents loaded")
+	if err := gState.referenceMap.validate(); err != nil {
+		log.Fatalln(err)
 	}
-	return nil
+
+	gState.dump()	// Place-holder for future trigger point of code generation
+	//generateOutput()
 }

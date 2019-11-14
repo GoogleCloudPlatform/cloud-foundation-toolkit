@@ -23,7 +23,7 @@ func testFolder(id string, name string, parentType crdKind, parentId string) *fo
 		folderSpecYAML{
 			Id:          id,
 			DisplayName: name,
-			ParentRef:   parentRefYAML{parentType, parentId},
+			ParentRef:   referenceYAML{parentType, parentId},
 		},
 	}
 }

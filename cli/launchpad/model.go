@@ -10,13 +10,10 @@ package launchpad
 import (
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"log"
 	"regexp"
-)
-
-const (
-	folderNameMin = 3
-	folderNameMax = 30
+	"strings"
 )
 
 var (
@@ -24,94 +21,110 @@ var (
 	tfNameRegex         = regexp.MustCompile("^[a-zA-Z][a-zA-Z\\d\\-\\_]*$")
 )
 
-// configYAML represents a fully qualified CRD that can be of any supported Kind.
+// crdKind is the CustomResourceDefinition (CRD) which is indicated YAML's Kind value.
+type crdKind int
+
+const (
+	CloudFoundation crdKind = iota
+	Folder
+	Organization
+)
+
+func (k crdKind) String() string {
+	return []string{"CloudFoundation", "Folder", "Organization"}[k]
+}
+
+// newCRDKind parses string formatted crdKind and convert to internal format.
+//
+// Unsupported format given will terminate the application.
+func newCRDKind(crdKindStr string) crdKind {
+	switch strings.ToLower(crdKindStr) {
+	case "cloudfoundation":
+		return CloudFoundation
+	case "folder":
+		return Folder
+	case "organization":
+		return Organization
+	default:
+		log.Fatalln("Unsupported CustomResourceDefinition", crdKindStr)
+	}
+	return -1
+}
+
+// genericYAML represents a fully qualified CRD that can be of any Kind.
 //
 // All CRDs are expected to have the following properties.
-type configYAML struct {
-	APIVersion string      `yaml:"apiVersion"`
-	Kind       crdKind     `yaml:"kind"`
-	Spec       interface{} `yaml:"spec"` // Placeholder, yielding for further evaluation
-	//Metadata   Metadata               `yaml:"metadata"`
-	Undefined map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior
-
-	// Original YAML for backup purpose
-	rawYAML string
+type genericYAML struct {
+	APIVersion string                 `yaml:"apiVersion"`
+	KindStr    string                 `yaml:"kind"`
+	Spec       interface{}            `yaml:"spec"`    // Placeholder, yielding for further evaluation
+	Undefined  map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior
 }
 
-// commonConfigYAML alias configYAML for all CRDs to implement common properties.
-type commonConfigYAML configYAML
+// Kind returns a validated crdKind type based on YAML Kind field.
+func (g *genericYAML) Kind() crdKind {
+	return newCRDKind(g.KindStr)
+}
 
-// UnmarshalYAML evaluates common CRD attributes and dynamically parse the CRDs based on Kind field value.
-func (c *configYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
-	type raw configYAML
-	if err := unmarshal((*raw)(c)); err != nil {
+// UnmarshalYAML evaluates common CRD attributes and dynamically parse the CRDs based on CRD Kind.
+func (g *genericYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
+	type raw genericYAML
+	if err := unmarshal((*raw)(g)); err != nil {
 		return err
 	}
-	switch c.Kind {
-	case KindCloudFoundation:
-		cf := cloudFoundationYAML{}
-		cf.APIVersion = c.APIVersion
-		cf.Kind = c.Kind
-		err = unmarshal(&cf)
-	case KindFolder:
-		f := folderYAML{}
-		f.APIVersion = c.APIVersion
-		f.Kind = c.Kind
-		err = unmarshal(&f)
-	case KindOrganization:
-		o := orgYAML{}
-		o.APIVersion = c.APIVersion
-		o.Kind = c.Kind
-		err = unmarshal(&o)
+	switch g.Kind() {
+	case CloudFoundation:
+		return unmarshal(&struct {
+			Spec cloudFoundationSpecYAML `yaml:"spec"`
+		}{})
+	case Organization:
+		return unmarshal(&struct {
+			Spec orgSpecYAML `yaml:"spec"`
+		}{})
+	case Folder:
+		return unmarshal(&struct {
+			Spec folderSpecYAML `yaml:"spec"`
+		}{})
 	default:
-		return errors.New(fmt.Sprintf("Kind %s not implemented", c.Kind))
+		return fmt.Errorf("crd %s not supported", g.KindStr)
 	}
-	return err
 }
 
-// parentRefYAML represents ownership reference inside a CRD.
+// referenceYAML represents a reference to another object within a CRD.
 //
 // Among different types of CRDs, it is common to have parent-children relationship, ex: Projects belong to
-// a folder, Network belong to a project. parentRefYAML is a relationship identifier between these objects.
+// a folder, Network belong to a project. referenceYAML is a relationship identifier between these objects.
 //
 // With explicit definition of ParentRef is possible
-type parentRefYAML struct {
-	ParentType crdKind `yaml:"type"`
-	ParentId   string  `yaml:"id"`
+type referenceYAML struct {
+	TargetTypeStr string `yaml:"type"`
+	TargetId      string `yaml:"id"`
 }
 
-// UnmarshalYAML evaluates parentRefYAML.
+func (r *referenceYAML) TargetType() crdKind {
+	return newCRDKind(r.TargetTypeStr)
+}
+
+// UnmarshalYAML evaluates referenceYAML.
 //
 // UnmarshalYAML will have side effect to set organization ID if reference type is Organization. And will store the
-// references as this represents an explicit reference.
-func (p *parentRefYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
-	top := gState.peek()
-	type raw parentRefYAML
-	if err := unmarshal((*raw)(p)); err != nil {
+// referenceMap as this represents an explicit reference.
+func (r *referenceYAML) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
+	src := gState.evalStack.peek() // retrieve reference source
+	type raw referenceYAML
+	if err := unmarshal((*raw)(r)); err != nil {
 		return err
 	}
-	switch p.ParentType {
-	case KindOrganization:
-		if err := gState.setOrg(p.ParentId); err != nil {
-			return err
-		}
-	}
-	gState.storeReference(*top, p) // retain explicit reference to check if reference exist
+
+	gState.referenceMap.putExplicit(src, r) // retain explicit reference to check if reference exist
 	return nil
 }
 
 // ==== CloudFoundation ====
-
-// cloudFoundationYAML represents a CloudFoundation CRD.
+// cloudFoundationSpecYAML defines CloudFoundation Kind's spec.
 //
 // A CloudFoundation CRD can represent a birds-eye view of the entire organization's GCP environment.
 // The CRD can be further broken down into small CRDs (ex: Project, Folder, Org) to represent the same.
-type cloudFoundationYAML struct {
-	commonConfigYAML
-	Spec cloudFoundationSpecYAML `yaml:"spec"`
-}
-
-// cloudFoundationSpecYAML defines CloudFoundation Kind's spec.
 //
 // It is assumed that one CloudFoundation will host at most one Organization.
 type cloudFoundationSpecYAML struct {
@@ -123,8 +136,8 @@ type cloudFoundationSpecYAML struct {
 // UnmarshalYAML will have side effect to push CloudFoundation onto its stack while nested
 // evaluation is ongoing.
 func (c *cloudFoundationSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	gState.push(KindCloudFoundation, c)
-	defer gState.popSilent()
+	gState.evalStack.push(c)
+	defer gState.evalStack.popSilent()
 
 	type raw cloudFoundationSpecYAML
 	if err := unmarshal((*raw)(c)); err != nil {
@@ -134,20 +147,15 @@ func (c *cloudFoundationSpecYAML) UnmarshalYAML(unmarshal func(interface{}) erro
 }
 
 // ==== Organization ====
-
-// orgYAML represents Organization CRD.
-//
-// orgYAML defines a single GCP Organization
-type orgYAML struct {
-	commonConfigYAML
-	Spec orgSpecYAML `yaml:"spec"`
-}
-
 // orgSpecYAML defines Organization Kind's spec.
 type orgSpecYAML struct {
-	Id          string            `yaml:"id"`
-	DisplayName string            `yaml:"displayName"`
-	Folders     []*folderSpecYAML `yaml:"folders"`
+	Id          string          `yaml:"id"`
+	DisplayName string          `yaml:"displayName"`
+	Folders     folderSpecYAMLs `yaml:"folders"`
+}
+
+func (o *orgSpecYAML) String() string {
+	return Organization.String() + "." + o.Id
 }
 
 // UnmarshalYAML evaluates orgSpecYAML.
@@ -155,34 +163,93 @@ type orgSpecYAML struct {
 // UnmarshalYAML will have side effect to push Organization onto its stack while nested
 // evaluation is ongoing.
 func (o *orgSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	gState.push(KindOrganization, o)
-	defer gState.popSilent()
+	gState.evalStack.push(o)
+	defer gState.evalStack.popSilent()
 
 	type raw orgSpecYAML
 	if err := unmarshal((*raw)(o)); err != nil {
 		return err
 	}
-	if err := gState.setOrg(o.Id); err != nil {
+
+	if err := gState.validatedOrg.merge(o); err != nil {
 		return err
 	}
 	return nil
 }
 
-// ==== Folder ====
+//
+func (o *orgSpecYAML) merge(newO *orgSpecYAML) error {
+	if o.Id != "" && o.Id != newO.Id {
+		return errConflictDefinition
+	}
+	o.Id = newO.Id
+	o.DisplayName = newO.DisplayName
+	o.Folders.merge(newO.Folders)
+	return nil
+}
 
-// folderYAML represents Folder CRD.
-type folderYAML struct {
-	commonConfigYAML
-	Spec folderSpecYAML `yaml:"spec"`
+func (o *orgSpecYAML) StringIndent(indentCount int) string {
+	var buff strings.Builder
+	indent := strings.Repeat(" ", indentCount)
+	buff.WriteString(fmt.Sprintf("%sOrganization (%s:\"%s\")\n", indent, o.Id, o.DisplayName))
+	for _, f := range o.Folders {
+		buff.WriteString(f.StringIndent(indentCount + 2))
+	}
+	return buff.String()
+}
+
+// ==== Folder ====
+const (
+	folderNameMin = 3
+	folderNameMax = 30
+)
+
+type folderSpecYAMLs []*folderSpecYAML
+
+func (fs *folderSpecYAMLs) contains(id string) bool {
+	for _, f := range *fs {
+		if f.Id == id {
+			return true
+		}
+	}
+	return false
+}
+
+func (fs *folderSpecYAMLs) add(newF *folderSpecYAML) {
+	if fs.contains(newF.Id) {
+		log.Println("Warning: ignoring duplicated folder definition", newF.Id)
+		return
+	}
+	*fs = append(*fs, newF)
+}
+
+func (fs *folderSpecYAMLs) merge(oFs folderSpecYAMLs) {
+	for _, of := range oFs {
+		fs.add(of)
+	}
 }
 
 // folderSpecYAML defines Folder Kind's spec.
 type folderSpecYAML struct { // Inner mappings
 	Id          string                 `yaml:"id"`
 	DisplayName string                 `yaml:"displayName"`
-	ParentRef   parentRefYAML          `yaml:"parentRef"`
-	Folders     []*folderSpecYAML      `yaml:"folders"`
-	Undefined   map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior1
+	ParentRef   referenceYAML          `yaml:"parentRef"`
+	Folders     folderSpecYAMLs        `yaml:"folders"`
+	Undefined   map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior
+}
+
+func (f *folderSpecYAML) String() string {
+	return Folder.String() + "." + f.Id
+}
+
+func (f *folderSpecYAML) StringIndent(indentCount int) string {
+	var buff strings.Builder
+	indent := strings.Repeat(" ", indentCount)
+	buff.WriteString(fmt.Sprintf("%sfolder (%s:\"%s\")", indent, f.Id, f.DisplayName))
+	for _, subFolder := range f.Folders {
+		buff.WriteString(fmt.Sprintf("\n%s", subFolder.StringIndent(indentCount + 2)))
+	}
+	return buff.String()
 }
 
 // UnmarshalYAML evaluates folderSpecYAML.
@@ -192,43 +259,13 @@ type folderSpecYAML struct { // Inner mappings
 //
 // GCP Folder names required to be in between 3 to 30 characters
 func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	top := gState.peek()
-	gState.push(KindFolder, f)
-	defer gState.popSilent()
+	top := gState.evalStack.peek()
+	gState.evalStack.push(f)
+	defer gState.evalStack.popSilent()
 
 	type raw folderSpecYAML
 	if err := unmarshal((*raw)(f)); err != nil {
 		return err
-	}
-
-	// Implicit ParentRef can be default value if it is nested under others
-	//
-	//   kind: Folder
-	//   spec:
-	//     id: X
-	//     folders:
-	//       - id: Y
-	//
-	// During evaluation of Y, ParentRef could be undefined, however, stack
-	// will retain owner X reference and infer it as parent
-	if f.ParentRef.ParentId == "" {
-		if top == nil {
-			// ParentRef is not provided, and there are no ownership mappings
-			log.Printf("warning, cannot infer parents, output will need to be manually filled in")
-		} else {
-			switch parent := top.stackPtr.(type) {
-			case *folderSpecYAML:
-				// implicit reference does not need to state since it is guaranteed that parent is resolved
-				f.ParentRef.ParentType = KindFolder
-				f.ParentRef.ParentId = parent.Id
-			case *orgSpecYAML:
-				f.ParentRef.ParentType = KindOrganization
-				f.ParentRef.ParentId = parent.Id
-				if err := gState.setOrg(parent.Id); err != nil {
-					return err
-				}
-			}
-		}
 	}
 
 	// TODO (wengm) warn undefined
@@ -242,8 +279,15 @@ func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error 
 		return errValidationFailed
 	}
 
-	if err := gState.storeFolder(f); err != nil {
-		log.Println("warning: ignoring duplicated definition of folder", f.Id)
+	if top != nil { // Top of stack exists, parent is implicitly referenced
+		if f.ParentRef.TargetId != "" {
+			log.Println("Warning: folder", f.Id, "contains both explicit and implicit parents, using implicit")
+		}
+		f.ParentRef = gState.referenceMap.putImplicit(f, top)
+	} else { // Implies this YAML doc is a Folder CRD
+		if f.ParentRef.TargetId == "" {
+			log.Fatalln("folder", f.Id, "does not have a parent defined")
+		}
 	}
 	return nil
 }
@@ -253,17 +297,12 @@ func (f *folderSpecYAML) UnmarshalYAML(unmarshal func(interface{}) error) error 
 //
 // An explicit reference specified current folder as parent. Caller can be of any type,
 // however, only supported resources can be a children of this folder.
-func (f *folderSpecYAML) resolveReference(ref reference) error {
-	switch src := ref.srcPtr.(type) {
+func (f *folderSpecYAML) resolveReference(ref reference, targetPtr yaml.Unmarshaler) error {
+	switch parent := targetPtr.(type) {
 	case *folderSpecYAML: // sub folder relationship
-		for _, f := range f.Folders {
-			if src.Id != f.Id {
-				continue
-			}
-			log.Println("Ignore existing reference within folders", f.Id)
-			return nil
-		}
-		f.Folders = append(f.Folders, src)
+		parent.Folders.add(f)
+	case *orgSpecYAML: // root folder
+		parent.Folders.add(f)
 	default:
 		return errUnsupportedReference
 	}

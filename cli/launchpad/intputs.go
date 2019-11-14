@@ -1,32 +1,13 @@
+// Package launchpad file inputs.go contains all input processing logic.
 package launchpad
 
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
-	"path/filepath"
 	"strings"
 )
-
-const extensionYAML = ".yaml"
-
-// validateYAMLFilepath returns .yaml suffix files based on filepath.Glob patterns.
-func validateYAMLFilepath(raw []string) ([]string, error) {
-	var fps []string
-	for _, pattern := range raw {
-		matches, err := filepath.Glob(pattern)
-		if err != nil {
-			return nil, err
-		}
-		for _, m := range matches {
-			if strings.ToLower(filepath.Ext(m)) != extensionYAML {
-				continue
-			}
-			fps = append(fps, m)
-		}
-	}
-	return fps, nil
-}
 
 // loadFile return the file content with the specified relative path to current location.
 //
@@ -48,4 +29,33 @@ func loadFile(fp string) (string, error) {
 		fmt.Printf("Requested file does not exist in filesystem nor generated binary %s\n", fp)
 		return "", os.ErrNotExist
 	}
+}
+
+// outputFlavor defines launchpad's generated output language.
+type outputFlavor int
+
+const (
+	DeploymentManager outputFlavor = iota
+	Terraform
+)
+
+// String returns the string representation of an outputFlavor.
+func (f outputFlavor) String() string {
+	return []string{"DeploymentManager", "Terraform"}[f]
+}
+
+// newOutputFlavor parses string formatted output flavor and convert to internal format.
+//
+// Unsupported format given will terminate the application.
+func newOutputFlavor(fStr string) outputFlavor {
+	switch strings.ToLower(fStr) {
+	case "deploymentmanager", "dm":
+		log.Println("Warning: Deployment Manager format not yet supported")
+		return DeploymentManager
+	case "terraform", "tf":
+		return Terraform
+	default:
+		log.Fatalln("Unsupported output flavor", fStr)
+	}
+	return -1
 }

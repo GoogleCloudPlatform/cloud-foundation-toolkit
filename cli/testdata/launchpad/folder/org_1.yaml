@@ -4,5 +4,5 @@ spec:
   id: 12345678 #ORGANIZATION_ID
   displayName: "my-org"
   folders:
-    - id: "group1_2"
-      displayName: "Group 1-2"
+    - id: "group1"
+      displayName: "Group 1"
