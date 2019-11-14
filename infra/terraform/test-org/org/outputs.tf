@@ -29,3 +29,7 @@ output "billing_account" {
 output "cft_ci_group" {
   value = local.cft_ci_group
 }
+
+output "protected_project_labels" {
+  value = local.protected_project_labels
+}

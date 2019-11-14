@@ -25,6 +25,8 @@ locals {
     "ci-shared"   = module.folders-root.ids["ci-shared"]
   }
 
+  protected_project_labels = { "cft-ci" = "permanent" }
+
   ci_folders = module.folders-ci.ids
   modules = [
     "kms",
