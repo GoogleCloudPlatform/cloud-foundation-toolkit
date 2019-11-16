@@ -15,7 +15,7 @@
  */
 
 resource "google_cloudbuild_trigger" "lint_trigger" {
-  provider    = "google-beta"
+  provider    = google-beta
   project     = local.project_id
   description = "Lint tests on pull request for ${each.key}"
   for_each    = local.repo_folder
@@ -31,7 +31,7 @@ resource "google_cloudbuild_trigger" "lint_trigger" {
 }
 
 resource "google_cloudbuild_trigger" "int_trigger" {
-  provider    = "google-beta"
+  provider    = google-beta
   project     = local.project_id
   description = "Integration tests on pull request for ${each.key}"
   for_each    = local.repo_folder
@@ -52,7 +52,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
 }
 
 resource "google_cloudbuild_trigger" "tf_validator" {
-  provider    = "google-beta"
+  provider    = google-beta
   project     = local.project_id
   description = "Pull request build for tf-validator"
   github {
@@ -70,7 +70,7 @@ resource "google_cloudbuild_trigger" "tf_validator" {
 }
 
 resource "google_cloudbuild_trigger" "forseti_lint" {
-  provider    = "google-beta"
+  provider    = google-beta
   project     = local.project_id
   description = "Lint tests on pull request for forseti"
   github {
@@ -85,7 +85,7 @@ resource "google_cloudbuild_trigger" "forseti_lint" {
 }
 
 resource "google_cloudbuild_trigger" "forseti_int" {
-  provider    = "google-beta"
+  provider    = google-beta
   project     = local.project_id
   description = "Integration tests on pull request for forseti"
   github {
@@ -105,7 +105,7 @@ resource "google_cloudbuild_trigger" "forseti_int" {
 }
 
 resource "google_cloudbuild_trigger" "tf_py_test_helper_lint" {
-  provider    = "google-beta"
+  provider    = google-beta
   project     = local.project_id
   description = "Lint tests on pull request for terraform-python-testing-helper"
   github {
@@ -120,7 +120,7 @@ resource "google_cloudbuild_trigger" "tf_py_test_helper_lint" {
 }
 
 resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
-  provider    = "google-beta"
+  provider    = google-beta
   project     = local.project_id
   description = "Test on pull request for terraform-python-testing-helper"
   github {
