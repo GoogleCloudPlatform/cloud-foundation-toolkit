@@ -179,12 +179,24 @@ properties:
         pattern: ^[0-9]{8,25}$
   labels:
     type: object
+    minProperties: 0
+    maxProperties: 64
+    additionalProperties: false
+    patternProperties: 
+      ^[a-z](?:[-_a-z0-9]{0,61}[a-z0-9])?$ :
+        type: string
+        pattern: ^[a-z0-9]?(?:[-_a-z0-9]{0,61}[a-z0-9])?$
     description: |
-      Map of labels associated with this Project.
+      Map of labels associated with this Project up to a maximum of 64. Keys have a minimum length of 1 
+      character and a maximum length of 63 characters, and cannot be empty. Values can be empty, and have 
+      a maximum length of 63 characters. Keys and values can contain only lowercase letters, numeric 
+      characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters 
+      are allowed.
       Example:
-        name: wrench
-        mass: 1.3kg
-        count: 3
+        name: my-name
+        mass_not_eq_to_0: 1_3kg
+        count-next: '3'
+        empty-value: ''
   billingAccountId:
     type: string
     description: |
