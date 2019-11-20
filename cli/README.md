@@ -4,6 +4,7 @@
 
 The CFT CLI includes a few components, including:
 - [CFT Scorecard](./docs/scorecard.md)
+- [CFT Scorecard Reports](./docs/scorecard.md#reporting)
 
 Follow cft --help instructions
 
@@ -26,18 +27,6 @@ Flags:
 Use "cft [command] --help" for more information about a command.
 ```
 
-
-#### Report
-Generate inventory reports for resources in Cloud Asset Inventory (CAI) output files, with reports defined in rego (in '<path_to_cloud-foundation-toolkit>/reports/sample' folder).
-
-Example:
-
-```bash
-	
-	  cft report --query-path <path_to_cloud-foundation-toolkit>/reports/sample \
-		--dir-path <path-to-directory-containing-cai-export> \
-		--output-path <path-to-directory-for-report-output>
-```
 
 ## Development
 

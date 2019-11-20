@@ -5,7 +5,7 @@ an easy integration with [Forseti Config Validator](https://github.com/forseti-s
 It can be used to print a scorecard of your GCP environment, for resources and IAM policies in Cloud Asset Inventory (CAI) exports.
 The policies tested are based on constraints and constraint templates from the [Config Validator policy library](https://github.com/forseti-security/policy-library).
 
-### Scorecard User Guide
+## Scorecard User Guide
 This tutorial will walk you through setting up Scorecard for a single project.
 
 1. Set some environment variables:
@@ -64,7 +64,7 @@ This tutorial will walk you through setting up Scorecard for a single project.
         --bucket=$CAI_BUCKET_NAME
     ```
 
-#### Using a local export
+### Using a local export
 You can also run CFT Scorecard against locally downloaded CAI data:
 
 ```
@@ -74,3 +74,31 @@ gsutil cp gs://$CAI_BUCKET_NAME/iam_inventory.json ./cai-dir/
 ./cft scorecard --policy-path ./policy-library \
   --dir-path ./cai-dir
 ```
+
+## Reporting
+The CFT CLI can also be used for generating resource reports from CAI output files.
+These resource reports are defined in Rego, including [these samples](../../reports/sample)
+
+For example:
+
+```bash
+./cft report --query-path <path_to_cloud-foundation-toolkit>/reports/sample \
+    --dir-path <path-to-directory-containing-cai-export> \
+    --output-path <path-to-directory-for-report-output>
+```
+
+You could reuse the same CAI export generated for Scorecard by following these steps:
+1. Download the report library from GitHub:
+    ```
+    git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
+    ```
+2. Create a directory to store report output:
+    ```
+    mkdir reports
+    ```
+3. Run the CFT report command:
+    ```
+    ./cft report --query-path cloud-foundation-toolkit/reports/sample \
+        --dir-path ./cai-dir \
+        --output-path ./reports
+    ```
