@@ -14,27 +14,14 @@
  * limitations under the License.
  */
 
-module "folders-root" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
-
-  parent      = "organizations/${local.org_id}"
-
-  names = [
-    "ci-projects",
-    "ci-shared"
-  ]
-
-  set_roles = false
+output "repo_folder" {
+  value = local.repo_folder
 }
 
-module "folders-ci" {
-  source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
+output "lint_triggers" {
+  value = google_cloudbuild_trigger.lint_trigger.*
+}
 
-  parent      = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
-
-  names = [for module in local.modules : "ci-${module}"]
-
-  set_roles = false
+output "int_triggers" {
+  value = google_cloudbuild_trigger.int_trigger.*
 }
