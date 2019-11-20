@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-output "folders" {
-  value = merge(local.folders, local.ci_folders)
+terraform {
+  required_version = ">= 0.12"
 }
 
-output "org_id" {
-  value = local.org_id
+provider "archive" {
+  version = "~> 1.3"
 }
 
-output "billing_account" {
-  value = local.billing_account
+provider "google" {
+  version = "~> 2.19"
 }
 
-output "cft_ci_group" {
-  value = local.cft_ci_group
+provider "google-beta" {
+  version = "~> 2.19"
+}
+
+provider "null" {
+  version = "~> 2.1"
+}
+
+provider "random" {
+  version = "~> 2.2"
 }

@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-output "folders" {
-  value = merge(local.folders, local.ci_folders)
+locals {
+  folder_id       = data.terraform_remote_state.org.outputs.folders["ci-shared"]
+  org_id          = data.terraform_remote_state.org.outputs.org_id
+  billing_account = data.terraform_remote_state.org.outputs.billing_account
+  cleanup_folder  = replace(data.terraform_remote_state.org.outputs.folders["ci-projects"], "folders/", "")
+  exclude_labels  = { "cft-ci" = "permanent" }
+  region          = "us-central1"
+  app_location    = "us-central"
 }
 
-output "org_id" {
-  value = local.org_id
-}
-
-output "billing_account" {
-  value = local.billing_account
-}
-
-output "cft_ci_group" {
-  value = local.cft_ci_group
-}
