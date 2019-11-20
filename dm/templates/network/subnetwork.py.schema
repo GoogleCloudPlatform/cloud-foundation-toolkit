@@ -33,6 +33,37 @@ required:
   - region
   - ipCidrRange
 
+oneOf:
+  - allOf:
+    - not:
+        required:
+          - purpose
+    - not:
+        required:
+          - role
+  - allOf:
+    - properties:
+        purpose:
+          enum:
+           - PRIVATE_RFC_1918
+    - not:
+        required:
+          - role
+  - allOf:
+    - properties:
+        purpose:
+          enum:
+            - INTERNAL_HTTPS_LOAD_BALANCER
+    - required:
+        - role
+    - not:
+        required:
+          - enableFlowLogs
+    - not:
+        required:
+          - privateIpGoogleAccess
+
+
 properties:
   name:
     type: string
@@ -103,6 +134,29 @@ properties:
   enableFlowLogs:
     type: boolean
     description: If "true", enables flow logging for the subnetwork.
+  purpose:
+    type: string
+    enum:
+      - PRIVATE_RFC_1918
+      - INTERNAL_HTTPS_LOAD_BALANCER
+    description: |
+      The purpose of the resource. This field can be either PRIVATE_RFC_1918 or
+      INTERNAL_HTTPS_LOAD_BALANCER. A subnetwork with purpose set to
+      INTERNAL_HTTPS_LOAD_BALANCER is a user-created subnetwork that is
+      reserved for Internal HTTP(S) Load Balancing. If unspecified, the purpose
+      defaults to PRIVATE_RFC_1918.
+  role:
+    type: string
+    enum:
+      - ACTIVE
+      - BACKUP
+    description: |
+      The role of subnetwork. Currenly, this field is only used when purpose =
+      INTERNAL_HTTPS_LOAD_BALANCER. The value can be set to ACTIVE or BACKUP.
+      An ACTIVE subnetwork is one that is currently being used for Internal
+      HTTP(S) Load Balancing. A BACKUP subnetwork is one that is ready to be
+      promoted to ACTIVE or is currently draining. This field can be updated
+      with a patch request.
 
 outputs:
   properties:
