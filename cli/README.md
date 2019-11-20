@@ -1,21 +1,11 @@
-# Cloud Foundation Toolkit CLI Project
+# Cloud Foundation Toolkit CLI (CFT CLI)
 
-## Overview
+## Usage
 
-### Requirements 
-
- * go 1.12 and above 
-
-### Build and Run 
-
-    make build
-    
-After build find binary at bin/cft location     
-
-### Usage
+The CFT CLI includes a few components, including:
+- [CFT Scorecard](./docs/scorecard.md)
 
 Follow cft --help instructions
-
 
 Google Cloud Foundation Toolkit CLI
 
@@ -35,20 +25,6 @@ Flags:
 
 Use "cft [command] --help" for more information about a command.
 ```
-#### Scorecard
-Print a scorecard of your GCP environment, for resources and IAM policies in Cloud Asset Inventory (CAI) exports, and constraints and constraint templates from Config Validator policy library.
-
-Example:
-
-```bash
-	  cft scorecard --policy-path <path-to>/policy-library \
-		  --bucket <name-of-bucket-containing-cai-export>
-
-# Or
-	  cft scorecard --policy-path <path-to>/policy-library \
-		  --dir-path <path-to-directory-containing-cai-export>
-```
-As of now, CAI export file names need to be `resource_inventory.json` and/or `iam_inventory.json`
 
 
 #### Report
@@ -62,6 +38,20 @@ Example:
 		--dir-path <path-to-directory-containing-cai-export> \
 		--output-path <path-to-directory-for-report-output>
 ```
+
+## Development
+
+### Requirements
+
+* go 1.12 and above
+
+### Build and Run
+
+```
+make build
+```
+
+After build find binary at bin/cft location
 
 ## License
 
