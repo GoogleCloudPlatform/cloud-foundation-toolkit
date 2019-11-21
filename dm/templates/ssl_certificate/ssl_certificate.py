@@ -26,12 +26,17 @@ def generate_config(context):
 
     properties = context.properties
     name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
-    ssl_props = {}
-    resource = {
+    ssl_props = {
         'name': name,
-        'type': 'compute.v1.sslCertificate',
-        'properties': ssl_props
+        'project': project_id,
+    }
+    resource = {
+        'name': context.env['name'],
+        # https://cloud.google.com/compute/docs/reference/rest/v1/sslCertificates
+        'type': 'gcp-types/compute-v1:sslCertificates',
+        'properties': ssl_props,
     }
 
     for prop in ['privateKey', 'certificate', 'description']:
@@ -47,7 +52,7 @@ def generate_config(context):
                 },
                 {
                     'name': 'selfLink',
-                    'value': '$(ref.{}.selfLink)'.format(name)
+                    'value': '$(ref.{}.selfLink)'.format(context.env['name'])
                 }
             ]
     }

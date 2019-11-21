@@ -58,7 +58,8 @@ function setup() {
         create_config
         # Create DNS Managed Zone
         gcloud dns managed-zones create --dns-name="${CLOUDDNS_DNS_NAME}" \
-            --description="Test managed zone" "${CLOUDDNS_ZONE_NAME}"
+            --description="Test managed zone" "${CLOUDDNS_ZONE_NAME}" \
+            --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     fi
 
     # Per-test setup steps.
@@ -71,7 +72,8 @@ function teardown() {
         rm -f "${RANDOM_FILE}"
         # Delete DNS Managed Zone
         echo "Deleting cloud DNS managed zone: ${CLOUDDNS_ZONE_NAME}"
-        gcloud dns managed-zones delete "${CLOUDDNS_ZONE_NAME}"
+        gcloud dns managed-zones delete "${CLOUDDNS_ZONE_NAME}" \
+            --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     fi
 
     # Per-test teardown steps.

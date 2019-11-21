@@ -13,89 +13,126 @@
 # limitations under the License.
 """ This template creates a Pub/Sub (publish-subscribe) service. """
 
-def create_subscription(resource_name, spec, topic_resource_name, spec_index):
+from hashlib import sha1
+import json
+
+
+def set_optional_property(destination, source, prop_name):
+    """ Copies the property value if present. """
+
+    if prop_name in source:
+        destination[prop_name] = source[prop_name]
+
+def create_subscription(resource_name, project_id, spec):
     """ Create a pull/push subscription from the simplified spec. """
 
+    suffix = 'subscription-{}'.format(sha1(resource_name + json.dumps(spec)).hexdigest()[:10])
+
     subscription = {
-        'name': '{}-subscription-{}'.format(resource_name, spec_index),
-        'type': 'pubsub.v1.subscription',
+        'name': '{}-{}'.format(resource_name, suffix),
+        # https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions
+        'type': 'gcp-types/pubsub-v1:projects.subscriptions',
         'properties':{
-            'subscription': spec['name'],
-            'topic': '$(ref.{}.name)'.format(topic_resource_name)
+            'subscription': spec.get('name', suffix),
+            'name': 'projects/{}/subscriptions/{}'.format(project_id, spec.get('name', suffix)),
+            'topic': '$(ref.{}.name)'.format(resource_name)
         }
     }
+    resources_list = [subscription]
+
+    optional_properties = [
+        'labels',
+        'pushConfig',
+        'ackDeadlineSeconds',
+        'retainAckedMessages',
+        'messageRetentionDuration',
+        'expirationPolicy',
+    ]
+
+    for prop in optional_properties:
+        set_optional_property(subscription['properties'], spec, prop)
 
     push_endpoint = spec.get('pushEndpoint')
     if push_endpoint is not None:
         subscription['properties']['pushConfig'] = {
-            'pushEndpoint': push_endpoint
+            'pushEndpoint': push_endpoint,
         }
 
-    ack_deadline_seconds = spec.get('ackDeadlineSeconds')
-    if ack_deadline_seconds is not None:
-        subscription['properties']['ackDeadlineSeconds'] = ack_deadline_seconds
-
-    set_access_control(subscription, spec)
-
-    return subscription
-
-def create_iam_policy(bindings_spec):
-    """ Create an IAM policy for the resource. """
-
-    return {
-        'gcpIamPolicy': {
-            'bindings': bindings_spec
+    if spec.get('accessControl'):
+        policy = {
+            'name': "{}-{}".format(subscription['name'], 'setIamPolicy'),
+            # https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/setIamPolicy
+            'action': 'gcp-types/pubsub-v1:pubsub.projects.subscriptions.setIamPolicy',
+            'properties':
+                {
+                    'resource': '$(ref.{}.name)'.format(subscription['name']),
+                    'policy': {
+                        'bindings': spec['accessControl']
+                    }
+                },
+            'metadata': {
+                'dependsOn': [subscription['name']]
+            }
         }
-    }
+        resources_list.append(policy)
 
-def set_access_control(resource, context):
-    """ If necessary, define access control for the resource """
-
-    access_control = context.get('accessControl')
-    if access_control is not None:
-        resource['accessControl'] = create_iam_policy(access_control)
-
-def create_pubsub(resource_name, pubsub_spec):
-    """ Create a topic with subscriptions. """
-
-    topic_name = pubsub_spec.get('topic', resource_name)
-    topic_resource_name = '{}-topic'.format(resource_name)
-    topic = {
-        'name': topic_resource_name,
-        'type': 'pubsub.v1.topic',
-        'properties':{
-            'topic': topic_name
-        }
-    }
-
-    set_access_control(topic, pubsub_spec)
-
-    subscription_specs = pubsub_spec.get('subscriptions', [])
-    subscriptions = [create_subscription(resource_name, spec,
-                                         topic_resource_name, index)
-                     for (index, spec)
-                     in enumerate(subscription_specs, 1)]
-
-    return [topic] + subscriptions
-
-def create_topic_outputs(topic_resource):
-    """ Create outputs for the topic. """
-
-    return [
-        {
-            'name': 'topicName',
-            'value': '$(ref.{}.name)'.format(topic_resource['name'])
-        }
-    ]
+    return resources_list
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    resource_name = context.env['name']
-    pubsub_resources = create_pubsub(resource_name, context.properties)
-    pubsub_outputs = create_topic_outputs(pubsub_resources[0])
+    properties = context.properties
+    name = properties.get('name', properties.get('topic', context.env['name']))
+    project_id = properties.get('project', context.env['project'])
+
+    topic = {
+        'name': context.env['name'],
+        # https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics
+        'type': 'gcp-types/pubsub-v1:projects.topics',
+        'properties':{
+            'topic': name,
+            'name': 'projects/{}/topics/{}'.format(project_id, name),
+        }
+    }
+    resources_list = [topic]
+
+    if properties.get('accessControl'):
+        policy = {
+            'name': "{}-{}".format(context.env['name'], 'setIamPolicy'),
+            # https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/setIamPolicy
+            'action': 'gcp-types/pubsub-v1:pubsub.projects.topics.setIamPolicy',
+            'properties':
+                {
+                    'resource': '$(ref.{}.name)'.format(context.env['name']),
+                    'policy': {
+                        'bindings': properties['accessControl']
+                    }
+                },
+            'metadata': {
+                'dependsOn': [context.env['name']]
+            }
+        }
+        resources_list.append(policy)
+
+    optional_properties = [
+        'labels',
+    ]
+
+    for prop in optional_properties:
+        set_optional_property(topic['properties'], properties, prop)
+
+
+    subscription_specs = properties.get('subscriptions', [])
+
+    for spec in subscription_specs:
+        resources_list = resources_list + create_subscription(context.env['name'], project_id, spec)
 
     return {
-        'resources': pubsub_resources,
-        'outputs': pubsub_outputs
+        'resources': resources_list,
+        'outputs': [
+            {
+                'name': 'topicName',
+                'value': '$(ref.{}.name)'.format(context.env['name'])
+            }
+        ],
     }

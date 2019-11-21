@@ -15,6 +15,7 @@
 info:
   title: Cloud SQL
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Cloud SQL instance with database and user resources.
     For more information, see https://cloud.google.com/sql/docs/.
@@ -29,16 +30,32 @@ required:
   - settings
 
 properties:
+  name:
+    type: string
+    description: |
+      The name of the Cloud SQL instance. This does not include the project ID.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the Cloud SQL instance. The
+      Google apps domain is prefixed if applicable.
   databaseVersion:
     type: string
     description: |
       The database engine type and version.
-      The value of this field cannot be changed after instance creation.
-      Supports MySQL Second Generation instances MYSQL_5_7 | MYSQL_5_6,
-      First Generation instances MYSQL_5_6 | MYSQL_5_5, and 
-      PostgreSQL instances POSTGRES_9_6.
+      The databaseVersion field can not be changed after instance creation.
+      MySQL Second Generation instances: MYSQL_5_7 (default) or MYSQL_5_6.
+      PostgreSQL instances: POSTGRES_9_6
+      MySQL First Generation instances: MYSQL_5_6 (default) or MYSQL_5_5
+    enum:
+      - MYSQL_5_5 # Deprecated
+      - MYSQL_5_6
+      - MYSQL_5_7
+      - POSTGRES_9_6
   failoverReplica:
     type: object
+    additionalProperties: false
     description: |
       The name and status of the failover replica. Applicable only to Second
       Generation instances.
@@ -71,27 +88,28 @@ properties:
   maxDiskSize:
     type: number
     description: The maximum disk size of the instance in bytes.
-  name:
-    type: string
-    description: |
-      The name of the Cloud SQL instance. This does not include the project ID.
   onPremisesConfiguration:
     type: object
+    additionalProperties: false
     description: |
       Configuration specific to on-premises instances.
+    requires:
+      - hostPort
+      - kind
     properties:
       hostPort:
         type: string
         description: |
           The host and port of the on-premises instance in the host:port
           format.
-  project:
-    type: string
-    description: |
-      The project ID of the project containing the Cloud SQL instance. The
-      Google apps domain is prefixed if applicable.
+      kind:
+        type: string
+        const: "sql#onPremisesConfiguration"
+        description: |
+          This is always sql#onPremisesConfiguration.
   replicaConfiguration:
     type: object
+    additionalProperties: false
     description: |
       Configuration specific to failover replicas and read replicas.
     properties:
@@ -106,6 +124,7 @@ properties:
           instance.
       mysqlReplicaConfiguration:
         type: object
+        additionalProperties: false
         description: |
           MySQL-specific configuration when replicating from an MySQL
           on-premises master. Replication configuration information such as the
@@ -166,12 +185,13 @@ properties:
     type: object
     description: SSL configuration.
   serviceAccountEmailAddress:
-    type: object
+    type: string
     description: |
-      The service account's email address assigned to the instance. Applicable
-      only to Second Generation instances.
+      The service account email address assigned to the instance. This property is applicable only
+      to Second Generation instances.
   settings:
     type: object
+    additionalProperties: false
     description: User settings.
     required:
       - tier
@@ -214,6 +234,7 @@ properties:
           - REGIONAL
       backupConfiguration:
         type: object
+        additionalProperties: false
         description: The daily backup configuration for the instance.
         properties:
           binaryLogEnabled:
@@ -257,6 +278,7 @@ properties:
           Database flags passed to the instance at startup.
         items:
           type: object
+          additionalProperties: false
           properties:
             name:
               type: string
@@ -279,6 +301,7 @@ properties:
           specific to read replica instances. Writable.  
       ipConfiguration:
         type: object
+        additionalProperties: false
         description: |
           Settings for IP Management. This allows to enable or disable the
           instance IP and to define which external networks can connect to the
@@ -293,6 +316,7 @@ properties:
               notation (e.g., 192.168.100.0/24). Writable.
             items:
               type: object
+              additionalProperties: false
               properties:
                 expirationTime:
                   type: string
@@ -327,6 +351,7 @@ properties:
               Defines whether SSL connections over IP must be enforced.
       locationPreference:
         type: object
+        additionalProperties: false
         description: |
           Location preference settings. This allows the instance to be
           located as near as possible to either an App Engine app or Compute
@@ -345,6 +370,7 @@ properties:
               us-central1-b, etc.).
       maintenanceWindow:
         type: object
+        additionalProperties: false
         description: |
           The maintenance window for the instance. Specifies when the instance
           can be restarted for maintenance purposes. Not used for First
@@ -365,11 +391,16 @@ properties:
         description: |
           The pricing plan for the instance: PER_USE or PACKAGE. Only PER_USE
           is supported for Second Generation instances.
+        enum:
+          - PER_USE
+          - PACKAGE
       replicationType:
         type: string
         description: |
-          The type of replication the instance uses: ASYNCHRONOUS or
-          SYNCHRONOUS.
+          The type of replication the instance uses: ASYNCHRONOUS or SYNCHRONOUS.
+        enum:
+          - ASYNCHRONOUS
+          - SYNCHRONOUS
       settingsVersion:
         type: number
         description: |
@@ -409,6 +440,29 @@ properties:
       on the instance type (First Generation or Second Generation/PostgreSQL).
       For a complete list of valid values, see Instance Locations. The region
       cannot be changed after instance creation.
+      See https://cloud.google.com/sql/docs/mysql/locations
+    enum:
+      - northamerica-northeast1
+      - us-central
+      - us-central1
+      - us-east1
+      - us-east4
+      - us-west1
+      - us-west2
+      - southamerica-east1
+      - europe-north1
+      - europe-west1
+      - europe-west2
+      - europe-west3
+      - europe-west4
+      - europe-west6
+      - asia-east1
+      - asia-east2
+      - asia-northeast1
+      - asia-northeast2
+      - asia-south1
+      - asia-southeast1
+      - australia-southeast1
   databases:
     type: array
     description: SQL Databases to create in the new instance.
@@ -416,6 +470,7 @@ properties:
       - name
     items:
       type: object
+      additionalProperties: false
       properties:
         name:
           type: string
@@ -430,10 +485,11 @@ properties:
   users:
     type: array
     description: Cloud SQL users to create in the new instance.
-    required:
-      - name
     items:
       type: object
+      additionalProperties: false
+      required:
+        - name
       properties:
         name:
           type: string
@@ -493,6 +549,9 @@ outputs:
     - databaseNames:
         type: array
         description: The names of the created databases.
+    - backendType:
+        type: string
+        description: Database generation.
     - databaseSelfLinks:
         type: array
         description: |

@@ -1,0 +1,13 @@
+imports:
+- path: templates/network/network.py
+
+resources:
+- type: templates/network/network.py
+  string: $(out.prj1.name1.res1.string)
+  strings: $(out.prj1.name1.res1.string)$(out.prj1.name1.res1.string2)
+  map: $(out.prj1.name1.res1.map)
+  list: $(out.prj1.name1.res1.list)
+  listOfMaps: $(out.prj1.name1.res1.listOfMaps)
+  sub-resource: $(out.prj1.name1.sub-resource.sub-property)
+  sub-sub-resource: $(out.prj1.name1.sub-sub-resource.sub-sub-property)
+  listBroken: foo-$(out.prj1.name1.res1.list)

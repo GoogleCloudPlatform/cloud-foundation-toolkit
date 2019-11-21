@@ -43,7 +43,7 @@ See the `properties` section in the schema file(s):
    case, [examples/cloud\_sql.yaml](examples/cloud_sql.yaml):
 
     ```shell
-    cp templates/dns_managed_zone/examples/cloud_sql.yaml my_cloud_sql.yaml
+    cp templates/cloud_sql/examples/cloud_sql.yaml my_cloud_sql.yaml
     ```
 
 4. Change the values in the config file to match your specific GCP setup (for
@@ -61,10 +61,22 @@ See the `properties` section in the schema file(s):
         --config my_cloud_sql.yaml
     ```
 
+   To deploy with CFT:
+
+    ```shell
+    cft apply my_cloud_sql.yaml
+    ```
+
 6. In case you need to delete your deployment:
 
     ```shell
     gcloud deployment-manager deployments delete <YOUR_DEPLOYMENT_NAME>
+    ```
+
+   To delete deployment with CFT:
+
+    ```shell
+    cft delete my_cloud_sql.yaml
     ```
 
 `Notes:` After a Cloud SQL instance is deleted, its name cannot be reused for
@@ -72,5 +84,7 @@ up to 7 days.
 
 ## Examples
 
-- [Cloud SQL](examples/cloud_sql_.yaml)
+- [Cloud SQL](examples/cloud_sql.yaml)
 - [Cloud SQL with Read Replica](examples/cloud_sql_read_replica.yaml)
+- [Cloud SQL Postgres](examples/cloud_sql_postgres.yaml)
+- [Cloud SQL Private Networking](examples/cloud_sql_private_network.yaml)

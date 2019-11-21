@@ -1,0 +1,1 @@
+ERROR: (gcloud.deployment-manager.deployments.describe) ResponseError: code=404, message=The object 'projects/gl-akopachevskyy-dm/global/deployments/template4' is not found.

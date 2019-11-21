@@ -30,7 +30,7 @@ def extract_source_files(imports, local_upload_path):
         if imported_file.startswith(local_upload_path):
             file_name = imported_file[len(local_upload_path):]
             file_content = imports[imported_file]
-            imported_files.append((file_name, file_content))
+            imported_files.append((file_name.lstrip('/'), file_content))
 
     return imported_files
 
@@ -48,7 +48,7 @@ def archive_files(files):
     sources_zip.close()
     return output_file.getvalue()
 
-def upload_source(function, imports, local_path, source_archive_url):
+def upload_source(context_name, project, function, imports, local_path, source_archive_url):
     """ Uploads the Cloud Function source code from the local machine 
     to a Cloud Storage bucket. If the bucket does not exist, creates it.
     """
@@ -80,7 +80,8 @@ def upload_source(function, imports, local_path, source_archive_url):
                                                volume_archive_path)
 
     build_action = {
-        'name': 'upload-task',
+        'name': '{}-upload-task'.format(context_name),
+        # https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.builds/create
         'action': 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create',
         'metadata':
             {
@@ -88,6 +89,7 @@ def upload_source(function, imports, local_path, source_archive_url):
             },
         'properties':
             {
+                'projectId': project,
                 'steps':
                     [
                         { # Saves a ZIP to a file.
@@ -97,6 +99,7 @@ def upload_source(function, imports, local_path, source_archive_url):
                         },
                         { # Creates a bucket if one does not exist.
                             'name': 'gcr.io/cloud-builders/gsutil',
+                            'env': ['CLOUDSDK_CORE_PROJECT={}'.format(project)],
                             'args': [
                                 '-c',
                                 'gsutil mb {} || true'.format(bucket_name)
@@ -105,6 +108,7 @@ def upload_source(function, imports, local_path, source_archive_url):
                         },
                         { # Uploads the ZIP to the bucket.
                             'name': 'gcr.io/cloud-builders/gsutil',
+                            'env': ['CLOUDSDK_CORE_PROJECT={}'.format(project)],
                             'args': [
                                 'cp',
                                 volume_archive_path, source_archive_url

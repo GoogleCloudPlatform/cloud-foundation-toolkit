@@ -15,10 +15,16 @@
 info:
   title: BigQuery Table
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Creates a BigQuery table.
-    For more information on this resource:
+
+    For information on this resource:
     https://cloud.google.com/bigquery/docs/.
+
+    APIs endpoints used by this template:
+    - gcp-types/bigquery-v2:tables =>
+        https://cloud.google.com/bigquery/docs/reference/rest/v2/tables
 
 imports:
   - path: bigquery_table.py
@@ -31,14 +37,25 @@ required:
 properties:
   name:
     type: string
-    description: The resource name.
+    description: |
+      The table name name. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the table. The
+      Google apps domain is prefixed if applicable.
   datasetId:
     type: string
     description: |
       The ID of the dataset the table belongs to.
   friendlyName:
     type: string
-    description: A descriptive name for the table.
+    description: |
+      A descriptive name for the table.
+  description:
+    type: string
+    description: |
+      A user-friendly description of the dataset.
   expirationTime:
     type: string
     description: |
@@ -47,9 +64,314 @@ properties:
       deleted, and their storage is reclaimed. The defaultTableExpirationMs
       property of the encapsulating dataset can be used to set a default
       expirationTime on newly created tables. For example, 1535739430.
+  encryptionConfiguration:
+    type: object
+    additionalProperties: false
+    description: |
+      Custom encryption configuration (e.g., Cloud KMS keys).
+    properties:
+      kmsKeyName:
+        type: string
+        description: |
+          Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table.
+          The BigQuery Service Account associated with your project requires access to this encryption key.
+  externalDataConfiguration:
+    type: object
+    additionalProperties: false
+    description: |
+      Describes the data format, location, and other properties of a table stored outside of BigQuery.
+      By defining these properties, the data source can then be queried as if it were a standard BigQuery table.
+    required:
+      - sourceUris
+      - sourceFormat
+    properties:
+      sourceUris:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        description: |
+          The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs:
+          Each URI can contain one '*' wildcard character and it must come after the 'bucket' name.
+          Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs:
+          Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a
+          Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified.
+          Also, the '*' wildcard character is not allowed.
+        items:
+          type: object
+      schema:
+        type: object
+        description: |
+          The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for
+          Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
+      sourceFormat:
+        type: string
+        description: |
+          The data format. For CSV files, specify "CSV". For Google sheets, specify "GOOGLE_SHEETS".
+          For newline-delimited JSON, specify "NEWLINE_DELIMITED_JSON". For Avro files, specify "AVRO".
+          For Google Cloud Datastore backups, specify "DATASTORE_BACKUP".
+          [Beta] For Google Cloud Bigtable, specify "BIGTABLE".
+        enum:
+          - CSV
+          - GOOGLE_SHEETS
+          - NEWLINE_DELIMITED_JSON
+          - AVRO
+          - DATASTORE_BACKUP
+          - BIGTABLE
+      maxBadRecords:
+        type: number
+        description: |
+          The maximum number of bad records that BigQuery can ignore when reading data. If the number of
+          bad records exceeds this value, an invalid error is returned in the job result.
+          The default value is 0, which requires that all records are valid. This setting is ignored
+          for Google Cloud Bigtable, Google Cloud Datastore backups and Avro formats.
+      autodetect:
+        type: boolean
+        description: |
+          Indicates if BigQuery should allow extra values that are not represented in the table schema.
+          If true, the extra values are ignored. If false, records with extra columns are treated as bad records,
+          and if there are too many bad records, an invalid error is returned in the job result.
+          The default value is false. The sourceFormat property determines what BigQuery treats as an extra value:
+          CSV: Trailing columns JSON: Named values that don't match any column names
+          Google Cloud Bigtable: This setting is ignored
+          Google Cloud Datastore backups: This setting is ignored
+          Avro: This setting is ignored.
+      compression:
+        type: string
+        description: |
+          The compression type of the data source. Possible values include GZIP and NONE. The default value is NONE.
+          This setting is ignored for Google Cloud Bigtable, Google Cloud Datastore backups and Avro formats.
+          An empty string is an invalid value.
+        enum:
+          - NONE
+          - GZIP
+      csvOptions:
+        type: object
+        additionalProperties: false
+        description: |
+          Additional properties to set if sourceFormat is set to CSV.
+        properties:
+          fieldDelimiter:
+            type: string
+            description: |
+              The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding,
+              and then uses the first byte of the encoded string to split the data in its raw, binary state.
+              BigQuery also supports the escape sequence "\t" to specify a tab separator.
+              The default value is a comma (',').
+          skipLeadingRows:
+            type: number
+            description: |
+              The number of rows at the top of a CSV file that BigQuery will skip when reading the data.
+              The default value is 0. This property is useful if you have header rows in the file that should be skipped.
+          quote:
+            type: string
+            description: |
+              The value that is used to quote data sections in a CSV file. BigQuery converts the string to
+              ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw,
+              binary state. The default value is a double-quote ('"'). If your data does not contain quoted sections,
+              set the property value to an empty string. If your data contains quoted newline characters,
+              you must also set the allowQuotedNewlines property to true. @default '"'
+          allowQuotedNewlines:
+            type: boolean
+            description: |
+              Indicates if BigQuery should allow quoted data sections that contain newline characters in a CSV file.
+              The default value is false.
+          allowJaggedRows:
+            type: boolean
+            description: |
+              Indicates if BigQuery should accept rows that are missing trailing optional columns.
+              If true, BigQuery treats missing trailing columns as null values.
+              If false, records with missing trailing columns are treated as bad records, and if there are
+              too many bad records, an invalid error is returned in the job result. The default value is false.
+          encoding:
+            type: string
+            description: |
+              The character encoding of the data. The supported values are UTF-8 or ISO-8859-1.
+              The default value is UTF-8. BigQuery decodes the data after the raw, binary data has
+              been split using the values of the quote and fieldDelimiter properties.
+            enum:
+              - UTF-8
+              - ISO-8859-1
+      bigtableOptions:
+        type: object
+        additionalProperties: false
+        description: |
+          Additional options if sourceFormat is set to BIGTABLE.
+        properties:
+          columnFamilies:
+            type: array
+            uniqueItems: true
+            description: |
+              tabledata.list of column families to expose in the table schema along with their types.
+              This list restricts the column families that can be referenced in queries and specifies their value types.
+              You can use this list to do type conversions - see the 'type' field for more details.
+              If you leave this list empty, all column families are present in the table schema and their values
+              are read as BYTES. During a query only the column families referenced in that query are read from Bigtable.
+            items:
+              type: object
+              additionalProperties: false
+              properties:
+                familyId:
+                  type: string
+                  description: |
+                    Identifier of the column family.
+                type:
+                  type: string
+                  description: |
+                    The type to convert the value in cells of this column family. The values are expected to be
+                    encoded using HBase Bytes.toBytes function when using the BINARY encoding value.
+                    Following BigQuery types are allowed (case-sensitive) - BYTES STRING INTEGER FLOAT BOOLEAN
+                    Default type is BYTES. This can be overridden for a specific column by listing that
+                    column in 'columns' and specifying a type for it.
+                  enum:
+                    - BYTES
+                    - STRING
+                    - INTEGER
+                    - FLOAT
+                    - BOOLEAN
+                encoding:
+                  type: string
+                  description: |
+                    The encoding of the values when the type is not STRING. Acceptable encoding values are:
+                    - TEXT - indicates values are alphanumeric text strings.
+                    - BINARY - indicates values are encoded using HBase Bytes.toBytes family of functions.
+                    This can be overridden for a specific column by listing that column in
+                    'columns' and specifying an encoding for it.
+                  enum:
+                    - TEXT
+                    - BINARY
+                columns:
+                  type: array
+                  uniqueItems: true
+                  description: |
+                    Lists of columns that should be exposed as individual fields as opposed to a list of
+                    (column name, value) pairs. All columns whose qualifier matches a qualifier in this list
+                    can be accessed as .. Other columns can be accessed as a list through .Column field.
+                  items:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - qualifierEncoded
+                    properties:
+                      qualifierEncoded:
+                        type: string
+                        description: |
+                          Qualifier of the column. Columns in the parent column family that has this exact qualifier
+                          are exposed as . field. If the qualifier is valid UTF-8 string, it can be specified in
+                          the qualifierString field. Otherwise, a base-64 encoded value must be set to qualifierEncoded.
+                          The column field name is the same as the column qualifier. However, if the qualifier is not a
+                          valid BigQuery field identifier i.e. does not match [a-zA-Z][a-zA-Z0-9_]*, a valid identifier
+                          must be provided as fieldName.
+                      qualifierString:
+                        type: string
+                      fieldName:
+                        type: string
+                        description: |
+                          If the qualifier is not a valid BigQuery field identifier i.e. does not match
+                          [a-zA-Z][a-zA-Z0-9_]*, a valid identifier must be provided as the column field name
+                          and is used as field name in queries.
+                      type:
+                        type: string
+                        description: |
+                          The type to convert the value in cells of this column. The values are expected to be
+                          encoded using HBase Bytes.toBytes function when using the BINARY encoding value.
+                          Following BigQuery types are allowed (case-sensitive) - BYTES STRING INTEGER FLOAT BOOLEAN
+                          Default type is BYTES. 'type' can also be set at the column family level.
+                          However, the setting at this level takes precedence if 'type' is set at both levels.
+                        enum:
+                          - BYTES
+                          - STRING
+                          - INTEGER
+                          - FLOAT
+                          - BOOLEAN
+                      encoding:
+                        type: string
+                        description: |
+                          The encoding of the values when the type is not STRING. Acceptable encoding values are:
+                          - TEXT - indicates values are alphanumeric text strings.
+                          - BINARY - indicates values are encoded using HBase Bytes.toBytes family of functions.
+                          'encoding' can also be set at the column family level. However, the setting at this level
+                          takes precedence if 'encoding' is set at both levels.
+                        enum:
+                          - TEXT
+                          - BINARY
+                      onlyReadLatest:
+                        type: boolean
+                        description: |
+                          If this is set, only the latest version of value in this column are exposed.
+                          'onlyReadLatest' can also be set at the column family level. However, the setting at
+                          this level takes precedence if 'onlyReadLatest' is set at both levels.
+          ignoreUnspecifiedColumnFamilies:
+            type: boolean
+            description: |
+              If field is true, then the column families that are not specified in columnFamilies list are not
+              exposed in the table schema. Otherwise, they are read with BYTES type values. The default value is false.
+          readRowkeyAsString:
+            type: boolean
+            description: |
+              If field is true, then the rowkey column families will be read and converted to string.
+              Otherwise they are read with BYTES type values and users need to manually cast them with CAST if necessary.
+              The default value is false.
+      googleSheetsOptions:
+        type: object
+        additionalProperties: false
+        description: |
+          Additional options if sourceFormat is set to GOOGLE_SHEETS.
+        properties:
+          skipLeadingRows:
+            type: number
+            description: |
+              The number of rows at the top of a sheet that BigQuery will skip when reading the data.
+              The default value is 0. This property is useful if you have header rows that should be skipped.
+              When autodetect is on, behavior is the following: * skipLeadingRows unspecified - Autodetect tries to
+              detect headers in the first row. If they are not detected, the row is read as data. Otherwise data
+              is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are
+              no headers and data should be read starting from the first row. * skipLeadingRows = N > 0 - Autodetect
+              skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped.
+              Otherwise row N is used to extract column names for the detected schema.
+          range:
+            type: string
+            description: |
+              [Beta] Range of a sheet to query from. Only used when non-empty.
+      hivePartitioningMode:
+        type: string
+        description: |
+          [Experimental] When set, what mode of hive partitioning to use when reading data.
+          Two modes are supported:
+          - AUTO: automatically infer partition key name(s) and type(s).
+          - STRINGS: automatically infer partition key name(s). All types are strings.
+          Not all storage formats support hive partitioning -- requesting hive partitioning
+          on an unsupported format will lead to an error.
+        enum:
+          - AUTO
+          - STRINGS
+  clustering:
+    type: object
+    additionalProperties: false
+    description: |
+      Clustering specification for the table. Must be specified with time-based partitioning, data in the table
+      will be first partitioned and subsequently clustered.
+    required:
+      - fields
+    properties:
+      fields:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        description: |
+          One or more fields on which data should be clustered. Only top-level, non-repeated, simple-type fields
+          are supported. The order of the fields will determine how clusters will be generated, so it is important.
+        items:
+          type: string
+  requirePartitionFilter:
+    type: boolean
+    description: |
+      [Beta] If set to true, queries over this table require a partition filter that can be used for
+      partition elimination to be specified.
   timePartitioning:
     type: object
-    description: The time-based partitioning specification for this table.
+    additionalProperties: false
+    description: |
+      The time-based partitioning specification for this table.
     properties:
       expirationMs:
         type: string
@@ -69,7 +391,7 @@ properties:
       requirePartitionFilter:
         type: boolean
         description: |
-          If True, queries over the table require a partition filter
+          [Beta] If True, queries over the table require a partition filter
           (that can be used for partition elimination) to be specified.
       type:
         type: string
@@ -78,6 +400,7 @@ properties:
           per day.
   view:
     type: object
+    additionalProperties: false
     description: The view definintion.
     properties:
       query:
@@ -94,6 +417,7 @@ properties:
           value.
       userDefinedFunctionResources:
         type: array
+        uniqueItems: true
         description: |
           User-defined function resources used in the query.
         items:
@@ -111,12 +435,14 @@ properties:
                 (gs://bucket/path).
   schema:
     type: array
+    uniqueItems: true
     description: |
       The schema for the data. Required for the CSV and JSON formats.
       Disallowed for the Google Cloud Bigtable, Cloud Datastore
       backups, and Avro formats.
     items:
       type: object
+      additionalProperties: false
       description: Defines the table fields.
       required:
         - name
@@ -167,6 +493,14 @@ properties:
           type: string
           description: |
             The field description. The maximum length is 1,024 characters.
+  labels:
+    type: object
+    description: |
+      Map labels associated with this table.
+      Example:
+        name: wrench
+        mass: 1.3kg
+        count: 3
 
 outputs:
   properties:

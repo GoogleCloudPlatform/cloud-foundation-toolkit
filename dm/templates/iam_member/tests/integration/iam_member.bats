@@ -50,7 +50,7 @@ function teardown() {
     # Global teardown; this is executed once per test file.
     if [[ "$BATS_TEST_NUMBER" -eq "${#BATS_TEST_NAMES[@]}" ]]; then
         gcloud iam service-accounts delete "${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com" \
-            --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+            --quiet --project "${CLOUD_FOUNDATION_PROJECT_ID}"
         delete_config
         rm -f "${RANDOM_FILE}"
     fi
@@ -65,11 +65,26 @@ function teardown() {
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 }
 
-@test "Verifying that roles were assigned in deployment ${DEPLOYMENT_NAME}" {
+@test "Verifying that roles were assigned to project in deployment ${DEPLOYMENT_NAME}" {
     run gcloud projects get-iam-policy "${CLOUD_FOUNDATION_PROJECT_ID}" \
         --flatten="bindings[].members" \
         --format='table(bindings.role)' \
         --filter="bindings.members:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com"
+    [[ "$output" =~ "roles/editor" ]]
+    [[ "$output" =~ "roles/viewer" ]]
+}
+
+@test "Verifying that roles were assigned to folder in deployment ${DEPLOYMENT_NAME}" {
+    # Get the test folder ID and make it available.
+    TEST_ORG_FOLDER_NAME=$(gcloud alpha resource-manager folders list \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
+        --organization "${CLOUD_FOUNDATION_ORGANIZATION_ID}" | \
+        grep "org-folder-${RAND}" | awk '{print $3}')
+    run gcloud alpha resource-manager folders get-iam-policy "folders/${TEST_ORG_FOLDER_NAME}"  \
+        --flatten="bindings[].members" \
+        --format='table(bindings.role)' \
+        --filter="bindings.members:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com"
+
     [[ "$output" =~ "roles/editor" ]]
     [[ "$output" =~ "roles/viewer" ]]
 }

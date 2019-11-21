@@ -13,48 +13,43 @@
 # limitations under the License.
 """ This template creates firewall rules for a network. """
 
-
-def get_network(properties):
-    """ Gets a network name. """
-
-    network_name = properties.get('network')
-    if network_name:
-        is_self_link = '/' in network_name or '.' in network_name
-
-        if is_self_link:
-            network_url = network_name
-        else:
-            network_url = 'global/networks/{}'.format(network_name)
-
-    return network_url
+from hashlib import sha1
 
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    network = context.properties.get('network')
+    properties = context.properties
+    project_id = properties.get('project', context.env['project'])
+    network = properties.get('network')
+    if network:
+        if not ('/' in network or '.' in network):
+            network = 'global/networks/{}'.format(network)
+    else:
+        network = 'projects/{}/global/networks/{}'.format(
+            project_id,
+            properties.get('networkName', 'default')
+        )
 
     resources = []
     out = {}
-    for i, rule in enumerate(context.properties['rules'], 1000):
-        # Use VPC if specified in the properties. Otherwise, specify
-        # the network URL in the config. If the network is not specified in
-        # the config, the API defaults to 'global/networks/default'.
-        if network and not rule.get('network'):
-            rule['network'] = get_network(context.properties)
+    for i, rule in enumerate(properties['rules'], 1000):
+        res_name = sha1(rule['name']).hexdigest()[:10]
 
+        rule['network'] = network
         rule['priority'] = rule.get('priority', i)
+        rule['project'] = project_id
         resources.append(
             {
-                'name': rule['name'],
-                'type': 'compute.beta.firewall',
+                'name': res_name,
+                'type': 'gcp-types/compute-v1:firewalls',
                 'properties': rule
             }
         )
 
-        out[rule['name']] = {
-            'selfLink': '$(ref.' + rule['name'] + '.selfLink)',
-            'creationTimestamp': '$(ref.' + rule['name']
+        out[res_name] = {
+            'selfLink': '$(ref.' + res_name + '.selfLink)',
+            'creationTimestamp': '$(ref.' + res_name
                                  + '.creationTimestamp)',
         }
 

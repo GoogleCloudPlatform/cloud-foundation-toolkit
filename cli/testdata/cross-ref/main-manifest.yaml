@@ -1,0 +1,36 @@
+name: manifest-1558955227411
+id: '8045110837272541748'
+config:
+  content: |
+    ...
+layout: |
+  resources:
+  - name: res1
+    outputs:
+    - name: string
+      finalValue: stringValue
+    - name: string2
+      finalValue: stringValue2
+    - name: map
+      finalValue:
+         name: someName
+         value: someValue
+    - name: listOfMaps
+      finalValue:
+        - name: value1
+        - name: value2
+    - name: list
+      finalValue:
+        - string1
+        - string2
+  - name: sub-resource
+    resources:
+      - name: sub-resource
+        outputs:
+        - finalValue: sub-property-value
+          name: sub-property
+        resources:
+          - name: sub-sub-resource
+            outputs:
+            - finalValue: sub-sub-property-value
+              name: sub-sub-property

@@ -25,7 +25,10 @@ resources:
       targetSize: 3
       instanceTemplate:
         diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
-        network: default
+        networks:
+          - network: default
+            accessConfigs:
+              - type: ONE_TO_ONE_NAT
         machineType: f1-micro
       healthChecks:
         - initialDelaySec: 500

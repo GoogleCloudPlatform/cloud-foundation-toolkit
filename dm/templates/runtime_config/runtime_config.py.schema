@@ -15,10 +15,16 @@
 info:
   title: Runtime Configurator
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Runtime Configurator.
+
     For more information on this resource, see
-    https://cloud.google.com/deployment-manager/runtime-configurator/.
+    https://cloud.google.com/deployment-manager/runtime-configurator/
+
+    APIs endpoints used by this template:
+    - gcp-types/runtimeconfig-v1beta1:projects.configs =>
+        https://cloud.google.com/deployment-manager/runtime-configurator/reference/rest/v1beta1/projects.configs
 
 imports:
   - path: variable.py
@@ -26,13 +32,28 @@ imports:
 
 additionalProperties: false
 
-required:
-  - config
+oneOf:
+  - required:
+      - config
+  - required:
+      - name
 
 properties:
   config:
     type: string
-    description: The config resource name.
+    description: |
+      The config resource name. DEPRECATED, use "name"
+      Resource name would be used if omitted.
+  name:
+    type: string
+    description: |
+      The config resource name.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   projectId:
     type: string
     description: ProjectID of the project to create the config in.
@@ -41,6 +62,7 @@ properties:
     description: The config resource description.
   variables:
     type: array
+    uniqItems: true
     description: |
       The list of variables as defined in the variable.py template.
       Example:
@@ -48,6 +70,7 @@ properties:
           variableTextValue: "my variable value"
   waiters:
     type: array
+    uniqItems: true
     description: |
       The list of waiters as defined in the waiter.py template.
       Example:

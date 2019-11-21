@@ -1,0 +1,53 @@
+name: manifest-1558955227411
+id: '8045110837272541748'
+config:
+  content: |
+    imports:
+      - path: templates/network/network.py
+
+    resources:
+      - type: templates/network/network.py
+        name: my-network-prod
+        properties:
+          autoCreateSubnetworks: true
+
+      - type: templates/network/network.py
+        name: my-network-dev
+        properties:
+          autoCreateSubnetworks: false
+layout: |
+  resources:
+  - name: my-network-prod
+    outputs:
+    - finalValue: my-network-prod
+      name: name
+      value: my-network-prod
+    - finalValue: https://www.googleapis.com/compute/v1/projects/gl-akopachevskyy-dm-seed/global/networks/my-network-prod
+      name: selfLink
+      value: $(ref.my-network-prod.selfLink)
+    - finalValue: {}
+      name: subnetworks
+      value:
+        - name: subnet1
+        - name: subnet2
+    properties:
+      autoCreateSubnetworks: true
+    resources:
+    - name: my-network-prod
+      type: compute.v1.network
+    type: templates/network/network.py
+  - name: my-network-dev
+    outputs:
+    - finalValue: my-network-dev
+      name: name
+      value: my-network-dev
+    - finalValue: https://www.googleapis.com/compute/v1/projects/gl-akopachevskyy-dm-seed/global/networks/my-network-dev
+      name: selfLink
+      value: $(ref.my-network-dev.selfLink)
+    properties:
+      autoCreateSubnetworks: false
+    resources:
+    - name: my-network-dev
+      type: compute.v1.network
+    type: templates/network/network.py
+

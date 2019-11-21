@@ -20,8 +20,10 @@ resources:
     properties:
       portRange: 80
       backendServices:
-        - name: backend-service
+        - resourceName: backend-service
           portName: http
           healthCheck: <FIXME:healthcheck>
           backends:
             - group: <FIXME:instanceGroup>
+              balancingMode: UTILIZATION
+              maxUtilization: 0.8

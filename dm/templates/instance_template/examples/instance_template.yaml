@@ -12,7 +12,9 @@ resources:
     properties:
       diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
       networks:
-        - default
+        - network: default
+          accessConfigs:
+            - type: ONE_TO_ONE_NAT
       machineType: f1-micro
       tags:
         items:

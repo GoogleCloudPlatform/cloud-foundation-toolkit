@@ -15,8 +15,10 @@
 info:
   title: Cloud Tasks
   author: Sourced Group Inc.
+  version: 1.0.0
   description: |
     Supports creation of a Cloud Task resource.
+
     For more information on this resource, see
     https://cloud.google.com/tasks/docs/dual-overview.
 
@@ -80,6 +82,7 @@ properties:
           For example, "2014-10-02T15:01:23.045123456Z".
       appEngineHttpRequest:
         type: object
+        additionalProperties: false
         description: |
           Defines the HTTP request that is sent to an App Engine app when the
           task is dispatched. This can only be used for tasks in a queue with
@@ -102,6 +105,7 @@ properties:
               - DELETE
           appEngineRouting:
             type: object
+            additionalProperties: false
             description: Task-level settings for App Engine routing.
             properties:
               service:

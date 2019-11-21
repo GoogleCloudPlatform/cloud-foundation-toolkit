@@ -37,4 +37,5 @@ resources:
       masterInstanceName: $(ref.cloud-sql-master-instance.name)
       # Wait until all the resources required by the master instance had been
       # created.
-      dependsOn: $(ref.cloud-sql-master-instance.resources)
+      dependsOn: 
+        - $(ref.cloud-sql-master-instance.resources)

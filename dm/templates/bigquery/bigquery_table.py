@@ -18,16 +18,19 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    name = context.properties['name']
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
     properties = {
         'tableReference':
             {
                 'tableId': name,
                 'datasetId': context.properties['datasetId'],
-                'projectId': context.env['project']
+                'projectId': project_id
             },
-        'datasetId': context.properties['datasetId']
+        'datasetId': context.properties['datasetId'],
+        'projectId': project_id,
     }
 
     optional_properties = [
@@ -48,51 +51,52 @@ def generate_config(context):
 
     resources = [
         {
-            'type': 'bigquery.v2.table',
-            'name': name,
-            'properties': properties,
-            'metadata': {
-                'dependsOn': [context.properties['datasetId']]
-            }
+            # https://cloud.google.com/bigquery/docs/reference/rest/v2/tables
+            'type': 'gcp-types/bigquery-v2:tables',
+            'name': context.env['name'],
+            'properties': properties
         }
     ]
+
+    if 'dependsOn' in context.properties:
+        resources[0]['metadata'] = {'dependsOn': context.properties['dependsOn']}
 
     outputs = [
         {
             'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(name)
+            'value': '$(ref.{}.selfLink)'.format(context.env['name'])
         },
         {
             'name': 'etag',
-            'value': '$(ref.{}.etag)'.format(name)
+            'value': '$(ref.{}.etag)'.format(context.env['name'])
         },
         {
             'name': 'creationTime',
-            'value': '$(ref.{}.creationTime)'.format(name)
+            'value': '$(ref.{}.creationTime)'.format(context.env['name'])
         },
         {
             'name': 'lastModifiedTime',
-            'value': '$(ref.{}.lastModifiedTime)'.format(name)
+            'value': '$(ref.{}.lastModifiedTime)'.format(context.env['name'])
         },
         {
             'name': 'location',
-            'value': '$(ref.{}.location)'.format(name)
+            'value': '$(ref.{}.location)'.format(context.env['name'])
         },
         {
             'name': 'numBytes',
-            'value': '$(ref.{}.numBytes)'.format(name)
+            'value': '$(ref.{}.numBytes)'.format(context.env['name'])
         },
         {
             'name': 'numLongTermBytes',
-            'value': '$(ref.{}.numLongTermBytes)'.format(name)
+            'value': '$(ref.{}.numLongTermBytes)'.format(context.env['name'])
         },
         {
             'name': 'numRows',
-            'value': '$(ref.{}.numRows)'.format(name)
+            'value': '$(ref.{}.numRows)'.format(context.env['name'])
         },
         {
             'name': 'type',
-            'value': '$(ref.{}.type)'.format(name)
+            'value': '$(ref.{}.type)'.format(context.env['name'])
         }
     ]
 

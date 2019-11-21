@@ -17,7 +17,7 @@ resources:
       metricKind: CUMULATIVE
       valueType: INT64
       unit: "1"
+      launchStage: ALPHA
       metadata:
-        launchStage: ALPHA
         samplePeriod: "10s"
         ingestDelay: "1s"

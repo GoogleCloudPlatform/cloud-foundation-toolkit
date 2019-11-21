@@ -1,0 +1,30 @@
+name: cftcli-test-network-dpl
+
+imports:
+- path: ../../../dm/templates/network/network.py
+  name: network.py
+- path: ../../../dm/templates/network/subnetwork.py
+  name: subnetwork.py
+
+resources:
+- name: cftcli-test-network
+  type: network.py
+  properties:
+    autoCreateSubnetworks: false
+    subnetworks:
+    - name: cftcli-test-subnetwork-1
+      region: us-east1
+      ipCidrRange: 10.0.0.0/24
+      privateIpGoogleAccess: false
+      enableFlowLogs: true
+      secondaryIpRanges:
+      - rangeName: my-secondary-range-1
+        ipCidrRange: 10.0.1.0/24
+      - rangeName: my-secondary-range-2
+        ipCidrRange: 10.0.2.0/24
+- name: cftcli-test-subnetwork-2
+  type: subnetwork.py
+  properties:
+    network: $(ref.cftcli-test-network.selfLink)
+    region: us-east1
+    ipCidrRange: 192.168.0.0/16

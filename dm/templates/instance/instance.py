@@ -49,36 +49,32 @@ def get_network_interfaces(properties):
     """
     network_interfaces = []
 
-    networks = properties.get('networks', [{
-        "name": properties.get('network'),
-        "hasExternalIp": properties.get('hasExternalIp'),
-        "natIP": properties.get('natIP'),
-        "subnetwork": properties.get('subnetwork'),
-        "networkIP": properties.get('networkIP'),
-    }])
+    networks = properties.get('networks', [])
+    if len(networks) == 0 and properties.get('network'):
+        network = {
+            "network": properties.get('network'),
+            "subnetwork": properties.get('subnetwork'),
+            "networkIP": properties.get('networkIP'),
+        }
+        networks.append(network)
+        if (properties.get('hasExternalIp')):
+            network['accessConfigs'] = [{
+                "type": "ONE_TO_ONE_NAT",
+            }]
+            if properties.get('natIP'):
+                network['accessConfigs'][0]['natIP'] = properties.get('natIP')
 
     for network in networks:
-        if not '.' in network['name'] and not '/' in network['name']:
-            network_name = 'global/networks/{}'.format(network['name'])
+        if not '.' in network['network'] and not '/' in network['network']:
+            network_name = 'global/networks/{}'.format(network['network'])
         else:
-            network_name = network['name']
+            network_name = network['network']
 
         network_interface = {
             'network': network_name,
         }
 
-        if network['hasExternalIp']:
-            access_configs = {
-                'name': 'External NAT',
-                'type': 'ONE_TO_ONE_NAT'
-            }
-
-            if network.get('natIP'):
-                access_configs['natIP'] = network['natIP']
-
-            network_interface['accessConfigs'] = [access_configs]
-
-        netif_optional_props = ['subnetwork', 'networkIP']
+        netif_optional_props = ['subnetwork', 'networkIP', 'aliasIpRanges', 'accessConfigs']
         for prop in netif_optional_props:
             if network.get(prop):
                 network_interface[prop] = network[prop]
@@ -90,40 +86,82 @@ def get_network_interfaces(properties):
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    zone = context.properties['zone']
-    vm_name = context.properties.get('name', context.env['name'])
-    machine_type = context.properties['machineType']
+    properties = context.properties
+    zone = properties['zone']
+    vm_name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
+    network_interfaces = get_network_interfaces(properties)
 
-    boot_disk = create_boot_disk(context.properties, zone, vm_name)
-    network_interfaces = get_network_interfaces(context.properties)
     instance = {
-        'name': vm_name,
-        'type': 'compute.v1.instance',
-        'properties':{
+        'name': context.env['name'],
+        # https://cloud.google.com/compute/docs/reference/rest/v1/instances
+        'type': 'gcp-types/compute-v1:instances',
+        'properties': {
+            'name': vm_name,
             'zone': zone,
-            'machineType': 'zones/{}/machineTypes/{}'.format(zone,
-                                                             machine_type),
-            'disks': [boot_disk],
-            'networkInterfaces': network_interfaces
+            'project': project_id
         }
     }
 
-    for name in ['metadata', 'serviceAccounts', 'canIpForward', 'tags']:
-        set_optional_property(instance['properties'], context.properties, name)
+    if not properties.get('sourceInstanceTemplate'):
+        instance['properties']['machineType'] = 'zones/{}/machineTypes/{}'.format(zone, properties['machineType'])
+        instance['properties']['networkInterfaces'] = network_interfaces
+        optional_properties = [
+            'description',
+            'scheduling',
+            'disks',
+            'minCpuPlatform',
+            'guestAccelerators',
+            'deletionProtection',
+            'hostname',
+            'shieldedInstanceConfig',
+            'shieldedInstanceIntegrityPolicy',
+            'labels',
+            'metadata',
+            'serviceAccounts',
+            'canIpForward',
+            'tags',
+        ]
+        for name in optional_properties:
+            set_optional_property(instance['properties'], properties, name)
+
+        if not properties.get('disks'):
+            instance['properties']['disks'] = [create_boot_disk(properties, zone, vm_name)]
+    else:
+        instance['properties']['sourceInstanceTemplate'] = properties['sourceInstanceTemplate']
 
     outputs = [
         {
             'name': 'networkInterfaces',
-            'value': '$(ref.{}.networkInterfaces)'.format(vm_name)
+            'value': '$(ref.{}.networkInterfaces)'.format(context.env['name'])
         },
         {
             'name': 'name',
-            'value': '$(ref.{}.name)'.format(vm_name)
+            'value': '$(ref.{}.name)'.format(context.env['name'])
         },
         {
             'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(vm_name)
+            'value': '$(ref.{}.selfLink)'.format(context.env['name'])
         }
     ]
+
+    if not properties.get('sourceInstanceTemplate') and len(network_interfaces) == 1:
+        outputs.append({
+            'name': 'internalIp',
+            'value': '$(ref.{}.networkInterfaces[0].networkIP)'.format(context.env['name'])
+        })
+
+        if 'accessConfigs' in network_interfaces[0]:
+            accessConfigs = network_interfaces[0]['accessConfigs']
+            for i, row in enumerate(accessConfigs, 0):
+              if row['type'] == 'ONE_TO_ONE_NAT':
+                outputs.append({
+                  'name': 'externalIp',
+                  'value': '$(ref.{}.networkInterfaces[0].accessConfigs[{}].natIP)'.format(context.env['name'], i)
+                })
+                break
+
+    print(instance)
+
 
     return {'resources': [instance], 'outputs': outputs}

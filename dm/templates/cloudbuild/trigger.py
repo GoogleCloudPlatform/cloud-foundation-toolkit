@@ -20,37 +20,37 @@ def generate_config(context):
     resources = []
     properties = context.properties
     name = context.env['name']
-    project_id = context.env['project']
+    project_id = properties.get('project', context.env['project'])
     # set projectId in triggerTemplate
     properties['triggerTemplate']['projectId'] = project_id
-    build_def = properties.get('build')
+    build_def = properties.get('buildTemplate')
     build_filename = properties.get('filename')
     build_trigger_id = '$(ref.{}.id)'.format(name)
 
     # build trigger create action
     build_trigger_create = {
-        'name':
-            name,
-        'action':
-            'gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.create',
+        'name': name,
+        # https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers/create
+        'action': 'gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.create',
         'metadata': {
             'runtimePolicy': ['CREATE'],
         },
         'properties': {
+            'projectId': project_id,
             'triggerTemplate': properties['triggerTemplate']
         }
     }
 
     # build trigger update action
     build_trigger_update = {
-        'name':
-            name + '-update',
-        'action':
-            'gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.patch',
+        'name': name + '-update',
+        # https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers/patch
+        'action': 'gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.patch',
         'metadata': {
             'runtimePolicy': ['UPDATE_ON_CHANGE'],
         },
         'properties': {
+            'projectId': project_id,
             'id': build_trigger_id,
             'triggerId': build_trigger_id,
             'triggerTemplate': properties['triggerTemplate']
@@ -62,7 +62,8 @@ def generate_config(context):
         'disabled',
         'substitutions',
         'ignoredFiles',
-        'includedFiles'
+        'includedFiles',
+        'tags'
     ]
 
     for prop in optional_properties:
@@ -82,10 +83,9 @@ def generate_config(context):
 
     # build trigger delete action
     build_trigger_delete = {
-        'name':
-            name + '-delete',
-        'action':
-            'gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.delete',
+        'name': name + '-delete',
+        # https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers/delete
+        'action': 'gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.delete',
         'metadata': {
             'runtimePolicy': ['DELETE'],
         },

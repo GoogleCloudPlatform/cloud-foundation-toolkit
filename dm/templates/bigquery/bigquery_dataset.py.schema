@@ -15,10 +15,16 @@
 info:
   title: BigQuery Dataset
   author: Sourced Group Inc.
+  version: 1.0.1
   description: |
     Creates a BigQuery dataset.
+
     For information on this resource:
     https://cloud.google.com/bigquery/docs/.
+
+    APIs endpoints used by this template:
+    - gcp-types/bigquery-v2:datasets =>
+        https://cloud.google.com/bigquery/docs/reference/rest/v2/datasets
 
 imports:
   - path: bigquery_dataset.py
@@ -31,7 +37,21 @@ required:
 properties:
   name:
     type: string
-    description: The resource name.
+    description: |
+      The table dataset name. Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing the dataset. The
+      Google apps domain is prefixed if applicable.
+  friendlyName:
+    type: string
+    description: |
+      A descriptive name for the dataset.
+  description:
+    type: string
+    description: |
+      A user-friendly description of the dataset.
   location:
     type: string
     description: |
@@ -43,8 +63,24 @@ properties:
       - Asia
       - EU
       - US
+      - us-west2
+      - northamerica-northeast1
+      - us-east4
+      - southamerica-east1
+      - europe-north1
+      - europe-west2
+      - europe-west3
+      - europe-west6
+      - asia-east2
+      - asia-south1
+      - asia-northeast2
+      - asia-east1
+      - asia-northeast1
+      - asia-southeast1
+      - australia-southeast1
   access:
     type: array
+    uniqueItems: true
     description: |
       An array of objects that define dataset access for one or more
       entities. You can set this property when inserting or updating
@@ -56,33 +92,34 @@ properties:
         access.specialGroup: projectOwners; access.role: OWNER
         access.userByEmail: [dataset creator email]; access.role: OWNER
     items:
-      role:
-        type: string
-        description: |
-          The role (rights) granted to the user specified by the other
-          member of the access object. The following string values are
-          supported: READER, WRITER, OWNER. See details at 
-          https://cloud.google.com/bigquery/docs/access-control.
-        enum:
-          - READER
-          - WRITER
-          - OWNER
-      oneOf:
-        - domain:
+      type: object
+      additionalProperties: false
+      required:
+        - role
+      properties:
+        role:
+          type: string
+          description: |
+            An IAM role ID that should be granted to the user, group, or domain specified in this access entry.
+            The following legacy mappings will be applied: OWNER <=> roles/bigquery.dataOwner
+            WRITER <=> roles/bigquery.dataEditor READER <=> roles/bigquery.dataViewer This field will accept any of
+            the above formats, but will return only the legacy format. For example, if you set this field to
+            "roles/bigquery.dataOwner", it will be returned back as "OWNER". @mutable bigquery.datasets.update
+        domain:
           type: string
           description: |
             The domain to grant access to. All users signed in with the 
             specified domain are granted the corresponding access.
             Example: "example.com".
-        - userByEmail:
+        userByEmail:
           type: string
           description: |
             The email address of a user to grant access to. For example:
             fred@example.com.
-        - groupByEmail:
+        groupByEmail:
           type: string
           description: The email address of a Google Group to grant access to.
-        - specialGroup:
+        specialGroup:
           type: string
           description: |
             The special group to grant access to. Possible values include:
@@ -90,8 +127,9 @@ properties:
               projectReaders: readers of the enclosing project
               projectWriters: writers of the enclosing project
               allAuthenticatedUsers: all authenticated BigQuery users
-        - view:
+        view:
           type: object
+          additionalProperties: false
           description: |
             A view from a different dataset to grant access to. Queries
             executed against that view have the Read access to tables in that
@@ -112,9 +150,6 @@ properties:
                 The table ID. The ID must contain only letters
                 (a-z, A-Z), numbers (0-9), or underscores (_). The maximum
                 length is 1,024 characters.
-  description:
-    type: string
-    description: A user-friendly description of the dataset.
   setDefaultOwner:
     type: boolean
     default: False
@@ -136,6 +171,26 @@ properties:
       expirationTime while creating the table, that value takes precedence over
       the default expiration time indicated by this property.
     minimum: 3600000
+  defaultPartitionExpirationMs:
+    type: string
+    format: int64
+    description: |
+      The default partition expiration for all partitioned tables in the dataset, in milliseconds.
+      Once this property is set, all newly-created partitioned tables in the dataset will have an expirationMs
+      property in the timePartitioning settings set to this value, and changing the value will only affect new tables,
+      not existing ones. The storage in a partition will have an expiration time of its partition time plus this value.
+      Setting this property overrides the use of defaultTableExpirationMs for partitioned tables: only one of
+      defaultTableExpirationMs and defaultPartitionExpirationMs will be used for any new partitioned table.
+      If you provide an explicit timePartitioning.expirationMs when creating or updating a partitioned table,
+      that value takes precedence over the default partition expiration time indicated by this property.
+  labels:
+    type: object
+    description: |
+      Map labels associated with this dataset.
+      Example:
+        name: wrench
+        mass: 1.3kg
+        count: 3
 
 outputs:
   properties:

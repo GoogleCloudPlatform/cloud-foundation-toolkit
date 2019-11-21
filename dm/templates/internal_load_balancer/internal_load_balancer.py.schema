@@ -14,6 +14,7 @@
 
 info:
   title: Internal Load Balancer
+  version: 1.0.0
   author: Sourced Group Inc.
   description: |
     Supports the creation of an internal load balancing solution that consists 
@@ -38,6 +39,12 @@ properties:
     description: |
       The internal load balancer name. This name is assigned to the 
       underlying forwarding rule resource.
+      Resource name would be used if omitted.
+  project:
+    type: string
+    description: |
+      The project ID of the project containing resources. The
+      Google apps domain is prefixed if applicable.
   description:
     type: string
     description: |
@@ -49,6 +56,7 @@ properties:
       The name of the region where the internal load balancer resides.
   ports:
     type: array
+    uniqItems: true
     description: | 
       The list of ports; only packets addressed to these ports are forwarded
       to the backends configured with the load balancer.
@@ -84,6 +92,7 @@ properties:
   backendService:
     type: object
     description: The backend service configuration.
+    additionalProperties: false
     required:
       - healthCheck
       - backends
@@ -96,11 +105,13 @@ properties:
         description: An optional description of the backend service resource.
       backends:
         type: array
+        uniqItems: true
         description: |
           The list of backends (instance groups) to which the backend service
           distributes traffic.
         items:
           type: object
+          additionalProperties: false
           required:
             - group
           properties:
@@ -137,6 +148,7 @@ properties:
           - CLIENT_IP_PORT_PROTO
       connectionDraining:
         type: object
+        additionalProperties: false
         description: The connection draining settings.
         properties:
           drainingTimeoutSec:

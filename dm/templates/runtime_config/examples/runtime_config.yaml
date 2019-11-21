@@ -8,15 +8,15 @@ resources:
   - name: my-test-config
     type: runtime_config.py
     properties:
-      config: my-test-config
+      name: my-test-config
       description: my config description
       variables:
-        - variable: myapp/dev/sql/connection_string
+        - name: myapp/dev/sql/connection_string
           text: super text value
-        - variable: myapp/dev/web/wildcardcert
+        - name: myapp/dev/web/wildcardcert
           value: c3VwZXJhd2Vzb21ldGV4dAo=
       waiters:
-        - waiter: my-test-waiter
+        - name: my-test-waiter
           timeout: 3.5s
           success:
             cardinality:
