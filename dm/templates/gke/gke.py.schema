@@ -314,15 +314,33 @@ properties:
     required:
       - network
       - subnetwork
-    oneOf:
-      - allOf:
+    allOf:
+      # We should either be using unified Stackdriver monitoring for _both_
+      # logging and monitoring, or for _neither_.
+      - oneOf:
+        - properties:
+            loggingService:
+              enum: ["logging.googleapis.com/kubernetes"]
+            monitoringService:
+              enum: ["monitoring.googleapis.com/kubernetes"]
+        - allOf:
+          - not:
+              properties:
+                loggingService:
+                  enum: ["logging.googleapis.com/kubernetes"]
+          - not:
+              properties:
+                monitoringService:
+                  enum: ["monitoring.googleapis.com/kubernetes"]
+      - oneOf:
+        - allOf:
+          - required:
+              - nodePools
+          - not:
+              required:
+                - initialNodeCount
         - required:
-            - nodePools
-        - not:
-            required:
-              - initialNodeCount
-      - required:
-          - nodeConfig
+            - nodeConfig
     properties:
       name:
         type: string
@@ -331,8 +349,12 @@ properties:
         type: string
         description: An optional description of the cluster.
       initialNodeCount:
+        description: |
+          Deprecated. Use nodePools.initialNodeCount instead.
         $ref: '#/definitions/initialNodeCount'
       nodeConfig:
+        description: |
+          Deprecated. Use nodePools.config instead.
         $ref: '#/definitions/nodeConfig'
       nodePools:
         type: array
@@ -467,24 +489,28 @@ properties:
         description: |
           The logging service the cluster should use to write logs. Currently available options:
 
-          logging.googleapis.com - the Google Cloud Logging service.
+          logging.googleapis.com/kubernetes - unified Kubernetes logging/monitoring service.
+          logging.googleapis.com - legacy Google Cloud Logging service.
           none - no logs will be exported from the cluster.
-          if left as an empty string,logging.googleapis.com will be used.
+          if left as an empty string, logging.googleapis.com will be used.
         enum:
           - none
           - logging.googleapis.com
+          - logging.googleapis.com/kubernetes
       monitoringService:
         type: string
         default: monitoring.googleapis.com
         description: |
           The monitoring service the cluster should use to write metrics. Currently available options:
 
-          monitoring.googleapis.com - the Google Cloud Monitoring service.
+          monitoring.googleapis.com/kubernetes - unified Kubernetes logging/monitoring service.
+          monitoring.googleapis.com - legacy Google Cloud Monitoring service.
           none - no metrics will be exported from the cluster.
           if left as an empty string, monitoring.googleapis.com will be used.
         enum:
           - none
           - monitoring.googleapis.com
+          - monitoring.googleapis.com/kubernetes
       network:
         type: string
         default: default
