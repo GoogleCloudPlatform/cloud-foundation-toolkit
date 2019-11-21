@@ -15,7 +15,6 @@
 
 from hashlib import sha1
 
-
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
@@ -25,14 +24,23 @@ def generate_config(context):
     project_id = properties.get('projectId', context.env['project'])
 
     resources = []
+
+    if 'dependsOn' in properties:
+        dependson = { 'metadata': { 'dependsOn': properties['dependsOn'] } }
+        dependson_root = properties['dependsOn']
+    else:
+        dependson = {}
+        dependson_root = []
+
     for role in properties['roles']:
         for member in role['members']:
-            suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
+            suffix = sha1('{}-{}'.format(role['role'], member).encode('utf-8')).hexdigest()[:10]
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
             if org_id:
-                resources.append({
-                    'name': '{}-organization'.format(policy_get_name),
+                resourse_name = '{}-organization'.format(policy_get_name)
+                iam_resource = {
+                    'name': resourse_name,
                     # TODO - Virtual type documentation needed
                     'type': 'gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding',
                     'properties': {
@@ -40,10 +48,13 @@ def generate_config(context):
                         'role': role['role'],
                         'member': member,
                     }
-                })
+                }
+                iam_resource.update(dependson)
+                resources.append(iam_resource)
             elif folder_id:
-                resources.append({
-                    'name': '{}-folder'.format(policy_get_name),
+                resourse_name = '{}-folder'.format(policy_get_name)
+                iam_resource = {
+                    'name': resourse_name,
                     # TODO - Virtual type documentation needed
                     'type': 'gcp-types/cloudresourcemanager-v2:virtual.folders.iamMemberBinding',
                     'properties': {
@@ -51,10 +62,13 @@ def generate_config(context):
                         'role': role['role'],
                         'member': member,
                     }
-                })
+                }
+                iam_resource.update(dependson)
+                resources.append(iam_resource)
             else:
-                resources.append({
-                    'name': '{}-project'.format(policy_get_name),
+                resourse_name = '{}-project'.format(policy_get_name)
+                iam_resource = {
+                    'name': (resourse_name),
                     # TODO - Virtual type documentation needed
                     'type': 'gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding',
                     'properties': {
@@ -62,11 +76,10 @@ def generate_config(context):
                         'role': role['role'],
                         'member': member,
                     }
-                })
+                }
+                iam_resource.update(dependson)
+                resources.append(iam_resource)
 
-
-    if 'dependsOn' in properties:
-        for resource in resources:
-            resource['metadata'] = {'dependsOn': properties['dependsOn']}
+            dependson = { 'metadata': { 'dependsOn': [resourse_name] + dependson_root } }
 
     return {"resources": resources}
