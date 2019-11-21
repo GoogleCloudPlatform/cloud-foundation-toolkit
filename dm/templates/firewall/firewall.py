@@ -34,7 +34,7 @@ def generate_config(context):
     resources = []
     out = {}
     for i, rule in enumerate(properties['rules'], 1000):
-        res_name = sha1(rule['name']).hexdigest()[:10]
+        res_name = sha1(rule['name'].encode('utf-8')).hexdigest()[:10]
 
         rule['network'] = network
         rule['priority'] = rule.get('priority', i)
