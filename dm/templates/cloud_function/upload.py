@@ -17,7 +17,7 @@ import zipfile
 import hashlib
 import base64
 import uuid
-from StringIO import StringIO
+from io import BytesIO
 from copy import deepcopy
 
 GS_SCHEMA_LENGTH = 5
@@ -37,7 +37,7 @@ def extract_source_files(imports, local_upload_path):
 def archive_files(files):
     """ Archives input files and returns the result as a binary array. """
 
-    output_file = StringIO()
+    output_file = BytesIO()
     sources_zip = zipfile.ZipFile(output_file,
                                   mode='w',
                                   compression=zipfile.ZIP_DEFLATED)
