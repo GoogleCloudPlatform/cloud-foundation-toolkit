@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-output "folders" {
-  value = merge(local.folders, local.ci_folders)
+output "repo_folder" {
+  value = local.repo_folder
 }
 
-output "org_id" {
-  value = local.org_id
+output "lint_triggers" {
+  value = google_cloudbuild_trigger.lint_trigger.*
 }
 
-output "billing_account" {
-  value = local.billing_account
-}
-
-output "cft_ci_group" {
-  value = local.cft_ci_group
+output "int_triggers" {
+  value = google_cloudbuild_trigger.int_trigger.*
 }
