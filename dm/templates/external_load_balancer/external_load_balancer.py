@@ -129,7 +129,7 @@ def get_backend_services(properties, res_name, project_id):
     backend_specs = properties['backendServices']
 
     for backend_spec in backend_specs:
-        backend_res_name = '{}-backend-service-{}'.format(res_name, sha1(json.dumps(backend_spec)).hexdigest()[:10])
+        backend_res_name = '{}-backend-service-{}'.format(res_name, sha1(json.dumps(backend_spec).encode('utf-8')).hexdigest()[:10])
         resources, outputs = get_backend_service(properties, backend_spec, backend_res_name, project_id)
         backend_resources += resources
         # Merge outputs with the same name.

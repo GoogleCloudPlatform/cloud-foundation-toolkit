@@ -13,6 +13,8 @@
 # limitations under the License.
 """ This template creates a Dataproc cluster. """
 
+import six
+
 NODES_SCHEMA = {
     'numInstances': None,
     'isPreemptible': None,
@@ -39,7 +41,7 @@ def read_configuration(properties, schema):
 
     if any(name in properties for name in schema):
         config = {}
-        for name, rename_to in schema.iteritems():
+        for name, rename_to in six.iteritems(schema):
             add_optional_property(config, properties, name, rename_to)
         return config
 

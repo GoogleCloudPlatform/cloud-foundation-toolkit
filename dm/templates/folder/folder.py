@@ -32,7 +32,7 @@ def generate_config(context):
 
         suffix = folder.get(
             'resourceNameSuffix',
-            sha1('{}/folders/{}'.format(parent, folder.get('displayName'))).hexdigest()[:10]
+            sha1('{}/folders/{}'.format(parent, folder.get('displayName')).encode('utf-8')).hexdigest()[:10]
         )
         create_folder = '{}-{}'.format(context.env['name'], suffix)
         resources.append(

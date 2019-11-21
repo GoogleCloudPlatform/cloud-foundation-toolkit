@@ -27,7 +27,7 @@ def generate_config(context):
     resources = []
     for role in properties['roles']:
         for member in role['members']:
-            suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
+            suffix = sha1('{}-{}'.format(role['role'], member).encode('utf-8')).hexdigest()[:10]
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
             if org_id:
