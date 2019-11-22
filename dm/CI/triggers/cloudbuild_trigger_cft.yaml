@@ -1,0 +1,53 @@
+# This config+template creates a Cloud build trigger for every CFT DM template
+# by crawling through the repository. For this crawl we use glob import which
+# needs to be enabled:
+#
+# gcloud config set deployment_manager/glob_imports True
+#
+# Currently the repo is hardcoded.
+
+imports:
+  - path: cft-triggers.py
+    name: cft-triggers.py
+# Using the gcloud glob import to load one file from every template where
+# triggers should be created. This is inderictly passing the list of possible
+# templates to DM without hardcoding that into a config list.
+  - path: ../../templates/**/*.md
+
+resources:
+  - name: cft-triggers
+    type: cft-triggers.py
+    properties:
+      description: CFT-DM-#template# PR trigger [cft-dm-dev]
+      disabled: False
+      github:
+        name: cloud-foundation-toolkit
+        owner: GoogleCloudPlatform
+        pullRequest:
+          branch: cft-dm-dev
+          commentControl: COMMENTS_ENABLED
+      filename: dm/CI/cft_test_runner/cloudbuild-test.yaml
+      substitutions:
+        _BATS_TEST_FILE: ./templates/#template#/tests/integration/#template#.bats
+      includedFiles:
+        - dm/templates/#template#/*.py
+        - dm/templates/#template#/*.schema
+        - dm/templates/#template#/tests/integration/*
+  - name: cft-triggers-master
+    type: cft-triggers.py
+    properties:
+      description: CFT-DM-#template# PR trigger [Master]
+      disabled: False
+      github:
+        name: cloud-foundation-toolkit
+        owner: GoogleCloudPlatform
+        pullRequest:
+          branch: master
+          commentControl: COMMENTS_ENABLED
+      filename: dm/CI/cft_test_runner/cloudbuild-test.yaml
+      substitutions:
+        _BATS_TEST_FILE: ./templates/#template#/tests/integration/#template#.bats
+      includedFiles:
+        - dm/templates/#template#/*.py
+        - dm/templates/#template#/*.schema
+        - dm/templates/#template#/tests/integration/*
