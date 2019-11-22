@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## CFT Templates
 
 
+### 22.11.2019
+
+- Cloud Build Trigger support for Github
+- CI example for Github triggering Cloudbuild for PRs
+
 ### 21.11.2019
 
 - Added support for unified Stackdriver Kubernetes Engine Monitoring [#463] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
