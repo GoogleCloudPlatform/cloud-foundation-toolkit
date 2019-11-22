@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### 22.11.2019
 
-- Cloud Build Trigger support for Github
+- Cloud Build Trigger support for Github [#470] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
 - CI example for Github triggering Cloudbuild for PRs
 
 ### 21.11.2019
