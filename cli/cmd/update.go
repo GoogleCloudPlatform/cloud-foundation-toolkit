@@ -7,6 +7,7 @@ import (
 )
 
 func init() {
+	initValidateFlags(updateCmd)
 	initCommon(updateCmd)
 }
 
