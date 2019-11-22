@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 21.11.2019
+
+- Added support for unified Stackdriver Kubernetes Engine Monitoring [#463] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
+- Add explicit dependencies to the 'iam_member' DM template to avoid fail, in case of a large amount of bindings (30+) [#443] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/443)
+
 ### 31.10.2019
 
 - New helper template to use firewall with Google important IP ranges, stored in YAML [#370] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/370)

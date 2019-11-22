@@ -82,7 +82,7 @@ def generate_config(context):
     if bindings:
         for role in bindings:
             for member in role['members']:
-                suffix = sha1('{}-{}'.format(role['role'], member)).hexdigest()[:10]
+                suffix = sha1('{}-{}'.format(role['role'], member).encode('utf-8')).hexdigest()[:10]
                 policy_get_name = '{}-{}'.format(context.env['name'], suffix)
                 policy_name = '{}-iampolicy'.format(policy_get_name)
                 iam_policy_resource = {
