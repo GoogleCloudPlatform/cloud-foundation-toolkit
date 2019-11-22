@@ -2,8 +2,7 @@
 set -eu
 
 readonly GIT_URL='https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit'
-readonly CLONE_DIRNAME="$(mktemp -d)"
-readonly BRANCH_NAME="cft-dm-dev"
+readonly CLONE_DIRNAME="/workspace"
 readonly DM_root="/cloud-foundation-toolkit/dm"
 
 readonly COLOR_RESET='\033[0m'
@@ -25,13 +24,18 @@ set -u
 
 export CLOUD_FOUNDATION_CONF=/etc/cloud-foundation-tests.conf
 
-echo_color "Cloning repo"
+if [ -d "/workspace/dm" ]
+then
+    echo_color "/workspace/dm exists, no need to clone repo"
+else
+    echo_color "/workspace/dm is missing, cloning repo"
+    readonly BRANCH_NAME=$2
+    git clone "${GIT_URL}" "${CLONE_DIRNAME}"
+    cd "${CLONE_DIRNAME}"
+    git checkout "${BRANCH_NAME}"
+fi
 
-git clone "${GIT_URL}" "${CLONE_DIRNAME}"
-cd "${CLONE_DIRNAME}"
-git checkout "${BRANCH_NAME}"
-
-mv "${CLONE_DIRNAME}/dm/templates"  "${DM_root}"
+mv "/workspace/dm/templates"  "${DM_root}"
 
 echo_color "Welcome your Majesty, ready to run some tests!"
 
@@ -39,5 +43,5 @@ echo_color "Welcome your Majesty, ready to run some tests!"
 
 cd "${DM_root}"
 
-chmod 777 $@
-exec bats $@
+chmod 777 $1
+exec bats $1
