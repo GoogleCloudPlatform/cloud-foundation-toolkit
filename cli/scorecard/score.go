@@ -15,6 +15,7 @@
 package scorecard
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -32,14 +33,14 @@ type ScoringConfig struct {
 }
 
 // NewScoringConfig creates a scoring engine for the given policy library
-func NewScoringConfig(policyPath string) (*ScoringConfig, error) {
+func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, error) {
 	config := &ScoringConfig{}
 
 	config.PolicyPath = policyPath
 
-	v, err := gcv.NewValidator(
-		gcv.PolicyPath(filepath.Join(config.PolicyPath, "policies")),
-		gcv.PolicyLibraryDir(filepath.Join(config.PolicyPath, "lib")),
+	v, err := gcv.NewValidator(ctx.Done(),
+		[]string{filepath.Join(config.PolicyPath, "policies")},
+		filepath.Join(config.PolicyPath, "lib"),
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "initializing gcv validator")
