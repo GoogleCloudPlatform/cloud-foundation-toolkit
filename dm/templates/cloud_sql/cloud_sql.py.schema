@@ -15,7 +15,7 @@
 info:
   title: Cloud SQL
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.0.1
   description: |
     Supports creation of a Cloud SQL instance with database and user resources.
     For more information, see https://cloud.google.com/sql/docs/.
@@ -53,6 +53,7 @@ properties:
       - MYSQL_5_6
       - MYSQL_5_7
       - POSTGRES_9_6
+      - POSTGRES_11
   failoverReplica:
     type: object
     additionalProperties: false
@@ -527,11 +528,6 @@ outputs:
         type: string
         description: |
           The URL (SelfLink) of the Cloud SQL instance resource.
-    - connectionName:
-        type: string
-        description: |
-          The connection name of the Cloud SQL instance (used in connection
-          strings).
     - gceZone:
         type: string
         description: |
@@ -539,6 +535,14 @@ outputs:
           This value could be different from the zone that was specified when
           the instance was created if the instance has failed over to its
           secondary zone.
+    - connectionName:
+        type: string
+        description: |
+          The connection name of the Cloud SQL instance (used in connection
+          strings).
+    - backendType:
+        type: string
+        description: Database generation.
     - ipAddresses:
         type: array
         description: |
@@ -549,9 +553,6 @@ outputs:
     - databaseNames:
         type: array
         description: The names of the created databases.
-    - backendType:
-        type: string
-        description: Database generation.
     - databaseSelfLinks:
         type: array
         description: |

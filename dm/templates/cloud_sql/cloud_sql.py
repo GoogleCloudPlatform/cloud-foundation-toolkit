@@ -72,28 +72,19 @@ def get_instance(res_name, project_id, properties):
     if 'dependsOn' in properties:
         instance['metadata'] = {'dependsOn': properties['dependsOn']}
 
-    outputs = [
-        {
-            'name': 'name',
-            'value': '$(ref.{}.name)'.format(name)
-        },
-        {
-            'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(name)
-        },
-        {
-            'name': 'gceZone',
-            'value': '$(ref.{}.gceZone)'.format(name)
-        },
-        {
-            'name': 'connectionName',
-            'value': '$(ref.{}.connectionName)'.format(name)
-        },
-        {
-            'name': 'backendType',
-            'value': '$(ref.{}.backendType)'.format(name)
-        },
+    output_fields = [
+        'name',
+        'selfLink',
+        'gceZone',
+        'connectionName',
+        'backendType',
+        'ipAddresses',
     ]
+
+    outputs = [{
+        'name': i,
+        'value': '$(ref.{}.{})'.format(name, i)
+    } for i in output_fields]
 
     return DMBundle(instance, outputs)
 

@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 25.11.2019
+
+- In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddresses` output.
 
 ### 21.11.2019
 
