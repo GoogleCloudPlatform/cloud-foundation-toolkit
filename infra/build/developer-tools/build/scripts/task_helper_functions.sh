@@ -72,6 +72,7 @@ find_files() {
     -path './autogen' -o \
     -path './test/fixtures/all_examples' -o \
     -path './test/fixtures/shared' -o \
+    -path './cache' -o \
     -path './test/source.sh' ')' \
     -prune -o -type f "$@"
 }
