@@ -1,0 +1,17 @@
+# Example of the Cloud SQL template usage.
+# Note that Postgres instances use different instance types then MySQL instances
+
+imports:
+  - path: ../cloud_run.py
+    name: cloud_run.py
+
+resources:
+  - name: cloud_run
+    type: cloud_run.py
+    properties:
+      oauth_token: access_token
+      metadataName: testname
+      containers:
+        - image: gcr.io/cloudrun/hello
+
+
