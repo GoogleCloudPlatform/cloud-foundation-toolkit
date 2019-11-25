@@ -1,12 +1,14 @@
 # IAM Member
 
-This template grants IAM roles for a project.
+This template grants IAM roles for a projects, folders and organizations.
 
 ## Prerequisites
 
 - Install [gcloud](https://cloud.google.com/sdk)
 - Create a [GCP project, set up billing, enable requisite APIs](../project/README.md)
-- Grant the [resourcemanager.projectIamAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role to the project service account
+- Grant the [resourcemanager.projectIamAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the project to the *DM Service Account* to grant roles within the project
+- Grant the [roles/resourcemanager.folderIamAdmin owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the folder to the *DM Service Account* to grant roles within the folder
+- Grant the [roles/iam.securityAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the organization to the *DM Service Account* to grant roles within the organization and all nested resources
 
 ## Development
 

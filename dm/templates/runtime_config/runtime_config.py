@@ -45,7 +45,7 @@ def generate_config(context):
 
     # The runtimeconfig variable resources.
     for variable in properties.get('variables', []):
-        suffix = sha1('{}-{}'.format(context.env['name'], variable.get('name', variable.get('variable')))).hexdigest()[:10]
+        suffix = sha1('{}-{}'.format(context.env['name'], variable.get('name', variable.get('variable'))).encode('utf-8')).hexdigest()[:10]
         variable['project'] = project_id
         variable['parent'] = parent
         variable['config'] = name
@@ -58,7 +58,7 @@ def generate_config(context):
 
     # The runtimeconfig waiter resources.
     for waiter in properties.get('waiters', []):
-        suffix = sha1('{}-{}'.format(context.env['name'], waiter.get('name', waiter.get('waiter')))).hexdigest()[:10]
+        suffix = sha1('{}-{}'.format(context.env['name'], waiter.get('name', waiter.get('waiter'))).encode('utf-8')).hexdigest()[:10]
         waiter['project'] = project_id
         waiter['parent'] = parent
         waiter['config'] = name
