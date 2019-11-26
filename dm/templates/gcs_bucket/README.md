@@ -12,7 +12,8 @@ This template creates a Google Cloud Storage bucket.
 
 ### Resources
 
-- [storage.v1.bucket](https://cloud.google.com/storage/docs/creating-buckets)
+- [gcp-types/storage-v1:buckets](https://cloud.google.com/storage/docs/creating-buckets)
+- gcp-types/storage-v1:virtual.buckets.iamMemberBinding
 
 ### Properties
 
