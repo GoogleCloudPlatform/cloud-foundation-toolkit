@@ -15,9 +15,12 @@ resources:
     type: internal_load_balancer.py
     properties:
       region: <FIXME:region>
+      protocol: TCP
       ports:
         - <FIXME:port>
       backendService:
         healthCheck: <FIXME:healthcheck>
+        sessionAffinity: CLIENT_IP
         backends:
           - group: <FIXME:instanceGroup>
+                type: internal_load_balancer.py
