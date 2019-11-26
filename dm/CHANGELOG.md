@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddresses` output.
 
+### 22.11.2019
+
+- Fixed sharedVPC for GKE use case behaviour in 'project' DM template [#469] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/469)
+
 ### 21.11.2019
 
 - Added support for unified Stackdriver Kubernetes Engine Monitoring [#463] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
