@@ -19,69 +19,69 @@ locals {
   repos  = keys(data.terraform_remote_state.triggers.outputs.repo_folder)
   labels = [
     {
-      name: "enhancement",
-      color: "a2eeef",
-      description: "New feature or request"
+      name : "enhancement",
+      color : "a2eeef",
+      description : "New feature or request"
     },
     {
-      name: "bug",
-      color: "d73a4a"
-      description: "Something isn't working"
+      name : "bug",
+      color : "d73a4a"
+      description : "Something isn't working"
     },
     {
-      name: "duplicate",
-      color: "cfd3d7"
-      description: "This issue or pull request already exists"
+      name : "duplicate",
+      color : "cfd3d7"
+      description : "This issue or pull request already exists"
     },
     {
-      name: "good first issue",
-      color: "7057ff"
-      description: "Good for newcomers"
+      name : "good first issue",
+      color : "7057ff"
+      description : "Good for newcomers"
     },
     {
-      name: "help wanted",
-      color: "008672",
-      description: "Extra attention is needed"
+      name : "help wanted",
+      color : "008672",
+      description : "Extra attention is needed"
     },
     {
-      name: "invalid",
-      color: "e4e669",
-      description: "Something doesn't seem right"
+      name : "invalid",
+      color : "e4e669",
+      description : "Something doesn't seem right"
     },
     {
-      name: "question",
-      color: "d876e3",
-      description: "Further information is requested"
+      name : "question",
+      color : "d876e3",
+      description : "Further information is requested"
     },
     {
-      name: "wontfix",
-      color: "db643d",
-      description: "This will not be worked on"
+      name : "wontfix",
+      color : "db643d",
+      description : "This will not be worked on"
     },
     {
-      name: "triaged",
-      color: "322560",
-      description: "Scoped and ready for work"
+      name : "triaged",
+      color : "322560",
+      description : "Scoped and ready for work"
     },
     {
-      name: "upstream",
-      color: "B580D1",
-      description: "Work required on Terraform core or provider"
+      name : "upstream",
+      color : "B580D1",
+      description : "Work required on Terraform core or provider"
     },
     {
-      name: "security",
-      color: "801336",
-      description: "Fixes a security vulnerability or lapse in best practice"
+      name : "security",
+      color : "801336",
+      description : "Fixes a security vulnerability or lapse in best practice"
     },
     {
-      name: "refactor",
-      color: "004445",
-      description: "Updates for readability, code cleanliness, DRYness, etc. Only needs Terraform exp."
+      name : "refactor",
+      color : "004445",
+      description : "Updates for readability, code cleanliness, DRYness, etc. Only needs Terraform exp."
     },
     {
-      name: "blocked",
-      color: "ef4339",
-      description: "Blocked by some other work"
+      name : "blocked",
+      color : "ef4339",
+      description : "Blocked by some other work"
     },
   ]
 }
