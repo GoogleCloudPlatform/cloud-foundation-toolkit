@@ -543,10 +543,10 @@ outputs:
     - backendType:
         type: string
         description: Database generation.
-    - ipAddresses:
-        type: array
+    - ipAddress:
+        type: string
         description: |
-          The IP addresses assigned to the instance.
+          The first IP address assigned to the instance.
     - userNames:
         type: array
         description: The names of the created users.
