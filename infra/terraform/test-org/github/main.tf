@@ -88,6 +88,5 @@ locals {
 
 provider "github" {
   version      = "~> 2.2"
-  token        = var.github_token
   organization = local.gh_org
 }
