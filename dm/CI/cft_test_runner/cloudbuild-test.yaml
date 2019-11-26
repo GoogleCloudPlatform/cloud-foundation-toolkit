@@ -1,9 +1,10 @@
 steps:
 - name: 'gcr.io/$PROJECT_ID/cft-ci-test'
-  args: ['${_BATS_TEST_FILE}']
+  args: ['${_BATS_TEST_FILE}',  '${_BRANCH_NAME}']
 
 substitutions:
-    _BATS_TEST_FILE: ./templates/autoscaler/tests/integration/autoscaler.bats # default value
+    _BATS_TEST_FILE: ./templates/healthcheck/tests/integration/healthcheck.bats # default value
+    _BRANCH_NAME: master # default value
 
 tags: ['cft-dm-test-runner']
 timeout: '7200s'
