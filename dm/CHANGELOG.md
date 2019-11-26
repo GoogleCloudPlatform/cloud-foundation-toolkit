@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### 25.11.2019
 
-- In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddresses` output.
+- In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddress` output [#477] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/477)
 
 ### 22.11.2019
 
