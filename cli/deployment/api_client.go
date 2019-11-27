@@ -37,6 +37,29 @@ const (
 	ActionUpdate string = "update"
 )
 
+type DeploymentDescriptionResource struct {
+	Name            string
+	Type            string
+	Properties      string
+	FinalProperties string `yaml:",omitempty"`
+	Update          struct {
+		Properties      string
+		FinalProperties string `yaml:",omitempty"`
+		State           string
+	} `yaml:",omitempty"`
+}
+
+type DeploymentDescription struct {
+	Deployment struct {
+		Name      string
+		Operation struct {
+			OperationType string
+			Status        string
+		}
+	}
+	Resources []DeploymentDescriptionResource
+}
+
 // Resource struct used to parse deployment manifest yaml received with 'gcloud deployment-manager manifests describe' command.
 type Resources struct {
 	Name    string
@@ -54,9 +77,9 @@ func (s Status) String() string {
 	return [...]string{"DONE", "PENDING", "RUNNING", "NOT_FOUND", "ERROR"}[s]
 }
 
-// The runGCloud function runs the gcloud tool with the specified arguments. It is implemented
+// The RunGCloud function runs the gcloud tool with the specified arguments. It is implemented
 // as a variable so that it can be mocked in tests of its exported consumers.
-var runGCloud = func(args ...string) (result string, err error) {
+var RunGCloud = func(args ...string) (result string, err error) {
 	log.Println("gcloud", strings.Join(args, " "))
 	cmd := exec.Command("gcloud", args...)
 	// pass user's PATH env variable, expected gcloud executable can be found in PATH
@@ -74,7 +97,7 @@ var runGCloud = func(args ...string) (result string, err error) {
 // GetOutputs retrieves existing Deployment outputs using gcloud and store result in map[string]interface{}
 // where "resourceName.propertyName" is key, and value is string (in case of flat value) or JSON object.
 func GetOutputs(project string, name string) (map[string]interface{}, error) {
-	output, err := runGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project, "--format", "yaml")
+	output, err := RunGCloud("deployment-manager", "manifests", "describe", "--deployment", name, "--project", project, "--format", "yaml")
 	if err != nil {
 		log.Printf("failed to describe deployment manifest for deployment: %s.%s, error: %v, output: %s", project, name, err, output)
 		return nil, err
@@ -84,7 +107,7 @@ func GetOutputs(project string, name string) (map[string]interface{}, error) {
 
 // GCloudDefaultProjectID returns the default project id taken from local gcloud configuration.
 func GCloudDefaultProjectID() (string, error) {
-	data, err := runGCloud("config", "list", "--format", "yaml")
+	data, err := RunGCloud("config", "list", "--format", "yaml")
 	if err != nil {
 		return "", err
 	}
@@ -136,7 +159,7 @@ func createOrUpdate(action string, deployment *Deployment, preview bool) (string
 		args = append(args, "--preview")
 	}
 
-	output, err := runGCloud(args...)
+	output, err := RunGCloud(args...)
 	if err != nil {
 		log.Printf("failed to %s deployment: %v, error: %v, output: %s", action, deployment, err, output)
 		return output, err
@@ -150,6 +173,7 @@ func createOrUpdate(action string, deployment *Deployment, preview bool) (string
 		}
 		deployment.Outputs = outputs
 	}
+
 	return output, nil
 }
 
@@ -166,7 +190,7 @@ func CancelPreview(deployment *Deployment) (string, error) {
 		deployment.config.GetProject(),
 		"-q",
 	}
-	output, err := runGCloud(args...)
+	output, err := RunGCloud(args...)
 	if err != nil {
 		log.Printf("failed to cancel preview deployment: %v, error: %v, output: %s", deployment, err, output)
 		return output, err
@@ -185,7 +209,7 @@ func ApplyPreview(deployment *Deployment) (string, error) {
 		deployment.config.GetProject(),
 		"-q",
 	}
-	output, err := runGCloud(args...)
+	output, err := RunGCloud(args...)
 	if err != nil {
 		log.Printf("failed to apply preview for deployment: %v, error: %v, output: %s", deployment, err, output)
 		return output, err
@@ -208,12 +232,38 @@ func Delete(deployment *Deployment, preview bool) (string, error) {
 	if preview {
 		args = append(args, "--preview")
 	}
-	output, err := runGCloud(args...)
+	output, err := RunGCloud(args...)
 	if err != nil {
 		log.Printf("failed to delete deployment: %v, error: %v, output: %s", deployment, err, output)
 		return output, err
 	}
 	return output, nil
+}
+
+func GetDeploymentDescription(name string, project string) (*DeploymentDescription, error) {
+	args := []string{
+		"deployment-manager",
+		"deployments",
+		"describe",
+		name,
+		"--project",
+		project,
+		"--format", "yaml",
+	}
+	response, err := RunGCloud(args...)
+	if err != nil {
+		return nil, err
+	}
+
+	description := &DeploymentDescription{}
+
+	err = yaml.Unmarshal([]byte(response), description)
+	if err != nil {
+		log.Printf("error unmarshall response: %s,\n deployment: %v \n error: %v", response, name, err)
+		return nil, err
+	}
+
+	return description, nil
 }
 
 // GetStatus retrieves Deployment status using gcloud cli, see deployment.Status type for details.
@@ -227,7 +277,7 @@ func GetStatus(deployment *Deployment) (Status, error) {
 		deployment.config.GetProject(),
 		"--format", "yaml",
 	}
-	response, err := runGCloud(args...)
+	response, err := RunGCloud(args...)
 	if err != nil {
 		if strings.Contains(response, "code=404") {
 			return NotFound, nil
@@ -236,15 +286,7 @@ func GetStatus(deployment *Deployment) (Status, error) {
 		}
 	}
 
-	description := &struct {
-		Deployment struct {
-			Name      string
-			Operation struct {
-				Status        string
-				OperationType string
-			}
-		}
-	}{}
+	description := &DeploymentDescription{}
 
 	err = yaml.Unmarshal([]byte(response), description)
 	if err != nil {
