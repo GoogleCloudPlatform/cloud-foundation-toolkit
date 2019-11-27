@@ -57,6 +57,7 @@ maketemp() {
 # find_files is a helper to exclude .git directories and match only regular
 # files to avoid double-processing symlinks.
 find_files() {
+  EXCLUDE_LINT_DIR=${EXCLUDE_LINT_DIR:-}
   local pth="$1"
   shift
   # Note: Take care to use -print or -print0 when using this function,
@@ -72,7 +73,7 @@ find_files() {
     -path './autogen' -o \
     -path './test/fixtures/all_examples' -o \
     -path './test/fixtures/shared' -o \
-    -path "*/${EXCLUDE_LINT_DIR}" -o \
+    -path "./${EXCLUDE_LINT_DIR}" -o \
     -path './test/source.sh' ')' \
     -prune -o -type f "$@"
 }
