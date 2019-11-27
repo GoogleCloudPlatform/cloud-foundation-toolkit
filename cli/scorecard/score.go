@@ -23,6 +23,7 @@ import (
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
+	_struct "github.com/golang/protobuf/ptypes/struct"
 	"github.com/pkg/errors"
 )
 
@@ -80,6 +81,24 @@ func (cv constraintViolations) Count() int {
 
 func (cv constraintViolations) GetName() string {
 	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
+}
+
+// RichViolation holds a violation with its category
+type RichViolation struct {
+	Category string // category of violation
+	Resource string
+	Message  string
+	Metadata *_struct.Value `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
+}
+
+// NewRichViolation creates a new RichViolation
+func NewRichViolation(categoryName string, violation *validator.Violation) (*RichViolation, error) {
+	richViolation := &RichViolation{}
+	richViolation.Category = categoryName
+	richViolation.Resource = violation.Resource
+	richViolation.Message = violation.Message
+	richViolation.Metadata = violation.Metadata
+	return richViolation, nil
 }
 
 var availableCategories = map[string]string{
@@ -163,21 +182,14 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		}
 		switch outputFormat {
 		case "json":
-			type violationOutput struct {
-				Category   string
-				Constraint string
-				Resource   string
-				Message    string
-			}
-			var vOutput violationOutput
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
-						vOutput.Category = category.Name
-						vOutput.Constraint = v.Constraint
-						vOutput.Resource = v.Resource
-						vOutput.Message = v.Message
-						byteContent, err := json.MarshalIndent(vOutput, "", "  ")
+						richViolation, err := NewRichViolation(category.Name, v)
+						if err != nil {
+							return err
+						}
+						byteContent, err := json.MarshalIndent(richViolation, "", "  ")
 						if err != nil {
 							return err
 						}
