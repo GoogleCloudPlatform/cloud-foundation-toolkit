@@ -24,7 +24,10 @@ func init() {
 	Cmd.MarkFlagRequired("policy-path")
 
 	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain scorecard outputs. Output to console if not specified")
+
 	Cmd.Flags().StringVar(&flags.outputFormat, "output-format", "", "Format of scorecard outputs, can be txt, json or csv, default is txt")
+	viper.SetDefault("output-format", "txt")
+	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
 
 	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
@@ -79,7 +82,7 @@ var Cmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = inventory.Score(config, flags.outputPath, flags.outputFormat)
+		err = inventory.Score(config, flags.outputPath, viper.GetString("output-format"))
 		if err != nil {
 			return err
 		}

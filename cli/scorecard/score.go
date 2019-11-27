@@ -186,7 +186,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					}
 				}
 			}
-		default:
+		case "txt":
 			outputFormat = "txt"
 			content = fmt.Sprintf("\n\n%v total issues found\n", len(auditResult.Violations))
 			for _, category := range config.categories {
@@ -202,6 +202,8 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					}
 				}
 			}
+		default:
+			return fmt.Errorf("Unsupported output format %v", outputFormat)
 		}
 		if outputPath == "" {
 			fmt.Printf("%v", content)
