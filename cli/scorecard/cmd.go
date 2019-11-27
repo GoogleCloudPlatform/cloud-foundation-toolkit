@@ -13,6 +13,8 @@ var flags struct {
 	controlProjectID string
 	bucketName       string
 	dirPath          string
+	outputPath       string
+	outputFormat     string
 }
 
 func init() {
@@ -20,6 +22,9 @@ func init() {
 
 	Cmd.Flags().StringVar(&flags.policyPath, "policy-path", "", "Path to directory containing validation policies")
 	Cmd.MarkFlagRequired("policy-path")
+
+	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain scorecard outputs. Output to console if not specified")
+	Cmd.Flags().StringVar(&flags.outputFormat, "output-format", "", "Format of scorecard outputs, can be txt, json or csv, default is txt")
 
 	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
@@ -74,7 +79,7 @@ var Cmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = inventory.Score(config)
+		err = inventory.Score(config, flags.outputPath, flags.outputFormat)
 		if err != nil {
 			return err
 		}

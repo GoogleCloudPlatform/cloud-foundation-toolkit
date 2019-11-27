@@ -15,7 +15,9 @@
 package scorecard
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"path/filepath"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
@@ -139,7 +141,7 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 }
 
 // Score creates a Scorecard for an inventory
-func (inventory *InventoryConfig) Score(config *ScoringConfig) error {
+func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
@@ -148,18 +150,66 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig) error {
 	err = config.attachViolations(auditResult)
 
 	if len(auditResult.Violations) > 0 {
-		fmt.Printf("\n\n%v total issues found\n", len(auditResult.Violations))
-		for _, category := range config.categories {
-			fmt.Printf("\n\n%v: %v issues found\n", category.Name, category.Count())
-			fmt.Printf("----------\n")
-			for _, cv := range category.constraints {
-				fmt.Printf("%v: %v issues\n", cv.GetName(), cv.Count())
-				for _, v := range cv.Violations {
-					fmt.Printf("- %v\n\n",
-						v.Message,
-					)
-					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+		content := ""
+		switch outputFormat {
+		case "json":
+			type violationOutput struct {
+				Category   string
+				Constraint string
+				Resource   string
+				Message    string
+			}
+			var vOutput violationOutput
+			for _, category := range config.categories {
+				for _, cv := range category.constraints {
+					for _, v := range cv.Violations {
+						vOutput.Category = category.Name
+						vOutput.Constraint = v.Constraint
+						vOutput.Resource = v.Resource
+						vOutput.Message = v.Message
+						byteContent, err := json.MarshalIndent(vOutput, "", "  ")
+						if err != nil {
+							return err
+						}
+						content += string(byteContent) + "\n"
+						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					}
 				}
+			}
+		case "csv":
+			content = "Category,Constraint,Resource,Message\n"
+			for _, category := range config.categories {
+				for _, cv := range category.constraints {
+					for _, v := range cv.Violations {
+						content += fmt.Sprintf("%v,%v,%v,%v\n", category.Name, v.Constraint, v.Resource, v.Message)
+						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					}
+				}
+			}
+		default:
+			outputFormat = "txt"
+			content = fmt.Sprintf("\n\n%v total issues found\n", len(auditResult.Violations))
+			for _, category := range config.categories {
+				content += fmt.Sprintf("\n\n%v: %v issues found\n", category.Name, category.Count())
+				content += fmt.Sprintf("----------\n")
+				for _, cv := range category.constraints {
+					content += fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count())
+					for _, v := range cv.Violations {
+						content += fmt.Sprintf("- %v\n\n",
+							v.Message,
+						)
+						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					}
+				}
+			}
+		}
+		if outputPath == "" {
+			fmt.Printf("%v", content)
+		} else {
+			outputFile := "scorecard." + outputFormat
+			err = ioutil.WriteFile(filepath.Join(outputPath, outputFile), []byte(content), 0644)
+			if err != nil {
+				return err
 			}
 		}
 	} else {
