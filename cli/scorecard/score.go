@@ -15,6 +15,7 @@
 package scorecard
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -199,11 +200,16 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				}
 			}
 		case "csv":
-			io.WriteString(dest, "Category,Constraint,Resource,Message\n")
+			w := csv.NewWriter(dest)
+			header := []string{"Category", "Constraint", "Resource", "Message"}
+			w.Write(header)
+			w.Flush()
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
-						io.WriteString(dest, fmt.Sprintf("%v,%v,%v,%v\n", category.Name, v.Constraint, v.Resource, v.Message))
+						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
+						w.Write(record)
+						w.Flush()
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 					}
 				}
