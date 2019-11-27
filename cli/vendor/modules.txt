@@ -527,3 +527,5 @@ google.golang.org/grpc/tap
 google.golang.org/grpc/test/bufconn
 # gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2
+# gopkg.in/yaml.v3 v3.0.0-20191105164941-196cff6ef4b6
+gopkg.in/yaml.v3

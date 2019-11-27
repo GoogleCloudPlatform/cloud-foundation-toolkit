@@ -18,6 +18,7 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022/go.mod h1:nuWgzSkT5PnyOd+272uUmV0dnAnAn42Mk7PiQC5VzN4=
+github.com/GoogleCloudPlatform/cloud-foundation-toolkit v0.0.0-20191112214736-59123edd4745 h1:E98UHPPl/uU1Oei9oqylOvEV/96MsxbQpGU8RqUkQ2Y=
 github.com/GoogleCloudPlatform/terraform-google-conversion v0.0.0-20190517181531-30d4358dc839 h1:mVWFcWpP2aE8hPHYLtVj3eE/Pj0qzZPWyCtKbOwbMJU=
 github.com/GoogleCloudPlatform/terraform-google-conversion v0.0.0-20190517181531-30d4358dc839/go.mod h1:f6m1zQRQrAiGbGErm7Dl8MF9UyzykcTb12oiAWm5ric=
 github.com/GoogleCloudPlatform/terraform-validator v0.0.0-20190611191127-0aa9d709266e h1:VJY6NRGJn8S+1cdTWFkAAfU1KinojHF4hYOF84VIX7A=
@@ -753,6 +754,8 @@ gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWD
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+gopkg.in/yaml.v3 v3.0.0-20191105164941-196cff6ef4b6 h1:umoiDPO6VlmlEqcxgonLE9De+8xGLDZFOumC0Pb2kUw=
+gopkg.in/yaml.v3 v3.0.0-20191105164941-196cff6ef4b6/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gotest.tools v2.2.0+incompatible/go.mod h1:DsYFclhRJ6vuDpmuTbkuFWG+y2sxOXAzmJt81HFBacw=
 grpc.go4.org v0.0.0-20170609214715-11d0a25b4919/go.mod h1:77eQGdRu53HpSqPFJFmuJdjuHRquDANNeA4x7B8WQ9o=
 honnef.co/go/tools v0.0.0-20180728063816-88497007e858/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=

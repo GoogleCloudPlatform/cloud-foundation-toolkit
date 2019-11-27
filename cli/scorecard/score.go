@@ -16,11 +16,16 @@ package scorecard
 
 import (
 	"context"
+	"encoding/csv"
+	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
+	_struct "github.com/golang/protobuf/ptypes/struct"
 	"github.com/pkg/errors"
 )
 
@@ -78,6 +83,24 @@ func (cv constraintViolations) Count() int {
 
 func (cv constraintViolations) GetName() string {
 	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
+}
+
+// RichViolation holds a violation with its category
+type RichViolation struct {
+	Category string // category of violation
+	Resource string
+	Message  string
+	Metadata *_struct.Value `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
+}
+
+// NewRichViolation creates a new RichViolation
+func NewRichViolation(categoryName string, violation *validator.Violation) (*RichViolation, error) {
+	richViolation := &RichViolation{}
+	richViolation.Category = categoryName
+	richViolation.Resource = violation.Resource
+	richViolation.Message = violation.Message
+	richViolation.Metadata = violation.Metadata
+	return richViolation, nil
 }
 
 var availableCategories = map[string]string{
@@ -140,28 +163,75 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 }
 
 // Score creates a Scorecard for an inventory
-func (inventory *InventoryConfig) Score(config *ScoringConfig) error {
+func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
 	}
 
 	err = config.attachViolations(auditResult)
+	var dest io.Writer
 
 	if len(auditResult.Violations) > 0 {
-		fmt.Printf("\n\n%v total issues found\n", len(auditResult.Violations))
-		for _, category := range config.categories {
-			fmt.Printf("\n\n%v: %v issues found\n", category.Name, category.Count())
-			fmt.Printf("----------\n")
-			for _, cv := range category.constraints {
-				fmt.Printf("%v: %v issues\n", cv.GetName(), cv.Count())
-				for _, v := range cv.Violations {
-					fmt.Printf("- %v\n\n",
-						v.Message,
-					)
-					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+		if outputPath == "" {
+			dest = os.Stdout
+		} else {
+			outputFile := "scorecard." + outputFormat
+			dest, err = os.Create(filepath.Join(outputPath, outputFile))
+			if err != nil {
+				return err
+			}
+		}
+		switch outputFormat {
+		case "json":
+			for _, category := range config.categories {
+				for _, cv := range category.constraints {
+					for _, v := range cv.Violations {
+						richViolation, err := NewRichViolation(category.Name, v)
+						if err != nil {
+							return err
+						}
+						byteContent, err := json.MarshalIndent(richViolation, "", "  ")
+						if err != nil {
+							return err
+						}
+						io.WriteString(dest, string(byteContent)+"\n")
+						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					}
 				}
 			}
+		case "csv":
+			w := csv.NewWriter(dest)
+			header := []string{"Category", "Constraint", "Resource", "Message"}
+			w.Write(header)
+			w.Flush()
+			for _, category := range config.categories {
+				for _, cv := range category.constraints {
+					for _, v := range cv.Violations {
+						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
+						w.Write(record)
+						w.Flush()
+						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					}
+				}
+			}
+		case "txt":
+			io.WriteString(dest, fmt.Sprintf("\n\n%v total issues found\n", len(auditResult.Violations)))
+			for _, category := range config.categories {
+				io.WriteString(dest, fmt.Sprintf("\n\n%v: %v issues found\n", category.Name, category.Count()))
+				io.WriteString(dest, fmt.Sprintf("----------\n"))
+				for _, cv := range category.constraints {
+					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count()))
+					for _, v := range cv.Violations {
+						io.WriteString(dest, fmt.Sprintf("- %v\n\n",
+							v.Message,
+						))
+						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					}
+				}
+			}
+		default:
+			return fmt.Errorf("Unsupported output format %v", outputFormat)
 		}
 	} else {
 		fmt.Println("No issues found found! You have a perfect score.")
