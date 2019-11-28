@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"context"
 	"errors"
 	"log"
 
@@ -53,7 +54,8 @@ func ValidateDeployment(name string, policyPath string, project string) (validat
 		}
 	}
 
-	auditResult, err := forsetiValidator(assets, policyPath)
+	ctx := context.Background()
+	auditResult, err := forsetiValidator(ctx, assets, policyPath)
 
 	if err != nil {
 		log.Printf("error validating deployment: %s, error: %v", name, err)
