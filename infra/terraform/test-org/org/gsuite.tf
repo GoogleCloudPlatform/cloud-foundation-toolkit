@@ -44,7 +44,7 @@ module "ci_gsuite_sa_project" {
   version = "~> 4.0"
 
   name              = "ci-gsuite-sa-project"
-  random_project_id = true
+  project_id        = "ci-gsuite-sa-project"
   org_id            = local.org_id
   folder_id         = google_folder.ci_gsuite_sa_folder.id
   billing_account   = local.billing_account
@@ -92,8 +92,4 @@ resource "google_billing_account_iam_member" "ci_gsuite_sa_billing" {
   billing_account_id = local.billing_account
   role               = "roles/billing.user"
   member             = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
-}
-
-resource "google_service_account_key" "ci_gsuite_sa" {
-  service_account_id = google_service_account.ci_gsuite_sa.id
 }
