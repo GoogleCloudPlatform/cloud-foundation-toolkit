@@ -73,18 +73,18 @@ resource "google_service_account" "ci_gsuite_sa" {
 }
 
 resource "google_project_iam_member" "ci_gsuite_sa_project" {
-  count = length(local.ci_gsuite_sa_project_roles)
+  for_each = toset(local.ci_gsuite_sa_project_roles)
 
   project = module.ci_gsuite_sa_project.project_id
-  role    = local.ci_gsuite_sa_project_roles[count.index]
+  role    = each.value
   member  = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
 }
 
 resource "google_folder_iam_member" "ci_gsuite_sa_folder" {
-  count = length(local.ci_gsuite_sa_folder_roles)
+  for_each = toset(local.ci_gsuite_sa_folder_roles)
 
   folder = google_folder.ci_gsuite_sa_folder.name
-  role   = local.ci_gsuite_sa_folder_roles[count.index]
+  role   = each.value
   member = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
 }
 

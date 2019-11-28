@@ -45,3 +45,8 @@ output "ci_gsuite_sa_folder_id" {
 output "ci_gsuite_sa_project_id" {
   value = module.ci_gsuite_sa_project.project_id
 }
+
+output "ci_gsuite_sa_key" {
+  value     = google_service_account_key.ci_gsuite_sa.private_key
+  sensitive = true
+}
