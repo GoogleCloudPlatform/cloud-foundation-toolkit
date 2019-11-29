@@ -30,4 +30,10 @@ $(PLATFORMS):
 
 .PHONY: test
 test:
-	go test ./...
+	# Skip integration tests in ./tests/ using -short flag
+	GO111MODULE=on go test -mod=vendor -short -tags=$(BUILDTAGS) ./...
+
+.PHONY: test-integration
+test-integration: build
+test-integration:
+	go test -mod=vendor -tags=$(BUILDTAGS) -run=CLI ./tests

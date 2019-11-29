@@ -63,6 +63,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 		rootCmd.SetArgs([]string{"-h"})
 	}
 
+	rootCmd.PersistentFlags().BoolVar(&nonInteractiveFlag, "non-interactive", false, "run in non-interactive mode")
 	rootCmd.PersistentFlags().BoolVar(&flags.verbose, "verbose", false, "Log output to stdout")
 
 	rootCmd.AddCommand(scorecard.Cmd)

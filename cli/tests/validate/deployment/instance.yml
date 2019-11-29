@@ -1,0 +1,27 @@
+name: my-instance-prod-1
+description: My instance deployment for prod environment
+
+imports:
+  - path: ../../../../dm/templates/instance/instance.py
+    name: instance.py
+
+resources:
+  - name: my-instance-prod-1
+    type: instance.py
+    properties:
+      zone: us-central1-a
+      diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+      diskSizeGb: 100
+      machineType: f1-micro
+      diskType: pd-ssd
+      network: $(out.my-networks.my-network-prod.name)
+      metadata:
+        items:
+          - key: startup-script
+            value: sudo apt-get update && sudo apt-get install -y nginx
+      tags:
+        items:
+          - test1-$(out.my-networks.my-network-prod.name)-test2
+      labels:
+        items1: test1-$(out.my-networks.my-network-prod.name)-test2
+        items2: test1-$(out.my-networks.my-network-prod.name)-test2-$(out.my-networks.my-network-prod.name)-test3

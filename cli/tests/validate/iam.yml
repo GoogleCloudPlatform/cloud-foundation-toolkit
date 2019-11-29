@@ -1,0 +1,16 @@
+name: project-iam
+description: Project IAM config
+
+imports:
+  - path: ../../..//dm/templates/iam_member/iam_member.py
+    name: iam_member.py
+
+resources:
+  - type: iam_member.py
+    name: project-iam
+    properties:
+      projectId: "12345"
+      roles:
+        - role: "roles/composer.user"
+          members:
+            - "admin@example.com"

@@ -1,0 +1,17 @@
+name: my-networks
+description: my networks deployment
+
+imports:
+  - path: ../../../../dm/templates/network/network.py
+    name: network.py
+
+resources:
+  - type: network.py
+    name: my-network-prod
+    properties:
+      autoCreateSubnetworks: true
+
+  - type: network.py
+    name: my-network-dev
+    properties:
+      autoCreateSubnetworks: false

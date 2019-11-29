@@ -23,6 +23,7 @@ var policyPathFlag string
 var validateFlag bool = false
 var previewFlag bool = false
 var showStagesFlag bool = false
+var nonInteractiveFlag bool = false
 var formatFlag string
 
 var supportedExt = []string{"*.yaml", "*.yml", "*.jinja"}
@@ -126,7 +127,10 @@ func executeStages(action string, stages [][]deployment.Config, isDelete bool) m
 			}
 
 			if previewFlag {
-				choice := deployment.GetUserInput("Update(u), Skip (s), or Abort(a) Deployment?", []string{"u", "s", "a"}, os.Stdin)
+				choice := "a"
+				if !nonInteractiveFlag {
+					choice = deployment.GetUserInput("Update(u), Skip (s), or Abort(a) Deployment?", []string{"u", "s", "a"}, os.Stdin)
+				}
 				switch choice {
 				case "u":
 					output, err := deployment.ApplyPreview(dep)
@@ -137,7 +141,7 @@ func executeStages(action string, stages [][]deployment.Config, isDelete bool) m
 				case "s":
 					_, err = deployment.CancelPreview(dep)
 					if err != nil {
-						log.Fatalf("error cancel-preuvew action for deployment: %v, error: %v", dep, err)
+						log.Fatalf("error cancel-preview action for deployment: %v, error: %v", dep, err)
 					}
 					log.Printf("canceled %s action for deployment: %v", action, dep)
 					if action == deployment.ActionCreate {
