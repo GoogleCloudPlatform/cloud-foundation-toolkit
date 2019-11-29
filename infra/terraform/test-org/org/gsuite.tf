@@ -32,6 +32,11 @@ locals {
     "roles/resourcemanager.folderIamAdmin",
     "roles/billing.projectManager",
   ]
+
+  ci_group_gsuite_sa_project_roles = [
+    "roles/owner",
+    "roles/iam.serviceAccountAdmin",
+  ]
 }
 
 resource "google_folder" "ci_gsuite_sa_folder" {
@@ -92,4 +97,15 @@ resource "google_billing_account_iam_member" "ci_gsuite_sa_billing" {
   billing_account_id = local.billing_account
   role               = "roles/billing.user"
   member             = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
+}
+
+# Grant G-Suite project rights to cft_ci_group
+# Required to be able to create keys for the gsuite sa.
+
+resource "google_project_iam_member" "ci_group_gsuite_sa_project" {
+  for_each = toset(local.ci_group_gsuite_sa_project_roles)
+
+  project = module.ci_gsuite_sa_project.project_id
+  role    = each.value
+  member  = "group:${local.cft_ci_group}"
 }
