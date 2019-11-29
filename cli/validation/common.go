@@ -16,16 +16,57 @@ var ancestryCache = map[string]string{}
 
 type convertFunc func(resType string, res cai.Resource) (cai.Asset, error)
 
-func mappers() map[string]convertFunc {
-	return map[string]convertFunc{
-		"gcp-types/compute-v1:firewalls":   converter.GetComputeFirewallCaiObject,
-		"compute.v1.firewall":              converter.GetComputeFirewallCaiObject,
-		"gcp-types/compute-beta:firewalls": converter.GetComputeFirewallCaiObject,
-		"compute.beta.firewall":            converter.GetComputeFirewallCaiObject,
-		"gcp-types/compute-v1:instances":   converter.GetComputeInstanceCaiObject,
-		"compute.v1.instance":              converter.GetComputeInstanceCaiObject,
-		"gcp-types/compute-beta:instances": converter.GetComputeInstanceCaiObject,
-		"compute.beta.instance":            converter.GetComputeInstanceCaiObject,
+// mergeFunc combines DM resources that have a many-to-one relationship
+// with CAI assets, i.e:
+// gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding -> google.cloud.resourcemanager/Project
+type mergeFunc func(existing cai.Asset, incoming cai.Asset) (cai.Asset, error)
+
+// mapper pairs related conversion/merging functions.
+type mapper struct {
+	// convert must be defined.
+	convert convertFunc
+	// merge may be defined.
+	merge mergeFunc
+}
+
+// mappers maps DM resource types (i.e. `compute.v1.firewall`) into
+// a slice of mapperFuncs.
+//
+// Modelling of relationships:
+// DM resources to CAI assets as []mapperFuncs:
+// 1:1 = [mapper{convert: convertAbc}]                  (len=1)
+// 1:N = [mapper{convert: convertAbc}, ...]             (len=N)
+// N:1 = [mapper{convert: convertAbc, merge: mergeAbc}] (len=1)
+func mappers() map[string][]mapper {
+	return map[string][]mapper{
+		"gcp-types/compute-v1:firewalls":   {{convert: converter.GetComputeFirewallCaiObject}},
+		"compute.v1.firewall":              {{convert: converter.GetComputeFirewallCaiObject}},
+		"gcp-types/compute-beta:firewalls": {{convert: converter.GetComputeFirewallCaiObject}},
+		"compute.beta.firewall":            {{convert: converter.GetComputeFirewallCaiObject}},
+
+		"gcp-types/compute-v1:instances":   {{convert: converter.GetComputeInstanceCaiObject}},
+		"compute.v1.instance":              {{convert: converter.GetComputeInstanceCaiObject}},
+		"gcp-types/compute-beta:instances": {{convert: converter.GetComputeInstanceCaiObject}},
+		"compute.beta.instance":            {{convert: converter.GetComputeInstanceCaiObject}},
+
+		"gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding": {
+			{
+				convert: converter.GetIamCaiObject,
+				merge:   converter.MergeIamCaiObject,
+			},
+		},
+		"gcp-types/cloudresourcemanager-v2:virtual.folders.iamMemberBinding": {
+			{
+				convert: converter.GetIamCaiObject,
+				merge:   converter.MergeIamCaiObject,
+			},
+		},
+		"gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding": {
+			{
+				convert: converter.GetIamCaiObject,
+				merge:   converter.MergeIamCaiObject,
+			},
+		},
 	}
 }
 
