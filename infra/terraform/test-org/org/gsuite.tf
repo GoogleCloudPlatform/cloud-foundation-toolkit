@@ -93,3 +93,38 @@ resource "google_billing_account_iam_member" "ci_gsuite_sa_billing" {
   role               = "roles/billing.user"
   member             = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
 }
+
+# G-Suite folder and project rights.
+# Required to be able to create keys for the gsuite sa.
+
+# CI group (full rights)
+
+resource "google_project_iam_member" "ci_group_gsuite_sa_project" {
+  for_each = toset(local.ci_gsuite_sa_project_roles)
+
+  project = module.ci_gsuite_sa_project.project_id
+  role    = each.value
+  member  = "group:${local.cft_ci_group}"
+}
+
+resource "google_folder_iam_member" "ci_group_gsuite_sa_folder" {
+  for_each = toset(local.ci_gsuite_sa_folder_roles)
+
+  folder = google_folder.ci_gsuite_sa_folder.name
+  role   = each.value
+  member = "group:${local.cft_ci_group}"
+}
+
+# Dev group (view only)
+
+resource "google_project_iam_member" "dev_group_gsuite_sa_project" {
+  project = module.ci_gsuite_sa_project.project_id
+  role    = "roles/viewer"
+  member  = "group:${local.cft_dev_group}"
+}
+
+resource "google_folder_iam_member" "dev_group_gsuite_sa_folder" {
+  folder = google_folder.ci_gsuite_sa_folder.name
+  role   = "roles/viewer"
+  member = "group:${local.cft_dev_group}"
+}
