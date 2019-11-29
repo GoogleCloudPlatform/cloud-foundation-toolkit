@@ -41,18 +41,18 @@ locals {
 
 resource "google_folder" "ci_gsuite_sa_folder" {
   display_name = "ci-gsuite-sa-folder"
-  parent      = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
+  parent       = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
 }
 
 module "ci_gsuite_sa_project" {
   source  = "terraform-google-modules/project-factory/google"
   version = "~> 4.0"
 
-  name              = "ci-gsuite-sa-project"
-  project_id        = "ci-gsuite-sa-project"
-  org_id            = local.org_id
-  folder_id         = google_folder.ci_gsuite_sa_folder.id
-  billing_account   = local.billing_account
+  name            = "ci-gsuite-sa-project"
+  project_id      = "ci-gsuite-sa-project"
+  org_id          = local.org_id
+  folder_id       = google_folder.ci_gsuite_sa_folder.id
+  billing_account = local.billing_account
 
   labels = {
     cft-ci = "permanent"
