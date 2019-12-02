@@ -15,7 +15,7 @@
 info:
   title: IAM policy member
   author: Sourced Group Inc.
-  version: 1.1.0
+  version: 1.2.0
   description: |
     Manages an IAM policy member
 
@@ -45,6 +45,8 @@ oneOf:
       - organizationId
   - required:
       - projectId
+  - required:
+      - bucket
   - allOf:
       - not:
           required:
@@ -70,6 +72,10 @@ properties:
     description:  |
      Overwrite of project ID in case IAM bindings are referencing to
      a different project or if you need to assign members to folders/organizations as well.
+  bucket:
+    type: string
+    description:  |
+     GCS bucket to assign members to.
   roles:
     type: array
     uniqueItems: true
