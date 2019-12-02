@@ -1,7 +1,5 @@
 apiVersion: cft.dev/v1alpha1
 kind: Folder
-metadata:
-  name: group2_1
 spec:
   id: "group2_1"
   displayName: "Group 2-1"
@@ -11,8 +9,6 @@ spec:
 ---
 apiVersion: cft.dev/v1alpha1
 kind: Folder
-metadata:
-  name: group2_1_2
 spec:
   id: "group2_1_2"
   displayName: "Group 2-1-2"

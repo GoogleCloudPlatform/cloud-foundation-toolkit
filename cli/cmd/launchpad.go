@@ -41,7 +41,7 @@ var launchpadGenerateCmd = &cobra.Command{
 		if args == nil || len(args) == 0 {
 			cmd.HelpFunc()(cmd, args)
 		} else {
-			launchpad.NewGenerate(args, launchpadOutputFlavor, launchpadOutputDirectory)
+			launchpad.NewGenerate(args, launchpad.NewOutputFlavor(launchpadOutputFlavor), launchpadOutputDirectory)
 		}
 	},
 }

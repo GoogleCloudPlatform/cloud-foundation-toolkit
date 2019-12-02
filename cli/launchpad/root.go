@@ -1,59 +1,145 @@
 package launchpad
 
 import (
-	"bytes"
+	"fmt"
 	"gopkg.in/yaml.v2"
-	"io"
+	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
+	"strings"
 )
-
-//go:generate go run static/includestatic.go
-
-// gState is a global scoped state to facilitate evaluation and output generation.
-var gState globalState
-
-// init initialize tracking for evaluated objects
-func init() { gState.init() }
 
 // NewGenerate takes file patterns as input YAMLs and output Infrastructure as
 // Code ready scripts based on specified output flavor.
 //
 // NewGenerate can be triggered by
 //   $ cft launchpad generate
-func NewGenerate(rawPaths []string, outputFlavorString string, outputDir string) {
-	gState.outputDirectory = outputDir
-	gState.outputFlavor = newOutputFlavor(outputFlavorString)
-
+func NewGenerate(rawPaths []string, outFlavor OutputFlavor, outputDir string) {
 	// attempt to load all configs with best effort
-	lenYAMLDocs := 0
+	log.Println("debug: output location", outputDir) // Remove after generate code is written
+	log.Println("debug: output flavor", outFlavor)   // Remove after generate code is written
+	resources := loadResources(rawPaths)
+	log.Println(len(resources), "YAML documents loaded")
+
+	eval := evaluate(resources)
+
+	fmt.Printf("%s\n", eval.org.String())  // Place-holder for future trigger point of code generation
+	fmt.Printf("%s\n", eval.rmap.String()) // Place-holder for future trigger point of code generation
+}
+
+// OutputFlavor defines launchpad's generated output language.
+type OutputFlavor int
+
+const (
+	DeploymentManager OutputFlavor = iota
+	Terraform
+)
+
+// String returns the string representation of an OutputFlavor.
+func (f OutputFlavor) String() string {
+	return []string{"DeploymentManager", "Terraform"}[f]
+}
+
+// newOutputFlavor parses string formatted output flavor and convert to internal format.
+//
+// Unsupported format given will terminate the application.
+func NewOutputFlavor(fStr string) OutputFlavor {
+	switch strings.ToLower(fStr) {
+	case "deploymentmanager", "dm":
+		log.Println("Warning: Deployment Manager format not yet supported")
+		return DeploymentManager
+	case "terraform", "tf":
+		return Terraform
+	default:
+		log.Fatalln("Unsupported output flavor", fStr)
+	}
+	return -1
+}
+
+const yamlDelimiter = "---\n"
+
+// loadResources attempts to load YAMLs from all given path patterns in best effort.
+//
+// loadResources will silently ignore file I/O related errors, attempt to parse all
+// files and extract resources if possible.
+func loadResources(rawPaths []string) []resourcer {
+	var buff []resourcer
 	for _, pathPattern := range rawPaths {
 		matches, err := filepath.Glob(pathPattern)
 		if err != nil {
-			log.Println("Warning: Invalid file path pattern", pathPattern)
+			log.Println("warning: Invalid file path pattern", pathPattern)
 			continue
 		}
 		for _, fp := range matches {
 			content, err := loadFile(fp)
 			if err != nil {
-				log.Println("Warning: Unable to load requested file", fp)
+				log.Println("warning: Unable to load requested file", fp)
 				continue
 			}
 			// Multiple YAML doc can exist within one file
-			decoder := yaml.NewDecoder(bytes.NewReader([]byte(content)))
-			for err := decoder.Decode(&genericYAML{}); err != io.EOF; err = decoder.Decode(&genericYAML{}) {
-				if err != nil { // sub document processing error
-					log.Fatalln("Unable to process a YAML document within", fp, err.Error())
+			docStrs := strings.Split(content, yamlDelimiter)
+			for _, docStr := range docStrs {
+				resource, err := loadYAML([]byte(docStr))
+				if err != nil {
+					log.Printf("warning: unable to parse YAML [%s]:\n%s", err.Error(), docStr)
+					continue
 				}
-				lenYAMLDocs += 1
+				if err = resource.validate(); err != nil {
+					log.Printf("warning: YAML validation failed [%s]:\n%s", err.Error(), docStr)
+					continue
+				}
+				buff = append(buff, resource)
 			}
 		}
 	}
-	log.Println(lenYAMLDocs, "YAML documents loaded")
-	if err := gState.referenceMap.validate(); err != nil {
-		log.Fatalln(err)
-	}
+	return buff
+}
 
-	gState.dump()	// Place-holder for future trigger point of code generation
-	//generateOutput()
+// loadFile return the file content with the specified relative path to current location.
+//
+// loadFile will attempt to load from filesystem directly first, a not found will attempt
+// to load from statics variable generated from `$ go generate`. A user using output binary
+// can in theory place their own file in matching relative path and overwrite the binary
+// default.
+func loadFile(fp string) (string, error) {
+	if content, err := ioutil.ReadFile(fp); err == nil {
+		return string(content), nil
+	} else {
+		if !os.IsNotExist(err) {
+			fmt.Printf("Request file %s exists but cannot be read\n", fp)
+			return "", err
+		}
+		if content, ok := statics[fp]; ok { // attempt to load from binary statics
+			return content, nil
+		}
+		fmt.Printf("Requested file does not exist in filesystem nor generated binary %s\n", fp)
+		return "", os.ErrNotExist
+	}
+}
+
+func loadYAML(docStr []byte) (resourcer, error) {
+	h := &headerYAML{}
+	err := yaml.Unmarshal(docStr, h)
+	if err != nil {
+		log.Printf("Malformed YAML")
+		return nil, err
+	}
+	kinds, ok := supportedVersion[h.APIVersion]
+	if !ok {
+		log.Printf("Not supported version")
+		return nil, err
+	}
+	resourceFunc, ok := kinds[h.kind()]
+	if !ok {
+		log.Printf("Not supported kind")
+		return nil, err
+	}
+	resource := resourceFunc()
+	err = yaml.Unmarshal(docStr, resource)
+	if err != nil {
+		log.Printf("Malformed YAML")
+		return nil, err
+	}
+	return resource, nil
 }
