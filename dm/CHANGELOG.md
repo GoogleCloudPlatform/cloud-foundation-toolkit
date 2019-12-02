@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+
+### XX.12.2019
+
+- Updated internal LB and external LB templates according to backend_service.py.schema change [#476] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/476)
+
 ### 02.12.2019
 
 - IAM Member template support bindings on types which implement `gcp-types/storage-v1:virtual.buckets.iamMemberBinding` like syntax. ( currently storage-v1.)

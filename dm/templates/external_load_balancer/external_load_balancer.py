@@ -51,6 +51,7 @@ def get_backend_service(properties, backend_spec, res_name, project_id):
         'connectionDraining',
         'backends',
         'healthCheck',
+        'healthChecks',
         'portName',
         'enableCDN',
         'affinityCookieTtlSec'
