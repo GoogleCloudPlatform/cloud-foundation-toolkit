@@ -68,10 +68,10 @@ def generate_config(context):
                 '{}-{}'.format(role['role'], member).encode('utf-8')).hexdigest()[:10]
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
-            resourse_name = '{}-{}'.format(policy_get_name,
+            resource_name = '{}-{}'.format(policy_get_name,
                                            base_resource['postfix'])
             iam_resource = {
-                'name': resourse_name,
+                'name': resource_name,
                 # TODO - Virtual type documentation needed
                 'type': base_resource['dm_type'],
                 'properties': {
@@ -84,6 +84,6 @@ def generate_config(context):
             resources.append(iam_resource)
 
             dependson = {'metadata': {'dependsOn': [
-                resourse_name] + dependson_root}}
+                resource_name] + dependson_root}}
 
     return {"resources": resources}
