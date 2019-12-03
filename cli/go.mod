@@ -20,4 +20,5 @@ require (
 	google.golang.org/api v0.6.0
 	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873
 	gopkg.in/yaml.v2 v2.2.2
+	gopkg.in/yaml.v3 v3.0.0-20191105164941-196cff6ef4b6
 )

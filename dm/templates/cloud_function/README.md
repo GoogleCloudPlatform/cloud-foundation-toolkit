@@ -2,7 +2,7 @@
 
 This template creates a Cloud Function.
 
-| Warning: As of November 1, 2019, newly created Functions are private-by-default and will require [appropriate IAM permissions](https://cloud.google.com/functions/docs/reference/iam/roles) to be invoked. |
+| Warning: As of January 15, 2019, newly created Functions are private-by-default and will require [appropriate IAM permissions](https://cloud.google.com/functions/docs/reference/iam/roles) to be invoked. |
 |---|
 
 ## Prerequisites
@@ -61,8 +61,6 @@ See the `properties` section in the schema file(s):
     gcloud deployment-manager deployments create <YOUR_DEPLOYMENT_NAME> \
     --config my_cloud_function.yaml
 ```
-
-`Note:` The Cloud Function HTTP trigger has no built-in authentication. Any user who has the link to the HTTP trigger can call it.
 
 6. In case you need to delete your deployment:
 

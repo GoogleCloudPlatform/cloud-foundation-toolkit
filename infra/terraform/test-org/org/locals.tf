@@ -15,10 +15,11 @@
  */
 
 locals {
-  org_id          = "943740911108"
-  billing_account = "01D904-DAF6EC-F34EF7"
-  cft_ci_group    = "cft-ci-robots@test.infra.cft.tips"
-  cft_dev_group   = "cft-developers@dev.infra.cft.tips"
+  org_id           = "943740911108"
+  billing_account  = "01D904-DAF6EC-F34EF7"
+  cft_ci_group     = "cft-ci-robots@test.infra.cft.tips"
+  cft_dev_group    = "cft-developers@dev.infra.cft.tips"
+  gcp_admins_group = "gcp-admins@test.infra.cft.tips"
 
   folders = {
     "ci-projects" = module.folders-root.ids["ci-projects"]
