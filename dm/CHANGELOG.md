@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 02.12.2019
+
+- IAM Member template support bindings on types which implement `gcp-types/storage-v1:virtual.buckets.iamMemberBinding` like syntax. ( currently storage-v1.)
 
 ### 22.11.2019
 
