@@ -2,13 +2,15 @@ package cmd
 
 import (
 	"os"
-
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
+	"flag"
+	
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
-	"github.com/forseti-security/config-validator/cmd/policy-tool/status"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/policies"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -37,6 +39,11 @@ var flags struct {
 }
 
 func init() {
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+
+	// For https://github.com/kubernetes/kubernetes/issues/17162#issuecomment-225596212
+	flag.CommandLine.Parse([]string{})
+
 	rootCmd.SetUsageTemplate(`Usage:
   {{if .Runnable}}{{.UseLine}}{{end}}
   {{if .HasAvailableSubCommands}}{{.CommandPath}} [command] [flags]{{end}}{{if gt (len .Aliases) 0}}
@@ -69,7 +76,11 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 
 	rootCmd.AddCommand(scorecard.Cmd)
 	rootCmd.AddCommand(report.Cmd)
-	rootCmd.AddCommand(status.Cmd)
+	rootCmd.AddCommand(policies.Cmd)
+
+
+	// flag.Set("logtostderr", "true")
+	// flag.Set("stderrthreshold", "INFO")
 }
 
 func Execute() {

@@ -8,6 +8,8 @@ require (
 	github.com/briandowns/spinner v1.6.1
 	github.com/coreos/go-systemd v0.0.0-20181012123002-c6f51f82210d // indirect
 	github.com/forseti-security/config-validator v0.0.0-20191121204425-eb1b299ab838
+	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.3.1
 	github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7 // indirect
 	github.com/hashicorp/terraform v0.12.2 // indirect
@@ -15,6 +17,7 @@ require (
 	github.com/open-policy-agent/opa v0.11.0
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
+	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.2
 	google.golang.org/api v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873
@@ -22,3 +25,5 @@ require (
 	gopkg.in/yaml.v2 v2.2.2
 	gopkg.in/yaml.v3 v3.0.0-20191105164941-196cff6ef4b6
 )
+
+replace github.com/forseti-security/config-validator => ../../config-validator
