@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
-### XX.12.2019
+### 09.12.2019
+
+- Added 'resource_policy' DM template [#497] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/497)
+
+### 05.12.2019
 
 - Updated internal LB and external LB templates according to backend_service.py.schema change [#476] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/476)
 
