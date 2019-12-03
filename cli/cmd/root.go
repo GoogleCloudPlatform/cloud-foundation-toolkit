@@ -3,10 +3,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
+
+	"github.com/forseti-security/config-validator/cmd/policy-tool/status"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -67,6 +69,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 
 	rootCmd.AddCommand(scorecard.Cmd)
 	rootCmd.AddCommand(report.Cmd)
+	rootCmd.AddCommand(status.Cmd)
 }
 
 func Execute() {
