@@ -24,6 +24,7 @@ import (
 var flags struct {
 	libraryPath string
 	bundle      string
+	sourcePath  string
 }
 
 func init() {
@@ -32,10 +33,11 @@ func init() {
 	Cmd.AddCommand(status.Cmd)
 
 	Cmd.AddCommand(listCmd)
-	listCmd.Flags().StringVar(&flags.libraryPath, "path", "", "Path to the policy library root.")
 
-	listCmd.Flags().StringVar(&flags.bundle, "bundle", "scorecard-v1", "Policy bundle to use, default is scorecard")
-	// viper.SetDefault("bundle", "txt")
+	Cmd.PersistentFlags().StringVar(&flags.libraryPath, "path", "./", "Path to the policy library root.")
+	Cmd.PersistentFlags().StringVar(&flags.sourcePath, "source-path", "./samples/", "Path relative to policy library where available policies are stored.")
+
+	listCmd.Flags().StringVar(&flags.bundle, "bundle", "scorecard-v1", "Policy bundle to use.")
 	viper.BindPFlag("bundle", listCmd.Flags().Lookup("bundle"))
 }
 

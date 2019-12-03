@@ -3,6 +3,7 @@ package policies
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -12,8 +13,10 @@ import (
 )
 
 func list(cmd *cobra.Command, args []string) error {
+	source := path.Join(flags.libraryPath, flags.sourcePath)
+
 	bundleManager := bundlemanager.New()
-	if err := bundleManager.Load(flags.libraryPath); err != nil {
+	if err := bundleManager.Load(source); err != nil {
 		return err
 	}
 
