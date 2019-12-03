@@ -14,6 +14,7 @@ require (
 	github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7 // indirect
 	github.com/hashicorp/terraform v0.12.2 // indirect
 	github.com/inconshreveable/log15 v0.0.0-20180818164646-67afb5ed74ec
+	github.com/olekukonko/tablewriter v0.0.3
 	github.com/open-policy-agent/opa v0.11.0
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
