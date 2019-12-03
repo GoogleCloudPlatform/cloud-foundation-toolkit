@@ -1,0 +1,26 @@
+# Example of a project logsink with a big query destination template usage, where BigQuery dataset will be created in another project.
+#
+# In this example, single log sink project is created with a BigQuery
+# destination name and destination project
+#
+# Replace the following with appropirate values
+# <FIXME:source_project_id>: The project id to create the logsink for.
+# <FIXME:target_project_id>: The project id to create target BigQuery dataset for.
+# <FIXME:bq_dataset_name>: The name of a BigQuery dataset that does not exist.
+#
+
+imports:
+  - path: templates/logsink/logsink.py
+    name: logsink.py
+
+resources:
+  - name: test-logsink-bq
+    type: logsink.py
+    properties:
+      projectId: <FIXME:source_project_id>
+      destinationName: <FIXME:bq_dataset_name>
+      destinationType: bigquery
+      uniqueWriterIdentity: true
+      destinationProject: <FIXME:target_project_id>
+      bqProperties:
+        location: US

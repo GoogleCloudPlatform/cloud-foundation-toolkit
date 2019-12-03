@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### 11.12.2019
 
+- Updated logging sink configuration to export entries to a desired destination in external project [#77] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/496)
+
+### 11.12.2019
+
 - Added Stackdriver Notification Channels template [#432] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/485) 
 
 ### 09.12.2019 Ho-ho-ho
