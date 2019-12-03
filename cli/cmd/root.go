@@ -1,12 +1,11 @@
 package cmd
 
 import (
-	"os"
 	"flag"
-	
+	"os"
+
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/policies"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
@@ -26,9 +25,14 @@ var rootCmd = &cobra.Command{
 		}
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+
 		if !flags.verbose {
 			// discard logs
 			scorecard.Log.SetHandler(log.DiscardHandler())
+		} else {
+			// set log level for glog (in Config Validator)
+			flag.Set("v", "2")
+			flag.Set("alsologtostderr", "true")
 		}
 	},
 }
@@ -39,9 +43,7 @@ var flags struct {
 }
 
 func init() {
-	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-
-	// For https://github.com/kubernetes/kubernetes/issues/17162#issuecomment-225596212
+	// Parse flags for glog
 	flag.CommandLine.Parse([]string{})
 
 	rootCmd.SetUsageTemplate(`Usage:
@@ -77,10 +79,6 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(scorecard.Cmd)
 	rootCmd.AddCommand(report.Cmd)
 	rootCmd.AddCommand(policies.Cmd)
-
-
-	// flag.Set("logtostderr", "true")
-	// flag.Set("stderrthreshold", "INFO")
 }
 
 func Execute() {
