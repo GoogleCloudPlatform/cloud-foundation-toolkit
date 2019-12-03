@@ -17,8 +17,6 @@ package policies
 import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/forseti-security/config-validator/cmd/policy-tool/status"
 )
 
 var flags struct {
@@ -30,12 +28,12 @@ var flags struct {
 func init() {
 	viper.AutomaticEnv()
 
-	Cmd.AddCommand(status.Cmd)
+	Cmd.PersistentFlags().StringVar(&flags.libraryPath, "path", "./", "Path to the policy library root.")
+	Cmd.PersistentFlags().StringVar(&flags.sourcePath, "source-path", "samples/", "Path relative to policy library where available policies are stored.")
+
+	Cmd.AddCommand(addCmd)
 
 	Cmd.AddCommand(listCmd)
-
-	Cmd.PersistentFlags().StringVar(&flags.libraryPath, "path", "./", "Path to the policy library root.")
-	Cmd.PersistentFlags().StringVar(&flags.sourcePath, "source-path", "./samples/", "Path relative to policy library where available policies are stored.")
 
 	listCmd.Flags().StringVar(&flags.bundle, "bundle", "scorecard-v1", "Policy bundle to use.")
 	viper.BindPFlag("bundle", listCmd.Flags().Lookup("bundle"))
@@ -48,9 +46,15 @@ var Cmd = &cobra.Command{
 }
 
 var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   "List available constraints and constraint templates from a library.",
-	Example: `cft policies list`,
-	Args:    cobra.NoArgs,
-	RunE:    list,
+	Use:   "list",
+	Short: "List available constraints and constraint templates from a library.",
+	Args:  cobra.NoArgs,
+	RunE:  list,
+}
+
+var addCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Add a constraint to your policy library",
+	Args:  cobra.MinimumNArgs(1),
+	RunE:  add,
 }
