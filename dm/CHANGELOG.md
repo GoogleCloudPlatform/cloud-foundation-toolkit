@@ -13,6 +13,10 @@ All notable changes to this project will be documented in this file.
 
 - IAM Member template support bindings on types which implement `gcp-types/storage-v1:virtual.buckets.iamMemberBinding` like syntax. ( currently storage-v1.)
 
+### 25.11.2019
+
+- In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddress` output [#477] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/477)
+
 ### 22.11.2019
 
 - Fixed sharedVPC for GKE use case behaviour in 'project' DM template [#469] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/469)
