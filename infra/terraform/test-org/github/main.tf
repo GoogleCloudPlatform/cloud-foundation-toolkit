@@ -83,6 +83,26 @@ locals {
       color : "ef4339",
       description : "Blocked by some other work"
     },
+    {
+      name: "P1",
+      color: "b01111",
+      description: "highest priority issues"
+    },
+    {
+      name: "P2",
+      color: "b4451f",
+      description: "high priority issues"
+    },
+    {
+      name: "P3",
+      color: "e7d87d",
+      description: "medium priority issues"
+    },
+    {
+      name: "P4",
+      color: "62a1db",
+      description: "low priority issues"
+    },
   ]
 }
 

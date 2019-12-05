@@ -89,6 +89,14 @@ function teardown() {
     [[ "$output" =~ "roles/viewer" ]]
 }
 
+@test "Verify if SA has roles on the bucket" {
+    role=$(gsutil iam get "gs://org-bucket-${RAND}/" | grep role)
+    [[ "$status" -eq 0 ]]
+    [[ "$role" =~ "roles/storage.objectAdmin" ]]
+    [[ "$role" =~ "roles/storage.objectViewer" ]]
+
+}
+
 @test "Deleting deployment" {
     gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q

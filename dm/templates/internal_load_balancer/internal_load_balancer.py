@@ -25,6 +25,11 @@ def get_backend_service(properties, project_id, res_name):
     """ Creates the backend service. """
 
     backend_spec = properties['backendService']
+    for backend in backend_spec['backends']:
+        backend.update({
+            'balancingMode': 'CONNECTION'
+        })
+
     name = '{}-bs'.format(res_name)
     backend_properties = {
         'name': backend_spec.get('name', properties.get('name', name)),
@@ -48,6 +53,7 @@ def get_backend_service(properties, project_id, res_name):
         'connectionDraining',
         'backends',
         'healthCheck',
+        'healthChecks',
     ]
 
     for prop in optional_properties:

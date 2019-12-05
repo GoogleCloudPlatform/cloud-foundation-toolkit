@@ -32,10 +32,10 @@ info:
 imports:
   - path: trigger.py
 
-additionalProperties: false
+#additionalProperties: false
 
-required:
-  - triggerTemplate
+#required:
+#  - triggerTemplate
 
 properties:
   project:
@@ -54,13 +54,6 @@ properties:
       Branch and tag names in the trigger templates are interpreted as regular
       expressions. Any branch or tag change that matches that regular
       expression triggers a build.
-    oneOf:
-      - required:
-          - branchName
-      - required:
-          - tagName
-      - required:
-          - commitSha
     properties:
       projectId:
         type: string
@@ -78,12 +71,72 @@ properties:
           The directory to run the build in (path relative to the source root).
           If a step's dir value is specified as an absolute path, this value
           is ignored for that step's execution.
-      branchName:
-        $ref: "#/definitions/branchName"
-      tagName:
-        $ref: "#/definitions/tagName"
-      commitSha:
-        $ref: "#/definitions/commitSha"
+      revision:
+        type: string
+        oneOf:
+          - "$ref": "#/definitions/branchName"
+          - "$ref": "#/definitions/tagName"
+          - "$ref": "#/definitions/commitSha"
+  github:
+    type: object
+    additionalProperties: false
+    description: |
+      GitHubEventsConfig describes the configuration of a trigger that creates 
+      a build whenever a GitHub event is received.
+    properties:
+      installationId:
+        type: string
+        description: |
+          The installationID that emits the GitHub event.
+      owner:
+        type: string
+        description: |
+          Owner of the repository. For example: The owner for 
+          https://github.com/googlecloudplatform/cloud-builders is "googlecloudplatform".
+      name:
+        type: string
+        description: |
+          Name of the repository. For example: The name for 
+          https://github.com/googlecloudplatform/cloud-builders is "cloud-builders".
+      pullRequest:
+        type: object
+        additionalProperties: false
+        description: |
+          filter to match changes in pull requests.
+        properties:
+           commentControl:
+              type: string
+              description: |
+                Whether to block builds on a "/gcbrun" comment from a repository owner or collaborator.
+              enum:
+                - COMMENTS_DISABLED
+                - COMMENTS_ENABLED
+           branch:
+              type: string
+              description: |
+                Regex of branches to match.
+                
+                The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax
+      push:
+        type: object
+        additionalProperties: false
+        description: |
+          filter to match changes in refs like branches, tags.
+        properties:
+           branch:
+              type: string
+              description: |
+                Regex of branches to match.
+                
+                The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax
+           tag:
+              type: string
+              description: |
+                Regexes matching tags to build.
+                
+                The syntax of the regular expressions accepted is the syntax accepted by RE2 and described at https://github.com/google/re2/wiki/Syntax
+
+
   disabled:
     type: boolean
     default: False
@@ -118,10 +171,10 @@ properties:
       the includedFiles glob. If not, we do not trigger a build.
     items:
       type: string
-  buildTemplate:
+  build_template:
     oneOf:
-      - $ref: "#/definitions/build"
-      - $ref: "#/definitions/filename"
+      - "$ref": "#/definitions/build"
+      - "$ref": "#/definitions/filename"
   tags:
     type: array
     uniqItems: true
@@ -172,10 +225,10 @@ definitions:
           ignored for that step's execution.
       revision:
         type: string
-        anyOf:
-          - $ref: "#/definitions/branchName"
-          - $ref: "#/definitions/tagName"
-          - $ref: "#/definitions/commitSha"
+        oneOf:
+          - "$ref": "#/definitions/branchName"
+          - "$ref": "#/definitions/tagName"
+          - "$ref": "#/definitions/commitSha"
   commitSha:
     type: string
     description: Explicit commit SHA to build.
@@ -200,8 +253,8 @@ definitions:
         additionalProperties: false
         description: The location of the source files to build.
         oneOf:
-          - $ref: "#/definitions/storageSource"
-          - $ref: "#/definitions/repoSource"
+          - "$ref": "#/definitions/storageSource"
+          - "$ref": "#/definitions/repoSource"
       steps:
         type: array
         uniqItems: true
@@ -486,6 +539,7 @@ definitions:
                     build step or with certain reserved volume paths.
       substitutions:
         type: object
+        additionalProperties: false
         description: |
           Substitution data for the build resource. A list of key-value items.
           Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
@@ -511,6 +565,7 @@ definitions:
                   variables.
               secretEnv:
                 type: object
+                additionalProperties: false
                 description: |
                   Maps of the environment variable names to their encrypted
                   values. 
@@ -530,3 +585,6 @@ documentation:
 
 examples:
   - templates/cloudbuild/examples/cloudbuild_trigger.yaml
+
+
+# cat cloudbuild/examples/cloudbuild_trigger.yaml | yq .resources[0].properties > project.json; cat cloudbuild/trigger.py.schema | yq . > project.py.schema.json; ajv validate -s project.py.schema.json -d project.json

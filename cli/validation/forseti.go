@@ -4,24 +4,21 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/pkg/errors"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
+	"github.com/pkg/errors"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/validation/cai"
 )
 
-func validateAssets(assets []cai.Asset, policyRootPath string) (*validator.AuditResponse, error) {
-	return validateAssetsWithLibrary(assets,
-		filepath.Join(policyRootPath, "policies"),
+func validateAssets(ctx context.Context, assets []cai.Asset, policyRootPath string) (*validator.AuditResponse, error) {
+	return validateAssetsWithLibrary(ctx, assets,
+		[]string{filepath.Join(policyRootPath, "policies")},
 		filepath.Join(policyRootPath, "lib"))
 }
 
-func validateAssetsWithLibrary(assets []cai.Asset, policyPath, policyLibraryDir string) (*validator.AuditResponse, error) {
-	valid, err := gcv.NewValidator(
-		gcv.PolicyPath(policyPath),
-		gcv.PolicyLibraryDir(policyLibraryDir),
-	)
+func validateAssetsWithLibrary(ctx context.Context, assets []cai.Asset, policyPaths []string, policyLibraryDir string) (*validator.AuditResponse, error) {
+	valid, err := gcv.NewValidator(ctx.Done(), policyPaths, policyLibraryDir)
 	if err != nil {
 		return nil, errors.Wrap(err, "initializing gcv validator")
 	}

@@ -14,7 +14,7 @@
 
 info:
   title: Internal Load Balancer
-  version: 1.0.0
+  version: 1.0.1
   author: Sourced Group Inc.
   description: |
     Supports the creation of an internal load balancing solution that consists 
@@ -93,8 +93,12 @@ properties:
     type: object
     description: The backend service configuration.
     additionalProperties: false
+    oneOf:
+      - required:
+          - healthCheck
+      - required:
+          - healthChecks
     required:
-      - healthCheck
       - backends
     properties:
       name:
@@ -135,6 +139,15 @@ properties:
         description: |
           The URL of the HealthCheck resource for healthchecking the backend
           service.
+      healthChecks:
+        type: array
+        uniqueItems: true
+        maxItems: 1
+        description: |
+          The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck resource
+          for healthchecking the backend service.
+        items:
+          type: string
       sessionAffinity:
         type: string
         default: NONE

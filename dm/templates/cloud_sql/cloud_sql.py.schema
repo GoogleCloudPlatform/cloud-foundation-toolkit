@@ -15,7 +15,7 @@
 info:
   title: Cloud SQL
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.0.1
   description: |
     Supports creation of a Cloud SQL instance with database and user resources.
     For more information, see https://cloud.google.com/sql/docs/.
@@ -53,6 +53,12 @@ properties:
       - MYSQL_5_6
       - MYSQL_5_7
       - POSTGRES_9_6
+      - POSTGRES_11
+      - SQLSERVER_ENTERPRISE_2016
+      - SQLSERVER_2017_STANDARD
+      - SQLSERVER_2017_ENTERPRISE
+      - SQLSERVER_2017_EXPRESS
+      - SQLSERVER_2017_WEB
   failoverReplica:
     type: object
     additionalProperties: false
@@ -189,6 +195,9 @@ properties:
     description: |
       The service account email address assigned to the instance. This property is applicable only
       to Second Generation instances.
+  rootPassword:
+    type: string
+    description: MSSQL root password
   settings:
     type: object
     additionalProperties: false
@@ -209,7 +218,7 @@ properties:
             itself off when not in use. Instances with PER_USE pricing turn off
             after 15 minutes of inactivity. Instances with PER_PACKAGE pricing
             turn off after 12 hours of inactivity. For First Generation
-            instances only. 
+            instances only.
         enum:
           - ALWAYS
           - NEVER
@@ -258,7 +267,7 @@ properties:
         description: |
           Defines whether database flags for crash-safe replication are
           enabled. Applicable to First Generation instances. Configuration
-          specific to read replica instances. 
+          specific to read replica instances.
       dataDiskSizeGb:
         type: number
         description: |
@@ -298,7 +307,7 @@ properties:
         type: boolean
         description: |
           Indicates whether replication is enabled or not. Configuration
-          specific to read replica instances. Writable.  
+          specific to read replica instances. Writable.
       ipConfiguration:
         type: object
         additionalProperties: false
@@ -527,11 +536,6 @@ outputs:
         type: string
         description: |
           The URL (SelfLink) of the Cloud SQL instance resource.
-    - connectionName:
-        type: string
-        description: |
-          The connection name of the Cloud SQL instance (used in connection
-          strings).
     - gceZone:
         type: string
         description: |
@@ -539,19 +543,24 @@ outputs:
           This value could be different from the zone that was specified when
           the instance was created if the instance has failed over to its
           secondary zone.
-    - ipAddresses:
-        type: array
+    - connectionName:
+        type: string
         description: |
-          The IP addresses assigned to the instance.
+          The connection name of the Cloud SQL instance (used in connection
+          strings).
+    - backendType:
+        type: string
+        description: Database generation.
+    - ipAddress:
+        type: string
+        description: |
+          The first IP address assigned to the instance.
     - userNames:
         type: array
         description: The names of the created users.
     - databaseNames:
         type: array
         description: The names of the created databases.
-    - backendType:
-        type: string
-        description: Database generation.
     - databaseSelfLinks:
         type: array
         description: |
