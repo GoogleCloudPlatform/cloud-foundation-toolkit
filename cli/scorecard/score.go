@@ -170,6 +170,9 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	}
 
 	err = config.attachViolations(auditResult)
+	if err != nil {
+		return err
+	}
 	var dest io.Writer
 
 	if len(auditResult.Violations) > 0 {

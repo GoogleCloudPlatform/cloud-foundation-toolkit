@@ -45,6 +45,9 @@ func addDataFromReader(config *ScoringConfig, reader io.Reader) error {
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
+		if err != nil {
+			return err
+		}
 		pbAssets := []*validator.Asset{pbAsset}
 		err = config.validator.AddData(&validator.AddDataRequest{
 			Assets: pbAssets,
