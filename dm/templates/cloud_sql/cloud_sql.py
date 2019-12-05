@@ -57,6 +57,7 @@ def get_instance(res_name, project_id, properties):
         'serverCaCert',
         'serviceAccountEmailAddress',
         'settings',
+        'rootPassword',
     ]
 
     for prop in optional_properties:
