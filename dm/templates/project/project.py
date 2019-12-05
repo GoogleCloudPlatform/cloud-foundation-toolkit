@@ -151,7 +151,7 @@ def activate_apis(context):
             properties.get('enableGKEToUseSharedVPC') and
             properties.get('sharedVPC')
         ):
-            apis.append('compute.googleapis.com')
+            apis.append('container.googleapis.com')
 
     resources = []
     api_names_list = ['{}-billing'.format(context.env['name'])]
@@ -258,14 +258,14 @@ def create_service_accounts(context, project_id):
     network_list = [
         'serviceAccount:$(ref.{}-project.projectNumber)@cloudservices.gserviceaccount.com'.format(context.env['name'])
     ]
+    service_account_dep = []
     
     if context.properties.get('enableGKEToUseSharedVPC') and context.properties.get('sharedVPC'):
         network_list.append(
         'serviceAccount:service-$(ref.{}-project.projectNumber)@container-engine-robot.iam.gserviceaccount.com'.format(context.env['name'])
         )
-        service_account_dep = ["{}-api-container.googleapis.com".format(context.env['name'])]
+        service_account_dep.append("{}-api-container.googleapis.com".format(context.env['name']))
         
-    service_account_dep = ["{}-api-compute.googleapis.com".format(context.env['name'])]
     policies_to_add = []
 
     for service_account in context.properties['serviceAccounts']:
@@ -338,6 +338,7 @@ def create_service_accounts(context, project_id):
         context.properties.get('sharedVPC')
     ):
         # Create the shared VPC subnet IAM permissions.
+        service_account_dep.append("{}-api-compute.googleapis.com".format(context.env['name']))
         resources.extend(
             create_shared_vpc_subnet_iam(
                 context,

@@ -29,3 +29,19 @@ output "billing_account" {
 output "cft_ci_group" {
   value = local.cft_ci_group
 }
+
+output "ci_gsuite_sa_id" {
+  value = google_service_account.ci_gsuite_sa.id
+}
+
+output "ci_gsuite_sa_email" {
+  value = google_service_account.ci_gsuite_sa.email
+}
+
+output "ci_gsuite_sa_folder_id" {
+  value = google_folder.ci_gsuite_sa_folder.id
+}
+
+output "ci_gsuite_sa_project_id" {
+  value = module.ci_gsuite_sa_project.project_id
+}

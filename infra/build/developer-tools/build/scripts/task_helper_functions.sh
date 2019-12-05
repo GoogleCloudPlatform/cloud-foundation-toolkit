@@ -72,6 +72,7 @@ find_files() {
     -path './autogen' -o \
     -path './test/fixtures/all_examples' -o \
     -path './test/fixtures/shared' -o \
+    -path './cache' -o \
     -path './test/source.sh' ')' \
     -prune -o -type f "$@"
 }
@@ -111,19 +112,23 @@ function lint_docker() {
 # directory paths which contain *.tf files.
 function check_terraform() {
   set -e
-  local rval
+  local rval rc
+  rval=0
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
-  find_files . -name "*.tf" -print | while read -r file; do
+  while read -r file; do
     terraform fmt -diff -check=true -write=false "$file"
-    rval="$?"
-    if [[ "${rval}" -gt 0 ]]; then
-      echo "Error: terraform fmt failed with exit code ${rval}" >&2
+    rc="$?"
+    if [[ "${rc}" -ne 0 ]]; then
+      echo "Error: terraform fmt failed with exit code ${rc}" >&2
       echo "Check the output for diffs and correct using terraform fmt <dir>" >&2
-      return "${rval}"
+      rval="$rc"
     fi
-  done
+  done <<< "$(find_files . -name "*.tf" -print)"
+  if [[ "${rval}" -ne 0 ]]; then
+    return "${rval}"
+  fi
   echo "Running terraform validate"
   # Change to a temporary directory to avoid re-initializing terraform init
   # over and over in the root of the repository.

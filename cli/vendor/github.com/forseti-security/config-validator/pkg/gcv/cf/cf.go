@@ -22,9 +22,9 @@ import (
 	"github.com/forseti-security/config-validator/pkg/gcv/configs"
 	"github.com/open-policy-agent/opa/ast"
 	"github.com/open-policy-agent/opa/rego"
+	"github.com/open-policy-agent/opa/storage"
 	"github.com/open-policy-agent/opa/storage/inmem"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/pkg/errors"
 )
 
 // ConstraintFramework organizes constraints/templates/data and handles evaluation.
@@ -32,33 +32,36 @@ type ConstraintFramework struct {
 	userInputData []interface{}
 	// map[userDefined]regoCode
 	dependencyCode map[string]string
-	// map[kind]template
-	templates map[string]*configs.ConstraintTemplate
-	// map[kind]map[metadataName]constraint
-	constraints map[string]map[string]*configs.Constraint
-	auditScript string
+	auditScript    string
+	regoCompiler   *ast.Compiler
+	regoStore      storage.Store
 }
 
 const (
-	inputDataPrefix      = "inventory"
+	// inputDataPrefix is the field in rego land "data" that will hold inventory
+	inputDataPrefix = "inventory"
+	// constraintPathPrefix is the field in rego land "data" that will hold constraints
 	constraintPathPrefix = "constraints"
-	regoLibraryRule      = "data.validator.gcp.lib.audit"
+	// regoAuditRule is the rule that will be evaluated when calling audit
+	regoAuditRule = "data.validator.gcp.lib.audit"
+	// regoReviewRule is the rule that will be evaluated when calling review
+	regoReviewRule = "data.validator.gcp.lib.handle_asset"
 )
+
+// inputDataPath is the path in the rego storage.Store that will hold input data
+var inputDataPath = storage.Path{inputDataPrefix}
 
 // New creates a new ConstraintFramework
 // args:
 //   dependencyCode: map[debugString]regoCode: The debugString key will be referenced in compiler errors. It should help identify the source of the rego code.
 func New(dependencyCode map[string]string) (*ConstraintFramework, error) {
 	cf := ConstraintFramework{}
-	cf.templates = make(map[string]*configs.ConstraintTemplate)
-	cf.constraints = make(map[string]map[string]*configs.Constraint)
-	_, compileErrors := ast.CompileModules(dependencyCode)
-	if compileErrors != nil {
-		return nil, status.Error(codes.InvalidArgument, compileErrors.Error())
+	_, err := ast.CompileModules(dependencyCode)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to compile dependency code")
 	}
 	cf.dependencyCode = dependencyCode
 	cf.auditScript = AuditRego
-
 	return &cf, nil
 }
 
@@ -81,41 +84,50 @@ func (cf *ConstraintFramework) validateTemplate(t *configs.ConstraintTemplate) e
 	return err
 }
 
-// AddTemplate tracks an additional constraint template. This template is only used if a constraint is provided.
-func (cf *ConstraintFramework) AddTemplate(template *configs.ConstraintTemplate) error {
-	if _, exists := cf.templates[template.GeneratedKind]; exists {
-		return status.Errorf(codes.AlreadyExists, "Conflicting constraint templates with kind %s from file %s", template.GeneratedKind, template.Confg.FilePath)
+// Configure will set the constraint templates and constraints for ConstraintFramework
+func (cf *ConstraintFramework) Configure(templates []*configs.ConstraintTemplate, constraints []*configs.Constraint) error {
+	// create compiler from templates, other rego sources
+	templateMap := make(map[string]*configs.ConstraintTemplate)
+	for _, template := range templates {
+		if _, exists := templateMap[template.GeneratedKind]; exists {
+			return errors.Errorf("conflicting constraint templates with kind %s from file %s", template.GeneratedKind, template.Confg.FilePath)
+		}
+		if err := cf.validateTemplate(template); err != nil {
+			return errors.Wrapf(err, "failed to validate template")
+		}
+		templateMap[template.GeneratedKind] = template
 	}
-	if err := cf.validateTemplate(template); err != nil {
-		return status.Error(codes.InvalidArgument, err.Error())
-	}
-	cf.templates[template.GeneratedKind] = template
-	return nil
-}
 
-// validateConstraint validates template kind exists
-// TODO(corb): will also validate constraint data confirms to template validation
-func (cf *ConstraintFramework) validateConstraint(c *configs.Constraint) error {
-	if _, exists := cf.templates[c.Confg.Kind]; !exists {
-		return fmt.Errorf("no template found for kind %s, constraint's template needs to be loaded before constraint. ", c.Confg.Kind)
+	// create store from constraints
+	constraintMap := make(map[string]map[string]*configs.Constraint)
+	for _, c := range constraints {
+		if _, ok := constraintMap[c.Confg.Kind]; !ok {
+			constraintMap[c.Confg.Kind] = make(map[string]*configs.Constraint)
+		}
+		if _, exists := constraintMap[c.Confg.Kind][c.Confg.MetadataName]; exists {
+			return errors.Errorf("Conflicting constraint metadata names with name %s from file %s", c.Confg.MetadataName, c.Confg.FilePath)
+		}
+		if _, exists := templateMap[c.Confg.Kind]; !exists {
+			return errors.Errorf("no template found for kind %s, constraint's template needs to be loaded before constraint. ", c.Confg.Kind)
+		}
+		constraintMap[c.Confg.Kind][c.Confg.MetadataName] = c
 	}
-	// TODO(corb): validate constraints data with template validation spec
-	return nil
-}
 
-// AddConstraint adds a new constraint that will be used to validate data during Audit.
-// This will validate that the constraint dependencies are already loaded and that the constraint data is valid.
-func (cf *ConstraintFramework) AddConstraint(c *configs.Constraint) error {
-	if _, ok := cf.constraints[c.Confg.Kind]; !ok {
-		cf.constraints[c.Confg.Kind] = make(map[string]*configs.Constraint)
+	compiler, err := staticCompile(cf.auditScript, cf.dependencyCode, templateMap)
+	if err != nil {
+		return errors.Wrapf(err, "failed to compile all templates")
 	}
-	if _, exists := cf.constraints[c.Confg.Kind][c.Confg.MetadataName]; exists {
-		return status.Errorf(codes.AlreadyExists, "Conflicting constraint metadata names with name %s from file %s", c.Confg.MetadataName, c.Confg.FilePath)
+
+	constraintsData, err := constraintAsInputData(constraintMap)
+	if err != nil {
+		return errors.Wrapf(err, "failed to generate constraints as data")
 	}
-	if err := cf.validateConstraint(c); err != nil {
-		return status.Error(codes.InvalidArgument, err.Error())
-	}
-	cf.constraints[c.Confg.Kind][c.Confg.MetadataName] = c
+
+	cf.regoCompiler = compiler
+	cf.regoStore = inmem.NewFromObject(map[string]interface{}{
+		constraintPathPrefix: constraintsData,
+		inputDataPrefix:      []interface{}{},
+	})
 	return nil
 }
 
@@ -135,15 +147,25 @@ func staticCompile(auditScript string, dependencyCode map[string]string, templat
 	return ast.CompileModules(regoCode)
 }
 
-func (cf *ConstraintFramework) compile() (*ast.Compiler, error) {
-	return staticCompile(cf.auditScript, cf.dependencyCode, cf.templates)
-}
-
 // Reset the user provided data, preserving the constraint and template information.
-func (cf *ConstraintFramework) Reset() {
+func (cf *ConstraintFramework) Reset(ctx context.Context) error {
 	// Clear input data
 	// This is provided as a param in audit
 	cf.userInputData = []interface{}{}
+	return cf.setStoreInventory(ctx)
+}
+
+// Review returns violations that are found after evaluating constraints on
+// resource.  The "resource" arg is the return value of json.Unmarshal after
+// decoding a JSON resource.
+func (cf *ConstraintFramework) Review(ctx context.Context, resource interface{}) ([]*validator.Violation, error) {
+	violations, err := cf.expressionResult(ctx, regoReviewRule, rego.Input(map[string]interface{}{
+		"asset": resource,
+	}))
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to evaluate review")
+	}
+	return violations, nil
 }
 
 // constraintAsInputData prepares the constraint data for providing to rego.
@@ -168,66 +190,66 @@ func constraintAsInputData(constraintMap map[string]map[string]*configs.Constrai
 	return flattened, nil
 }
 
-func (cf *ConstraintFramework) buildRegoObject() (*rego.Rego, error) {
-	compiler, err := cf.compile()
+func (cf *ConstraintFramework) setStoreInventory(ctx context.Context) error {
+	txn, err := cf.regoStore.NewTransaction(ctx, storage.WriteParams)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return err
 	}
-	constraints, err := constraintAsInputData(cf.constraints)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+
+	if err := cf.regoStore.Write(ctx, txn, storage.ReplaceOp, inputDataPath, cf.userInputData); err != nil {
+		return err
 	}
-	r := rego.New(
-		rego.Query(regoLibraryRule),
-		rego.Compiler(compiler),
-		rego.Store(inmem.NewFromObject(map[string]interface{}{
-			inputDataPrefix:      cf.userInputData,
-			constraintPathPrefix: constraints,
-		})))
-	return r, nil
+
+	if err := cf.regoStore.Commit(ctx, txn); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func auditExpressionResult(ctx context.Context, r *rego.Rego) (*rego.ExpressionValue, error) {
-	rs, err := r.Eval(ctx)
+func (cf *ConstraintFramework) expressionResult(ctx context.Context, evalRule string, regoOpts ...func(r *rego.Rego)) ([]*validator.Violation, error) {
+	regoOpts = append(
+		regoOpts,
+		rego.Compiler(cf.regoCompiler),
+		rego.Store(cf.regoStore),
+		rego.Query(evalRule),
+	)
+	regoImpl := rego.New(regoOpts...)
+
+	rs, err := regoImpl.Eval(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if len(rs) != 1 {
 		// Only expecting to receive a single result set
-		return nil, status.Errorf(codes.Internal, "unexpected length of rego eval results, expected 1 got %d. This could indicate an error in the audit rego code", len(rs))
+		return nil, errors.Errorf("unexpected length of rego eval results, expected 1 got %d. This could indicate an error in the audit rego code", len(rs))
 	}
 	if len(rs[0].Expressions) != 1 {
-		return nil, status.Errorf(codes.Internal, "unexpected length of rego Expression results, expected 1 (from audit call) got %d. This could indicate an error in the audit rego code", len(rs[0].Expressions))
+		return nil, errors.Errorf("unexpected length of rego Expression results, expected 1 (from audit call) got %d. This could indicate an error in the audit rego code", len(rs[0].Expressions))
 	}
 	expressionResult := rs[0].Expressions[0]
-	if expressionResult.Text != regoLibraryRule {
-		return nil, status.Errorf(codes.Internal, "Unknown expression result %s, expected %s", expressionResult.Text, regoLibraryRule)
+	if expressionResult.Text != evalRule {
+		return nil, errors.Errorf("Unknown expression result %s, expected %s", expressionResult.Text, evalRule)
 	}
 
-	return expressionResult, nil
+	violations, err := convertToViolations(expressionResult)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to convert eval result to violations")
+	}
+
+	return violations, nil
 }
 
 // Audit checks the GCP resource metadata that has been added via AddData to determine if any of the constraint is violated.
 func (cf *ConstraintFramework) Audit(ctx context.Context) (*validator.AuditResponse, error) {
-	r, err := cf.buildRegoObject()
+	if err := cf.setStoreInventory(ctx); err != nil {
+		return nil, err
+	}
+
+	violations, err := cf.expressionResult(ctx, regoAuditRule)
 	if err != nil {
 		return nil, err
 	}
 
-	expressionVal, err := auditExpressionResult(ctx, r)
-	if err != nil {
-		return nil, err
-	}
-
-	response := &validator.AuditResponse{
-		Violations: []*validator.Violation{},
-	}
-
-	violations, err := convertToViolations(expressionVal)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-	response.Violations = violations
-
-	return response, nil
+	return &validator.AuditResponse{Violations: violations}, nil
 }

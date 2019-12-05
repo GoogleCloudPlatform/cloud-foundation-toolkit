@@ -16,23 +16,41 @@
 package gcv
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
+	"flag"
 	"io/ioutil"
+	"runtime"
+	"strings"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
+	asset2 "github.com/forseti-security/config-validator/pkg/asset"
 	"github.com/forseti-security/config-validator/pkg/gcv/cf"
 	"github.com/forseti-security/config-validator/pkg/gcv/configs"
+	"github.com/forseti-security/config-validator/pkg/multierror"
 	"github.com/golang/glog"
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-const logRequestsVerboseLevel = 2
+const (
+	logRequestsVerboseLevel = 2
+	// The JSON object key for ancestry path
+	ancestryPathKey = "ancestry_path"
+	// The JSON object key for ancestors list
+	ancestorsKey = "ancestors"
+)
+
+var flags struct {
+	workerCount int
+}
+
+func init() {
+	flag.IntVar(
+		&flags.workerCount,
+		"workerCount",
+		runtime.NumCPU(),
+		"Number of workers that Validator will spawn to handle validate calls, this defaults to core count on the host")
+}
 
 // Validator checks GCP resource metadata for constraint violation.
 //
@@ -47,70 +65,54 @@ const logRequestsVerboseLevel = 2
 // Any data added in AddData stays in the underlying rule evaluation engine's memory.
 // To avoid out of memory errors, callers can invoke Reset to delete existing data.
 type Validator struct {
-	// policyPath points to a directory where the constraints and constraint templates are stored as yaml files.
-	policyPath string
+	// policyPaths points to a list of directories where the constraints and
+	// constraint templates are stored as yaml files.
+	policyPaths []string
 	// policy dependencies directory points to rego files that provide supporting code for templates.
 	// These rego dependencies should be packaged with the GCV deployment.
 	// Right now expected to be set to point to "//policies/validator/lib" folder
 	policyLibraryDir    string
 	constraintFramework *cf.ConstraintFramework
-}
-
-// Option is a function for configuring Validator.
-// See https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis for background.
-type Option func(*Validator) error
-
-// PolicyPath returns an Option that sets the root directory of constraints and constraint templates.
-func PolicyPath(p string) Option {
-	return func(v *Validator) error {
-		v.policyPath = p
-		return nil
-	}
-}
-
-// PolicyLibraryDir returns an Option that sets the policy library directory with rego files.
-// This function is expected to be removed in the future when all assumed dependant rego code is inlined in template files,
-// and this validator includes the audit.rego files
-func PolicyLibraryDir(dir string) Option {
-	return func(v *Validator) error {
-		v.policyLibraryDir = dir
-		return nil
-	}
+	work                chan func()
 }
 
 func loadRegoFiles(dir string) (map[string]string, error) {
 	loadedFiles := make(map[string]string)
 	files, err := configs.ListRegoFiles(dir)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, errors.Wrapf(err, "failed to list rego files from %s", dir)
 	}
 	for _, filePath := range files {
 		glog.V(logRequestsVerboseLevel).Infof("Loading rego file: %s", filePath)
 		if _, exists := loadedFiles[filePath]; exists {
 			// This shouldn't happen
-			return nil, status.Errorf(codes.Internal, "Unexpected file collision with file %s", filePath)
+			return nil, errors.Errorf("unexpected file collision with file %s", filePath)
 		}
 		fileBytes, err := ioutil.ReadFile(filePath)
 		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, errors.Wrapf(err, "unable to read file %s", filePath).Error())
+			return nil, errors.Wrapf(err, "unable to read file %s", filePath)
 		}
 		loadedFiles[filePath] = string(fileBytes)
 	}
 	return loadedFiles, nil
 }
 
-func loadYAMLFiles(dir string) ([]*configs.ConstraintTemplate, []*configs.Constraint, error) {
+func loadYAMLFiles(dirs []string) ([]*configs.ConstraintTemplate, []*configs.Constraint, error) {
 	var templates []*configs.ConstraintTemplate
 	var constraints []*configs.Constraint
-	files, err := configs.ListYAMLFiles(dir)
-	if err != nil {
-		return nil, nil, err
+	var files []string
+	for _, dir := range dirs {
+		f, err := configs.ListYAMLFiles(dir)
+		if err != nil {
+			return nil, nil, err
+		}
+		files = append(files, f...)
 	}
 	for _, filePath := range files {
 		glog.V(logRequestsVerboseLevel).Infof("Loading yaml file: %s", filePath)
 		fileContents, err := ioutil.ReadFile(filePath)
 		if err != nil {
-			return nil, nil, status.Error(codes.InvalidArgument, errors.Wrapf(err, "unable to read file %s", filePath).Error())
+			return nil, nil, errors.Wrapf(err, "unable to read file %s", filePath)
 		}
 		categorizedData, err := configs.CategorizeYAMLFile(fileContents, filePath)
 		if err != nil {
@@ -124,7 +126,7 @@ func loadYAMLFiles(dir string) ([]*configs.ConstraintTemplate, []*configs.Constr
 			constraints = append(constraints, data)
 		default:
 			// Unexpected: CategorizeYAMLFile shouldn't return any types
-			return nil, nil, status.Errorf(codes.Internal, "CategorizeYAMLFile returned unexpected data type when converting file %s", filePath)
+			return nil, nil, errors.Errorf("CategorizeYAMLFile returned unexpected data type when converting file %s", filePath)
 		}
 	}
 	return templates, constraints, nil
@@ -133,22 +135,20 @@ func loadYAMLFiles(dir string) ([]*configs.ConstraintTemplate, []*configs.Constr
 // NewValidator returns a new Validator.
 // By default it will initialize the underlying query evaluation engine by loading supporting library, constraints, and constraint templates.
 // We may want to make this initialization behavior configurable in the future.
-func NewValidator(options ...Option) (*Validator, error) {
-	ret := &Validator{}
-	for _, option := range options {
-		if err := option(ret); err != nil {
-			return nil, err
-		}
+func NewValidator(stopChannel <-chan struct{}, policyPaths []string, policyLibraryPath string) (*Validator, error) {
+	if len(policyPaths) == 0 {
+		return nil, errors.Errorf("No policy path set, provide an option to set the policy path gcv.PolicyPath")
 	}
-	if ret.policyPath == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "No policy path set, provide an option to set the policy path gcv.PolicyPath")
+	if policyLibraryPath == "" {
+		return nil, errors.Errorf("No policy library set")
 	}
-	if ret.policyLibraryDir == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "No policy library set")
+
+	ret := &Validator{
+		work: make(chan func(), flags.workerCount*2),
 	}
 
 	glog.V(logRequestsVerboseLevel).Infof("loading policy library dir: %s", ret.policyLibraryDir)
-	regoLib, err := loadRegoFiles(ret.policyLibraryDir)
+	regoLib, err := loadRegoFiles(policyLibraryPath)
 	if err != nil {
 		return nil, err
 	}
@@ -157,34 +157,48 @@ func NewValidator(options ...Option) (*Validator, error) {
 	if err != nil {
 		return nil, err
 	}
-	glog.V(logRequestsVerboseLevel).Infof("loading policy dir: %s", ret.policyPath)
-	templates, constraints, err := loadYAMLFiles(ret.policyPath)
+	glog.V(logRequestsVerboseLevel).Infof("loading policy dir: %v", ret.policyPaths)
+	templates, constraints, err := loadYAMLFiles(policyPaths)
 	if err != nil {
 		return nil, err
 	}
-	for _, template := range templates {
-		if err := ret.constraintFramework.AddTemplate(template); err != nil {
-			return nil, err
-		}
+
+	if err := ret.constraintFramework.Configure(templates, constraints); err != nil {
+		return nil, err
 	}
-	for _, constraint := range constraints {
-		if err := ret.constraintFramework.AddConstraint(constraint); err != nil {
-			return nil, err
-		}
+
+	go func() {
+		<-stopChannel
+		glog.Infof("validator stopchannel closed, closing work channel")
+		close(ret.work)
+	}()
+
+	workerCount := flags.workerCount
+	glog.Infof("starting %d workers", workerCount)
+	for i := 0; i < workerCount; i++ {
+		go ret.reviewWorker(i)
 	}
 
 	return ret, nil
 }
 
+func (v *Validator) reviewWorker(idx int) {
+	glog.Infof("worker %d starting", idx)
+	for f := range v.work {
+		f()
+	}
+	glog.Infof("worker %d terminated", idx)
+}
+
 // AddData adds GCP resource metadata to be audited later.
 func (v *Validator) AddData(request *validator.AddDataRequest) error {
 	for i, asset := range request.Assets {
-		if err := validateAsset(asset); err != nil {
-			return status.Error(codes.InvalidArgument, errors.Wrapf(err, "index %d", i).Error())
+		if err := asset2.ValidateAsset(asset); err != nil {
+			return errors.Wrapf(err, "index %d", i)
 		}
-		f, err := convertResourceViaJSONToInterface(asset)
+		f, err := asset2.ConvertResourceViaJSONToInterface(asset)
 		if err != nil {
-			return status.Error(codes.Internal, errors.Wrapf(err, "index %d", i).Error())
+			return errors.Wrapf(err, "index %d", i)
 		}
 		v.constraintFramework.AddData(f)
 	}
@@ -192,50 +206,127 @@ func (v *Validator) AddData(request *validator.AddDataRequest) error {
 	return nil
 }
 
-func validateAsset(asset *validator.Asset) error {
-	var result *multierror.Error
-	if asset.GetName() == "" {
-		result = multierror.Append(result, errors.New("missing asset name"))
-	}
-	if asset.GetAncestryPath() == "" {
-		result = multierror.Append(result, errors.Errorf("asset %q missing ancestry path", asset.GetName()))
-	}
-	if asset.GetAssetType() == "" {
-		result = multierror.Append(result, errors.Errorf("asset %q missing type", asset.GetName()))
-	}
-	if asset.GetResource() == nil && asset.GetIamPolicy() == nil {
-		result = multierror.Append(result, errors.Errorf("asset %q missing both resource and IAM policy", asset.GetName()))
-	}
-	return result.ErrorOrNil()
+type assetResult struct {
+	violations []*validator.Violation
+	err        error
 }
 
-func convertResourceViaJSONToInterface(asset *validator.Asset) (interface{}, error) {
-	if asset == nil {
-		return nil, nil
+func (v *Validator) handleReview(ctx context.Context, idx int, asset *validator.Asset, resultChan chan<- *assetResult) func() {
+	return func() {
+		resultChan <- func() *assetResult {
+			if err := asset2.ValidateAsset(asset); err != nil {
+				return &assetResult{err: errors.Wrapf(err, "index %d", idx)}
+			}
+			if asset.AncestryPath == "" && len(asset.Ancestors) != 0 {
+				asset.AncestryPath = ancestryPath(asset.Ancestors)
+			}
+
+			assetInterface, err := asset2.ConvertResourceViaJSONToInterface(asset)
+			if err != nil {
+				return &assetResult{err: errors.Wrapf(err, "index %d", idx)}
+			}
+
+			violations, err := v.constraintFramework.Review(ctx, assetInterface)
+			if err != nil {
+				return &assetResult{err: errors.Wrapf(err, "index %d", idx)}
+			}
+
+			return &assetResult{violations: violations}
+		}()
 	}
-	m := &jsonpb.Marshaler{
-		OrigName: true,
+}
+
+// ancestryPath returns the ancestry path from a given ancestors list
+func ancestryPath(ancestors []string) string {
+	cnt := len(ancestors)
+	revAncestors := make([]string, len(ancestors))
+	for idx := 0; idx < cnt; idx++ {
+		revAncestors[cnt-idx-1] = ancestors[idx]
 	}
-	if asset.Resource != nil {
-		cleanStructValue(asset.Resource.Data)
+	return strings.Join(revAncestors, "/")
+}
+
+// fixAncestry will try to use the ancestors array to create the ancestorPath
+// value if it is not present.
+func (v *Validator) fixAncestry(input map[string]interface{}) error {
+	if _, found := input[ancestryPathKey]; found {
+		return nil
 	}
-	glog.V(logRequestsVerboseLevel).Infof("converting asset to golang interface: %v", asset)
-	var buf bytes.Buffer
-	if err := m.Marshal(&buf, asset); err != nil {
-		return nil, errors.Wrapf(err, "marshalling to json with asset %s: %v", asset.Name, asset)
+
+	ancestorsIface, found := input[ancestorsKey]
+	if !found {
+		glog.Infof("asset missing ancestry information: %v", input)
+		return nil
 	}
-	var f interface{}
-	err := json.Unmarshal(buf.Bytes(), &f)
-	if err != nil {
-		return nil, errors.Wrapf(err, "marshalling from json with asset %s: %v", asset.Name, asset)
+	ancestorsIfaceSlice, ok := ancestorsIface.([]interface{})
+	if !ok {
+		return errors.Errorf("ancestors field not array type: %s", input)
 	}
-	return f, nil
+	if len(ancestorsIfaceSlice) == 0 {
+		return nil
+	}
+	ancestors := make([]string, len(ancestorsIfaceSlice))
+	for idx, v := range ancestorsIfaceSlice {
+		val, ok := v.(string)
+		if !ok {
+			return errors.Errorf("ancestors field idx %d is not string %s, %s", idx, v, input)
+		}
+		ancestors[idx] = val
+	}
+	input[ancestryPathKey] = ancestryPath(ancestors)
+	return nil
+}
+
+// ReviewJSON reviews the content of a JSON string
+func (v *Validator) ReviewJSON(ctx context.Context, data string) ([]*validator.Violation, error) {
+	asset := map[string]interface{}{}
+	if err := json.Unmarshal([]byte(data), &asset); err != nil {
+		return nil, errors.Wrapf(err, "failed to unmarshal json")
+	}
+	return v.ReviewUnmarshalledJSON(ctx, asset)
+}
+
+// ReviewJSON evaluates a single asset without any threading in the background.
+func (v *Validator) ReviewUnmarshalledJSON(ctx context.Context, asset map[string]interface{}) ([]*validator.Violation, error) {
+	if err := v.fixAncestry(asset); err != nil {
+		return nil, err
+	}
+	return v.constraintFramework.Review(ctx, asset)
+}
+
+// Review evaluates each asset in the review request in parallel and returns any
+// violations found.
+func (v *Validator) Review(ctx context.Context, request *validator.ReviewRequest) (*validator.ReviewResponse, error) {
+	assetCount := len(request.Assets)
+	resultChan := make(chan *assetResult, flags.workerCount*2)
+	defer close(resultChan)
+
+	go func() {
+		for idx, asset := range request.Assets {
+			v.work <- v.handleReview(ctx, idx, asset, resultChan)
+		}
+	}()
+
+	response := &validator.ReviewResponse{}
+	var errs multierror.Errors
+	for i := 0; i < assetCount; i++ {
+		result := <-resultChan
+		if result.err != nil {
+			errs.Add(result.err)
+			continue
+		}
+		response.Violations = append(response.Violations, result.violations...)
+	}
+
+	if !errs.Empty() {
+		return response, errs.ToError()
+	}
+	return response, nil
 }
 
 // Reset clears previously added data from the underlying query evaluation engine.
-func (v *Validator) Reset() error {
-	v.constraintFramework.Reset()
-	return nil
+func (v *Validator) Reset(ctx context.Context) error {
+	return v.constraintFramework.Reset(ctx)
 }
 
 // Audit checks the GCP resource metadata that has been added via AddData to determine if any of the constraint is violated.
