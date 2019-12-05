@@ -166,6 +166,13 @@ properties:
             at the same time as sourceTags or targetTags.
           items:
             type: string
+        targetServiceAccounts:
+          type: array
+          uniqueItems: True
+          description: |
+            The email of a service account indicating the set of instances to which firewall rules apply.
+          items:
+            type: string
         allowed:
           type: array
           uniqueItems: True
