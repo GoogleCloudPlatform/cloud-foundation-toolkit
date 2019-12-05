@@ -87,4 +87,5 @@ up to 7 days.
 - [Cloud SQL](examples/cloud_sql.yaml)
 - [Cloud SQL with Read Replica](examples/cloud_sql_read_replica.yaml)
 - [Cloud SQL Postgres](examples/cloud_sql_postgres.yaml)
+- [Cloud SQL MSSQL Server](examples/cloud_sql_mssql.yaml)
 - [Cloud SQL Private Networking](examples/cloud_sql_private_network.yaml)
