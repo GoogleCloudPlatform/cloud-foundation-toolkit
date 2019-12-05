@@ -10,4 +10,6 @@ Then, export it:
 
 ```
 export GITHUB_TOKEN=aaaaaaa
-````
+```
+
+Note, because of the many resources involved, you might need to run Terraform with `-refresh=false`.

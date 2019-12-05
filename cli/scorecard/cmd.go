@@ -1,6 +1,7 @@
 package scorecard
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -64,6 +65,7 @@ var Cmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.Println("Generating CFT scorecard")
 		var err error
+		ctx := context.Background()
 
 		controlProjectID := viper.GetString("google_project")
 		if controlProjectID == "" {
@@ -78,7 +80,7 @@ var Cmd = &cobra.Command{
 			return err
 		}
 
-		config, err := NewScoringConfig(flags.policyPath)
+		config, err := NewScoringConfig(ctx, flags.policyPath)
 		if err != nil {
 			return err
 		}
