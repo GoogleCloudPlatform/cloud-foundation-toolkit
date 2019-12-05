@@ -1,0 +1,31 @@
+# Example of the IAM member template usage.
+#
+# The `members` property is a list of members to which the
+# `role` is applied.
+#
+# Replace `user-email` with a valid email.
+# Replace `service-account` with a valid service account.
+# Replace `group-address` with a valid group. 
+# Replace `domain-name` with a valid domain.
+# Replace `folderId` with a folder ID to assign roles to.
+
+
+imports:
+  - path: templates/iam_member/iam_member.py
+    name: iam_member.py
+
+resources:
+  - name: iam-member-bucket
+    type: iam_member.py
+    properties:
+      roles:
+        - role: roles/storage.objectAdmin
+          bucket: <FIXME:bucket-name-example:mybucket>
+          members:
+            - user:<FIXME:user-email-example:name@example.com>
+            - serviceAccount:<FIXME:service-account-example:example@myprojectname.gserviceaccount.com>
+        - role: roles/storage.objectViewer
+          bucket: <FIXME:bucket-name-example:mybucket>
+          members:
+            - group:<FIXME:group-address-example:admins@example.com>
+            - domain:<FIXME:domain-name-example:example.com>

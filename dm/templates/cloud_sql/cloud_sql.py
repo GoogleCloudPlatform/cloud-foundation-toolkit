@@ -57,6 +57,7 @@ def get_instance(res_name, project_id, properties):
         'serverCaCert',
         'serviceAccountEmailAddress',
         'settings',
+        'rootPassword',
     ]
 
     for prop in optional_properties:
@@ -72,28 +73,28 @@ def get_instance(res_name, project_id, properties):
     if 'dependsOn' in properties:
         instance['metadata'] = {'dependsOn': properties['dependsOn']}
 
-    outputs = [
-        {
-            'name': 'name',
-            'value': '$(ref.{}.name)'.format(name)
-        },
-        {
-            'name': 'selfLink',
-            'value': '$(ref.{}.selfLink)'.format(name)
-        },
-        {
-            'name': 'gceZone',
-            'value': '$(ref.{}.gceZone)'.format(name)
-        },
-        {
-            'name': 'connectionName',
-            'value': '$(ref.{}.connectionName)'.format(name)
-        },
-        {
-            'name': 'backendType',
-            'value': '$(ref.{}.backendType)'.format(name)
-        },
+    output_fields = [
+        'name',
+        'selfLink',
+        'gceZone',
+        'connectionName',
+        'backendType',
     ]
+
+    outputs = [{
+        'name': i,
+        'value': '$(ref.{}.{})'.format(name, i)
+    } for i in output_fields]
+
+    # Regrettably, 'ipAddress' is a special snowflake. 'ipAddresses' is a list
+    # of objects, and DM doesn't seem to let you extract child properties from
+    # outputs of imported templates. If we want to use the actual IP address of
+    # the instantiated database in a template that uses this template, we need
+    # to navigate to the relevant child value here.
+    outputs += [{
+        'name': 'ipAddress',
+        'value': '$(ref.{}.ipAddresses[0].ipAddress)'.format(name),
+    }]
 
     return DMBundle(instance, outputs)
 

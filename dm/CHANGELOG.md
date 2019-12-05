@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### XX.12.2019
+
+- Updated internal LB and external LB templates according to backend_service.py.schema change [#476] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/476)
+
+### 02.12.2019
+
+- IAM Member template support bindings on types which implement `gcp-types/storage-v1:virtual.buckets.iamMemberBinding` like syntax. ( currently storage-v1.)
+
+### 25.11.2019
+
+- In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddress` output [#477] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/477)
+
+### 22.11.2019
+
+- Fixed sharedVPC for GKE use case behaviour in 'project' DM template [#469] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/469)
+
+### 22.11.2019
+
+- Cloud Build Trigger support for Github [#470] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
+- CI example for Github triggering Cloudbuild for PRs
+
+### 21.11.2019
+
+- Added support for unified Stackdriver Kubernetes Engine Monitoring [#463] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
+- Add explicit dependencies to the 'iam_member' DM template to avoid fail, in case of a large amount of bindings (30+) [#443] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/443)
+
+### 18.11.2019
+
+- The [GCS Bucket template](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/ocsig-patch-storage1/dm/templates/gcs_bucket) supports gcp-types/storage-v1:virtual.buckets.iamMemberBinding. [#453] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/453)
+
 ### 31.10.2019
 
 - New helper template to use firewall with Google important IP ranges, stored in YAML [#370] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/370)

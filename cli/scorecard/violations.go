@@ -32,10 +32,10 @@ import (
 )
 
 // attachValidator attaches a Validator to the given config
-func attachValidator(config *ScoringConfig) error {
-	v, err := gcv.NewValidator(
-		gcv.PolicyPath(filepath.Join(config.PolicyPath, "policies")),
-		gcv.PolicyLibraryDir(filepath.Join(config.PolicyPath, "lib")),
+func attachValidator(ctx context.Context, config *ScoringConfig) error {
+	v, err := gcv.NewValidator(ctx.Done(),
+		[]string{filepath.Join(config.PolicyPath, "policies")},
+		filepath.Join(config.PolicyPath, "lib"),
 	)
 	config.validator = v
 	return err
