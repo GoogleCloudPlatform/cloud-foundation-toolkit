@@ -21,11 +21,12 @@ def generate_config(context):
     properties = context.properties
     name = context.env['name']
     project_id = properties.get('project', context.env['project'])
-    # set projectId in triggerTemplate
-    properties['triggerTemplate']['projectId'] = project_id
-    build_def = properties.get('buildTemplate')
+    build_def = properties.get('build')
     build_filename = properties.get('filename')
-    build_trigger_id = '$(ref.{}.id)'.format(name)
+    build_trigger_template = properties.get('triggerTemplate')
+    build_github = properties.get('github')
+    build_trigger_id = '$(ref.' + name + '.id)'
+    build_trigger_createTime = '$(ref.' + name + '.createTime)'
 
     # build trigger create action
     build_trigger_create = {
@@ -36,8 +37,8 @@ def generate_config(context):
             'runtimePolicy': ['CREATE'],
         },
         'properties': {
+            'name': name.replace('_', '-'),
             'projectId': project_id,
-            'triggerTemplate': properties['triggerTemplate']
         }
     }
 
@@ -50,10 +51,10 @@ def generate_config(context):
             'runtimePolicy': ['UPDATE_ON_CHANGE'],
         },
         'properties': {
+            'name': name.replace('_', '-'),
             'projectId': project_id,
             'id': build_trigger_id,
             'triggerId': build_trigger_id,
-            'triggerTemplate': properties['triggerTemplate']
         }
     }
 
@@ -77,6 +78,13 @@ def generate_config(context):
     elif build_filename:
         build_trigger_create['properties']['filename'] = build_filename
         build_trigger_update['properties']['filename'] = build_filename
+
+    if build_trigger_template:
+        build_trigger_create['properties']['triggerTemplate'] = build_trigger_template
+        build_trigger_update['properties']['triggerTemplate'] = build_trigger_template
+    elif build_github:
+        build_trigger_create['properties']['github'] = build_github
+        build_trigger_update['properties']['github'] = build_github
 
     resources.append(build_trigger_create)
     resources.append(build_trigger_update)
@@ -105,7 +113,7 @@ def generate_config(context):
         },
         {
             'name': 'createTime',
-            'value': '$(ref.{}.createTime)'.format(name)
+            'value': build_trigger_createTime
         }
     ]
 
