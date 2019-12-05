@@ -15,7 +15,7 @@
 info:
   title: External Load Balancer
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.0.1
   description: |
     Supports creation of an HTTP(S), SSL Proxy, or TCP Proxy external load
     balancer. For details, visit https://cloud.google.com/load-balancing/docs/.
@@ -233,9 +233,13 @@ properties:
     items:
       type: object
       additionalProperties: false
+      oneOf:
+        - required:
+            - healthCheck
+        - required:
+            - healthChecks
       required:
         - backends
-        - healthCheck
       properties:
         resourceName:
           type: string
@@ -323,6 +327,15 @@ properties:
           description: |
             The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck
             resource for healthchecking the backend service.
+        healthChecks:
+          type: array
+          uniqueItems: true
+          maxItems: 1
+          description: |
+            The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck resource
+            for healthchecking the backend service.
+          items:
+            type: string
         timeoutSec:
           type: number
           default: 30
