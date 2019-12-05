@@ -37,6 +37,27 @@ module "org_bindings" {
   }
 }
 
+module "admin_bindings" {
+  source  = "terraform-google-modules/iam/google"
+  version = "~> 2.0"
+
+  folders = [local.folders["ci-projects"]]
+
+  bindings = {
+    "roles/resourcemanager.projectCreator" = [
+      "group:${local.gcp_admins_group}",
+    ]
+
+    "roles/resourcemanager.folderAdmin" = [
+      "group:${local.gcp_admins_group}",
+    ]
+
+    "roles/billing.projectManager" = [
+      "group:${local.gcp_admins_group}",
+    ]
+  }
+}
+
 module "ci_bindings" {
   source  = "terraform-google-modules/iam/google"
   version = "~> 2.0"

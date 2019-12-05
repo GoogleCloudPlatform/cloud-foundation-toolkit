@@ -42,9 +42,9 @@ This tutorial will walk you through setting up Scorecard for a single project.
 6. Download the CFT CLI and make it executable:
     ```
     # OS X
-    curl -o cft https://storage.googleapis.com/cft-scorecard/v0.2.1/cft-darwin-amd64
+    curl -o cft https://storage.googleapis.com/cft-cli/latest/cft-darwin-amd64
     # Linux
-    curl -o cft https://storage.googleapis.com/cft-scorecard/v0.2.1/cft-linux-amd64
+    curl -o cft https://storage.googleapis.com/cft-cli/latest/cft-linux-amd64
     # executable
     chmod +x cft
     ```

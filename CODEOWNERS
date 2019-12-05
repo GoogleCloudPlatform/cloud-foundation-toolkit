@@ -3,3 +3,6 @@
 
 # Deployment Manager Reviewers
 /dm/        @morgante @ocsig @sjvanrossum
+
+# CLI owners
+/cli/       @morgante

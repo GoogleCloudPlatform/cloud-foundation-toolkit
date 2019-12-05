@@ -31,6 +31,17 @@ resources:
         - role: roles/viewer
           members:
             - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+  - name: iam-member-test-bucket-${RAND}
+    type: iam_member.py
+    properties:
+      bucket: $(ref.test-bucket-${RAND}.name)
+      roles:
+        - role: roles/storage.objectAdmin
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+        - role: roles/storage.objectViewer
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
 
   - name: test-folder-${RAND}
     type: gcp-types/cloudresourcemanager-v2:folders
@@ -38,3 +49,10 @@ resources:
       name: org-folder-${RAND}
       parent: organizations/${CLOUD_FOUNDATION_ORGANIZATION_ID}
       displayName: org-folder-${RAND}
+
+  - name: test-bucket-${RAND}
+    type: gcp-types/storage-v1:buckets
+    properties:
+      name: org-bucket-${RAND}
+      project: ${CLOUD_FOUNDATION_PROJECT_ID}
+
