@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetOutputs(t *testing.T) {
-	runGCloud = func(args ...string) (result string, err error) {
+	RunGCloud = func(args ...string) (result string, err error) {
 		expected := "deployment-manager manifests describe --deployment mydeployment --project myproject --format yaml"
 		actual := strings.Join(args, " ")
 		if expected != actual {
