@@ -60,12 +60,20 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config ${CONFIG} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+        
+    echo "Status: $status"
+    echo "Output: $output"
+
     [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying certificate" {
     run gcloud compute ssl-certificates describe "${CERT_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+        
+    echo "Status: $status"
+    echo "Output: $output"
+
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "description: ${CERT_DESCRIPTION}" ]]
     [[ "$output" =~ "${CERT_EXTRACT}" ]]
@@ -74,6 +82,10 @@ function teardown() {
 @test "Deleting deployment" {
     run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+        
+    echo "Status: $status"
+    echo "Output: $output"
+    
     [[ "$status" -eq 0 ]]
 }
 

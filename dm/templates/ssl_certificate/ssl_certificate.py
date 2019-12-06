@@ -32,14 +32,26 @@ def generate_config(context):
         'name': name,
         'project': project_id,
     }
+ 
+    if properties.get('betaFeaturesEnabled', False):
+        gcptype = 'gcp-types/compute-beta:sslCertificates'
+    else:
+        gcptype = 'gcp-types/compute-v1:sslCertificates'
+
     resource = {
         'name': context.env['name'],
         # https://cloud.google.com/compute/docs/reference/rest/v1/sslCertificates
-        'type': 'gcp-types/compute-v1:sslCertificates',
+        'type': gcptype,
         'properties': ssl_props,
     }
 
-    for prop in ['privateKey', 'certificate', 'description']:
+    for prop in [
+            'privateKey',
+            'certificate',
+            'description',
+            'managed',
+            'selfManaged',
+            'type']:
         set_optional_property(ssl_props, properties, prop)
 
     return {
@@ -54,5 +66,5 @@ def generate_config(context):
                     'name': 'selfLink',
                     'value': '$(ref.{}.selfLink)'.format(context.env['name'])
                 }
-            ]
+        ]
     }

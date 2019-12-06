@@ -15,7 +15,7 @@
 info:
   title: SSL Certificate
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Supports creation of the SSL certificate resource.
 
@@ -28,9 +28,32 @@ info:
 
 additionalProperties: false
 
-required:
-  - privateKey
-  - certificate
+oneOf:
+  - required:
+    - privateKey
+    - certificate
+  - required:
+    - managed
+  - required:
+    - selfManaged
+
+dependencies:
+  managed:
+    required:
+      - betaFeaturesEnabled
+      - type
+    properties:
+      type: 
+        enum:
+          - MANAGED
+  selfManaged:
+    required:
+      - betaFeaturesEnabled
+      - type
+    properties:
+      type: 
+        enum:
+          - SELF_MANAGED
 
 properties:
   name:
@@ -60,6 +83,46 @@ properties:
       The local certificate file. The certificate must be in the PEM format.
       The certificate chain must be no greater than 5 certs long. The chain
       must include at least one intermediate cert.
+  managed:
+    type: object
+    description: |
+      Configuration and status of a managed SSL certificate.
+    properties:
+      domains:
+        type: array
+        uniqItems: true
+        items:
+          type: string
+        description: |
+          The domains for which a managed SSL certificate will be generated. Currently only single-domain certs are supported.
+  selfManaged:
+    type: object
+    description: |
+      Configuration and status of a self-managed SSL certificate.
+    required:
+      - privateKey
+      - certificate
+    properties:
+      certificate:
+        type: string
+        description: |
+            A local certificate file. The certificate must be in PEM format. The certificate chain must be no greater than 5 certs long. The chain must include at least one intermediate cert.
+      privateKey:
+        type: string
+        description: |
+            A write-only private key in PEM format. Only insert requests will include this field.
+  type:
+    type: string
+    enum:
+      - SELF_MANAGED
+      - MANAGED
+    description: |
+      (Optional) Specifies the type of SSL certificate, either "SELF_MANAGED" or "MANAGED". If not specified, the certificate is self-managed and the fields certificate and privateKey are used.
+  betaFeaturesEnabled:
+    type: boolean
+    default: false
+    description: |
+      If this flag is enabled, beta properties can be used and the beta type will be used.
 
 outputs:
   properties:
