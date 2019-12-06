@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
-### XX.12.2019
+### 06.12.2019 Ho-ho-ho
+
+- SSL-Certificate template supports beta features (managed certificate). This update is backwards compatible. [#505] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/505)
+
+### 05.12.2019
 
 - Updated internal LB and external LB templates according to backend_service.py.schema change [#476] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/476)
 
