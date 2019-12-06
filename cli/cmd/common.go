@@ -135,14 +135,14 @@ func executeStages(action string, stages [][]deployment.Config, isDelete bool) m
 						log.Fatalf("error %s deployment: %v, error: %v", action, dep, err)
 					}
 				case "s":
-					output, err = deployment.CancelPreview(dep)
+					_, err = deployment.CancelPreview(dep)
 					if err != nil {
 						log.Fatalf("error cancel-preuvew action for deployment: %v, error: %v", dep, err)
 					}
 					log.Printf("canceled %s action for deployment: %v", action, dep)
 					if action == deployment.ActionCreate {
 						log.Printf("delete canceled creation for deployment: %v", dep)
-						output, err = deployment.Delete(dep, false)
+						_, err = deployment.Delete(dep, false)
 						if err != nil {
 							log.Fatalf("error cancel-preview action for deployment: %v, error: %v", dep, err)
 						}
