@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 09.12.2019 Ho-ho-ho
+
+- SSL-Certificate template supports beta features (managed certificate). This update is backwards compatible. [#505] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/505)
+
 ### 09.12.2019
 
 - Added 'resource_policy' DM template [#497] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/497)
