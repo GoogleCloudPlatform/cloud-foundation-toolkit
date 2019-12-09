@@ -2,6 +2,7 @@ package launchpad
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -132,18 +133,18 @@ func loadYAML(docStr []byte) (resourceHandler, error) {
 	kinds, ok := supportedVersion[h.APIVersion]
 	if !ok {
 		log.Printf("Not supported version")
-		return nil, err
+		return nil, errors.New("unsupported version")
 	}
 	resourceFunc, ok := kinds[h.kind()]
 	if !ok {
 		log.Printf("Not supported kind")
-		return nil, err
+		return nil, errors.New("unsupported custom resource kind for the version")
 	}
 	resource := resourceFunc()
 	err = yaml.Unmarshal(docStr, resource)
 	if err != nil {
 		log.Printf("Malformed YAML")
-		return nil, err
+		return nil, errors.New("unsupported custom resource kind")
 	}
 	return resource, nil
 }

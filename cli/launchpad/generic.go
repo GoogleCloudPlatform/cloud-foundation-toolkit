@@ -26,8 +26,11 @@ var v1alpha1SupportedKind = map[crdKind]func() resourceHandler{
 }
 
 var (
-	errValidationFailed = errors.New("validation failed")
-	tfNameRegex         = regexp.MustCompile("^[a-zA-Z][a-zA-Z\\d\\-\\_]*$")
+	errValidationFailed     = errors.New("validation failed")
+	errMissingRequiredField = errors.New("missing required field")
+	errInvalidParent        = errors.New("invalid parent reference")
+	errInvalidInput      = errors.New("invalid input")
+	tfNameRegex             = regexp.MustCompile("^[a-zA-Z][a-zA-Z\\d\\-\\_]*$")
 )
 
 // resourceHandler represents a resource that can be processed by launchpad.
@@ -59,7 +62,7 @@ func (k crdKind) String() string {
 
 // newCRDKind parses string formatted crdKind and convert to internal format.
 //
-// Unsupported format given will terminate the application.
+// Unsupported format given will return -1, caller is expected to handle unknown type.
 func newCRDKind(crdKindStr string) crdKind {
 	switch strings.ToLower(crdKindStr) {
 	case "cloudfoundation":
@@ -69,9 +72,9 @@ func newCRDKind(crdKindStr string) crdKind {
 	case "organization":
 		return Organization
 	default:
-		log.Fatalln("Unsupported CustomResourceDefinition", crdKindStr)
+		log.Println("warning: unsupported CustomResourceDefinition", crdKindStr)
+		return -1
 	}
-	return -1
 }
 
 // headerYAML defines the common fields all CRD is required to have.

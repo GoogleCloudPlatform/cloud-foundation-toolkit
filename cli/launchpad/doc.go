@@ -3,6 +3,28 @@
 //
 // Supported resources can be found in generic.go
 //
+// All resources implements resourceHandler interface and are expected
+// to have a full YAML representation with name {resource}YAML, with additional
+// {resource}SpecYAML to denote it's Spec field.
+//
+// Resource can have sub resource attached, through list of {resource}SpecYAML,
+// however, other functions will expect {resource}YAML for actual processing.
+// Implementer of a resource type should aim to track sub resources as an addition
+// field, as oppose to manipulating the parsed YAML directly. For example,
+//
+//   kind: Folder
+//   spec:
+//     id: X
+//     folders:
+//       - id: Y
+//		 - id: Z
+//
+// Folder X have Y, Z folders as sub resources. In the evaluation hierarchy, folder X
+// is a folderYAML representation with folderSpecYAML spec. Subdirectories Y, Z are
+// also represented by folderSpecYAML. During validation of folder X, sub-folder Y and
+// Z will be wrapped into a fully qualified folderYAML type and track elsewhere
+// without changing the original YAML definition.
+//
 // == Process ==
 // Launchpad divide the processing into 1) loading, 2) validating & assembling,
 // 3) generating output.

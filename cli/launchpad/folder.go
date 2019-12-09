@@ -51,10 +51,14 @@ func (f *folderYAML) String() string { return strings.Join(f.dump(0), "\n") }
 //
 // validate also populates subFolders.
 func (f *folderYAML) validate() error {
-	switch f.Spec.ParentRef.TargetType() { // Validate Supported Parents
-	case Organization, Folder:
+	if f.Spec.Id == "" {
+		return errMissingRequiredField
+	}
+	switch f.Spec.ParentRef.TargetTypeStr { // Validate Supported Parents
+	case Organization.String(), Folder.String():
 	default:
-		return errors.New(fmt.Sprintf("unsupported parent '%s' type for Folder", f.Spec.ParentRef.TargetTypeStr))
+		log.Printf("fatal: unsupported parent '%s' type for Folder\n", f.Spec.ParentRef.TargetTypeStr)
+		return errInvalidParent
 	}
 
 	// TODO validate misc
