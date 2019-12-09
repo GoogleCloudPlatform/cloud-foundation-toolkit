@@ -8,35 +8,43 @@ import (
 	"strings"
 )
 
-const indentSize = 2
+const (
+	// defaultIndentSize defines default indent size when calling String and dump.
+	defaultIndentSize = 2
+	apiCFTv1alpha1    = "cft.dev/v1alpha1"
+)
+
+// supportedVersion defines API version and support resource for each version.
+var supportedVersion = map[string]map[crdKind]func() resourceHandler{
+	apiCFTv1alpha1: v1alpha1SupportedKind,
+}
+
+// v1alpha1SupportedKind defines v1alpha1's supported resources.
+var v1alpha1SupportedKind = map[crdKind]func() resourceHandler{
+	Folder:       func() resourceHandler { return &folderYAML{} },
+	Organization: func() resourceHandler { return &orgYAML{} },
+}
 
 var (
 	errValidationFailed = errors.New("validation failed")
 	tfNameRegex         = regexp.MustCompile("^[a-zA-Z][a-zA-Z\\d\\-\\_]*$")
 )
 
-//
-type resourcer interface {
-	// validate ensures the parsed YAML has validate parameters.
+// resourceHandler represents a resource that can be processed by launchpad.
+type resourceHandler interface {
+	// refId defines the internal referencable id.
+	refId() string
+	// validate ensures the parsed YAML has validate fields.
 	validate() error
 	// kind returns the validated crdKind of the resource.
 	kind() crdKind
-	// enroll adds the resource into final eval mapping.
-	enroll(*eval) error
+	// addToOrg adds the resource into the assembled organization.
+	addToOrg(ao *assembledOrg) error
+	// resolveReferences takes action on resources referencing the current resource.
+	resolveReferences(refs []resourceHandler) error
 }
 
-type resourcespecer interface {
-	// refId defines the internal referencable id.
-	refId() string
-	// validate ensure the parsed YAML has validate parameters.
-	validate() error
-	// dump generates printable information on the resource.
-	dump(int) []string
-	// resolveRefs adds references to this resource as referenced target.
-	resolveRefs([]reference) error
-}
-
-// crdKind is the CustomResourceDefinition (CRD) which is indicated YAML's Kind value.
+// crdKind is the CustomResourceDefinition (CRD) which is indicated by YAML Kind value.
 type crdKind int
 
 const (
@@ -66,41 +74,23 @@ func newCRDKind(crdKindStr string) crdKind {
 	return -1
 }
 
-var supportedVersion = map[string]supportedKind{
-	"cft.dev/v1alpha1": v1alpha1SupportedKind,
-}
-
-type supportedKind map[crdKind]func() resourcer
-
-var v1alpha1SupportedKind = supportedKind{
-	Folder:       func() resourcer { return &folderYAML{} },
-	Organization: func() resourcer { return &orgYAML{} },
-}
-
+// headerYAML defines the common fields all CRD is required to have.
 type headerYAML struct {
 	APIVersion string `yaml:"apiVersion"`
 	KindStr    string `yaml:"kind"`
 }
 
-func (h *headerYAML) kind() crdKind {
-	return newCRDKind(h.KindStr)
-}
+func (h *headerYAML) kind() crdKind { return newCRDKind(h.KindStr) }
 
-// referenceYAML represents a reference to another object within a CRD.
+// referenceYAML represents an explicit reference to another resource.
 //
-// Among different types of CRDs, it is common to have parent-children relationship, ex: Projects belong to
-// a folder, Network belong to a project. referenceYAML is a relationship identifier between these objects.
-//
-// With explicit definition of ParentRef is possible
+// It is common to have reference relationship among difference resources. For example,
+// parent-children relationship such as project belong to a folder, network belong to a
+// project. referenceYAML is the relationship identifier between these resources.
 type referenceYAML struct {
 	TargetTypeStr string `yaml:"type"`
 	TargetId      string `yaml:"id"`
 }
 
-func (r *referenceYAML) TargetType() crdKind {
-	return newCRDKind(r.TargetTypeStr)
-}
-
-func (r *referenceYAML) refId() string {
-	return fmt.Sprintf("%s.%s", r.TargetType(), r.TargetId)
-}
+func (r *referenceYAML) TargetType() crdKind { return newCRDKind(r.TargetTypeStr) }
+func (r *referenceYAML) refId() string       { return fmt.Sprintf("%s.%s", r.TargetType(), r.TargetId) }

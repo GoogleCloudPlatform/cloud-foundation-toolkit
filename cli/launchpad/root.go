@@ -14,7 +14,8 @@ import (
 // Code ready scripts based on specified output flavor.
 //
 // NewGenerate can be triggered by
-//   $ cft launchpad generate
+//   $ cft launchpad generate *.yaml
+//   $ cft lp g *.yaml
 func NewGenerate(rawPaths []string, outFlavor OutputFlavor, outputDir string) {
 	// attempt to load all configs with best effort
 	log.Println("debug: output location", outputDir) // Remove after generate code is written
@@ -22,10 +23,9 @@ func NewGenerate(rawPaths []string, outFlavor OutputFlavor, outputDir string) {
 	resources := loadResources(rawPaths)
 	log.Println(len(resources), "YAML documents loaded")
 
-	eval := evaluate(resources)
+	assembled := assembleResourcesToOrg(resources)
 
-	fmt.Printf("%s\n", eval.org.String())  // Place-holder for future trigger point of code generation
-	fmt.Printf("%s\n", eval.rmap.String()) // Place-holder for future trigger point of code generation
+	fmt.Printf("%s\n", assembled.String())  // Place-holder for future trigger point of code generation
 }
 
 // OutputFlavor defines launchpad's generated output language.
@@ -63,8 +63,8 @@ const yamlDelimiter = "---\n"
 //
 // loadResources will silently ignore file I/O related errors, attempt to parse all
 // files and extract resources if possible.
-func loadResources(rawPaths []string) []resourcer {
-	var buff []resourcer
+func loadResources(rawPaths []string) []resourceHandler {
+	var buff []resourceHandler
 	for _, pathPattern := range rawPaths {
 		matches, err := filepath.Glob(pathPattern)
 		if err != nil {
@@ -118,7 +118,11 @@ func loadFile(fp string) (string, error) {
 	}
 }
 
-func loadYAML(docStr []byte) (resourcer, error) {
+// loadYAML loads given byte slice as a CFT resource.
+//
+// loadYAML takes two pass to load YAML, first to determine the CRD kind,
+// second to load the YAML into specific CFT resource.
+func loadYAML(docStr []byte) (resourceHandler, error) {
 	h := &headerYAML{}
 	err := yaml.Unmarshal(docStr, h)
 	if err != nil {

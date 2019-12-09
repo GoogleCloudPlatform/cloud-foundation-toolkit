@@ -12,95 +12,123 @@ const (
 	folderNameMax = 30
 )
 
-// folderYAML is a GCP Folder YAML representation.
-type folderYAML struct {
-	headerYAML `yaml:",inline"`
-	Spec       folderSpecYAML `yaml:"spec"`
-}
-
-func (f *folderYAML) validate() error      { return f.Spec.validate() }
-func (f *folderYAML) enroll(e *eval) error { return f.Spec.enroll(e) }
-func (f *folderYAML) String() string       { return strings.Join(f.Spec.dump(0), "\n") }
-
 // folderSpecYAML defines GCP Folder's spec.
 type folderSpecYAML struct { // Inner mappings
-	Id          string                 `yaml:"id"`
-	DisplayName string                 `yaml:"displayName"`
-	ParentRef   referenceYAML          `yaml:"parentRef"`
-	Folders     folderSpecYAMLs        `yaml:"folders"`
-	Undefined   map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior
+	Id             string                 `yaml:"id"`
+	DisplayName    string                 `yaml:"displayName"`
+	ParentRef      referenceYAML          `yaml:"parentRef"`
+	SubFolderSpecs []*folderSpecYAML      `yaml:"folders"`
+	Undefined      map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior
 }
 
-func (f *folderSpecYAML) refId() string { return fmt.Sprintf("%s.%s", Folder, f.Id) }
-func (f *folderSpecYAML) dump(ind int) []string {
-	indent := strings.Repeat(" ", ind)
-	rep := fmt.Sprintf("%s+ %s.%s (\"%s\") <- (%s.%s)", indent, Folder, f.Id,
-		f.DisplayName, f.ParentRef.TargetTypeStr, f.ParentRef.TargetId)
-	buff := []string{rep}
-	for _, sf := range f.Folders {
-		buff = append(buff, sf.dump(ind+indentSize)...)
-	}
-	return buff
-}
+// folders represents a list of folders.
+type folders []*folderYAML
 
-func (f *folderSpecYAML) validate() error {
-	switch f.ParentRef.TargetType() { // Validate Supported Parents
-	case Organization, Folder:
-	default:
-		return errors.New(fmt.Sprintf("unsupported parent '%s' type for Folder", f.ParentRef.TargetTypeStr))
-	}
-
-	// TODO validate misc
-	if ind := tfNameRegex.FindStringIndex(f.Id); ind == nil {
-		log.Printf("GCP Folder [%s] ID does not conform to Terraform standard", f.DisplayName)
-		return errValidationFailed
-	}
-
-	if len(f.DisplayName) < folderNameMin || len(f.DisplayName) > folderNameMax {
-		log.Printf("GCP Folder Name [%s] needs to be between %d and %d", f.DisplayName, folderNameMin, folderNameMax)
-		return errValidationFailed
-	}
-
-	for _, sf := range f.Folders {
-		// Setting & Over writing parent reference for sub-folders
-		sf.ParentRef.TargetTypeStr = Folder.String()
-		sf.ParentRef.TargetId = f.Id
-
-		if err := sf.validate(); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (f *folderSpecYAML) enroll(e *eval) error {
-	e.register(f, &f.ParentRef)
-	for _, sf := range f.Folders { // Recursively enroll sub-folders
-		if err := sf.enroll(e); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (f *folderSpecYAML) resolveRefs(refs []reference) error {
-	for _, r := range refs {
-		sf, ok := r.srcPtr.(*folderSpecYAML)
-		if !ok {
-			return errors.New("unable to add non folder as a sub-folder")
-		}
-		f.Folders.add(sf)
-	}
-	return nil
-}
-
-type folderSpecYAMLs []*folderSpecYAML
-
-func (fs *folderSpecYAMLs) add(newF *folderSpecYAML) {
+// add appends a folder into the folder list if it does not exist already.
+func (fs *folders) add(newF *folderYAML) {
 	for _, f := range *fs {
-		if f.Id == newF.Id { // silently ignore already existing folder
+		if f.Spec.Id == newF.Spec.Id { // silently ignore already existing folder
 			return
 		}
 	}
 	*fs = append(*fs, newF)
+}
+
+// folderYAML is a GCP Folder YAML representation.
+type folderYAML struct {
+	headerYAML `yaml:",inline"`
+	Spec       folderSpecYAML `yaml:"spec"`
+	subFolders folders        // subFolder represents validated sub directories.
+}
+
+// refId returns an internal referencable id.
+func (f *folderYAML) refId() string { return fmt.Sprintf("%s.%s", Folder, f.Spec.Id) }
+
+// String implements Stringer and generates a string representation.
+func (f *folderYAML) String() string { return strings.Join(f.dump(0), "\n") }
+
+// validate ensures input YAML fields are correct.
+//
+// validate also populates subFolders.
+func (f *folderYAML) validate() error {
+	switch f.Spec.ParentRef.TargetType() { // Validate Supported Parents
+	case Organization, Folder:
+	default:
+		return errors.New(fmt.Sprintf("unsupported parent '%s' type for Folder", f.Spec.ParentRef.TargetTypeStr))
+	}
+
+	// TODO validate misc
+	if ind := tfNameRegex.FindStringIndex(f.Spec.Id); ind == nil {
+		log.Printf("GCP Folder [%s] ID does not conform to Terraform standard", f.Spec.DisplayName)
+		return errValidationFailed
+	}
+
+	if len(f.Spec.DisplayName) < folderNameMin || len(f.Spec.DisplayName) > folderNameMax {
+		log.Printf("GCP Folder Name [%s] needs to be between %d and %d", f.Spec.DisplayName, folderNameMin, folderNameMax)
+		return errValidationFailed
+	}
+
+	f.subFolders = newSubFoldersBySpecs(f.Spec.SubFolderSpecs, Folder, f.Spec.Id)
+	return nil
+}
+
+// addToOrg adds the folder into the assembled organization.
+//
+// addToOrg also recursively add folder's subFolders into the org.
+func (f *folderYAML) addToOrg(ao *assembledOrg) error {
+	ao.registerResource(f, &f.Spec.ParentRef)
+
+	for _, sf := range f.subFolders { // Recursively enroll sub-folders
+		if err := sf.addToOrg(ao); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// resolveReferences processes references to folder.
+//
+// resolveReferences takes reference from folder as a subFolder of this folder.
+func (f *folderYAML) resolveReferences(refs []resourceHandler) error {
+	for _, ref := range refs {
+		switch r := ref.(type) {
+		case *folderYAML:
+			f.subFolders.add(r)
+		default:
+			return errors.New("unable to process reference from resource")
+		}
+	}
+	return nil
+}
+
+// dump generates debug string slices representation.
+func (f *folderYAML) dump(ind int) []string {
+	indent := strings.Repeat(" ", ind)
+	rep := fmt.Sprintf("%s+ %s.%s (\"%s\") <- (%s.%s)", indent, Folder, f.Spec.Id,
+		f.Spec.DisplayName, f.Spec.ParentRef.TargetTypeStr, f.Spec.ParentRef.TargetId)
+	buff := []string{rep}
+	for _, sf := range f.subFolders {
+		buff = append(buff, sf.dump(ind+defaultIndentSize)...)
+	}
+	return buff
+}
+
+// newSubFoldersBySpecs initializes folderSpecYAMLs and turn it into a folderYAMLs.
+//
+// newSubFoldersBySpecs overwrites folderSpecYAML's parent field if parentId is provided.
+func newSubFoldersBySpecs(sfYAMLs []*folderSpecYAML, parentType crdKind, parentId string) []*folderYAML {
+	var sfs []*folderYAML
+
+	for _, sfYAML := range sfYAMLs {
+		sf := folderYAML{Spec: *sfYAML}
+		if parentId != "" { // overwrite parents setting
+			sf.Spec.ParentRef.TargetTypeStr = parentType.String()
+			sf.Spec.ParentRef.TargetId = parentId
+		}
+		sf.APIVersion = apiCFTv1alpha1
+		sf.KindStr = Folder.String()
+
+		sfs = append(sfs, &sf)
+	}
+	return sfs
 }

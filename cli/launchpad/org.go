@@ -1,86 +1,89 @@
 package launchpad
 
 import (
+	"errors"
 	"fmt"
-	"github.com/pkg/errors"
 	"strings"
 )
 
+// orgSpecYAML defines an Organization's Spec.
+type orgSpecYAML struct {
+	Id             string            `yaml:"id"`          // GCP organization id.
+	DisplayName    string            `yaml:"displayName"` // Optional field to denote GCP organization name.
+	SubFolderSpecs []*folderSpecYAML `yaml:"folders"`
+}
+
+// orgYAML represents a GCP organization.
 type orgYAML struct {
 	headerYAML `yaml:",inline"`
 	Spec       orgSpecYAML `yaml:"spec"`
+	subFolders folders     // subFolder represents validated sub directories.
 }
 
-func (o *orgYAML) enroll(e *eval) error { return o.Spec.enroll(e) }
-func (o *orgYAML) validate() error      { return o.Spec.validate() }
+// refId returns an internal referencable id.
+func (o *orgYAML) refId() string { return fmt.Sprintf("%s.%s", Organization, o.Spec.Id) }
 
-// orgSpecYAML defines Organization Kind's spec.
-type orgSpecYAML struct {
-	Id          string          `yaml:"id"`
-	DisplayName string          `yaml:"displayName"`
-	Folders     folderSpecYAMLs `yaml:"folders"`
-}
+// String implements Stringer and generates a string representation.
+func (o *orgYAML) String() string { return strings.Join(o.dump(0), "\n") }
 
-func (o *orgSpecYAML) refId() string { return fmt.Sprintf("%s.%s", Organization, o.Id) }
-func (o *orgSpecYAML) dump(ind int) []string {
-	indent := strings.Repeat(" ", ind)
-	rep := fmt.Sprintf("%s%s.%s (\"%s\")", indent, Organization, o.Id, o.DisplayName)
-	buff := []string{rep}
-	for _, sf := range o.Folders {
-		buff = append(buff, sf.dump(ind+indentSize)...)
-	}
-	return buff
-}
-
-func (o *orgSpecYAML) validate() error {
+// validate ensures input YAML fields are correct.
+//
+// validate also populates subFolders.
+func (o *orgYAML) validate() error {
 	// TODO validate ORG spec
+
+	o.subFolders = newSubFoldersBySpecs(o.Spec.SubFolderSpecs, Organization, o.Spec.Id)
 	return nil
 }
 
-// enroll adds organization into eval along with its sub-resources.
-func (o *orgSpecYAML) enroll(e *eval) error {
-	e.register(o, nil)
-	for _, sf := range o.Folders {
-		if err := sf.enroll(e); err != nil {
+// addToOrg adds the organization into the assembled organization.
+//
+// addToOrg also recursively add organization's subFolders into the org.
+func (o *orgYAML) addToOrg(ao *assembledOrg) error {
+	ao.registerResource(o, nil)
+
+	for _, sf := range o.subFolders { // Recursively enroll sub-folders
+		if err := sf.addToOrg(ao); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (o *orgSpecYAML) String() string {
-	return strings.Join(o.dump(0), "\n")
-}
-
-// initializeByRef initializes an organization through other resource's reference.
-func (o *orgSpecYAML) initializeByRef(ref *referenceYAML) error {
-	if o.Id != "" && o.Id != ref.TargetId {
-		return errors.New("unable to initialize organization to a different id")
-	} else if o.Id == "" && ref.TargetId == "" {
-		return errors.New("unset org id")
-	}
-	o.Id = ref.TargetId
-	return nil
-}
-
-func (o *orgSpecYAML) initialize(oNew *orgSpecYAML) error {
-	if o.Id != "" && o.Id != oNew.Id {
-		return errors.New("unable to initialize organization to a different id")
-	} else if o.Id == "" && oNew.Id == "" {
-		return errors.New("unset org id")
-	}
-	// TODO validation?
-	return nil
-}
-
-// resolveRefs adds references to this organization as its sub-resources.
-func (o *orgSpecYAML) resolveRefs(refs []reference) error {
-	for _, r := range refs {
-		sf, ok := r.srcPtr.(*folderSpecYAML)
-		if !ok {
-			return errors.New("unable to add non folder as a sub-folder")
+// resolveReferences processes references to organization.
+//
+// resolveReferences takes reference from folder as a subFolder of this organization.
+func (o *orgYAML) resolveReferences(refs []resourceHandler) error {
+	for _, ref := range refs {
+		switch r := ref.(type) {
+		case *folderYAML:
+			o.subFolders.add(r)
+		default:
+			return errors.New("unable to process reference from resource")
 		}
-		o.Folders.add(sf)
 	}
 	return nil
+}
+
+// initializeByRef initializes an organization through another resource's reference.
+func (o *orgYAML) initializeByRef(ref *referenceYAML) error {
+	if o.Spec.Id != "" && o.Spec.Id != ref.TargetId {
+		return errors.New("unable to initialize organization to a different id")
+	} else if o.Spec.Id == "" && ref.TargetId == "" {
+		return errors.New("unset org id")
+	}
+	o.Spec.Id = ref.TargetId
+	return nil
+}
+
+// dump generates debug string slices representation.
+func (o *orgYAML) dump(ind int) []string {
+	indent := strings.Repeat(" ", ind)
+	rep := fmt.Sprintf("%s%s.%s (\"%s\")", indent, Organization, o.Spec.Id, o.Spec.DisplayName)
+	buff := []string{rep}
+
+	for _, sf := range o.subFolders {
+		buff = append(buff, sf.dump(ind+defaultIndentSize)...)
+	}
+	return buff
 }
