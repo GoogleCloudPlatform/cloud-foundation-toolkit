@@ -76,7 +76,9 @@ func (f *folderYAML) validate() error {
 //
 // addToOrg also recursively add folder's subFolders into the org.
 func (f *folderYAML) addToOrg(ao *assembledOrg) error {
-	ao.registerResource(f, &f.Spec.ParentRef)
+	if err := ao.registerResource(f, &f.Spec.ParentRef); err != nil {
+		return err
+	}
 
 	for _, sf := range f.subFolders { // Recursively enroll sub-folders
 		if err := sf.addToOrg(ao); err != nil {

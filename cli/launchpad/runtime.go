@@ -4,10 +4,13 @@
 package launchpad
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 )
+
+var errUndefinedReference = errors.New("undefined reference")
 
 // assembledOrg enables runtime reference tracking and allows resources to organized into an organization.
 type assembledOrg struct {
@@ -19,19 +22,25 @@ type assembledOrg struct {
 	org orgYAML
 }
 
+// newAssembledOrg creates and initializes an assembledOrg.
+func newAssembledOrg() *assembledOrg {
+	ao := assembledOrg{}
+	ao.resourceRegistry = make(map[string]resourceHandler)
+	ao.referenceTracker = make(map[string][]resourceHandler)
+	return &ao
+}
+
 // String implements Stringer and generates a string representation.
 func (ao *assembledOrg) String() string { return strings.Join(ao.dump(0), "\n") }
 
 // assembleResourcesToOrg takes in resources and assembles into an organization.
 func assembleResourcesToOrg(rs []resourceHandler) *assembledOrg {
-	ao := assembledOrg{}
-	ao.resourceRegistry = make(map[string]resourceHandler)
-	ao.referenceTracker = make(map[string][]resourceHandler)
+	ao := newAssembledOrg()
 
 	// discover resources in a DFS style
 	// updating ao.resourceRegistry and ao.referenceTracker for reference resolution
 	for _, r := range rs {
-		if err := r.addToOrg(&ao); err != nil {
+		if err := r.addToOrg(ao); err != nil {
 			log.Fatalln("error validating YAML", err.Error())
 		}
 	}
@@ -39,7 +48,7 @@ func assembleResourcesToOrg(rs []resourceHandler) *assembledOrg {
 	if err := ao.resolveReferences(); err != nil {
 		log.Fatalln("unable to resolve referenceTracker between YAML resources", err.Error())
 	}
-	return &ao
+	return ao
 }
 
 // registerResource registers a resource onto resourceRegistry and referenceTracker for later resolution.
@@ -49,18 +58,17 @@ func assembleResourcesToOrg(rs []resourceHandler) *assembledOrg {
 // be registered onto the assembledOrg.referenceTracker for dst -> [src...] mapping.
 //
 // If there are conflicting resources of the same id, silently pick the latest.
-func (ao *assembledOrg) registerResource(src resourceHandler, dst *referenceYAML) {
+func (ao *assembledOrg) registerResource(src resourceHandler, dst *referenceYAML) error {
 	srcId := src.refId()
 	ao.resourceRegistry[srcId] = src // silently replace mapping if exist
 
-	if dst == nil {	// no reference
-		return
+	if dst == nil { // no reference
+		return nil
 	}
 
 	if dst.TargetType() == Organization { // Initialize Organization
 		if err := ao.org.initializeByRef(dst); err != nil { // attempt to initialize org
-			log.Fatalln(fmt.Sprintf("org already initialized as %s, cannot initialize to %s",
-				ao.org.Spec.Id, dst.TargetId))
+			return err
 		}
 		// Org is special that we need to manually register it's ID for them
 		ao.resourceRegistry[ao.org.refId()] = &ao.org
@@ -69,6 +77,7 @@ func (ao *assembledOrg) registerResource(src resourceHandler, dst *referenceYAML
 
 	// update referenceTracker for references from src
 	ao.referenceTracker[dst.refId()] = append(ao.referenceTracker[dst.refId()], src)
+	return nil
 }
 
 // resolveReferences loops through referenceTracker to link up references.
@@ -78,7 +87,8 @@ func (ao *assembledOrg) resolveReferences() error {
 	for k, v := range ao.referenceTracker {
 		target, found := ao.resourceRegistry[k]
 		if !found {
-			log.Fatalln(fmt.Sprintf("reference %s does not exist", k))
+			log.Printf("fatal: reference %s does not exist\n", k)
+			return errUndefinedReference
 		}
 		// each resource holds its own resolve logic
 		if err := target.resolveReferences(v); err != nil {

@@ -3,8 +3,11 @@ package launchpad
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 )
+
+var errConflictId = errors.New("unable to initialize organization to a different id")
 
 // orgSpecYAML defines an Organization's Spec.
 type orgSpecYAML struct {
@@ -40,7 +43,9 @@ func (o *orgYAML) validate() error {
 //
 // addToOrg also recursively add organization's subFolders into the org.
 func (o *orgYAML) addToOrg(ao *assembledOrg) error {
-	ao.registerResource(o, nil)
+	if err := ao.registerResource(o, nil); err != nil {
+		return err
+	}
 
 	for _, sf := range o.subFolders { // Recursively enroll sub-folders
 		if err := sf.addToOrg(ao); err != nil {
@@ -68,8 +73,10 @@ func (o *orgYAML) resolveReferences(refs []resourceHandler) error {
 // initializeByRef initializes an organization through another resource's reference.
 func (o *orgYAML) initializeByRef(ref *referenceYAML) error {
 	if o.Spec.Id != "" && o.Spec.Id != ref.TargetId {
-		return errors.New("unable to initialize organization to a different id")
+		log.Printf("fatal: org already initialized to %s, cannot reinitialize to %s\n", o.Spec.Id, ref.TargetId)
+		return errConflictId
 	} else if o.Spec.Id == "" && ref.TargetId == "" {
+		log.Printf("fatal: trying to initialize org with empty Id\n")
 		return errors.New("unset org id")
 	}
 	o.Spec.Id = ref.TargetId
