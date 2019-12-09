@@ -1,0 +1,229 @@
+# Copyright 2019 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Resource Policy
+  author: Sourced Group Inc.
+  version: 1.0.0
+  description: |
+    Supports creation of a Resource Policy.
+
+    For more information on this resource:
+    https://cloud.google.com/compute/docs/reference/rest/v1/resourcePolicies.
+
+    APIs endpoints used by this template:
+    - gcp-types/compute-v1:resourcePolicies =>
+        https://cloud.google.com/compute/docs/reference/rest/v1/resourcePolicies/insert
+
+imports:
+  - path: resource_policy.py
+
+additionalProperties: false
+
+required:
+  - snapshotSchedulePolicy
+  - resource
+  - region
+
+properties:
+  description:
+    type: string
+  resource:
+    description: |
+      The name of the resource, provided by the client when initially
+      creating the resource. The resource name must be 1-63 characters long,
+      and comply with RFC1035. Specifically, the name must be 1-63 characters
+      long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which
+      means the first character must be a lowercase letter, and all following
+      characters must be a dash, lowercase letter, or digit, except the last
+      character, which cannot be a dash.
+    pattern: '[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?'
+    type: string
+  project:
+    type: string
+    description: |
+      The project ID of the project to create Resource Policy.
+  region:
+    description: |
+      Name of the region for this request.
+    pattern: '[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?'
+    type: string
+  snapshotSchedulePolicy:
+    $ref: '#/schemas/ResourcePolicySnapshotSchedulePolicy'
+    description: |
+      Resource policy for persistent disks for creating snapshots.
+
+schemas:
+  ResourcePolicyDailyCycle:
+    description: |
+      Time window specified for daily operations.
+    id: '#ResourcePolicyDailyCycle'
+    properties:
+      daysInCycle:
+        description: Defines a schedule that runs every nth day of the month.
+        format: int32
+        type: integer
+      startTime:
+        description: |
+          Start time of the window. This must be in UTC format that
+          resolves to one of 00:00, 04:00, 08:00, 12:00, 16:00, or 20:00. For
+          example, both 13:00-5 and 08:00 are valid.
+        type: string
+    type: object
+  ResourcePolicyHourlyCycle:
+    description: |
+      Time window specified for hourly operations.
+    id: '#ResourcePolicyHourlyCycle'
+    properties:
+      hoursInCycle:
+        description: Allows to define schedule that runs every nth hour.
+        format: int32
+        type: integer
+      startTime:
+        description: |
+          'Time within the window to start the operations. It must
+          be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.'
+        type: string
+    type: object
+  ResourcePolicySnapshotSchedulePolicy:
+    description: |
+      A snapshot schedule policy specifies when and how frequently
+      snapshots are to be created for the target disk. Also specifies how many
+      and how long these scheduled snapshots should be retained.
+    id: '#ResourcePolicySnapshotSchedulePolicy'
+    properties:
+      retentionPolicy:
+        $ref: '#/schemas/ResourcePolicySnapshotSchedulePolicyRetentionPolicy'
+        description: |
+          Retention policy applied to snapshots created by this resource
+          policy.
+      schedule:
+        $ref: '#/schemas/ResourcePolicySnapshotSchedulePolicySchedule'
+        description: |
+          A Vm Maintenance Policy specifies what kind of infrastructure
+          maintenance we are allowed to perform on this VM and when. Schedule
+          that is applied to disks covered by this policy.
+      snapshotProperties:
+        $ref: '#/schemas/ResourcePolicySnapshotSchedulePolicySnapshotProperties'
+        description: |
+          Properties with which snapshots are created such as labels,
+          encryption keys.
+    type: object
+  ResourcePolicySnapshotSchedulePolicyRetentionPolicy:
+    description: |
+      Policy for retention of scheduled snapshots.
+    id: '#ResourcePolicySnapshotSchedulePolicyRetentionPolicy'
+    properties:
+      maxRetentionDays:
+        description: |
+          Maximum age of the snapshot that is allowed to be kept.
+        format: int32
+        type: integer
+      onSourceDiskDelete:
+        description: |
+          Specifies the behavior to apply to scheduled snapshots
+          when the source disk is deleted.
+        enum:
+        - APPLY_RETENTION_POLICY
+        - KEEP_AUTO_SNAPSHOTS
+        - UNSPECIFIED_ON_SOURCE_DISK_DELETE
+        enumDescriptions:
+        - ''
+        - ''
+        - ''
+        type: string
+    type: object
+  ResourcePolicySnapshotSchedulePolicySchedule:
+    description: |
+      A schedule for disks where the schedueled operations are performed.
+    id: '#ResourcePolicySnapshotSchedulePolicySchedule'
+    properties:
+      dailySchedule:
+        $ref: '#/schemas/ResourcePolicyDailyCycle'
+      hourlySchedule:
+        $ref: '#/schemas/ResourcePolicyHourlyCycle'
+      weeklySchedule:
+        $ref: '#/schemas/ResourcePolicyWeeklyCycle'
+    type: object
+  ResourcePolicySnapshotSchedulePolicySnapshotProperties:
+    description: |
+      Specified snapshot properties for scheduled snapshots created
+      by this policy.
+    id: '#ResourcePolicySnapshotSchedulePolicySnapshotProperties'
+    properties:
+      guestFlush:
+        description: |
+          Indication to perform a ?guest aware? snapshot.
+        type: boolean
+      labels:
+        additionalProperties:
+          type: string
+        description: |
+          Labels to apply to scheduled snapshots. These can be later
+          modified by the setLabels method. Label values may be empty.
+        type: object
+      storageLocations:
+        description: |
+          Cloud Storage bucket storage location of the auto snapshot
+          (regional or multi-regional).
+        items:
+          type: string
+        type: array
+    type: object
+  ResourcePolicyWeeklyCycle:
+    description: |
+      Time window specified for weekly operations.
+    id: '#ResourcePolicyWeeklyCycle'
+    properties:
+      dayOfWeeks:
+        description: |
+          Up to 7 intervals/windows, one for each day of the week.
+        items:
+          $ref: '#/schemas/ResourcePolicyWeeklyCycleDayOfWeek'
+        type: array
+    type: object
+  ResourcePolicyWeeklyCycleDayOfWeek:
+    id: '#ResourcePolicyWeeklyCycleDayOfWeek'
+    properties:
+      day:
+        description: |
+          Allows to define schedule that runs specified day of the
+          week.
+        enum:
+        - MONDAY
+        - TUESDAY
+        - WEDNESDAY
+        - THURSDAY
+        - FRIDAY
+        - SATURDAY
+        - SUNDAY
+        type: string
+      startTime:
+        description: |
+          'Time within the window to start the operations. It must
+          be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.'
+        type: string
+    type: object
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The resource policy name.
+
+documentation:
+  - templates/resource_policy/README.md
+
+examples:
+  - templates/resource_policy/examples/resource_policy.yaml
