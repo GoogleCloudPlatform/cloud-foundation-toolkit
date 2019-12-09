@@ -57,23 +57,28 @@ maketemp() {
 # find_files is a helper to exclude .git directories and match only regular
 # files to avoid double-processing symlinks.
 find_files() {
-  local pth="$1"
+  local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
+    ".*/\.terraform"
+    ".*/\.kitchen"
+    ".*/.*\.png"
+    ".*/.*\.jpg"
+    ".*/.*\.jpeg"
+    ".*/.*\.svg"
+    "\./autogen"
+    "\./test/fixtures/all_examples"
+    "\./test/fixtures/shared"
+    "\./cache"
+    "\./test/source\.sh" )
   shift
+  EXCLUDE_LINT_DIRS+=( "${exclude_dirs[@]}" )
+  for ((index=0; index<$((${#EXCLUDE_LINT_DIRS[@]}-1)); ++index)); do
+    find_path_regex+="${EXCLUDE_LINT_DIRS[index]}|"
+  done
+  find_path_regex+="${EXCLUDE_LINT_DIRS[-1]})"
+
   # Note: Take care to use -print or -print0 when using this function,
   # otherwise excluded directories will be included in the output.
-  find "${pth}" '(' \
-    -path '*/.git' -o \
-    -path '*/.terraform' -o \
-    -path '*/.kitchen' -o \
-    -path '*/*.png' -o \
-    -path '*/*.jpg' -o \
-    -path '*/*.jpeg' -o \
-    -path '*/*.svg' -o \
-    -path './autogen' -o \
-    -path './test/fixtures/all_examples' -o \
-    -path './test/fixtures/shared' -o \
-    -path './cache' -o \
-    -path './test/source.sh' ')' \
+  find "${pth}" -regextype posix-egrep -regex "${find_path_regex}" \
     -prune -o -type f "$@"
 }
 
