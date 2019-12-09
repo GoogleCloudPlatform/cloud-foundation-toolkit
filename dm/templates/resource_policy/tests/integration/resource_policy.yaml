@@ -1,0 +1,50 @@
+# Test of the Resource Policy template.
+#
+# Variables:
+#   RAND: A random string used by the testing suite.
+#   REGION: A region to deploy instance with resource policy.
+
+imports:
+  - path: templates/resource_policy/resource_policy.py
+    name: resource_policy.py
+  - path: templates/instance/instance.py
+    name: instance.py
+
+resources:
+  - name: test-resource-policy-${RAND}
+    type: resource_policy.py
+    properties:
+      region: ${REGION}
+      resource: $(ref.instance-res-pol-${RAND}.name)
+      snapshotSchedulePolicy:
+        schedule:
+          weeklySchedule:
+            dayOfWeeks:
+              - day: "MONDAY"
+                startTime: "00:00"
+
+
+# Test prerequisites:
+  - name: instance-res-pol-${RAND}
+    type: instance.py
+    properties:
+      zone: ${REGION}-b
+      name: test-res-policy-inst-${RAND}
+      diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+      machineType: f1-micro
+      canIpForward: true
+      diskType: pd-ssd
+      diskSizeGb: 50
+      networks:
+        - network: $(ref.test-network-0-${RAND}.selfLink)
+          subnetwork: $(ref.test-subnetwork-0-${RAND}.selfLink)
+  - name: test-network-0-${RAND}
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: false
+  - name: test-subnetwork-0-${RAND}
+    type: compute.v1.subnetwork
+    properties:
+      network: $(ref.test-network-0-${RAND}.selfLink)
+      ipCidrRange: 10.0.1.0/24
+      region: ${REGION}
