@@ -16,7 +16,7 @@ This template creates an SSL certificate.
 
 - [gcp-types/compute-v1:sslCertificates](https://cloud.google.com/compute/docs/reference/rest/v1/sslCertificates)
 - [gcp-types/compute-beta:sslCertificates](https://cloud.google.com/compute/docs/reference/rest/beta/sslCertificates)
-(If `beta` flag turned on.) 
+(If `betaFeaturesEnabled` flag turned on.) 
 
 ### Properties
 
