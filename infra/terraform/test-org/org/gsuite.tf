@@ -109,14 +109,7 @@ resource "google_service_account_key" "ci_gsuite_sa" {
   service_account_id = google_service_account.ci_gsuite_sa.id
 }
 
-provider "google" {
-  alias       = "sa"
-  credentials = base64decode(google_service_account_key.ci_gsuite_sa.private_key)
-}
-
 resource "google_storage_bucket" "ci_gsuite_sa" {
-  provider = google.sa
-
   name          = local.ci_gsuite_sa_bucket
   storage_class = "MULTI_REGIONAL"
   project       = module.ci_gsuite_sa_project.project_id
@@ -129,31 +122,10 @@ resource "google_storage_bucket" "ci_gsuite_sa" {
 }
 
 resource "google_storage_bucket_object" "ci_gsuite_sa_json" {
-  provider = google.sa
-
   name    = local.ci_gsuite_sa_bucket_path
   content = base64decode(google_service_account_key.ci_gsuite_sa.private_key)
   bucket  = google_storage_bucket.ci_gsuite_sa.name
 }
-
-/* EXAMPLE: Retrieve json key in CI in the end-user's module
-
-data "google_storage_object_signed_url" "ci_gsuite_sa_json" {
-  bucket   = "ci-gsuite-sa-secrets"
-  path     = "gsuite-sa.json"
-  duration = "1m"
-}
-
-data "http" "ci_gsuite_sa_json" {
-  url = data.google_storage_object_signed_url.ci_gsuite_sa_json.signed_url
-}
-
-output "gsuite_sa_json" {
-  value     = data.http.ci_gsuite_sa_json.body
-  sensitive = true
-}
-
-*/
 
 # Grant G-Suite project rights to cft_ci_group.
 # Required to be able to create new gsuite sa keys and to fetch
