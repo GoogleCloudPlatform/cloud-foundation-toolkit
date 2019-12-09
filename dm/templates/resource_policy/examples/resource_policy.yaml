@@ -1,0 +1,26 @@
+# Example of the Resource Policy template usage.
+#
+# In this example, a Resource Policy is created from the existing source.
+#
+# Replace the following placeholders with valid values:
+#  <FIXME:location>: a region where the resource resides
+#  <FIXME:resource>: a resource to apply resource policy
+
+imports:
+  - path: templates/resource_policy/resource_policy.py
+    name: resource_policy.py
+
+resources: 
+  - name: test-resourcepolicy
+    type: resource_policy.py
+    properties:
+      region: <FIXME:location>
+      resource: <FIXME:resource>
+      description: |
+        Test Resource Policy
+      snapshotSchedulePolicy:
+        schedule:
+          weeklySchedule:
+            dayOfWeeks:
+              - day: "MONDAY"
+                startTime: "00:00"

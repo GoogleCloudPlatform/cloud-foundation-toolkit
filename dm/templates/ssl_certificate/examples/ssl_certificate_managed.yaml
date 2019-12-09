@@ -1,0 +1,18 @@
+# Example of the SSL certificate template usage.
+#
+# Replace the following placeholders with valid values:
+#   <FIXME:yourDomain>: DNS name for the managed certificate. (ex: test.cft.com)
+
+imports:
+  - path: templates/ssl_certificate/ssl_certificate.py
+    name: ssl_certificate.py
+
+resources:
+  - name: example-certificate
+    type: ssl_certificate.py
+    properties:
+      betaFeaturesEnabled: True
+      type: MANAGED
+      managed:
+        domains:
+          - <FIXME:yourDomain>

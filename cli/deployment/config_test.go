@@ -121,7 +121,7 @@ func TestFindAllDependencies_corner_cases(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			runGCloud = func(args ...string) (result string, err error) {
+			RunGCloud = func(args ...string) (result string, err error) {
 				expected := "deployment-manager deployments describe deploymentA --project projectA --format yaml"
 				actual := strings.Join(args, " ")
 				if expected != actual {
