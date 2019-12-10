@@ -1,7 +1,6 @@
 package launchpad
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -99,9 +98,15 @@ func (f *folderYAML) resolveReferences(refs []resourceHandler) error {
 	for _, ref := range refs {
 		switch r := ref.(type) {
 		case *folderYAML:
+			if f.Spec.Id != r.Spec.ParentRef.TargetId {
+				// caller should already ensure this once
+				log.Printf("fatail: mismatch parent id %s %s", f.refId(), r.Spec.ParentRef.refId())
+				return errInvalidParent
+			}
 			f.subFolders.add(r)
 		default:
-			return errors.New("unable to process reference from resource")
+			log.Printf("fatal: invalid %s parent for %s\n", f.refId(), r.refId())
+			return errInvalidInput
 		}
 	}
 	return nil
