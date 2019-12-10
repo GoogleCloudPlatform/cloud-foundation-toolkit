@@ -71,18 +71,20 @@ func TestFolderYAML_validate(t *testing.T) {
 		})
 	}
 }
+
+var testFolder = folderYAML{Spec: folderSpecYAML{
+	Id:             "f1",
+	DisplayName:    "fold1",
+	ParentRef:      referenceYAML{Organization.String(), "12345"},
+	SubFolderSpecs: []*folderSpecYAML{{Id: "sf1", DisplayName: "subf1"}, {Id: "sf2", DisplayName: "subf2"}},
+}}
+
 func TestFolderYAML_validateSubFolder(t *testing.T) {
-	f := folderYAML{Spec: folderSpecYAML{
-		Id:             "f1",
-		DisplayName:    "fold1",
-		ParentRef:      referenceYAML{Organization.String(), "12345"},
-		SubFolderSpecs: []*folderSpecYAML{{Id: "sf1", DisplayName: "subf1"}, {Id: "sf2", DisplayName: "subf2"}},
-	}}
-	assert.Len(t, f.subFolders, 0, "no default subfolder should exist")
-	err := f.validate()
+	assert.Len(t, testFolder.subFolders, 0, "no default subfolder should exist")
+	err := testFolder.validate()
 	assert.Nil(t, err, "does not expect validation failure")
 
-	sfs := f.subFolders // validated wrapped folders
+	sfs := testFolder.subFolders // validated wrapped folders
 	assert.Len(t, sfs, 2, "expected to have parsed folders")
 	var buff []string
 	for _, sf := range sfs {
@@ -94,7 +96,11 @@ func TestFolderYAML_validateSubFolder(t *testing.T) {
 }
 
 func TestFolderYAML_addToOrg(t *testing.T) {
-
+	//f := folderYAML{Spec: folderSpecYAML{
+	//	Id: "f1",
+	//	DisplayName: "fold1",
+	//	ParentRef:
+	//}}
 }
 
 func TestFolderYAML_resolveReferences(t *testing.T) {
