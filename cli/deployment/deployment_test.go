@@ -45,7 +45,7 @@ func TestDeploymentExecuteCreateUpdateDelete(t *testing.T) {
 	for _, tt := range executeTests {
 		t.Run(tt.action, func(t *testing.T) {
 			var actual []string
-			runGCloud = func(args ...string) (result string, err error) {
+			RunGCloud = func(args ...string) (result string, err error) {
 				actual = append(actual, strings.Join(args, " "))
 				return GetTestData("deployment", "describe-manifest.yaml", t), nil
 			}
@@ -103,7 +103,7 @@ func TestDeploymentExecuteApply(t *testing.T) {
 	for _, tt := range applyTests {
 		t.Run(tt.name, func(t *testing.T) {
 			var actual []string
-			runGCloud = func(args ...string) (result string, err error) {
+			RunGCloud = func(args ...string) (result string, err error) {
 				actual = append(actual, strings.Join(args, " "))
 				if strings.HasPrefix(actual[len(actual)-1], "deployment-manager deployments describe") {
 					if tt.status == NotFound {
