@@ -1,5 +1,5 @@
-name: my-networks
-description: my networks deployment
+name: test-network
+description: Network helper deployment
 
 imports:
   - path: ../../../../dm/templates/network/network.py
@@ -7,11 +7,13 @@ imports:
 
 resources:
   - type: network.py
-    name: my-network-prod
+    name: test-network-prod-1
     properties:
+      name: test-network-prod
       autoCreateSubnetworks: true
 
   - type: network.py
-    name: my-network-dev
+    name: test-network-dev-1
     properties:
+      name: test-network-dev
       autoCreateSubnetworks: false

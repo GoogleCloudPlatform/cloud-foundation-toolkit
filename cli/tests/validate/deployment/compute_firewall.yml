@@ -1,5 +1,5 @@
-name: my-firewalls
-description: My firewalls deployment
+name: test-compute-firewall
+description: Firewall types test
 
 imports:
   - path: ../../../../dm/templates/firewall/firewall.py
@@ -7,9 +7,9 @@ imports:
 
 resources:
   - type: firewall.py
-    name: my-firewall-prod
+    name: test-compute-firewall-prod
     properties:
-      network: $(out.my-networks.my-network-prod.name)
+      network: $(out.test-network.test-network-prod-1.name)
       rules:
         - name: allow-proxy-from-inside-prod
           allowed:
@@ -34,9 +34,9 @@ resources:
           destinationRanges:
             - 8.8.8.8/32
   - type: firewall.py
-    name: my-firewall-dev
+    name: test-compute-firewall-dev
     properties:
-      network: $(out.my-networks.my-network-dev.name)
+      network: $(out.test-network.test-network-dev-1.name)
       rules:
         - name: allow-proxy-from-inside-dev
           allowed:

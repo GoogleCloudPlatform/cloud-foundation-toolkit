@@ -1,0 +1,13 @@
+name: test-storage-bucket
+description: Storage bucket type test
+
+imports:
+  - path: ../../../../dm/templates/gcs_bucket/gcs_bucket.py
+    name: gcs_bucket.py
+
+resources:
+  - name: test-storage-bucket-1
+    type: gcs_bucket.py
+    properties:
+      name: test-storage-bucket
+      location: us-east1

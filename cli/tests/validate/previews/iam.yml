@@ -1,13 +1,13 @@
-name: project-iam
+name: test-iam
 description: Project IAM config
 
 imports:
-  - path: ../../..//dm/templates/iam_member/iam_member.py
+  - path: ../../../../dm/templates/iam_member/iam_member.py
     name: iam_member.py
 
 resources:
   - type: iam_member.py
-    name: project-iam
+    name: test-iam-1
     properties:
       projectId: "12345"
       roles:

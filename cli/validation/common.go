@@ -49,6 +49,9 @@ func mappers() map[string][]mapper {
 		"gcp-types/compute-beta:instances": {{convert: converter.GetComputeInstanceCaiObject}},
 		"compute.beta.instance":            {{convert: converter.GetComputeInstanceCaiObject}},
 
+		"gcp-types/storage-v1:buckets": {{convert: converter.GetStorageBucketCaiObject}},
+		"storage.v1.bucket":            {{convert: converter.GetStorageBucketCaiObject}},
+
 		"gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding": {
 			{
 				convert: converter.GetIamCaiObject,

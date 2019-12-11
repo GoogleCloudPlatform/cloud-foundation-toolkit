@@ -103,7 +103,7 @@ func TestCLI(t *testing.T) {
 func testValidatePassing(t *testing.T, dirTestdata string) {
 	stdOut, stdErr := runCft(t, false, cwd, []string{
 		"validate",
-		"my-networks",
+		"test-network",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_all"),
 	})
@@ -111,7 +111,7 @@ func testValidatePassing(t *testing.T, dirTestdata string) {
 
 	stdOut, stdErr = runCft(t, false, cwd, []string{
 		"validate",
-		"my-firewalls",
+		"test-compute-firewall",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_all"),
 	})
@@ -119,7 +119,7 @@ func testValidatePassing(t *testing.T, dirTestdata string) {
 
 	stdOut, stdErr = runCft(t, false, cwd, []string{
 		"validate",
-		"my-instance-prod-1",
+		"test-compute-instance",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_all"),
 	})
@@ -127,7 +127,15 @@ func testValidatePassing(t *testing.T, dirTestdata string) {
 
 	stdOut, stdErr = runCft(t, false, cwd, []string{
 		"validate",
-		"project-iam",
+		"test-iam",
+		"--policy-path",
+		filepath.Join(dirTestdata, "policies", "test_all"),
+	})
+	checkOutput(t, append(stdOut, stdErr...), []string{"No violations found."})
+
+	stdOut, stdErr = runCft(t, false, cwd, []string{
+		"validate",
+		"test-storage-bucket",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_all"),
 	})
@@ -137,7 +145,7 @@ func testValidatePassing(t *testing.T, dirTestdata string) {
 func testValidateFailing(t *testing.T, dirTestdata string) {
 	stdOut, stdErr := runCft(t, false, cwd, []string{
 		"validate",
-		"my-networks",
+		"test-network",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_none"),
 	})
@@ -145,7 +153,7 @@ func testValidateFailing(t *testing.T, dirTestdata string) {
 
 	stdOut, stdErr = runCft(t, false, cwd, []string{
 		"validate",
-		"my-firewalls",
+		"test-compute-firewall",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_none"),
 	})
@@ -158,19 +166,19 @@ func testValidateFailing(t *testing.T, dirTestdata string) {
 
 	stdOut, stdErr = runCft(t, false, cwd, []string{
 		"validate",
-		"my-instance-prod-1",
+		"test-compute-instance",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_none"),
 	})
 	checkOutput(t, append(stdOut, stdErr...), []string{
 		"Found Violations",
 		"Constraint gcp-compute-zone",
-		"//compute\\.googleapis\\.com/projects/.+/zones/us-central1-a/instances/my-instance-prod-1",
+		"//compute\\.googleapis\\.com/projects/.+/zones/us-central1-a/instances/test-compute-instance",
 	})
 
 	stdOut, stdErr = runCft(t, false, cwd, []string{
 		"validate",
-		"project-iam",
+		"test-iam",
 		"--policy-path",
 		filepath.Join(dirTestdata, "policies", "test_none"),
 	})
@@ -179,23 +187,43 @@ func testValidateFailing(t *testing.T, dirTestdata string) {
 		"Constraint iam_ban_roles",
 		"//cloudresourcemanager\\.googleapis\\.com/projects/12345",
 	})
+
+	stdOut, stdErr = runCft(t, false, cwd, []string{
+		"validate",
+		"test-storage-bucket",
+		"--policy-path",
+		filepath.Join(dirTestdata, "policies", "test_none"),
+	})
+	checkOutput(t, append(stdOut, stdErr...), []string{
+		"Found Violations",
+		"Constraint gcp-storage-location",
+		"//storage\\.googleapis\\.com/test-storage-bucket",
+	})
 }
 
 func setupValidate(t *testing.T, dirTestdata string) {
 	runCft(t, false, cwd, []string{"apply", filepath.Join(dirTestdata, "deployment")})
-	runCft(t, false, cwd, []string{"apply", "--preview", filepath.Join(dirTestdata, "iam.yml")})
+
+	files, _ := filepath.Glob(filepath.Join(dirTestdata, "previews", "*.yml"))
+	for _, file := range files {
+		runCft(t, false, cwd, []string{"apply", "--preview", file})
+	}
 }
 
 func destroyValidate(t *testing.T, dirTestdata string) {
 	runCft(t, false, cwd, []string{"delete", filepath.Join(dirTestdata, "deployment")})
-	runCft(t, false, cwd, []string{"delete", filepath.Join(dirTestdata, "iam.yml")})
+
+	files, _ := filepath.Glob(filepath.Join(dirTestdata, "previews", "*.yml"))
+	for _, file := range files {
+		runCft(t, false, cwd, []string{"delete", file})
+	}
 }
 
 func checkOutput(t *testing.T, data []byte, regex []string) {
 	for _, reg := range regex {
 		wantRe := regexp.MustCompile(reg)
 		if !wantRe.Match(data) {
-			t.Fatalf("Wrong output output, \ngot=%s \nwant (regex)=%s", string(data), reg)
+			t.Fatalf("Wrong output, got:\n%s \nwant (regex)=%s", string(data), reg)
 		}
 	}
 }

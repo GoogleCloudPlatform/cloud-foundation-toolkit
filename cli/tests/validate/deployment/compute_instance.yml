@@ -1,0 +1,28 @@
+name: test-compute-instance
+description: Compute instance test
+
+imports:
+  - path: ../../../../dm/templates/instance/instance.py
+    name: instance.py
+
+resources:
+  - name: test-compute-instance-1
+    type: instance.py
+    properties:
+      name: test-compute-instance
+      zone: us-central1-a
+      diskImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+      diskSizeGb: 10
+      machineType: f1-micro
+      diskType: pd-ssd
+      network: $(out.test-network.test-network-prod-1.name)
+      metadata:
+        items:
+          - key: startup-script
+            value: sudo apt-get update && sudo apt-get install -y nginx
+      tags:
+        items:
+          - test1-$(out.test-network.test-network-prod-1.name)-test2
+      labels:
+        items1: test1-$(out.test-network.test-network-prod-1.name)-test2
+        items2: test1-$(out.test-network.test-network-prod-1.name)-test2-$(out.test-network.test-network-prod-1.name)-test3
