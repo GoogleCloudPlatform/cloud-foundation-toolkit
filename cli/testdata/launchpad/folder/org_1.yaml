@@ -1,7 +1,7 @@
 apiVersion: cft.dev/v1alpha1
 kind: Organization
 spec:
-  id: 12345678 #ORGANIZATION_ID
+  id: 12345678
   displayName: "my-org"
   folders:
     - id: "group1"

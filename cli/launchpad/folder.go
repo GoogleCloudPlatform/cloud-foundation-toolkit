@@ -60,7 +60,6 @@ func (f *folderYAML) validate() error {
 		return errInvalidParent
 	}
 
-	// TODO validate misc
 	if ind := tfNameRegex.FindStringIndex(f.Spec.Id); ind == nil {
 		log.Printf("GCP Folder [%s] ID does not conform to Terraform standard", f.Spec.DisplayName)
 		return errValidationFailed

@@ -72,7 +72,6 @@ func (ao *assembledOrg) registerResource(src resourceHandler, dst *referenceYAML
 		}
 		// Org is special that we need to manually register it's ID for them
 		ao.resourceRegistry[ao.org.refId()] = &ao.org
-		// TODO take care of explicit org initialization case
 	}
 
 	// update referenceTracker for references from src

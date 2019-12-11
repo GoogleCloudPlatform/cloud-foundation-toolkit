@@ -33,7 +33,9 @@ func (o *orgYAML) String() string { return strings.Join(o.dump(0), "\n") }
 //
 // validate also populates subFolders.
 func (o *orgYAML) validate() error {
-	// TODO validate ORG spec
+	if o.Spec.Id == "" {
+		return errValidationFailed
+	}
 
 	o.subFolders = newSubFoldersBySpecs(o.Spec.SubFolderSpecs, Organization, o.Spec.Id)
 	return nil
@@ -43,6 +45,13 @@ func (o *orgYAML) validate() error {
 //
 // addToOrg also recursively add organization's subFolders into the org.
 func (o *orgYAML) addToOrg(ao *assembledOrg) error {
+	// assembledOrg.org could have already been initialized by others via reference, or explicitly
+	// need to copy all fields over
+	if err := o.mergeFields(&ao.org); err != nil {
+		return err
+	}
+	ao.org = *o // replace finalized org as the current org.
+
 	if err := ao.registerResource(o, nil); err != nil {
 		return err
 	}
@@ -80,6 +89,23 @@ func (o *orgYAML) initializeByRef(ref *referenceYAML) error {
 		return errors.New("unset org id")
 	}
 	o.Spec.Id = ref.TargetId
+	return nil
+}
+
+// mergeFields merges all fields from input to current resource.
+//
+// mergeFields is NOT recursive. However, future version can consider recursively merging
+// all sub resources through additional of mergeFields requirement in resourceHandler.
+func (o *orgYAML) mergeFields(oldO *orgYAML) error {
+	if oldO.APIVersion != "" {
+		o.APIVersion = oldO.APIVersion
+	}
+	if oldO.Spec.DisplayName != "" {
+		o.APIVersion = oldO.Spec.DisplayName
+	}
+	// TODO (FR) recursively merge folderSpecYAML projectSpecYAML ...etc
+	// resolveReferences ensures output linkage is valid, hence not a priority as this is a cleanup.
+	// downside is {resource}SpecYAML sub-resources are misaligned.
 	return nil
 }
 
