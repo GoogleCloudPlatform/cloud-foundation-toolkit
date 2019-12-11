@@ -84,6 +84,31 @@ function teardown() {
     [[ "$status" -eq 0 ]]
 }
 
+@test "Check Slack notification channel configuration" {
+    run gcloud alpha monitoring channels list \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "displayName: ${SLACK_DISPLAY_NAME}" ]]
+    [[ "$output" =~ "channel_name: '${SLACK_CHANNEL_NAME}'" ]]
+    [[ "$output" =~ "type: ${SLACK_TYPE}" ]]
+    [[ "$output" =~ "name: projects/${CLOUD_FOUNDATION_PROJECT_ID}/notificationChannels/" ]]
+}
+
+@test "Check alert policies" {
+    run gcloud alpha monitoring policies list \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "combiner: OR" ]]
+    [[ "$output" =~ "displayName: ${TEST_POLICY_NAME}" ]]
+    [[ "$output" =~ "alignmentPeriod: ${CONDITION_AGGREGATION_ALIGNMENT_PERIOD}" ]]
+    [[ "$output" =~ "crossSeriesReducer: ${CONDITION_AGGREGATION_CROSS_SERIES_REDUCER}" ]]
+    [[ "$output" =~ "perSeriesAligner: ${CONDITION_AGGREGATION_ALIGNMENT_PER_SERIES}" ]]
+    [[ "$output" =~ "comparison: ${CONDITION_COMPARISON}" ]]
+    [[ "$output" =~ "duration: ${CONDITION_DURATION}" ]]
+    [[ "$output" =~ "displayName: ${CONDITION_DISPLAY_NAME}" ]]
+    [[ "$output" =~ "count: ${CONDITION_TRIGGER_COUNT}" ]]
+}
+
 @test "Deleting deployment ${DEPLOYMENT_NAME}" {
     run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q

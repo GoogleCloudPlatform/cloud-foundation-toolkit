@@ -6,6 +6,7 @@ This template creates a Stackdriver Notification Channel.
 
 - Install [gcloud](https://cloud.google.com/sdk)
 - Create a [GCP project, set up billing, enable requisite APIs](../project/README.md)
+- Enable the [Stackdriver Monitoring AP](https://cloud.google.com/monitoring/api/ref_v3/rest/)
 - Create a [Stackdriver Workspace](https://cloud.google.com/monitoring/workspaces/)
 - Log in to the [Stackdriver Workspace](https://cloud.google.com/monitoring/workspaces/)
   where the metric has to be deployed

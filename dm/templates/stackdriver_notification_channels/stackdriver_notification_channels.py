@@ -13,8 +13,6 @@
 # limitations under the License.
 """ This template creates a Stackdriver Metric Descriptor. """
 
-DEFAULT_MIME_TYPE = "text/markdown"
-
 
 def get_condition_threshold(condition_properties):
     condition_threshold = {}
@@ -65,7 +63,7 @@ def generate_config(context):
             'properties': {
                 'name': 'projects/{}'.format(project_id),
                 'type': channel_type,
-                'enabled': True,
+                'enabled': channel['channelEnabled'],
                 'displayName': channel['displayName'],
                 'labels': channel['labels']
             }
@@ -79,10 +77,10 @@ def generate_config(context):
                 'displayName': policy['name'],
                 'documentation': {
                     'content': policy['documentationContent'],
-                    'mimeType': DEFAULT_MIME_TYPE
+                    'mimeType': policy['mimeType']
                 },
-                'combiner': 'OR',
-                'enabled': True,
+                'combiner': policy['combiner'],
+                'enabled': policy['policyEnabled'],
                 'conditions': get_policy_conditions(policy['conditions']),
                 'notificationChannels': notification_channel_names
             }

@@ -22,8 +22,7 @@ resources:
     type: stackdriver_notification_channels.py
     properties:
       notificationChannels:
-        -
-          displayName: "name"
+        - displayName: "name"
           typeName: "slack"
           labels:
             channel_name: "#slack-channel"

@@ -12,6 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+info:
+  title: Stackdriver Notification Channels
+  author: Sourced Group Inc.
+  version: 1.0.0
+  description: |
+    Supports creation of the Stackdriver notification channel and alert resources.
+
+    For more information on this resource:
+    - https://cloud.google.com/monitoring/alerts/using-channels-api
+    - https://cloud.google.com/monitoring/alerts/using-alerting-api
+
+    APIs endpoints used by this template:
+    - gcp-types/monitoring-v3:projects.notificationChannels =>
+        https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.notificationChannels
+    - gcp-types/monitoring-v3:projects.alertPolicies =>
+        https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.alertPolicies
+
 imports:
   - path: stackdriver_notification_channels.py
 
@@ -34,6 +51,10 @@ properties:
       required:
         - typeName
       properties:
+        channelEnabled:
+          type: boolean
+          default: True
+          description: Whether or not the channel is enabled.
         labels:
           description: Configuration fields that define the channel and its behavior.
           type: object
@@ -70,19 +91,32 @@ properties:
             name for multiple policies in the same project. The name is limited to 512
             Unicode characters.
           type: string
+        policyEnabled:
+          type: boolean
+          default: True
+          description: Whether or not the policy is enabled.
+        combiner:
+          description: |
+            The conditions are combined by AND or OR according
+            to the combiner field. If the combined conditions
+            evaluate to true, then an incident is created.
+          type: string
+          default: OR
         conditions:
           type: array
-          description: |
-            A list of conditions for the policy. The conditions are combined
-            by AND or OR according to the combiner field. If the combined conditions
-            evaluate to true, then an incident is created. A policy can have from one
-            to six conditions.
+          minItems: 1
+          maxItems: 6
+          description: A list of conditions for the policy.
         documentationContent:
           description: |
             The text of the documentation, interpreted according to mime_type.
             The content may not exceed 8,192 Unicode characters and may not exceed more
             than 10,240 bytes when encoded in UTF-8 format, whichever is smaller.
           type: string
+        mimeType:
+          description: Content type
+          type: string
+          default: text/markdown
 outputs:
   properties:
     - name:
