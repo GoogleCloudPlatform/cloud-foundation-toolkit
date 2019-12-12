@@ -1,0 +1,160 @@
+# Copyright 2019 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: Stackdriver Notification Channels
+  author: Sourced Group Inc.
+  version: 1.0.0
+  description: |
+    Supports creation of the Stackdriver notification channel and alert resources.
+
+    For more information on this resource:
+    - https://cloud.google.com/monitoring/alerts/using-channels-api
+    - https://cloud.google.com/monitoring/alerts/using-alerting-api
+
+    APIs endpoints used by this template:
+    - gcp-types/monitoring-v3:projects.notificationChannels =>
+        https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.notificationChannels
+    - gcp-types/monitoring-v3:projects.alertPolicies =>
+        https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.alertPolicies
+
+imports:
+  - path: stackdriver_notification_channels.py
+
+required:
+  - notificationChannels
+  - policies
+
+properties:
+  notificationChannels:
+    type: array
+    minItems: 1
+    description: |
+        A NotificationChannel is a medium through which an alert is delivered
+        when a policy violation is detected. Examples of channels include email, SMS,
+        and third-party messaging applications. Fields containing sensitive information
+        like authentication tokens or contact info are only partially populated on retrieval.
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - typeName
+      properties:
+        channelEnabled:
+          type: boolean
+          default: True
+          description: Whether or not the channel is enabled.
+        labels:
+          description: Configuration fields that define the channel and its behavior.
+          type: object
+          additionalProperties: true
+        verificationStatus:
+          description: Indicates whether this channel has been verified or not.
+          type: string
+        description:
+          description: An optional human-readable description of this notification channel. This may not exceed 1024 Unicode characters.
+          type: string
+        displayName:
+          type: string
+          description: An optional human-readable name for this notification channel.
+        typeName:
+          type: string
+          description: The type of the notification channel.
+  policies:
+    type: array
+    minItems: 1
+    description: |
+      A description of the conditions under which some aspect of your system
+      is considered to be "unhealthy" and the ways to notify people or services about
+      this state. For an overview of alert policies, see Introduction to Alerting.
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          description: |
+            A short name or phrase used to identify the policy in dashboards,
+            notifications, and incidents. To avoid confusion, don't use the same display
+            name for multiple policies in the same project. The name is limited to 512
+            Unicode characters.
+          type: string
+        policyEnabled:
+          type: boolean
+          default: True
+          description: Whether or not the policy is enabled.
+        combiner:
+          description: |
+            The conditions are combined by AND or OR according
+            to the combiner field. If the combined conditions
+            evaluate to true, then an incident is created.
+          type: string
+          default: OR
+        conditions:
+          type: array
+          minItems: 1
+          maxItems: 6
+          description: A list of conditions for the policy.
+        documentationContent:
+          description: |
+            The text of the documentation, interpreted according to mime_type.
+            The content may not exceed 8,192 Unicode characters and may not exceed more
+            than 10,240 bytes when encoded in UTF-8 format, whichever is smaller.
+          type: string
+        mimeType:
+          description: Content type
+          type: string
+          default: text/markdown
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The name of the Metric Descriptor.
+    - type:
+        type: string
+        description: The metric type as defined in the descriptor.
+    - labels:
+        type: array
+        description: List of the defined labels.
+        minItems: 0
+        items:
+          type: string
+    - metricKind:
+        type: string
+        description: The metric kind as defined.
+    - valueType:
+        type: string
+        description: The measurement type (int, string, etc.).
+    - unit:
+        type: string
+        description: The unit in which the metric value is reported.
+    - description:
+        type: string
+        description: The metric description.
+    - displayName:
+        type: string
+        description: The display name of the metric.
+    - metadata:
+        type: object
+        additionalProperties: false
+        description: Metadata associated with the metric.
+
+documentation:
+  - templates/stackdriver_metric_descriptor/README.md
+
+
+
+
+

@@ -36,7 +36,11 @@ locals {
   ci_group_gsuite_sa_project_roles = [
     "roles/owner",
     "roles/iam.serviceAccountAdmin",
+    "roles/storage.admin",
   ]
+
+  ci_gsuite_sa_bucket      = "ci-gsuite-sa-secrets"
+  ci_gsuite_sa_bucket_path = "gsuite-sa.json"
 }
 
 resource "google_folder" "ci_gsuite_sa_folder" {
@@ -99,8 +103,33 @@ resource "google_billing_account_iam_member" "ci_gsuite_sa_billing" {
   member             = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
 }
 
-# Grant G-Suite project rights to cft_ci_group
-# Required to be able to create keys for the gsuite sa.
+// Generate a json key and put it into the secrets bucket.
+
+resource "google_service_account_key" "ci_gsuite_sa" {
+  service_account_id = google_service_account.ci_gsuite_sa.id
+}
+
+resource "google_storage_bucket" "ci_gsuite_sa" {
+  name          = local.ci_gsuite_sa_bucket
+  storage_class = "MULTI_REGIONAL"
+  project       = module.ci_gsuite_sa_project.project_id
+
+  versioning {
+    enabled = true
+  }
+
+  force_destroy = true
+}
+
+resource "google_storage_bucket_object" "ci_gsuite_sa_json" {
+  name    = local.ci_gsuite_sa_bucket_path
+  content = base64decode(google_service_account_key.ci_gsuite_sa.private_key)
+  bucket  = google_storage_bucket.ci_gsuite_sa.name
+}
+
+# Grant G-Suite project rights to cft_ci_group.
+# Required to be able to create new gsuite sa keys and to fetch
+# the precreated one from the secrets bucket.
 
 resource "google_project_iam_member" "ci_group_gsuite_sa_project" {
   for_each = toset(local.ci_group_gsuite_sa_project_roles)

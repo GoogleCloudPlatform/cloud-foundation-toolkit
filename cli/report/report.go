@@ -40,6 +40,9 @@ func GenerateReports(dirPath string, queryPath string, outputPath string, report
 		return err
 	}
 	results, err := generateReportData(rawAssetFileName, queryPath, outputPath)
+	if err != nil {
+		return err
+	}
 	printReports(results, outputPath, reportFormat, fileSuffix)
 	return nil
 }
@@ -89,9 +92,7 @@ func findReports(paths []string) (results interface{}, err error) {
 }
 
 func generateReportData(rawAssetFileName string, queryPath string, outputPath string) (results interface{}, err error) {
-	results, err = findReports([]string{filepath.Join(outputPath, rawAssetFileName), queryPath})
-
-	return results, nil
+	return findReports([]string{filepath.Join(outputPath, rawAssetFileName), queryPath})
 }
 
 func printReports(results interface{}, reportOutputPath string, format string, fileSuffix string) error {

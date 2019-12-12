@@ -1,0 +1,45 @@
+# Test of the Stackdriver Metric Descriptor template.
+
+########## NOTE ###########################
+# These tests need to be run in the Stackdriver workspace.
+#
+# To list the current context:
+#  gcloud config list
+#
+# To switch context:
+#  gcloud config set project <stackdriver_workspace_project>
+#
+###########################################
+
+imports:
+  - path: templates/stackdriver_notification_channels/stackdriver_notification_channels.py
+    name: stackdriver_notification_channels.py
+
+resources:
+  - name: my-notification-channels
+    type: stackdriver_notification_channels.py
+    properties:
+      notificationChannels:
+        - displayName: ${SLACK_DISPLAY_NAME}
+          typeName: ${SLACK_TYPE}
+          labels:
+            channel_name: "${SLACK_CHANNEL_NAME}"
+            auth_token: ${SLACK_TOKEN}
+      policies:
+        - name: ${TEST_POLICY_NAME}
+          documentationContent: "${TEST_POLICY_DOCUMENTATION_CONTEXT}"
+          conditions:
+            - displayName: ${CONDITION_DISPLAY_NAME}
+              filter: "${CONDITION_FILTER}"
+              comparison: ${CONDITION_COMPARISON}
+              duration: ${CONDITION_DURATION}
+              thresholdValue: ${CONDITION_THRESHOLD_VALUE}
+              trigger:
+                count: ${CONDITION_TRIGGER_COUNT}
+              aggregations:
+                - alignmentPeriod: ${CONDITION_AGGREGATION_ALIGNMENT_PERIOD}
+                  perSeriesAligner: ${CONDITION_AGGREGATION_ALIGNMENT_PER_SERIES}
+                  crossSeriesReducer: ${CONDITION_AGGREGATION_CROSS_SERIES_REDUCER}
+                  groupByFields:
+                    - ${CONDITION_AGGREGATION_GROUP_BY_FIELD}
+

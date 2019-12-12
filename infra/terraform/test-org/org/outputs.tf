@@ -45,3 +45,16 @@ output "ci_gsuite_sa_folder_id" {
 output "ci_gsuite_sa_project_id" {
   value = module.ci_gsuite_sa_project.project_id
 }
+
+output "ci_gsuite_sa_key" {
+  value     = google_service_account_key.ci_gsuite_sa.private_key
+  sensitive = true
+}
+
+output "ci_gsuite_sa_bucket" {
+  value = google_storage_bucket.ci_gsuite_sa.name
+}
+
+output "ci_gsuite_sa_bucket_path" {
+  value = google_storage_bucket_object.ci_gsuite_sa_json.name
+}
