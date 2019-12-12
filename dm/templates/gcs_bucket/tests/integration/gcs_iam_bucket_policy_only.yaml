@@ -1,0 +1,18 @@
+# Test of the Cloud Storage bucket template with bucketPolicyOnly option.
+#
+# Variables (declared in the gcs_bucket.bats file):
+#   BUCKET_NAME: a globally unique Cloud Storage bucket name
+
+imports:
+  - path: templates/gcs_bucket/gcs_bucket.py
+    name: gcs_bucket.py
+
+resources:
+  - name: ${BUCKET_NAME}
+    type: gcs_bucket.py
+    properties:
+      name: ${BUCKET_NAME}
+      location: us-east1
+      iamConfiguration:
+        bucketPolicyOnly:
+          enabled: True

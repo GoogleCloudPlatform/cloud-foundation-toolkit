@@ -15,7 +15,7 @@
 info:
   title: Google Cloud Storage Bucket
   author: Sourced Group Inc.
-  version: 1.1.0
+  version: 1.1.1
   description: |
     Supports creation of a Google Cloud Storage bucket.
 
@@ -101,7 +101,7 @@ properties:
     default: STANDARD
     description: |
       The bucket's default storage class. Defines how objects
-      in the bucket are stored; determines the SLA and the 
+      in the bucket are stored; determines the SLA and the
       cost of storage.
     enum:
       - REGIONAL
@@ -122,7 +122,6 @@ properties:
         description: Enables/disables object versioning.
   predefinedAcl:
     type: string
-    default: private
     description: |
       The predefined or "canned" ACL - an alias for a set of specific
       ACL entries that you can use to quickly apply multiple ACL entries
@@ -136,7 +135,6 @@ properties:
       - publicReadWrite
   predefinedDefaultObjectAcl:
     type: string
-    default: private
     enum:
       - authenticatedRead
       - bucketOwnerFullControl
@@ -406,7 +404,7 @@ properties:
               properties:
                 storageClass:
                   type: string
-                  description: 
+                  description:
                     The storage class to switch on if the condition is met.
                   enum:
                     - NEARLINE
@@ -448,14 +446,14 @@ properties:
                 isLive:
                   type: boolean
                   description: |
-                    Defines whether the object is live. Applies only to 
+                    Defines whether the object is live. Applies only to
                     versioned objects.
                 numNewerVersions:
                   type: number
                   description: |
                     The number of newer versions. Selects all objects with
                     at least that many newer versions. Applies only to
-                    versioned objects. 
+                    versioned objects.
   labels:
     type: object
     description: User-provided labels in key/value pairs.
@@ -476,7 +474,7 @@ properties:
           The suffix that allows creation of index.html objects to represent
           directory pages. If the requested object path is missing, the service
           ensures that the trailing '/' is present, appends this suffix, and
-          attempt to retrieve the resulting object. 
+          attempt to retrieve the resulting object.
       notFoundPage:
         type: string
         description: |
