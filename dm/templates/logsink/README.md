@@ -26,6 +26,30 @@ resource.
   IAM role to the project service account if creating bq logging sink
   destination
 
+#### If you are going to create bucket, pubsub or BigQuery destinations in current project:  
+
+- Grant the [resourcemanager.projectIamAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the project to the *DM Service Account* to grant roles within the project
+- Grant the [roles/resourcemanager.folderIamAdmin owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the folder to the *DM Service Account* to grant roles within the folder
+- Grant the [roles/iam.securityAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the organization to the *DM Service Account* to grant roles within the organization and all nested resources
+- Grant the [logging.configWriter or logging.admin](https://cloud.google.com/logging/docs/access-control) IAM role on the project to the *DM Service Account* to grant roles within the project
+
+## If you specify destination project and are going to create bucket, pubsub or BigQuery destinations:
+
+- Grant the [resourcemanager.projectIamAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the project to the *DM Service Account* to grant roles within the project
+- Grant the [roles/resourcemanager.folderIamAdmin owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the folder to the *DM Service Account* to grant roles within the folder
+- Grant the [roles/iam.securityAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the organization to the *DM Service Account* to grant roles within the organization and all nested resources
+- Grant the [logging.configWriter or logging.admin](https://cloud.google.com/logging/docs/access-control) IAM role on the project to the *DM Service Account* to grant roles within the project
+  IAM role to the project service account
+- Grant the [`pubsub.admin`](https://cloud.google.com/pubsub/docs/access-control)
+  IAM role to the project service account if creating a pubsub logging sink
+  destination
+- Grant the [`storage.admin`](https://cloud.google.com/storage/docs/access-control/iam-roles)
+  IAM role to the project service account if creating a bucket logging sink
+  destination
+- Grant the [`bigquery.admin`](https://cloud.google.com/bigquery/docs/access-control)
+  IAM role to the project service account if creating bq logging sink
+  destination
+
 ## Deployment
 
 ### Resources

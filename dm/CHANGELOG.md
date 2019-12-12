@@ -6,19 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ### 11.12.2019
 
-- Added Stackdriver Notification Channels template [#432] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/485) 
+- Updated logging sink configuration to export entries to a desired destination in external project [#77](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/496)
+- Added Stackdriver Notification Channels template [#432](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/485)
 
 ### 09.12.2019 Ho-ho-ho
 
-- SSL-Certificate template supports beta features (managed certificate). This update is backwards compatible. [#505] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/505)
+- SSL-Certificate template supports beta features (managed certificate). This update is backwards compatible. [#505](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/505)
 
 ### 09.12.2019
 
-- Added 'resource_policy' DM template [#497] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/497)
+- Added 'resource_policy' DM template [#497](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/497)
 
 ### 05.12.2019
 
-- Updated internal LB and external LB templates according to backend_service.py.schema change [#476] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/476)
+- Updated internal LB and external LB templates according to backend_service.py.schema change [#476](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/476)
 
 ### 02.12.2019
 
@@ -26,29 +27,29 @@ All notable changes to this project will be documented in this file.
 
 ### 25.11.2019
 
-- In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddress` output [#477] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/477)
+- In `cloud_sql.py`, added support for PostgreSQL 11 & fixed `ipAddress` output [#477](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/477)
 
 ### 22.11.2019
 
-- Fixed sharedVPC for GKE use case behaviour in 'project' DM template [#469] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/469)
+- Fixed sharedVPC for GKE use case behaviour in 'project' DM template [#469](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/469)
 
 ### 22.11.2019
 
-- Cloud Build Trigger support for Github [#470] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
+- Cloud Build Trigger support for Github [#470](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
 - CI example for Github triggering Cloudbuild for PRs
 
 ### 21.11.2019
 
-- Added support for unified Stackdriver Kubernetes Engine Monitoring [#463] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
-- Add explicit dependencies to the 'iam_member' DM template to avoid fail, in case of a large amount of bindings (30+) [#443] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/443)
+- Added support for unified Stackdriver Kubernetes Engine Monitoring [#463](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/463)
+- Add explicit dependencies to the 'iam_member' DM template to avoid fail, in case of a large amount of bindings (30+) [#443](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/443)
 
 ### 18.11.2019
 
-- The [GCS Bucket template](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/ocsig-patch-storage1/dm/templates/gcs_bucket) supports gcp-types/storage-v1:virtual.buckets.iamMemberBinding. [#453] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/453)
+- The [GCS Bucket template](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/ocsig-patch-storage1/dm/templates/gcs_bucket) supports gcp-types/storage-v1:virtual.buckets.iamMemberBinding. [#453](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/453)
 
 ### 31.10.2019
 
-- New helper template to use firewall with Google important IP ranges, stored in YAML [#370] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/370)
+- New helper template to use firewall with Google important IP ranges, stored in YAML [#370](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/370)
 
 ### 29.10.2019
 
@@ -56,13 +57,13 @@ All notable changes to this project will be documented in this file.
 
 ### 25.10.2019
 
-- Fixed examples for ELB to pass the new (strict) schema validation [#392] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/392)
-- Added support for GKE on SharedVPC for the Project Factory and better visibility for the GKE Service Accounts [#385] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/385)
-- Fixed IAM member binding schema to truly support the lack of project property. [#384] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/384)
-- The CFT CLI (go version) support complex cross deployment references [#359] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/359)
-- Added a Docker container for running bats tests on your local source code for template developers [#355] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/355)
-- New exapmle: [Instance with a private IP](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/dm/templates/instance/examples/instance_private.yaml) [#346] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/346)
-- New template: [Cloud Filestore](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/dm/templates/cloud_filestore) [#348] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/348)
+- Fixed examples for ELB to pass the new (strict) schema validation [#392](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/392)
+- Added support for GKE on SharedVPC for the Project Factory and better visibility for the GKE Service Accounts [#385](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/385)
+- Fixed IAM member binding schema to truly support the lack of project property. [#384](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/384)
+- The CFT CLI (go version) support complex cross deployment references [#359](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/359)
+- Added a Docker container for running bats tests on your local source code for template developers [#355](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/355)
+- New exapmle: [Instance with a private IP](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/dm/templates/instance/examples/instance_private.yaml) [#346](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/346)
+- New template: [Cloud Filestore](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/dm/templates/cloud_filestore) [#348](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/348)
 
 ### 17.09.2019
 
