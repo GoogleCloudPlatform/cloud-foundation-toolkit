@@ -121,7 +121,7 @@ def create_storage(context, logsink_name):
         dest_prop['project'] = project_id
         bindings = dest_prop.get('bindings', [])
         bindings.append({
-            'role': 'roles/storage.objectAdmin',
+            'role': 'roles/storage.admin',
             'members': ['$(ref.{}.writerIdentity)'.format(logsink_name)]
         })
 
