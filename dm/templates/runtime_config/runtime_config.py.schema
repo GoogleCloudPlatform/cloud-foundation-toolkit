@@ -29,6 +29,8 @@ info:
 imports:
   - path: variable.py
   - path: waiter.py
+  - path: ../../templates/cft_helpers/cft_helper.py
+    name: cft_helper.py
 
 additionalProperties: false
 

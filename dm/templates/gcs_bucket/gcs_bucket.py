@@ -13,7 +13,7 @@
 # limitations under the License.
 """ This template creates a Google Cloud Storage bucket. """
 
-from hashlib import sha1
+from cft_helper import get_hash
 
 
 def generate_config(context):
@@ -71,7 +71,7 @@ def generate_config(context):
     # If IAM policy bindings are defined, apply these bindings.
     storage_provider_type = 'gcp-types/storage-v1:virtual.buckets.iamMemberBinding'
     bindings = properties.get('bindings', [])
-    
+
     if 'dependsOn' in properties:
         dependson = { 'metadata': { 'dependsOn': properties['dependsOn'] } }
         dependson_root = properties['dependsOn']
@@ -82,7 +82,7 @@ def generate_config(context):
     if bindings:
         for role in bindings:
             for member in role['members']:
-                suffix = sha1('{}-{}'.format(role['role'], member).encode('utf-8')).hexdigest()[:10]
+                suffix = get_hash('{}-{}'.format(role['role'], member))
                 policy_get_name = '{}-{}'.format(context.env['name'], suffix)
                 policy_name = '{}-iampolicy'.format(policy_get_name)
                 iam_policy_resource = {

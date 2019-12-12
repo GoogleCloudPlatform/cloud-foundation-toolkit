@@ -28,6 +28,10 @@ info:
     - gcp-types/pubsub-v1:projects.topics =>
         https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics
 
+imports:
+  - path: ../../templates/cft_helpers/cft_helper.py
+    name: cft_helper.py
+
 additionalProperties: false
 
 oneOf:
@@ -206,7 +210,7 @@ properties:
               role:
                 type: string
                 description: |
-                  The IAM role. 
+                  The IAM role.
                   For details, see https://cloud.google.com/iam/docs/understanding-roles
               members:
                 type: array
@@ -225,7 +229,7 @@ properties:
         role:
           type: string
           description: |
-            The IAM role. 
+            The IAM role.
             For details, see https://cloud.google.com/iam/docs/understanding-roles
         members:
           type: array

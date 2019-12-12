@@ -13,7 +13,7 @@
 # limitations under the License.
 """ This template creates a Pub/Sub (publish-subscribe) service. """
 
-from hashlib import sha1
+from cft_helper import get_hash
 import json
 
 
@@ -26,7 +26,7 @@ def set_optional_property(destination, source, prop_name):
 def create_subscription(resource_name, project_id, spec):
     """ Create a pull/push subscription from the simplified spec. """
 
-    suffix = 'subscription-{}'.format(sha1((resource_name + json.dumps(spec)).encode('utf-8')).hexdigest()[:10])
+    suffix = 'subscription-{}'.format(get_hash(resource_name + json.dumps(spec)))
 
     subscription = {
         'name': '{}-{}'.format(resource_name, suffix),

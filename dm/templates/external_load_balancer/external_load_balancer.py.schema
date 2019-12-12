@@ -31,6 +31,8 @@ imports:
     name: ssl_certificate.py
   - path: ../target_proxy/target_proxy.py
     name: target_proxy.py
+  - path: ../../templates/cft_helpers/cft_helper.py
+    name: cft_helper.py
 
 additionalProperties: false
 

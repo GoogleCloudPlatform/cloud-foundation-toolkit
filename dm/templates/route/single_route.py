@@ -14,10 +14,6 @@
 """This template creates a custom route."""
 
 
-from hashlib import sha1
-import json
-
-
 def generate_config(context):
     """ Entry point for the deployment resources. """
 

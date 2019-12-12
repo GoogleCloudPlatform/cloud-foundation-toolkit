@@ -13,7 +13,7 @@
 # limitations under the License.
 """ This template creates an IAM policy member. """
 
-from hashlib import sha1
+from cft_helper import get_hash
 
 mapper = {
     'organizationId': {
@@ -64,8 +64,7 @@ def generate_config(context):
 
     for role in properties['roles']:
         for member in role['members']:
-            suffix = sha1(
-                '{}-{}'.format(role['role'], member).encode('utf-8')).hexdigest()[:10]
+            suffix = get_hash('{}-{}'.format(role['role'], member))
             policy_get_name = '{}-{}'.format(context.env['name'], suffix)
 
             resource_name = '{}-{}'.format(policy_get_name,

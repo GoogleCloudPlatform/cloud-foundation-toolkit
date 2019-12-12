@@ -26,6 +26,10 @@ info:
     - gcp-types/compute-v1:firewalls =>
         https://cloud.google.com/compute/docs/reference/rest/v1/firewalls
 
+imports:
+  - path: ../../templates/cft_helpers/cft_helper.py
+    name: cft_helper.py
+
 additionalProperties: false
 
 required:

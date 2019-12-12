@@ -16,7 +16,7 @@ This template creates a Runtime Configurator with the associated resources.
 """
 
 
-from hashlib import sha1
+from cft_helper import get_hash
 
 
 def generate_config(context):
@@ -45,7 +45,7 @@ def generate_config(context):
 
     # The runtimeconfig variable resources.
     for variable in properties.get('variables', []):
-        suffix = sha1('{}-{}'.format(context.env['name'], variable.get('name', variable.get('variable'))).encode('utf-8')).hexdigest()[:10]
+        suffix = get_hash('{}-{}'.format(context.env['name'], variable.get('name', variable.get('variable'))))
         variable['project'] = project_id
         variable['parent'] = parent
         variable['config'] = name
@@ -58,7 +58,7 @@ def generate_config(context):
 
     # The runtimeconfig waiter resources.
     for waiter in properties.get('waiters', []):
-        suffix = sha1('{}-{}'.format(context.env['name'], waiter.get('name', waiter.get('waiter'))).encode('utf-8')).hexdigest()[:10]
+        suffix = get_hash('{}-{}'.format(context.env['name'], waiter.get('name', waiter.get('waiter'))))
         waiter['project'] = project_id
         waiter['parent'] = parent
         waiter['config'] = name

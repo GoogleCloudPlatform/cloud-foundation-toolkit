@@ -14,7 +14,7 @@
 """This template creates a custom route."""
 
 
-from hashlib import sha1
+from cft_helper import get_hash
 import json
 
 
@@ -31,8 +31,8 @@ def generate_config(context):
     for i, route in enumerate(properties['routes'], 1000):
         name = route.get('name')
         if not name:
-            name = '{}-{}'.format(context.env['name'], sha1(json.dumps(route).encode('utf-8')).hexdigest()[:10])
-        
+            name = '{}-{}'.format(context.env['name'], get_hash(json.dumps(route)))
+
         route_properties = {
             'name': name,
             'network': network_name,

@@ -13,7 +13,7 @@
 # limitations under the License.
 """ This template creates firewall rules for a network. """
 
-from hashlib import sha1
+from cft_helper import get_hash
 
 
 def generate_config(context):
@@ -34,7 +34,7 @@ def generate_config(context):
     resources = []
     out = {}
     for i, rule in enumerate(properties['rules'], 1000):
-        res_name = sha1(rule['name'].encode('utf-8')).hexdigest()[:10]
+        res_name = get_hash(rule['name'])
 
         rule['network'] = network
         rule['priority'] = rule.get('priority', i)

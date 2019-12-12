@@ -16,7 +16,7 @@
     parent folder.
 """
 
-from hashlib import sha1
+from cft_helper import get_hash
 
 
 def generate_config(context):
@@ -32,7 +32,7 @@ def generate_config(context):
 
         suffix = folder.get(
             'resourceNameSuffix',
-            sha1('{}/folders/{}'.format(parent, folder.get('displayName')).encode('utf-8')).hexdigest()[:10]
+            get_hash('{}/folders/{}'.format(parent, folder.get('displayName')))
         )
         create_folder = '{}-{}'.format(context.env['name'], suffix)
         resources.append(
