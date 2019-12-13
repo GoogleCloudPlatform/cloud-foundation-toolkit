@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 13.12.2019
+
+- Updated test triggers for Github. From now on every bats test will be triggered
+for a particular template when a PR is sent.
+
 ### 11.12.2019
 
 - Updated logging sink configuration to export entries to a desired destination in external project [#77](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/496)
