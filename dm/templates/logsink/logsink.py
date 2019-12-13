@@ -231,7 +231,7 @@ def generate_config(context):
             }
 
     return {
-        'resources':
+        'resources': 
             resources,
         'outputs':
             [
