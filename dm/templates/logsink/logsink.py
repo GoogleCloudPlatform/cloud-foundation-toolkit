@@ -235,9 +235,10 @@ def generate_config(context):
             resources,
         'outputs':
             [
-                {
+                { 
                     'name': 'writerIdentity',
                     'value': '$(ref.{}.writerIdentity)'.format(context.env['name'])
-                }
-            ]
-    }
+                } 
+            ] 
+    } 
+ 
