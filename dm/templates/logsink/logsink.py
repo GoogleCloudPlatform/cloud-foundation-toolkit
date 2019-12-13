@@ -240,4 +240,4 @@ def generate_config(context):
                     'value': '$(ref.{}.writerIdentity)'.format(context.env['name'])
                 }
             ]
-    } 
+    }
