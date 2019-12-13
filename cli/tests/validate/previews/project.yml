@@ -1,0 +1,18 @@
+name: test-project
+description: Project type test
+
+imports:
+  - path: ../../../../dm/templates/project/project.py
+    name: project.py
+
+resources:
+  - type: project.py
+    name: test-project-1
+    properties:
+      name: test-project
+      billingAccountId: "12345"
+      parent:
+        type: folder
+        id: 12345678
+      labels:
+        test_existing: "yes"

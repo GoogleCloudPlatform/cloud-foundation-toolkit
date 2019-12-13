@@ -140,6 +140,14 @@ func testValidatePassing(t *testing.T, dirTestdata string) {
 		filepath.Join(dirTestdata, "policies", "test_all"),
 	})
 	checkOutput(t, append(stdOut, stdErr...), []string{"No violations found."})
+
+	stdOut, stdErr = runCft(t, false, cwd, []string{
+		"validate",
+		"test-project",
+		"--policy-path",
+		filepath.Join(dirTestdata, "policies", "test_all"),
+	})
+	checkOutput(t, append(stdOut, stdErr...), []string{"No violations found."})
 }
 
 func testValidateFailing(t *testing.T, dirTestdata string) {
@@ -198,6 +206,18 @@ func testValidateFailing(t *testing.T, dirTestdata string) {
 		"Found Violations",
 		"Constraint gcp-storage-location",
 		"//storage\\.googleapis\\.com/test-storage-bucket",
+	})
+
+	stdOut, stdErr = runCft(t, false, cwd, []string{
+		"validate",
+		"test-project",
+		"--policy-path",
+		filepath.Join(dirTestdata, "policies", "test_none"),
+	})
+	checkOutput(t, append(stdOut, stdErr...), []string{
+		"Found Violations",
+		"Constraint project-labels",
+		"//cloudresourcemanager\\.googleapis\\.com/projects/test-project",
 	})
 }
 

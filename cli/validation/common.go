@@ -52,6 +52,23 @@ func mappers() map[string][]mapper {
 		"gcp-types/storage-v1:buckets": {{convert: converter.GetStorageBucketCaiObject}},
 		"storage.v1.bucket":            {{convert: converter.GetStorageBucketCaiObject}},
 
+		// DM project resources have a 1:N relationship with CAI assets.
+		"gcp-types/cloudresourcemanager-v1:projects": {
+			{
+				convert: converter.GetProjectCaiObject,
+				merge:   converter.MapProjectCaiObject,
+			},
+			{convert: converter.GetProjectBillingInfoCaiObject},
+		},
+		"cloudresourcemanager.v1.project": {
+			{
+				convert: converter.GetProjectCaiObject,
+				merge:   converter.MapProjectCaiObject,
+			},
+			{convert: converter.GetProjectBillingInfoCaiObject},
+		},
+
+		// DM IAM resources resources have a N:1 relationship with CAI assets.
 		"gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding": {
 			{
 				convert: converter.GetIamCaiObject,
