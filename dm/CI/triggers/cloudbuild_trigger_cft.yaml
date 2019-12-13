@@ -12,28 +12,28 @@ imports:
 # Using the gcloud glob import to load one file from every template where
 # triggers should be created. This is inderictly passing the list of possible
 # templates to DM without hardcoding that into a config list.
-  - path: ../../templates/**/*.md
+  - path: ../../templates/**/tests/integration/*.bats
 
 resources:
-  - name: cft-triggers
-    type: cft-triggers.py
-    properties:
-      description: CFT-DM-#template# PR trigger [cft-dm-dev]
-      disabled: False
-      github:
-        name: cloud-foundation-toolkit
-        owner: GoogleCloudPlatform
-        pullRequest:
-          branch: cft-dm-dev
-          commentControl: COMMENTS_ENABLED
-      filename: dm/CI/cft_test_runner/cloudbuild-test.yaml
-      substitutions:
-        _BATS_TEST_FILE: ./templates/#template#/tests/integration/#template#.bats
-      includedFiles:
-        - dm/templates/#template#/*.py
-        - dm/templates/#template#/*.schema
-        - dm/templates/#template#/tests/integration/*
-  - name: cft-triggers-master
+#  - name: cft-github-dev
+#    type: cft-triggers.py
+#    properties:
+#      description: CFT-DM-#template# PR trigger [cft-dm-dev]
+#      disabled: False
+#      github:
+#        name: cloud-foundation-toolkit
+#        owner: GoogleCloudPlatform
+#        pullRequest:
+#          branch: cft-dm-dev
+#          commentControl: COMMENTS_ENABLED
+#      filename: dm/CI/cft_test_runner/cloudbuild-test.yaml
+#      substitutions:
+#        _BATS_TEST_FILE: ./templates/#template#/tests/integration/#templatetest#
+#      includedFiles:
+#        - dm/templates/#template#/*.py
+#        - dm/templates/#template#/*.schema
+#        - dm/templates/#template#/tests/integration/*
+  - name: cft-github-master
     type: cft-triggers.py
     properties:
       description: CFT-DM-#template# PR trigger [Master]
