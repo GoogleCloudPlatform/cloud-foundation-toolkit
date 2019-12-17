@@ -15,7 +15,7 @@
 info:
   title: External Load Balancer
   author: Sourced Group Inc.
-  version: 1.0.1
+  version: 1.0.2
   description: |
     Supports creation of an HTTP(S), SSL Proxy, or TCP Proxy external load
     balancer. For details, visit https://cloud.google.com/load-balancing/docs/.
@@ -470,9 +470,26 @@ properties:
     additionalProperties: false
     description: |
       Encryption settings for connections processed by the resource.
-    required:
-      - certificate
+    oneOf:
+      - required:
+          - sslCertificates
+      - required:
+          - certificate
     properties:
+      sslCertificates:
+        type: array
+        uniqItems: true
+        description: |
+          URLs to SslCertificate resources that are used to authenticate connections to Backends.
+          At least one SSL certificate must be specified. Currently, you may specify up to 15 SSL certificates.
+
+          Authorization requires the following Google IAM permission on the specified resource sslCertificates:
+
+          compute.sslCertificates.get
+        minItems: 0
+        maxItems: 15
+        items:
+          type: string
       certificate:
         type: object
         additionalProperties: false
