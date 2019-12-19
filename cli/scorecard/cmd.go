@@ -56,9 +56,8 @@ var Cmd = &cobra.Command{
 	`,
 	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if (flags.bucketName == "" && flags.dirPath == "") ||
-			(flags.bucketName != "" && flags.dirPath != "") {
-			return fmt.Errorf("Either bucket or dir-path should be set")
+		if flags.bucketName != "" && flags.dirPath != "" {
+			return fmt.Errorf("Only one of bucket and dir-path should be set")
 		}
 		return nil
 	},
