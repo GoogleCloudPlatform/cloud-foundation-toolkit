@@ -44,15 +44,17 @@ var Cmd = &cobra.Command{
 	Short: "Print a scorecard of your GCP environment",
 	Long: `Print a scorecard of your GCP environment, for resources and IAM policies in Cloud Asset Inventory (CAI) exports, and constraints and constraint templates from Config Validator policy library.
 
-	Example:
+	Read from a bucket:
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --bucket <name-of-bucket-containing-cai-export>
-	Or:
+
+	Read from a local directory:
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --dir-path <path-to-directory-containing-cai-export>
 
 	As of now, CAI export file names need to be resource_inventory.json and/or iam_inventory.json
 
+	To read from stdin, do not set neither --bucket or --dir-path.
 	`,
 	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
