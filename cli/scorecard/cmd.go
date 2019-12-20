@@ -14,6 +14,7 @@ var flags struct {
 	controlProjectID string
 	bucketName       string
 	dirPath          string
+	stdin            bool
 	outputPath       string
 	outputFormat     string
 }
@@ -31,8 +32,9 @@ func init() {
 	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
 
 	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
-	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
-	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
+	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path and --stdin)")
+	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket and --stdin)")
+	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Whether inventory will be passed as standard input or not (conflicts with --dir-path and --bucket)")
 	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
 	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
 
@@ -44,21 +46,28 @@ var Cmd = &cobra.Command{
 	Short: "Print a scorecard of your GCP environment",
 	Long: `Print a scorecard of your GCP environment, for resources and IAM policies in Cloud Asset Inventory (CAI) exports, and constraints and constraint templates from Config Validator policy library.
 
-	Example:
+	Read from a bucket:
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --bucket <name-of-bucket-containing-cai-export>
-	Or:
+
+	Read from a local directory:
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --dir-path <path-to-directory-containing-cai-export>
+
+	Read from standard input:
+		  cft scorecard --policy-path <path-to>/policy-library \
+			  --stdin
 
 	As of now, CAI export file names need to be resource_inventory.json and/or iam_inventory.json
 
 	`,
 	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if (flags.bucketName == "" && flags.dirPath == "") ||
-			(flags.bucketName != "" && flags.dirPath != "") {
-			return fmt.Errorf("Either bucket or dir-path should be set")
+		if flags.bucketName != "" && flags.dirPath != "" && !flags.stdin ||
+			flags.bucketName != "" && flags.stdin ||
+			flags.bucketName != "" && flags.dirPath != "" ||
+			flags.dirPath != "" && flags.stdin {
+			return fmt.Errorf("One of bucket, dir-path, or stdin should be set")
 		}
 		return nil
 	},
@@ -74,7 +83,7 @@ var Cmd = &cobra.Command{
 		}
 
 		inventory, err := NewInventory(controlProjectID,
-			flags.bucketName, flags.dirPath,
+			flags.bucketName, flags.dirPath, flags.stdin,
 			TargetProject(flags.targetProjectID))
 		if err != nil {
 			return err

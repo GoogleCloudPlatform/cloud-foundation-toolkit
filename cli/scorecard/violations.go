@@ -96,6 +96,14 @@ func addDataFromFile(config *ScoringConfig, caiDirName string) error {
 	return nil
 }
 
+func addDataFromStdin(config *ScoringConfig) error {
+	err := addDataFromReader(config, os.Stdin)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // getViolations finds all Config Validator violations for a given Inventory
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
 	v := config.validator
@@ -105,10 +113,15 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
 		}
-	} else {
+	} else if inventory.dirPath != "" {
 		err := addDataFromFile(config, inventory.dirPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from local directory")
+		}
+	} else if inventory.readFromStdin {
+		err := addDataFromStdin(config)
+		if err != nil {
+			return nil, errors.Wrap(err, "Reading from stdin")
 		}
 	}
 	auditResponse, err := v.Audit(context.Background())
