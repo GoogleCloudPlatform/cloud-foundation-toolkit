@@ -13,8 +13,8 @@ var flags struct {
 	targetProjectID  string
 	controlProjectID string
 	bucketName       string
-	stdin            bool
 	dirPath          string
+	stdin            bool
 	outputPath       string
 	outputFormat     string
 }
@@ -34,7 +34,7 @@ func init() {
 	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path and --stdin)")
 	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket and --stdin)")
-	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Whether inventory will be passed as stdin or not (conflicts with --dir-path and --bucket)")
+	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Whether inventory will be passed as standard input or not (conflicts with --dir-path and --bucket)")
 	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
 	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
 
@@ -54,7 +54,7 @@ var Cmd = &cobra.Command{
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --dir-path <path-to-directory-containing-cai-export>
 
-	Read from stdin:
+	Read from standard input:
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --stdin
 
