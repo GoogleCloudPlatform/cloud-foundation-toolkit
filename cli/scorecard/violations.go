@@ -118,7 +118,7 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from local directory")
 		}
-	} else {
+	} else if inventory.readFromStdin {
 		err := addDataFromStdin(config)
 		if err != nil {
 			return nil, errors.Wrap(err, "Reading from stdin")
