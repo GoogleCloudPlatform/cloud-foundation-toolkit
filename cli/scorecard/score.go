@@ -37,21 +37,24 @@ type ScoringConfig struct {
 	validator   *gcv.Validator                   // the validator instance used for scoring
 }
 
+// NewScoringConfigFromValidator creates a scoring engine with a given validator.
+func NewScoringConfigFromValidator(v *gcv.Validator) *ScoringConfig {
+	config := &ScoringConfig{}
+	config.validator = v
+	return config
+}
+
 // NewScoringConfig creates a scoring engine for the given policy library
 func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, error) {
-	config := &ScoringConfig{}
-
-	config.PolicyPath = policyPath
-
 	v, err := gcv.NewValidator(ctx.Done(),
-		[]string{filepath.Join(config.PolicyPath, "policies")},
-		filepath.Join(config.PolicyPath, "lib"),
+		[]string{filepath.Join(policyPath, "policies")},
+		filepath.Join(policyPath, "lib"),
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "initializing gcv validator")
 	}
-	config.validator = v
-
+	config := NewScoringConfigFromValidator(v)
+	config.PolicyPath = policyPath
 	return config, nil
 }
 
