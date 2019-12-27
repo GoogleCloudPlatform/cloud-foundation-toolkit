@@ -31,7 +31,6 @@ import (
 
 // ScoringConfig holds settings for generating a score
 type ScoringConfig struct {
-	PolicyPath  string                           // the directory path of a policy library to use
 	categories  map[string]*constraintCategory   // available constraint categories
 	constraints map[string]*constraintViolations // a map of constraints violated and their violations
 	validator   *gcv.Validator                   // the validator instance used for scoring
@@ -54,7 +53,6 @@ func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, e
 		return nil, errors.Wrap(err, "initializing gcv validator")
 	}
 	config := NewScoringConfigFromValidator(v)
-	config.PolicyPath = policyPath
 	return config, nil
 }
 
