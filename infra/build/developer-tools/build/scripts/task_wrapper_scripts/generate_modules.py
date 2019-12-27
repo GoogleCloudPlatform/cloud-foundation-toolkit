@@ -39,10 +39,11 @@ DEVNULL_FILE = open(os.devnull, 'w')
 def main(argv):
     modules = json.loads(argv[1])
     for module in modules:
+        template_folder = module["template_folder"]
         module = Module(module["path"], module["options"])
         env = Environment(
             keep_trailing_newline=True,
-            loader=FileSystemLoader(module["template_folder"]),
+            loader=FileSystemLoader(template_folder),
             trim_blocks=True,
             lstrip_blocks=True,
         )
