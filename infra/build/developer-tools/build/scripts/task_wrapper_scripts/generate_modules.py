@@ -21,13 +21,7 @@ import json
 
 from jinja2 import Environment, FileSystemLoader
 
-TEMPLATE_FOLDER = "./autogen"
-BASE_TEMPLATE_OPTIONS = {
-    'autogeneration_note': '// This file was automatically generated ' +
-                           'from a template in {folder}'.format(
-                               folder=TEMPLATE_FOLDER
-                               ),
-}
+AUTOGEN_NOTE = '// This file was automatically generated from a template in '
 
 class Module(object):
     path = None
@@ -43,22 +37,25 @@ class Module(object):
 DEVNULL_FILE = open(os.devnull, 'w')
 
 def main(argv):
-    env = Environment(
-        keep_trailing_newline=True,
-        loader=FileSystemLoader(TEMPLATE_FOLDER),
-        trim_blocks=True,
-        lstrip_blocks=True,
-    )
-    templates = env.list_templates()
     modules = json.loads(argv[1])
     for module in modules:
         module = Module(module["path"], module["options"])
+        env = Environment(
+            keep_trailing_newline=True,
+            loader=FileSystemLoader(module["template_folder"]),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
+        templates = env.list_templates()
+
         for template_file in templates:
             template = env.get_template(template_file)
             if template_file.endswith(".tf.tmpl"):
                 template_file = template_file.replace(".tf.tmpl", ".tf")
             rendered = template.render(
-                module.template_options(BASE_TEMPLATE_OPTIONS)
+                module.template_options(
+                    {'autogeneration_note': AUTOGEN_NOTE + template_folder}
+                )
             )
             with open(os.path.join(module.path, template_file), "w") as f:
                 f.write(rendered)
