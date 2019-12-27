@@ -80,7 +80,7 @@ find_files() {
   done
 
   # Add any regex supplied to ignore other dirs
-  if [[ -n "$EXCLUDE_LINT_DIRS" ]]; then
+  if [[ -n "${EXCLUDE_LINT_DIRS-}" ]]; then
     find_path_regex+="${EXCLUDE_LINT_DIRS}"
     find_path_regex+="|"
   fi
