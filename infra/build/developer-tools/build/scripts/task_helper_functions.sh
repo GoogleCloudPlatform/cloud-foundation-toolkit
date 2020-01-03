@@ -56,6 +56,9 @@ maketemp() {
 
 # find_files is a helper to exclude .git directories and match only regular
 # files to avoid double-processing symlinks.
+# You can ignore directories by setting an environment variable of
+#   relative escaped paths separated by a pipe
+# Ex: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
 find_files() {
   local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
     ".*/\.terraform"
@@ -70,11 +73,23 @@ find_files() {
     "\./cache"
     "\./test/source\.sh" )
   shift
-  EXCLUDE_LINT_DIRS+=( "${exclude_dirs[@]}" )
-  for ((index=0; index<$((${#EXCLUDE_LINT_DIRS[@]}-1)); ++index)); do
-    find_path_regex+="${EXCLUDE_LINT_DIRS[index]}|"
+
+  # Concat all of the above dirs except the last, separated by a pipe
+  for ((index=0; index<$((${#exclude_dirs[@]}-1)); ++index)); do
+    find_path_regex+="${exclude_dirs[index]}|"
   done
-  find_path_regex+="${EXCLUDE_LINT_DIRS[-1]})"
+
+  # Add any regex supplied to ignore other dirs
+  if [[ -n "${EXCLUDE_LINT_DIRS-}" ]]; then
+    find_path_regex+="${EXCLUDE_LINT_DIRS}"
+    find_path_regex+="|"
+  fi
+
+  # Concat last dir, along with closing paren
+  find_path_regex+="${exclude_dirs[-1]})"
+  # find_path_regex should be a string of this format:
+  # (some_relative_path|another_relative_path)
+  # ex: find_path_regex = (.*/\.git|.*/\.terraform|.*/\.kitchen|.*/.*\.png)
 
   # Note: Take care to use -print or -print0 when using this function,
   # otherwise excluded directories will be included in the output.
