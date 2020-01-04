@@ -10,8 +10,11 @@ All notable changes to this project will be documented in this file.
 
 ### 13.12.2019
 
+- Limited ports to use with TCP external LB template according to documentation [#514] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/514)
+
+### 13.12.2019
+
 - Updated test triggers for Github. From now on every bats test will be triggered
-for a particular template when a PR is sent.
 
 ### 11.12.2019
 
