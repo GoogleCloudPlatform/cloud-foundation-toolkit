@@ -14,7 +14,6 @@ LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
 .PHONY: build
 build:
-	go generate launchpad/root.go
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
 .PHONY: publish
