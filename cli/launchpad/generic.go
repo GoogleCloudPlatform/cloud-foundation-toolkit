@@ -96,4 +96,4 @@ type referenceYAML struct {
 }
 
 func (r *referenceYAML) TargetType() crdKind { return newCRDKind(r.TargetTypeStr) }
-func (r *referenceYAML) refId() string       { return fmt.Sprintf("%s.%s", r.TargetType(), r.TargetId) }
+func (r *referenceYAML) resId() string       { return fmt.Sprintf("%s.%s", r.TargetType(), r.TargetId) }

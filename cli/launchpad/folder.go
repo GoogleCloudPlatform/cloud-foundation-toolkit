@@ -2,6 +2,7 @@ package launchpad
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"sort"
 	"strings"
@@ -51,9 +52,6 @@ type folderYAML struct {
 // resId returns an internal referencable id.
 func (f *folderYAML) resId() string { return fmt.Sprintf("%s.%s", Folder, f.Spec.Id) }
 
-// String implements Stringer and generates a string representation.
-func (f *folderYAML) String() string { return strings.Join(f.dump(0), "\n") }
-
 // validate ensures input YAML fields are correct.
 //
 // validate also populates subFolders.
@@ -68,8 +66,8 @@ func (f *folderYAML) validate() error {
 		return errInvalidParent
 	}
 
-	if ind := tfNameRegex.FindStringIndex(f.Spec.Id); ind == nil {
-		log.Printf("GCP Folder [%s] ID does not conform to Terraform standard", f.Spec.DisplayName)
+	if !tfNameRegex.MatchString(f.Spec.Id) {
+		log.Printf("GCP Folder [%s] ID does not conform to Terraform standard", f.Spec.Id)
 		return errValidationFailed
 	}
 
@@ -106,7 +104,7 @@ func (f *folderYAML) resolveReferences(refs []resourceHandler) error {
 		switch r := ref.(type) {
 		case *folderYAML:
 			if f.Spec.Id != r.Spec.ParentRef.TargetId { // caller should already ensure this once
-				log.Printf("fatail: mismatch parent id %s %s", f.resId(), r.Spec.ParentRef.refId())
+				log.Printf("fatail: mismatch parent id %s %s", f.resId(), r.Spec.ParentRef.resId())
 				return errInvalidParent
 			}
 			f.subFolders.add(r)
@@ -119,16 +117,20 @@ func (f *folderYAML) resolveReferences(refs []resourceHandler) error {
 }
 
 // dump generates debug string slices representation.
-func (f *folderYAML) dump(ind int) []string {
+func (f *folderYAML) dump(ind int, buff io.Writer) error {
 	indent := strings.Repeat(" ", ind)
-	rep := fmt.Sprintf("%s+ %s.%s (\"%s\") < %s.%s", indent, Folder, f.Spec.Id,
+	_, err := fmt.Fprintf(buff, "%s+ %s.%s (\"%s\") < %s.%s\n", indent, Folder, f.Spec.Id,
 		f.Spec.DisplayName, f.Spec.ParentRef.TargetTypeStr, f.Spec.ParentRef.TargetId)
-	buff := []string{rep}
-
-	for _, sf := range f.subFolders.sortedCopy() {
-		buff = append(buff, sf.dump(ind+defaultIndentSize)...)
+	if err != nil {
+		return err
 	}
-	return buff
+	for _, sf := range f.subFolders.sortedCopy() {
+		err = sf.dump(ind+defaultIndentSize, buff)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // newSubFoldersBySpecs initializes folderSpecYAMLs and turn it into a folderYAMLs.

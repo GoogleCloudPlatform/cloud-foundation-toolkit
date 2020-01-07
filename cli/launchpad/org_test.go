@@ -35,13 +35,13 @@ func addTestRelations(ao *assembledOrg, testFolders []testFolderRelation) {
 		}}
 		ao.resourceMap[f.resId()] = &resource{yaml: f}
 
-		parentId := f.Spec.ParentRef.refId()
+		parentId := f.Spec.ParentRef.resId()
 		switch parent := ao.resourceMap[parentId].yaml.(type) {
 		case *orgYAML:
 			parent.subFolders = append(parent.subFolders, f)
 		case *folderYAML:
 			parent.subFolders = append(parent.subFolders, f)
 		}
-		ao.resourceMap[parentId].inRefs = append(ao.resourceMap[f.Spec.ParentRef.refId()].inRefs, f)
+		ao.resourceMap[parentId].inRefs = append(ao.resourceMap[f.Spec.ParentRef.resId()].inRefs, f)
 	}
 }

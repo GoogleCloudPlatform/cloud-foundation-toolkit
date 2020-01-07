@@ -3,6 +3,7 @@ package launchpad
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"strings"
 )
@@ -25,9 +26,6 @@ type orgYAML struct {
 
 // resId returns an internal referencable id.
 func (o *orgYAML) resId() string { return fmt.Sprintf("%s.%s", Organization, o.Spec.Id) }
-
-// String implements Stringer and generates a string representation.
-func (o *orgYAML) String() string { return strings.Join(o.dump(0), "\n") }
 
 // validate ensures input YAML fields are correct.
 //
@@ -110,13 +108,18 @@ func (o *orgYAML) mergeFields(oldO *orgYAML) error {
 }
 
 // dump generates debug string slices representation.
-func (o *orgYAML) dump(ind int) []string {
+func (o *orgYAML) dump(ind int, buff io.Writer) error {
 	indent := strings.Repeat(" ", ind)
-	rep := fmt.Sprintf("%s%s.%s (\"%s\")", indent, Organization, o.Spec.Id, o.Spec.DisplayName)
-	buff := []string{rep}
+	_, err := fmt.Fprintf(buff, "%s%s.%s (\"%s\")\n", indent, Organization, o.Spec.Id, o.Spec.DisplayName)
+	if err != nil {
+		return err
+	}
 
 	for _, sf := range o.subFolders {
-		buff = append(buff, sf.dump(ind+defaultIndentSize)...)
+		err = sf.dump(ind + defaultIndentSize, buff)
+		if err != nil {
+			return err
+		}
 	}
-	return buff
+	return nil
 }

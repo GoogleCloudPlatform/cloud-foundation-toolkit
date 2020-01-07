@@ -6,6 +6,7 @@ package launchpad
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"sort"
 	"strings"
@@ -62,7 +63,14 @@ func newAssembledOrg() *assembledOrg {
 }
 
 // String implements Stringer and generates a string representation.
-func (ao *assembledOrg) String() string { return strings.Join(ao.dump(0), "\n") }
+func (ao *assembledOrg) String() string {
+	sb := strings.Builder{}
+	err := ao.dump(0, &sb)
+	if err != nil {
+		panic(err.Error())
+	}
+	return sb.String()
+}
 
 // assembleResourcesToOrg takes in resources and assembles into an organization.
 func assembleResourcesToOrg(rs []resourceHandler) *assembledOrg {
@@ -106,7 +114,7 @@ func (ao *assembledOrg) registerResource(src resourceHandler, dst *referenceYAML
 	}
 
 	// update referenceTracker for references from src
-	ao.resourceMap.addRef(dst.refId(), src)
+	ao.resourceMap.addRef(dst.resId(), src)
 	return nil
 }
 
@@ -129,9 +137,12 @@ func (ao *assembledOrg) resolveReferences() error {
 }
 
 // dump generates debug string slices representation.
-func (ao *assembledOrg) dump(ind int) []string {
+func (ao *assembledOrg) dump(ind int, buff io.Writer) error {
 	indent := strings.Repeat(" ", ind)
-	buff := []string{fmt.Sprintf("%sResource Map [%d]:", indent, len(ao.resourceMap))}
+	_, err := fmt.Fprintf(buff, "%sResource Map [%d]:\n", indent, len(ao.resourceMap))
+	if err != nil {
+		return err
+	}
 
 	for _, resId := range ao.resourceMap.sortedResId() {
 		res := ao.resourceMap[resId]
@@ -140,8 +151,11 @@ func (ao *assembledOrg) dump(ind int) []string {
 			refs = append(refs, refRes.resId())
 		}
 		sort.Strings(refs)
-		buff = append(buff, fmt.Sprintf("%s  * %s <- [%s]", indent, resId, strings.Join(refs, ", ")))
+
+		_, err = fmt.Fprintf(buff, "%s  * %s <- [%s]\n", indent, resId, strings.Join(refs, ", "))
+		if err != nil {
+			return err
+		}
 	}
-	buff = append(buff, ao.org.dump(ind)...)
-	return buff
+	return ao.org.dump(ind, buff)
 }
