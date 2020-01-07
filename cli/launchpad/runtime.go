@@ -136,7 +136,7 @@ func (ao *assembledOrg) resolveReferences() error {
 	return nil
 }
 
-// dump generates debug string slices representation.
+// dump writes resource's string representation into provided buffer.
 func (ao *assembledOrg) dump(ind int, buff io.Writer) error {
 	indent := strings.Repeat(" ", ind)
 	_, err := fmt.Fprintf(buff, "%sResource Map [%d]:\n", indent, len(ao.resourceMap))
