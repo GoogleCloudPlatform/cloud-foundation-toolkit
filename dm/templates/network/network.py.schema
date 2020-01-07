@@ -15,7 +15,7 @@
 info:
   title: Network
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.0.1
   description: |
     Creates a network.
 
@@ -41,6 +41,15 @@ oneOf:
         type: array
         default: []
         minItems: 1
+  - properties:
+      autoCreateSubnetworks:
+        enum:
+          - false
+      subnetworks:
+        type: array
+        default: []
+        minItems: 0
+        maxItems: 0
 
 properties:
   name:

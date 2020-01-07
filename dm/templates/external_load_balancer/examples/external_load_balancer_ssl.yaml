@@ -23,6 +23,8 @@ resources:
           healthCheck: <FIXME:healthcheck>
           backends:
             - group: <FIXME:instanceGroup>
+              balancingMode: UTILIZATION
+              maxUtilization: 0.8
       ssl:
         certificate:
           url: <FIXME:sslCertificateUrl>

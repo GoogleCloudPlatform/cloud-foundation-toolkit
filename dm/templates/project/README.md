@@ -7,7 +7,7 @@ This template:
 3. Sets IAM permissions in the new project
 4. Turns on a set of APIs in the new project
 5. Creates service accounts for the new project
-6. Creates an usage export Cloud Storage bucket for the new project
+6. Creates a usage export Cloud Storage bucket for the new project
 7. Removed default networks, firewalls
 8. Removes default Service Account
 9. Creates VPC host or attached VPC service project
@@ -17,6 +17,9 @@ This template:
 Following are the prerequisites for creating a project via Deployment Manager. You can perform some of the steps via the Cloud Console at https://console.cloud.google.com/. The `gcloud` command line tool is used to deploy the configs.
 
 `Note:` Permission changes can take up to 20 minutes to propagate. If you run commands before the propagation is completed, you may receive errors regarding the user not having permissions.
+
+`Note:` "If you have [Shared VPC Admin role](https://cloud.google.com/vpc/docs/provisioning-shared-vpc#enable-shared-vpc-host) at the folder level, you need to use gcloud beta or the beta API." Some version of the Project Factory is using the GA API, which means SharedVPC features may result a permission error. See [Issue #403](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/403)
+
 
 1. Install [gcloud](https://cloud.google.com/sdk).
 
@@ -63,7 +66,7 @@ Following are the prerequisites for creating a project via Deployment Manager. Y
 
 8.  Give the *DM Service Account* the following permissions on the *Billing Account*: `roles/billing.user`. This is visible in Cloud Console's IAM permissions in *Billing -> Billing Account User*.
 
-9.  If the project is a VPC host project, give the *DM Service Account* the following permissions: `roles/compute.xpnAdmin`.
+9.  If the project is a VPC host or guest project, give the *DM Service Account* the following permissions: `roles/compute.xpnAdmin`.
 
 ## Deployment
 
@@ -73,14 +76,14 @@ Following are the prerequisites for creating a project via Deployment Manager. Y
 - [deploymentmanager.v2.virtual.projectBillingInfo](https://cloud.google.com/billing/reference/rest/v1/projects/updateBillingInfo)
 - [iam.v1.serviceAccount](https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts)
 - [deploymentmanager.v2.virtual.enableService](https://cloud.google.com/service-management/reference/rest/v1/services/enable)
-- [../iam_member CFT temaplet](../iam_member/README.md)
+- [../iam_member CFT template](../iam_member/README.md)
 - [gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.setIamPolicy](https://cloud.google.com/deployment-manager/docs/configuration/supported-gcp-types)
 - [gcp-types/storage-v1:buckets](https://cloud.google.com/deployment-manager/docs/configuration/supported-gcp-types)
 - [gcp-types/compute-v1:compute.projects.setUsageExportBucket](https://cloud.google.com/deployment-manager/docs/configuration/supported-gcp-types)
 - [compute.beta.xpnResource](https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnResource)
 - [compute.beta.xpnHost](https://cloud.google.com/compute/docs/reference/rest/beta/projects/enableXpnHost)
-- [gcp-types/compute-beta:compute.firewalls.delete](https://cloud.google.com/compute/docs/reference/rest/beta/firewalls)
-- [gcp-types/compute-beta:compute.networks.delete](https://cloud.google.com/compute/docs/reference/rest/beta/networks)
+- [gcp-types/compute-v1:compute.firewalls.delete](https://cloud.google.com/compute/docs/reference/rest/v1/firewalls)
+- [gcp-types/compute-v1:compute.networks.delete](https://cloud.google.com/compute/docs/reference/rest/v1/networks)
 - [gcp-types/iam-v1:iam.projects.serviceAccounts.delete](https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts)
 
 ### Properties
@@ -103,10 +106,10 @@ See the `properties` section in the schema file(s):
     cd dm
 ```
 
-3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/project.yaml](examples/project.yaml):
+3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/project_standalone.yaml](examples/project_standalone.yaml):
 
 ```shell
-    cp templates/project/examples/project.yaml my_project.yaml
+    cp templates/project/examples/project_standalone.yaml my_project.yaml
 ```
 
 4. Change the values in the config file to match your specific GCP setup (for properties, refer to the schema files listed above):
@@ -130,4 +133,6 @@ See the `properties` section in the schema file(s):
 
 ## Examples
 
-- [Project](examples/project.yaml)
+- [Standalone project](examples/project_standalone.yaml)
+- [VPC host project](examples/project_vpc_host.yaml)
+- [VPC consumer project](examples/project_vpc_consumer.yaml)

@@ -1,0 +1,37 @@
+deployment:
+  fingerprint: 31GxEiMK277PbccddsZEng==
+  id: '1438350847008870689'
+  insertTime: '2019-06-03T07:33:50.999-07:00'
+  manifest: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/my-networks-main/manifests/manifest-1559807728858
+  name: my-networks-main
+  operation:
+    endTime: '2019-06-06T00:55:43.989-07:00'
+    id: '0'
+    insertTime: '1969-12-31T16:00:00.000-08:00'
+    kind: deploymentmanager#operation
+    name: operation-1559807728695-58aa309963a30-613a6303-cf70ff47
+    operationType: update
+    progress: 100
+    selfLink: https://www.googleapis.com/deploymentmanager/v2/projects/0/global/operations/operation-1559807728695-58aa309963a30-613a6303-cf70ff47
+    startTime: '2019-06-06T00:55:28.927-07:00'
+    status: %STATUS%
+    targetId: '1438350847008870689'
+    targetLink: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/my-networks-main
+    user: andriy.kopachevskyy@phoogle.net
+  selfLink: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/my-networks-main
+  updateTime: '2019-06-06T00:55:43.865-07:00'
+outputs: []
+resources:
+  - finalProperties: |
+      autoCreateSubnetworks: false
+      name: my-network
+    id: '3516033184730485048'
+    insertTime: '2019-06-03T07:33:59.712-07:00'
+    manifest: https://www.googleapis.com/deploymentmanager/v2/projects/gl-akopachevskyy-dm-seed/global/deployments/my-networks-main/manifests/manifest-1559807728858
+    name: my-network
+    properties: |
+      autoCreateSubnetworks: false
+      name: my-network
+    type: compute.v1.network
+    updateTime: '2019-06-06T00:55:41.628-07:00'
+    url: https://www.googleapis.com/compute/v1/projects/gl-akopachevskyy-dm-seed/global/networks/my-network

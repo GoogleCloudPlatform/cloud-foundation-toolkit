@@ -11,7 +11,8 @@ resources:
       portRange: ${SSL_PORT_RANGE}
       backendServices:
         - name: ${SSL_BACKEND_NAME}
-          healthCheck: $(ref.${SSL_HEALTHCHECK_NAME}.selfLink)
+          healthChecks: 
+            - $(ref.${SSL_HEALTHCHECK_NAME}.selfLink)
           portName: ${SSL_PORT_NAME}
           backends:
             - group: $(ref.${HTTPS_IGM_NAME}.instanceGroup)

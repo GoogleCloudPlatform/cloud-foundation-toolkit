@@ -1,0 +1,26 @@
+# Example of a project logsink with a pubsub destination template usage.
+#
+# In this example, single log sink project is created with a pubsub
+# destination name and target project destination name
+#
+# Replace the following with appropirate values
+# <FIXME:source_project_id>: The project id to create the logsink for.
+# <FIXME:target_project_id>: The project id to create the target pubsub topic for.
+# <FIXME:pubsub_topic_name>: The name of a pubsub topic that does not exists.
+#
+
+imports:
+  - path: templates/logsink/logsink.py
+    name: logsink.py
+
+resources:
+  - name: test-org-logsink-create-pubsub
+    type: logsink.py
+    properties:
+      projectId: <FIXME:source_project_id>
+      destinationName: <FIXME:pubsub_topic_name>
+      destinationType: pubsub
+      uniqueWriterIdentity: true
+      destinationProject: <FIXME:target_project_id>
+      pubsubProperties:
+        topic: <FIXME:pubsub_topic_name>

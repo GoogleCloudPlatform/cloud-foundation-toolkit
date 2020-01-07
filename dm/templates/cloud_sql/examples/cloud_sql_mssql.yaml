@@ -1,0 +1,30 @@
+# Example of the Cloud SQL template usage.
+# Note that MSSQL Server instance uses rootPassword.
+
+imports:
+  - path: templates/cloud_sql/cloud_sql.py
+    name: cloud_sql.py
+
+resources:
+  - name: cloud-sql-mssql-instance
+    type: cloud_sql.py
+    properties:
+      region: us-central1
+      databaseVersion: SQLSERVER_2017_STANDARD
+      instanceType: CLOUD_SQL_INSTANCE
+      rootPassword: changeit
+      settings:
+        tier: db-custom-2-3840
+        backupConfiguration:
+          startTime: '02:00'
+          enabled: true
+        locationPreference:
+          zone: us-central1-a
+      users:
+        - name: user-1
+          host: 10.1.1.1
+        - name: user-2
+          host: 10.1.1.2
+      databases:
+        - name: db-1
+        - name: db-2
