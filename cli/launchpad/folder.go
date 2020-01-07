@@ -3,6 +3,7 @@ package launchpad
 import (
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 )
 
@@ -17,7 +18,7 @@ type folderSpecYAML struct { // Inner mappings
 	DisplayName    string                 `yaml:"displayName"`
 	ParentRef      referenceYAML          `yaml:"parentRef"`
 	SubFolderSpecs []*folderSpecYAML      `yaml:"folders"`
-	Undefined      map[string]interface{} `yaml:",inline"` // Catch-all for untended behavior
+	Undefined      map[string]interface{} `yaml:",inline"` // Catch-all for unintended behavior
 }
 
 // folders represents a list of folders.
@@ -33,15 +34,22 @@ func (fs *folders) add(newF *folderYAML) {
 	*fs = append(*fs, newF)
 }
 
+func (fs folders) sortedCopy() folders {
+	buff := make(folders, len(fs)) // sorted subFolders
+	copy(buff, fs)
+	sort.SliceStable(buff, func(i, j int) bool { return buff[i].Spec.Id < buff[j].Spec.Id })
+	return buff
+}
+
 // folderYAML is a GCP Folder YAML representation.
 type folderYAML struct {
 	headerYAML `yaml:",inline"`
 	Spec       folderSpecYAML `yaml:"spec"`
-	subFolders folders        // subFolder represents validated sub directories.
+	subFolders folders        // subFolders is a validated sub directories.
 }
 
-// refId returns an internal referencable id.
-func (f *folderYAML) refId() string { return fmt.Sprintf("%s.%s", Folder, f.Spec.Id) }
+// resId returns an internal referencable id.
+func (f *folderYAML) resId() string { return fmt.Sprintf("%s.%s", Folder, f.Spec.Id) }
 
 // String implements Stringer and generates a string representation.
 func (f *folderYAML) String() string { return strings.Join(f.dump(0), "\n") }
@@ -97,14 +105,13 @@ func (f *folderYAML) resolveReferences(refs []resourceHandler) error {
 	for _, ref := range refs {
 		switch r := ref.(type) {
 		case *folderYAML:
-			if f.Spec.Id != r.Spec.ParentRef.TargetId {
-				// caller should already ensure this once
-				log.Printf("fatail: mismatch parent id %s %s", f.refId(), r.Spec.ParentRef.refId())
+			if f.Spec.Id != r.Spec.ParentRef.TargetId { // caller should already ensure this once
+				log.Printf("fatail: mismatch parent id %s %s", f.resId(), r.Spec.ParentRef.refId())
 				return errInvalidParent
 			}
 			f.subFolders.add(r)
 		default:
-			log.Printf("fatal: invalid %s parent for %s\n", f.refId(), r.refId())
+			log.Printf("fatal: invalid %s parent for %s\n", f.resId(), r.resId())
 			return errInvalidInput
 		}
 	}
@@ -114,10 +121,11 @@ func (f *folderYAML) resolveReferences(refs []resourceHandler) error {
 // dump generates debug string slices representation.
 func (f *folderYAML) dump(ind int) []string {
 	indent := strings.Repeat(" ", ind)
-	rep := fmt.Sprintf("%s+ %s.%s (\"%s\") <- (%s.%s)", indent, Folder, f.Spec.Id,
+	rep := fmt.Sprintf("%s+ %s.%s (\"%s\") < %s.%s", indent, Folder, f.Spec.Id,
 		f.Spec.DisplayName, f.Spec.ParentRef.TargetTypeStr, f.Spec.ParentRef.TargetId)
 	buff := []string{rep}
-	for _, sf := range f.subFolders {
+
+	for _, sf := range f.subFolders.sortedCopy() {
 		buff = append(buff, sf.dump(ind+defaultIndentSize)...)
 	}
 	return buff

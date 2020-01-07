@@ -1,8 +1,11 @@
 package launchpad
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
+// newTestFolder generates a fully formed folder for testing usage.
 func newTestFolder(id string, name string, parType crdKind, parId string, subFolderIds []string) folderYAML {
 	var subdir []*folderSpecYAML
 	for _, sId := range subFolderIds {
@@ -24,19 +27,11 @@ func TestFolders_add(t *testing.T) {
 		name   string
 		input  []*folderYAML
 		output folders
-	}{{
-		"add_once",
-		[]*folderYAML{f1},
-		folders1,
-	}, {
-		"add_twice",
-		[]*folderYAML{f1, f2},
-		folders12,
-	}, {
-		"add_same_twice",
-		[]*folderYAML{f1, f2, f1},
-		folders12,
-	}}
+	}{
+		{"add_once", []*folderYAML{f1}, folders1},
+		{"add_twice", []*folderYAML{f1, f2}, folders12},
+		{"add_same_twice", []*folderYAML{f1, f2, f1}, folders12},
+	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			fs := folders{}
@@ -54,27 +49,17 @@ func TestFolderYAML_validate(t *testing.T) {
 		name   string
 		input  *folderYAML
 		output error
-	}{{
-		"missing_id",
-		&folderYAML{Spec: folderSpecYAML{Id: ""}},
-		errMissingRequiredField,
-	}, {
-		"no_parents",
-		&folderYAML{Spec: folderSpecYAML{Id: "f1"}},
-		errInvalidParent,
-	}, {
-		"invalid_parent",
-		&folderYAML{Spec: folderSpecYAML{Id: "f1", ParentRef: referenceYAML{CloudFoundation.String(), "dummy"}}},
-		errInvalidParent,
-	}, {
-		"folderName_too_short",
-		&folderYAML{Spec: folderSpecYAML{Id: "f1", DisplayName: "12", ParentRef: orgRef}},
-		errValidationFailed,
-	}, {
-		"folderName_too_long",
-		&folderYAML{Spec: folderSpecYAML{Id: "f1", DisplayName: "1234567890123456789012345678901", ParentRef: orgRef}},
-		errValidationFailed,
-	}}
+	}{
+		{"missing_id", &folderYAML{Spec: folderSpecYAML{Id: ""}}, errMissingRequiredField},
+		{"no_parents", &folderYAML{Spec: folderSpecYAML{Id: "f1"}}, errInvalidParent},
+		{
+			"invalid_parent",
+			&folderYAML{Spec: folderSpecYAML{Id: "f1", ParentRef: referenceYAML{CloudFoundation.String(), "dummy"}}},
+			errInvalidParent,
+		},
+		{"folderName_too_short", &folderYAML{Spec: folderSpecYAML{Id: "f1", DisplayName: "12", ParentRef: orgRef}}, errValidationFailed},
+		{"folderName_too_long", &folderYAML{Spec: folderSpecYAML{Id: "f1", DisplayName: "1234567890123456789012345678901", ParentRef: orgRef}}, errValidationFailed},
+	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.input.validate()
@@ -101,34 +86,30 @@ func TestFolderYAML_validateSubFolder(t *testing.T) {
 }
 
 func TestFolderYAML_addToOrg(t *testing.T) {
+	// ORG <- f1 <- (sf1, sf2)
 	f := newTestFolder("f1", "fold1", Organization, "12345", []string{"sf1", "sf2"})
+
 	err := f.validate() // validation triggers subFolder population
 	assert.Nil(t, err, "folder validation should pass")
 
 	ao := newAssembledOrg()
-	assert.Len(t, ao.resourceRegistry, 0, "registry should be zero")
-	assert.Len(t, ao.referenceTracker, 0, "reference tracker should be empty")
-
 	err = f.addToOrg(ao)
-	assert.Nil(t, err, "folder should be registered")
+	assert.Nil(t, err, "folder should be now registered")
 
 	// verify f1 exist and valid pointer
-	f1, found := ao.resourceRegistry[f.refId()]
+	f1, found := ao.resourceMap[f.resId()]
 	assert.True(t, found, "f1 is not registered")
-	assert.Equal(t, &f, f1, "f1 registered is not the same")
+	assert.Equal(t, &f, f1.yaml, "f1 registered yaml is not the same")
+	assert.Len(t, f1.inRefs, 2, "both sf1, sf2 should reference f1")
 
-	f1Ref, found := ao.referenceTracker[f.refId()]
-	assert.True(t, found, "f1 reference tracker should exist")
-	assert.Len(t, f1Ref, 2, "sf1, sf2 should reference f1")
-
-	orgRef, found := ao.referenceTracker[Organization.String()+".12345"]
+	org, found := ao.resourceMap[Organization.String()+".12345"]
 	assert.True(t, found, "org should be populated")
-	assert.Len(t, orgRef, 1, "f1 should point to org")
+	assert.Len(t, org.inRefs, 1, "f1 should point to org")
 
-	// verify sub-folder sf1 and sf2 also registered
-	_, found = ao.resourceRegistry[Folder.String()+".sf1"]
+	// verify sub-folder sf1 and sf2 are also registered
+	_, found = ao.resourceMap[Folder.String()+".sf1"]
 	assert.True(t, found, "sf1 is not registered")
-	_, found = ao.resourceRegistry[Folder.String()+".sf2"]
+	_, found = ao.resourceMap[Folder.String()+".sf2"]
 	assert.True(t, found, "sf2 is not registered")
 }
 
@@ -163,4 +144,55 @@ func TestFolderYAML_resolveReferences(t *testing.T) {
 	org1 := orgYAML{Spec: orgSpecYAML{Id: "dummy"}}
 	err = f1.resolveReferences([]resourceHandler{&org1})
 	assert.Equal(t, errInvalidInput, err, "impossible reference")
+}
+
+func TestFolderYAMLIntegration(t *testing.T) {
+	var testCases = []struct {
+		name              string
+		expectedRelations []testFolderRelation
+		inputYAMLs        []string
+		assembleFail      bool
+	}{{
+		"one_folder_under_org",
+		[]testFolderRelation{{"group1", true, testOrgId}},
+		[]string{"../testdata/launchpad/folder/folder_1.yaml"},
+		false,
+	}, {
+		"nested_folder_out_of_order",
+		[]testFolderRelation{
+			{"group1", true, testOrgId},
+			{"group1_2", false, "group1"},
+			{"group1_2_1", false, "group1_2"}, // Ordering on purpose
+			{"group1_2_3", false, "group1_2"},
+		},
+		[]string{"../testdata/launchpad/folder/folder_1.yaml", "../testdata/launchpad/folder/folder_12.yaml"},
+		false,
+	}, {
+		"parent_not_found",
+		[]testFolderRelation{},
+		[]string{"../testdata/launchpad/folder/folder_12.yaml"},
+		true,
+	}, {
+		"org_crd_subfolder",
+		[]testFolderRelation{{"group1", true, testOrgId}},
+		[]string{"../testdata/launchpad/folder/org_1.yaml"},
+		false,
+	}}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ao := newTestOrg("")
+			addTestRelations(ao, tc.expectedRelations)
+
+			resources := loadResources(tc.inputYAMLs)
+			if tc.assembleFail {
+				assert.Panics(t, func() {
+					assembleResourcesToOrg(resources)
+				}, "panic was expected for undefined reference")
+			} else {
+				assembled := assembleResourcesToOrg(resources)
+				assert.Equal(t, ao.String(), assembled.String())
+			}
+		})
+	}
 }

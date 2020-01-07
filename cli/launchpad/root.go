@@ -26,7 +26,7 @@ func NewGenerate(rawPaths []string, outFlavor OutputFlavor, outputDir string) {
 
 	assembled := assembleResourcesToOrg(resources)
 
-	fmt.Printf("%s\n", assembled.String())  // Place-holder for future trigger point of code generation
+	fmt.Printf("%s\n", assembled.String()) // Place-holder for future trigger point of code generation
 }
 
 // OutputFlavor defines launchpad's generated output language.

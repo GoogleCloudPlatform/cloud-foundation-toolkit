@@ -23,8 +23,8 @@ type orgYAML struct {
 	subFolders folders     // subFolder represents validated sub directories.
 }
 
-// refId returns an internal referencable id.
-func (o *orgYAML) refId() string { return fmt.Sprintf("%s.%s", Organization, o.Spec.Id) }
+// resId returns an internal referencable id.
+func (o *orgYAML) resId() string { return fmt.Sprintf("%s.%s", Organization, o.Spec.Id) }
 
 // String implements Stringer and generates a string representation.
 func (o *orgYAML) String() string { return strings.Join(o.dump(0), "\n") }

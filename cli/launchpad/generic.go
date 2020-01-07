@@ -29,14 +29,14 @@ var (
 	errValidationFailed     = errors.New("validation failed")
 	errMissingRequiredField = errors.New("missing required field")
 	errInvalidParent        = errors.New("invalid parent reference")
-	errInvalidInput      = errors.New("invalid input")
+	errInvalidInput         = errors.New("invalid input")
 	tfNameRegex             = regexp.MustCompile("^[a-zA-Z][a-zA-Z\\d\\-\\_]*$")
 )
 
 // resourceHandler represents a resource that can be processed by launchpad.
 type resourceHandler interface {
-	// refId defines the internal referencable id.
-	refId() string
+	// resId defines the internal referencable id.
+	resId() string
 	// validate ensures the parsed YAML has validate fields.
 	validate() error
 	// kind returns the validated crdKind of the resource.

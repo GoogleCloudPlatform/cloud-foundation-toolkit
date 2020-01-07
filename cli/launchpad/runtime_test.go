@@ -1,6 +1,8 @@
 package launchpad
 
-import "testing"
+import (
+	"testing"
+)
 import "github.com/stretchr/testify/assert"
 
 type dummyResource struct {
@@ -8,7 +10,7 @@ type dummyResource struct {
 	id string
 }
 
-func (d *dummyResource) refId() string                                  { return "Folder." + d.id }
+func (d *dummyResource) resId() string                                  { return "Folder." + d.id }
 func (d *dummyResource) validate() error                                { return nil }
 func (d *dummyResource) kind() crdKind                                  { return crdKind(0) }
 func (d *dummyResource) addToOrg(ao *assembledOrg) error                { return nil }
@@ -22,11 +24,11 @@ type registerResourceArg struct {
 func TestAssembledOrg_registerResourceAddResourceRegistry(t *testing.T) {
 	d1, d2 := &dummyResource{id: "1"}, &dummyResource{id: "2"}
 	expAo1 := newAssembledOrg()
-	expAo1.resourceRegistry[d1.refId()] = d1
+	expAo1.resourceMap[d1.resId()] = &resource{yaml: d1}
 
 	expAo2 := newAssembledOrg()
-	expAo2.resourceRegistry[d1.refId()] = d1
-	expAo2.resourceRegistry[d2.refId()] = d2
+	expAo2.resourceMap[d1.resId()] = &resource{yaml: d1}
+	expAo2.resourceMap[d2.resId()] = &resource{yaml: d2}
 
 	var testCases = []struct {
 		name           string
@@ -59,17 +61,33 @@ func TestAssembledOrg_registerResourceAddResourceRegistry(t *testing.T) {
 
 func TestAssembledOrg_registerResourceAddReferenceTracker(t *testing.T) {
 	d1, d2, d3 := &dummyResource{id: "1"}, &dummyResource{id: "2"}, &dummyResource{id: "3"}
+	expAo0 := newAssembledOrg() // Case 1 (no ref)
+	expAo0.resourceMap[d1.resId()] = &resource{yaml: d1}
+
 	expAo1 := newAssembledOrg() // Case 1 <- 2
-	expAo1.referenceTracker[d1.refId()] = []resourceHandler{d2}
+	expAo1.resourceMap[d1.resId()] = &resource{yaml: d1, inRefs: []resourceHandler{d2}}
+	expAo1.resourceMap[d2.resId()] = &resource{yaml: d2}
 
 	expAo2 := newAssembledOrg() // Case 1 <- 2, 3
-	expAo2.referenceTracker[d1.refId()] = []resourceHandler{d2, d3}
+	expAo2.resourceMap[d1.resId()] = &resource{yaml: d1, inRefs: []resourceHandler{d2, d3}}
+	expAo2.resourceMap[d2.resId()] = &resource{yaml: d2}
+	expAo2.resourceMap[d3.resId()] = &resource{yaml: d3}
+
+	expAoUndefined := newAssembledOrg() // Case 1 -> 000 (not exist)
+	expAoUndefined.resourceMap[d1.resId()] = &resource{yaml: d1}
+	expAoUndefined.resourceMap["Folder.000"] = &resource{inRefs: []resourceHandler{d1}}
 
 	var testCases = []struct {
 		name           string
 		inputs         []registerResourceArg
 		expectedOutput *assembledOrg
 	}{{
+		"no_reference",
+		[]registerResourceArg{
+			{d1, nil},
+		},
+		expAo0,
+	}, {
 		"single_reference",
 		[]registerResourceArg{
 			{d1, nil},
@@ -92,6 +110,12 @@ func TestAssembledOrg_registerResourceAddReferenceTracker(t *testing.T) {
 			{d3, &referenceYAML{"folder", "1"}},
 		},
 		expAo2,
+	}, {
+		"undefined_reference",
+		[]registerResourceArg{
+			{d1, &referenceYAML{"folder", "000"}},
+		},
+		expAoUndefined,
 	}}
 
 	for _, tc := range testCases {
@@ -100,7 +124,7 @@ func TestAssembledOrg_registerResourceAddReferenceTracker(t *testing.T) {
 			for _, r := range tc.inputs {
 				assert.Nil(t, ao.registerResource(r.src, r.dst))
 			}
-			assert.Equal(t, tc.expectedOutput.referenceTracker, ao.referenceTracker, "assembledOrg is expected to be equal")
+			assert.EqualValues(t, tc.expectedOutput.resourceMap, ao.resourceMap, "assembledOrg is expected to be equal")
 		})
 	}
 }
@@ -155,10 +179,10 @@ func TestAssembledOrg_registerResourceInitializeOrg(t *testing.T) {
 			}
 			assert.Equal(t, tc.expectedOutput.org, ao.org, "org is expected to be initialized the same")
 
-			if len(tc.expectedOutput.resourceRegistry) == 0 {
+			if len(tc.expectedOutput.resourceMap) == 0 {
 				return
 			}
-			_, found := ao.resourceRegistry[Organization.String()+".1234"]
+			_, found := ao.resourceMap[Organization.String()+".1234"]
 			assert.True(t, found, "org is expected to be registered after initialization")
 		})
 	}
