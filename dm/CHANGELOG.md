@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 08.01.2020
+
+- Updated gke template to support Python 3
+
 ### 23.12.2019
 
 - Fixed template `cloud_router` schema [#524](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/524)
