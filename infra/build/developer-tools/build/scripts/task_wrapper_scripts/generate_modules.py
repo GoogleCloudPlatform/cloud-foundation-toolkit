@@ -21,7 +21,7 @@ import json
 
 from jinja2 import Environment, FileSystemLoader
 
-AUTOGEN_NOTE = '// This file was automatically generated from a template in '
+AUTOGEN_NOTE = '// This file was automatically generated from a template in {folder}'
 
 class Module(object):
     path = None
@@ -55,7 +55,7 @@ def main(argv):
                 template_file = template_file.replace(".tf.tmpl", ".tf")
             rendered = template.render(
                 module.template_options(
-                    {'autogeneration_note': AUTOGEN_NOTE + template_folder}
+                    {'autogeneration_note': AUTOGEN_NOTE.format(folder=template_folder)}
                 )
             )
             with open(os.path.join(module.path, template_file), "w") as f:
