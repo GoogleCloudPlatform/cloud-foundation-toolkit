@@ -1,0 +1,14 @@
+apiVersion: cft.dev/v1alpha1
+kind: Folder
+spec:
+  id: "group1_2"
+  displayName: "group1_2"
+  folders:
+    # Intentional out of order
+    - id: "group1_2_3"
+      displayName: "group1_2_3"
+    - id: "group1_2_1"
+      displayName: "group1_2_1"
+  parentRef:
+    type: Folder
+    id: group1

@@ -15,7 +15,7 @@
 info:
   title: Google Cloud Storage Bucket
   author: Sourced Group Inc.
-  version: 1.1.0
+  version: 1.1.1
   description: |
     Supports creation of a Google Cloud Storage bucket.
 
@@ -124,7 +124,6 @@ properties:
         description: Enables/disables object versioning.
   predefinedAcl:
     type: string
-    default: private
     description: |
       The predefined or "canned" ACL - an alias for a set of specific
       ACL entries that you can use to quickly apply multiple ACL entries
@@ -138,7 +137,6 @@ properties:
       - publicReadWrite
   predefinedDefaultObjectAcl:
     type: string
-    default: private
     enum:
       - authenticatedRead
       - bucketOwnerFullControl

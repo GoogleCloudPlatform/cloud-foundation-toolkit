@@ -8,23 +8,25 @@ import copy
 def generate_config(context):
 
     tests = []
-    for test in context.imports:
-        if '../../templates/' in test:
-            tests.append(test[16:-10])
-
     resources = []
-    for test in tests:
-        props = copy.deepcopy(context.properties)
-        props['description'] = props['description'].replace('#template#', test)
-        props['substitutions']['_BATS_TEST_FILE'] = \
-            props['substitutions']['_BATS_TEST_FILE'].replace(
-            '#template#', test)
-        for i in range(len(props['includedFiles'])):
-            props['includedFiles'][i] = props['includedFiles'][i].replace(
-                '#template#', test)
-        resources.append({
-            'type': "cft-trigger.py",
-            'name': context.env['name'] + "-" + test,
-            'properties': props})
+    for test in context.imports:
+        if '/tests/integration/' in test:
+            testData = test.split('/')
+            testFolder = testData[3]
+            batsFile = testData[6]
+
+            props = copy.deepcopy(context.properties)
+            props['description'] = props['description'].replace('#template#', batsFile[:-5])
+            props['substitutions']['_BATS_TEST_FILE'] = \
+                props['substitutions']['_BATS_TEST_FILE'].replace(
+                '#template#', testFolder).replace(
+                '#templatetest#', batsFile)
+            for i in range(len(props['includedFiles'])):
+                props['includedFiles'][i] = props['includedFiles'][i].replace(
+                    '#template#', testFolder)
+            resources.append({
+                'type': "cft-trigger.py",
+                'name': context.env['name'] + "-" + batsFile[:-5],
+                'properties': props})
 
     return {'resources': resources}

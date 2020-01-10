@@ -15,7 +15,7 @@
 info:
   title: Logging Sink
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Creates a logging sink to export entries to a desired destination.
 
@@ -41,6 +41,8 @@ imports:
     name: bigquery_dataset.py
   - path: ../gcs_bucket/gcs_bucket.py
     name: gcs_bucket.py
+  - path: ../iam_member/iam_member.py
+    name: iam_member.py
 
 additionalProperties: false
 
@@ -96,6 +98,10 @@ properties:
       An advanced log filter that limits the export to those log entries that:
       (a) are in the resource that owns the sink; and
       (b) matches the filter condition(s).
+  destinationProject:
+    type: string
+    description: |
+      Bucket project name.
   pubsubProperties:
     type: object
     description: |

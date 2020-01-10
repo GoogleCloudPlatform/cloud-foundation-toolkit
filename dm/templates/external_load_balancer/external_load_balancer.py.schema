@@ -15,7 +15,7 @@
 info:
   title: External Load Balancer
   author: Sourced Group Inc.
-  version: 1.0.1
+  version: 1.1.1
   description: |
     Supports creation of an HTTP(S), SSL Proxy, or TCP Proxy external load
     balancer. For details, visit https://cloud.google.com/load-balancing/docs/.
@@ -35,6 +35,49 @@ imports:
     name: cft_helper.py
 
 additionalProperties: false
+
+oneOf:
+  - not:
+      required:
+        - urlMap
+        - ssl
+    portRange:
+      type: array
+      items:
+        - type: string
+          enum:
+            - 25
+            - 43
+            - 110
+            - 143
+            - 195
+            - 443
+            - 465
+            - 587
+            - 700
+            - 993
+            - 995
+            - 1883
+            - 5222
+        - type: integer
+          enum:
+            - 25
+            - 43
+            - 110
+            - 143
+            - 195
+            - 443
+            - 465
+            - 587
+            - 700
+            - 993
+            - 995
+            - 1883
+            - 5222
+  - required:
+    - urlMap
+  - required:
+    - ssl
 
 properties:
   name:
@@ -472,9 +515,26 @@ properties:
     additionalProperties: false
     description: |
       Encryption settings for connections processed by the resource.
-    required:
-      - certificate
+    oneOf:
+      - required:
+          - sslCertificates
+      - required:
+          - certificate
     properties:
+      sslCertificates:
+        type: array
+        uniqItems: true
+        description: |
+          URLs to SslCertificate resources that are used to authenticate connections to Backends.
+          At least one SSL certificate must be specified. Currently, you may specify up to 15 SSL certificates.
+
+          Authorization requires the following Google IAM permission on the specified resource sslCertificates:
+
+          compute.sslCertificates.get
+        minItems: 0
+        maxItems: 15
+        items:
+          type: string
       certificate:
         type: object
         additionalProperties: false

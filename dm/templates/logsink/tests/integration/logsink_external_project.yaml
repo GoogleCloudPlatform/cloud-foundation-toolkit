@@ -1,0 +1,46 @@
+# Test of the logsink template for target in external project.
+#
+# Variables:
+#   RAND: A random string used by the testing suite.
+#
+
+imports:
+  - path: templates/logsink/logsink.py
+    name: logsink.py
+
+resources:
+  # Project sink with bucket destination
+  - name: test-logsink-project-storage-${RAND}
+    type: logsink.py
+    properties:
+      projectId: ${CLOUD_FOUNDATION_PROJECT_ID}
+      destinationName: test-bucket-${RAND}
+      destinationType: storage
+      uniqueWriterIdentity: true
+      destinationProject: ${TARGET_PROJECT_ID}
+      storageProperties:
+        location: us-east1
+
+  # Project sink with pubsub destination
+  - name: test-logsink-project-pubsub-${RAND}
+    type: logsink.py
+    properties:
+      projectId: ${CLOUD_FOUNDATION_PROJECT_ID}
+      destinationName: test-topic-${RAND}
+      destinationType: pubsub
+      uniqueWriterIdentity: true
+      destinationProject: ${TARGET_PROJECT_ID}
+      pubsubProperties:
+        topic: test-topic-${RAND}
+
+  # Project sink with bq destination
+  - name: test-logsink-project-bq-${RAND}
+    type: logsink.py
+    properties:
+      projectId: ${CLOUD_FOUNDATION_PROJECT_ID}
+      destinationName: test_dataset_${RAND}
+      destinationType: bigquery
+      uniqueWriterIdentity: true
+      destinationProject: ${TARGET_PROJECT_ID}
+      bqProperties:
+        location: US
