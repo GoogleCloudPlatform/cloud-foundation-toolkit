@@ -114,3 +114,23 @@ func (o *orgYAML) dump(ind int, buff io.Writer) error {
 	}
 	return nil
 }
+
+// draw adds the org to a diagram
+func (o *orgYAML) draw(dg *diagramGroup, parent *diagramCard) error {
+	newGroup, err := dg.addGroup("organization")
+	if err != nil {
+		return err
+	}
+	newCard, err := newGroup.addCard("org", "organization")
+	if err != nil {
+		return err
+	}
+
+	for _, sf := range o.subFolders {
+		err = sf.draw(newGroup, newCard)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

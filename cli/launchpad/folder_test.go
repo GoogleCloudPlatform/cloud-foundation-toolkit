@@ -194,7 +194,10 @@ func TestFolderYAMLIntegration(t *testing.T) {
 		true,
 	}, {
 		"org_crd_subfolder",
-		[]testFolderRelation{{"group1", true, testOrgId}},
+		[]testFolderRelation{
+			{"group1", true, testOrgId},
+			{"group2", true, testOrgId},
+		},
 		[]string{"../testdata/launchpad/folder/org_1.yaml"},
 		false,
 	}}

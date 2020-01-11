@@ -5,5 +5,11 @@ spec:
   folders:
     - id: "group1"
       displayName: "group1"
+      folders:
+        - id: "group1_nest1"
+          displayName: "Nest 1.1"
+          folders:
+          - id: "group1_nest1_nest2"
+            displayName: "Nest 1.1.2"
     - id: "group2"
       displayName: "group2"

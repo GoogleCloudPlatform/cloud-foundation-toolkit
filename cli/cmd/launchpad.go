@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	launchpadGenerateCmd.Flags().StringVarP(&launchpadOutputFlavor, "flavor", "f", "tf", "Output Flavor: [tf]/dm")
+	launchpadGenerateCmd.Flags().StringVarP(&launchpadOutputFlavor, "flavor", "f", "tf", "Output Flavor: [tf]/dm/draw")
 	launchpadGenerateCmd.Flags().StringVarP(&launchpadOutputDirectory, "directory", "d", "config", "Output Directory: [config]")
 
 	rootCmd.AddCommand(launchpadCmd)

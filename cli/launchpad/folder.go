@@ -152,6 +152,24 @@ func (f *folderYAML) dump(ind int, buff io.Writer) error {
 	return nil
 }
 
+// draw adds the folder to a diagram
+func (f *folderYAML) draw(dg *diagramGroup, parent *diagramCard) error {
+	newCard, err := dg.addCard(f.Spec.Id, f.Spec.DisplayName)
+	if err != nil {
+		return err
+	}
+
+	dg.addPath(parent, newCard, "-->")
+
+	for _, sf := range f.subFolders {
+		err = sf.draw(dg, newCard)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // newSubFoldersBySpecs initializes folderSpecYAMLs and turn it into a folderYAMLs.
 //
 // newSubFoldersBySpecs overwrites folderSpecYAML's parent field if parentId is provided.

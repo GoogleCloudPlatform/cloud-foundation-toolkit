@@ -26,7 +26,12 @@ func NewGenerate(rawPaths []string, outFlavor OutputFlavor, outputDir string) {
 
 	assembled := assembleResourcesToOrg(resources)
 
-	print(assembled.String()) // Place-holder for future trigger point of code generation
+	switch outFlavor {
+	case Drawing:
+		assembled.draw()
+	default:
+		print(assembled.String()) // Place-holder for future trigger point of code generation
+	}
 }
 
 // OutputFlavor defines launchpad's generated output language.
@@ -35,11 +40,12 @@ type OutputFlavor int
 const (
 	DeploymentManager OutputFlavor = iota
 	Terraform
+	Drawing
 )
 
 // String returns the string representation of an OutputFlavor.
 func (f OutputFlavor) String() string {
-	return []string{"DeploymentManager", "Terraform"}[f]
+	return []string{"DeploymentManager", "Terraform", "Drawing"}[f]
 }
 
 // newOutputFlavor parses string formatted output flavor and convert to internal format.
@@ -52,6 +58,8 @@ func NewOutputFlavor(fStr string) OutputFlavor {
 		return DeploymentManager
 	case "terraform", "tf":
 		return Terraform
+	case "diagram", "draw", "drawing":
+		return Drawing
 	default:
 		log.Fatalln("Unsupported output flavor", fStr)
 	}

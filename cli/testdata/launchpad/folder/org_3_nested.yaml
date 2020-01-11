@@ -1,0 +1,23 @@
+apiVersion: cft.dev/v1alpha1
+kind: Organization
+spec:
+  id: 12345678
+  folders:
+    - id: "group1"
+      displayName: "group1"
+      folders:
+        - id: "group1_dev"
+          displayName: "Dev"
+        - id: "group1_uat"
+          displayName: "UAT"
+        - id: "group1_prod"
+          displayName: "Production"
+    - id: "group2"
+      displayName: "group2"
+      folders:
+        - id: "group2_dev"
+          displayName: "Dev"
+        - id: "group2_uat"
+          displayName: "UAT"
+        - id: "group2_prod"
+          displayName: "Production"
