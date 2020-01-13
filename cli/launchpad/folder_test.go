@@ -36,7 +36,7 @@ func TestFolders_add(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			fs := folders{}
 			for _, newF := range tc.input {
-				fs.add(newF)
+				_ = fs.add(newF) 	// silently ignore existing resource
 			}
 			assert.Equal(t, tc.output, fs, "expected folders to be the same")
 		})
@@ -167,6 +167,26 @@ func TestFolderYAMLIntegration(t *testing.T) {
 		},
 		[]string{"../testdata/launchpad/folder/folder_1.yaml", "../testdata/launchpad/folder/folder_12.yaml"},
 		false,
+	}, {
+		"deep_nested",
+		[]testFolderRelation{
+			{"group1", true, testOrgId},
+			{"group11", false, "group1"},
+			{"group12", false, "group1"},
+			{"group123", false, "group12"},
+		},
+		[]string{"../testdata/launchpad/folder/folder_1_nested.yaml"},
+		false,
+	}, {
+		"conflict_folder_def",
+		[]testFolderRelation{},
+		[]string{"../testdata/launchpad/folder/folder_1.yaml", "../testdata/launchpad/folder/folder_1_nested.yaml"},
+		true,
+	}, {
+		"conflict_nested_folder_def",
+		[]testFolderRelation{},
+		[]string{"../testdata/launchpad/folder/org_2_nested_conflict.yaml"},
+		true,
 	}, {
 		"parent_not_found",
 		[]testFolderRelation{},

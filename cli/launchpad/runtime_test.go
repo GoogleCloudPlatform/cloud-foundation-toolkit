@@ -174,7 +174,7 @@ func TestAssembledOrg_registerResourceInitializeOrg(t *testing.T) {
 				}
 			}
 			if err != nil && tc.expectedOutput == nil {
-				assert.Equal(t, errConflictId, err, "expect to have org id conflict error")
+				assert.Equal(t, errConflictDefinition, err, "expect to have org id conflict error")
 				return
 			}
 			assert.Equal(t, tc.expectedOutput.org, ao.org, "org is expected to be initialized the same")

@@ -1,0 +1,15 @@
+apiVersion: cft.dev/v1alpha1
+kind: Organization
+spec:
+  id: 12345678
+  folders:
+    - id: "group1"
+      displayName: "group1"
+      folders:
+        - id: "error"
+          displayName: "error"
+    - id: "group2"
+      displayName: "group2"
+      folders:
+        - id: "error"
+          displayName: "error"

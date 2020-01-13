@@ -26,13 +26,27 @@ type folderSpecYAML struct { // Inner mappings
 type folders []*folderYAML
 
 // add appends a folder into the folder list if it does not exist already.
-func (fs *folders) add(newF *folderYAML) {
+//
+// add returns existing folder's reference if attempted to add folder of the same ID.
+func (fs *folders) add(newF *folderYAML) *folderYAML {
 	for _, f := range *fs {
-		if f.Spec.Id == newF.Spec.Id { // silently ignore already existing folder
-			return
+		if f.Spec.Id == newF.Spec.Id {
+			return f
 		}
 	}
 	*fs = append(*fs, newF)
+	return nil
+}
+
+// merge adds given list of folders into the current folders list recursively.
+//
+// merge will be called on subfolder when it exist in both current and given list of folders.
+func (fs *folders) merge(nfs *folders) {
+	for _, f := range *nfs {
+		if existF := fs.add(f); existF != nil {
+			existF.subFolders.merge(&f.subFolders) // recursively merge sub folders
+		}
+	}
 }
 
 func (fs folders) sortedCopy() folders {
@@ -77,6 +91,11 @@ func (f *folderYAML) validate() error {
 	}
 
 	f.subFolders = newSubFoldersBySpecs(f.Spec.SubFolderSpecs, Folder, f.Spec.Id)
+	for _, f := range f.subFolders { // triggers subfolder validation to validate and add nested folders
+		if err := f.validate(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -107,7 +126,7 @@ func (f *folderYAML) resolveReferences(refs []resourceHandler) error {
 				log.Printf("fatail: mismatch parent id %s %s", f.resId(), r.Spec.ParentRef.resId())
 				return errInvalidParent
 			}
-			f.subFolders.add(r)
+			_ = f.subFolders.add(r) // silently ignore existing resource
 		default:
 			log.Printf("fatal: invalid %s parent for %s\n", f.resId(), r.resId())
 			return errInvalidInput

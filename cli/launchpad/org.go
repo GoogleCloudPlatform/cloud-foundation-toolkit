@@ -4,11 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"strings"
 )
-
-var errConflictId = errors.New("unable to initialize organization to a different id")
 
 // orgSpecYAML defines an Organization's Spec.
 type orgSpecYAML struct {
@@ -36,6 +33,11 @@ func (o *orgYAML) validate() error {
 	}
 
 	o.subFolders = newSubFoldersBySpecs(o.Spec.SubFolderSpecs, Organization, o.Spec.Id)
+	for _, f := range o.subFolders {
+		if err := f.validate(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -69,7 +71,7 @@ func (o *orgYAML) resolveReferences(refs []resourceHandler) error {
 	for _, ref := range refs {
 		switch r := ref.(type) {
 		case *folderYAML:
-			o.subFolders.add(r)
+			_ = o.subFolders.add(r) // silently ignore existing resource
 		default:
 			return errors.New("unable to process reference from resource")
 		}
@@ -77,30 +79,19 @@ func (o *orgYAML) resolveReferences(refs []resourceHandler) error {
 	return nil
 }
 
-// initializeByRef initializes an organization through another resource's reference.
-func (o *orgYAML) initializeByRef(ref *referenceYAML) error {
-	if o.Spec.Id != "" && o.Spec.Id != ref.TargetId {
-		log.Printf("fatal: org already initialized to %s, cannot reinitialize to %s\n", o.Spec.Id, ref.TargetId)
-		return errConflictId
-	} else if o.Spec.Id == "" && ref.TargetId == "" {
-		log.Printf("fatal: trying to initialize org with empty Id\n")
-		return errors.New("unset org id")
-	}
-	o.Spec.Id = ref.TargetId
-	return nil
-}
-
 // mergeFields merges all fields from input to current resource.
 //
-// mergeFields is NOT recursive. However, future version can consider recursively merging
-// all sub resources through additional of mergeFields requirement in resourceHandler.
+// mergeFields only operates on named resource, ignoring YAML Specs.
+// However, future version can consider recursively merging all sub resources through
+// additional of mergeFields requirement in resourceHandler.
 func (o *orgYAML) mergeFields(oldO *orgYAML) error {
 	if oldO.APIVersion != "" {
 		o.APIVersion = oldO.APIVersion
 	}
 	if oldO.Spec.DisplayName != "" {
-		o.APIVersion = oldO.Spec.DisplayName
+		o.Spec.DisplayName = oldO.Spec.DisplayName
 	}
+	o.subFolders.merge(&oldO.subFolders)
 	// TODO (FR) recursively merge folderSpecYAML projectSpecYAML ...etc
 	// resolveReferences ensures output linkage is valid, hence not a priority as this is a cleanup.
 	// downside is {resource}SpecYAML sub-resources are misaligned.
@@ -116,7 +107,7 @@ func (o *orgYAML) dump(ind int, buff io.Writer) error {
 	}
 
 	for _, sf := range o.subFolders {
-		err = sf.dump(ind + defaultIndentSize, buff)
+		err = sf.dump(ind+defaultIndentSize, buff)
 		if err != nil {
 			return err
 		}
