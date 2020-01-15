@@ -12,7 +12,11 @@ import (
 	"strings"
 )
 
-var errUndefinedReference = errors.New("undefined reference")
+var (
+	errUndefinedReference = errors.New("undefined reference")
+	errConflictDefinition = errors.New("definition conflict")
+	errUnexpectedType     = errors.New("unexpected type")
+)
 
 type resource struct {
 	yaml   resourceHandler
@@ -21,21 +25,33 @@ type resource struct {
 
 type resourceMap map[string]*resource
 
-func (rm resourceMap) getInit(rId string, yaml resourceHandler) *resource {
+func (rm resourceMap) getInit(rId string, yaml resourceHandler) (*resource, error) {
 	res, found := rm[rId]
 	if !found { // initialize resource was not encountered before
 		res = &resource{yaml: yaml} // yaml is possible be nil
 		rm[rId] = res
 	}
-	if yaml != nil {
-		res.yaml = yaml
+	if yaml == nil {
+		return res, nil
 	}
-	return res
-}
-
-func (rm resourceMap) addRef(dst string, yaml resourceHandler) {
-	dstResource := rm.getInit(dst, nil) // initialize resource before encountering
-	dstResource.inRefs = append(dstResource.inRefs, yaml)
+	if res.yaml.kind() == Organization {
+		// newer organization definition, pull sub-resources into current
+		o, ok := res.yaml.(*orgYAML)
+		if !ok {
+			return nil, errUnexpectedType
+		}
+		oNew, ok := yaml.(*orgYAML)
+		if !ok {
+			return nil, errUnexpectedType
+		}
+		return res, o.mergeFields(oNew)
+	}
+	if yaml != res.yaml {
+		log.Println("conflicting YAML definition detected on", yaml.resId())
+		return nil, errConflictDefinition
+	}
+	res.yaml = yaml
+	return res, nil
 }
 
 func (rm resourceMap) sortedResId() []string {
@@ -59,6 +75,7 @@ type assembledOrg struct {
 func newAssembledOrg() *assembledOrg {
 	ao := assembledOrg{}
 	ao.resourceMap = make(resourceMap)
+	ao.org.headerYAML = headerYAML{APIVersion: apiCFTv1alpha1, KindStr: Organization.String()}
 	return &ao
 }
 
@@ -80,7 +97,8 @@ func assembleResourcesToOrg(rs []resourceHandler) *assembledOrg {
 	// initialize resource into resourceMap or update references if already exist.
 	for _, r := range rs {
 		if err := r.addToOrg(ao); err != nil {
-			log.Fatalln("error validating YAML", err.Error())
+			log.Println("error validating YAML", err.Error())
+			panic(err.Error())
 		}
 	}
 	// assemble each discovered resource onto a finalized org
@@ -99,28 +117,37 @@ func assembleResourcesToOrg(rs []resourceHandler) *assembledOrg {
 //
 // If there are conflicting resources ID, silently pick the latest.
 func (ao *assembledOrg) registerResource(src resourceHandler, dst *referenceYAML) error {
-	_ = ao.resourceMap.getInit(src.resId(), src)
+	if _, err := ao.resourceMap.getInit(src.resId(), src); err != nil {
+		return err
+	}
 
 	if dst == nil { // no outgoing reference from src
 		return nil
 	}
 
-	if dst.TargetType() == Organization { // Initialize Organization
-		if err := ao.org.initializeByRef(dst); err != nil { // attempt to initialize org
-			return err
+	// initialize a resource on the resource map, pending future definition on YAML
+	var dstYAML resourceHandler
+	if dst.TargetType() == Organization {
+		if ao.org.Spec.Id == "" {
+			ao.org.Spec.Id = dst.TargetId
+		} else if ao.org.Spec.Id != dst.TargetId {
+			log.Printf("fatal: org is identified as %s, cannot remap to %s\n", ao.org.Spec.Id, dst.TargetId)
+			return errConflictDefinition
 		}
-		// org is special that we need to manually register it's ID for them
-		ao.resourceMap.getInit(ao.org.resId(), &ao.org)
+		dstYAML = &ao.org // allow future resolution to pick up finalized org directly
 	}
 
+	dstRes, err := ao.resourceMap.getInit(dst.resId(), dstYAML)
+	if err != nil {
+		return err
+	}
 	// update referenceTracker for references from src
-	ao.resourceMap.addRef(dst.resId(), src)
+	dstRes.inRefs = append(dstRes.inRefs, src)
 	return nil
 }
 
 // resolveReferences loops through resourceMap to link up resource to sub resources.
 func (ao *assembledOrg) resolveReferences() error {
-	// TODO dont do resId do resId
 	for resId, res := range ao.resourceMap {
 		if res.yaml == nil {
 			// an item is initialized but the resourceHandler never provided

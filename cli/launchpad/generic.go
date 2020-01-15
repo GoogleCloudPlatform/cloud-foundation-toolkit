@@ -72,7 +72,7 @@ func newCRDKind(crdKindStr string) crdKind {
 	case "organization":
 		return Organization
 	default:
-		log.Println("warning: unsupported CustomResourceDefinition", crdKindStr)
+		log.Printf("warning: unsupported CustomResourceDefinition %q", crdKindStr)
 		return -1
 	}
 }
