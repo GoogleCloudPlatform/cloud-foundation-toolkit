@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 15.01.2020
+
+- Updated cloud sql template to fix intermittent Python 3 warnings [#538](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/538)
+
 ### 08.01.2020
 
 - Updated gke template to support Python 3 [#531](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/531)
