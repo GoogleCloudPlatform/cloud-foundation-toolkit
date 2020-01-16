@@ -703,6 +703,21 @@ properties:
                 cidrBlock:
                   type: string
                   description: The cidrBlock in the CIDR notation.
+      releaseChannel:
+        type: object
+        additionalProperties: false
+        description: |
+          Instead of defining explicit version of Kubernetes, uses the new Release channel feature.
+        properties:
+          channel:
+            type: string
+            default: REGULAR
+            description: |
+              Use RAPID, REGULAR or STABLE. Defaults to REGULAR
+            enum:
+              - REGULAR
+              - RAPID
+              - STABLE
       addonsConfig:
         type: object
         additionalProperties: false
