@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 16.01.2020
+
+- Updated gke template to support setting for releaseChannel [#539](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/539)
+
 ### 08.01.2020
 
 - Updated gke template to support Python 3 [#531](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/531)
