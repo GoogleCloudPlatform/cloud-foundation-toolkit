@@ -15,7 +15,7 @@
 info:
   title: Target Proxy
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.0.1
   description: |
     Depending on the configuration, supports creation of one of these proxy
     resources:

@@ -15,7 +15,7 @@
 info:
   title: Healthcheck
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Creates a Healthcheck resource.
 
