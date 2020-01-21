@@ -109,7 +109,7 @@ def get_secure_proxy(is_http, res_name, project_id, properties, optional_propert
     # SSL settings:
     ssl_resources = []
     ssl_outputs = []
-    if 'sslCertificates' not in resource_prop:
+    if 'certificate' in resource_prop:
         ssl = properties['ssl']
         url, ssl_resources, ssl_outputs = get_certificate(ssl['certificate'], project_id, res_name)
         resource_prop['sslCertificates'] = [url]
