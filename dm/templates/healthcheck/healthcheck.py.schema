@@ -101,7 +101,9 @@ properties:
     description: The healthcheck type.
     enum:
       - HTTP
+      - HTTP-Legacy
       - HTTPS
+      - HTTPS-Legacy
       - HTTP2
       - SSL
       - TCP

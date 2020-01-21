@@ -25,6 +25,7 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     export UNHEALTHY_THRESHOLD="2"
     export HEALTHY_THRESHOLD="2"
     export PORT_80="80"
+    export PORT_443="443"
 fi
 ########## HELPER FUNCTIONS ##########
 
@@ -64,7 +65,7 @@ function teardown() {
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
 }
 
-@test "HTTP healthcheck was created" {
+@test "Legacy HTTP healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-http
     run gcloud compute http-health-checks describe ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
@@ -76,7 +77,7 @@ function teardown() {
     [[ "$output" =~ "port: ${PORT_80}" ]]
 }
 
-@test "HTTPS healthcheck was created" {
+@test "Legacy HTTPS healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-https
     run gcloud compute https-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
@@ -85,7 +86,7 @@ function teardown() {
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
     [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
     [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
-    [[ "$output" =~ "port: 443" ]]
+    [[ "$output" =~ "port: ${PORT_443}" ]]
 }
 
 @test "TCP healthcheck was created" {
@@ -124,7 +125,7 @@ function teardown() {
     [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
     [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
     [[ "$output" =~ "requestPath: /health.html" ]]
-    [[ "$output" =~ "port: 443" ]]
+    [[ "$output" =~ "port: ${PORT_443}" ]]
 }
 
 @test "TCP w/ request/response data was created" {
@@ -142,8 +143,8 @@ function teardown() {
     [[ "$output" =~ "response: response-data" ]]
 }
 
-@test "HTTP beta healthcheck was created" {
-    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-http
+@test "Legacy HTTP beta healthcheck was created" {
+    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-beta-http
     run gcloud beta compute http-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
@@ -154,8 +155,8 @@ function teardown() {
     [[ "$output" =~ "port: ${PORT_80}" ]]
 }
 
-@test "HTTPS beta healthcheck was created" {
-    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-https
+@test "Legacy HTTPS beta healthcheck was created" {
+    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-beta-https
     run gcloud beta compute https-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
@@ -163,7 +164,7 @@ function teardown() {
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
     [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
     [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
-    [[ "$output" =~ "port: 443" ]]
+    [[ "$output" =~ "port: ${PORT_443}" ]]
 }
 
 @test "HTTPS beta http2 healthcheck was created" {
@@ -204,8 +205,55 @@ function teardown() {
     [[ "$output" =~ "type: SSL" ]]
 }
 
-@test "Deleting deployment" {
-    run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
-        --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
+@test "HTTP healthcheck was created" {
+    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-http
+    run gcloud compute health-checks describe ${RESOURCE_NAME} \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
+    [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
+    [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "port: ${PORT_80}" ]]
 }
+
+@test "Legacy HTTPS healthcheck was created" {
+    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-https
+    run gcloud compute health-checks describe ${RESOURCE_NAME}\
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
+    [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
+    [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "port: ${PORT_443}" ]]
+}
+
+@test "HTTP beta healthcheck was created" {
+    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-http
+    run gcloud beta compute health-checks describe ${RESOURCE_NAME}\
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
+    [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
+    [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "port: ${PORT_80}" ]]
+}
+
+@test "HTTPS beta healthcheck was created" {
+    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-https
+    run gcloud beta compute health-checks describe ${RESOURCE_NAME}\
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
+    [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
+    [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "port: ${PORT_443}" ]]
+}
+#@test "Deleting deployment" {
+#    run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
+#        --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
+#    [[ "$status" -eq 0 ]]
+#}
