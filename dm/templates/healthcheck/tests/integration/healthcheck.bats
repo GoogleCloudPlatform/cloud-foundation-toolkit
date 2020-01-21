@@ -252,8 +252,8 @@ function teardown() {
     [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
     [[ "$output" =~ "port: ${PORT_443}" ]]
 }
-#@test "Deleting deployment" {
-#    run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
-#        --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
-#    [[ "$status" -eq 0 ]]
-#}
+@test "Deleting deployment" {
+    run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
+    [[ "$status" -eq 0 ]]
+}
