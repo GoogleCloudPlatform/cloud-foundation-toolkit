@@ -232,7 +232,7 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
         },
     }
 
-    for prop in ['proxyHeader', 'quicOverride']:
+    for prop in ['proxyHeader', 'quicOverride', 'sslCertificates']:
         set_optional_property(proxy['properties'], properties, prop)
 
     outputs.extend(
@@ -255,24 +255,20 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
     if 'ssl' in properties:
         ssl_spec = properties['ssl']
         proxy['properties']['ssl'] = ssl_spec
-        if 'certificate' in ssl_spec:
-            creates_new_certificate = not 'url' in ssl_spec.get('certificate')
-            if creates_new_certificate:
-                outputs.extend(
-                    [
-                        {
-                            'name': 'certificateName',
-                            'value': '$(ref.{}.certificateName)'.format(name)
-                        },
-                        {
-                            'name': 'certificateSelfLink',
-                            'value': '$(ref.{}.certificateSelfLink)'.format(name)
-                        }
-                    ]
-                )
-            
-        if 'sslCertificates' in ssl_spec:
-            proxy['properties']['sslCertificates'] = ssl_spec['sslCertificates']
+        creates_new_certificate = not 'url' in ssl_spec.get('certificate')
+        if creates_new_certificate:
+            outputs.extend(
+                [
+                    {
+                        'name': 'certificateName',
+                        'value': '$(ref.{}.certificateName)'.format(name)
+                    },
+                    {
+                        'name': 'certificateSelfLink',
+                        'value': '$(ref.{}.certificateSelfLink)'.format(name)
+                    }
+                ]
+            )
 
     return [proxy] + resources, outputs
 
