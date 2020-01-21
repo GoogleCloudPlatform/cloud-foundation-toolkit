@@ -225,7 +225,7 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
             'name': '{}-target'.format(properties.get('name', res_name)),
             'project': project_id,
             'protocol': protocol,
-            'target': target,
+            'target': target
         },
         'metadata': {
             'dependsOn': [depends],
@@ -255,7 +255,7 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
     if 'ssl' in properties:
         ssl_spec = properties['ssl']
         proxy['properties']['ssl'] = ssl_spec
-        creates_new_certificate = not 'url' in ssl_spec['certificate']
+        creates_new_certificate = not 'url' in ssl_spec.get('certificate', )
         if creates_new_certificate:
             outputs.extend(
                 [
@@ -269,6 +269,9 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
                     }
                 ]
             )
+            
+        if 'sslCertificates' in ssl_spec:
+            proxy['properties']['sslCertificates'] = ssl_spec['sslCertificates']
 
     return [proxy] + resources, outputs
 
