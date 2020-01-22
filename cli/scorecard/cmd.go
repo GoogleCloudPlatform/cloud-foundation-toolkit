@@ -63,10 +63,10 @@ var Cmd = &cobra.Command{
 	`,
 	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if flags.bucketName != "" && flags.dirPath != "" && !flags.stdin ||
-			flags.bucketName != "" && flags.stdin ||
-			flags.bucketName != "" && flags.dirPath != "" ||
-			flags.dirPath != "" && flags.stdin {
+		if (flags.bucketName == "" && flags.dirPath == "" && !flags.stdin) ||
+			(flags.bucketName != "" && flags.stdin) ||
+			(flags.bucketName != "" && flags.dirPath != "") ||
+			(flags.dirPath != "" && flags.stdin) {
 			return fmt.Errorf("One of bucket, dir-path, or stdin should be set")
 		}
 		return nil
