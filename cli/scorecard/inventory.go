@@ -29,49 +29,65 @@ import (
 // InventoryConfig manages a CAI inventory
 type InventoryConfig struct {
 	projectID        string
-	controlProjectID string
+	folderID   		 string
 	organizationID   string
 	bucketName       string
 	dirPath          string
 	readFromStdin    bool
+	refresh			 bool
 }
 
 // Option for NewInventory
 type Option func(*InventoryConfig)
 
-// ControlProject sets the project for storing inventory data
-func ControlProject(projectID string) Option {
-	return func(inventory *InventoryConfig) {
-		inventory.controlProjectID = projectID
-	}
-}
-
-// TargetProject sets the project for storing inventory data
+// TargetProject sets the project for collecting inventory data
 func TargetProject(projectID string) Option {
 	return func(inventory *InventoryConfig) {
 		inventory.projectID = projectID
 	}
 }
 
+// TargetFolder sets the folder for collecting inventory data
+func TargetFolder(folderID string) Option {
+	return func(inventory *InventoryConfig) {
+		inventory.folderID = folderID
+	}
+}
+
+// TargetOrg sets the organzation for collecting inventory data
+func TargetOrg(organizationID string) Option {
+	return func(inventory *InventoryConfig) {
+		inventory.organizationID = organizationID
+	}
+}
+
 // NewInventory creates a new CAI inventory manager
-func NewInventory(projectID, bucketName, dirPath string, readFromStdin bool, options ...Option) (*InventoryConfig, error) {
+func NewInventory(bucketName, dirPath string, readFromStdin bool, refresh bool, options ...Option) (*InventoryConfig, error) {
 	inventory := new(InventoryConfig)
-	inventory.controlProjectID = projectID
 	inventory.bucketName = bucketName
 	inventory.dirPath = dirPath
 	inventory.readFromStdin = readFromStdin
+	inventory.refresh = refresh
 
 	for _, option := range options {
 		option(inventory)
 	}
 
-	Log.Debug("Initializing inventory", "target", inventory.getParent(), "control", inventory.controlProjectID)
+	Log.Debug("Initializing inventory", "target", inventory.getParent())
+	if (refresh){
+		err := inventory.Export()
+		if err != nil {
+			return nil, err
+		}
+	}
 	return inventory, nil
 }
 
 func (inventory InventoryConfig) getParent() string {
 	if inventory.organizationID != "" {
 		return fmt.Sprintf("organizations/%v", inventory.organizationID)
+	}else if inventory.folderID != "" {
+		return fmt.Sprintf("folders/%v", inventory.folderID)
 	}
 	return fmt.Sprintf("projects/%v", inventory.projectID)
 }
@@ -109,7 +125,7 @@ func (inventory InventoryConfig) exportToGcs(contentType assetpb.ContentType) er
 			},
 		},
 	}
-
+	Log.Debug("Exporting Asset ", "contentType", contentType, "parent", inventory.getParent())
 	op, err := c.ExportAssets(ctx, req)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("destination = %v", destination))
@@ -130,11 +146,12 @@ func (inventory *InventoryConfig) Export() error {
 		return err
 	}
 	err = inventory.exportToGcs(assetpb.ContentType_IAM_POLICY)
-	s.Stop()
-
 	if err != nil {
+		s.Stop()
 		return err
 	}
+	s.Stop()
+
 
 	return nil
 }
