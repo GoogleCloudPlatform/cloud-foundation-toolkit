@@ -36,7 +36,7 @@ func init() {
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)")
 	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket or --stdin)")
 	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Passed Cloud Asset Inventory json string as standard input (conflicts with --dir-path or --bucket)")
-	Cmd.Flags().BoolVar(&flags.refresh, "refresh", false, "Refresh Cloud Asset Inventory export files in GCS bucket. Requires service account key to be set via $GOOGLE_APPLICATION_CREDENTIALS (Works with --bucket)")
+	Cmd.Flags().BoolVar(&flags.refresh, "refresh", false, "Refresh Cloud Asset Inventory export files in GCS bucket. If set, Application Default Credentials must be a service account (Works with --bucket)")
 	Cmd.Flags().StringVar(&flags.targetProjectID, "target-project", "", "Project ID to analyze (Works with --bucket and --refresh; conflicts with --target-folder or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetFolderID, "target-folder", "", "Folder ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetOrgID, "target-organization", "", "Organization ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--folder)")
