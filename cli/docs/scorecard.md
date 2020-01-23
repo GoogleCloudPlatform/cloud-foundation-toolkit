@@ -26,7 +26,12 @@ This tutorial will walk you through setting up Scorecard for a single project.
     ```
     gsutil mb gs://$CAI_BUCKET_NAME
     ```
-5. Export the CAI data to GCS:
+5. Optionally, create a public GCS bucket to trigger a violation:
+    ```
+    gsutil mb gs://$PUBLIC_BUCKET_NAME
+    gsutil iam ch allUsers:objectViewer gs://$PUBLIC_BUCKET_NAME
+    ```
+6. Export the CAI data to GCS:
     ```
     # Export resource data
     gcloud asset export --output-path=gs://$CAI_BUCKET_NAME/resource_inventory.json \
@@ -39,7 +44,7 @@ This tutorial will walk you through setting up Scorecard for a single project.
         --project=$GOOGLE_PROJECT \
         # could also use --folder or --organization
     ```
-6. Download the CFT CLI and make it executable:
+7. Download the CFT CLI and make it executable:
     ```
     # OS X
     curl -o cft https://storage.googleapis.com/cft-cli/latest/cft-darwin-amd64
@@ -48,15 +53,10 @@ This tutorial will walk you through setting up Scorecard for a single project.
     # executable
     chmod +x cft
     ```
-7. Download the sample policy library and add a sample constraint for detecting public buckets:
+8. Download the sample policy library and add a sample constraint for detecting public buckets:
     ```
     git clone https://github.com/forseti-security/policy-library.git
     cp policy-library/samples/storage_blacklist_public.yaml policy-library/policies/constraints/
-    ```
-8. Optionally, create a public GCS bucket to trigger a violation:
-    ```
-    gsutil mb gs://$PUBLIC_BUCKET_NAME
-    gsutil iam ch allUsers:objectViewer gs://$PUBLIC_BUCKET_NAME
     ```
 9. Run CFT Scorecard:
     ```
