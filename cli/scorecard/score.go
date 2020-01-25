@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -45,6 +46,7 @@ func NewScoringConfigFromValidator(v *gcv.Validator) *ScoringConfig {
 
 // NewScoringConfig creates a scoring engine for the given policy library
 func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, error) {
+	flag.Parse()
 	v, err := gcv.NewValidator(ctx.Done(),
 		[]string{filepath.Join(policyPath, "policies")},
 		filepath.Join(policyPath, "lib"),
