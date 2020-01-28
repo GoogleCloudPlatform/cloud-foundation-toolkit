@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"os"
 )
 
 // diagram represents a GCP draw diagram
@@ -91,10 +92,7 @@ func (path *diagramPath) dump(ind int, buff io.Writer) error {
 	return nil
 }
 
-// String implements Stringer and generates a string representation.
-func (d *diagram) String() string {
-	buff := &strings.Builder{}
-
+func (d *diagram) dump(buff io.Writer) error {
 	fmt.Fprintf(buff, "elements {\n")
 	d.group.dump(defaultIndentSize, buff)
 	fmt.Fprintf(buff, "}\n")
@@ -104,6 +102,15 @@ func (d *diagram) String() string {
 		path.dump(defaultIndentSize, buff)
 	}
 	fmt.Fprintf(buff, "}\n")
+
+	return nil
+}
+
+// String implements Stringer and generates a string representation.
+func (d *diagram) String() string {
+	buff := &strings.Builder{}
+
+	d.dump(buff)
 
 	return buff.String()
 }
@@ -120,13 +127,15 @@ func (ao *assembledOrg) makeDiagram() (*diagram, error) {
 }
 
 // draw prints diagram(s) for a given org
-func (ao *assembledOrg) draw() error {
+func (ao *assembledOrg) draw(fp *os.File) error {
 	orgDiagram, err := ao.makeDiagram()
 	if err != nil {
 		return err
 	}
 
 	print(orgDiagram.String())
+
+	orgDiagram.dump(fp)
 
 	return nil
 }

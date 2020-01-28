@@ -28,7 +28,16 @@ func NewGenerate(rawPaths []string, outFlavor OutputFlavor, outputDir string) {
 
 	switch outFlavor {
 	case Drawing:
-		assembled.draw()
+		if _, err := os.Stat(outputDir); os.IsNotExist(err) {
+			os.Mkdir(outputDir, os.ModePerm)
+		}
+		drawFile := filepath.Join(outputDir, "drawing.txt")
+		f, err := os.Create(drawFile)
+		if (err != nil) {
+			panic(err)
+		}
+		assembled.draw(f)
+		log.Printf("Drawing output to %s\n", drawFile)
 	default:
 		print(assembled.String()) // Place-holder for future trigger point of code generation
 	}
