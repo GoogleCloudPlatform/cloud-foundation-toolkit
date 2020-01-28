@@ -34,6 +34,8 @@ func init() {
 	viper.SetDefault("output-format", "txt")
 	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
 
+	Cmd.Flags().StringSliceVar(&flags.metadata, "output-metadata", []string{}, "List of comma delimited violation metadata fields of string type to include in output. Works when --output-format is txt or csv. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when output-format is json.")
+
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)")
 	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket or --stdin)")
 	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Passed Cloud Asset Inventory json string as standard input (conflicts with --dir-path or --bucket)")
@@ -41,13 +43,6 @@ func init() {
 	Cmd.Flags().StringVar(&flags.targetProjectID, "target-project", "", "Project ID to analyze (Works with --bucket and --refresh; conflicts with --target-folder or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetFolderID, "target-folder", "", "Folder ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetOrgID, "target-organization", "", "Organization ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--folder)")
-	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
-	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path and --stdin)")
-	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket and --stdin)")
-	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Whether inventory will be passed as standard input or not (conflicts with --dir-path and --bucket)")
-	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
-	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
-	Cmd.Flags().StringSliceVar(&flags.metadata, "output-metadata", []string{}, "List of comma delimited violation metadata fields of string type to include in output. Works when --output-format is txt or csv. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when output-format is json.")
 	
 }
 

@@ -208,10 +208,8 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		case "csv":
 			w := csv.NewWriter(dest)
 			header := []string{"Category", "Constraint", "Resource", "Message"}
-			if (len(outputMetadata) >0) {
-				for _, field:= range outputMetadata{
-					header = append(header, field)
-				}
+			for _, field:= range outputMetadata{
+				header = append(header, field)
 			}
 			w.Write(header)
 			w.Flush()
@@ -219,12 +217,10 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
 						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
-						if (len(outputMetadata) >0) {
-							for _, field:= range outputMetadata{
-								metadata := v.Metadata.GetStructValue()
-								value := metadata.Fields[field].GetStringValue()
-								record = append(record, value)
-							}
+						for _, field:= range outputMetadata{
+							metadata := v.Metadata.GetStructValue()
+							value := metadata.Fields[field].GetStringValue()
+							record = append(record, value)
 						}
 						w.Write(record)
 						w.Flush()
@@ -241,13 +237,11 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count()))
 					for _, v := range cv.Violations {
 						io.WriteString(dest, fmt.Sprintf("- %v\n",v.Message))
-						if (len(outputMetadata) >0) {
-							for _, field:= range outputMetadata{
-								metadata := v.Metadata.GetStructValue()
-								value := metadata.Fields[field].GetStringValue()
-								if value != "" {
-									io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
-								}
+						for _, field:= range outputMetadata{
+							metadata := v.Metadata.GetStructValue()
+							value := metadata.Fields[field].GetStringValue()
+							if value != "" {
+								io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
 							}
 						}
 						io.WriteString(dest, "\n")
