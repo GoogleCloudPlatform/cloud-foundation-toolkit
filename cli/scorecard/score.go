@@ -166,7 +166,7 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 }
 
 // Score creates a Scorecard for an inventory
-func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string) error {
+func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadata []string) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
@@ -177,7 +177,6 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		return err
 	}
 	var dest io.Writer
-
 	if len(auditResult.Violations) > 0 {
 		if outputPath == "" {
 			dest = os.Stdout
@@ -209,12 +208,24 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		case "csv":
 			w := csv.NewWriter(dest)
 			header := []string{"Category", "Constraint", "Resource", "Message"}
+			if (len(outputMetadata) >0) {
+				for _, field:= range outputMetadata{
+					header = append(header, field)
+				}
+			}
 			w.Write(header)
 			w.Flush()
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
 						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
+						if (len(outputMetadata) >0) {
+							for _, field:= range outputMetadata{
+								metadata := v.Metadata.GetStructValue()
+								value := metadata.Fields[field].GetStringValue()
+								record = append(record, value)
+							}
+						}
 						w.Write(record)
 						w.Flush()
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
@@ -229,9 +240,17 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				for _, cv := range category.constraints {
 					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count()))
 					for _, v := range cv.Violations {
-						io.WriteString(dest, fmt.Sprintf("- %v\n\n",
-							v.Message,
-						))
+						io.WriteString(dest, fmt.Sprintf("- %v\n",v.Message))
+						if (len(outputMetadata) >0) {
+							for _, field:= range outputMetadata{
+								metadata := v.Metadata.GetStructValue()
+								value := metadata.Fields[field].GetStringValue()
+								if value != "" {
+									io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
+								}
+							}
+						}
+						io.WriteString(dest, "\n")
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 					}
 				}
