@@ -118,6 +118,7 @@ Flags:
       --dir-path string              Local directory path for storing inventory (conflicts with --bucket or --stdin)
   -h, --help                         help for scorecard
       --output-format string         Format of scorecard outputs, can be txt, json or csv, default is txt
+      --output-metadata strings      List of comma delimited violation metadata fields of string type to include in output. Works when --output-format is txt or csv. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when output-format is json.
       --output-path string           Path to directory to contain scorecard outputs. Output to console if not specified
       --policy-path string           Path to directory containing validation policies
       --refresh                      Refresh Cloud Asset Inventory export files in GCS bucket. If set, Application Default Credentials must be a service account (Works with --bucket)
