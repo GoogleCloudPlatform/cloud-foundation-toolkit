@@ -140,12 +140,10 @@ func (inventory *InventoryConfig) Export() error {
 	s.Start()
 	err := inventory.exportToGcs(assetpb.ContentType_RESOURCE)
 	if err != nil {
-		s.Stop()
 		return err
 	}
 	err = inventory.exportToGcs(assetpb.ContentType_IAM_POLICY)
 	if err != nil {
-		s.Stop()
 		return err
 	}
 	s.Stop()
