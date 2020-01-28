@@ -84,7 +84,7 @@ func NewInventory(bucketName, dirPath string, readFromStdin bool, refresh bool, 
 func (inventory InventoryConfig) getParent() string {
 	if inventory.organizationID != "" {
 		return fmt.Sprintf("organizations/%v", inventory.organizationID)
-	}else if inventory.folderID != "" {
+	} else if inventory.folderID != "" {
 		return fmt.Sprintf("folders/%v", inventory.folderID)
 	}
 	return fmt.Sprintf("projects/%v", inventory.projectID)
@@ -140,10 +140,12 @@ func (inventory *InventoryConfig) Export() error {
 	s.Start()
 	err := inventory.exportToGcs(assetpb.ContentType_RESOURCE)
 	if err != nil {
+		s.Stop()
 		return err
 	}
 	err = inventory.exportToGcs(assetpb.ContentType_IAM_POLICY)
 	if err != nil {
+		s.Stop()
 		return err
 	}
 	s.Stop()
