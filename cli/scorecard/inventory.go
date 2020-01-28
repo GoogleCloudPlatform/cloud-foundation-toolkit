@@ -28,13 +28,12 @@ import (
 
 // InventoryConfig manages a CAI inventory
 type InventoryConfig struct {
-	projectID        string
-	folderID   		 string
-	organizationID   string
-	bucketName       string
-	dirPath          string
-	readFromStdin    bool
-	refresh			 bool
+	projectID      string
+	folderID       string
+	organizationID string
+	bucketName     string
+	dirPath        string
+	readFromStdin  bool
 }
 
 // Option for NewInventory
@@ -67,14 +66,13 @@ func NewInventory(bucketName, dirPath string, readFromStdin bool, refresh bool, 
 	inventory.bucketName = bucketName
 	inventory.dirPath = dirPath
 	inventory.readFromStdin = readFromStdin
-	inventory.refresh = refresh
 
 	for _, option := range options {
 		option(inventory)
 	}
 
 	Log.Debug("Initializing inventory", "target", inventory.getParent())
-	if (refresh){
+	if refresh {
 		err := inventory.Export()
 		if err != nil {
 			return nil, err
@@ -151,7 +149,6 @@ func (inventory *InventoryConfig) Export() error {
 		return err
 	}
 	s.Stop()
-
 
 	return nil
 }
