@@ -31,7 +31,7 @@ This tutorial will walk you through setting up Scorecard for a single project.
     gsutil mb gs://$PUBLIC_BUCKET_NAME
     gsutil iam ch allUsers:objectViewer gs://$PUBLIC_BUCKET_NAME
     ```
-6. Export the CAI data to GCS:
+6. Optionally, export the CAI data to GCS:
     ```
     # Export resource data
     gcloud asset export --output-path=gs://$CAI_BUCKET_NAME/resource_inventory.json \
@@ -44,6 +44,7 @@ This tutorial will walk you through setting up Scorecard for a single project.
         --project=$GOOGLE_PROJECT \
         # could also use --folder or --organization
     ```
+    The alternative is to use [integrated inventory refresh feature](#Using-integrated-inventory-refresh-feature) `cft scorecard --refresh`
 7. Download the CFT CLI and make it executable:
     ```
     # OS X
