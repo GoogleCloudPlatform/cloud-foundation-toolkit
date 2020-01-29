@@ -166,7 +166,7 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 }
 
 // Score creates a Scorecard for an inventory
-func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadata []string) error {
+func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadataFields []string) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
@@ -208,7 +208,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		case "csv":
 			w := csv.NewWriter(dest)
 			header := []string{"Category", "Constraint", "Resource", "Message"}
-			for _, field:= range outputMetadata{
+			for _, field:= range outputMetadataFields{
 				header = append(header, field)
 			}
 			w.Write(header)
@@ -217,7 +217,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
 						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
-						for _, field:= range outputMetadata{
+						for _, field:= range outputMetadataFields{
 							metadata := v.Metadata.GetStructValue()
 							value := metadata.Fields[field].GetStringValue()
 							record = append(record, value)
@@ -237,7 +237,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count()))
 					for _, v := range cv.Violations {
 						io.WriteString(dest, fmt.Sprintf("- %v\n",v.Message))
-						for _, field:= range outputMetadata{
+						for _, field:= range outputMetadataFields{
 							metadata := v.Metadata.GetStructValue()
 							value := metadata.Fields[field].GetStringValue()
 							if value != "" {

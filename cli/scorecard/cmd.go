@@ -19,7 +19,7 @@ var flags struct {
 	refresh          bool
 	outputPath       string
 	outputFormat     string
-	metadata		 []string
+	metadataFields		 []string
 }
 
 func init() {
@@ -34,7 +34,7 @@ func init() {
 	viper.SetDefault("output-format", "txt")
 	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
 
-	Cmd.Flags().StringSliceVar(&flags.metadata, "output-metadata", []string{}, "List of comma delimited violation metadata fields of string type to include in output. Works when --output-format is txt or csv. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when --output-format is json.")
+	Cmd.Flags().StringSliceVar(&flags.metadataFields, "output-metadata-fields", []string{}, "List of comma delimited violation metadata fields of string type to include in output. Works when --output-format is txt or csv. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when --output-format is json.")
 
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)")
 	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket or --stdin)")
@@ -105,7 +105,7 @@ var Cmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = inventory.Score(config, flags.outputPath, viper.GetString("output-format"), flags.metadata)
+		err = inventory.Score(config, flags.outputPath, viper.GetString("output-format"), flags.metadataFields)
 		if err != nil {
 			return err
 		}
