@@ -104,6 +104,13 @@ properties:
     description: |
       The port range; only packets addressed to ports in that range are
       forwarded to the target.
+  labels:
+    type: object
+    description: |
+      Labels to apply to this instance. These can be later modified by the setLabels method.
+
+      An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
   ipVersion:
     type: string
     description: The IP version of the load balancer.
