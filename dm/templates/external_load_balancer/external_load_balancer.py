@@ -98,6 +98,7 @@ def get_forwarding_rule(properties, target, res_name, project_id):
         'IPAddress',
         'ipVersion',
         'portRange',
+        'labels',
     ]
 
     for prop in optional_properties:

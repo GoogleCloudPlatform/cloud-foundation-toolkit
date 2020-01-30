@@ -87,6 +87,7 @@ def generate_config(context):
         'serviceLabel',
         'networkTier',
         'allPorts',
+        'labels',
     ]
 
     for prop in optional_properties:

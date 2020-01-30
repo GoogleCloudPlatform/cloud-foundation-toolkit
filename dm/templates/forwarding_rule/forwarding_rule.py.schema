@@ -277,6 +277,13 @@ properties:
       the last character, which cannot be a dash.
 
       This field is only used for internal load balancing.
+  labels:
+    type: object
+    description: |
+      Labels to apply to this instance. These can be later modified by the setLabels method.
+
+      An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
   networkTier:
     type: string
     description: |
