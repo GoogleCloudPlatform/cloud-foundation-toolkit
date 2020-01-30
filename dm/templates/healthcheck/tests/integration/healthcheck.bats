@@ -63,12 +63,16 @@ function teardown() {
     gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
 }
 
 @test "Legacy HTTP healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-http
     run gcloud compute http-health-checks describe ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -81,6 +85,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-https
     run gcloud compute https-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -93,6 +99,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-tcp
     run gcloud compute health-checks describe ${RESOURCE_NAME} \
          --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -106,6 +114,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-ssl
     run gcloud compute health-checks describe ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -119,6 +129,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-requestpath-https
     run gcloud compute https-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -132,6 +144,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-response-tcp
     run gcloud compute health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -147,6 +161,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-beta-http
     run gcloud beta compute http-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -159,6 +175,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-legacy-beta-https
     run gcloud beta compute https-health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -171,6 +189,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-http2
     run gcloud beta compute health-checks describe --global ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -183,6 +203,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-tcp
     run gcloud beta compute health-checks describe --global ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -196,6 +218,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-ssl
     run gcloud beta compute health-checks describe --global ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -209,6 +233,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-http
     run gcloud compute health-checks describe ${RESOURCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -221,6 +247,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-https
     run gcloud compute health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -233,6 +261,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-http
     run gcloud beta compute health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -245,6 +275,8 @@ function teardown() {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-https
     run gcloud beta compute health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
     [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
@@ -255,5 +287,7 @@ function teardown() {
 @test "Deleting deployment" {
     run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
 }
