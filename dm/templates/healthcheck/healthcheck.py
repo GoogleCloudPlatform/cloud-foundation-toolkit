@@ -38,15 +38,25 @@ def generate_config(context):
 
     # Deployment Manager resource types per healthcheck type.
     healthcheck_type_dictionary = {
-        'HTTP':
+        'HTTP-Legacy':
             {
                 'v1': 'gcp-types/compute-v1:httpHealthChecks',
                 'beta': 'gcp-types/compute-beta:httpHealthChecks'
             },
-        'HTTPS':
+        'HTTPS-Legacy':
             {
                 'v1': 'gcp-types/compute-v1:httpsHealthChecks',
                 'beta': 'gcp-types/compute-beta:httpsHealthChecks'
+            },
+        'HTTP':
+            {
+                'v1': 'gcp-types/compute-v1:healthChecks',
+                'beta': 'gcp-types/compute-beta:healthChecks'
+            },
+        'HTTPS':
+            {
+                'v1': 'gcp-types/compute-v1:healthChecks',
+                'beta': 'gcp-types/compute-beta:healthChecks'
             },
         'SSL':
             {
@@ -65,11 +75,13 @@ def generate_config(context):
 
     # Deployment Manager object types associated with each type of healthcheck.
     healthcheck_object_dictionary = {
-        'HTTP': 'httpHealthCheck',
-        'HTTPS': 'httpsHealthCheck',
-        'SSL': 'sslHealthCheck',
-        'TCP': 'tcpHealthCheck',
-        'HTTP2': 'http2HealthCheck'
+        'HTTP-Legacy':  'httpHealthCheck',
+        'HTTPS-Legacy': 'httpsHealthCheck',
+        'HTTP':         'httpHealthCheck',
+        'HTTPS':        'httpsHealthCheck',
+        'SSL':          'sslHealthCheck',
+        'TCP':          'tcpHealthCheck',
+        'HTTP2':        'http2HealthCheck'
     }
 
     # Create a generic healthcheck object.
@@ -111,7 +123,7 @@ def generate_config(context):
 
     # Check for HTTP/S/2-specific properties.
     # Add them to the generic healthcheck.
-    if healthcheck_type in ['HTTP', 'HTTPS', 'HTTP2']:
+    if healthcheck_type in ['HTTP', 'HTTPS', 'HTTP2','HTTP-Legacy' ,'HTTPS-Legacy']:
         for prop in ['requestPath', 'host']:
             set_if_exists(healthcheck_properties, properties, prop)
 
