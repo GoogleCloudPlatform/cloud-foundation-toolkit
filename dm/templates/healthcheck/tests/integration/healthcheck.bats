@@ -259,7 +259,7 @@ function teardown() {
 
 @test "HTTP beta healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-http
-    run gcloud beta compute health-checks describe ${RESOURCE_NAME}\
+    run gcloud beta compute health-checks describe --global ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     echo "status = ${status}"
     echo "output = ${output}"
@@ -273,7 +273,7 @@ function teardown() {
 
 @test "HTTPS beta healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-beta-https
-    run gcloud beta compute health-checks describe ${RESOURCE_NAME}\
+    run gcloud beta compute health-checks describe --global ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     echo "status = ${status}"
     echo "output = ${output}"
