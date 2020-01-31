@@ -21,9 +21,8 @@ resources:
         certificate:
           url: $(ref.${HTTPS_RES_NAME}.certificateSelfLink)
       labels:
-        name: testLabelName
-        owner: Megatron
-
+        name: testlabelname
+        owner: megatron
   - name: ${HTTP_RES_NAME}
     type: external_load_balancer.py
     properties:
