@@ -304,6 +304,14 @@ function check_documentation() {
   return $((rval))
 }
 
+# Generate modules from tempalte files in 'autogen' folder
+function generate_modules() {
+  if [[ -e /workspace/autogen_modules.json ]]; then
+    autogen_modules=$(jq '.' /workspace/autogen_modules.json)
+    python /usr/local/bin/generate_modules.py "$autogen_modules"
+  fi
+}
+
 function prepare_test_variables() {
   echo "Preparing terraform.tfvars files for integration tests"
   #shellcheck disable=2044
