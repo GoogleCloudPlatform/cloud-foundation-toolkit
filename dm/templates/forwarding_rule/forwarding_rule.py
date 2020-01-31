@@ -16,13 +16,13 @@
 REGIONAL_GLOBAL_TYPE_NAMES = {
     # https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
     True: {
-        GA: 'gcp-types/compute-v1:forwardingRules',
-        Beta: 'gcp-types/compute-beta:forwardingRules'
+        'GA': 'gcp-types/compute-v1:forwardingRules',
+        'Beta': 'gcp-types/compute-beta:forwardingRules'
     },
     # https://cloud.google.com/compute/docs/reference/rest/v1/globalForwardingRules
     False: {
-        GA: 'gcp-types/compute-v1:globalForwardingRules',
-        Beta: 'gcp-types/compute-beta:globalForwardingRules'
+        'GA': 'gcp-types/compute-v1:globalForwardingRules',
+        'Beta': 'gcp-types/compute-beta:globalForwardingRules'
     }
 }
 
@@ -65,7 +65,7 @@ def generate_config(context):
     name = properties.get('name', context.env['name'])
     project_id = properties.get('project', context.env['project'])
     is_regional = 'region' in properties
-    FW_rule_version = 'Beta' if 'labels' in properties else 'GA' 
+    FW_rule_version = 'Beta' if 'labels' in properties else 'GA'
     region = properties.get('region')
     rule_properties = {
         'name': name,
