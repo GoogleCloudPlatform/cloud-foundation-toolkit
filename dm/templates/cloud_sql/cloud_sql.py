@@ -14,19 +14,8 @@
 """ This template creates a Cloud SQL Instance with databases and users. """
 
 import collections
-import random
-import string
 
 DMBundle = collections.namedtuple('DMBundle', 'resource outputs')
-
-SUFFIX_LENGTH = 5
-CHAR_CHOICE = string.digits + string.ascii_lowercase
-
-
-def get_random_string(length):
-    """ Creates a random string of characters of the specified length. """
-
-    return ''.join([random.choice(CHAR_CHOICE) for _ in range(length)])
 
 
 def set_optional_property(receiver, source, property_name):
@@ -216,7 +205,9 @@ def consolidate_outputs(bundles, prefix):
             res[new_name] = {'name': new_name, 'value': []}
         res[new_name]['value'].append(output['value'])
 
-    return [value for _, value in res.items()]
+    # We sort the output by key to guarantee deterministic results. This makes
+    # DM's Python3 compatibility checker less grumpy.
+    return [value for _, value in sorted(res.items())]
 
 
 def get_resource_names_output(resources):

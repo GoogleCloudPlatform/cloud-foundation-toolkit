@@ -95,6 +95,16 @@ function teardown() {
     [[ "$output" =~ "${SSL_CERT_NAME}" ]]
 }
 
+@test "Verifying HTTPS proxy sslCertificates" {
+    run gcloud compute target-https-proxies describe "${HTTPS_RES_NAME}-2" \
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "quicOverride: ${HTTPS_QUIC_OVERRIDE}" ]]
+    [[ "$output" =~ "${URL_MAP_RES_NAME}" ]]
+    [[ "$output" =~ "${SSL_CERT_NAME}" ]]
+}
+
+
 @test "Verifying SSL proxy" {
     run gcloud compute target-ssl-proxies describe "${SSL_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"

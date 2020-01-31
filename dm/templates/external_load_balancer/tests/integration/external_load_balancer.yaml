@@ -23,7 +23,6 @@ resources:
       labels:
         name: testlabelname
         owner: megatron
-
   - name: ${HTTP_RES_NAME}
     type: external_load_balancer.py
     properties:
@@ -56,6 +55,23 @@ resources:
         pathMatchers:
           - name: example-matcher
             defaultService: ${HTTP_SECOND_BACKEND_NAME}
+
+  - name: ${HTTPS_RES_NAME}-2
+    type: external_load_balancer.py
+    properties:
+      portRange: ${HTTPS_PORT_RANGE}
+      quicOverride: ${QUIC_OVERRIDE}
+      backendServices:
+        - resourceName: ${HTTPS_FIRST_BACKEND_NAME}-2
+          healthCheck: $(ref.${HTTPS_HEALTHCHECK_NAME}.selfLink)
+          portName: ${HTTPS_PORT_NAME}
+          backends:
+            - group: $(ref.${HTTPS_IGM_NAME}.instanceGroup)
+      urlMap:
+        defaultService: ${HTTPS_FIRST_BACKEND_NAME}-2
+      ssl:
+        sslCertificates: 
+          - $(ref.${HTTPS_RES_NAME}.certificateSelfLink)
 
   - name: ${HTTPS_RES_NAME}
     type: external_load_balancer.py
