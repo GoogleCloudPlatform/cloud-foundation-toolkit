@@ -10,11 +10,13 @@ import (
 
 var flags struct {
 	policyPath       string
-	targetProjectID  string
-	controlProjectID string
+	targetProjectID	 string
+	targetFolderID	 string
+	targetOrgID		 string
 	bucketName       string
 	dirPath          string
 	stdin            bool
+	refresh          bool
 	outputPath       string
 	outputFormat     string
 }
@@ -31,13 +33,13 @@ func init() {
 	viper.SetDefault("output-format", "txt")
 	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
 
-	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
-	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path and --stdin)")
-	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket and --stdin)")
-	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Whether inventory will be passed as standard input or not (conflicts with --dir-path and --bucket)")
-	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
-	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
-
+	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)")
+	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket or --stdin)")
+	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Passed Cloud Asset Inventory json string as standard input (conflicts with --dir-path or --bucket)")
+	Cmd.Flags().BoolVar(&flags.refresh, "refresh", false, "Refresh Cloud Asset Inventory export files in GCS bucket. If set, Application Default Credentials must be a service account (Works with --bucket)")
+	Cmd.Flags().StringVar(&flags.targetProjectID, "target-project", "", "Project ID to analyze (Works with --bucket and --refresh; conflicts with --target-folder or --target--organization)")
+	Cmd.Flags().StringVar(&flags.targetFolderID, "target-folder", "", "Folder ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--organization)")
+	Cmd.Flags().StringVar(&flags.targetOrgID, "target-organization", "", "Organization ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--folder)")
 }
 
 // Cmd represents the base scorecard command
@@ -58,17 +60,18 @@ var Cmd = &cobra.Command{
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --stdin
 
-	As of now, CAI export file names need to be resource_inventory.json and/or iam_inventory.json
+	As of now, CAI export file names need to be resource_inventory.json and iam_inventory.json
 
 	`,
 	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if flags.bucketName != "" && flags.dirPath != "" && !flags.stdin ||
-			flags.bucketName != "" && flags.stdin ||
-			flags.bucketName != "" && flags.dirPath != "" ||
-			flags.dirPath != "" && flags.stdin {
-			return fmt.Errorf("One of bucket, dir-path, or stdin should be set")
+		if (flags.bucketName == "" && flags.dirPath == "" && !flags.stdin) ||
+			(flags.bucketName != "" && flags.stdin) ||
+			(flags.bucketName != "" && flags.dirPath != "") ||
+			(flags.dirPath != "" && flags.stdin) {
+			return fmt.Errorf("One and only one of bucket, dir-path, or stdin should be set")
 		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -76,15 +79,20 @@ var Cmd = &cobra.Command{
 		var err error
 		ctx := context.Background()
 
-		controlProjectID := viper.GetString("google_project")
-		if controlProjectID == "" {
-			controlProjectID = flags.targetProjectID
-			Log.Info("No control project specified, using target project", "project", controlProjectID)
+		targetProjectID := flags.targetProjectID
+		if (targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == ""){
+			targetProjectID = viper.GetString("google_project")
 		}
-
-		inventory, err := NewInventory(controlProjectID,
-			flags.bucketName, flags.dirPath, flags.stdin,
-			TargetProject(flags.targetProjectID))
+		if (flags.bucketName != "" && flags.refresh){
+			if  (targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == "") ||
+				(targetProjectID != "" && flags.targetFolderID != "") ||
+				(targetProjectID != "" && flags.targetOrgID != "") ||
+				(flags.targetFolderID != "" && flags.targetOrgID != "") {
+				return fmt.Errorf("When using --refresh and --bucket, one and only one of target-project, target-folder, or target-org should be set")
+			}
+		}
+		inventory, err := NewInventory(flags.bucketName, flags.dirPath, flags.stdin, flags.refresh,
+			TargetProject(targetProjectID), TargetFolder(flags.targetFolderID), TargetOrg(flags.targetOrgID))
 		if err != nil {
 			return err
 		}

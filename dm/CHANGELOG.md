@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 30.01.2020
+
+- Update forwarding rule template and external loadbalancer to support labels [#551](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/551). Fixing tests
+
+### 21.01.2020
+
+- Update on target proxy and external loadbalancer templates to properly support a list of sslCertificates
+- Update on healthcheck template (v1.1.0) to support legacy and non-legacy healthchecks. [#542](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/542)
+
+### 16.01.2020
+
+- Updated gke template to support setting for releaseChannel [#539](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/539)
+
 ### 15.01.2020
 
 - Updated cloud sql template to fix intermittent Python 3 warnings [#538](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/538)

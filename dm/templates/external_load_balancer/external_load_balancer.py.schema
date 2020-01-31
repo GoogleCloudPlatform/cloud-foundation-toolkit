@@ -15,7 +15,7 @@
 info:
   title: External Load Balancer
   author: Sourced Group Inc.
-  version: 1.1.1
+  version: 1.1.2
   description: |
     Supports creation of an HTTP(S), SSL Proxy, or TCP Proxy external load
     balancer. For details, visit https://cloud.google.com/load-balancing/docs/.
@@ -104,6 +104,13 @@ properties:
     description: |
       The port range; only packets addressed to ports in that range are
       forwarded to the target.
+  labels:
+    type: object
+    description: |
+      Labels to apply to this instance. These can be later modified by the setLabels method.
+
+      An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
   ipVersion:
     type: string
     description: The IP version of the load balancer.

@@ -31,7 +31,10 @@ import (
 )
 
 func addDataFromReader(config *ScoringConfig, reader io.Reader) error {
+	const maxCapacity = 1024 * 1024
 	scanner := bufio.NewScanner(reader)
+	buf := make([]byte, maxCapacity)
+	scanner.Buffer(buf, maxCapacity)
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
 		if err != nil {

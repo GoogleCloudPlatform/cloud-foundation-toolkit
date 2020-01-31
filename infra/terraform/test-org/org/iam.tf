@@ -31,6 +31,9 @@ module "org_bindings" {
     "roles/compute.xpnAdmin" = [
       "group:${local.cft_ci_group}",
     ]
+    "roles/browser" = [
+      "group:${local.cft_dev_group}"
+    ]
     "roles/viewer" = [
       "group:${local.cft_dev_group}"
     ]

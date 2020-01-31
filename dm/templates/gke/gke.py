@@ -83,7 +83,8 @@ def generate_config(context):
         'maintenancePolicy',
         'podSecurityPolicyConfig',
         'privateCluster',
-        'masterIpv4CidrBlock'
+        'masterIpv4CidrBlock',
+        'releaseChannel'
     ]
 
     cluster_props = gke_cluster['properties']['cluster']
