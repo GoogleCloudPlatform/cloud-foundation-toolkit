@@ -14,6 +14,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.3.2
+	github.com/stretchr/testify v1.4.0
 	google.golang.org/api v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873
 	gopkg.in/yaml.v2 v2.2.2

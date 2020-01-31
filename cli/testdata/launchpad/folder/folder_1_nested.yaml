@@ -1,0 +1,17 @@
+apiVersion: cft.dev/v1alpha1
+kind: Folder
+spec:
+  id: "group1"
+  displayName: "group1"
+  folders:
+    - id: "group11"
+      displayName: "group11"
+    - id: "group12"
+      displayName: "group12"
+      folders:
+        - id: "group123"
+          displayName: "group123"
+  parentRef:
+    type: Organization
+    id: 12345678
+

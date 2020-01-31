@@ -15,7 +15,7 @@
 info:
   title: External Load Balancer
   author: Sourced Group Inc.
-  version: 1.0.2
+  version: 1.1.2
   description: |
     Supports creation of an HTTP(S), SSL Proxy, or TCP Proxy external load
     balancer. For details, visit https://cloud.google.com/load-balancing/docs/.
@@ -33,6 +33,49 @@ imports:
     name: target_proxy.py
 
 additionalProperties: false
+
+oneOf:
+  - not:
+      required:
+        - urlMap
+        - ssl
+    portRange:
+      type: array
+      items:
+        - type: string
+          enum:
+            - 25
+            - 43
+            - 110
+            - 143
+            - 195
+            - 443
+            - 465
+            - 587
+            - 700
+            - 993
+            - 995
+            - 1883
+            - 5222
+        - type: integer
+          enum:
+            - 25
+            - 43
+            - 110
+            - 143
+            - 195
+            - 443
+            - 465
+            - 587
+            - 700
+            - 993
+            - 995
+            - 1883
+            - 5222
+  - required:
+    - urlMap
+  - required:
+    - ssl
 
 properties:
   name:
@@ -61,6 +104,13 @@ properties:
     description: |
       The port range; only packets addressed to ports in that range are
       forwarded to the target.
+  labels:
+    type: object
+    description: |
+      Labels to apply to this instance. These can be later modified by the setLabels method.
+
+      An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
   ipVersion:
     type: string
     description: The IP version of the load balancer.

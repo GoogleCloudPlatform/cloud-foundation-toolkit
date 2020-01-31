@@ -28,21 +28,13 @@ import (
 
 	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
-	"github.com/forseti-security/config-validator/pkg/gcv"
 )
 
-// attachValidator attaches a Validator to the given config
-func attachValidator(ctx context.Context, config *ScoringConfig) error {
-	v, err := gcv.NewValidator(ctx.Done(),
-		[]string{filepath.Join(config.PolicyPath, "policies")},
-		filepath.Join(config.PolicyPath, "lib"),
-	)
-	config.validator = v
-	return err
-}
-
 func addDataFromReader(config *ScoringConfig, reader io.Reader) error {
+	const maxCapacity = 1024 * 1024
 	scanner := bufio.NewScanner(reader)
+	buf := make([]byte, maxCapacity)
+	scanner.Buffer(buf, maxCapacity)
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
 		if err != nil {
