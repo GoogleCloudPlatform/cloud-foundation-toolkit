@@ -19,6 +19,7 @@ var flags struct {
 	refresh          bool
 	outputPath       string
 	outputFormat     string
+	metadataFields		 []string
 }
 
 func init() {
@@ -29,9 +30,11 @@ func init() {
 
 	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain scorecard outputs. Output to console if not specified")
 
-	Cmd.Flags().StringVar(&flags.outputFormat, "output-format", "", "Format of scorecard outputs, can be txt, json or csv, default is txt")
+	Cmd.Flags().StringVar(&flags.outputFormat, "output-format", "txt", "Format of scorecard outputs, can be txt, json or csv")
 	viper.SetDefault("output-format", "txt")
 	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
+
+	Cmd.Flags().StringSliceVar(&flags.metadataFields, "output-metadata-fields", []string{}, "List of comma delimited violation metadata fields of string/bool/number types to include in output. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when --output-format is json.")
 
 	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)")
 	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket or --stdin)")
@@ -40,6 +43,7 @@ func init() {
 	Cmd.Flags().StringVar(&flags.targetProjectID, "target-project", "", "Project ID to analyze (Works with --bucket and --refresh; conflicts with --target-folder or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetFolderID, "target-folder", "", "Folder ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetOrgID, "target-organization", "", "Organization ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--folder)")
+	
 }
 
 // Cmd represents the base scorecard command
@@ -101,7 +105,7 @@ var Cmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = inventory.Score(config, flags.outputPath, viper.GetString("output-format"))
+		err = inventory.Score(config, flags.outputPath, viper.GetString("output-format"), flags.metadataFields)
 		if err != nil {
 			return err
 		}

@@ -166,7 +166,7 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 }
 
 // Score creates a Scorecard for an inventory
-func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string) error {
+func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadataFields []string) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
@@ -177,7 +177,6 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		return err
 	}
 	var dest io.Writer
-
 	if len(auditResult.Violations) > 0 {
 		if outputPath == "" {
 			dest = os.Stdout
@@ -197,6 +196,30 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 						if err != nil {
 							return err
 						}
+						if len(outputMetadataFields) > 0 {
+							newMetadata := make(map[string]interface{})
+							oldMetadata := v.Metadata.GetStructValue()
+							for _, field := range outputMetadataFields {
+								m := oldMetadata.Fields[field]
+								if x, ok := m.GetKind().(*_struct.Value_StringValue); ok {
+									newMetadata[field] = x.StringValue
+								}
+								if x, ok := m.GetKind().(*_struct.Value_BoolValue); ok {
+									newMetadata[field] = x.BoolValue
+								}
+								if x, ok := m.GetKind().(*_struct.Value_NumberValue); ok {
+									newMetadata[field] = x.NumberValue
+								}
+								// Below does not work well because it results in nested struct wrapper fields
+								// if x, ok := m.GetKind().(*_struct.Value_StructValue); ok {
+								//		newMetadata[field] = x.StructValue
+								// }
+							}
+							err := protoViaJSON(newMetadata, richViolation.Metadata)
+							if err != nil {
+								return err
+							}
+						}
 						byteContent, err := json.MarshalIndent(richViolation, "", "  ")
 						if err != nil {
 							return err
@@ -209,12 +232,30 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		case "csv":
 			w := csv.NewWriter(dest)
 			header := []string{"Category", "Constraint", "Resource", "Message"}
+			for _, field := range outputMetadataFields {
+				header = append(header, field)
+			}
 			w.Write(header)
 			w.Flush()
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
 						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
+						for _, field := range outputMetadataFields {
+							metadata := v.Metadata.GetStructValue()
+							m := metadata.Fields[field]
+							value := ""
+							if x, ok := m.GetKind().(*_struct.Value_StringValue); ok {
+								value = x.StringValue
+							}
+							if x, ok := m.GetKind().(*_struct.Value_BoolValue); ok {
+								value = fmt.Sprintf("%v", x.BoolValue)
+							}
+							if x, ok := m.GetKind().(*_struct.Value_NumberValue); ok {
+								value = fmt.Sprintf("%v", x.NumberValue)
+							}
+							record = append(record, value)
+						}
 						w.Write(record)
 						w.Flush()
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
@@ -229,9 +270,25 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				for _, cv := range category.constraints {
 					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count()))
 					for _, v := range cv.Violations {
-						io.WriteString(dest, fmt.Sprintf("- %v\n\n",
-							v.Message,
-						))
+						io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
+						for _, field := range outputMetadataFields {
+							metadata := v.Metadata.GetStructValue()
+							m := metadata.Fields[field]
+							value := ""
+							if x, ok := m.GetKind().(*_struct.Value_StringValue); ok {
+								value = x.StringValue
+							}
+							if x, ok := m.GetKind().(*_struct.Value_BoolValue); ok {
+								value = fmt.Sprintf("%v", x.BoolValue)
+							}
+							if x, ok := m.GetKind().(*_struct.Value_NumberValue); ok {
+								value = fmt.Sprintf("%v", x.NumberValue)
+							}
+							if value != "" {
+								io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
+							}
+						}
+						io.WriteString(dest, "\n")
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 					}
 				}
