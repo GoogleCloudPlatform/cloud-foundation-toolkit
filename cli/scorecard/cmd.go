@@ -9,17 +9,17 @@ import (
 )
 
 var flags struct {
-	policyPath       string
-	targetProjectID	 string
-	targetFolderID	 string
-	targetOrgID		 string
-	bucketName       string
-	dirPath          string
-	stdin            bool
-	refresh          bool
-	outputPath       string
-	outputFormat     string
-	metadataFields		 []string
+	policyPath      string
+	targetProjectID string
+	targetFolderID  string
+	targetOrgID     string
+	bucketName      string
+	dirPath         string
+	stdin           bool
+	refresh         bool
+	outputPath      string
+	outputFormat    string
+	metadataFields  []string
 }
 
 func init() {
@@ -43,7 +43,7 @@ func init() {
 	Cmd.Flags().StringVar(&flags.targetProjectID, "target-project", "", "Project ID to analyze (Works with --bucket and --refresh; conflicts with --target-folder or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetFolderID, "target-folder", "", "Folder ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetOrgID, "target-organization", "", "Organization ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--folder)")
-	
+
 }
 
 // Cmd represents the base scorecard command
@@ -84,11 +84,11 @@ var Cmd = &cobra.Command{
 		ctx := context.Background()
 
 		targetProjectID := flags.targetProjectID
-		if (targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == ""){
+		if targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == "" {
 			targetProjectID = viper.GetString("google_project")
 		}
-		if (flags.bucketName != "" && flags.refresh){
-			if  (targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == "") ||
+		if flags.bucketName != "" && flags.refresh {
+			if (targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == "") ||
 				(targetProjectID != "" && flags.targetFolderID != "") ||
 				(targetProjectID != "" && flags.targetOrgID != "") ||
 				(flags.targetFolderID != "" && flags.targetOrgID != "") {
