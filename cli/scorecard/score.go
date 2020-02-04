@@ -200,20 +200,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 							newMetadata := make(map[string]interface{})
 							oldMetadata := v.Metadata.GetStructValue()
 							for _, field := range outputMetadataFields {
-								m := oldMetadata.Fields[field]
-								if x, ok := m.GetKind().(*_struct.Value_StringValue); ok {
-									newMetadata[field] = x.StringValue
-								}
-								if x, ok := m.GetKind().(*_struct.Value_BoolValue); ok {
-									newMetadata[field] = x.BoolValue
-								}
-								if x, ok := m.GetKind().(*_struct.Value_NumberValue); ok {
-									newMetadata[field] = x.NumberValue
-								}
-								// Below does not work well because it results in nested struct wrapper fields
-								// if x, ok := m.GetKind().(*_struct.Value_StructValue); ok {
-								//		newMetadata[field] = x.StructValue
-								// }
+								newMetadata[field], _ = interfaceViaJSON(oldMetadata.Fields[field])
 							}
 							err := protoViaJSON(newMetadata, richViolation.Metadata)
 							if err != nil {
@@ -242,18 +229,8 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					for _, v := range cv.Violations {
 						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
 						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue()
-							m := metadata.Fields[field]
-							value := ""
-							if x, ok := m.GetKind().(*_struct.Value_StringValue); ok {
-								value = x.StringValue
-							}
-							if x, ok := m.GetKind().(*_struct.Value_BoolValue); ok {
-								value = fmt.Sprintf("%v", x.BoolValue)
-							}
-							if x, ok := m.GetKind().(*_struct.Value_NumberValue); ok {
-								value = fmt.Sprintf("%v", x.NumberValue)
-							}
+							metadata := v.Metadata.GetStructValue().Fields[field]
+							value, _ := stringViaJSON(metadata)
 							record = append(record, value)
 						}
 						w.Write(record)
@@ -272,18 +249,8 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					for _, v := range cv.Violations {
 						io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
 						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue()
-							m := metadata.Fields[field]
-							value := ""
-							if x, ok := m.GetKind().(*_struct.Value_StringValue); ok {
-								value = x.StringValue
-							}
-							if x, ok := m.GetKind().(*_struct.Value_BoolValue); ok {
-								value = fmt.Sprintf("%v", x.BoolValue)
-							}
-							if x, ok := m.GetKind().(*_struct.Value_NumberValue); ok {
-								value = fmt.Sprintf("%v", x.NumberValue)
-							}
+							metadata := v.Metadata.GetStructValue().Fields[field]
+							value, _ := stringViaJSON(metadata)
 							if value != "" {
 								io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
 							}
