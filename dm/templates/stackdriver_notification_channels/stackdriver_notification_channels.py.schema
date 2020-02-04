@@ -29,9 +29,6 @@ info:
     - gcp-types/monitoring-v3:projects.alertPolicies =>
         https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.alertPolicies
 
-imports:
-  - path: stackdriver_notification_channels.py
-
 required:
   - notificationChannels
   - policies
