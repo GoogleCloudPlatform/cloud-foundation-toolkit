@@ -30,9 +30,6 @@ info:
     - gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding =>
         TODO - Virtual type documentation needed
 
-imports:
-  - path: iam_member.py
-
 additionalProperties: false
 
 required:
