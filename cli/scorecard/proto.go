@@ -56,7 +56,7 @@ func interfaceViaJSON(from proto.Message) (interface{}, error) {
 }
 
 // stringViaJSON uses JSON as an intermediary serialization to convert a protobuf message
-// into an interface value
+// into an string value
 func stringViaJSON(from proto.Message) (string, error) {
 	marshaler := &jsonpb.Marshaler{}
 	jsn, err := marshaler.MarshalToString(from)
@@ -65,6 +65,7 @@ func stringViaJSON(from proto.Message) (string, error) {
 	}
 	str, err := strconv.Unquote(jsn)
 	if err != nil {
+		// return original json string if it's not a quoted string
 		return jsn, nil
 	}
 	return str, nil
