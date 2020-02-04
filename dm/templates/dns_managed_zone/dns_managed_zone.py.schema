@@ -26,9 +26,6 @@ info:
     - gcp-types/dns-v1:managedZones =>
         https://cloud.google.com/dns/docs/reference/v1/managedZones
 
-imports:
-  - path: dns_managed_zone.py
-
 # Note: Supported Backward Compatibility with the old property `zoneName`
 oneOf:
   - required:
