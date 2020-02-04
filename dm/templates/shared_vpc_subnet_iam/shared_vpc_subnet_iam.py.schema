@@ -26,9 +26,6 @@ info:
       - gcp-types/compute-beta:compute.subnetworks.setIamPolicy =>
           https://cloud.google.com/compute/docs/reference/rest/beta/subnetworks/setIamPolicy
 
-imports:
-  - path: shared_vpc_subnet_iam.py
-
 oneOf:
 - required:
   - bindings
