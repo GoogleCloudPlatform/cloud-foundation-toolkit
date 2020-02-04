@@ -27,7 +27,6 @@ info:
         https://cloud.google.com/compute/docs/reference/rest/v1/routes
 
 imports:
-  - path: route.py
   - path: ../route/single_route.py
     name: single_route.py
 
