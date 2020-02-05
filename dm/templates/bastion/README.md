@@ -1,6 +1,6 @@
 # Bastion Host
 
-> :warning: ** NOTE**
+> :warning: **NOTE**
 
 Check out SSH via IAP as an alternative to Bastion Hosts:
 
