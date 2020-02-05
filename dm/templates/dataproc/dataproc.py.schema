@@ -26,9 +26,6 @@ info:
     - gcp-types/dataproc-v1:projects.regions.clusters =>
         https://cloud.google.com/dataproc/docs/reference/rest/v1/projects.regions.clusters
 
-imports:
-  - path: dataproc.py
-
 additionalProperties: false
 
 definitions:

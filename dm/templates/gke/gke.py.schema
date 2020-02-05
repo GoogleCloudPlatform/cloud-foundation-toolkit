@@ -28,9 +28,6 @@ info:
     - gcp-types/container-v1beta1:projects.zones.clusters =>
         https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.zones.clusters
 
-imports:
-  - path: gke.py
-
 additionalProperties: false
 
 required:

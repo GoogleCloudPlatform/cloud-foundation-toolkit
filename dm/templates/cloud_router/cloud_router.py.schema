@@ -26,9 +26,6 @@ info:
     - gcp-types/compute-v1:routers =>
         https://cloud.google.com/compute/docs/reference/rest/v1/routers
 
-imports:
-  - path: cloud_router.py
-
 additionalProperties: false
 
 allOf:

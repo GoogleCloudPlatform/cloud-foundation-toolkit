@@ -26,9 +26,6 @@ info:
       - gcp-types/dns-v1:resourceRecordSets =>
           https://cloud.google.com/dns/docs/reference/v1/resourceRecordSets
 
-imports:
-  - path: dns_records.py
-
 additionalProperties: false
 
 required:

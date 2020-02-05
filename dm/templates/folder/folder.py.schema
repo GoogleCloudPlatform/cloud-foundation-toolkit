@@ -27,9 +27,6 @@ info:
     - gcp-types/cloudresourcemanager-v2:folders =>
         https://cloud.google.com/resource-manager/reference/rest/v2/folders
 
-imports:
-  - path: folder.py
-
 additionalProperties: false
 
 required:

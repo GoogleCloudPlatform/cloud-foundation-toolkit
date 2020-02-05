@@ -26,9 +26,6 @@ info:
     - gcp-types/compute-v1:resourcePolicies =>
         https://cloud.google.com/compute/docs/reference/rest/v1/resourcePolicies/insert
 
-imports:
-  - path: resource_policy.py
-
 additionalProperties: false
 
 required:

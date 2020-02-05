@@ -22,9 +22,6 @@ info:
     For more information on this resource, see
     https://cloud.google.com/tasks/docs/dual-overview.
 
-imports:
-  - path: task.py
-
 required:
   - task
   - queueId
