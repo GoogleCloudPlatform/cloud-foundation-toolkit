@@ -68,6 +68,7 @@ def get_instance(res_name, project_id, properties):
         'gceZone',
         'connectionName',
         'backendType',
+        'serviceAccountEmailAddress',
     ]
 
     outputs = [{
