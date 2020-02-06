@@ -146,6 +146,9 @@ def get_user(instance_name, project_id, properties):
 
     name = properties['name']
     res_name = 'cloud-sql-{}'.format(name)
+    if 'host' in properties:
+        res_name = '{}-{}'.format(res_name, properties['host'].replace('cloudsqlproxy~', 'proxy_').replace('.', '_'))
+
     user_properties = {
         'name': name,
         'project': project_id,
