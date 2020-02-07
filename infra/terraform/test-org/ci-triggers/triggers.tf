@@ -43,9 +43,10 @@ resource "google_cloudbuild_trigger" "int_trigger" {
     }
   }
   substitutions = {
-    _BILLING_ACCOUNT = local.billing_account
-    _FOLDER_ID       = each.value
-    _ORG_ID          = local.org_id
+    _BILLING_ACCOUNT          = local.billing_account
+    _FOLDER_ID                = each.value
+    _ORG_ID                   = local.org_id
+    _BILLING_IAM_TEST_ACCOUNT = local.billing_iam_test_account
   }
 
   filename = "build/int.cloudbuild.yaml"
