@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" This template deploys SAP HANA and all required infrastructure resources (network, firewall rules, NAT, etc) """
+""" This template deploys SAP HANA and all required infrastructure resources (network, firewall rules, NAT, etc). """
 
 def generate_config(context):
     
@@ -34,8 +34,7 @@ def generate_config(context):
             }]
         }
     }
-
-    
+   
     #Create a Cloud NAT Gateway
     cloud_router = {
         'name': 'cloud-nat-gateway',

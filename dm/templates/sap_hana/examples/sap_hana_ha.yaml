@@ -20,18 +20,18 @@ resources:
   - name: sap_hana_ha
     type: sap_hana_template.py
     properties:
-        primaryInstanceName: hana-db1
-        secondaryInstanceName: hana-db2
-        region: us-central1
-        primaryZone: us-central1-a
-        secondaryZone: us-central1-c
-        instanceType: n1-highmem-16
-        linuxImage: family/sles-12-sp3-sap
-        linuxImageProject: suse-sap-cloud
+        primaryInstanceName: [INSTANCE-NAME-1]
+        secondaryInstanceName: [INSTANCE-NAME-2]
+        region: [REGION]
+        primaryZone: [ZONE-1]
+        secondaryZone: [ZONE-2]
+        instanceType: [INSTANCE_TYPE]
+        linuxImage: [LINUX_IMAGE]
+        linuxImageProject: [IMAGE_PROJECT]
         sap_hana_deployment_bucket: [YOUR_BUCKET_NAME]
-        sap_hana_sid: DI4
-        sap_hana_sidadm_password: Google1234
-        sap_hana_system_password: Google1234
+        sap_hana_sid: [SID]
+        sap_hana_sidadm_password: [PASSWORD]
+        sap_hana_system_password: [PASSWORD]
         #
         # --- Advanced Options ---
         # The following advanced options are not usually needed. To use an advanced option, remove
