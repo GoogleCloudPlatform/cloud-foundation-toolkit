@@ -1,8 +1,8 @@
 # Route
 
-This template creates a SAP HANA deployment. It supportes two type of deployments:
-- A standalone HANA instance 
-- A highly-available HANA deployment
+This template creates an SAP HANA deployment. It supports two types of deployments:
+- A standalone SAPA HANA instance
+- A highly-available SAP HANA deployment
 
 ## Prerequisites
 
