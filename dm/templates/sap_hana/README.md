@@ -1,11 +1,11 @@
 # SAP HANA
 
 This template creates an SAP HANA deployment. It supports two types of deployments:
-- A *standalone* SAP HANA instance 
+- A **standalone** SAP HANA instance 
 ![GitHub Logo](/dm/templates/sap_hana/images/sap_hana_standalone.png)
 
 
-- A *highly-available* SAP HANA deployment
+- A **highly-available** SAP HANA deployment
 ![GitHub Logo](/dm/templates/sap_hana/images/sap_hana_ha.png)
 
 
@@ -84,7 +84,7 @@ See `properties` section in the schema file(s):
 ## How to test it?
 You need to perform the the testing steps are the following: 
 1) Deploy the template as described in step 5 above
-2) Wait until HANA is deployed successfully. This can be done by checking the Stackdriver Logs for ""INSTANCE DEPLOYMENT COMPLETE".
+2) Wait until HANA is deployed successfully. This can be done by checking the Stackdriver Logs for **INSTANCE DEPLOYMENT COMPLETE**.
 3) Connect vis SSH to the Linux bastion host 
 4) From the bastion host, connect to the HANA instance using the command ```gcloud compute INSTANCE-NAME --internal-ip```, then:
     * For a standalone HANA deployment, follow the steps described [here](https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide#verifying_deployment).
