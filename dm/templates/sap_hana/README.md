@@ -2,7 +2,7 @@
 
 This template creates an SAP HANA deployment. It supports two types of deployments:
 - A standalone HANA instance 
-![GitHub Logo](/images/sap_hana_standalone.png)
+![GitHub Logo](/dm/sap_hana/images/sap_hana_standalone.png)
 
 
 - A highly-available HANA deployment
