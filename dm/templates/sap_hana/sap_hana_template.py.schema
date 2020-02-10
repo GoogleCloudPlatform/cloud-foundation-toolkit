@@ -1,0 +1,149 @@
+# Copyright 2018 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+info:
+  title: SAP HANA PoC module
+  author: Google Inc.
+  version: 1.0.1
+  description: |
+    Deploy an SAP HANA PoC environment.
+
+    For more information on this resource:
+        - https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide
+
+imports:
+    - path: ../network/network.py
+      name: network.py
+    - path: ../cloud_router/cloud_router.py
+      name: cloud_router.py
+    - path: ../firewall/firewall.py
+      name: firewall.py
+    - path: ../instance/instance.py
+      name: instance.py
+    - path: sap_hana.py
+    - path: sap_hana_ha.py
+
+required:
+  - primaryInstanceName
+  - instanceType
+  - region
+  - primaryZone
+  - linuxImage
+  - linuxImageProject
+  - sap_hana_deployment_bucket
+  - sap_hana_sid
+  - sap_hana_sidadm_password
+  - sap_hana_system_password
+
+properties:
+  primaryInstanceName:
+    type: string
+    description: |
+      The name of the HANA DB instance,
+  secondaryInstanceName:
+    type: string
+    description: |
+      The name of the secondary HANA DB instance, in case of deployment in a high-availability mode.
+  instanceType:
+    type: string
+    description: |
+      Type of the Compute Engine instance which will be used to deploy HANA (e.g n1-highmem-16 )
+  region:
+    type: string
+    description: |
+      The GCP region where the resources will be deployed.
+  primaryZone:
+    type: string
+    description: |
+      The primary GCP zone (withing the region specified above) where the "primary" Compute Engine instances will be deployed.
+  secondaryZone:
+    type: string
+    description: |
+      The secondary GCP zone (withing the region specified above) where the secondary Compute Engine instances will be deployed in case of high-availability deployment.
+  linuxImage:
+    type: string
+    description: |
+      Linux Image to be use for the HANA Compute Engine instance(s). See https://cloud.google.com/compute/docs/images
+  linuxImageProject:
+    type: string
+    description: |
+      The project where the Linux Image above reside. See https://cloud.google.com/compute/docs/images
+  sap_hana_deployment_bucket:
+    type: string
+    description: |
+      The name of the Cloud Storage bucket where the HANA installation binaries are hosted.
+  sap_hana_sid:
+    type: string
+    description: |
+      See https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide.
+  sap_hana_sidadm_password:
+    type: string
+    description: |
+      An optional description of this resource. Provide this property when you create the resource.
+  sap_hana_system_password:
+    type: string
+    description: |
+      See https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide.
+  serviceAccount:
+    type: string
+    description: |
+       Optional: by default, the VM's will be deployed using the default project service account. 
+       If you wish, you can create your own service account with locked down permissions and
+       specify the name of the account here. Note that an incorrectly defined service
+       account will prevent a successful deployment. Example of a correctly specified
+       custom service account: myserviceuser@myproject.iam.gserviceaccount.com
+
+  sap_hana_backup_size:
+    type: integer
+    description: |
+       Optional: overrides the backup volume size (2x machine memory size) and sets the size to the
+       number of GB specified. Valid values are 1 to 64000
+
+  sap_hana_double_volume_size:
+    type: integer
+    description: |
+       Optional: doubles the HANA volume size. Useful if you wish to locate multiple SAP HANA instances
+       or a DR HANA instance on the same VM. By default, the volume size is automatically
+       calculated to be the minimum required for your memory footprint while still meeting
+       the SAP certification & support requirements.
+
+  sap_hana_sidadm_uid:
+    type: integer
+    description: |
+       Optional: the default value for the <sid>adm user ID is 900 to avoid user created groups conflicting
+       with SAP HANA. However, you may want to change this to a different value and be consistent
+       across your landscape
+  sap_hana_sapsys_gid:
+    type: integer
+    description: |
+       Optional: the default group ID for sapsys is 79. By specifying a value above you can overide this value to your requirements.
+  sap_deployment_debug:
+    type: boolean
+    description: |
+       Optional: debug mode. Do not enable debug mode unless you are asked by support to turn it on.
+  post_deployment_script:
+    type: string
+    description: |
+       Optional: specifies the location of a script to run after the deployment is complete.
+       The script should be hosted on a web server or in a GCS bucket. The URL should
+       begin with http:// https:// or gs://. Note that this script will be executed
+       on all VM's that the template creates. If you only want to run it on the master
+       instance you will need to add a check at the top of your script.
+
+documentation:
+  - templates/sap_hana_module/README.md
+
+examples:
+  - templates/sap_hana_module/examples/hana_standalone_template.yaml
+  - templates/sap_hana_module/examples/hana_ha_template.yaml
