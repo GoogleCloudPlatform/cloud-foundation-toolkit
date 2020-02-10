@@ -46,7 +46,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
     _BILLING_ACCOUNT          = local.billing_account
     _FOLDER_ID                = each.value
     _ORG_ID                   = local.org_id
-    _BILLING_IAM_TEST_ACCOUNT = local.billing_iam_test_account
+    _BILLING_IAM_TEST_ACCOUNT = local.repo_folder == "terraform-google-billing-iam" ? local.billing_iam_test_account : null
   }
 
   filename = "build/int.cloudbuild.yaml"
