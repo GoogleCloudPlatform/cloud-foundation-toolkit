@@ -3,11 +3,11 @@
 This template creates an SAP HANA deployment. It supports two types of deployments:
 - A *standalone* SAP HANA instance 
 ![GitHub Logo](/dm/templates/sap_hana/images/sap_hana_standalone.png)
-Format: ![SAP HANA standalone setup](url)
+
 
 - A *highly-available* SAP HANA deployment
 ![GitHub Logo](/dm/templates/sap_hana/images/sap_hana_ha.png)
-Format: ![SAP HANA HA setup](url)
+
 
 Below are the main steps performed by the template: 
 - Create a custom VPC  with two subnets: 
