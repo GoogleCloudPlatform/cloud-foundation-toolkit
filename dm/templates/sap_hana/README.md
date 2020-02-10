@@ -16,7 +16,7 @@ Below are the main steps performed by the template:
 2) Set up a NAT gateway: so that your VMs can access the internet without having to have a public IP address.
 3) Create necessary firewall rules, to allow connectivity between bastion hosts and the instance where HANA is deployed.
 4) Install SAP HANA using by leveraging existing [templates](https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide).
-5) Deploy two bastion-hosts. Once which is windows-based 
+5) Deploy two bastion-hosts. A Linux instance for SSH and a Windows instance for RDP/HANA Studio access.
 
 
 ## Prerequisites
