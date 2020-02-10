@@ -10,13 +10,13 @@ This template creates an SAP HANA deployment. It supports two types of deploymen
 
 
 Below are the main steps performed by the template: 
-- Create a custom VPC  with two subnets: 
+1) Create a custom VPC  with two subnets: 
     - subnetwork-1 will be used as DMZ and the bastion host will be deployed into it.
     - subnetwork-2: this is where the HANA DB will be deployed.
-- Set up a NAT gateway: so that your VMs can access the internet without having to have a public IP address.
-- Create necessary firewall rules, to allow connectivity between bastion hosts and the instance where HANA is deployed.
-- Install SAP HANA using by leveraging existing [templates](https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide).
-- Deploy two bastion-hosts. Once which is windows-based 
+2) Set up a NAT gateway: so that your VMs can access the internet without having to have a public IP address.
+3) Create necessary firewall rules, to allow connectivity between bastion hosts and the instance where HANA is deployed.
+4) Install SAP HANA using by leveraging existing [templates](https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide).
+5) Deploy two bastion-hosts. Once which is windows-based 
 
 
 ## Prerequisites
