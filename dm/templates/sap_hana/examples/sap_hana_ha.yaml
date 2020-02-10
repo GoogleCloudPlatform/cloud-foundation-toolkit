@@ -13,7 +13,7 @@
 # limitations under the License.
 
 imports:
-  - path: ../sap_hana_template.py
+  - path: templates/sap_hana/sap_hana_template.py
     name: sap_hana_template.py
     
 resources:
@@ -28,7 +28,7 @@ resources:
         instanceType: n1-highmem-16
         linuxImage: family/sles-12-sp3-sap
         linuxImageProject: suse-sap-cloud
-        sap_hana_deployment_bucket: saphana-binaries
+        sap_hana_deployment_bucket: [YOUR_BUCKET_NAME]
         sap_hana_sid: DI4
         sap_hana_sidadm_password: Google1234
         sap_hana_system_password: Google1234

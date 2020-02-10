@@ -31,8 +31,10 @@ imports:
       name: firewall.py
     - path: ../instance/instance.py
       name: instance.py
-    - path: sap_hana.py
-    - path: sap_hana_ha.py
+    - path: https://storage.googleapis.com/sapdeploy/dm-templates/sap_hana/sap_hana.py
+      name: sap_hana.py
+    - path: https://storage.googleapis.com/sapdeploy/dm-templates/sap_hana_ha/sap_hana_ha.py
+      name: sap_hana_ha.py
 
 required:
   - primaryInstanceName

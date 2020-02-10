@@ -77,5 +77,5 @@ You need to perform the the testing steps are the following:
 
 ## Examples
 
-- [A standlone SAP Hana deployment](examples/hana_ha_scenario.yaml)
-- [A highly-available SAP HANA deployment](examples/hana_standalone_scenario.yaml)
+- [A standlone SAP Hana deployment](examples/sap_hana_ha.yaml)
+- [A highly-available SAP HANA deployment](examples/sap_hana_standalone.yaml)
