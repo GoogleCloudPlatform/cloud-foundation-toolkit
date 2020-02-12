@@ -125,9 +125,24 @@ function teardown() {
     [[ "$output" =~ "type: SSL" ]]
 }
 
+@test "Request path legacy healthcheck was created" {
+    RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-requestpath-legacy-https
+    run gcloud compute https-health-checks describe ${RESOURCE_NAME}\
+        --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
+    [[ "$status" -eq 0 ]]
+    [[ "$output" =~ "checkIntervalSec: ${CHECK_INTERVAL_SEC}" ]]
+    [[ "$output" =~ "timeoutSec: ${TIMEOUT_SEC}" ]]
+    [[ "$output" =~ "unhealthyThreshold: ${UNHEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "healthyThreshold: ${HEALTHY_THRESHOLD}" ]]
+    [[ "$output" =~ "requestPath: /health.html" ]]
+    [[ "$output" =~ "port: ${PORT_443}" ]]
+}
+
 @test "Request path healthcheck was created" {
     RESOURCE_NAME=${RESOURCE_NAME_PREFIX}-requestpath-https
-    run gcloud compute https-health-checks describe ${RESOURCE_NAME}\
+    run gcloud compute health-checks describe ${RESOURCE_NAME}\
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     echo "status = ${status}"
     echo "output = ${output}"
