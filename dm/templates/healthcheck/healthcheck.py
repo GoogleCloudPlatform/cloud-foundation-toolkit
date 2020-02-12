@@ -125,7 +125,7 @@ def generate_config(context):
     # Add them to the generic healthcheck.
     if healthcheck_type in ['HTTP', 'HTTPS', 'HTTP2','HTTP-Legacy' ,'HTTPS-Legacy']:
         for prop in ['requestPath', 'host']:
-            set_if_exists(healthcheck_properties, properties, prop)
+            set_if_exists(specific_healthcheck, properties, prop)
 
     # Check for TCP/SSL-specific properties.
     # Add them to the specific healthcheck object.
