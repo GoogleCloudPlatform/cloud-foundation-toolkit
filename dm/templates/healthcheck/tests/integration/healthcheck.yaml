@@ -126,6 +126,7 @@ resources:
     proxyHeader: PROXY_V1
     requestPath: /health.html
     healthcheckType: HTTPS
+    port: ${PORT_443}
 - name: ${RESOURCE_NAME_PREFIX}-response-tcp
   type: healthcheck.py
   properties:
