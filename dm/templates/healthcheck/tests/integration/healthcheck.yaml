@@ -104,7 +104,7 @@ resources:
     healthyThreshold: ${HEALTHY_THRESHOLD}
     port: ${PORT_80}
     healthcheckType: SSL
-- name: ${RESOURCE_NAME_PREFIX}-requestpath-https
+- name: ${RESOURCE_NAME_PREFIX}-requestpath-legacy-https
   type: healthcheck.py
   properties:
     description: My Compute Engine requestpath healthcheck.
@@ -115,6 +115,17 @@ resources:
     proxyHeader: PROXY_V1
     requestPath: /health.html
     healthcheckType: HTTPS-Legacy
+- name: ${RESOURCE_NAME_PREFIX}-requestpath-https
+  type: healthcheck.py
+  properties:
+    description: My Compute Engine requestpath healthcheck.
+    checkIntervalSec: ${CHECK_INTERVAL_SEC}
+    timeoutSec: ${TIMEOUT_SEC}
+    unhealthyThreshold: ${UNHEALTHY_THRESHOLD}
+    healthyThreshold: ${HEALTHY_THRESHOLD}
+    proxyHeader: PROXY_V1
+    requestPath: /health.html
+    healthcheckType: HTTPS
 - name: ${RESOURCE_NAME_PREFIX}-response-tcp
   type: healthcheck.py
   properties:
