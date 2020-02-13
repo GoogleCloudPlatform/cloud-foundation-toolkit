@@ -93,7 +93,7 @@ def get_database(instance_name, project_id, properties):
     """ Creates a Cloud SQL database. """
 
     name = properties['name']
-    res_name = name
+    res_name = '{}-{}'.format(instance_name,name)
 
     db_properties = {
         'name': name,
@@ -145,7 +145,7 @@ def get_user(instance_name, project_id, properties):
     """ Creates a Cloud SQL user. """
 
     name = properties['name']
-    res_name = 'cloud-sql-{}'.format(name)
+    res_name = '{}-user-{}'.format(instance_name,name)
     if 'host' in properties:
         res_name = '{}-{}'.format(res_name, properties['host'].replace('cloudsqlproxy~', 'proxy_').replace('.', '_'))
 
