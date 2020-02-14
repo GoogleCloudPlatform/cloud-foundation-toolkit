@@ -13,6 +13,10 @@ git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999/go.mod h1:fPE2ZNJGy
 github.com/Azure/azure-sdk-for-go v21.3.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
 github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78/go.mod h1:LmzpDX56iTiv29bbRTIsUNlaFfuhWRQBWjQdVyAevI8=
 github.com/Azure/go-autorest v10.15.4+incompatible/go.mod h1:r+4oMnoxhatjLLJ6zxSWATqVooLgysK6ZNox3g/xq24=
+<<<<<<< HEAD
+=======
+github.com/Azure/go-autorest v11.1.2+incompatible/go.mod h1:r+4oMnoxhatjLLJ6zxSWATqVooLgysK6ZNox3g/xq24=
+>>>>>>> use real ancestry path
 github.com/Azure/go-autorest/autorest v0.9.0/go.mod h1:xyHB1BMZT0cuDHU7I0+g046+BFDTQ8rEZB0s4Yfa6bI=
 github.com/Azure/go-autorest/autorest/adal v0.5.0/go.mod h1:8Z9fGy2MpX0PvDjB1pEgQTmVqjGhiHBW7RJJEciWzS0=
 github.com/Azure/go-autorest/autorest/date v0.1.0/go.mod h1:plvfp3oPSKwf2DNjlBjWF/7vwR+cUD/ELuzDCXwHUVA=
@@ -103,9 +107,17 @@ github.com/coreos/bbolt v1.3.0/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkE
 github.com/coreos/bbolt v1.3.1-coreos.6/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkEiiKk=
 github.com/coreos/bbolt v1.3.3/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkEiiKk=
 github.com/coreos/etcd v3.3.10+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
+<<<<<<< HEAD
 github.com/coreos/etcd v3.3.15+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
 github.com/coreos/etcd v3.3.17+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
 github.com/coreos/go-etcd v2.0.0+incompatible/go.mod h1:Jez6KQU2B/sWsbdaef3ED8NzMklzPG4d5KIOhIy30Tk=
+=======
+github.com/coreos/etcd v3.3.13+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
+github.com/coreos/etcd v3.3.15+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
+github.com/coreos/etcd v3.3.17+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
+github.com/coreos/go-etcd v2.0.0+incompatible/go.mod h1:Jez6KQU2B/sWsbdaef3ED8NzMklzPG4d5KIOhIy30Tk=
+github.com/coreos/go-oidc v0.0.0-20180117170138-065b426bd416/go.mod h1:CgnwVTmzoESiwO9qyAFEMiHoZ1nMCKZlZ9V6mm3/LKc=
+>>>>>>> use real ancestry path
 github.com/coreos/go-oidc v2.1.0+incompatible/go.mod h1:CgnwVTmzoESiwO9qyAFEMiHoZ1nMCKZlZ9V6mm3/LKc=
 github.com/coreos/go-semver v0.2.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3EedlOD2RNk=
 github.com/coreos/go-semver v0.3.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3EedlOD2RNk=
@@ -138,16 +150,27 @@ github.com/elazarl/goproxy v0.0.0-20170405201442-c4fc26588b6e/go.mod h1:/Zj4wYkg
 github.com/emicklei/go-restful v0.0.0-20170410110728-ff4f55a20633/go.mod h1:otzb+WCGbkyDHkqmQmT5YD2WR4BBwUdeQoFo8l/7tVs=
 github.com/emicklei/go-restful v2.9.5+incompatible/go.mod h1:otzb+WCGbkyDHkqmQmT5YD2WR4BBwUdeQoFo8l/7tVs=
 github.com/evanphx/json-patch v4.2.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
+<<<<<<< HEAD
 github.com/evanphx/json-patch v4.5.0+incompatible h1:ouOWdg56aJriqS0huScTkVXPC5IcNrDCXZ6OoTAWu7M=
+=======
+>>>>>>> use real ancestry path
 github.com/evanphx/json-patch v4.5.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/exponent-io/jsonpath v0.0.0-20151013193312-d6023ce2651d/go.mod h1:ZZMPRZwes7CROmyNKgQzC3XPs6L/G2EJLHddWejkmf4=
 github.com/fatih/camelcase v1.0.0/go.mod h1:yN2Sb0lFhZJUdVvtELVWefmrXpuZESvPmqwoZc+/fpc=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
+github.com/forseti-security/config-validator v0.0.0-20190611184209-ce0fa1c12514 h1:mV6lXPu9Y6lLDVb9q6CNPJV/XadnaXNjiec3kbw+pLo=
 github.com/forseti-security/config-validator v0.0.0-20190611184209-ce0fa1c12514/go.mod h1:Vau5ih3z998VJAvBiKZZV+q8MHwVY7EAs+GAE1SDikE=
+<<<<<<< HEAD
 github.com/forseti-security/config-validator v0.0.0-20200214190434-b3da3b61dbb1 h1:jbuKpXia0YmT2ynKeuI0hm01hzjmgJtvGdtBgdhBT6c=
 github.com/forseti-security/config-validator v0.0.0-20200214190434-b3da3b61dbb1/go.mod h1:/ZIphx5XmfeeY6igAkKAQN6o1zUjUnmhD4Xyevon6po=
+=======
+github.com/forseti-security/config-validator v0.0.0-20191121204425-eb1b299ab838 h1:LTpTiSd+B8gZuFeuzqt4/NFJeZTYwPjalR4ChSjJeVo=
+github.com/forseti-security/config-validator v0.0.0-20191121204425-eb1b299ab838/go.mod h1:fWCA0bIvpL6dSoLK3bq4XIIVz5mIZo7RQycLOlrdd/8=
+github.com/forseti-security/config-validator v0.0.0-20200212191249-258b9eb9e8e6 h1:g3ELXVAdpw3/sMSeF7ONuV20HNesYue2AdsmW+drecM=
+github.com/forseti-security/config-validator v0.0.0-20200212191249-258b9eb9e8e6/go.mod h1:/ZIphx5XmfeeY6igAkKAQN6o1zUjUnmhD4Xyevon6po=
+>>>>>>> use real ancestry path
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/gammazero/deque v0.0.0-20180920172122-f6adf94963e4 h1:R+19WKQClnfMXS60cP5BmMe1wjZ4u0evY2p2Ar0ZTXo=
@@ -167,7 +190,10 @@ github.com/go-logfmt/logfmt v0.4.0/go.mod h1:3RMwSq7FuexP4Kalkev3ejPJsZTpXXBr9+V
 github.com/go-logr/logr v0.1.0 h1:M1Tv3VzNlEHg6uyACnRdtrploV2P7wZqH8BoQMtz0cg=
 github.com/go-logr/logr v0.1.0/go.mod h1:ixOQHD9gLJUVQQ2ZOR7zLEifBX6tGkNJF4QyIY7sIas=
 github.com/go-logr/zapr v0.1.0/go.mod h1:tabnROwaDl0UNxkVeFRbY8bwB37GwRv0P8lg6aAiEnk=
+<<<<<<< HEAD
 github.com/go-logr/zapr v0.1.1 h1:qXBXPDdNncunGs7XeEpsJt8wCjYBygluzfdLO0G5baE=
+=======
+>>>>>>> use real ancestry path
 github.com/go-logr/zapr v0.1.1/go.mod h1:tabnROwaDl0UNxkVeFRbY8bwB37GwRv0P8lg6aAiEnk=
 github.com/go-openapi/analysis v0.0.0-20180825180245-b006789cd277/go.mod h1:k70tL6pCuVxPJOHXQ+wIac1FUrvNkHolPie/cLEU6hI=
 github.com/go-openapi/analysis v0.17.0/go.mod h1:IowGgpVeD0vNm45So8nr+IcQ3pxVtpRoBWb8PVZO0ik=
@@ -266,7 +292,10 @@ github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Z
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/go-cmp v0.3.0 h1:crn/baboCvb5fXaQ0IJ1SGTsTVrWpDsCWC8EGETZijY=
 github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
+<<<<<<< HEAD
 github.com/google/go-cmp v0.3.1 h1:Xye71clBPdm5HgqGwUkwhbynsUJZhDbS20FvLhQ2izg=
+=======
+>>>>>>> use real ancestry path
 github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
 github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
@@ -286,7 +315,10 @@ github.com/googleapis/gax-go/v2 v2.0.3/go.mod h1:LLvjysVCY1JZeum8Z6l8qUty8fiNwE0
 github.com/googleapis/gax-go/v2 v2.0.4 h1:hU4mGcQI4DaAYW+IbTun+2qEZVFxK0ySjQLTbS0VQKc=
 github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
 github.com/googleapis/gnostic v0.0.0-20170729233727-0c5108395e2d/go.mod h1:sJBsCZ4ayReDTBIg8b9dl28c5xFWyhBTVRp3pOg5EKY=
+<<<<<<< HEAD
 github.com/googleapis/gnostic v0.3.1 h1:WeAefnSUHlBb0iJKwxFDZdbfGwkd7xRNuV+IpXMJhYk=
+=======
+>>>>>>> use real ancestry path
 github.com/googleapis/gnostic v0.3.1/go.mod h1:on+2t9HRStVgn95RSsFWFz+6Q0Snyqv1awfrALZdbtU=
 github.com/gophercloud/gophercloud v0.0.0-20190208042652-bc37892e1968/go.mod h1:3WdhXV3rUYy9p6AUW8d94kr+HS62Y4VL9mBnFxsD8q4=
 github.com/gophercloud/gophercloud v0.1.0/go.mod h1:vxM41WHh5uqHVBMZHzuwNOHh8XEoIEcSTewFxm1c5g8=
@@ -499,14 +531,22 @@ github.com/onsi/ginkgo v1.4.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+W
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.8.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
+<<<<<<< HEAD
 github.com/onsi/ginkgo v1.10.1 h1:q/mM8GF/n0shIN8SaAZ0V+jnLPzen6WIVZdiwrRlMlo=
+=======
+>>>>>>> use real ancestry path
 github.com/onsi/ginkgo v1.10.1/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
 github.com/onsi/gomega v1.3.0/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
 github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
 github.com/onsi/gomega v1.5.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
+<<<<<<< HEAD
 github.com/onsi/gomega v1.7.0 h1:XPnZz8VVBHjVsy1vzJmRwIcSwiUO+JFfrv/xGiigmME=
 github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
+=======
+github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
+github.com/open-policy-agent/frameworks v0.0.0-20190814212154-6ca0a0f6a314/go.mod h1:51UX0WS4lpcbYBGdWGlMNXtIJI8SonUwgeYm1Qs2kpg=
+>>>>>>> use real ancestry path
 github.com/open-policy-agent/frameworks/constraint v0.0.0-20200127222620-69dff9b895a2 h1:1Z/2aSMy9k8kvAaMb2r1rSQ+we21nisxILthLRoYStw=
 github.com/open-policy-agent/frameworks/constraint v0.0.0-20200127222620-69dff9b895a2/go.mod h1:RYtG2t6a5nly9IWFMNgq/K29YzYMV9ftA7XlGOM75bs=
 github.com/open-policy-agent/gatekeeper v0.0.0-20200130050101-a7990e5bc83a h1:VG+QBBJIURLRWFitdRxAMrxo0saatgWC9wZ7C7O2rPI=
@@ -640,7 +680,10 @@ github.com/terraform-providers/terraform-provider-google v2.0.0+incompatible/go.
 github.com/terraform-providers/terraform-provider-openstack v1.15.0/go.mod h1:2aQ6n/BtChAl1y2S60vebhyJyZXBsuAI5G4+lHrT1Ew=
 github.com/terraform-providers/terraform-provider-random v2.0.0+incompatible h1:4wuExSWk/NHYS95P2H4KGv22bsabuDjGk5cFikIYzuU=
 github.com/terraform-providers/terraform-provider-random v2.0.0+incompatible/go.mod h1:1U2balY0mfjMnO5iotT60EuFqDJxqP433wJcybviCTw=
+<<<<<<< HEAD
 github.com/tidwall/pretty v1.0.0 h1:HsD+QiTn7sK6flMKIvNmpqz1qrpP3Ps6jOKIKMooyg4=
+=======
+>>>>>>> use real ancestry path
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20170815181823-89b8d40f7ca8/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
@@ -684,7 +727,10 @@ go.uber.org/multierr v1.1.0 h1:HoEmRHQPVSqub6w2z2d2EOVs2fjyFRGyofhKuyDq0QI=
 go.uber.org/multierr v1.1.0/go.mod h1:wR5kodmAFQ0UK8QlbwjlSNy0Z68gJhDJUG5sjR94q/0=
 go.uber.org/zap v0.0.0-20180814183419-67bc79d13d15/go.mod h1:vwi/ZaCAaUcBkycHslxD9B2zi4UTXhF60s6SWpuDF0Q=
 go.uber.org/zap v1.9.1/go.mod h1:vwi/ZaCAaUcBkycHslxD9B2zi4UTXhF60s6SWpuDF0Q=
+<<<<<<< HEAD
 go.uber.org/zap v1.10.0 h1:ORx85nbTijNz8ljznvCMR1ZBIPKFn3jQrag10X2AsuM=
+=======
+>>>>>>> use real ancestry path
 go.uber.org/zap v1.10.0/go.mod h1:vwi/ZaCAaUcBkycHslxD9B2zi4UTXhF60s6SWpuDF0Q=
 go4.org v0.0.0-20180809161055-417644f6feb5/go.mod h1:MkTOUMDaeVYJUOUsaDXIhWPZYa1yOyC1qaOBpL57BhE=
 golang.org/x/build v0.0.0-20190111050920-041ab4dc3f9d/go.mod h1:OWs+y06UdEOHN4y+MfF/py+xQ/tYqIWW03b70/CG9Rw=
@@ -736,6 +782,7 @@ golang.org/x/net v0.0.0-20190320064053-1272bf9dcd53/go.mod h1:t9HGtf8HONx5eT2rtn
 golang.org/x/net v0.0.0-20190327214358-63eda1eb0650/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190502183928-7f726cade0ab/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c h1:uOCk1iQW6Vc18bnC13MfzScl+wdKBmM9Y9kU7Z83/lw=
 golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190613194153-d28f0bde5980 h1:dfGZHvZk057jK2MCeWus/TowKpJ8y4AmooUzdBSR9GU=
 golang.org/x/net v0.0.0-20190613194153-d28f0bde5980/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
@@ -781,6 +828,7 @@ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20190422165155-953cdadca894/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190502145724-3ef323f4f1fd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190502175342-a43fa875dd82/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20190507160741-ecd444e8653b h1:ag/x1USPSsqHud38I9BAC88qdNLDHHtQ4mlgQIZPPNA=
 golang.org/x/sys v0.0.0-20190507160741-ecd444e8653b/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f h1:25KHgbfyiSm6vwQLbM3zZIe1v9p/3ea4Rz+nnM5K/i4=
 golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
@@ -813,7 +861,10 @@ golang.org/x/tools v0.0.0-20190614205625-5aca471b1d59/go.mod h1:/rFqwRUd4F7ZHNgw
 golang.org/x/tools v0.0.0-20190617190820-da514acc4774/go.mod h1:/rFqwRUd4F7ZHNgwSSTFct+R/Kf4OFW1sUzUTQQTgfc=
 golang.org/x/tools v0.0.0-20190621195816-6e04913cbbac/go.mod h1:/rFqwRUd4F7ZHNgwSSTFct+R/Kf4OFW1sUzUTQQTgfc=
 golang.org/x/tools v0.0.0-20190920225731-5eefd052ad72/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+<<<<<<< HEAD
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7 h1:9zdDQZ7Thm29KFXgAX/+yaf3eVbP7djjWp/dXAppNCc=
+=======
+>>>>>>> use real ancestry path
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 gomodules.xyz/jsonpatch/v2 v2.0.1/go.mod h1:IhYNNY4jnS53ZnfE4PAmpKtDpTCj1JFXc+3mwe7XcUU=
 gonum.org/v1/gonum v0.0.0-20190331200053-3d26580ed485/go.mod h1:2ltnJ7xHfj0zHS40VVPYEAAMTa3ZGguvHGBSJeRWqE0=
@@ -858,7 +909,10 @@ gopkg.in/alecthomas/kingpin.v2 v2.2.6/go.mod h1:FMv+mEhP44yOT+4EoQTLFTRgOQ1FBLks
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 h1:qIbj1fsPNlZgppZ+VLlY7N33q108Sa+fhmuc+sWQYwY=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+<<<<<<< HEAD
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 h1:YR8cESwS4TdDjEe65xsg0ogRM/Nc3DYOhEAlW+xobZo=
+=======
+>>>>>>> use real ancestry path
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/cheggaaa/pb.v1 v1.0.27/go.mod h1:V/YB90LKu/1FcN3WVnfiiE5oMCibMjukxqG/qStrOgw=
 gopkg.in/fsnotify.v1 v1.4.7 h1:xOHLXZwVvI9hhs+cLKq5+I5onOuwQLhQwiu63xxlHs4=
@@ -888,6 +942,7 @@ honnef.co/go/tools v0.0.0-20190106161140-3f1c8253044a/go.mod h1:rf3lG4BRIbNafJWh
 honnef.co/go/tools v0.0.0-20190418001031-e561f6794a2a/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 howett.net/plist v0.0.0-20181124034731-591f970eefbb/go.mod h1:vMygbs4qMhSZSc4lCUl2OEE+rDiIIJAIdR4m7MiMcm0=
+<<<<<<< HEAD
 k8s.io/api v0.0.0-20190918155943-95b840bb6a1f/go.mod h1:uWuOHnjmNrtQomJrvEBg0c0HRNyQ+8KTEERVsK0PW48=
 k8s.io/api v0.16.4 h1:O06Ed/hgLiCrzW1SHp6HAhqcTnYHtK80bP5rXoHakpM=
 k8s.io/api v0.16.4/go.mod h1:AtzMnsR45tccQss5q8RnF+W8L81DH6XwXwo/joEx9u0=
@@ -906,19 +961,61 @@ k8s.io/client-go v0.16.4 h1:sf+FEZXYhJNjpTZapQDLvvN+0kBeUTxCYxlXcVdhv2E=
 k8s.io/client-go v0.16.4/go.mod h1:ZgxhFDxSnoKY0J0U2/Y1C8obKDdlhGPZwA7oHH863Ok=
 k8s.io/code-generator v0.0.0-20190912054826-cd179ad6a269/go.mod h1:V5BD6M4CyaN5m+VthcclXWsVcT1Hu+glwa1bi3MIsyE=
 k8s.io/code-generator v0.16.4/go.mod h1:mJUgkl06XV4kstAnLHAIzJPVCOzVR+ZcfPIv4fUsFCY=
+=======
+k8s.io/api v0.0.0-20190814101207-0772a1bdf941/go.mod h1:PBHnH5pdKCvv/+J4D3mpFXQCHFqtBbB1JvlkIVrfqrc=
+k8s.io/api v0.0.0-20190918155943-95b840bb6a1f/go.mod h1:uWuOHnjmNrtQomJrvEBg0c0HRNyQ+8KTEERVsK0PW48=
+k8s.io/api v0.16.4 h1:O06Ed/hgLiCrzW1SHp6HAhqcTnYHtK80bP5rXoHakpM=
+k8s.io/api v0.16.4/go.mod h1:AtzMnsR45tccQss5q8RnF+W8L81DH6XwXwo/joEx9u0=
+k8s.io/apiextensions-apiserver v0.0.0-20190814221956-627d23dfd9d6/go.mod h1:YTipkOXIJwY8F0M0sS2nu35cZeSjNooLDAo5WD22gJY=
+k8s.io/apiextensions-apiserver v0.0.0-20190918161926-8f644eb6e783/go.mod h1:xvae1SZB3E17UpV59AWc271W/Ph25N+bjPyR63X6tPY=
+k8s.io/apiextensions-apiserver v0.16.4 h1:QaDkeAe13GDPT9JZT2VwvllZs4b3wGLuh1AdbAhclOo=
+k8s.io/apiextensions-apiserver v0.16.4/go.mod h1:HYQwjujEkXmQNhap2C9YDdIVOSskGZ3et0Mvjcyjbto=
+k8s.io/apimachinery v0.0.0-20190814100815-533d101be9a6/go.mod h1:MAmngDqHkEif0Kxdsl08wStgNTmHhat4DuIUyb4LbCc=
+k8s.io/apimachinery v0.0.0-20190913080033-27d36303b655/go.mod h1:nL6pwRT8NgfF8TT68DBI8uEePRt89cSvoXUVqbkWHq4=
+k8s.io/apimachinery v0.16.4 h1:+VNiyTcctUvBBRUxfulwL2I6TGratkR1oAoULuas/HI=
+k8s.io/apimachinery v0.16.4/go.mod h1:llRdnznGEAqC3DcNm6yEj472xaFVfLM7hnYofMb12tQ=
+k8s.io/apiserver v0.0.0-20190814141433-f1bcc2994023/go.mod h1:RVsrkFlw5QgrMlY1u0eRVt/UZum3JnWsV2EZsjeE19g=
+k8s.io/apiserver v0.0.0-20190918160949-bfa5e2e684ad/go.mod h1:XPCXEwhjaFN29a8NldXA901ElnKeKLrLtREO9ZhFyhg=
+k8s.io/apiserver v0.16.4 h1:BbvSsgra871cSu3WG1tqZkxBeWB1W1UYNL1tm6gtBgw=
+k8s.io/apiserver v0.16.4/go.mod h1:kbLJOak655g6W7C+muqu1F76u9wnEycfKMqbVaXIdAc=
+k8s.io/cli-runtime v0.0.0-20190814105353-799c3f7793f3/go.mod h1:3MAEzYmfxZfU1ZwRtUQK6badUtgbLSUTupmHGIYutm4=
+k8s.io/cli-runtime v0.16.4/go.mod h1:eMzMINgUDp0722/80GDTQrKJ18S4H48iNzaIt5jy/IU=
+k8s.io/client-go v0.0.0-20190814101625-e290f153d148/go.mod h1:0RW1dsRMP6QZ0t8mqzBU90Qb3XLbY2aOwvwfEv53aYw=
+k8s.io/client-go v0.0.0-20190918160344-1fbdaa4c8d90/go.mod h1:J69/JveO6XESwVgG53q3Uz5OSfgsv4uxpScmmyYOOlk=
+k8s.io/client-go v0.16.4 h1:sf+FEZXYhJNjpTZapQDLvvN+0kBeUTxCYxlXcVdhv2E=
+k8s.io/client-go v0.16.4/go.mod h1:ZgxhFDxSnoKY0J0U2/Y1C8obKDdlhGPZwA7oHH863Ok=
+k8s.io/code-generator v0.0.0-20190814100514-5654a2f3dfb8/go.mod h1:PT1SOMszr9TJAi4EL8ncHI85SEdLvzWWYlfJ7ICZeYU=
+k8s.io/code-generator v0.0.0-20190814140513-6483f25b1faf/go.mod h1:PT1SOMszr9TJAi4EL8ncHI85SEdLvzWWYlfJ7ICZeYU=
+k8s.io/code-generator v0.0.0-20190912054826-cd179ad6a269/go.mod h1:V5BD6M4CyaN5m+VthcclXWsVcT1Hu+glwa1bi3MIsyE=
+k8s.io/code-generator v0.16.4/go.mod h1:mJUgkl06XV4kstAnLHAIzJPVCOzVR+ZcfPIv4fUsFCY=
+k8s.io/component-base v0.0.0-20190814102701-2c85c628702c/go.mod h1:wulb8NqH7Cn2VLON2+Glym5Y80r5QZOzIb85KGukSmM=
+>>>>>>> use real ancestry path
 k8s.io/component-base v0.0.0-20190918160511-547f6c5d7090/go.mod h1:933PBGtQFJky3TEwYx4aEPZ4IxqhWh3R6DCmzqIn1hA=
 k8s.io/component-base v0.16.4 h1:2sHiZD4eNk/Rk71z0MLLNAOV7CAFUaAGB9ONKIdtNXE=
 k8s.io/component-base v0.16.4/go.mod h1:GYQ+4hlkEwdlpAp59Ztc4gYuFhdoZqiAJD1unYDJ3FM=
 k8s.io/gengo v0.0.0-20190128074634-0689ccc1d7d6/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
+<<<<<<< HEAD
+=======
+k8s.io/gengo v0.0.0-20190813173942-955ffa8fcfc9/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
+>>>>>>> use real ancestry path
 k8s.io/gengo v0.0.0-20190822140433-26a664648505/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
 k8s.io/klog v0.0.0-20181102134211-b9b56d5dfc92/go.mod h1:Gq+BEi5rUBO/HRz0bTSXDUcqjScdoY3a9IHpCEIOOfk=
 k8s.io/klog v0.3.0/go.mod h1:Gq+BEi5rUBO/HRz0bTSXDUcqjScdoY3a9IHpCEIOOfk=
 k8s.io/klog v0.4.0/go.mod h1:4Bi6QPql/J/LkTDqv7R/cd3hPo4k2DG6Ptcz060Ez5I=
 k8s.io/klog v1.0.0 h1:Pt+yjF5aB1xDSVbau4VsWe+dQNzA0qv1LlXdC2dF6Q8=
 k8s.io/klog v1.0.0/go.mod h1:4Bi6QPql/J/LkTDqv7R/cd3hPo4k2DG6Ptcz060Ez5I=
+<<<<<<< HEAD
 k8s.io/kube-openapi v0.0.0-20190816220812-743ec37842bf/go.mod h1:1TqjTSzOxsLGIKfj0lK8EeCP7K1iUG65v09OM0/WG5E=
 k8s.io/kubectl v0.16.4 h1:iLhM6EXhKWitUKjqUyYUiKgMHIpJXnyq1PzMOB1VbRg=
 k8s.io/kubectl v0.16.4/go.mod h1:c9oVmQh1S7+FssSK8NTBSUlf4UFf5CkLwdVMIxhUBjA=
+=======
+k8s.io/kube-openapi v0.0.0-20190709113604-33be087ad058/go.mod h1:nfDlWeOsu3pUf4yWGL+ERqohP4YsZcBJXWMK+gkzOA4=
+k8s.io/kube-openapi v0.0.0-20190816220812-743ec37842bf/go.mod h1:1TqjTSzOxsLGIKfj0lK8EeCP7K1iUG65v09OM0/WG5E=
+k8s.io/kubectl v0.0.0-20190814111721-609f2a9f132d/go.mod h1:T8s5U2vo4vv2qCcQRaE782PoDq6kj3Hh102nNB4uROc=
+k8s.io/kubectl v0.16.4 h1:iLhM6EXhKWitUKjqUyYUiKgMHIpJXnyq1PzMOB1VbRg=
+k8s.io/kubectl v0.16.4/go.mod h1:c9oVmQh1S7+FssSK8NTBSUlf4UFf5CkLwdVMIxhUBjA=
+k8s.io/metrics v0.0.0-20190814105131-3588a53b85e5/go.mod h1:WoehuQ2bRXep/USl/iK3ZoFysEVrkw9HKi8XUtZOIJI=
+>>>>>>> use real ancestry path
 k8s.io/metrics v0.16.4/go.mod h1:dckkfqvaASo+NrzEmp8ST8yCc9hGt7lx9ABAILyDHx8=
 k8s.io/utils v0.0.0-20190801114015-581e00157fb1/go.mod h1:sZAwmy6armz5eXlNoLmJcl4F1QuKu7sr+mFQ0byX7Ew=
 k8s.io/utils v0.0.0-20190920012459-5008bf6f8cd6 h1:rfepARh/ECp66dk9TTmT//1PBkHffjnxhdOrgH4m+eA=
@@ -928,14 +1025,24 @@ modernc.org/golex v1.0.0/go.mod h1:b/QX9oBD/LhixY6NDh+IdGv17hgB+51fET1i2kPSmvk=
 modernc.org/mathutil v1.0.0/go.mod h1:wU0vUrJsVWBZ4P6e7xtFJEhFSNsfRLJ8H458uRjg03k=
 modernc.org/strutil v1.0.0/go.mod h1:lstksw84oURvj9y3tn8lGvRxyRC1S2+g5uuIzNfIOBs=
 modernc.org/xc v1.0.0/go.mod h1:mRNCo0bvLjGhHO9WsyuKVU4q0ceiDDDoEeWDJHrNx8I=
+<<<<<<< HEAD
+=======
+sigs.k8s.io/controller-runtime v0.1.12/go.mod h1:HFAYoOh6XMV+jKF1UjFwrknPbowfyHEHHRdJMf2jMX8=
+>>>>>>> use real ancestry path
 sigs.k8s.io/controller-runtime v0.4.0 h1:wATM6/m+3w8lj8FXNaO6Fs/rq/vqoOjO1Q116Z9NPsg=
 sigs.k8s.io/controller-runtime v0.4.0/go.mod h1:ApC79lpY3PHW9xj/w9pj+lYkLgwAAUZwfXkME1Lajns=
 sigs.k8s.io/controller-tools v0.2.2/go.mod h1:8SNGuj163x/sMwydREj7ld5mIMJu1cDanIfnx6xsU70=
 sigs.k8s.io/kustomize v2.0.3+incompatible/go.mod h1:MkjgH3RdOWrievjo6c9T245dYlB5QeXV4WCbnt/PEpU=
 sigs.k8s.io/structured-merge-diff v0.0.0-20190525122527-15d366b2352e/go.mod h1:wWxsB5ozmmv/SG7nM11ayaAW51xMvak/t1r0CSlcokI=
+<<<<<<< HEAD
 sigs.k8s.io/structured-merge-diff v0.0.0-20190817042607-6149e4549fca/go.mod h1:IIgPezJWb76P0hotTxzDbWsMYB8APh18qZnxkomBpxA=
 sigs.k8s.io/structured-merge-diff v1.0.1/go.mod h1:IIgPezJWb76P0hotTxzDbWsMYB8APh18qZnxkomBpxA=
 sigs.k8s.io/testing_frameworks v0.1.2 h1:vK0+tvjF0BZ/RYFeZ1E6BYBwHJJXhjuZ3TdsEKH+UQM=
+=======
+sigs.k8s.io/structured-merge-diff v0.0.0-20190724202554-0c1d754dd648/go.mod h1:IIgPezJWb76P0hotTxzDbWsMYB8APh18qZnxkomBpxA=
+sigs.k8s.io/structured-merge-diff v0.0.0-20190817042607-6149e4549fca/go.mod h1:IIgPezJWb76P0hotTxzDbWsMYB8APh18qZnxkomBpxA=
+sigs.k8s.io/structured-merge-diff v1.0.1/go.mod h1:IIgPezJWb76P0hotTxzDbWsMYB8APh18qZnxkomBpxA=
+>>>>>>> use real ancestry path
 sigs.k8s.io/testing_frameworks v0.1.2/go.mod h1:ToQrwSC3s8Xf/lADdZp3Mktcql9CG0UAmdJG9th5i0w=
 sigs.k8s.io/yaml v1.1.0 h1:4A07+ZFc2wgJwo8YNlQpr1rVlgUDlxXHhPJciaPY5gs=
 sigs.k8s.io/yaml v1.1.0/go.mod h1:UJmg0vDUVViEyp3mgSv9WPwZCDxu4rQW1olrI1uml+o=
