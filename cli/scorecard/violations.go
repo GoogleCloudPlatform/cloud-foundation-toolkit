@@ -23,7 +23,6 @@ import (
 	"path/filepath"
 
 	"cloud.google.com/go/storage"
-	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/pkg/errors"
 )
@@ -125,24 +124,23 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 
 // converts raw JSON into Asset proto
 func getAssetFromJSON(input []byte) (*validator.Asset, error) {
-	asset := tfconverter.Asset{}
+	var asset map[string]interface{}
 	err := json.Unmarshal(input, &asset)
 	if err != nil {
 		return nil, err
 	}
-
 	pbAsset := &validator.Asset{}
 	err = protoViaJSON(asset, pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "converting asset %s to proto", asset.Name)
+		return nil, errors.Wrapf(err, "converting asset %s to proto", asset)
 	}
 
 	pbAsset.AncestryPath, err = getAncestryPath(pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset.Name)
+		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset)
 	}
 
-	Log.Debug("Asset converted", "name", asset.Name, "ancestry", pbAsset.GetAncestryPath())
+	Log.Debug("Asset converted", "name", asset, "ancestry", pbAsset.GetAncestryPath())
 
 	return pbAsset, nil
 }
