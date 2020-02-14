@@ -21,6 +21,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -140,18 +141,25 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset)
 	}
-
 	Log.Debug("Asset converted", "name", asset, "ancestry", pbAsset.GetAncestryPath())
-
 	return pbAsset, nil
 }
 
 // looks up the ancestry path for a given asset
 func getAncestryPath(pbAsset *validator.Asset) (string, error) {
-	// TODO(morgantep): make this fetch the actual asset path
-	// fmt.Printf("Asset parent: %v\n", pbAsset.GetResource().GetParent())
-	return "organization/0/project/test", nil
+	ancestors := pbAsset.Ancestors
+	cnt := len(ancestors)
+	revAncestors := make([]string, len(ancestors))
+	for idx := 0; idx < cnt; idx++ {
+		revAncestors[cnt-idx-1] = ancestors[idx]
+	}
+	ancestorPath := strings.Join(revAncestors, "/")
+	if ancestorPath == ""{
+		ancestorPath = "organization/0/project/test"
+	}
+	return ancestorPath, nil
 }
+
 
 // listFiles returns a list of files under a dir. Errors will be grpc errors.
 func listFiles(dir string) ([]string, error) {
