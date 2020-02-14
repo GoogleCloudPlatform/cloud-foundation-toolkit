@@ -133,14 +133,14 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 	pbAsset := &validator.Asset{}
 	err = protoViaJSON(asset, pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "converting asset %s to proto", asset.Name)
+		return nil, errors.Wrapf(err, "converting asset %s to proto", asset["Name"])
 	}
 
 	pbAsset.AncestryPath, err = getAncestryPath(pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset.Name)
+		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset["Name"])
 	}
-	Log.Debug("Asset converted", "name", asset.Name, "ancestry", pbAsset.GetAncestryPath())
+	Log.Debug("Asset converted", "name", asset["Name"], "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
 }
 
