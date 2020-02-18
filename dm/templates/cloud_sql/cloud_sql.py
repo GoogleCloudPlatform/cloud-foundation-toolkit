@@ -89,11 +89,11 @@ def get_instance(res_name, project_id, properties):
     return DMBundle(instance, outputs)
 
 
-def get_database(instance_name, project_id, properties):
+def get_database(instance_name, project_id, properties, res_name):
     """ Creates a Cloud SQL database. """
 
     name = properties['name']
-    res_name = name
+    res_name = '{}-{}'.format(res_name, name)
 
     db_properties = {
         'name': name,
@@ -131,21 +131,21 @@ def get_database(instance_name, project_id, properties):
     return DMBundle(database, outputs)
 
 
-def get_databases(instance_name, project_id, properties):
+def get_databases(instance_name, project_id, properties, res_name):
     """ Creates Cloud SQL databases for the given instance. """
 
     dbs = properties.get('databases')
     if dbs:
-        return [get_database(instance_name, project_id, db) for db in dbs]
+        return [get_database(instance_name, project_id, db, res_name) for db in dbs]
 
     return []
 
 
-def get_user(instance_name, project_id, properties):
+def get_user(instance_name, project_id, properties, res_name):
     """ Creates a Cloud SQL user. """
 
     name = properties['name']
-    res_name = 'cloud-sql-{}'.format(name)
+    res_name = '{}-user-{}'.format(res_name, name)
     if 'host' in properties:
         res_name = '{}-{}'.format(res_name, properties['host'].replace('cloudsqlproxy~', 'proxy_').replace('.', '_'))
 
@@ -165,17 +165,17 @@ def get_user(instance_name, project_id, properties):
         'properties': user_properties
     }
 
-    outputs = [{'name': 'name', 'value': name}]
+    outputs = [{'name': 'name', 'value': res_name}]
 
     return DMBundle(user, outputs)
 
 
-def get_users(instance_name, project_id, properties):
+def get_users(instance_name, project_id, properties, res_name):
     """ Creates Cloud SQL users for the given instance. """
 
     users = properties.get('users')
     if users:
-        return [get_user(instance_name, project_id, user) for user in users]
+        return [get_user(instance_name, project_id, user, res_name) for user in users]
 
     return []
 
@@ -234,8 +234,8 @@ def generate_config(context):
     instance = get_instance(res_name, project_id, properties)
     instance_name = instance.outputs[0]['value']  # 'name' output
 
-    users = get_users(instance_name, project_id, properties)
-    dbs = get_databases(instance_name, project_id, properties)
+    users = get_users(instance_name, project_id, properties, res_name)
+    dbs = get_databases(instance_name, project_id, properties, res_name)
 
     children = [user.resource for user in users] + [db.resource for db in dbs]
     create_sequentially(children)
