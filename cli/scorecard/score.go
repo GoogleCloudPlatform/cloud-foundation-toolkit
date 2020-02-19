@@ -47,7 +47,7 @@ func NewScoringConfigFromValidator(v *gcv.Validator) *ScoringConfig {
 // NewScoringConfig creates a scoring engine for the given policy library
 func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, error) {
 	flag.Parse()
-	v, err := gcv.NewValidator(ctx.Done(),
+	v, err := gcv.NewValidator(
 		[]string{filepath.Join(policyPath, "policies")},
 		filepath.Join(policyPath, "lib"),
 	)

@@ -22,106 +22,105 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-
 	"cloud.google.com/go/storage"
-
 	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
+	"github.com/pkg/errors"
 )
 
-func addDataFromReader(config *ScoringConfig, reader io.Reader) error {
+func getDataFromReader(config *ScoringConfig, reader io.Reader) ([]*validator.Asset, error) {
 	const maxCapacity = 1024 * 1024
 	scanner := bufio.NewScanner(reader)
 	buf := make([]byte, maxCapacity)
 	scanner.Buffer(buf, maxCapacity)
+	var pbAssets []*validator.Asset
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
 		if err != nil {
-			return err
+			return nil, err
 		}
-		pbAssets := []*validator.Asset{pbAsset}
-		err = config.validator.AddData(&validator.AddDataRequest{
-			Assets: pbAssets,
-		})
-		if err != nil {
-			return errors.Wrap(err, "adding data to validator")
-		}
+		pbAssets = append(pbAssets, pbAsset)
 	}
-	return nil
+	return pbAssets, nil
 }
 
-func addDataFromBucket(config *ScoringConfig, bucketName string) error {
+func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.Asset, error) {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	bucket := client.Bucket(bucketName)
+	var pbAssets []*validator.Asset
 	for _, objectName := range destinationObjectNames {
 		reader, err := bucket.Object(objectName).NewReader(ctx)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		defer reader.Close()
-		err = addDataFromReader(config, reader)
+		assets, err := getDataFromReader(config, reader)
 		if err != nil {
-			return err
+			return nil, err
 		}
+
+		pbAssets = append(pbAssets, assets...)
 	}
-	return nil
+	return pbAssets, nil
 }
 
-func addDataFromFile(config *ScoringConfig, caiDirName string) error {
+func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Asset, error) {
+	var pbAssets []*validator.Asset
 	for _, objectName := range destinationObjectNames {
 		reader, err := os.Open(filepath.Join(caiDirName, objectName))
 		if err != nil {
-			return err
+			return nil, err
 		}
 		defer reader.Close()
-		err = addDataFromReader(config, reader)
+		assets, err := getDataFromReader(config, reader)
 		if err != nil {
-			return err
+			return nil, err
 		}
+
+		pbAssets = append(pbAssets, assets...)
 	}
-	return nil
+	return pbAssets, nil
 }
 
-func addDataFromStdin(config *ScoringConfig) error {
-	err := addDataFromReader(config, os.Stdin)
-	if err != nil {
-		return err
-	}
-	return nil
+func getDataFromStdin(config *ScoringConfig) ([]*validator.Asset, error) {
+	return getDataFromReader(config, os.Stdin)
 }
 
 // getViolations finds all Config Validator violations for a given Inventory
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
-	v := config.validator
-
+	var err error
+	var pbAssets []*validator.Asset
 	if inventory.bucketName != "" {
-		err := addDataFromBucket(config, inventory.bucketName)
+		pbAssets, err = getDataFromBucket(config, inventory.bucketName)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
 		}
 	} else if inventory.dirPath != "" {
-		err := addDataFromFile(config, inventory.dirPath)
+		pbAssets, err = getDataFromFile(config, inventory.dirPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from local directory")
 		}
 	} else if inventory.readFromStdin {
-		err := addDataFromStdin(config)
+		pbAssets, err = getDataFromStdin(config)
 		if err != nil {
 			return nil, errors.Wrap(err, "Reading from stdin")
 		}
 	}
-	auditResponse, err := v.Audit(context.Background())
-	if err != nil {
-		return nil, errors.Wrap(err, "auditing")
-	}
 
-	return auditResponse, nil
+	auditResult := &validator.AuditResponse{}
+	for _, asset := range pbAssets {
+		violations, err := config.validator.ReviewAsset(context.Background(), asset)
+		if err != nil {
+			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
+		}
+		auditResult.Violations = append(auditResult.Violations, violations...)
+	}
+	return auditResult, nil
 }
 
 // converts raw JSON into Asset proto
