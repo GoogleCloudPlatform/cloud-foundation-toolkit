@@ -34,7 +34,7 @@ def get_backend_service(properties, backend_spec, res_name, project_id):
         'name': backend_name,
         'project': project_id,
         'loadBalancingScheme': 'EXTERNAL',
-        'protocol': get_protocol(properties),
+        'protocol': backend_spec.get('protocol', get_protocol(properties)),
     }
 
     backend_resource = {
