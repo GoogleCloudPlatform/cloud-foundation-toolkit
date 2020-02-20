@@ -391,7 +391,19 @@ properties:
           default: 30
           description: |
             The number of seconds to wait for the backend response before
-            considering the request as failed.
+            considering the request as failed. 
+        protocol:
+          type: string
+          description: |
+            The protocol the backend service uses to communicate with backends.
+            The default is HTTP. For INTERNAL load balancing, the possible values are
+            TCP and UDP, and the default is TCP.
+          enum:
+            - HTTP
+            - HTTPS
+            - TCP
+            - UDP
+            - SSL
         portName:
           type: string
           description: |
