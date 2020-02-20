@@ -20,21 +20,23 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     DEPLOYMENT_NAME=${DEPLOYMENT_NAME//_/-}
     CONFIG=".${DEPLOYMENT_NAME}.yaml"
     export MASTER_INSTANCE_NAME="cloud-sql-master-instance-${RAND}"
-    export VERSION="MYSQL_5_6"
-    export MASTER_INSTANCE_TIER="db-n1-standard-1"
+    export VERSION="POSTGRES_9_6"
+    export MASTER_INSTANCE_TIER="db-f1-micro"
     export MASTER_ZONE="us-central1-c"
     export REPLICA_ZONE="us-central1-a"
     export REGION="us-central1"
     export REPLICA_INSTANCE_NAME="cloud-sql-replica-instance-${RAND}"
-    export REPLICA_INSTANCE_TIER="db-n1-standard-2"
+    export REPLICA_INSTANCE_TIER="db-f1-micro"
     export REPLICA_INSTANCE_TYPE="READ_REPLICA_INSTANCE"
     export BACKUP_START_TIME="02:00"
     export BACKUP_ENABLED="true"
     export BACKUP_BL_ENABLED="true"
     export USER1_NAME="user-1"
     export USER1_HOST="10.1.1.1"
+    export USER1_PASS="dummy1"
     export USER2_NAME="user-2"
     export USER2_HOST="10.1.1.2"
+    export USER2_PASS="dummy2"
     export DB1="db-1"
     export DB2="db-2"
 fi
@@ -128,8 +130,6 @@ function teardown() {
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${USER1_NAME}" ]]
     [[ "$output" =~ "${USER2_NAME}" ]]
-    [[ "$output" =~ "${USER1_HOST}" ]]
-    [[ "$output" =~ "${USER2_HOST}" ]]
 }
 
 @test "Verifying master backup settings" {
@@ -139,7 +139,6 @@ function teardown() {
     echo "status = ${status}"
     echo "output = ${output}"
     [[ "$status" -eq 0 ]]
-    [[ "$output" =~ "binaryLogEnabled: ${BACKUP_BL_ENABLED}" ]]
     [[ "$output" =~ "enabled: ${BACKUP_ENABLED}" ]]
     [[ "$output" =~ "startTime: ${BACKUP_START_TIME}" ]]
 }
