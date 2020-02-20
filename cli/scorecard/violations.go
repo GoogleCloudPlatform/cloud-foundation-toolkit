@@ -21,10 +21,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
+	cvasset "github.com/forseti-security/config-validator/pkg/asset"
 	"github.com/pkg/errors"
 )
 
@@ -133,32 +133,16 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 	pbAsset := &validator.Asset{}
 	err = protoViaJSON(asset, pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "converting asset %s to proto", asset["Name"])
+		return nil, errors.Wrapf(err, "converting asset %s to proto", asset["name"])
+	}
+	err = cvasset.SanitizeAncestryPath(pbAsset)
+	if err != nil {
+		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset["name"])
 	}
 
-	pbAsset.AncestryPath, err = getAncestryPath(pbAsset)
-	if err != nil {
-		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset["Name"])
-	}
-	Log.Debug("Asset converted", "name", asset["Name"], "ancestry", pbAsset.GetAncestryPath())
+	Log.Debug("Asset converted", "name", asset["name"], "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
 }
-
-// looks up the ancestry path for a given asset
-func getAncestryPath(pbAsset *validator.Asset) (string, error) {
-	ancestors := pbAsset.Ancestors
-	cnt := len(ancestors)
-	revAncestors := make([]string, len(ancestors))
-	for idx := 0; idx < cnt; idx++ {
-		revAncestors[cnt-idx-1] = ancestors[idx]
-	}
-	ancestorPath := strings.Join(revAncestors, "/")
-	if ancestorPath == ""{
-		ancestorPath = "organization/0/project/test"
-	}
-	return ancestorPath, nil
-}
-
 
 // listFiles returns a list of files under a dir. Errors will be grpc errors.
 func listFiles(dir string) ([]string, error) {
