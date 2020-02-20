@@ -22,8 +22,10 @@ resources:
       users:
         - name: user-1
           host: 10.1.1.1
+          password: dummy2
         - name: user-2
           host: 10.1.1.2
+          password: dummy3
       databases:
         - name: db-1
         - name: db-2
