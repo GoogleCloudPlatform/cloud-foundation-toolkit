@@ -23,8 +23,8 @@ import (
 	"path/filepath"
 
 	"cloud.google.com/go/storage"
-	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
+	cvasset "github.com/forseti-security/config-validator/pkg/asset"
 	"github.com/pkg/errors"
 )
 
@@ -125,33 +125,23 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 
 // converts raw JSON into Asset proto
 func getAssetFromJSON(input []byte) (*validator.Asset, error) {
-	asset := tfconverter.Asset{}
+	var asset map[string]interface{}
 	err := json.Unmarshal(input, &asset)
 	if err != nil {
 		return nil, err
 	}
-
 	pbAsset := &validator.Asset{}
 	err = protoViaJSON(asset, pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "converting asset %s to proto", asset.Name)
+		return nil, errors.Wrapf(err, "converting asset %s to proto", asset["name"])
 	}
-
-	pbAsset.AncestryPath, err = getAncestryPath(pbAsset)
+	err = cvasset.SanitizeAncestryPath(pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset.Name)
+		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset["name"])
 	}
 
-	Log.Debug("Asset converted", "name", asset.Name, "ancestry", pbAsset.GetAncestryPath())
-
+	Log.Debug("Asset converted", "name", asset["name"], "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
-}
-
-// looks up the ancestry path for a given asset
-func getAncestryPath(pbAsset *validator.Asset) (string, error) {
-	// TODO(morgantep): make this fetch the actual asset path
-	// fmt.Printf("Asset parent: %v\n", pbAsset.GetResource().GetParent())
-	return "organization/0/project/test", nil
 }
 
 // listFiles returns a list of files under a dir. Errors will be grpc errors.

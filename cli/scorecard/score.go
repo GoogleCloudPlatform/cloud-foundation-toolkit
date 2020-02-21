@@ -198,7 +198,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 						}
 						if len(outputMetadataFields) > 0 {
 							newMetadata := make(map[string]interface{})
-							oldMetadata := v.Metadata.GetStructValue()
+							oldMetadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue()
 							for _, field := range outputMetadataFields {
 								newMetadata[field], _ = interfaceViaJSON(oldMetadata.Fields[field])
 							}
@@ -229,7 +229,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					for _, v := range cv.Violations {
 						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
 						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue().Fields[field]
+							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 							value, _ := stringViaJSON(metadata)
 							record = append(record, value)
 						}
@@ -249,7 +249,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 					for _, v := range cv.Violations {
 						io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
 						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue().Fields[field]
+							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 							value, _ := stringViaJSON(metadata)
 							if value != "" {
 								io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
