@@ -1,14 +1,17 @@
-FROM gcr.io/cloud-builders/gcloud
+FROM gcr.io/google.com/cloudsdktool/cloud-sdk 
+# gcr.io/cloud-builders/gcloud
 
 RUN set -ex && apt-get update && apt-get -y install make \
     && apt-get -y install gettext-base \
-    && pip install --upgrade pip \
-    && pip install setuptools \
+    && python3 --version \
+    && pip3 install --upgrade pip \
+    && pip3 --version \
+    && pip3 install setuptools \
     && git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit \
     && cd cloud-foundation-toolkit/dm \
     && rm -rf templates \
-    && pip install tox \
-    && pip install pytest wheel \
+    && pip3 install tox \
+    && pip3 install pytest wheel \
     && make build \
     && make install \
     && make cft-venv \
