@@ -114,8 +114,6 @@ function teardown() {
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${USER1_NAME}" ]]
     [[ "$output" =~ "${USER2_NAME}" ]]
-    [[ "$output" =~ "${USER1_HOST}" ]]
-    [[ "$output" =~ "${USER2_HOST}" ]]
 }
 
 @test "Verifying master backup settings" {
