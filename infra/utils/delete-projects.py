@@ -16,13 +16,16 @@
 
 import google.api_core
 from google.cloud import resource_manager
+from googleapiclient.discovery import build
 import sys
+from pprint import pprint
 import argparse
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
 client = resource_manager.Client()
 credentials = GoogleCredentials.get_application_default()
+client2 = build('cloudresourcemanager', 'v2', credentials=credentials)
 
 def delete_liens(project_id):
     service = discovery.build('cloudresourcemanager', 'v1', credentials=credentials)
@@ -55,16 +58,30 @@ def delete_project(project):
         print("Failed to delete {}".format(project.project_id))
         print(e)
 
-def delete_projects(parent_type, parent_id):
-    print("Deleting projects in {} {}".format(parent_type, parent_id))
+def delete_children(parent_type, parent_id):
+    print("Deleting children of {} {}".format(parent_type, parent_id))
 
     project_filter = {
         'parent.type': parent_type,
         'parent.id': parent_id
     }
     for project in client.list_projects(project_filter):
-        print("  Deleting project {}...".format(project.project_id))
+        if (project.status != "ACTIVE"):
+            print("  Skipping deletion of inactive project {}...".format(project.project_id))
+            continue
+        print("  Deleting project {} (status={})...".format(project.project_id, project.status))
         delete_project(project)
+
+    name = "{}s/{}".format(parent_type, parent_id)
+    res = client2.folders().list(parent=name).execute()
+    for folder in res.get('folders', []):
+        delete_children("folder", folder.get('name').split('/')[-1])
+
+    deletion = client2.folders().delete(name=name).execute()
+    if deletion.get('lifecycleState') == 'DELETE_REQUESTED':
+        print("Deleted {}".format(name))
+    else:
+        print(deletion)
 
 def main(argv):
     parser = argparser()
@@ -72,7 +89,7 @@ def main(argv):
 
     (parent_type, parent_id) = args.parent_id.split('/')
     
-    delete_projects(parent_type.strip('s'), parent_id)
+    delete_children(parent_type.strip('s'), parent_id)
 
 def argparser():
     parser = argparse.ArgumentParser(description='Delete projects within a folder')
