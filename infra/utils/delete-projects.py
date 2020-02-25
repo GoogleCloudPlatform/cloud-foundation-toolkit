@@ -58,7 +58,7 @@ def delete_project(project):
         print("Failed to delete {}".format(project.project_id))
         print(e)
 
-def delete_children(parent_type, parent_id):
+def delete_children(parent_type, parent_id, delete_root=True):
     print("Deleting children of {} {}".format(parent_type, parent_id))
 
     project_filter = {
@@ -77,11 +77,12 @@ def delete_children(parent_type, parent_id):
     for folder in res.get('folders', []):
         delete_children("folder", folder.get('name').split('/')[-1])
 
-    deletion = client2.folders().delete(name=name).execute()
-    if deletion.get('lifecycleState') == 'DELETE_REQUESTED':
-        print("Deleted {}".format(name))
-    else:
-        print(deletion)
+    if delete_root:
+        deletion = client2.folders().delete(name=name).execute()
+        if deletion.get('lifecycleState') == 'DELETE_REQUESTED':
+            print("Deleted {}".format(name))
+        else:
+            print(deletion)
 
 def main(argv):
     parser = argparser()
@@ -89,7 +90,7 @@ def main(argv):
 
     (parent_type, parent_id) = args.parent_id.split('/')
     
-    delete_children(parent_type.strip('s'), parent_id)
+    delete_children(parent_type.strip('s'), parent_id, delete_root=False)
 
 def argparser():
     parser = argparse.ArgumentParser(description='Delete projects within a folder')
