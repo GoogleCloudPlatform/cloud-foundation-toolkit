@@ -65,11 +65,13 @@ def get_instance(res_name, project_id, properties):
     output_fields = [
         'name',
         'selfLink',
-        'gceZone',
         'connectionName',
         'backendType',
         'serviceAccountEmailAddress',
     ]
+
+    if 'onPremisesConfiguration' not in properties:
+        output_fields.extend(['gceZone'])
 
     outputs = [{
         'name': i,
