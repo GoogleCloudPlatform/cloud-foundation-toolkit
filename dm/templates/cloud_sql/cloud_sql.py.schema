@@ -24,7 +24,6 @@ additionalProperties: false
 
 required:
   - region
-  - settings
 
 properties:
   name:
