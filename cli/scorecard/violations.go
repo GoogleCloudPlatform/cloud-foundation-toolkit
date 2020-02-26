@@ -115,6 +115,7 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 	auditResult := &validator.AuditResponse{}
 	for _, asset := range pbAssets {
 		violations, err := config.validator.ReviewAsset(context.Background(), asset)
+
 		if err != nil {
 			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
 		}
