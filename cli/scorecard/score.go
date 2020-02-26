@@ -86,7 +86,8 @@ func (cv constraintViolations) Count() int {
 }
 
 func (cv constraintViolations) GetName() string {
-	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
+	return cv.Violations[0].Constraint
+//	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
 }
 
 // RichViolation holds a violation with its category
