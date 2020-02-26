@@ -14,8 +14,13 @@ This template grants IAM roles for a projects, folders and organizations.
 
 ### Resources
 
-- [virtual.projects.iamMemberBinding](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/google/resource-snippets/cloudresourcemanager-v1/policies.jinja)
+Resources are created based on the input properties:
+- [cloudresourcemanager-v1:virtual.projects.iamMemberBinding](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/google/resource-snippets/cloudresourcemanager-v1/policies.jinja)
     - This virtual endpoint implements projects.getIamPolicy and projects.setIamPolicy internally with proper concurancy handling.
+- [cloudresourcemanager-v2:virtual.folders.iamMemberBinding](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/google/resource-snippets/cloudresourcemanager-v2/policies.jinja)
+- [cloudresourcemanager-v1:virtual.organizations.iamMemberBinding](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/google/resource-snippets/cloudresourcemanager-v1/policies.jinja)
+- storage-v1:virtual.buckets.iamMemberBinding
+- cloudfunctions-v1:virtual.projects.locations.functions.iamMemberBinding
 
 ### Properties
 
