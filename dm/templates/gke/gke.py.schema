@@ -71,12 +71,16 @@ definitions:
           If unspecified, the default disk size is 100GB.
       imageType:
         type: string
-        default: cos
+        default: COS
         description: |
           The image type to use for this node. Note that for a given image type, the latest version of it will be used.
         enum:
-          - cos
-          - Ubuntu
+          - cos # backwards compatible spelling
+          - Ubuntu # backwards compatible spelling
+          - COS
+          - UBUNTU
+          - COS_CONTAINERD
+          - UBUNTU_CONTAINERD
       oauthScopes:
         type: array
         uniqueItems: True
