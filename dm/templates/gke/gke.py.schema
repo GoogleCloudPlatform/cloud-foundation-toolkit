@@ -560,14 +560,11 @@ properties:
           https://kubernetes.io/docs/concepts/services-networking/networkpolicies/
         properties:
           provider:
-            type: array
-            uniqueItems: True
+            type: string
             description: The selected network policy provider.
-            items:
-              type: string
-              enum:
-                - PROVIDER_UNSPECIFIED
-                - CALICO
+            enum:
+              - PROVIDER_UNSPECIFIED
+              - CALICO
           enabled:
             type: boolean
             description: |
