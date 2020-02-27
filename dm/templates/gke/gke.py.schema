@@ -212,17 +212,14 @@ definitions:
           - nodeMetadata
         properties:
           nodeMetadata:
-            type: array
-            uniqueItems: True
+            type: string
             description: |
               Configuration that defines how to expose the node metadata to the workload running on the node.
-            items:
-              type: string
-              enum:
-                - UNSPECIFIED
-                - SECURE
-                - EXPOSE
-                - GKE_METADATA_SERVER
+            enum:
+              - UNSPECIFIED
+              - SECURE
+              - EXPOSE
+              - GKE_METADATA_SERVER
       shieldedInstanceConfig:
         type: object
         additionalProperties: false
