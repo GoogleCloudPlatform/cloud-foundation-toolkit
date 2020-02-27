@@ -288,3 +288,4 @@ func uniqueViolations(violations []*validator.Violation) []*validator.Violation 
 	}
 	return uniqueViolations
 }
+
