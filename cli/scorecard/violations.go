@@ -143,3 +143,4 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 	Log.Debug("Asset converted", "name", asset["name"], "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
 }
+
