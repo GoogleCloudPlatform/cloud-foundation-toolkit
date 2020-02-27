@@ -16,6 +16,7 @@ package scorecard
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"testing"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
@@ -28,11 +29,15 @@ func jsonToInterface(jsonStr string) map[string]interface{} {
 }
 
 func TestDataTypeTransformation(t *testing.T) {
-	asset := jsonToInterface(testIamPolicyAuditLogsJSON)
+	fileContent, err := ioutil.ReadFile(testRoot + "/shared/iam_policy_audit_logs.json")
+	if err != nil {
+		t.Fatal("unexpected error", err)
+	}
+	asset := jsonToInterface(string(fileContent))
 	wantedName := "//cloudresourcemanager.googleapis.com/projects/23456"
 
 	pbAsset := &validator.Asset{}
-	err := protoViaJSON(asset, pbAsset)
+	err = protoViaJSON(asset, pbAsset)
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
@@ -63,41 +68,3 @@ func TestDataTypeTransformation(t *testing.T) {
 		}
 	})
 }
-
-var testIamPolicyAuditLogsJSON = `
-{
-	"name": "//cloudresourcemanager.googleapis.com/projects/23456",
-	"asset_type": "cloudresourcemanager.googleapis.com/Project",
-	"iam_policy": {
-	  "version": 1,
-	  "etag": "WwAA1Aaa/BB=",
-	  "bindings": [
-		{
-		  "role": "roles/owner",
-		  "members": [
-			"user:user@example.com"
-		  ]
-		}
-	  ],
-	  "audit_configs": [
-		{
-		  "service": "storage.googleapis.com",
-		  "audit_log_configs": [
-			{
-			  "log_type": 1
-			},
-			{
-			  "log_type": 3
-			},
-			{
-			  "log_type": 2
-			}
-		  ]
-		}
-	  ]
-	},
-	"ancestors": [
-	  "projects/1234",
-	  "organizations/56789"
-	]
-  }`
