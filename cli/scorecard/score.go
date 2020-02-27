@@ -16,6 +16,7 @@ package scorecard
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/csv"
 	"encoding/json"
 	"flag"
@@ -23,7 +24,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"crypto/md5"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
@@ -87,7 +87,7 @@ func (cv constraintViolations) Count() int {
 
 func (cv constraintViolations) GetName() string {
 	return cv.Violations[0].Constraint
-//	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
+	//	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
 }
 
 // RichViolation holds a violation with its category
@@ -174,7 +174,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		return err
 	}
 	Log.Debug("AuditResult from Config Validator", "# of Violations", len(auditResult.Violations))
-	auditResult.Violations = uniqueViolation(auditResult.Violations)
+	auditResult.Violations = uniqueViolations(auditResult.Violations)
 	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(auditResult.Violations))
 
 	err = config.attachViolations(auditResult)
@@ -275,16 +275,16 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	return nil
 }
 
-func uniqueViolation(violations []*validator.Violation) []*validator.Violation {
-    uniqueViolationMap := make(map[string]*validator.Violation)
-    for _, v := range violations {
+func uniqueViolations(violations []*validator.Violation) []*validator.Violation {
+	uniqueViolationMap := make(map[string]*validator.Violation)
+	for _, v := range violations {
 		b, _ := json.Marshal(v)
 		hash := md5.Sum(b)
-        uniqueViolationMap[string(hash[:])] = v
-    }
-    uniqueViolation := make([]*validator.Violation, 0, len(uniqueViolationMap))
-    for _, v := range uniqueViolationMap {
-        uniqueViolation = append(uniqueViolation, v)
-    }
-    return uniqueViolation
+		uniqueViolationMap[string(hash[:])] = v
+	}
+	uniqueViolations := make([]*validator.Violation, 0, len(uniqueViolationMap))
+	for _, v := range uniqueViolationMap {
+		uniqueViolations = append(uniqueViolations, v)
+	}
+	return uniqueViolations
 }
