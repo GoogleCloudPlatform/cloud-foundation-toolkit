@@ -1,0 +1,24 @@
+{
+	"name": "//compute.googleapis.com/projects/test-project",
+	"asset_type": "compute.googleapis.com/Project",
+	"resource": {
+	  "version": "v1",
+	  "discovery_document_uri": "https://www.googleapis.com/discovery/v1/apis/compute/v1/rest",
+	  "discovery_name": "Project",
+	  "parent": "//cloudresourcemanager.googleapis.com/projects/1234",
+	  "data": {
+		"creationTimestamp": "2019-04-08T21:19:06.581-07:00",
+		"defaultNetworkTier": "PREMIUM",
+		"defaultServiceAccount": "1234-compute@developer.gserviceaccount.com",
+		"id": "4321",
+		"kind": "compute#project",
+		"name": "test-project",
+		"selfLink": "https://www.googleapis.com/compute/v1/projects/test-project",
+		"xpnProjectStatus": "UNSPECIFIED_XPN_PROJECT_STATUS"
+	  }
+	},
+	"ancestors": [
+	  "projects/1234",
+	  "organizations/56789"
+	]
+}

@@ -1,0 +1,36 @@
+{
+	"name": "//cloudresourcemanager.googleapis.com/projects/23456",
+	"asset_type": "cloudresourcemanager.googleapis.com/Project",
+	"iam_policy": {
+	  "version": 1,
+	  "etag": "WwAA1Aaa/BB=",
+	  "bindings": [
+		{
+		  "role": "roles/owner",
+		  "members": [
+			"user:user@example.com"
+		  ]
+		}
+	  ],
+	  "audit_configs": [
+		{
+		  "service": "storage.googleapis.com",
+		  "audit_log_configs": [
+			{
+			  "log_type": 1
+			},
+			{
+			  "log_type": 3
+			},
+			{
+			  "log_type": 2
+			}
+		  ]
+		}
+	  ]
+	},
+	"ancestors": [
+	  "projects/1234",
+	  "organizations/56789"
+	]
+}
