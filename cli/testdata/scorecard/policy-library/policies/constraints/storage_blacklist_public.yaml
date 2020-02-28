@@ -1,4 +1,4 @@
-# Copyright 2018 Google LLC
+# Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,10 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 4.9"
-  gem "kubeclient", "~> 4.0"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.10'
-end
+#
+apiVersion: constraints.gatekeeper.sh/v1alpha1
+kind: GCPStorageBucketWorldReadableConstraintV1
+metadata:
+  name: iam-gcs-blacklist-public-users
+  annotations:
+    description: Prevent public users from having access to resources via IAM
+    bundles.validator.forsetisecurity.org/scorecard-v1: security
+spec:
+  severity: high
+  match:
+    target: ["organization/*"]
+    exclude: [] # optional, default is no exclusions
+  parameters: {}

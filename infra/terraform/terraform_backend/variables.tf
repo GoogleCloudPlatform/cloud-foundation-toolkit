@@ -1,1 +1,1 @@
-module "variables" { source = "../variables" }
+module "variables" { source = "../modules/variables" }
