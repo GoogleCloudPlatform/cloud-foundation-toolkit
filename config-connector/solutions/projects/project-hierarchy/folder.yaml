@@ -4,8 +4,6 @@ metadata:
   annotations:
     # Replace "${ORG_ID?}" with the numeric ID for your organization
     cnrm.cloud.google.com/organization-id: "${ORG_ID?}"
-  labels:
-    label-one: "value-one"
-  name: folder-sample-in-org
+  name: project-hierarchy-folder
 spec:
-  displayName: Config Connector sample
+  displayName: Project Hierarchy Folder
