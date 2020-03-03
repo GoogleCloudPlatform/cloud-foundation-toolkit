@@ -7,23 +7,44 @@ packageMetadata:
 openAPI:
   definitions:
     io.k8s.cli.setters.org-id:
-      description: The organization ID for the associated services
+      description: organization ID for the associated services
       x-k8s-cli:
         setter:
           name: org-id
           value: "${ORG_ID?}"
           setBy: package-default
     io.k8s.cli.setters.project-id:
-      description: The GCP ID of the project
+      description: GCP ID of the project
       x-k8s-cli:
         setter:
-          name: project-name
+          name: project-id
           value: project-hierarchy-project
           setBy: package-default
     io.k8s.cli.setters.folder-id:
-      description: The GCP ID of the folder
+      description: GCP ID of the folder
       x-k8s-cli:
         setter:
           name: folder-id
           value: project-hierarchy-folder
+          setBy: package-default
+    io.k8s.cli.setters.project-name:
+      description: human-readable name of the project
+      x-k8s-cli:
+        setter:
+          name: project-name
+          value: Project Hierarchy Project
+          setBy: package-default
+    io.k8s.cli.setters.billing-account:
+      description: ID of the billing account
+      x-k8s-cli:
+        setter:
+          name: billing-account
+          value: ${BILLING_ACCOUNT_ID?}
+          setBy: package-default
+    io.k8s.cli.setters.folder-name:
+      description: human-readable name of the project
+      x-k8s-cli:
+        setter:
+          name: folder-name
+          value: Project Hierarchy Folder
           setBy: package-default
