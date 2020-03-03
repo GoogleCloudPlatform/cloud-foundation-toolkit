@@ -1,0 +1,14 @@
+apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+kind: Project
+metadata:
+  annotations:
+    # Replace "${FOLDER_ID?}" with the numeric ID for your folder
+    cnrm.cloud.google.com/folder-id: "${FOLDER_ID?}"
+  labels:
+    label-one: "value-one"
+  name: project-sample-in-folder
+spec:
+  name: Config Connector Sample
+  billingAccountRef:
+    # Replace "${BILLING_ACCOUNT_ID?}" with the numeric ID for your billing account
+    external: "${BILLING_ACCOUNT_ID?}"
