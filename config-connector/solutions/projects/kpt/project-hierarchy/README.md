@@ -9,7 +9,9 @@ Project Hierarchy
 
   Config Connector compatible YAML files to create
   a folder in an organization, and a project
-  beneath it.
+  beneath it. Make sure your Config Connector
+  service account has the folder creator and
+  project creator role for your organization.
 
   In order to use, replace the
   `${BILLING_ACCOUNT_ID?}` and `${ORG_ID?}` values
@@ -32,3 +34,6 @@ Project Hierarchy
   ```
   kubectl apply -f project.yaml
   ```
+=======
+  Ensure your Config Connector service account has permissions for folder and project
+
