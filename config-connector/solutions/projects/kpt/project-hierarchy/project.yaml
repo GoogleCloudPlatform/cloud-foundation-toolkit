@@ -18,7 +18,7 @@ metadata:
   annotations:
     # Set this field after finding the folder number.
     cnrm.cloud.google.com/folder-id: "${FOLDER_NUMBER?}" # {"$ref":"#/definitions/io.k8s.cli.setters.folder-number"}
-  name: project-factory-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  name: project-hierarchy-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
 spec:
   name: Project Hierarchy Project # {"$ref":"#/definitions/io.k8s.cli.setters.project-name"}
   billingAccountRef:

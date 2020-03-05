@@ -18,7 +18,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: project-id
-          value: project-factory-project
+          value: project-hierarchy-project
           setBy: package-default
     io.k8s.cli.setters.folder-id:
       description: k8s ID of folder
