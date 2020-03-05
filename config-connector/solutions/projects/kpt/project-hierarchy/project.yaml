@@ -4,7 +4,7 @@ metadata:
   annotations:
     # Run set-folder-number.sh to find and set this field after applying folder.yaml
     cnrm.cloud.google.com/folder-id: "${FOLDER_NUMBER?}" # {"$ref":"#/definitions/io.k8s.cli.setters.folder-number"}
-  name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  name: project-factory-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
 spec:
   name: Project Hierarchy Project # {"$ref":"#/definitions/io.k8s.cli.setters.project-name"}
   billingAccountRef:

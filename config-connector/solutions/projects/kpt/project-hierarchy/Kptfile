@@ -1,9 +1,9 @@
 apiVersion: kpt.dev/v1alpha1
 kind: Kptfile
 metadata:
-  name: .
+  name: project-hierarchy
 packageMetadata:
-  shortDescription: sample description
+  shortDescription: Deploy a project under a folder within an organization
 openAPI:
   definitions:
     io.k8s.cli.setters.org-id:
@@ -18,10 +18,10 @@ openAPI:
       x-k8s-cli:
         setter:
           name: project-id
-          value: ${PROJECT_ID?}
-          setBy: PLACEHOLDER
+          value: project-factory-project
+          setBy: package-default
     io.k8s.cli.setters.folder-id:
-      description: alphanumeric ID of folder
+      description: k8s ID of folder
       x-k8s-cli:
         setter:
           name: folder-id
