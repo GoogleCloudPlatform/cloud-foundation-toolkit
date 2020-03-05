@@ -58,6 +58,6 @@ Project Hierarchy
   ```
   kubectl apply -f project.yaml
   ```
-## License
+## LICENSE
 
-Apache 2.0 - See [LICENSE](LICENSE) for more information.
+Apache 2.0 - See [LICENSE](/LICENSE) for more information.
