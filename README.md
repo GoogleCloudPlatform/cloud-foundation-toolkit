@@ -12,7 +12,7 @@ The Cloud Foundation toolkit (henceforth, CFT) includes the following parts:
   single or multiple CFT-compliant config files - see:
   - The CFT source Python files (the `src/` directory)
   - The [CFT DM User Guide](dm/docs/userguide.md)
-- A growing set of YAML deployments for use with [Config
+- A [growing set of YAML deployments](config-connector/solutions/) for use with [Config
   Connector](https://cloud.google.com/config-connector/docs/overview)
 
 In addition, the CFT repository includes a sample pipeline that enables running

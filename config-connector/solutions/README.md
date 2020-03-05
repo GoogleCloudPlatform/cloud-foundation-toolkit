@@ -5,8 +5,8 @@
 Config Connector Solutions provides best practice solutions
 to common cloud applications, formatted as YAML definitions
 for Config Connector CRDs. These YAMLs can be applied to
-clusters [running Config
-Connector](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall).
+clusters running [Config
+Connector](https://cloud.google.com/config-connector/docs/how-to/getting-started).
 
 ## Structure
 
