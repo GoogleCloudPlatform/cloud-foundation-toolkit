@@ -20,7 +20,7 @@ Project Hierarchy
   project with the given ID already exists.
 
 
-  Unfortunately, to create a project under a
+  Currently, to create a project under a
   folder, you must supply a numeric folder ID,
   which is only available after the folder is
   created. An issue outlining this shortfall in

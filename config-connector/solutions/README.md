@@ -12,7 +12,7 @@ Connector](https://cloud.google.com/config-connector/docs/how-to/getting-started
 
 Folders under this directory denote general solution areas.
 In each solution area folder, there are folders for each package
-manager (currently only kpt), under which are nested all available solutions in
+& customization tool (currently only kpt), under which are nested all available solutions in
 that solution area and package format.
 
 ## Usage
