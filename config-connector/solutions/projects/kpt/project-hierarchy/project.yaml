@@ -20,7 +20,7 @@ metadata:
     cnrm.cloud.google.com/folder-id: "${FOLDER_NUMBER?}" # {"$ref":"#/definitions/io.k8s.cli.setters.folder-number"}
   name: project-hierarchy-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
 spec:
-  name: Project Hierarchy Project # {"$ref":"#/definitions/io.k8s.cli.setters.project-name"}
+  name: project-hierarchy-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-name"}
   billingAccountRef:
     # Replace "${BILLING_ACCOUNT_ID?}" with the numeric ID for your billing account
     external: "${BILLING_ACCOUNT_ID?}" # {"$ref":"#/definitions/io.k8s.cli.setters.billing-account"}

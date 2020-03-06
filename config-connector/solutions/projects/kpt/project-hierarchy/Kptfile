@@ -28,11 +28,11 @@ openAPI:
           value: project-hierarchy-folder
           setBy: package-default
     io.k8s.cli.setters.project-name:
-      description: human-readable name of project
+      description: display name of project
       x-k8s-cli:
         setter:
           name: project-name
-          value: Project Hierarchy Project
+          value: project-hierarchy-project
           setBy: package-default
     io.k8s.cli.setters.billing-account:
       description: ID of billing account
@@ -42,7 +42,7 @@ openAPI:
           value: ${BILLING_ACCOUNT_ID?}
           setBy: PLACEHOLDER
     io.k8s.cli.setters.folder-name:
-      description: human-readable name of project
+      description: display name of folder
       x-k8s-cli:
         setter:
           name: folder-name
