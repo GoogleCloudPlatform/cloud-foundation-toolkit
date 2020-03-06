@@ -15,7 +15,7 @@ Project Hierarchy
 
   Using [kpt](https://googlecontainertools.github.io/kpt/):
 
-  Run `kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git project-hierarchy`.
+  Run `kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/projects/kpt/project-hierarchy project-hierarchy`.
 
 # REQUIREMENTS
 
