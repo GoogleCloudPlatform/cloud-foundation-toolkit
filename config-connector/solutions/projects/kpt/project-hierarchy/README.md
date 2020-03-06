@@ -9,15 +9,43 @@ Project Hierarchy
 
   Config Connector compatible YAML files to create
   a folder in an organization, and a project
-  beneath it. Make sure your Config Connector
-  service account has the folder creator and
-  project creator role for your organization.
+  beneath it.
 
-  In order to use, replace the
-  `${BILLING_ACCOUNT_ID?}` and `${ORG_ID?}` values
-  with your billing account and organization ID.
-  You will need to replace the project ID, since a
-  project with the given ID already exists.
+# CONSUMPTION
+
+  Using [kpt](https://googlecontainertools.github.io/kpt/):
+
+  Run `kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git project-hierarchy`.
+
+# REQUIREMENTS
+
+  A working Config Connector cluster using a
+  service account with the following roles in
+  the organization:
+  - roles/resourcemanager.folderCreator
+  - roles/resourcemanager.projectCreator
+
+# USAGE
+
+  Replace the
+  `${BILLING_ACCOUNT_ID?}` and `${ORG_ID?}` values:
+
+  From within this directory, run
+  ```
+  kpt cfg set . billing-account VALUE
+  ```
+  and
+  ```
+  kpt cfg set . org-id VALUE
+  ```
+  replacing `VALUE` with your billing account
+  and organization ID respectively.
+
+  You will also need to reset the project ID,
+  since a project with the given ID already exists.
+  ```
+  kpt cfg set . project-id VALUE
+  ```
 
 
   Currently, to create a project under a
@@ -41,23 +69,22 @@ Project Hierarchy
   kubectl wait --for=condition=Ready -f folder.yaml
   ```
 
-  Now the folder number can be found with the
-  following.
+  Now extract the folder number.
   ```
-  kubectl describe -f folder.yaml | grep Name:\ *folders\/ | sed "s/.*folders\///"
+  FOLDER_NUMBER=$(kubectl describe -f folder.yaml | grep Name:\ *folders\/ | sed "s/.*folders\///")
   ```
   You can set the folder number using the
-  following kpt command:
+  following command:
   ```
-  kpt cfg set . folder-number <number found above> --set-by "README-instructions"
+  kpt cfg set . folder-number $FOLDER_NUMBER --set-by "README-instructions"
   ```
 
 
-  Now you can create your project under the new
-  folder by applying the updated project YAML.
+  Now you can fully apply this solution.
   ```
-  kubectl apply -f project.yaml
+  kubectl apply -f .
   ```
-## LICENSE
+
+# LICENSE
 
 Apache 2.0 - See [LICENSE](/LICENSE) for more information.
