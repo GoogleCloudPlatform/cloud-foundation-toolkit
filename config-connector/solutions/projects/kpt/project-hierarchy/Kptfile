@@ -46,7 +46,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: folder-name
-          value: Project Hierarchy Folder
+          value: project-hierarchy-folder
           setBy: package-default
     io.k8s.cli.setters.folder-number:
       description: numeric GCP ID of folder

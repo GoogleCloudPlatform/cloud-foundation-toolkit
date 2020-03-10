@@ -20,4 +20,4 @@ metadata:
     cnrm.cloud.google.com/organization-id: "${ORG_ID}" # {"$ref":"#/definitions/io.k8s.cli.setters.org-id"}
   name: project-hierarchy-folder # {"$ref":"#/definitions/io.k8s.cli.setters.folder-id"}
 spec:
-  displayName: Project Hierarchy Folder # {"$ref":"#/definitions/io.k8s.cli.setters.folder-name"}
+  displayName: project-hierarchy-folder # {"$ref":"#/definitions/io.k8s.cli.setters.folder-name"}
