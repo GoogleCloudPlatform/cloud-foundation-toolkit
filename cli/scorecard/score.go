@@ -16,6 +16,7 @@ package scorecard
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/csv"
 	"encoding/json"
 	"flag"
@@ -85,7 +86,8 @@ func (cv constraintViolations) Count() int {
 }
 
 func (cv constraintViolations) GetName() string {
-	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
+	return cv.Violations[0].Constraint
+	//	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
 }
 
 // RichViolation holds a violation with its category
@@ -171,6 +173,9 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	if err != nil {
 		return err
 	}
+	Log.Debug("AuditResult from Config Validator", "# of Violations", len(auditResult.Violations))
+	auditResult.Violations = uniqueViolations(auditResult.Violations)
+	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(auditResult.Violations))
 
 	err = config.attachViolations(auditResult)
 	if err != nil {
@@ -269,3 +274,18 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 
 	return nil
 }
+
+func uniqueViolations(violations []*validator.Violation) []*validator.Violation {
+	uniqueViolationMap := make(map[string]*validator.Violation)
+	for _, v := range violations {
+		b, _ := json.Marshal(v)
+		hash := md5.Sum(b)
+		uniqueViolationMap[string(hash[:])] = v
+	}
+	uniqueViolations := make([]*validator.Violation, 0, len(uniqueViolationMap))
+	for _, v := range uniqueViolationMap {
+		uniqueViolations = append(uniqueViolations, v)
+	}
+	return uniqueViolations
+}
+
