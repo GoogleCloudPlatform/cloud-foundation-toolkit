@@ -15,7 +15,7 @@
 info:
   title: Project
   author: Sourced Group Inc.
-  version: 1.1.4
+  version: 1.1.5
   description: |
     Supports creation of a single project. The project is created with a
     billing account attached, permissions altered, APIs activated, and
