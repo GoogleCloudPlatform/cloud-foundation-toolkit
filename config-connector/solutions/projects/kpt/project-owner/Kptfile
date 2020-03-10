@@ -1,0 +1,44 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: project-owner
+packageMetadata:
+  shortDescription: Deploy a project under a folder with given IAM owner
+openAPI:
+  definitions:
+    io.k8s.cli.setters.project-id:
+      description: ID of project
+      x-k8s-cli:
+        setter:
+          name: project-id
+          value: project-owner-project
+          setBy: package-default
+    io.k8s.cli.setters.billing-account:
+      description: ID of project billing account
+      x-k8s-cli:
+        setter:
+          name: billing-account
+          value: ${BILLING_ACCOUNT_ID?}
+          setBy: PLACEHOLDER
+    io.k8s.cli.setters.folder-number:
+      description: numeric GCP ID of folder
+      x-k8s-cli:
+        setter:
+          name: folder-number
+          value: "${FOLDER_NUMBER?}"
+          setBy: PLACEHOLDER
+    io.k8s.cli.substitutions.project-selflink:
+      x-k8s-cli:
+        substitution:
+          name: project-selflink
+          pattern: projects/PROJECT
+          values:
+          - marker: PROJECT
+            ref: '#/definitions/io.k8s.cli.setters.project-id'
+    io.k8s.cli.setters.iam-name:
+      description: IAM name of service account to give owner permission
+      x-k8s-cli:
+        setter:
+          name: iam-name
+          value: serviceAccount:project-owner-service@project-owner-project.iam.gserviceaccount.com
+          setBy: package-default
