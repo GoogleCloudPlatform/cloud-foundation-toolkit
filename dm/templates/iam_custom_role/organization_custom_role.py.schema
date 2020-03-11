@@ -38,9 +38,6 @@ info:
     - gcp-types/iam-v1:organizations.roles =>
         https://cloud.google.com/iam/reference/rest/v1/organizations.roles
 
-imports:
-  - path: organization_custom_role.py
-
 additionalProperties: false
 
 required:

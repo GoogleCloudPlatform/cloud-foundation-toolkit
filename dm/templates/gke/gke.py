@@ -13,8 +13,6 @@
 # limitations under the License.
 """ This template creates a Google Kubernetes Engine cluster. """
 
-from packaging import version
-
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
@@ -85,7 +83,8 @@ def generate_config(context):
         'maintenancePolicy',
         'podSecurityPolicyConfig',
         'privateCluster',
-        'masterIpv4CidrBlock'
+        'masterIpv4CidrBlock',
+        'releaseChannel'
     ]
 
     cluster_props = gke_cluster['properties']['cluster']
@@ -116,16 +115,10 @@ def generate_config(context):
         'servicesIpv4Cidr'
     ]
 
-    initial_cluster_version = propc.get('initialClusterVersion')
-    less_than_112 = (
-        initial_cluster_version.lower() != 'latest' and 
-        version.parse(initial_cluster_version.split('-')[0]) < version.parse("1.12")
-    )
-
     if (
         # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/463
         propc.get('enableDefaultAuthOutput', False) and (
-            less_than_112 or propc.get('masterAuth', {}).get('clientCertificateConfig', False)
+            propc.get('masterAuth', {}).get('clientCertificateConfig', False)
         )
     ):
         output_props.append('clientCertificate')

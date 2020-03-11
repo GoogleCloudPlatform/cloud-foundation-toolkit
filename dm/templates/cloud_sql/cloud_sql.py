@@ -14,19 +14,8 @@
 """ This template creates a Cloud SQL Instance with databases and users. """
 
 import collections
-import random
-import string
 
 DMBundle = collections.namedtuple('DMBundle', 'resource outputs')
-
-SUFFIX_LENGTH = 5
-CHAR_CHOICE = string.digits + string.ascii_lowercase
-
-
-def get_random_string(length):
-    """ Creates a random string of characters of the specified length. """
-
-    return ''.join([random.choice(CHAR_CHOICE) for _ in range(length)])
 
 
 def set_optional_property(receiver, source, property_name):
@@ -76,10 +65,11 @@ def get_instance(res_name, project_id, properties):
     output_fields = [
         'name',
         'selfLink',
-        'gceZone',
-        'connectionName',
         'backendType',
     ]
+
+    if 'onPremisesConfiguration' not in properties:
+        output_fields.extend(['gceZone','connectionName','serviceAccountEmailAddress'])
 
     outputs = [{
         'name': i,
@@ -91,19 +81,20 @@ def get_instance(res_name, project_id, properties):
     # outputs of imported templates. If we want to use the actual IP address of
     # the instantiated database in a template that uses this template, we need
     # to navigate to the relevant child value here.
-    outputs += [{
-        'name': 'ipAddress',
-        'value': '$(ref.{}.ipAddresses[0].ipAddress)'.format(name),
-    }]
+    if 'onPremisesConfiguration' not in properties:
+        outputs += [{
+            'name': 'ipAddress',
+            'value': '$(ref.{}.ipAddresses[0].ipAddress)'.format(name),
+        }]
 
     return DMBundle(instance, outputs)
 
 
-def get_database(instance_name, project_id, properties):
+def get_database(instance_name, project_id, properties, res_name):
     """ Creates a Cloud SQL database. """
 
     name = properties['name']
-    res_name = name
+    res_name = '{}-{}'.format(res_name, name)
 
     db_properties = {
         'name': name,
@@ -141,21 +132,24 @@ def get_database(instance_name, project_id, properties):
     return DMBundle(database, outputs)
 
 
-def get_databases(instance_name, project_id, properties):
+def get_databases(instance_name, project_id, properties, res_name):
     """ Creates Cloud SQL databases for the given instance. """
 
     dbs = properties.get('databases')
     if dbs:
-        return [get_database(instance_name, project_id, db) for db in dbs]
+        return [get_database(instance_name, project_id, db, res_name) for db in dbs]
 
     return []
 
 
-def get_user(instance_name, project_id, properties):
+def get_user(instance_name, project_id, properties, res_name):
     """ Creates a Cloud SQL user. """
 
     name = properties['name']
-    res_name = 'cloud-sql-{}'.format(name)
+    res_name = '{}-user-{}'.format(res_name, name)
+    if 'host' in properties:
+        res_name = '{}-{}'.format(res_name, properties['host'].replace('cloudsqlproxy~', 'proxy_').replace('.', '_'))
+
     user_properties = {
         'name': name,
         'project': project_id,
@@ -172,17 +166,17 @@ def get_user(instance_name, project_id, properties):
         'properties': user_properties
     }
 
-    outputs = [{'name': 'name', 'value': name}]
+    outputs = [{'name': 'name', 'value': res_name}]
 
     return DMBundle(user, outputs)
 
 
-def get_users(instance_name, project_id, properties):
+def get_users(instance_name, project_id, properties, res_name):
     """ Creates Cloud SQL users for the given instance. """
 
     users = properties.get('users')
     if users:
-        return [get_user(instance_name, project_id, user) for user in users]
+        return [get_user(instance_name, project_id, user, res_name) for user in users]
 
     return []
 
@@ -216,7 +210,9 @@ def consolidate_outputs(bundles, prefix):
             res[new_name] = {'name': new_name, 'value': []}
         res[new_name]['value'].append(output['value'])
 
-    return [value for _, value in res.items()]
+    # We sort the output by key to guarantee deterministic results. This makes
+    # DM's Python3 compatibility checker less grumpy.
+    return [value for _, value in sorted(res.items())]
 
 
 def get_resource_names_output(resources):
@@ -239,8 +235,8 @@ def generate_config(context):
     instance = get_instance(res_name, project_id, properties)
     instance_name = instance.outputs[0]['value']  # 'name' output
 
-    users = get_users(instance_name, project_id, properties)
-    dbs = get_databases(instance_name, project_id, properties)
+    users = get_users(instance_name, project_id, properties, res_name)
+    dbs = get_databases(instance_name, project_id, properties, res_name)
 
     children = [user.resource for user in users] + [db.resource for db in dbs]
     create_sequentially(children)

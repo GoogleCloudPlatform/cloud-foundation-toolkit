@@ -12,7 +12,9 @@ resources:
       loadBalancingScheme: ${EXTERNAL_LB_SCHEME}
       target: $(ref.${PROXY_NAME}.selfLink)
       portRange: ${EXTERNAL_PORT}
-
+      labels:
+        name: testlabelname
+        owner: megatron
   - name: ${INTERNAL_RES_NAME}
     type: forwarding_rule.py
     properties:

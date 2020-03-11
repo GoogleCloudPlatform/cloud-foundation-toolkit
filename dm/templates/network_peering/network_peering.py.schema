@@ -28,9 +28,6 @@ info:
     - gcp-types/compute-v1:compute.networks.removePeering =>
         https://cloud.google.com/compute/docs/reference/rest/v1/networks/removePeering
 
-imports:
-  - path: network_peering.py
-
 additionalProperties: false
 
 required:

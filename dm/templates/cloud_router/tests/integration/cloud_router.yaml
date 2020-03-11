@@ -14,5 +14,17 @@ resources:
     properties:
       name: cloud-router-${RAND}
       network: network-${RAND}
-      region: us-east1
+      region: ${REGION}
       asn: 65001
+  - name: cloud-router-nat-${RAND}
+    type: cloud_router.py
+    properties:
+      name: cloud-router-nat-${RAND}
+      network: network-${RAND}
+      region: ${REGION}
+      nats:
+        - name: cloud-nat-test-${RAND}
+          sourceSubnetworkIpRangesToNat: LIST_OF_SUBNETWORKS
+          natIpAllocateOption: AUTO_ONLY
+          subnetworks:
+            - name: projects/${CLOUD_FOUNDATION_PROJECT_ID}/regions/${REGION}/subnetworks/network-${RAND}

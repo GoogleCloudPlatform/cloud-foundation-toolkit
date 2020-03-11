@@ -31,7 +31,11 @@ mapper = {
     'bucket': {
         'dm_type': 'gcp-types/storage-v1:virtual.buckets.iamMemberBinding',
         'dm_resource_property': 'bucket',
-        'postfix': 'bucket'}
+        'postfix': 'bucket'},
+    'cloudFunction': {
+        'dm_type': 'gcp-types/cloudfunctions-v1:virtual.projects.locations.functions.iamMemberBinding',
+        'dm_resource_property': 'resource',
+        'postfix': 'cf'}
 }
 
 

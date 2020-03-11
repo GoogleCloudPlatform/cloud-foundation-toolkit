@@ -38,9 +38,6 @@ info:
     - gcp-types/iam-v1:projects.roles =>
         https://cloud.google.com/iam/reference/rest/v1/projects.roles
 
-imports:
-  - path: project_custom_role.py
-
 additionalProperties: false
 
 required:

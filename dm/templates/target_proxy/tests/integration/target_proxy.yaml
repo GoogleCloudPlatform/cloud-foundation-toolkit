@@ -16,6 +16,17 @@ resources:
         certificate:
           url: $(ref.${SSL_RES_NAME}.certificateSelfLink)
 
+  - name: test-proxy-2
+    type: target_proxy.py
+    properties:
+      name:  ${HTTPS_RES_NAME}-2
+      protocol: HTTPS
+      target: $(ref.${URL_MAP_RES_NAME}.selfLink)
+      quicOverride: ${HTTPS_QUIC_OVERRIDE}
+      ssl:
+        sslCertificates: 
+            - $(ref.${SSL_RES_NAME}.certificateSelfLink)
+
   - name: ${SSL_RES_NAME}
     type: target_proxy.py
     properties:

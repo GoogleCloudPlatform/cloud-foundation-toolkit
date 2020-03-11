@@ -26,9 +26,6 @@ info:
     - gcp-types/compute-v1:instances =>
         https://cloud.google.com/compute/docs/reference/rest/v1/instances
 
-imports:
-  - path: instance.py
-
 required:
   - zone
 

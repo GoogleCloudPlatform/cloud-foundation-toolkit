@@ -23,7 +23,6 @@ info:
 imports:
   - path: ../instance/instance.py
     name: instance.py
-  - path: haproxy.py
 
 additionalProperties: false
 

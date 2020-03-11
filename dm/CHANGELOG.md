@@ -4,10 +4,47 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 10.03.2020
+
+- Extending the IAM member binding template to support bindings on CloudFunctions with `gcp-types/cloudfunctions-v1:virtual.projects.locations.functions.iamMemberBinding`. [#591](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/591)
+- Update project template fixing usage export bucket related bug. [#601](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/601)
+
+### 18.02.2020
+
+- Update cloudsql template to support multiple instances in a deployment with the same names for databases and users [#573](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/573) (Breaking change)
+
+### 30.01.2020
+
+- Update forwarding rule template and external loadbalancer to support labels [#551](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/551). Fixing tests
+
+### 21.01.2020
+
+- Update on target proxy and external loadbalancer templates to properly support a list of sslCertificates
+- Update on healthcheck template (v1.1.0) to support legacy and non-legacy healthchecks. [#542](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/542)
+
+### 16.01.2020
+
+- Updated gke template to support setting for releaseChannel [#539](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/539)
+
+### 15.01.2020
+
+- Updated cloud sql template to fix intermittent Python 3 warnings [#538](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/538)
+
+### 08.01.2020
+
+- Updated gke template to support Python 3 [#531](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/531)
+
+### 23.12.2019
+
+- Fixed template `cloud_router` schema [#524](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/524)
+
+### 13.12.2019
+
+- Limited ports to use with TCP external LB template according to documentation [#514] (https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/514)
+
 ### 13.12.2019
 
 - Updated test triggers for Github. From now on every bats test will be triggered
-for a particular template when a PR is sent.
 
 ### 11.12.2019
 
