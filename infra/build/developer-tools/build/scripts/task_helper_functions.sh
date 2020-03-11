@@ -308,7 +308,40 @@ function check_documentation() {
 function generate_modules() {
   if [[ -e /workspace/autogen_modules.json ]]; then
     autogen_modules=$(jq '.' /workspace/autogen_modules.json)
-    python /usr/local/bin/generate_modules.py "$autogen_modules"
+    python3 /usr/local/bin/generate_modules.py "$autogen_modules"
+  fi
+}
+
+# Check that module generation has happened
+function check_generate_modules() {
+  if [[ -e /workspace/autogen_modules.json ]]; then
+    local tempdir rval rc
+    setup_trap_handler
+    tempdir=$(mktemp -d)
+    rval=0
+    echo "Checking submodule's files generation"
+    rsync -axh \
+      --exclude '*/.terraform' \
+      --exclude '*/.kitchen' \
+      --exclude '*/.git' \
+      /workspace "${tempdir}" >/dev/null 2>/dev/null
+    cd "${tempdir}/workspace" || exit 1
+    generate_modules >/dev/null 2>/dev/null
+    generate_docs >/dev/null 2>/dev/null
+    diff -r \
+      --exclude=".terraform" \
+      --exclude=".kitchen" \
+      --exclude=".git" \
+      /workspace "${tempdir}/workspace"
+    rc=$?
+    if [[ "${rc}" -ne 0 ]]; then
+      echo "Error: submodule's files generation has not been run, please run the"
+      echo "'make build' command and commit changes"
+      ((rval++))
+    fi
+    cd /workspace || exit 1
+    rm -Rf "${tempdir}"
+    return $((rval))
   fi
 }
 

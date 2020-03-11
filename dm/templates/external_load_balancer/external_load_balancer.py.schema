@@ -148,7 +148,7 @@ properties:
           - compute.backendServices.use
       hostRules:
         type: array
-        uniqItems: true
+        uniqueItems: true
         description: |
           The list of HostRules to use against the URL.
         items:
@@ -174,7 +174,7 @@ properties:
                 the URL if the hostRule matches the URL's host portion.
       pathMatchers:
         type: array
-        uniqItems: true
+        uniqueItems: true
         description: |
           The list of the named PathMatchers to use against the URL.
         items:
@@ -214,7 +214,7 @@ properties:
                 - compute.backendServices.use
             pathRules:
               type: array
-              uniqItems: true
+              uniqueItems: true
               description: |
                 The list of path rules.
               items:
@@ -237,7 +237,7 @@ properties:
                       - compute.backendServices.use
                   paths:
                     type: array
-                    uniqItems: true
+                    uniqueItems: true
                     description: |
                       The list of the path patterns to match. Each pattern must
                       start with /. Asterisks (*) are allowed only at the end,
@@ -248,7 +248,7 @@ properties:
                       type: string
       tests:
         type: array
-        uniqItems: true
+        uniqueItems: true
         description: |
           The list of the expected URL mapping tests. Request to update this UrlMap
           succeed only if all of the test cases pass. You can specify a maximum of
@@ -276,7 +276,7 @@ properties:
                 to.
   backendServices:
     type: array
-    uniqItems: true
+    uniqueItems: true
     description: |
       Backend services to create. These services will deliver traffic to the
       instance groups.
@@ -302,7 +302,7 @@ properties:
           description: The resource description (optional).
         backends:
           type: array
-          uniqItems: true
+          uniqueItems: true
           description: |
             The list of backends (instance groups) to which the backend service
             distributes traffic.
@@ -391,7 +391,19 @@ properties:
           default: 30
           description: |
             The number of seconds to wait for the backend response before
-            considering the request as failed.
+            considering the request as failed. 
+        protocol:
+          type: string
+          description: |
+            The protocol the backend service uses to communicate with backends.
+            The default is HTTP. For INTERNAL load balancing, the possible values are
+            TCP and UDP, and the default is TCP.
+          enum:
+            - HTTP
+            - HTTPS
+            - TCP
+            - UDP
+            - SSL
         portName:
           type: string
           description: |
@@ -457,7 +469,7 @@ properties:
                     cache key entirely.
                 queryStringWhitelist:
                   type: array
-                  uniqItems: true
+                  uniqueItems: true
                   description: |
                     The names of the query string parameters to include in
                     cache keys. All other parameters are excluded. Specify
@@ -468,7 +480,7 @@ properties:
                     type: string
                 queryStringBlacklist:
                   type: array
-                  uniqItems: true
+                  uniqueItems: true
                   description: |
                     The names of the query string parameters to exclude from
                     the cache keys. All other parameters are included. Specify
@@ -528,7 +540,7 @@ properties:
     properties:
       sslCertificates:
         type: array
-        uniqItems: true
+        uniqueItems: true
         description: |
           URLs to SslCertificate resources that are used to authenticate connections to Backends.
           At least one SSL certificate must be specified. Currently, you may specify up to 15 SSL certificates.

@@ -29,9 +29,6 @@ info:
     - gcp-types/cloudbuild-v1:cloudbuild.projects.triggers.delete =>
         https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers/delete
 
-imports:
-  - path: trigger.py
-
 #additionalProperties: false
 
 #required:

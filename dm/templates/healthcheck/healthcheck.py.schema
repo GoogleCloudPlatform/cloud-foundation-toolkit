@@ -36,9 +36,6 @@ info:
     - gcp-types/compute-beta:healthChecks =>
         https://cloud.google.com/compute/docs/reference/rest/beta/healthChecks
 
-imports:
-  - path: healthcheck.py
-
 additionalProperties: false
 
 required:
