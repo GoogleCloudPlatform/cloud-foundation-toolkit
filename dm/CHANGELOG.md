@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## CFT Templates
 
 ### 10.03.2020
+
+- Extending the IAM member binding template to support bindings on CloudFunctions with `gcp-types/cloudfunctions-v1:virtual.projects.locations.functions.iamMemberBinding`. [#591](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/591)
 - Update project template fixing usage export bucket related bug. [#601](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/601)
 
 ### 18.02.2020

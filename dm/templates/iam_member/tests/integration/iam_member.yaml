@@ -42,6 +42,18 @@ resources:
         - role: roles/storage.objectViewer
           members:
             - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+  - name: iam-member-test-function-${RAND}
+    type: iam_member.py
+    properties:
+      cloudFunction: $(ref.test-function-${RAND}.name)
+      roles:
+        - role: roles/cloudfunctions.developer
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+        - role: roles/cloudfunctions.invoker
+          members:
+            - serviceAccount:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com
+
 
   - name: test-folder-${RAND}
     type: gcp-types/cloudresourcemanager-v2:folders
@@ -55,4 +67,14 @@ resources:
     properties:
       name: org-bucket-${RAND}
       project: ${CLOUD_FOUNDATION_PROJECT_ID}
+
+  - type: gcp-types/cloudfunctions-v1:projects.locations.functions
+    name: test-function-${RAND}
+    properties:
+      parent: projects/${CLOUD_FOUNDATION_PROJECT_ID}/locations/europe-west2
+      function: test-function-${RAND}
+      sourceArchiveUrl: gs://cloud-function-sample/function.zip
+      entryPoint: handler
+      runtime: nodejs8
+      httpsTrigger: {}
 
