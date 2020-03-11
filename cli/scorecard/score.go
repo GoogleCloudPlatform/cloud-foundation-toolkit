@@ -16,8 +16,10 @@ package scorecard
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -31,27 +33,29 @@ import (
 
 // ScoringConfig holds settings for generating a score
 type ScoringConfig struct {
-	PolicyPath  string                           // the directory path of a policy library to use
 	categories  map[string]*constraintCategory   // available constraint categories
 	constraints map[string]*constraintViolations // a map of constraints violated and their violations
 	validator   *gcv.Validator                   // the validator instance used for scoring
 }
 
+// NewScoringConfigFromValidator creates a scoring engine with a given validator.
+func NewScoringConfigFromValidator(v *gcv.Validator) *ScoringConfig {
+	config := &ScoringConfig{}
+	config.validator = v
+	return config
+}
+
 // NewScoringConfig creates a scoring engine for the given policy library
 func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, error) {
-	config := &ScoringConfig{}
-
-	config.PolicyPath = policyPath
-
-	v, err := gcv.NewValidator(ctx.Done(),
-		[]string{filepath.Join(config.PolicyPath, "policies")},
-		filepath.Join(config.PolicyPath, "lib"),
+	flag.Parse()
+	v, err := gcv.NewValidator(
+		[]string{filepath.Join(policyPath, "policies")},
+		filepath.Join(policyPath, "lib"),
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "initializing gcv validator")
 	}
-	config.validator = v
-
+	config := NewScoringConfigFromValidator(v)
 	return config, nil
 }
 
@@ -82,7 +86,8 @@ func (cv constraintViolations) Count() int {
 }
 
 func (cv constraintViolations) GetName() string {
-	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
+	return cv.Violations[0].Constraint
+	//	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
 }
 
 // RichViolation holds a violation with its category
@@ -163,18 +168,20 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 }
 
 // Score creates a Scorecard for an inventory
-func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string) error {
+func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadataFields []string) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
 	}
+	Log.Debug("AuditResult from Config Validator", "# of Violations", len(auditResult.Violations))
+	auditResult.Violations = uniqueViolations(auditResult.Violations)
+	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(auditResult.Violations))
 
 	err = config.attachViolations(auditResult)
 	if err != nil {
 		return err
 	}
 	var dest io.Writer
-
 	if len(auditResult.Violations) > 0 {
 		if outputPath == "" {
 			dest = os.Stdout
@@ -194,6 +201,17 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 						if err != nil {
 							return err
 						}
+						if len(outputMetadataFields) > 0 {
+							newMetadata := make(map[string]interface{})
+							oldMetadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue()
+							for _, field := range outputMetadataFields {
+								newMetadata[field], _ = interfaceViaJSON(oldMetadata.Fields[field])
+							}
+							err := protoViaJSON(newMetadata, richViolation.Metadata)
+							if err != nil {
+								return err
+							}
+						}
 						byteContent, err := json.MarshalIndent(richViolation, "", "  ")
 						if err != nil {
 							return err
@@ -206,12 +224,20 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		case "csv":
 			w := csv.NewWriter(dest)
 			header := []string{"Category", "Constraint", "Resource", "Message"}
+			for _, field := range outputMetadataFields {
+				header = append(header, field)
+			}
 			w.Write(header)
 			w.Flush()
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
 						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
+						for _, field := range outputMetadataFields {
+							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
+							value, _ := stringViaJSON(metadata)
+							record = append(record, value)
+						}
 						w.Write(record)
 						w.Flush()
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
@@ -226,9 +252,15 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				for _, cv := range category.constraints {
 					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count()))
 					for _, v := range cv.Violations {
-						io.WriteString(dest, fmt.Sprintf("- %v\n\n",
-							v.Message,
-						))
+						io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
+						for _, field := range outputMetadataFields {
+							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
+							value, _ := stringViaJSON(metadata)
+							if value != "" {
+								io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
+							}
+						}
+						io.WriteString(dest, "\n")
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 					}
 				}
@@ -242,3 +274,18 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 
 	return nil
 }
+
+func uniqueViolations(violations []*validator.Violation) []*validator.Violation {
+	uniqueViolationMap := make(map[string]*validator.Violation)
+	for _, v := range violations {
+		b, _ := json.Marshal(v)
+		hash := md5.Sum(b)
+		uniqueViolationMap[string(hash[:])] = v
+	}
+	uniqueViolations := make([]*validator.Violation, 0, len(uniqueViolationMap))
+	for _, v := range uniqueViolationMap {
+		uniqueViolations = append(uniqueViolations, v)
+	}
+	return uniqueViolations
+}
+

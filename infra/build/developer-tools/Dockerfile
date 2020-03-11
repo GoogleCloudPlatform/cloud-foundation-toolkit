@@ -13,12 +13,15 @@
 # limitations under the License.
 # Download and verify the integrity of the download first
 ARG RUBY_VERSION
+ARG GOLANG_VERSION
 
 FROM sethvargo/hashicorp-installer:0.1.3 AS installer
 # Required to download and install Terraform
 ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
+
+FROM golang:$GOLANG_VERSION-alpine AS go
 
 FROM ruby:$RUBY_VERSION-alpine
 
@@ -78,6 +81,11 @@ RUN /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION}
 #RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
 COPY --from=installer /software/terraform /usr/local/bin/terraform
 
+# Install Golang
+COPY --from=go /usr/local/go/ /usr/local/go/
+RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
+RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+
 ADD ./build/install_shellcheck.sh /build/
 RUN /build/install_shellcheck.sh
 
@@ -133,4 +141,5 @@ RUN terraform --version && \
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build
+RUN go version
 CMD ["/bin/bash"]

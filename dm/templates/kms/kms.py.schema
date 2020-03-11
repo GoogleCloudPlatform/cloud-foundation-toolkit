@@ -28,9 +28,6 @@ info:
     - gcp-types/cloudkms-v1:cloudkms.projects.locations =>
         https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings
 
-imports:
-  - path: kms.py
-
 additionalProperties: false
 
 required:

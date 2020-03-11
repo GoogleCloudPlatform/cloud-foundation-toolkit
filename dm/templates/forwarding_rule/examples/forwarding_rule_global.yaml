@@ -7,6 +7,8 @@
 #   resource to receive the matched traffic; e.g., targetHttpProxy
 #   <FIXME:portRange>: a range of port numbers traffic from which 
 #   must be forwarded to the target; e.g., '80, 8080'
+#   <FIXME:labelName>: Name of a label
+#   <FIXME:labelValue>: Value of a label
 #
 imports:
   - path: templates/forwarding_rule/forwarding_rule.py
@@ -19,3 +21,5 @@ resources:
       loadBalancingScheme: EXTERNAL
       target: <FIXME:globalTarget>
       portRange: <FIXME:portRange>
+      labels:
+        <FIXME:labelName>: <FIXME:labelValue>

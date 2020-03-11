@@ -26,9 +26,6 @@ info:
     - gcp-types/monitoring-v3:projects.metricDescriptors =>
         https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.metricDescriptors
 
-imports:
-  - path: stackdriver_metric_descriptor.py
-
 additionalProperties: false
 
 allOf:

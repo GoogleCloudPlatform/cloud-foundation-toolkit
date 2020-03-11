@@ -25,9 +25,6 @@ info:
     - gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create =>
         https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.builds/create
 
-imports:
-  - path: cloudbuild.py
-
 additionalProperties: false
 
 required:

@@ -28,9 +28,6 @@ info:
     - gcp-types/storage-v1:virtual.buckets.iamMemberBinding =>
         TODO - Virtual type documentation needed
 
-imports:
-  - path: gcs_bucket.py
-
 additionalProperties: false
 
 allOf:

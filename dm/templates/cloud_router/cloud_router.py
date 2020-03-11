@@ -43,13 +43,15 @@ def generate_config(context):
                     project_id,
                 'region':
                     properties['region'],
-                'bgp': bgp,
                 'network':
                     properties.get('networkURL', generate_network_uri(
                         project_id,
                         properties.get('network', ''))),
             }
     }
+
+    if properties.get('bgp'):
+        router['properties']['bgp'] = bgp
 
     optional_properties = [
         'description',

@@ -1,5 +1,13 @@
 # Bastion Host
 
+> :warning: **NOTE**
+
+Check out SSH via IAP as an alternative to Bastion Hosts:
+
+- [Cloud IAP enables context-aware access to VMs via SSH and RDP without bastion hosts](https://cloud.google.com/blog/products/identity-security/cloud-iap-enables-context-aware-access-to-vms-via-ssh-and-rdp-without-bastion-hosts)
+- [Using IAP for TCP forwarding](https://cloud.google.com/iap/docs/using-tcp-forwarding#tunneling_with_ssh)
+> :warning: **NOTE** 
+
 This template creates a Bastion host. Once it had been deployed, one can use
 `gcloud compute ssh <BASTION_HOST_NAME> --zone <ZONE>` to connect to
 the Bastion host, and then use
