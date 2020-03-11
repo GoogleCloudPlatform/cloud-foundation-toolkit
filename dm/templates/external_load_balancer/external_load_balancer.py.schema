@@ -15,7 +15,7 @@
 info:
   title: External Load Balancer
   author: Sourced Group Inc.
-  version: 1.0.0
+  version: 1.1.2
   description: |
     Supports creation of an HTTP(S), SSL Proxy, or TCP Proxy external load
     balancer. For details, visit https://cloud.google.com/load-balancing/docs/.
@@ -33,6 +33,49 @@ imports:
     name: target_proxy.py
 
 additionalProperties: false
+
+oneOf:
+  - not:
+      required:
+        - urlMap
+        - ssl
+    portRange:
+      type: array
+      items:
+        - type: string
+          enum:
+            - 25
+            - 43
+            - 110
+            - 143
+            - 195
+            - 443
+            - 465
+            - 587
+            - 700
+            - 993
+            - 995
+            - 1883
+            - 5222
+        - type: integer
+          enum:
+            - 25
+            - 43
+            - 110
+            - 143
+            - 195
+            - 443
+            - 465
+            - 587
+            - 700
+            - 993
+            - 995
+            - 1883
+            - 5222
+  - required:
+    - urlMap
+  - required:
+    - ssl
 
 properties:
   name:
@@ -61,6 +104,13 @@ properties:
     description: |
       The port range; only packets addressed to ports in that range are
       forwarded to the target.
+  labels:
+    type: object
+    description: |
+      Labels to apply to this instance. These can be later modified by the setLabels method.
+
+      An object containing a list of "key": value pairs. Example: { "name": "wrench", "mass": "1.3kg", "count": "3" }.
+
   ipVersion:
     type: string
     description: The IP version of the load balancer.
@@ -98,7 +148,7 @@ properties:
           - compute.backendServices.use
       hostRules:
         type: array
-        uniqItems: true
+        uniqueItems: true
         description: |
           The list of HostRules to use against the URL.
         items:
@@ -124,7 +174,7 @@ properties:
                 the URL if the hostRule matches the URL's host portion.
       pathMatchers:
         type: array
-        uniqItems: true
+        uniqueItems: true
         description: |
           The list of the named PathMatchers to use against the URL.
         items:
@@ -164,7 +214,7 @@ properties:
                 - compute.backendServices.use
             pathRules:
               type: array
-              uniqItems: true
+              uniqueItems: true
               description: |
                 The list of path rules.
               items:
@@ -187,7 +237,7 @@ properties:
                       - compute.backendServices.use
                   paths:
                     type: array
-                    uniqItems: true
+                    uniqueItems: true
                     description: |
                       The list of the path patterns to match. Each pattern must
                       start with /. Asterisks (*) are allowed only at the end,
@@ -198,7 +248,7 @@ properties:
                       type: string
       tests:
         type: array
-        uniqItems: true
+        uniqueItems: true
         description: |
           The list of the expected URL mapping tests. Request to update this UrlMap
           succeed only if all of the test cases pass. You can specify a maximum of
@@ -226,16 +276,20 @@ properties:
                 to.
   backendServices:
     type: array
-    uniqItems: true
+    uniqueItems: true
     description: |
       Backend services to create. These services will deliver traffic to the
       instance groups.
     items:
       type: object
       additionalProperties: false
+      oneOf:
+        - required:
+            - healthCheck
+        - required:
+            - healthChecks
       required:
         - backends
-        - healthCheck
       properties:
         resourceName:
           type: string
@@ -248,7 +302,7 @@ properties:
           description: The resource description (optional).
         backends:
           type: array
-          uniqItems: true
+          uniqueItems: true
           description: |
             The list of backends (instance groups) to which the backend service
             distributes traffic.
@@ -323,12 +377,33 @@ properties:
           description: |
             The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck
             resource for healthchecking the backend service.
+        healthChecks:
+          type: array
+          uniqueItems: true
+          maxItems: 1
+          description: |
+            The URL of the HealthCheck, HttpHealthCheck, or HttpsHealthCheck resource
+            for healthchecking the backend service.
+          items:
+            type: string
         timeoutSec:
           type: number
           default: 30
           description: |
             The number of seconds to wait for the backend response before
-            considering the request as failed.
+            considering the request as failed. 
+        protocol:
+          type: string
+          description: |
+            The protocol the backend service uses to communicate with backends.
+            The default is HTTP. For INTERNAL load balancing, the possible values are
+            TCP and UDP, and the default is TCP.
+          enum:
+            - HTTP
+            - HTTPS
+            - TCP
+            - UDP
+            - SSL
         portName:
           type: string
           description: |
@@ -394,7 +469,7 @@ properties:
                     cache key entirely.
                 queryStringWhitelist:
                   type: array
-                  uniqItems: true
+                  uniqueItems: true
                   description: |
                     The names of the query string parameters to include in
                     cache keys. All other parameters are excluded. Specify
@@ -405,7 +480,7 @@ properties:
                     type: string
                 queryStringBlacklist:
                   type: array
-                  uniqItems: true
+                  uniqueItems: true
                   description: |
                     The names of the query string parameters to exclude from
                     the cache keys. All other parameters are included. Specify
@@ -457,9 +532,26 @@ properties:
     additionalProperties: false
     description: |
       Encryption settings for connections processed by the resource.
-    required:
-      - certificate
+    oneOf:
+      - required:
+          - sslCertificates
+      - required:
+          - certificate
     properties:
+      sslCertificates:
+        type: array
+        uniqueItems: true
+        description: |
+          URLs to SslCertificate resources that are used to authenticate connections to Backends.
+          At least one SSL certificate must be specified. Currently, you may specify up to 15 SSL certificates.
+
+          Authorization requires the following Google IAM permission on the specified resource sslCertificates:
+
+          compute.sslCertificates.get
+        minItems: 0
+        maxItems: 15
+        items:
+          type: string
       certificate:
         type: object
         additionalProperties: false

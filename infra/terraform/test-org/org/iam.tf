@@ -31,8 +31,32 @@ module "org_bindings" {
     "roles/compute.xpnAdmin" = [
       "group:${local.cft_ci_group}",
     ]
+    "roles/browser" = [
+      "group:${local.cft_dev_group}"
+    ]
     "roles/viewer" = [
       "group:${local.cft_dev_group}"
+    ]
+  }
+}
+
+module "admin_bindings" {
+  source  = "terraform-google-modules/iam/google"
+  version = "~> 2.0"
+
+  folders = [local.folders["ci-projects"]]
+
+  bindings = {
+    "roles/resourcemanager.projectCreator" = [
+      "group:${local.gcp_admins_group}",
+    ]
+
+    "roles/resourcemanager.folderAdmin" = [
+      "group:${local.gcp_admins_group}",
+    ]
+
+    "roles/billing.projectManager" = [
+      "group:${local.gcp_admins_group}",
     ]
   }
 }

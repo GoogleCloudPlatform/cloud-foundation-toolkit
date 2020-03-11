@@ -28,9 +28,6 @@ apk add --no-cache findutils
 # git is used to clone repositories
 apk add --no-cache git
 
-# go is used for go lint checks
-apk add --no-cache go
-
 # grep is used by lint checks
 apk add --no-cache grep
 

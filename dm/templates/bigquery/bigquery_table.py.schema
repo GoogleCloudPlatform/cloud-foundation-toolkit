@@ -26,9 +26,6 @@ info:
     - gcp-types/bigquery-v2:tables =>
         https://cloud.google.com/bigquery/docs/reference/rest/v2/tables
 
-imports:
-  - path: bigquery_table.py
-
 additionalProperties: false
 
 required:

@@ -22,147 +22,126 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-
 	"cloud.google.com/go/storage"
-
-	tfconverter "github.com/GoogleCloudPlatform/terraform-validator/converters/google"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
-	"github.com/forseti-security/config-validator/pkg/gcv"
+	cvasset "github.com/forseti-security/config-validator/pkg/asset"
+	"github.com/pkg/errors"
 )
 
-// attachValidator attaches a Validator to the given config
-func attachValidator(config *ScoringConfig) error {
-	v, err := gcv.NewValidator(
-		gcv.PolicyPath(filepath.Join(config.PolicyPath, "policies")),
-		gcv.PolicyLibraryDir(filepath.Join(config.PolicyPath, "lib")),
-	)
-	config.validator = v
-	return err
-}
-
-func addDataFromReader(config *ScoringConfig, reader io.Reader) error {
+func getDataFromReader(config *ScoringConfig, reader io.Reader) ([]*validator.Asset, error) {
+	const maxCapacity = 1024 * 1024
 	scanner := bufio.NewScanner(reader)
+	buf := make([]byte, maxCapacity)
+	scanner.Buffer(buf, maxCapacity)
+	var pbAssets []*validator.Asset
 	for scanner.Scan() {
 		pbAsset, err := getAssetFromJSON(scanner.Bytes())
-		pbAssets := []*validator.Asset{pbAsset}
-		err = config.validator.AddData(&validator.AddDataRequest{
-			Assets: pbAssets,
-		})
 		if err != nil {
-			return errors.Wrap(err, "adding data to validator")
+			return nil, err
 		}
+		pbAssets = append(pbAssets, pbAsset)
 	}
-	return nil
+	return pbAssets, nil
 }
 
-func addDataFromBucket(config *ScoringConfig, bucketName string) error {
+func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.Asset, error) {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	bucket := client.Bucket(bucketName)
+	var pbAssets []*validator.Asset
 	for _, objectName := range destinationObjectNames {
 		reader, err := bucket.Object(objectName).NewReader(ctx)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		defer reader.Close()
-		err = addDataFromReader(config, reader)
+		assets, err := getDataFromReader(config, reader)
 		if err != nil {
-			return err
+			return nil, err
 		}
+
+		pbAssets = append(pbAssets, assets...)
 	}
-	return nil
+	return pbAssets, nil
 }
 
-func addDataFromFile(config *ScoringConfig, caiDirName string) error {
+func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Asset, error) {
+	var pbAssets []*validator.Asset
 	for _, objectName := range destinationObjectNames {
 		reader, err := os.Open(filepath.Join(caiDirName, objectName))
 		if err != nil {
-			return err
+			return nil, err
 		}
 		defer reader.Close()
-		err = addDataFromReader(config, reader)
+		assets, err := getDataFromReader(config, reader)
 		if err != nil {
-			return err
+			return nil, err
 		}
+
+		pbAssets = append(pbAssets, assets...)
 	}
-	return nil
+	return pbAssets, nil
+}
+
+func getDataFromStdin(config *ScoringConfig) ([]*validator.Asset, error) {
+	return getDataFromReader(config, os.Stdin)
 }
 
 // getViolations finds all Config Validator violations for a given Inventory
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
-	v := config.validator
-
+	var err error
+	var pbAssets []*validator.Asset
 	if inventory.bucketName != "" {
-		err := addDataFromBucket(config, inventory.bucketName)
+		pbAssets, err = getDataFromBucket(config, inventory.bucketName)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
 		}
-	} else {
-		err := addDataFromFile(config, inventory.dirPath)
+	} else if inventory.dirPath != "" {
+		pbAssets, err = getDataFromFile(config, inventory.dirPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from local directory")
 		}
-	}
-	auditResponse, err := v.Audit(context.Background())
-	if err != nil {
-		return nil, errors.Wrap(err, "auditing")
+	} else if inventory.readFromStdin {
+		pbAssets, err = getDataFromStdin(config)
+		if err != nil {
+			return nil, errors.Wrap(err, "Reading from stdin")
+		}
 	}
 
-	return auditResponse, nil
+	auditResult := &validator.AuditResponse{}
+	for _, asset := range pbAssets {
+		violations, err := config.validator.ReviewAsset(context.Background(), asset)
+
+		if err != nil {
+			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
+		}
+		auditResult.Violations = append(auditResult.Violations, violations...)
+	}
+	return auditResult, nil
 }
 
 // converts raw JSON into Asset proto
 func getAssetFromJSON(input []byte) (*validator.Asset, error) {
-	asset := tfconverter.Asset{}
+	var asset map[string]interface{}
 	err := json.Unmarshal(input, &asset)
 	if err != nil {
 		return nil, err
 	}
-
 	pbAsset := &validator.Asset{}
 	err = protoViaJSON(asset, pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "converting asset %s to proto", asset.Name)
+		return nil, errors.Wrapf(err, "converting asset %s to proto", asset["name"])
 	}
-
-	pbAsset.AncestryPath, err = getAncestryPath(pbAsset)
+	err = cvasset.SanitizeAncestryPath(pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset.Name)
+		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset["name"])
 	}
 
-	Log.Debug("Asset converted", "name", asset.Name, "ancestry", pbAsset.GetAncestryPath())
-
+	Log.Debug("Asset converted", "name", asset["name"], "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
 }
 
-// looks up the ancestry path for a given asset
-func getAncestryPath(pbAsset *validator.Asset) (string, error) {
-	// TODO(morgantep): make this fetch the actual asset path
-	// fmt.Printf("Asset parent: %v\n", pbAsset.GetResource().GetParent())
-	return "organization/0/project/test", nil
-}
-
-// listFiles returns a list of files under a dir. Errors will be grpc errors.
-func listFiles(dir string) ([]string, error) {
-	files := []string{}
-	visit := func(path string, f os.FileInfo, err error) error {
-		if err != nil {
-			return errors.Wrapf(err, "error visiting path %s", path)
-		}
-		if !f.IsDir() {
-			files = append(files, path)
-		}
-		return nil
-	}
-
-	err := filepath.Walk(dir, visit)
-	if err != nil {
-		return nil, err
-	}
-	return files, nil
-}

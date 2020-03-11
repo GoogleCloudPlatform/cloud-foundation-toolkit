@@ -14,18 +14,34 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/deployment"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/validation"
 )
 
 // --project flag value will be mapped during app initialization
 var projectFlag string
+var policyPathFlag string
+var validateFlag bool = false
 var previewFlag bool = false
 var showStagesFlag bool = false
 var formatFlag string
 
 var supportedExt = []string{"*.yaml", "*.yml", "*.jinja"}
 
-func initCommon(command *cobra.Command) {
+func initPolicyPathFlag(command *cobra.Command) {
+	command.PersistentFlags().StringVar(&policyPathFlag, "policy-path", "", "Policy path")
+}
+
+func initProjectFlag(command *cobra.Command) {
 	command.PersistentFlags().StringVarP(&projectFlag, "project", "p", "", "project id")
+}
+
+func initValidateFlags(command *cobra.Command) {
+	initPolicyPathFlag(command)
+	command.PersistentFlags().BoolVar(&validateFlag, "validate", false, "validate deployment")
+}
+
+func initCommon(command *cobra.Command) {
+	initProjectFlag(command)
 	command.PersistentFlags().BoolVar(&previewFlag, "preview", false, "preview before apply changes")
 	command.PersistentFlags().BoolVar(&showStagesFlag, "show-stages", false, "print deployment stages")
 	command.PersistentFlags().StringVar(&formatFlag, "format", "", "formattedConfig for stages display, used in conjunction wiht --show-stages")
@@ -41,6 +57,7 @@ func execute(action string, cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatalf("Error ordering deployments in dependency order: %v", err)
 	}
+
 	isDelete := action == deployment.ActionDelete
 	if isDelete {
 		// reverse order, dependent goes first for deletion
@@ -96,6 +113,18 @@ func executeStages(action string, stages [][]deployment.Config, isDelete bool) m
 				}
 				log.Fatalf("Error %s deployment: %v, erro: %v", action, dep, err)
 			}
+			if validateFlag && (action == deployment.ActionCreate ||
+				action == deployment.ActionUpdate ||
+				action == deployment.ActionApply) {
+				validated, err := validation.ValidateDeployment(config.Name, policyPathFlag, config.GetProject())
+				if err != nil {
+					log.Fatalf("Error %s validating deployment: %v, erro: %v", action, dep, err)
+				}
+				if !validated {
+					log.Fatalf("Error %s validating deployment: %v", action, dep)
+				}
+			}
+
 			if previewFlag {
 				choice := deployment.GetUserInput("Update(u), Skip (s), or Abort(a) Deployment?", []string{"u", "s", "a"}, os.Stdin)
 				switch choice {
@@ -106,14 +135,14 @@ func executeStages(action string, stages [][]deployment.Config, isDelete bool) m
 						log.Fatalf("error %s deployment: %v, error: %v", action, dep, err)
 					}
 				case "s":
-					output, err = deployment.CancelPreview(dep)
+					_, err = deployment.CancelPreview(dep)
 					if err != nil {
 						log.Fatalf("error cancel-preuvew action for deployment: %v, error: %v", dep, err)
 					}
 					log.Printf("canceled %s action for deployment: %v", action, dep)
 					if action == deployment.ActionCreate {
 						log.Printf("delete canceled creation for deployment: %v", dep)
-						output, err = deployment.Delete(dep, false)
+						_, err = deployment.Delete(dep, false)
 						if err != nil {
 							log.Fatalf("error cancel-preview action for deployment: %v, error: %v", dep, err)
 						}

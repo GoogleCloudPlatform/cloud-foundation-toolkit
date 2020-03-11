@@ -1,6 +1,6 @@
 # Example of the external load balancer template usage.
 #
-# This example creates an SSL Proxy load balancer. As the underlying
+# This example creates an TCP Proxy load balancer. As the underlying
 # targetTcpProxy resource has the ALPHA availability, you need to
 # enable the Compute ALPHA API to tun this example.
 #
@@ -8,7 +8,6 @@
 #   <FIXME:healthcheck>: a URL of the TCP healthcheck
 #   <FIXME:instanceGroup>: a URL of the instance group to accept
 #   incoming traffic at port 80
-#   <FIXME:sslCertificateUrl>: a URL of the SslCertificate resource
 
 imports:
   - path: templates/external_load_balancer/external_load_balancer.py
@@ -18,7 +17,7 @@ resources:
   - name: example-tcp-elb
     type: external_load_balancer.py
     properties:
-      portRange: 80
+      portRange: 25
       backendServices:
         - resourceName: backend-service
           portName: http

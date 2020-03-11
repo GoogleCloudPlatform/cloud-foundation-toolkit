@@ -15,9 +15,15 @@
 
 REGIONAL_GLOBAL_TYPE_NAMES = {
     # https://cloud.google.com/compute/docs/reference/rest/v1/forwardingRules
-    True: 'gcp-types/compute-v1:forwardingRules',
+    True: {
+        'GA': 'gcp-types/compute-v1:forwardingRules',
+        'Beta': 'gcp-types/compute-beta:forwardingRules'
+    },
     # https://cloud.google.com/compute/docs/reference/rest/v1/globalForwardingRules
-    False: 'gcp-types/compute-v1:globalForwardingRules'
+    False: {
+        'GA': 'gcp-types/compute-v1:globalForwardingRules',
+        'Beta': 'gcp-types/compute-beta:globalForwardingRules'
+    }
 }
 
 
@@ -59,6 +65,7 @@ def generate_config(context):
     name = properties.get('name', context.env['name'])
     project_id = properties.get('project', context.env['project'])
     is_regional = 'region' in properties
+    FW_rule_version = 'Beta' if 'labels' in properties else 'GA'
     region = properties.get('region')
     rule_properties = {
         'name': name,
@@ -67,7 +74,7 @@ def generate_config(context):
 
     resource = {
         'name': context.env['name'],
-        'type': REGIONAL_GLOBAL_TYPE_NAMES[is_regional],
+        'type': REGIONAL_GLOBAL_TYPE_NAMES[is_regional][FW_rule_version],
         'properties': rule_properties
     }
 
@@ -87,6 +94,7 @@ def generate_config(context):
         'serviceLabel',
         'networkTier',
         'allPorts',
+        'labels',
     ]
 
     for prop in optional_properties:

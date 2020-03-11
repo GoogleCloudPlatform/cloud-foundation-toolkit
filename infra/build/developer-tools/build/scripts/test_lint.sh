@@ -26,6 +26,7 @@ set +e
 rval=0
 failed_tests=()
 tests=(
+  check_generate_modules
   check_documentation
   check_whitespace
   check_shell

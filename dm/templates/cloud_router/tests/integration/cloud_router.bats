@@ -14,6 +14,7 @@ fi
 # Set variables based on the random string saved in the file.
 # envsubst requires all variables used in the example/config to be exported.
 if [[ -e "${RANDOM_FILE}" ]]; then
+    export REGION="us-east1"
     export RAND=$(cat "${RANDOM_FILE}")
     DEPLOYMENT_NAME="${CLOUD_FOUNDATION_PROJECT_ID}-${TEST_NAME}-${RAND}"
     # Replace underscores with dashes in the deployment name.
@@ -39,7 +40,7 @@ function setup() {
         gcloud compute networks create network-${RAND} \
             --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
             --description "integration test ${RAND}" \
-            --subnet-mode custom
+            --subnet-mode auto -q
         create_config
     fi
 
@@ -68,6 +69,7 @@ function teardown() {
 @test "Verifying that routers were created in deployment ${DEPLOYMENT_NAME}" {
   run gcloud compute routers list --project "${CLOUD_FOUNDATION_PROJECT_ID}"
   [[ "$output" =~ "cloud-router-${RAND}" ]]
+  [[ "$output" =~ "cloud-router-nat-${RAND}" ]]
 }
 
 @test "Deleting deployment" {

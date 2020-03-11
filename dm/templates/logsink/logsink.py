@@ -18,7 +18,7 @@ def create_pubsub(context, logsink_name):
     """ Create the pubsub destination. """
 
     properties = context.properties
-    project_id = properties.get('project', context.env['project'])
+    project_id = properties.get('destinationProject', properties.get('project', context.env['project']))
 
     dest_properties = []
     if 'pubsubProperties' in context.properties:
@@ -39,6 +39,19 @@ def create_pubsub(context, logsink_name):
                 'name': '{}-pubsub'.format(context.env['name']),
                 'type': 'pubsub.py',
                 'properties': dest_prop
+            },
+            {
+                'name': '{}-iam-member-pub-sub-policy'.format(context.env['name']),
+                'type': 'iam_member.py',
+                'properties':
+                    {
+                        'projectId': project_id,
+                        'dependsOn': [logsink_name],
+                        'roles': [{
+                            'role': 'roles/pubsub.admin',
+                            'members': ['$(ref.{}.writerIdentity)'.format(logsink_name)]
+                        }]
+                    }
             }
         ]
 
@@ -49,27 +62,45 @@ def create_bq_dataset(context, logsink_name):
     """ Create the BQ dataset destination. """
 
     properties = context.properties
-    project_id = properties.get('project', context.env['project'])
+    project_id = properties.get('destinationProject', properties.get('project', context.env['project']))
 
     dest_properties = []
     if 'bqProperties' in context.properties:
         dest_prop = context.properties['bqProperties']
         dest_prop['name'] = context.properties['destinationName']
         dest_prop['project'] = project_id
-        access = dest_prop.get('access', [])
-        access.append(
-            {
-                'role': 'OWNER',
-                'userByEmail': '$(ref.' + logsink_name + '.writerIdentity)'
-            }
-        )
 
-        dest_prop['access'] = access
+        ## NOTE: There is a issue where BQ does not accept the uniqueWriter
+        ## returned by the logsink to be used in the userByEmail property.
+        ## Until that is resolved, this property is not supported.
+        # access = dest_prop.get('access', [])
+        # access.append(
+        #     {
+        #         'role': 'roles/bigquery.admin',
+        #         'userByEmail': '$(ref.' + logsink_name + '.writerIdentity)'
+        #     }
+        # )
+        #
+        # dest_prop['access'] = access
+
         dest_properties = [
             {
                 'name': '{}-bigquery-dataset'.format(context.env['name']),
                 'type': 'bigquery_dataset.py',
                 'properties': dest_prop
+            },
+            {
+                'name': '{}-iam-member-bigquery-policy'.format(context.env['name']),
+                'type': 'iam_member.py',
+                'properties':
+                    {
+                        'projectId': project_id,
+                        'dependsOn': [logsink_name],
+                        'roles': [{
+                            'role': 'roles/bigquery.admin',
+                            'members': ['$(ref.{}.writerIdentity)'.format(logsink_name)]
+                        }]
+                    }
             }
         ]
 
@@ -80,7 +111,7 @@ def create_storage(context, logsink_name):
     """ Create the bucket destination. """
 
     properties = context.properties
-    project_id = properties.get('project', context.env['project'])
+    project_id = properties.get('destinationProject', properties.get('project', context.env['project']))
 
     dest_properties = []
     if 'storageProperties' in context.properties:
@@ -89,36 +120,32 @@ def create_storage(context, logsink_name):
         dest_prop['name'] = bucket_name
         dest_prop['project'] = project_id
         bindings = dest_prop.get('bindings', [])
-        bindings.append(
-            {
-                'role': 'roles/storage.admin',
-                'members': ['$(ref.' + logsink_name + '.writerIdentity)']
-            }
-        )
+        bindings.append({
+            'role': 'roles/storage.admin',
+            'members': ['$(ref.{}.writerIdentity)'.format(logsink_name)]
+        })
 
         # Do not set any IAM during the creation of the bucket since
         # we are going to set it afterwards
         if 'bindings' in dest_prop:
             del dest_prop['bindings']
 
-        name = '{}-bucket'.format(context.env['name'])
         dest_properties = [
             {
                 # Create the GCS Bucket
-                'name': name,
+                'name': bucket_name,
                 'type': 'gcs_bucket.py',
                 'properties': dest_prop
             },
             {
                 # Give the logsink writerIdentity permissions to the bucket
-                'name': '{}-iampolicy'.format(name),
-                # https://cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy
-                'action': 'gcp-types/storage-v1:storage.buckets.setIamPolicy',
+                'name': '{}-iam-member-bucket-policy'.format(bucket_name),
+                'type': 'iam_member.py',
                 'properties':
                     {
-                        'bucket': '$(ref.{}.name)'.format(name),
-                        'project': context.env['project'],
-                        'bindings': bindings
+                        'bucket': bucket_name,
+                        'dependsOn': [logsink_name],
+                        'roles': bindings
                     }
             }
         ]
@@ -170,10 +197,7 @@ def generate_config(context):
             context.properties['destinationName']
         )
     elif context.properties['destinationType'] == 'bigquery':
-        # NOTE: There is a issue where BQ does not accept the uniqueWriter
-        # returned by the logsink to be used in the userByEmail property.
-        # Until that is resolved, this property is not supported.
-        # dest_properties = create_bq_dataset(context, name)
+        dest_properties = create_bq_dataset(context, name)
         destination = 'bigquery.googleapis.com/projects/{}/datasets/{}'.format(
             project_id,
             context.properties['destinationName']
@@ -195,7 +219,6 @@ def generate_config(context):
         'type': base_type + source_type + '.sinks',
         'properties': properties
     }
-
     resources = [resource]
 
     if dest_properties:

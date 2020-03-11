@@ -59,3 +59,69 @@ resources:
         KXQmD9gmtTrCuv8LGyEPFsIhlBTOlLyzHpMhI2Hd23hzQp8v09ZdDpx8SqHv0THW
         y8YMreKih6+reSfC+GuOzQoKi4vTKO7wwuXYysXkg3juupqZ7Kab
         -----END RSA PRIVATE KEY-----
+  - name: test-cert1
+    type: ssl_certificate.py
+    properties:
+      name: ${CERT_NAME}-1
+      betaFeaturesEnabled: True
+      type: SELF_MANAGED
+      description: ${CERT_DESCRIPTION}
+      selfManaged:
+        certificate: |
+            -----BEGIN CERTIFICATE-----
+            MIIDODCCAiACCQCqBGuEeBXJTjANBgkqhkiG9w0BAQUFADBeMQswCQYDVQQGEwJD
+            QTEQMA4GA1UECAwHT250YXJpbzEQMA4GA1UEBwwHVG9yb250bzEVMBMGA1UECgwM
+            RXhhbXBsZSBPcmcuMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xODEwMTEyMDEy
+            MjVaFw0xOTEwMTEyMDEyMjVaMF4xCzAJBgNVBAYTAkNBMRAwDgYDVQQIDAdPbnRh
+            cmlvMRAwDgYDVQQHDAdUb3JvbnRvMRUwEwYDVQQKDAxFeGFtcGxlIE9yZy4xFDAS
+            BgNVBAMMC2V4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+            AQEA5yLVBWSqKRWSJrGh2nbW0j+Soy+uvDKCjSZtXIVIcWvSP+WXd6RE2zlsNee4
+            UA90Jjhx6Si2MxraCNblm4MJSQg46irBn4Vmex/2iY2vD1MbMEusTNIfpDh3A27H
+            qdBe+WSO0uHXfmgC68M8mgTMcMLVoUsGgv8B710qBN1D9EKPZdEhYBAEhC1RFj+8
+            o3krWa983QFVND4PeFJSZe0LxAg44/bHVFNKK5Ub+TPa9P3t86SpoNj9/M7DPSkh
+            AtqmHL+90G0gvkfvtaoNRHHdqk2X+Uz3cUXWgl8xE+X5wcWu7r3cMxPaJvuLldJa
+            SIcc4YIlKOB0nFDKPK+iy7LqPwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQAdf4dG
+            IkEmdNmTeGPVOUis+7ziWzRPxt8Vpmuq24z4H9mIkAPo/2aLpMKH7bloeYvz8blu
+            5VQZx7StoE5Sde1ss/AoaL1dVJi/dgmeN2cHy7J6POu3e9n6yXGiIh0qHlFe83nJ
+            RVIqtN9QGGuabGt3WGbKElMKwrCl9NGhExi/LntPFllXfTLb2pVGXH47ZihynbUj
+            4S21+KnQUPjhg6Na6hP3qLVqSYtWataJFpy6DOG1wgoAWjagNc3ltGdmv6O/ZkI3
+            3vymENyn8G7n+Z1knXUXxv4rJoeiYbZ7/2/bQ8BTc/RI5qnhzO8VYmyAZrrKGZnD
+            W2xuikK4nQHsideP
+            -----END CERTIFICATE-----
+        privateKey: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEowIBAAKCAQEA5yLVBWSqKRWSJrGh2nbW0j+Soy+uvDKCjSZtXIVIcWvSP+WX
+            d6RE2zlsNee4UA90Jjhx6Si2MxraCNblm4MJSQg46irBn4Vmex/2iY2vD1MbMEus
+            TNIfpDh3A27HqdBe+WSO0uHXfmgC68M8mgTMcMLVoUsGgv8B710qBN1D9EKPZdEh
+            YBAEhC1RFj+8o3krWa983QFVND4PeFJSZe0LxAg44/bHVFNKK5Ub+TPa9P3t86Sp
+            oNj9/M7DPSkhAtqmHL+90G0gvkfvtaoNRHHdqk2X+Uz3cUXWgl8xE+X5wcWu7r3c
+            MxPaJvuLldJaSIcc4YIlKOB0nFDKPK+iy7LqPwIDAQABAoIBACHHm25gWeYLOwLg
+            rxDokVjE5b9ntpfWofHTDeSZrg61fVLNUSexIEcRy1jNdshsmcMEONGkm4w4fmkQ
+            Txo9OlwsEXVXrliL/IA+GZ/czxrkQHL8fD/17Z3oiqw7wn5074xvP9heHUpiFRsz
+            u2WfEeng76vU9Syr7DJ5YSy40beew48gJsfclbbAWl1GQ4s1wluoMlutCWjRKSAD
+            Qg1pjJQuTHDpD+PNgHrx4Xbyjyo6tGqcdt9B0crhuxwTZXUogQsRKRuMHlxxBsbm
+            kINhSsNf8V8iRCBtZ4FPWcq+Rk/KntNzB9NZQFmrH5hS0oQmZjzNAyzCXIaYTji7
+            Ju8XDaECgYEA9hUDBBwniphLZxvIC8GHVgAFx76Xw085bksVI0jNl2yG1HgNjCNA
+            W7DXJnyAtJZQjaItZfvB/tMm/ZAypf77tnru2n/uRvB4uG1Yh7RSy7rhLpibvTpU
+            e+DHm2c6kVW6Ng4q6rFxaunpjKEaeZO8pKowUu4YGU9YaSqvIGwoPFcCgYEA8HOc
+            1J5Rop56BPvJgozqQRRQ3Q3AFfzlyYEniF35twIqnehemU3nJMdVp9jbZizOcrmu
+            ZBma5c5P5Bjgam3SQvswTUxmbIZ2VvvXOv5aPeldNdFHrADpVmOdKwcPxQ8qx+IT
+            GK3rrVRkH6+JByseHhxl3igIM7fAtbd27ENDkFkCgYEA9YmhqMgu7CtpkUg3IwPH
+            dhgvrE6QP2EdfN+OB9bszNqM7hOb8Oh7nwGkq9Iu2gHh/nCDu+6ocwtdLERlRRxX
+            LI0dJwffSQlIaz0vyLg0pPOjHEtJmlZJVhHDGVy3I6zWUHlyeRr0gClFz/wv3n97
+            CxKFhTns8dQp80WT2FYTD6ECgYBU0KMYSIQJNZda3Km22BflPtJLNwdzehJf4qPc
+            MTHdQPFhY87Cir0mtv1ayF6TiuiDhUWjX3jI6N47Wh8Gy5goMkxWZ8WVMFTb19eS
+            opeYURGk4x5B6MxlwZt1yvbgDrqLaQ5NXUPNjwAGQTe3hJkKDABOvZYvD/j04DMd
+            oZhaeQKBgGGgnxTTUTEdqZ/AsVD0NmaqauTmyjsUpmAph9oazERM729n9igob85z
+            KXQmD9gmtTrCuv8LGyEPFsIhlBTOlLyzHpMhI2Hd23hzQp8v09ZdDpx8SqHv0THW
+            y8YMreKih6+reSfC+GuOzQoKi4vTKO7wwuXYysXkg3juupqZ7Kab
+            -----END RSA PRIVATE KEY-----
+  - name: test-cert2
+    type: ssl_certificate.py
+    properties:
+      name: ${CERT_NAME}-2
+      betaFeaturesEnabled: True
+      type: MANAGED
+      managed:
+        domains:
+          - test.cloud.cft.tips

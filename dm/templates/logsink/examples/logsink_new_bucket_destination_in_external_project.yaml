@@ -1,0 +1,26 @@
+# Example of a project logsink with a bucket destination template usage, where bucket will be created in another project.
+#
+# In this example, single log sink project is created with a bucket
+# destination name and destination project
+#
+# Replace the following with appropirate values
+# <FIXME:source_project_id>: The project id to create the logsink for.
+# <FIXME:target_project_id>: The project id to create the target bucket for.
+# <FIXME:bucket_name_in_target_project>: The name of a GCS bucket that does not exist.
+#
+
+imports:
+  - path: templates/logsink/logsink.py
+    name: logsink.py
+
+resources:
+  - name: log-sink
+    type: logsink.py
+    properties:
+      projectId: <FIXME:source_project_id>
+      destinationName: <FIXME:bucket_name_in_target_project>
+      destinationType: storage
+      destinationProject: <FIXME:target_project_id>
+      uniqueWriterIdentity: true
+      storageProperties:
+        location: us-east1

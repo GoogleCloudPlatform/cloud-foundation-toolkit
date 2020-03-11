@@ -66,12 +66,18 @@ def generate_config(context):
         if prop in properties:
             bucket['properties'][prop] = properties[prop]
 
+    if not properties.get('iamConfiguration', {}).get('bucketPolicyOnly', {}).get('enabled', False):
+        if 'predefinedAcl' not in bucket['properties']:
+            bucket['properties']['predefinedAcl'] = 'private'
+        if 'predefinedDefaultObjectAcl' not in bucket['properties']:
+            bucket['properties']['predefinedDefaultObjectAcl'] = 'private'
+
     resources.append(bucket)
 
     # If IAM policy bindings are defined, apply these bindings.
     storage_provider_type = 'gcp-types/storage-v1:virtual.buckets.iamMemberBinding'
     bindings = properties.get('bindings', [])
-    
+
     if 'dependsOn' in properties:
         dependson = { 'metadata': { 'dependsOn': properties['dependsOn'] } }
         dependson_root = properties['dependsOn']

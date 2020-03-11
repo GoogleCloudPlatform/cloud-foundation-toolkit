@@ -2,9 +2,9 @@ package cf
 
 import (
 	"encoding/json"
+	"reflect"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
-	"github.com/golang/protobuf/jsonpb"
 	pb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/open-policy-agent/opa/rego"
 	"github.com/pkg/errors"
@@ -60,7 +60,7 @@ func convertToViolations(expression *rego.ExpressionValue) ([]*validator.Violati
 	if err != nil {
 		return nil, err
 	}
-	violations := []*validator.Violation{}
+	var violations []*validator.Violation
 	for i := 0; i < len(parsedExpression); i++ {
 		violationToAdd := &validator.Violation{
 			Constraint: parsedExpression[i].Constraint,
@@ -89,16 +89,67 @@ func convertToViolations(expression *rego.ExpressionValue) ([]*validator.Violati
 	return violations, nil
 }
 
-func convertToProtoVal(from interface{}) (*pb.Value, error) {
-	to := &pb.Value{}
-	jsn, err := json.Marshal(from)
-	if err != nil {
-		return nil, errors.Wrap(err, "marshalling to json")
-	}
+type convertFailed struct {
+	err error
+}
 
-	if err := jsonpb.UnmarshalString(string(jsn), to); err != nil {
-		return nil, errors.Wrap(err, "unmarshalling to proto")
-	}
+func convertToProtoVal(from interface{}) (val *pb.Value, err error) {
+	defer func() {
+		if x := recover(); x != nil {
+			convFail, ok := x.(*convertFailed)
+			if !ok {
+				panic(x)
+			}
+			val = nil
+			err = errors.Errorf("failed to convert proto val: %s", convFail.err)
+		}
+	}()
+	val = convertToProtoValInternal(from)
+	return
+}
 
-	return to, nil
+func convertToProtoValInternal(from interface{}) *pb.Value {
+	if from == nil {
+		return nil
+	}
+	switch val := from.(type) {
+	case map[string]interface{}:
+		fields := map[string]*pb.Value{}
+		for k, v := range val {
+			fields[k] = convertToProtoValInternal(v)
+		}
+		return &pb.Value{
+			Kind: &pb.Value_StructValue{
+				StructValue: &pb.Struct{
+					Fields: fields,
+				},
+			}}
+
+	case []interface{}:
+		vals := make([]*pb.Value, len(val))
+		for idx, v := range val {
+			vals[idx] = convertToProtoValInternal(v)
+		}
+		return &pb.Value{
+			Kind: &pb.Value_ListValue{
+				ListValue: &pb.ListValue{Values: vals},
+			},
+		}
+
+	case string:
+		return &pb.Value{Kind: &pb.Value_StringValue{StringValue: val}}
+	case int:
+		return &pb.Value{Kind: &pb.Value_NumberValue{NumberValue: float64(val)}}
+	case int64:
+		return &pb.Value{Kind: &pb.Value_NumberValue{NumberValue: float64(val)}}
+	case float64:
+		return &pb.Value{Kind: &pb.Value_NumberValue{NumberValue: val}}
+	case float32:
+		return &pb.Value{Kind: &pb.Value_NumberValue{NumberValue: float64(val)}}
+	case bool:
+		return &pb.Value{Kind: &pb.Value_BoolValue{BoolValue: val}}
+
+	default:
+		panic(&convertFailed{errors.Errorf("Unhandled type %v (%s)", from, reflect.TypeOf(from).String())})
+	}
 }

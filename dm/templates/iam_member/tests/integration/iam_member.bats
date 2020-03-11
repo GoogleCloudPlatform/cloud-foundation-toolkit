@@ -70,6 +70,8 @@ function teardown() {
         --flatten="bindings[].members" \
         --format='table(bindings.role)' \
         --filter="bindings.members:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$output" =~ "roles/editor" ]]
     [[ "$output" =~ "roles/viewer" ]]
 }
@@ -84,10 +86,36 @@ function teardown() {
         --flatten="bindings[].members" \
         --format='table(bindings.role)' \
         --filter="bindings.members:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com"
+    echo "status = ${status}"
+    echo "output = ${output}"
 
     [[ "$output" =~ "roles/editor" ]]
     [[ "$output" =~ "roles/viewer" ]]
 }
+
+@test "Verify if SA has roles on the bucket" {
+    role=$(gsutil iam get "gs://org-bucket-${RAND}/" | grep role)
+    echo "status = ${status}"
+    echo "output = ${output}"
+    [[ "$status" -eq 0 ]]
+    [[ "$role" =~ "roles/storage.objectAdmin" ]]
+    [[ "$role" =~ "roles/storage.objectViewer" ]]
+
+}
+
+@test "Verifying that roles were assigned to CloudFunction in deployment ${DEPLOYMENT_NAME}" {
+    run gcloud functions get-iam-policy "test-function-${RAND}" \
+        --region=europe-west2 \
+        --project=${CLOUD_FOUNDATION_PROJECT_ID} \
+        --flatten="bindings[].members" \
+        --format='table(bindings.role)' \
+        --filter="bindings.members:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com"
+    echo "status = ${status}"
+    echo "output = ${output}"
+    [[ "$output" =~ "roles/cloudfunctions.developer" ]]
+    [[ "$output" =~ "roles/cloudfunctions.invoker" ]]
+}
+
 
 @test "Deleting deployment" {
     gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" \
@@ -97,6 +125,8 @@ function teardown() {
         --flatten="bindings[].members" \
         --format='table(bindings.role)' \
         --filter="bindings.members:${TEST_SERVICE_ACCOUNT}@${CLOUD_FOUNDATION_PROJECT_ID}.iam.gserviceaccount.com"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ ! "$output" =~ "roles/editor" ]]
     [[ ! "$output" =~ "roles/viewer" ]]
 }

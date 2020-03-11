@@ -26,9 +26,6 @@ info:
     - gcp-types/compute-v1:instanceTemplates =>
         https://cloud.google.com/compute/docs/reference/rest/v1/routes
 
-imports:
-  - path: single_route.py
-
 additionalProperties: false
 
 required:

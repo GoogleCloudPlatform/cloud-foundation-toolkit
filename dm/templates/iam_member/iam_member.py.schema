@@ -15,7 +15,7 @@
 info:
   title: IAM policy member
   author: Sourced Group Inc.
-  version: 1.1.0
+  version: 1.3.0
   description: |
     Manages an IAM policy member
 
@@ -29,9 +29,10 @@ info:
         TODO - Virtual type documentation needed
     - gcp-types/cloudresourcemanager-v1:virtual.organizations.iamMemberBinding =>
         TODO - Virtual type documentation needed
-
-imports:
-  - path: iam_member.py
+    - gcp-types/gcp-types/storage-v1:virtual.buckets.iamMemberBinding =>
+        TODO - Virtual type documentation needed
+    - gcp-types/cloudfunctions-v1:virtual.projects.locations.functions.iamMemberBinding =>
+        TODO - Virtual type documentation needed
 
 additionalProperties: false
 
@@ -45,6 +46,10 @@ oneOf:
       - organizationId
   - required:
       - projectId
+  - required:
+      - bucket
+  - required:
+      - cloudFunction
   - allOf:
       - not:
           required:
@@ -70,6 +75,14 @@ properties:
     description:  |
      Overwrite of project ID in case IAM bindings are referencing to
      a different project or if you need to assign members to folders/organizations as well.
+  bucket:
+    type: string
+    description:  |
+     GCS bucket to assign members to.
+  cloudFunction:
+    type: string
+    description:  |
+     CloudFunction to assign members to.
   roles:
     type: array
     uniqueItems: true

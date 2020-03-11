@@ -56,24 +56,44 @@ maketemp() {
 
 # find_files is a helper to exclude .git directories and match only regular
 # files to avoid double-processing symlinks.
+# You can ignore directories by setting an environment variable of
+#   relative escaped paths separated by a pipe
+# Ex: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
 find_files() {
-  local pth="$1"
+  local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
+    ".*/\.terraform"
+    ".*/\.kitchen"
+    ".*/.*\.png"
+    ".*/.*\.jpg"
+    ".*/.*\.jpeg"
+    ".*/.*\.svg"
+    "\./autogen"
+    "\./test/fixtures/all_examples"
+    "\./test/fixtures/shared"
+    "\./cache"
+    "\./test/source\.sh" )
   shift
+
+  # Concat all of the above dirs except the last, separated by a pipe
+  for ((index=0; index<$((${#exclude_dirs[@]}-1)); ++index)); do
+    find_path_regex+="${exclude_dirs[index]}|"
+  done
+
+  # Add any regex supplied to ignore other dirs
+  if [[ -n "${EXCLUDE_LINT_DIRS-}" ]]; then
+    find_path_regex+="${EXCLUDE_LINT_DIRS}"
+    find_path_regex+="|"
+  fi
+
+  # Concat last dir, along with closing paren
+  find_path_regex+="${exclude_dirs[-1]})"
+  # find_path_regex should be a string of this format:
+  # (some_relative_path|another_relative_path)
+  # ex: find_path_regex = (.*/\.git|.*/\.terraform|.*/\.kitchen|.*/.*\.png)
+
   # Note: Take care to use -print or -print0 when using this function,
   # otherwise excluded directories will be included in the output.
-  find "${pth}" '(' \
-    -path '*/.git' -o \
-    -path '*/.terraform' -o \
-    -path '*/.kitchen' -o \
-    -path '*/*.png' -o \
-    -path '*/*.jpg' -o \
-    -path '*/*.jpeg' -o \
-    -path '*/*.svg' -o \
-    -path './autogen' -o \
-    -path './test/fixtures/all_examples' -o \
-    -path './test/fixtures/shared' -o \
-    -path './cache' -o \
-    -path './test/source.sh' ')' \
+  find "${pth}" -regextype posix-egrep -regex "${find_path_regex}" \
     -prune -o -type f "$@"
 }
 
@@ -112,19 +132,23 @@ function lint_docker() {
 # directory paths which contain *.tf files.
 function check_terraform() {
   set -e
-  local rval
+  local rval rc
+  rval=0
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
-  find_files . -name "*.tf" -print | while read -r file; do
+  while read -r file; do
     terraform fmt -diff -check=true -write=false "$file"
-    rval="$?"
-    if [[ "${rval}" -gt 0 ]]; then
-      echo "Error: terraform fmt failed with exit code ${rval}" >&2
+    rc="$?"
+    if [[ "${rc}" -ne 0 ]]; then
+      echo "Error: terraform fmt failed with exit code ${rc}" >&2
       echo "Check the output for diffs and correct using terraform fmt <dir>" >&2
-      return "${rval}"
+      rval="$rc"
     fi
-  done
+  done <<< "$(find_files . -name "*.tf" -print)"
+  if [[ "${rval}" -ne 0 ]]; then
+    return "${rval}"
+  fi
   echo "Running terraform validate"
   # Change to a temporary directory to avoid re-initializing terraform init
   # over and over in the root of the repository.
@@ -278,6 +302,47 @@ function check_documentation() {
   cd /workspace
   rm -Rf "${tempdir}"
   return $((rval))
+}
+
+# Generate modules from tempalte files in 'autogen' folder
+function generate_modules() {
+  if [[ -e /workspace/autogen_modules.json ]]; then
+    autogen_modules=$(jq '.' /workspace/autogen_modules.json)
+    python3 /usr/local/bin/generate_modules.py "$autogen_modules"
+  fi
+}
+
+# Check that module generation has happened
+function check_generate_modules() {
+  if [[ -e /workspace/autogen_modules.json ]]; then
+    local tempdir rval rc
+    setup_trap_handler
+    tempdir=$(mktemp -d)
+    rval=0
+    echo "Checking submodule's files generation"
+    rsync -axh \
+      --exclude '*/.terraform' \
+      --exclude '*/.kitchen' \
+      --exclude '*/.git' \
+      /workspace "${tempdir}" >/dev/null 2>/dev/null
+    cd "${tempdir}/workspace" || exit 1
+    generate_modules >/dev/null 2>/dev/null
+    generate_docs >/dev/null 2>/dev/null
+    diff -r \
+      --exclude=".terraform" \
+      --exclude=".kitchen" \
+      --exclude=".git" \
+      /workspace "${tempdir}/workspace"
+    rc=$?
+    if [[ "${rc}" -ne 0 ]]; then
+      echo "Error: submodule's files generation has not been run, please run the"
+      echo "'make build' command and commit changes"
+      ((rval++))
+    fi
+    cd /workspace || exit 1
+    rm -Rf "${tempdir}"
+    return $((rval))
+  fi
 }
 
 function prepare_test_variables() {

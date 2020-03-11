@@ -34,7 +34,7 @@ def get_backend_service(properties, backend_spec, res_name, project_id):
         'name': backend_name,
         'project': project_id,
         'loadBalancingScheme': 'EXTERNAL',
-        'protocol': get_protocol(properties),
+        'protocol': backend_spec.get('protocol', get_protocol(properties)),
     }
 
     backend_resource = {
@@ -51,6 +51,7 @@ def get_backend_service(properties, backend_spec, res_name, project_id):
         'connectionDraining',
         'backends',
         'healthCheck',
+        'healthChecks',
         'portName',
         'enableCDN',
         'affinityCookieTtlSec'
@@ -97,6 +98,7 @@ def get_forwarding_rule(properties, target, res_name, project_id):
         'IPAddress',
         'ipVersion',
         'portRange',
+        'labels',
     ]
 
     for prop in optional_properties:
@@ -224,7 +226,7 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
             'name': '{}-target'.format(properties.get('name', res_name)),
             'project': project_id,
             'protocol': protocol,
-            'target': target,
+            'target': target
         },
         'metadata': {
             'dependsOn': [depends],
@@ -254,20 +256,21 @@ def get_target_proxy(properties, res_name, project_id, bs_resources):
     if 'ssl' in properties:
         ssl_spec = properties['ssl']
         proxy['properties']['ssl'] = ssl_spec
-        creates_new_certificate = not 'url' in ssl_spec['certificate']
-        if creates_new_certificate:
-            outputs.extend(
-                [
-                    {
-                        'name': 'certificateName',
-                        'value': '$(ref.{}.certificateName)'.format(name)
-                    },
-                    {
-                        'name': 'certificateSelfLink',
-                        'value': '$(ref.{}.certificateSelfLink)'.format(name)
-                    }
-                ]
-            )
+        if 'certificate' in ssl_spec:
+            creates_new_certificate = not 'url' in ssl_spec.get('certificate')
+            if creates_new_certificate:
+                outputs.extend(
+                    [
+                        {
+                            'name': 'certificateName',
+                            'value': '$(ref.{}.certificateName)'.format(name)
+                        },
+                        {
+                            'name': 'certificateSelfLink',
+                            'value': '$(ref.{}.certificateSelfLink)'.format(name)
+                        }
+                    ]
+                )
 
     return [proxy] + resources, outputs
 
