@@ -6,9 +6,16 @@ This template grants IAM roles for a projects, folders and organizations.
 
 - Install [gcloud](https://cloud.google.com/sdk)
 - Create a [GCP project, set up billing, enable requisite APIs](../project/README.md)
-- Grant the [resourcemanager.projectIamAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the project to the *DM Service Account* to grant roles within the project
-- Grant the [roles/resourcemanager.folderIamAdmin owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the folder to the *DM Service Account* to grant roles within the folder
-- Grant the [roles/iam.securityAdmin or owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the organization to the *DM Service Account* to grant roles within the organization and all nested resources
+
+### Grant the appropriate IAM permissions depending on your usecase
+Grant the [owner](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the project to the *DM Service Account* to grant roles within the project. This allows DM to set IAM on the Project or on the resource level.
+
+For more restrictive permissions grant the appropriate resource level admin permission:
+
+- Grant the [resourcemanager.projectIamAdmin](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the project to the *DM Service Account* to grant roles within the project
+- Grant the [roles/resourcemanager.folderIamAdmin](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the folder to the *DM Service Account* to grant roles within the folder
+- Grant the [roles/iam.securityAdmin](https://cloud.google.com/iam/docs/understanding-roles) IAM role on the organization to the *DM Service Account* to grant roles within the organization and all nested resources
+- Etc.
 
 ## Development
 
