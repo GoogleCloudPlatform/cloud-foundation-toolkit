@@ -26,6 +26,9 @@ info:
     - gcp-types/compute-v1:networks =>
         https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert
 
+imports:
+  - path: subnetwork.py
+
 additionalProperties: false
 
 oneOf:
