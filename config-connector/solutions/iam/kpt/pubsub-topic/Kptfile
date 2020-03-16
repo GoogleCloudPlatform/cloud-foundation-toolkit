@@ -1,0 +1,43 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: pubsub-topic
+packageMetadata:
+  shortDescription: Create a PubSub topic and enable IAM roles for it
+openAPI:
+  definitions:
+    io.k8s.cli.setters.iam-name:
+      description: GCP identity to grant privileges
+      x-k8s-cli:
+        setter:
+          name: iam-name
+          value: ${IAM_NAME?}
+          setBy: PLACEHOLDER
+    io.k8s.cli.setters.topic-name:
+      description: name of PubSub topic
+      x-k8s-cli:
+        setter:
+          name: topic-name
+          value: allowed-topic
+          setBy: package-default
+    io.k8s.cli.setters.project-id:
+      description: ID of project
+      x-k8s-cli:
+        setter:
+          name: project-id
+          value: ${PROJECT_ID?}
+          setBy: PLACEHOLDER
+    io.k8s.cli.setters.role:
+      x-k8s-cli:
+        setter:
+          name: role
+          value: editor
+          setBy: package-default
+    io.k8s.cli.substitutions.role-sub:
+      x-k8s-cli:
+        substitution:
+          name: role-sub
+          pattern: roles/pubsub.ROLE_SETTER
+          values:
+          - marker: ROLE_SETTER
+            ref: '#/definitions/io.k8s.cli.setters.role'
