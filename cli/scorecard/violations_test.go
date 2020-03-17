@@ -28,8 +28,8 @@ const (
 
 type getAssetFromJSONTestcase struct {
 	name          string
-	assetJSONFile     string
-	ancestryPath string
+	assetJSONFile string
+	ancestryPath  string
 	isResource    bool
 	isIamPolicy   bool
 }
@@ -44,14 +44,14 @@ func TestGetAssetFromJSON(t *testing.T) {
 		{
 			name:          "resource",
 			assetJSONFile: "/shared/resource.json",
-			ancestryPath: "organizations/56789/projects/1234",
+			ancestryPath:  "organizations/56789/projects/1234",
 			isResource:    true,
 			isIamPolicy:   false,
 		},
 		{
 			name:          "iam policy",
 			assetJSONFile: "/shared/iam_policy.json",
-			ancestryPath: "organizations/56789/folders/2345/projects/1234",
+			ancestryPath:  "organizations/56789/folders/2345/projects/1234",
 			isResource:    false,
 			isIamPolicy:   true,
 		},
@@ -86,7 +86,7 @@ func TestGetAssetFromJSON(t *testing.T) {
 func TestGetViolations(t *testing.T) {
 	var testCases = []getViolationsTestcase{
 		{
-			resource:   "//storage.googleapis.com/test-project",
+			resource:   "//storage.googleapis.com/test-bucket-public",
 			constraint: "iam-gcs-blacklist-public-users",
 		},
 	}
@@ -117,4 +117,3 @@ func TestGetViolations(t *testing.T) {
 		})
 	}
 }
-
