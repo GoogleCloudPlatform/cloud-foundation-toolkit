@@ -1,9 +1,9 @@
-IAM Project
+Owned Project
 ==================================================
 
 # NAME
 
-  iam-project
+  owned-project
 
 # SYNOPSIS
 

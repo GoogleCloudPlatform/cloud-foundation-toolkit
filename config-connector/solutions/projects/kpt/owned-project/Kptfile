@@ -11,7 +11,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: project-id
-          value: project-owner-project
+          value: owned-project
           setBy: package-default
     io.k8s.cli.setters.billing-account:
       description: ID of project billing account
@@ -40,5 +40,5 @@ openAPI:
       x-k8s-cli:
         setter:
           name: iam-name
-          value: serviceAccount:project-owner-service@project-owner-project.iam.gserviceaccount.com
+          value: serviceAccount:owned-project-service@owned-project.iam.gserviceaccount.com
           setBy: package-default
