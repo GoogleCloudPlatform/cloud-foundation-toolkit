@@ -15,9 +15,16 @@ Simple Project
   with your billing account and organization id numbers. You can do this with kpt setters or manually. To use kpt setters:
   
   ```
-  kpt cfg set . billing-account <insert billing account here>
-  kpt cfg set . org-id <insert organization id here>
+  kpt cfg set . billing-account VALUE 
+  kpt cfg set . org-id VALUE 
   ```
+
+  To set the project ID:
+  ```
+  kpt cfg set . project-id VALUE
+  ```
+
+  Note: this will set both the project's ID and name to the same value, if a different value is desired, edit `project.yaml`.
   
   Once your information is in the configs, simply apply.
 
