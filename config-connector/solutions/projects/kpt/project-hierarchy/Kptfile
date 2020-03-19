@@ -20,19 +20,12 @@ openAPI:
           name: project-id
           value: project-hierarchy-project
           setBy: package-default
-    io.k8s.cli.setters.folder-id:
-      description: k8s ID of folder
+    io.k8s.cli.setters.folder-name:
+      description: name of folder
       x-k8s-cli:
         setter:
-          name: folder-id
+          name: folder-name
           value: project-hierarchy-folder
-          setBy: package-default
-    io.k8s.cli.setters.project-name:
-      description: display name of project
-      x-k8s-cli:
-        setter:
-          name: project-name
-          value: project-hierarchy-project
           setBy: package-default
     io.k8s.cli.setters.billing-account:
       description: ID of billing account
@@ -41,13 +34,6 @@ openAPI:
           name: billing-account
           value: ${BILLING_ACCOUNT_ID?}
           setBy: PLACEHOLDER
-    io.k8s.cli.setters.folder-name:
-      description: display name of folder
-      x-k8s-cli:
-        setter:
-          name: folder-name
-          value: project-hierarchy-folder
-          setBy: package-default
     io.k8s.cli.setters.folder-number:
       description: numeric GCP ID of folder
       x-k8s-cli:

@@ -18,6 +18,6 @@ metadata:
   annotations:
     # Replace "${ORG_ID?}" with the numeric ID for your organization
     cnrm.cloud.google.com/organization-id: "${ORG_ID}" # {"$ref":"#/definitions/io.k8s.cli.setters.org-id"}
-  name: project-hierarchy-folder # {"$ref":"#/definitions/io.k8s.cli.setters.folder-id"}
+  name: project-hierarchy-folder # {"$ref":"#/definitions/io.k8s.cli.setters.folder-name"}
 spec:
   displayName: project-hierarchy-folder # {"$ref":"#/definitions/io.k8s.cli.setters.folder-name"}
