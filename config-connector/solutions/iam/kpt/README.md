@@ -1,4 +1,4 @@
-# Kpt Project Solutions
+# Solutions Using kpt
 
 ## Installing kpt
 

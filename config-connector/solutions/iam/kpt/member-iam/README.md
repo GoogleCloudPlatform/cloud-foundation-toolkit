@@ -21,10 +21,9 @@ Member IAM
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using a service account 
-  (`cnrm-system@[PROJECT_ID].iam.gserviceaccount.com`) with the following 
-  roles in your desired project (it doesn't need to be the project where you 
-  installed Config Connector):
+  A working Config Connector cluster using "cnrm-system" service account that
+  has the following roles in your desired project (it doesn't need to be the
+  project where you installed Config Connector):
 
   - roles/resourcemanager.projectIamAdmin
   - roles/iam.serviceAccountAdmin
@@ -44,13 +43,13 @@ Member IAM
   kubectl apply -f .
   ```
 
-## OPTIONAL WORKFLOW
+# OPTIONAL WORKFLOW
 
   Optionally, you may want to create a different service account, grant a 
   different role to the service account, or grant multiple roles to the 
   service account, etc. Here are the instructions.
 
-**Create a Different Service Account**
+## Create a Different Service Account
 
   Change the service account name and apply the YAMLs:
 
@@ -59,7 +58,7 @@ Member IAM
   kubectl apply -f .
   ```
 
-**Grant a Different Role**
+## Grant a Different Role
   
   Change the role([predefined GCP IAM roles](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles)) and apply the YAMLs:
 
@@ -68,7 +67,7 @@ Member IAM
   kubectl apply -f .
   ```
 
-**Grant Multiple Roles**
+## Grant Multiple Roles
 
   Change the KCC resource name and the role each time before you grant a new
   role to the service account:
