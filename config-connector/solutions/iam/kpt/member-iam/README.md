@@ -60,7 +60,7 @@ Member IAM
 
 ## Grant a Different Role
   
-  Change the role([predefined GCP IAM roles](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles)) and apply the YAMLs:
+  Change the role ([predefined GCP IAM roles](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles)) and apply the YAMLs:
 
   ```
   kpt cfg set . role VALUE
