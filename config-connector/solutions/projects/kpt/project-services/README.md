@@ -8,8 +8,18 @@ Project Services
 # SYNOPSIS
 
   Config Connector compatible YAML files to enable services on a project.
+  
+## Consumption
+
+  Using kpt:
+  ```
+  BASE=https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
+  kpt pkg get $BASE/config-connector/solutions/projects/kpt/project-services project-services
+  ```
 
 ## Requirements
+
+  A working cluster with Config Connector installed.
   The cnrm-system service account must have `roles/serviceusage.serviceUsageAdmin` or `roles/owner`.
 
 
