@@ -39,6 +39,7 @@ def get_instance(res_name, project_id, properties):
         'databaseVersion',
         'failoverReplica',
         'instanceType',
+        'labels',
         'masterInstanceName',
         'maxDiskSize',
         'onPremisesConfiguration',
