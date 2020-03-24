@@ -27,12 +27,11 @@ Project Services
 
 ## Usage
   If you are enabling services for a project other than the one you have
-installed Config Connector in, set the project-id and apply the namespace:
+installed Config Connector in, set the `project-id` and `namespace`:
 
   ```
   kpt cfg set . project-id VALUE
-  kubectl apply -f namespace.yaml
-  kubectl config set-context --current --namespace project-annotated
+  kpt cfg set . namespace project-annotated
   ```
   
   Before applying a service, set the service name. For example, to enable
@@ -54,8 +53,6 @@ installed Config Connector in, set the project-id and apply the namespace:
   To enable multiple services, copy the `service.yaml` into either a separate
 file or the same file seperated by a yaml seperator and manually change its
 `metadata.name`.
-
-  To see services that have been enabled, run `kubectl get gcpservices`.
 
 
 # License

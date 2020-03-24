@@ -20,3 +20,10 @@ openAPI:
           name: project-id
           value: ${PROJECT_ID?}
           setBy: PLACEHOLDER
+    io.k8s.cli.setters.namespace:
+      description: namespace to use for service
+      x-k8s-cli:
+        setter:
+          name: namespace
+          value: default
+          setBy: package-default
