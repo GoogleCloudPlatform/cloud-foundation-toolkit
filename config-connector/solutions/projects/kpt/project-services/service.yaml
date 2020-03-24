@@ -14,7 +14,4 @@
 apiVersion: serviceusage.cnrm.cloud.google.com/v1beta1
 kind: Service
 metadata:
-  annotations:
-    # Replace the ${PROJECT_ID?} below with your desired project ID.
-    cnrm.cloud.google.com/project-id: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"} 
   name: firebasehosting.googleapis.com # {"$ref":"#/definitions/io.k8s.cli.setters.service-name"}

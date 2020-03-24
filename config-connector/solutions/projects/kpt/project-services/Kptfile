@@ -14,7 +14,7 @@ openAPI:
           value: firebasehosting.googleapis.com
           setBy: package-default
     io.k8s.cli.setters.project-id:
-      description: ID of project to enable service for
+      description: ID of project
       x-k8s-cli:
         setter:
           name: project-id

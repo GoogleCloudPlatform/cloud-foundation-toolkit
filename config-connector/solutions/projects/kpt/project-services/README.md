@@ -20,23 +20,30 @@ Project Services
 ## Requirements
 
   A working cluster with Config Connector installed.
-  The cnrm-system service account must have `roles/serviceusage.serviceUsageAdmin` or `roles/owner`.
+  
+  The cnrm-system service account must have
+`roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
 
 
 ## Usage
-  First, set the project-id:
+  If you are enabling services for a project other than the one you have
+installed Config Connector in, set the project-id and apply the namespace:
 
   ```
-  kpt cfg set . project-id VALUE 
+  kpt cfg set . project-id VALUE
+  kubectl apply -f namespace.yaml
+  kubectl config set-context --current --namespace project-annotated
   ```
-
-  Before applying a service, set the service name. For example, to enable [Compute Engine](https://cloud.google.com/compute/docs):
+  
+  Before applying a service, set the service name. For example, to enable
+[Compute Engine](https://cloud.google.com/compute/docs):
 
   ```
   kpt cfg set . service-name compute.googleapis.com
   ```
 
-  Note: the package-default value will enable [Firebase](https://firebase.google.com/docs).
+  Note: the package-default value will enable
+[Firebase](https://firebase.google.com/docs).
 
   Once your information is in the configs, simply apply.
 
@@ -44,7 +51,9 @@ Project Services
   kubectl apply -f .
   ```
 
-  To enable multiple services, copy the yaml for one service into a separate file and manually change the `metadata.name`.
+  To enable multiple services, copy the `service.yaml` into either a separate
+file or the same file seperated by a yaml seperator and manually change its
+`metadata.name`.
 
   To see services that have been enabled, run `kubectl get gcpservices`.
 
