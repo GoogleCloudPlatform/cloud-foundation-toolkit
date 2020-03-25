@@ -27,32 +27,29 @@ Project Services
 
 ## Usage
   If you are enabling services for a project other than the one you have
-installed Config Connector in, set the `project-id` and `namespace`:
-
+installed Config Connector in, set the `project-id`:
   ```
   kpt cfg set . project-id VALUE
-  kpt cfg set . namespace project-annotated
+  ```
+
+  Alternatively, if you are enabling services for the project in your default namespace:
+  ```
+  kpt cfg set . namespace default
   ```
   
-  Before applying a service, set the service name. For example, to enable
+  Optionally, change the service name before applying the service. For example, to enable
 [Compute Engine](https://cloud.google.com/compute/docs):
-
   ```
   kpt cfg set . service-name compute.googleapis.com
   ```
 
-  Note: the package-default value will enable
+  The package-default value will enable
 [Firebase](https://firebase.google.com/docs).
 
-  Once your information is in the configs, simply apply.
-
+  Once your configuration is complete, simply apply:
   ```
   kubectl apply -f .
   ```
-
-  To enable multiple services, copy the `service.yaml` into either a separate
-file or the same file seperated by a yaml seperator and manually change its
-`metadata.name`.
 
 
 # License

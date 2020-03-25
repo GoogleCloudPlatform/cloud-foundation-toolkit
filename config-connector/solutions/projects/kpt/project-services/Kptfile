@@ -25,5 +25,5 @@ openAPI:
       x-k8s-cli:
         setter:
           name: namespace
-          value: default
+          value: project-annotated
           setBy: package-default
