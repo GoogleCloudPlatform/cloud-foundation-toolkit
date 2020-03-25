@@ -32,13 +32,6 @@ openAPI:
           values:
           - marker: PROJECT_ID_SETTER
             ref: '#/definitions/io.k8s.cli.setters.project-id'
-    io.k8s.cli.setters.policy-member-name:
-      x-k8s-cli:
-        setter:
-          name: policy-member-name
-          value: project-iam-member
-          setBy: package-default
-      description: The name of the instantiated KCC IAMPolicyMember resource.
     io.k8s.cli.setters.service-account-name:
       x-k8s-cli:
         setter:

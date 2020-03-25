@@ -12,17 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: iam.cnrm.cloud.google.com/v1beta1
-kind: IAMPolicyMember
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: project-iam-member
-  namespace: member-iam-solution
-spec:
-  # Replace the ${PROJECT_ID?} below with your desired project ID.
-  member: serviceAccount:member-iam-test@${PROJECT_ID?}.iam.gserviceaccount.com # {"$ref":"#/definitions/io.k8s.cli.substitutions.project-id-in-sa-sub"}
-  role: roles/compute.networkAdmin # {"$ref":"#/definitions/io.k8s.cli.substitutions.role-sub"}
-  resourceRef:
+  annotations:
     # Replace the ${PROJECT_ID?} below with your desired project ID.
-    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
-    kind: Project
-    external: projects/${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.substitutions.project-id-sub"}
+    cnrm.cloud.google.com/project-id: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  name: member-iam-solution
