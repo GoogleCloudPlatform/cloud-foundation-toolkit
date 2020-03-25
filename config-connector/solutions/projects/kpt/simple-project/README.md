@@ -24,7 +24,7 @@ Simple Project
   The cnrm-system service account must have `roles/resourcemanager.projectCreator` in your organization and `roles/billing.user` for your billing account.
   
 # USAGE
-  In order to use, replace the `${BILLING_ACCOUNT_ID?}` and `${ORG_ID?}` values with your billing account and organization id. You can do this with kpt setters or by manually editing the YAML files. To use kpt setters:
+  In order to use, replace the `${BILLING_ACCOUNT_ID?}` and `${ORG_ID?}` values with your billing account and organization id. You can do this with kpt setters:
   ```
   kpt cfg set . billing-account VALUE 
   kpt cfg set . org-id VALUE 
