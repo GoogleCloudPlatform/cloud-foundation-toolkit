@@ -42,7 +42,6 @@ Member IAM
   ```
   kpt cfg set . service-account-name VALUE
   kpt cfg set . role VALUE
-
   ```
 
   Once the fields are set in the configs, apply the YAMLs:
