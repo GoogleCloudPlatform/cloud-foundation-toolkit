@@ -26,16 +26,11 @@ Project Services
 
 
 ## Usage
-  If you are enabling services for a project other than the one you have
-installed Config Connector in, set the `project-id`:
+  Set project-id to the ID of the project to enable services for:
   ```
   kpt cfg set . project-id VALUE
   ```
 
-  Alternatively, if you are enabling services for the project in your default namespace:
-  ```
-  kpt cfg set . namespace default
-  ```
   
   Optionally, change the service name before applying the service. For example, to enable
 [Compute Engine](https://cloud.google.com/compute/docs):
@@ -50,6 +45,8 @@ installed Config Connector in, set the `project-id`:
   ```
   kubectl apply -f .
   ```
+
+  Note: services that have been applied will have type `gcpservice` in kubectl
 
 
 # License
