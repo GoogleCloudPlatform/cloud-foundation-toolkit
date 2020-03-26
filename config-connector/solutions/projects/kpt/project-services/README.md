@@ -8,7 +8,7 @@ Project Services
 # SYNOPSIS
 
   Config Connector compatible YAML files to enable services on a project.
-  
+
 ## Consumption
 
   Using kpt:
@@ -20,7 +20,7 @@ Project Services
 ## Requirements
 
   A working cluster with Config Connector installed.
-  
+
   The cnrm-system service account must have
 `roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
 
@@ -31,7 +31,7 @@ Project Services
   kpt cfg set . project-id VALUE
   ```
 
-  
+
   Optionally, change the service name before applying the service. For example, to enable
 [Compute Engine](https://cloud.google.com/compute/docs):
   ```
@@ -46,7 +46,7 @@ Project Services
   kubectl apply -f .
   ```
 
-  Note: services that have been applied will have type `gcpservice` in kubectl
+  Note: services that have been applied will have type `gcpservice`
 
 
 # License
