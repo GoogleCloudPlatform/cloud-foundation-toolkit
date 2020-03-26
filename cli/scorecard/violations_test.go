@@ -87,7 +87,7 @@ func TestGetViolations(t *testing.T) {
 	var testCases = []getViolationsTestcase{
 		{
 			resource:   "//storage.googleapis.com/test-bucket-public",
-			constraint: "iam-gcs-blacklist-public-users",
+			constraint: "GCPStorageBucketWorldReadableConstraintV1.iam-gcs-blacklist-public-users",
 		},
 	}
 	inventory, err := NewInventory("", localCaiDir, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
