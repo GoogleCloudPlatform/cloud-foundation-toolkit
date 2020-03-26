@@ -16,7 +16,7 @@ Service Account
   Using [kpt](https://googlecontainertools.github.io/kpt/):
 
   ```
-  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/member-iam member-iam
+  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/service-account service-account
   ```
 
 # REQUIREMENTS
