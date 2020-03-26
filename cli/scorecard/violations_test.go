@@ -89,6 +89,10 @@ func TestGetViolations(t *testing.T) {
 			resource:   "//storage.googleapis.com/test-bucket-public",
 			constraint: "GCPStorageBucketWorldReadableConstraintV1.iam-gcs-blacklist-public-users",
 		},
+		{
+			resource:   "//container.googleapis.com/projects/gke-networking/zones/us-central1-a/clusters/private-cluster-demo/k8s/namespaces/default/pods/hello-world-deploy-1234567d898-xqwf9",
+			constraint: "K8sDumpReview.dump-review",
+		},
 	}
 	inventory, err := NewInventory("", localCaiDir, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
 	if err != nil {
