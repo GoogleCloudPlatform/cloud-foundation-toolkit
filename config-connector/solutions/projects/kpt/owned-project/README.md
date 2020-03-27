@@ -52,7 +52,7 @@ Owned Project
 
   To change the IAM member owning the project.
   ```
-  kpt cfg set . iam-name VALUE
+  kpt cfg set . iam-member VALUE
   ```
   where VALUE is the fully qualified IAM name of target member, e.g. "user:me@example.com".
 

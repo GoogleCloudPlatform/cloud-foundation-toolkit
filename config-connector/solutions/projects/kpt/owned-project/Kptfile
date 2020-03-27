@@ -35,10 +35,10 @@ openAPI:
           values:
           - marker: PROJECT
             ref: '#/definitions/io.k8s.cli.setters.project-id'
-    io.k8s.cli.setters.iam-name:
+    io.k8s.cli.setters.iam-member:
       description: IAM name of service account to give owner permission
       x-k8s-cli:
         setter:
-          name: iam-name
+          name: iam-member
           value: serviceAccount:owned-project-service@owned-project.iam.gserviceaccount.com
           setBy: package-default
