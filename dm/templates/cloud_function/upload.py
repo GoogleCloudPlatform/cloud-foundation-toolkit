@@ -55,7 +55,7 @@ def upload_source(context_name, project, function, imports, local_path, source_a
 
     # Creates an in-memory archive of the Cloud Function source files.
     sources = extract_source_files(imports, local_path)
-    archive_base64 = base64.b64encode(archive_files(sources))
+    archive_base64 = base64.b64encode(archive_files(sources)).decode("utf-8") 
 
     # The Cloud Function knows it was updated when MD5 changes.
     md5 = hashlib.md5()
