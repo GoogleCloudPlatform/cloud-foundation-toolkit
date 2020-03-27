@@ -17,8 +17,8 @@ metadata:
   name: topic-iam-member
   namespace: project-annotated
 spec:
-  member: ${IAM_NAME?} # {"$ref":"#/definitions/io.k8s.cli.setters.iam-name"}
-  role: roles/pubsub.editor # {"$ref":"#/definitions/io.k8s.cli.substitutions.role-sub"}
+  member: ${IAM_MEMBER?} # {"$ref":"#/definitions/io.k8s.cli.setters.iam-member"}
+  role: roles/pubsub.editor # {"$ref":"#/definitions/io.k8s.cli.setters.role"}
   resourceRef:
     apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
     kind: PubSubTopic

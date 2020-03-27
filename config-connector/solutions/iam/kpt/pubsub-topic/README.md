@@ -30,17 +30,17 @@ PubSub API enabled.
   kpt cfg set . project-id your-project-id
   ```
 
-  Replace `${IAM_NAME?}` with the GCP identity to grant access to:
+  Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:
   ```
-  kpt cfg set . iam-name user:name@example.com
+  kpt cfg set . iam-member user:name@example.com
   ```
 
   Optionally set the name of the PubSub topic (defaults to `allowed-topic`) and
-the role to grant (defaults to `editor`, full list of roles
+the role to grant (defaults to `roles/pubsub.editor`, full list of roles
 [here](https://cloud.google.com/iam/docs/understanding-roles#pub-sub-roles))
   ```
   kpt cfg set . topic-name your-topic
-  kpt cfg set . role viewer
+  kpt cfg set . role roles/pubsub.viewer
   ```
 
   Once the values are satisfactory, simply apply the YAMLs:
