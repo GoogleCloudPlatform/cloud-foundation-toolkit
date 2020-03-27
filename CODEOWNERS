@@ -6,3 +6,6 @@
 
 # CLI owners
 /cli/       @morgante
+
+# Config Connector team
+/config-connector/ @morgante @ocsig @AlexBulankou @maqiuyujoyce
