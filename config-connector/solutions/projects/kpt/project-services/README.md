@@ -28,7 +28,7 @@ Project Services
 ## Usage
   Set project-id to the ID of the project to enable services for:
   ```
-  kpt cfg set . project-id VALUE
+  kpt cfg set . project-id your-project-id
   ```
 
 
@@ -46,7 +46,7 @@ Project Services
   kubectl apply -f .
   ```
 
-  Note: services that have been applied will have type `gcpservice`
+  Note: services that have been applied will have type `gcpservice` and be in the namespace of your project-id.
 
 
 # License
