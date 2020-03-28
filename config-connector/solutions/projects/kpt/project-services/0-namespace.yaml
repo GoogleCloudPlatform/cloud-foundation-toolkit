@@ -17,4 +17,4 @@ metadata:
   annotations:
     # Replace the ${PROJECT_ID?} below with your desired project ID.
     cnrm.cloud.google.com/project-id: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
-  name: project-annotated
+  name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
