@@ -7,9 +7,7 @@ Service Account
 
 # SYNOPSIS
 
-  Config Connector compatible YAML files to create a service account in your desired project, and grant it a specific role (default to iam.serviceAccountKeyAdmin) on the service account resource level.
-
-  You can also create any number of service accounts and grant them any number of roles by adding new or updating the config YAMLs and then applying them.
+  Config Connector compatible YAML files to create a service account in your desired project, and grant a specifi member a role (default to iam.serviceAccountKeyAdmin) to access the service account that just created.
 
 # CONSUMPTION
 
@@ -21,81 +19,33 @@ Service Account
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using a service account
-  (`cnrm-system@[PROJECT_ID].iam.gserviceaccount.com`) with the following
-  roles in your desired project (it doesn't need to be the project where you
-  installed Config Connector):
-
-  - roles/resourcemanager.projectIamAdmin
-  - roles/iam.serviceAccountAdmin
+  A working Config Connector cluster using the cnrm-system service account.
 
 # USAGE
 
-  Replace `${PROJECT_ID?}` with your desired project ID value from
-  within this directory:
-
-  ```
-  kpt cfg set . project-id VALUE
-  ```
-
-  Once the project ID is set in the configs, simply apply the YAMLs:
-
-  ```
-  kubectl apply -f .
-  ```
-
-## OPTIONAL WORKFLOW
-
-  Optionally, you may want to create a different service account, grant a
-  different role to the service account, or grant multiple roles to the
-  service account, etc. Here are the instructions.
-
-**Create a Different Service Account**
-
-  Change the service account name and apply the YAMLs:
-
+  Replace the `${SERVICE_ACCOUNT?}` with a service account name you want to create:
   ```
   kpt cfg set . service-account-name VALUE
-  kubectl apply -f .
   ```
 
-**Grant a Different Role**
+  Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:
+  ```
+  kpt cfg set . iam-member user:name@example.com
+  ```
 
-  Change the role([predefined GCP IAM roles](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles)) and apply the YAMLs. Please make sure to delete the iam policy created previously:
+  _Optionally_, you can also change the role granted to the GCP identity in the previous step.
+  (you can find all of the service account related IAM roles
+  [here](https://cloud.google.com/iam/docs/understanding-roles#service-accounts-roles)):
 
   ```
-  kubectl delete -f .
   kpt cfg set . role VALUE
+  ```
+
+  Apply the YAMLs:
+
+  ```
   kubectl apply -f .
   ```
-
-**Grant Multiple Roles**
-
-  Change the KCC resource name and the role each time before you grant a new
-  role to the service account, also please make sure you delete the iam policy created previously:
-
-  ```
-  kubectl delete -f .
-  kpt cfg set . iampolicy-name VALUE_1
-  kpt cfg set . role VALUE_2
-  kubectl apply -f iampolicy.yaml
-  ```
-**Alternative Usage**
-
-You can modify the bindings object in the iampolicy.yaml to grant multiple roles to multiple identities at the same time. Here is an example:
-
-```
-  bindings:
-    - role: roles/iam.serviceAccountKeyAdmin
-      members:
-        - serviceAccount:service-account-example-1@${PROJECT_ID}.iam.gserviceaccount.com
-    - role: roles/iam.serviceAccountTokenCreator
-      members:
-        - serviceAccount:service-account-example-2@${PROJECT_ID}.iam.gserviceaccount.com
-        - serviceAccount:service-account-example-1@${PROJECT_ID}.iam.gserviceaccount.com
-```
-In the above example, _service-account-example-1_ will have both of the iam.serviceAccountKeyAdmin role and roles/iam.serviceAccountTokenCreator, while _service-account-example-2_ will only have iam.serviceAccountTokenCreator role.
-
 
 # LICENSE
 

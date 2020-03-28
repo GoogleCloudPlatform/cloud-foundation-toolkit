@@ -13,6 +13,13 @@
 # limitations under the License.
 
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
-kind: IAMServiceAccount
+kind: IAMPolicyMember
 metadata:
-  name: ${SERVICE_ACCOUNT?} # {"$ref":"#/definitions/io.k8s.cli.setters.service-account-name"}
+  name: iampolicymember-service-account
+spec:
+  member: ${IAM_MEMBER?} # {"$ref":"#/definitions/io.k8s.cli.setters.iam-member"}
+  role: roles/iam.serviceAccountKeyAdmin # {"$ref":"#/definitions/io.k8s.cli.setters.role"}
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: ${SERVICE_ACCOUNT?} # {"$ref":"#/definitions/io.k8s.cli.setters.service-account-name"}

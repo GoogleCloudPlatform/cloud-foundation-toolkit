@@ -6,55 +6,25 @@ packageMetadata:
   shortDescription: sample description
 openAPI:
   definitions:
-    io.k8s.cli.setters.project-id:
-      x-k8s-cli:
-        setter:
-          name: project-id
-          value: ${PROJECT_ID?}
-          setBy: PLACEHOLDER
-      description: The target project where you want to create service accounts and
-        grant permissions.
-    io.k8s.cli.substitutions.project-id-in-sa-sub:
-      x-k8s-cli:
-        substitution:
-          name: project-id-in-sa-sub
-          pattern: serviceAccount:SERVICE_ACCOUNT_NAME_SETTER@PROJECT_ID_SETTER.iam.gserviceaccount.com
-          values:
-          - marker: PROJECT_ID_SETTER
-            ref: '#/definitions/io.k8s.cli.setters.project-id'
-          - marker: SERVICE_ACCOUNT_NAME_SETTER
-            ref: '#/definitions/io.k8s.cli.setters.service-account-name'
-    io.k8s.cli.substitutions.project-id-sub:
-      x-k8s-cli:
-        substitution:
-          name: project-id-sub
-          pattern: projects/PROJECT_ID_SETTER
-          values:
-          - marker: PROJECT_ID_SETTER
-            ref: '#/definitions/io.k8s.cli.setters.project-id'
-    io.k8s.cli.setters.iampolicy-name:
-      x-k8s-cli:
-        setter:
-          name: iampolicy-name
-          value: iampolicy-service-account
-      description: The name of the instantiated KCC IAMPolicy resource.
     io.k8s.cli.setters.service-account-name:
       x-k8s-cli:
         setter:
           name: service-account-name
-          value: service-account-example
+          value: ${SERVICE_ACCOUNT?}
+          setBy: PLACEHOLDER
       description: The name of the new IAM service account.
+    io.k8s.cli.setters.iam-member:
+      x-k8s-cli:
+        setter:
+          name: iam-member
+          value: ${IAM_MEMBER?}
+          setBy: PLACEHOLDER
+      description: GCP identity to grant privileges
     io.k8s.cli.setters.role:
       x-k8s-cli:
         setter:
           name: role
-          value: iam.serviceAccountKeyAdmin
-      description: The role you want to grant the service account with.
-    io.k8s.cli.substitutions.role-sub:
-      x-k8s-cli:
-        substitution:
-          name: role-sub
-          pattern: roles/ROLE_SETTER
-          values:
-          - marker: ROLE_SETTER
-            ref: '#/definitions/io.k8s.cli.setters.role'
+          value: roles/iam.serviceAccountTokenCreator
+          setBy: package-default
+      description: the IAM role to grant to the member
+
