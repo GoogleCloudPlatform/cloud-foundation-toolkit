@@ -7,11 +7,11 @@ Service Account
 
 # SYNOPSIS
 
-  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to iam.serviceAccountKeyAdmin) for accessing the service account that just created.
+  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to roles/iam.serviceAccountKeyAdmin) for accessing the service account that just created.
 
 # CONSUMPTION
 
-  Using [kpt](https://googlecontainertools.github.io/kpt/):
+  Fetch the [kpt](https://googlecontainertools.github.io/kpt/) package of the solution:
 
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/service-account service-account
@@ -22,23 +22,22 @@ Service Account
   A working Config Connector cluster using the cnrm-system service account.
 
 # USAGE
-
-  Replace the `${SERVICE_ACCOUNT?}` with a service account name you want to create:
-  ```
-  kpt cfg set . service-account-name VALUE
-  ```
-
   Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:
   ```
   kpt cfg set . iam-member user:name@example.com
   ```
-
-  _Optionally_, you can also change the role granted to the GCP identity in the previous step.
+  
+  _Optionally_, you can change the following fields before you apply the YAMLs: 
+  - the name of the service account:
+  ```
+  kpt cfg set . service-account-name VALUE
+  ```
+  - the role granted to the GCP identity.
   (you can find all of the service account related IAM roles
   [here](https://cloud.google.com/iam/docs/understanding-roles#service-accounts-roles)):
 
   ```
-  kpt cfg set . role VALUE
+  kpt cfg set . role roles/iam.serviceAccountTokenCreator
   ```
 
   Apply the YAMLs:

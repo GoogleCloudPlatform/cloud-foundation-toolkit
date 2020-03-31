@@ -22,4 +22,4 @@ spec:
   resourceRef:
     apiVersion: iam.cnrm.cloud.google.com/v1beta1
     kind: IAMServiceAccount
-    name: ${SERVICE_ACCOUNT?} # {"$ref":"#/definitions/io.k8s.cli.setters.service-account-name"}
+    name: service-account-solution # {"$ref":"#/definitions/io.k8s.cli.setters.service-account-name"}
