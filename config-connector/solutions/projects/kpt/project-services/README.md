@@ -7,17 +7,17 @@ Project Services
 
 # SYNOPSIS
   Config Connector compatible YAML files to enable services on a project.
-## Consumption
+# CONSUMPTION
   Using kpt:
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/projects/kpt/project-services .
   ```
-## Requirements
+# REQUIREMENTS
   A working cluster with Config Connector installed.
 
   The cnrm-system service account must have
 `roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
-## Usage
+# USAGE
   Set project-id to the ID of the project to enable services for:
   ```
   kpt cfg set . project-id your-project-id
@@ -35,5 +35,5 @@ Project Services
   kubectl apply -f .
   ```
   Note: services that have been applied will have type `gcpservice` and be in a namespace with the name of your project-id.
-# License
+# LICENSE
   Apache 2.0 - See [LICENSE](/LICENSE) for more information.
