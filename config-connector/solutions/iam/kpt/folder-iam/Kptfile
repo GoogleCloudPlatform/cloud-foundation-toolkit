@@ -1,9 +1,9 @@
 apiVersion: kpt.dev/v1alpha1
 kind: Kptfile
 metadata:
-  name: .
+  name: folder-iam
 packageMetadata:
-  shortDescription: the package is used for KCC folder-iam solution
+  shortDescription: Configure permissions for a GCP folder
 openAPI:
   definitions:
     io.k8s.cli.setters.folder-id:

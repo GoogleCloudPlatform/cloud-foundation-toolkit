@@ -19,7 +19,9 @@ Folder-iam
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using a cnrm-system service account.
+  A working Config Connector cluster using a cnrm-system service account with _at least_ the following role in
+  the folder:
+  - roles/resourcemanager.folderIamAdmin
 
 # USAGE
 
