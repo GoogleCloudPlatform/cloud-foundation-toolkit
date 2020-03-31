@@ -20,13 +20,6 @@ openAPI:
           name: topic-name
           value: allowed-topic
           setBy: package-default
-    io.k8s.cli.setters.project-id:
-      description: ID of project
-      x-k8s-cli:
-        setter:
-          name: project-id
-          value: ${PROJECT_ID?}
-          setBy: PLACEHOLDER
     io.k8s.cli.setters.role:
       description: IAM role to grant
       x-k8s-cli:

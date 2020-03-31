@@ -22,10 +22,6 @@ Pub/Sub Topic
 
 # USAGE
 
-  Replace `${PROJECT_ID?}` with your desired project ID:
-  ```
-  kpt cfg set . project-id your-project-id
-  ```
   Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:
   ```
   kpt cfg set . iam-member user:name@example.com

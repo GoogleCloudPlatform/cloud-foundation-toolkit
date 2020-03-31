@@ -15,4 +15,3 @@ apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
 kind: PubSubTopic
 metadata:
   name: allowed-topic # {"$ref":"#/definitions/io.k8s.cli.setters.topic-name"}
-  namespace: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
