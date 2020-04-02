@@ -11,8 +11,8 @@ openAPI:
       x-k8s-cli:
         setter:
           name: project-id
-          value: owned-project
-          setBy: package-default
+          value: ${PROJECT_ID?}
+          setBy: PLACEHOLDER
     io.k8s.cli.setters.billing-account:
       description: ID of project billing account
       x-k8s-cli:
@@ -20,25 +20,17 @@ openAPI:
           name: billing-account
           value: ${BILLING_ACCOUNT_ID?}
           setBy: PLACEHOLDER
-    io.k8s.cli.setters.folder-number:
+    io.k8s.cli.setters.folder-id:
       description: numeric GCP ID of folder
       x-k8s-cli:
         setter:
-          name: folder-number
-          value: "${FOLDER_NUMBER?}"
+          name: folder-id
+          value: ${FOLDER_ID?}
           setBy: PLACEHOLDER
-    io.k8s.cli.substitutions.project-selflink:
-      x-k8s-cli:
-        substitution:
-          name: project-selflink
-          pattern: projects/PROJECT
-          values:
-          - marker: PROJECT
-            ref: '#/definitions/io.k8s.cli.setters.project-id'
     io.k8s.cli.setters.iam-member:
       description: IAM name of service account to give owner permission
       x-k8s-cli:
         setter:
           name: iam-member
-          value: serviceAccount:owned-project-service@owned-project.iam.gserviceaccount.com
-          setBy: package-default
+          value: ${IAM_MEMBER?}
+          setBy: PLACEHOLDER

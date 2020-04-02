@@ -17,10 +17,10 @@ kind: Project
 metadata:
   annotations:
     # Set this field after finding the folder number.
-    cnrm.cloud.google.com/folder-id: "${FOLDER_NUMBER?}" # {"$ref":"#/definitions/io.k8s.cli.setters.folder-number"}
-  name: owned-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+    cnrm.cloud.google.com/folder-id: "${FOLDER_ID?}" # {"$ref":"#/definitions/io.k8s.cli.setters.folder-id"}
+  name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
 spec:
-  name: owned-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
   billingAccountRef:
     # Replace "${BILLING_ACCOUNT_ID?}" with the numeric ID for your billing account
     external: "${BILLING_ACCOUNT_ID?}" # {"$ref":"#/definitions/io.k8s.cli.setters.billing-account"}

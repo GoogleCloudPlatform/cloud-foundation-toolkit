@@ -17,9 +17,9 @@ kind: IAMPolicyMember
 metadata:
   name: iampolicymember-sample-projectlevel
 spec:
-  member: serviceAccount:owned-project-service@owned-project.iam.gserviceaccount.com # {"$ref":"#/definitions/io.k8s.cli.setters.iam-member"}
+  member: "${IAM_MEMBER?}" # {"$ref":"#/definitions/io.k8s.cli.setters.iam-member"}
   role: roles/owner
   resourceRef:
-    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
     kind: Project
-    external: projects/owned-project # {"$ref":"#/definitions/io.k8s.cli.substitutions.project-selflink"}
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1

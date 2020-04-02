@@ -13,15 +13,15 @@ Owned Project
 
 # CONSUMPTION
 
-  Using [kpt](https://googlecontainertools.github.io/kpt/):
+  Fetch the package using [kpt](https://googlecontainertools.github.io/kpt/).
 
-  Run `kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/projects/kpt/project-owner project-owner`.
+  `kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/projects/kpt/owned-project owned-project`
 
 # REQUIREMENTS
 
   A working Config Connector cluster using a
   service account with the following roles in
-  the organization:
+  the folder:
   - roles/resourcemanager.folderViewer
   - roles/resourcemanager.projectCreator
   - roles/iam.securityAdmin
@@ -29,8 +29,7 @@ Owned Project
 # USAGE
 
   Replace the
-  `${BILLING_ACCOUNT_ID?}` value:
-
+  `${BILLING_ACCOUNT_ID?}` value.
   From within this directory, run
   ```
   kpt cfg set . billing-account VALUE
@@ -38,23 +37,13 @@ Owned Project
   replacing `VALUE` with your billing account
   ID.
 
-  Replace the `${FOLDER_ID}` the same way, using:
+  Replace the `${FOLDER_ID?}`, `${IAM_MEMBER?}`, and `${PROJECT_ID?}` values the same way, using:
   ```
   kpt cfg set . folder-id VALUE
-  ```
-  where VALUE is the numeric folder ID of the folder to create the new project under.
-
-  You will need to reset the project ID,
-  since a project with the given ID already exists.
-  ```
+  kpt cfg set . iam-member VALUE
   kpt cfg set . project-id VALUE
   ```
-
-  To change the IAM member owning the project.
-  ```
-  kpt cfg set . iam-member VALUE
-  ```
-  where VALUE is the fully qualified IAM name of target member, e.g. "user:me@example.com".
+  where the folder-id `VALUE` is the numeric folder ID of the folder to create the new project under, the iam-member `VALUE` is the fully qualified IAM name of target member, e.g. "user:me@example.com", and the project-id `VALUE` is the name you want your project to have.
 
   Now you can fully apply this solution.
   ```
