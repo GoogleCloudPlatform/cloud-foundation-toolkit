@@ -7,7 +7,7 @@ env:
   GCLOUD_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
 
 jobs:
-  createPullRequest:
+  update-tools:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -37,24 +37,31 @@ jobs:
               sed -i "s/CLOUD_SDK_VERSION := ${CURRENT_GCLOUD}/CLOUD_SDK_VERSION := ${LATEST_GCLOUD}/g" infra/build/Makefile
               echo ::set-env name=LATEST_GCLOUD::$LATEST_GCLOUD
           fi
+      - name: Bump image patch version
+        if: env.LATEST_TERRAFORM != 'is latest' || env.LATEST_GCLOUD != 'is latest'
+        run: |
+          CURRENT_IMG_VERSION=$(cat infra/build/Makefile  | grep 'DOCKER_TAG_VERSION_DEVELOPER_TOOLS :=' | awk -F" " '{print $3}')
+          NEW_IMG_VERSION=$(echo $CURRENT_IMG_VERSION | awk -F. '{$NF+=1; print $0}' OFS=".")
+          sed -i "s/DOCKER_TAG_VERSION_DEVELOPER_TOOLS := ${CURRENT_IMG_VERSION}/DOCKER_TAG_VERSION_DEVELOPER_TOOLS := ${NEW_IMG_VERSION}/g" infra/build/Makefile
+          echo ::set-env name=NEW_IMG_VERSION::$NEW_IMG_VERSION
       - name: Commit Makefile
         if: env.LATEST_TERRAFORM != 'is latest' || env.LATEST_GCLOUD != 'is latest'
         run: |
           git config user.name 'Bharath Baiju'
           git config user.email 'bharathkkb@users.noreply.github.com'
           git add infra/build/Makefile
-          git diff-index --quiet HEAD || git commit -m "Update tools - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}"
+          git diff-index --quiet HEAD || git commit -m "Update tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}"
       - name: Create Pull Request
         if: env.LATEST_TERRAFORM != 'is latest' || env.LATEST_GCLOUD != 'is latest'
         uses: peter-evans/create-pull-request@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Update tools - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
+          commit-message: Update tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
           author-email: bharathkkb@users.noreply.github.com
           author-name: Bharath Baiju
-          title: "Update Tools Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}"
+          title: "Update Tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}"
           body: |
-            Updated tools Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
+            Updated tools to ${{env.NEW_IMG_VERSION}} Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
           labels: automated pr
           assignees: bharathkkb,morgante
           reviewers: bharathkkb,morgante
