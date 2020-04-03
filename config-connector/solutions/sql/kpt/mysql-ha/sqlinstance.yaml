@@ -1,0 +1,124 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+spec:
+  databaseVersion: MYSQL_5_7
+  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  settings:
+    tier: db-f1-micro
+    backupConfiguration:
+      binaryLogEnabled: true
+      enabled: true
+    ipConfiguration:
+      ipv4Enabled: true
+      requireSsl: true
+      authorizedNetworks:
+      - name: mysql-ha-solution-cidr
+        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+    locationPreference:
+      zone: us-central1-b # {"$ref":"#/definitions/io.k8s.cli.setters.zone"}
+---
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: mysql-ha-solution-backup-1 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-1-name"}
+spec:
+  databaseVersion: MYSQL_5_7
+  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  masterInstanceRef:
+    name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+  replicaConfiguration:
+    connectRetryInterval: 30
+  settings:
+    tier: db-f1-micro
+    ipConfiguration:
+      ipv4Enabled: true
+      requireSsl: false
+      authorizedNetworks:
+      - name: mysql-ha-solution-cidr
+        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+    locationPreference:
+      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
+---
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: mysql-ha-solution-backup-2 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-2-name"}
+spec:
+  databaseVersion: MYSQL_5_7
+  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  masterInstanceRef:
+    name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+  replicaConfiguration:
+    connectRetryInterval: 30
+  settings:
+    tier: db-f1-micro
+    ipConfiguration:
+      ipv4Enabled: true
+      requireSsl: false
+      authorizedNetworks:
+        name: mysql-ha-solution-cidr
+        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+      authorizedNetworks:
+      - name: mysql-ha-solution-cidr
+        value: 192.10.10.10/32
+    locationPreference:
+      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
+---
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: mysql-ha-solution-backup-3 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-3-name"}
+spec:
+  databaseVersion: MYSQL_5_7
+  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  masterInstanceRef:
+    name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+  replicaConfiguration:
+    connectRetryInterval: 30
+  settings:
+    tier: db-f1-micro
+    ipConfiguration:
+      ipv4Enabled: true
+      requireSsl: false
+      authorizedNetworks:
+      - name: mysql-ha-solution-cidr
+        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+    locationPreference:
+      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
+---
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: mysql-ha-solution-backup-4 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-4-name"}
+spec:
+  databaseVersion: MYSQL_5_7
+  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  masterInstanceRef:
+    name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+  replicaConfiguration:
+    connectRetryInterval: 30
+  settings:
+    tier: db-f1-micro
+    ipConfiguration:
+      ipv4Enabled: true
+      requireSsl: false
+      authorizedNetworks:
+      - name: mysql-ha-solution-cidr
+        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+    locationPreference:
+      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
