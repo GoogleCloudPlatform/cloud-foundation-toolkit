@@ -14,4 +14,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  annotations:
+    cnrm.cloud.google.com/project-id: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  name:
+    project-annotated
