@@ -14,5 +14,5 @@
 apiVersion: serviceusage.cnrm.cloud.google.com/v1beta1
 kind: Service
 metadata:
-  namespace: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  namespace: project-annotated 
   name: firebasehosting.googleapis.com # {"$ref":"#/definitions/io.k8s.cli.setters.service-name"}
