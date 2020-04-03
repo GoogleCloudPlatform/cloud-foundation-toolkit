@@ -5,7 +5,7 @@ Pub/Sub Topic
 # SYNOPSIS
   Config Connector compatible YAML files to grant a role to a particular IAM member for a PubSub topic.
 # CONSUMPTION
-  Download the package using [kpt](https://googlecontainertools.github.io/kpt/):
+  Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/pubsub-topic .
   ```
@@ -20,7 +20,7 @@ Pub/Sub Topic
 | role       | roles/pubsub.editor | package-default | IAM role to grant              | 1     |
 | topic-name | allowed-topic       | package-default | name of PubSub topic           | 2     |
 
-  Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:
+  Replace `${IAM_MEMBER?}` with the GCP identity to grant access to.
   ```
   kpt cfg set . iam-member user:name@example.com
   ```
@@ -31,7 +31,7 @@ the role to grant (defaults to `roles/pubsub.editor`, full list of roles
   kpt cfg set . topic-name your-topic
   kpt cfg set . role roles/pubsub.viewer
   ```
-  Once the values are satisfactory, simply apply the YAMLs:
+  Once the values are satisfactory, apply the YAMLs.
   ```
   kubectl apply -f .
   ```
