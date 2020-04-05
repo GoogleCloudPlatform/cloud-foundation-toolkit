@@ -1,8 +1,6 @@
 name: Build and push new dev tools image
 on:
   push:
-    branches:
-      - master
     paths:
       - "infra/build/**"
 env:
