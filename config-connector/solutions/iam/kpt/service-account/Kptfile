@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: .
 packageMetadata:
-  shortDescription: sample description
+  shortDescription: Grant an IAM role to a member for accessing a given service account
 openAPI:
   definitions:
     io.k8s.cli.setters.service-account-name:
