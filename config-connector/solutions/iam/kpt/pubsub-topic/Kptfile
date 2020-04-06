@@ -7,7 +7,7 @@ packageMetadata:
 openAPI:
   definitions:
     io.k8s.cli.setters.iam-member:
-      description: GCP identity to grant privileges
+      description: identity to grant privileges
       x-k8s-cli:
         setter:
           name: iam-member
