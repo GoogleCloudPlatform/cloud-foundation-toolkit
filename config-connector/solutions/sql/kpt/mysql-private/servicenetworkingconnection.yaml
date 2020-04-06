@@ -1,0 +1,10 @@
+apiVersion: servicenetworking.cnrm.cloud.google.com/v1beta1
+kind: ServiceNetworkingConnection
+metadata:
+  name: mysql-private-connection
+spec:
+  networkRef:
+    name: mysql-private-network
+  reservedPeeringRanges:
+  - name: mysql-private-address
+  service: servicenetworking.googleapis.com

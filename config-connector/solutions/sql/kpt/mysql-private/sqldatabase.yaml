@@ -1,0 +1,9 @@
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLDatabase
+metadata:
+  name: mysql-private-database # {"$ref":"#/definitions/io.k8s.cli.setters.database-name"}
+spec:
+  charset: utf8mb4
+  collation: utf8mb4_bin
+  instanceRef:
+    name: mysql-private-instance # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}

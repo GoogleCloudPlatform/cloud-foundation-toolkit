@@ -1,0 +1,13 @@
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: mysql-private-instance # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+spec:
+  databaseVersion: MYSQL_5_7
+  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  settings:
+    tier: db-f1-micro
+    ipConfiguration:
+      ipv4Enabled: false
+      privateNetworkRef:
+        name: mysql-private-network
