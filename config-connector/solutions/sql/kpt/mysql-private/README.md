@@ -27,6 +27,18 @@ MySQL Private
   ```
   Setting placeholder values is required, changing package-defaults is optional.
 
+  For this package to work properly, the following resources must be in a ready state before the SQLInstance YAML is applied:
+  - `ComputeNetwork`
+  - `ComputeAddress`
+  - `ServiceNetworkingConnection`
+  
+  To ensure this is the case, use the following:
+  ```
+  kubectl apply -f network
+  kubectl wait --for=condition=Ready -f network 
+  kubectl apply -f sql
+  ```
+
 # LICENSE
   Apache 2.0 - See [LICENSE](/LICENSE) for more information.
 
