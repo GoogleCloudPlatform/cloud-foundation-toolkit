@@ -35,7 +35,7 @@ Member IAM
   kpt cfg set . project-id VALUE
   ```
 
-  _Optionally_, you can also change the service acocunt name and role
+  _Optionally_, you can also change the service account name and role
   (you can find all the predefined GCP IAM roles
   [here](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles)):
 

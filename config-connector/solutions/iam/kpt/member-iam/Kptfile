@@ -43,14 +43,6 @@ openAPI:
       x-k8s-cli:
         setter:
           name: role
-          value: compute.networkAdmin
+          value: roles/compute.networkAdmin
           setBy: package-default
       description: The role you want to grant the service account with.
-    io.k8s.cli.substitutions.role-sub:
-      x-k8s-cli:
-        substitution:
-          name: role-sub
-          pattern: roles/ROLE_SETTER
-          values:
-          - marker: ROLE_SETTER
-            ref: '#/definitions/io.k8s.cli.setters.role'

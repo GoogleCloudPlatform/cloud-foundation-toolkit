@@ -20,7 +20,7 @@ metadata:
 spec:
   # Replace the ${PROJECT_ID?} below with your desired project ID.
   member: serviceAccount:member-iam-test@${PROJECT_ID?}.iam.gserviceaccount.com # {"$ref":"#/definitions/io.k8s.cli.substitutions.project-id-in-sa-sub"}
-  role: roles/compute.networkAdmin # {"$ref":"#/definitions/io.k8s.cli.substitutions.role-sub"}
+  role: roles/compute.networkAdmin # {"$ref":"#/definitions/io.k8s.cli.setters.role"}
   resourceRef:
     # Replace the ${PROJECT_ID?} below with your desired project ID.
     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
