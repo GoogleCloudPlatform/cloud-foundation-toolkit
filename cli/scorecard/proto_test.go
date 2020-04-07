@@ -68,4 +68,3 @@ func TestDataTypeTransformation(t *testing.T) {
 		}
 	})
 }
-
