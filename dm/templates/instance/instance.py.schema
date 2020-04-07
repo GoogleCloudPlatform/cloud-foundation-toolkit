@@ -26,9 +26,6 @@ info:
     - gcp-types/compute-v1:instances =>
         https://cloud.google.com/compute/docs/reference/rest/v1/instances
 
-imports:
-  - path: instance.py
-
 required:
   - zone
 
@@ -401,10 +398,6 @@ properties:
                 projects/project/zones/zone/diskTypes/diskType
                 zones/zone/diskTypes/diskType
                 Note that for InstanceTemplate, this is the name of the disk type, not URL.
-              enum:
-                - pd-standard
-                - pd-ssd
-                - local-ssd
             sourceImageEncryptionKey:
               type: object
               additionalProperties: false

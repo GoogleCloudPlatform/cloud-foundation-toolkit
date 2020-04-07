@@ -15,19 +15,15 @@
 info:
   title: Cloud SQL
   author: Sourced Group Inc.
-  version: 1.0.1
+  version: 1.1.1
   description: |
     Supports creation of a Cloud SQL instance with database and user resources.
     For more information, see https://cloud.google.com/sql/docs/.
-
-imports:
-  - path: cloud_sql.py
 
 additionalProperties: false
 
 required:
   - region
-  - settings
 
 properties:
   name:

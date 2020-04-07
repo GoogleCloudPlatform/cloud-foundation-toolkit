@@ -9,13 +9,17 @@ import (
 )
 
 var flags struct {
-	policyPath       string
-	targetProjectID  string
-	controlProjectID string
-	bucketName       string
-	dirPath          string
-	outputPath       string
-	outputFormat     string
+	policyPath      string
+	targetProjectID string
+	targetFolderID  string
+	targetOrgID     string
+	bucketName      string
+	dirPath         string
+	stdin           bool
+	refresh         bool
+	outputPath      string
+	outputFormat    string
+	metadataFields  []string
 }
 
 func init() {
@@ -26,15 +30,19 @@ func init() {
 
 	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain scorecard outputs. Output to console if not specified")
 
-	Cmd.Flags().StringVar(&flags.outputFormat, "output-format", "", "Format of scorecard outputs, can be txt, json or csv, default is txt")
+	Cmd.Flags().StringVar(&flags.outputFormat, "output-format", "txt", "Format of scorecard outputs, can be txt, json or csv")
 	viper.SetDefault("output-format", "txt")
 	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
 
-	//Cmd.Flags().StringVar(&flags.targetProjectID, "project", "", "Project to analyze (conflicts with --organization)")
-	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
-	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket)")
-	Cmd.Flags().StringVar(&flags.controlProjectID, "control-project", "", "Control project to use for API calls")
-	viper.BindPFlag("google_project", Cmd.Flags().Lookup("control-project"))
+	Cmd.Flags().StringSliceVar(&flags.metadataFields, "output-metadata-fields", []string{}, "List of comma delimited violation metadata fields to include in output. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when --output-format is json.")
+
+	Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)")
+	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket or --stdin)")
+	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Passed Cloud Asset Inventory json string as standard input (conflicts with --dir-path or --bucket)")
+	Cmd.Flags().BoolVar(&flags.refresh, "refresh", false, "Refresh Cloud Asset Inventory export files in GCS bucket. If set, Application Default Credentials must be a service account (Works with --bucket)")
+	Cmd.Flags().StringVar(&flags.targetProjectID, "target-project", "", "Project ID to analyze (Works with --bucket and --refresh; conflicts with --target-folder or --target--organization)")
+	Cmd.Flags().StringVar(&flags.targetFolderID, "target-folder", "", "Folder ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--organization)")
+	Cmd.Flags().StringVar(&flags.targetOrgID, "target-organization", "", "Organization ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--folder)")
 
 }
 
@@ -44,22 +52,30 @@ var Cmd = &cobra.Command{
 	Short: "Print a scorecard of your GCP environment",
 	Long: `Print a scorecard of your GCP environment, for resources and IAM policies in Cloud Asset Inventory (CAI) exports, and constraints and constraint templates from Config Validator policy library.
 
-	Example:
+	Read from a bucket:
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --bucket <name-of-bucket-containing-cai-export>
-	Or:
+
+	Read from a local directory:
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --dir-path <path-to-directory-containing-cai-export>
 
-	As of now, CAI export file names need to be resource_inventory.json and/or iam_inventory.json
+	Read from standard input:
+		  cft scorecard --policy-path <path-to>/policy-library \
+			  --stdin
+
+	As of now, CAI export file names need to be resource_inventory.json and iam_inventory.json
 
 	`,
 	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if (flags.bucketName == "" && flags.dirPath == "") ||
-			(flags.bucketName != "" && flags.dirPath != "") {
-			return fmt.Errorf("Either bucket or dir-path should be set")
+		if (flags.bucketName == "" && flags.dirPath == "" && !flags.stdin) ||
+			(flags.bucketName != "" && flags.stdin) ||
+			(flags.bucketName != "" && flags.dirPath != "") ||
+			(flags.dirPath != "" && flags.stdin) {
+			return fmt.Errorf("One and only one of bucket, dir-path, or stdin should be set")
 		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -67,15 +83,20 @@ var Cmd = &cobra.Command{
 		var err error
 		ctx := context.Background()
 
-		controlProjectID := viper.GetString("google_project")
-		if controlProjectID == "" {
-			controlProjectID = flags.targetProjectID
-			Log.Info("No control project specified, using target project", "project", controlProjectID)
+		targetProjectID := flags.targetProjectID
+		if targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == "" {
+			targetProjectID = viper.GetString("google_project")
 		}
-
-		inventory, err := NewInventory(controlProjectID,
-			flags.bucketName, flags.dirPath,
-			TargetProject(flags.targetProjectID))
+		if flags.bucketName != "" && flags.refresh {
+			if (targetProjectID == "" && flags.targetFolderID == "" && flags.targetOrgID == "") ||
+				(targetProjectID != "" && flags.targetFolderID != "") ||
+				(targetProjectID != "" && flags.targetOrgID != "") ||
+				(flags.targetFolderID != "" && flags.targetOrgID != "") {
+				return fmt.Errorf("When using --refresh and --bucket, one and only one of target-project, target-folder, or target-org should be set")
+			}
+		}
+		inventory, err := NewInventory(flags.bucketName, flags.dirPath, flags.stdin, flags.refresh,
+			TargetProject(targetProjectID), TargetFolder(flags.targetFolderID), TargetOrg(flags.targetOrgID))
 		if err != nil {
 			return err
 		}
@@ -84,7 +105,7 @@ var Cmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = inventory.Score(config, flags.outputPath, viper.GetString("output-format"))
+		err = inventory.Score(config, flags.outputPath, viper.GetString("output-format"), flags.metadataFields)
 		if err != nil {
 			return err
 		}

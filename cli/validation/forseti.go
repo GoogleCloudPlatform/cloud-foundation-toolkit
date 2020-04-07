@@ -18,29 +18,23 @@ func validateAssets(ctx context.Context, assets []cai.Asset, policyRootPath stri
 }
 
 func validateAssetsWithLibrary(ctx context.Context, assets []cai.Asset, policyPaths []string, policyLibraryDir string) (*validator.AuditResponse, error) {
-	valid, err := gcv.NewValidator(ctx.Done(), policyPaths, policyLibraryDir)
+	valid, err := gcv.NewValidator(policyPaths, policyLibraryDir)
 	if err != nil {
 		return nil, errors.Wrap(err, "initializing gcv validator")
 	}
 
-	pbAssets := make([]*validator.Asset, len(assets))
+	auditResult := &validator.AuditResponse{}
 	for i := range assets {
-		pbAssets[i] = &validator.Asset{}
-		if err := protoViaJSON(assets[i], pbAssets[i]); err != nil {
+		asset := &validator.Asset{}
+		if err := protoViaJSON(assets[i], asset); err != nil {
 			return nil, errors.Wrapf(err, "converting asset %s to proto", assets[i].Name)
 		}
-	}
 
-	if err := valid.AddData(&validator.AddDataRequest{
-		Assets: pbAssets,
-	}); err != nil {
-		return nil, errors.Wrap(err, "adding data to validator")
+		violations, err := valid.ReviewAsset(ctx, asset)
+		if err != nil {
+			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
+		}
+		auditResult.Violations = append(auditResult.Violations, violations...)
 	}
-
-	auditResult, err := valid.Audit(context.Background())
-	if err != nil {
-		return nil, errors.Wrap(err, "auditing")
-	}
-
 	return auditResult, nil
 }

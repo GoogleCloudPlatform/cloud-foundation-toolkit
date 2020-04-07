@@ -25,9 +25,6 @@ info:
     - gcp-types/compute-v1:interconnects =>
         https://cloud.google.com/compute/docs/reference/rest/v1/interconnects
 
-imports:
-  - path: interconnect.py
-
 additionalProperties: false
 
 required:

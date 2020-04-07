@@ -21,11 +21,12 @@ locals {
     "ci-projects",
     "ci-shared",
   ]
-  repo_folder             = {for key, value in data.terraform_remote_state.org.outputs.folders : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key)}
-  org_id                  = data.terraform_remote_state.org.outputs.org_id
-  billing_account         = data.terraform_remote_state.org.outputs.billing_account
-  tf_validator_project_id = data.terraform_remote_state.tf-validator.outputs.project_id
-  project_id              = "cloud-foundation-cicd"
-  forseti_ci_folder_id    = "542927601143"
+  repo_folder              = {for key, value in data.terraform_remote_state.org.outputs.folders : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key)}
+  org_id                   = data.terraform_remote_state.org.outputs.org_id
+  billing_account          = data.terraform_remote_state.org.outputs.billing_account
+  tf_validator_project_id  = data.terraform_remote_state.tf-validator.outputs.project_id
+  project_id               = "cloud-foundation-cicd"
+  forseti_ci_folder_id     = "542927601143"
+  billing_iam_test_account = "0151A3-65855E-5913CF"
 }
 

@@ -16,6 +16,8 @@ package scorecard
 
 import (
 	"encoding/json"
+	"strconv"
+	"strings"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
@@ -30,9 +32,43 @@ func protoViaJSON(from interface{}, to proto.Message) error {
 		return errors.Wrap(err, "marshaling to json")
 	}
 
-	if err := jsonpb.UnmarshalString(string(jsn), to); err != nil {
+	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
+	if err := umar.Unmarshal(strings.NewReader(string(jsn)), to); err != nil {
 		return errors.Wrap(err, "unmarshaling to proto")
 	}
 
 	return nil
+}
+
+// interfaceViaJSON uses JSON as an intermediary serialization to convert a protobuf message
+// into an interface value
+func interfaceViaJSON(from proto.Message) (interface{}, error) {
+	marshaler := &jsonpb.Marshaler{}
+	jsn, err := marshaler.MarshalToString(from)
+	if err != nil {
+		return nil, errors.Wrap(err, "marshaling to json")
+	}
+
+	var to interface{}
+	if err := json.Unmarshal([]byte(jsn), &to); err != nil {
+		return nil, errors.Wrap(err, "unmarshaling to interface")
+	}
+
+	return to, nil
+}
+
+// stringViaJSON uses JSON as an intermediary serialization to convert a protobuf message
+// into an string value
+func stringViaJSON(from proto.Message) (string, error) {
+	marshaler := &jsonpb.Marshaler{}
+	jsn, err := marshaler.MarshalToString(from)
+	if err != nil {
+		return "", errors.Wrap(err, "marshaling to json")
+	}
+	str, err := strconv.Unquote(jsn)
+	if err != nil {
+		// return original json string if it's not a quoted string
+		return jsn, nil
+	}
+	return str, nil
 }

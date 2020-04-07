@@ -26,9 +26,6 @@ info:
     - gcp-types/bigquery-v2:datasets =>
         https://cloud.google.com/bigquery/docs/reference/rest/v2/datasets
 
-imports:
-  - path: bigquery_dataset.py
-
 additionalProperties: false
 
 required:

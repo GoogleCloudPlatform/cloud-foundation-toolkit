@@ -68,6 +68,8 @@ function teardown() {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config ${CONFIG} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
 }
 
@@ -77,6 +79,8 @@ function teardown() {
         "${EXTERNAL_RES_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
         --global
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "portRange: ${EXTERNAL_PORT}-${EXTERNAL_PORT}" ]]
     [[ "$output" =~ "loadBalancingScheme: ${EXTERNAL_LB_SCHEME}" ]]
@@ -87,6 +91,8 @@ function teardown() {
     run gcloud compute forwarding-rules describe "${INTERNAL_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" \
         --region "${REGION}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "- '${INTERNAL_PORT}'" ]]
     [[ "$output" =~ "description: ${INTERNAL_DESC}" ]]
@@ -98,5 +104,7 @@ function teardown() {
 @test "Deleting deployment" {
     run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
 }

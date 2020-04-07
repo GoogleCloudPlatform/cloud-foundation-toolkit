@@ -26,9 +26,6 @@ info:
     - gcp-types/file-v1beta1:instances =>
         https://cloud.google.com/filestore/docs/reference/rest/v1beta1/projects.locations.instances/create
 
-imports:
-  - path: cloud_filestore.py
-
 additionalProperties: false
 
 properties:
