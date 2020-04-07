@@ -1,7 +1,7 @@
 apiVersion: kpt.dev/v1alpha1
 kind: Kptfile
 metadata:
-  name: project-owner
+  name: owned-project
 packageMetadata:
   shortDescription: Deploy a project under a folder with given IAM owner
 openAPI:

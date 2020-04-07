@@ -15,7 +15,7 @@
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMPolicyMember
 metadata:
-  name: iampolicymember-sample-projectlevel
+  name: owned-project-iampolicymember
 spec:
   member: "${IAM_MEMBER?}" # {"$ref":"#/definitions/io.k8s.cli.setters.iam-member"}
   role: roles/owner
