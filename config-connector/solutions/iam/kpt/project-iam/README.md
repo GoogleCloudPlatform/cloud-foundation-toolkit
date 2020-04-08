@@ -8,7 +8,7 @@ Project IAM
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/):
   ```
-  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/project-iam .
+  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/project-iam project-iam
   ```
 # USAGE
 ## SETTERS
