@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-locals {
-  project_id = "cloud-foundation-cicd"
-  gh_orgs = {
-    infra = "GoogleCloudPlatform"
-  }
-  gh_repos = {
-    infra = "cloud-foundation-toolkit"
-  }
+resource "github_actions_secret" "infra_secret_gcr_project" {
+  repository      = local.gh_repos.infra
+  secret_name     = "GCR_PROJECT_ID"
+  plaintext_value = local.project_id
+}
+
+resource "github_actions_secret" "infra_secret_gcr_key" {
+  repository      = local.gh_repos.infra
+  secret_name     = "GCR_SA_KEY"
+  plaintext_value = module.service_accounts.key
 }
