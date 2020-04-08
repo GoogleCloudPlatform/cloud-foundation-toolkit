@@ -1,0 +1,17 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sdumpreview
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sDumpReview
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sdumpreview
+
+        violation[{"msg": msg}] {
+           msg := sprintf("%v", [input.review])
+        }
