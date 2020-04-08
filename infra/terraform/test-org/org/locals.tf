@@ -73,5 +73,6 @@ locals {
     "gcloud",
     "lb-internal",
     "utils",
+    "composer",
   ]
 }
