@@ -7,7 +7,7 @@ Pub/Sub Topic
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
-  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/pubsub-topic .
+  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/pubsub-topic pubsub-topic
   ```
 # REQUIREMENTS
   A Config Connector installation managing a GCP project with the Pub/Sub API enabled.
