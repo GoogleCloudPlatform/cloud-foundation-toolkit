@@ -9,7 +9,7 @@ MySQL Private
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
-  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/sql/kpt/mysql-private .
+  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/sql/kpt/mysql-private mysql-private
   ```
 # USAGE
 ## SETTERS
