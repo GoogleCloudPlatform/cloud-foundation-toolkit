@@ -13,14 +13,14 @@ Pub/Sub Subscription
 
   A Config Connector installation managing a GCP project with Pub/Sub API enabled. 
 
+# SETTERS
+|       NAME        |        VALUE         |     SET BY      |         DESCRIPTION         | COUNT |
+|-------------------|----------------------|-----------------|-----------------------------|-------|
+| iam-member        | ${IAM_MEMBER?}       | PLACEHOLDER     | IAM member to grant role    | 1     |
+| role              | roles/pubsub.viewer  | package-default | IAM role to grant           | 1     |
+| subscription-name | allowed-subscription | package-default | name of PubSub subscription | 2     |
+| topic-name        | allowed-topic        | package-default | name of PubSub topic        | 2     |
 # USAGE
-## SETTERS
-|       NAME        |        VALUE         |     SET BY      |          DESCRIPTION           | COUNT |
-|-------------------|----------------------|-----------------|--------------------------------|-------|
-| iam-member        | ${IAM_MEMBER?}       | PLACEHOLDER     | IAM member to grant role       | 1     |
-| role              | roles/pubsub.viewer  | package-default | IAM role to grant              | 1     |
-| subscription-name | allowed-subscription | package-default | name of PubSub subscription    | 2     |
-| topic-name        | allowed-topic        | package-default | name of PubSub topic           | 2     |
 
   Set the `iam-member` to grant a role to.
   ```
