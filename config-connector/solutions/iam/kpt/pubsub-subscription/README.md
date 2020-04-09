@@ -3,16 +3,14 @@ Pub/Sub Subscription
 # NAME
   pubsub-subscription
 # SYNOPSIS
-  This package configures permissions for a pubsub subscription by creating an IAMPolicyMember resource
+  This package configures permissions for a pubsub subscription by creating an IAMPolicyMember resource.
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/):
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/pubsub-subscription pubsub-subscription
   ```
 # REQUIREMENTS
-
   A Config Connector installation managing a GCP project with Pub/Sub API enabled. 
-
 # SETTERS
 |       NAME        |        VALUE         |     SET BY      |         DESCRIPTION         | COUNT |
 |-------------------|----------------------|-----------------|-----------------------------|-------|
@@ -21,7 +19,6 @@ Pub/Sub Subscription
 | subscription-name | allowed-subscription | package-default | name of PubSub subscription | 2     |
 | topic-name        | allowed-topic        | package-default | name of PubSub topic        | 2     |
 # USAGE
-
   Set the `iam-member` to grant a role to.
   ```
   kpt cfg set . iam-member user:name@example.com
