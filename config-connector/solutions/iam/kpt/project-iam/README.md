@@ -10,13 +10,13 @@ Project IAM
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/project-iam project-iam
   ```
-# USAGE
-## SETTERS
+# SETTERS
 |    NAME    |        VALUE         |     SET BY      |       DESCRIPTION        | COUNT |
 |------------|----------------------|-----------------|--------------------------|-------|
 | member     | ${IAM_MEMBER?}       | PLACEHOLDER     | IAM member to grant role | 1     |
 | project-id | ${PROJECT_ID?}       | PLACEHOLDER     | ID of project            | 1     |
 | role       | roles/logging.viewer | package-default | IAM role to grant        | 1     |
+# USAGE
 
 Setters marked as `PLACEHOLDER` are required. Set them using kpt:
 ```
