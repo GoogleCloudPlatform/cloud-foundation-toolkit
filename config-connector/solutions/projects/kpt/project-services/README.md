@@ -14,12 +14,12 @@ Project Services
 
   The cnrm-system service account must have
 `roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
-# USAGE
-## SETTERS
+# SETTERS
 |     NAME     |             VALUE              |     SET BY      |   DESCRIPTION    | COUNT |
 |--------------|--------------------------------|-----------------|------------------|-------|
 | project-id   | ${PROJECT_ID?}                 | PLACEHOLDER     | ID of project    | 1     |
 | service-name | firebasehosting.googleapis.com | package-default | API service name | 1     |
+# USAGE
 
   Set project-id to the ID of the project to enable services for.
   ```
