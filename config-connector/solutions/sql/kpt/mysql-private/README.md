@@ -15,13 +15,13 @@ MySQL Private
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/sql/kpt/mysql-private mysql-private
   ```
 # SETTERS
-|     NAME      |         VALUE          |     SET BY      |      DESCRIPTION       | COUNT |
-|---------------|------------------------|-----------------|------------------------|-------|
-| database-name | mysql-private-database | package-default | name of SQL database   | 1     |
-| instance-name | mysql-private-instance | package-default | name of SQL instance   | 3     |
-| password      | ${PASSWORD?}           | PLACEHOLDER     | password of SQL user   | 1     |
-| region        | us-central1            | package-default | region of SQL instance | 1     |
-| user-name     | ${USER_NAME?}          | PLACEHOLDER     | name of SQL user       | 1     |
+|     NAME      |         VALUE          |     SET BY      |          DESCRIPTION          | COUNT |
+|---------------|------------------------|-----------------|-------------------------------|-------|
+| database-name | mysql-private-database | package-default | name of SQL database          | 1     |
+| instance-name | mysql-private-instance | package-default | name of SQL instance          | 3     |
+| password      | ${PASSWORD?}           | PLACEHOLDER     | SQL password (base64 encoded) | 1     |
+| region        | us-central1            | package-default | region of SQL instance        | 1     |
+| user-name     | ${USER_NAME?}          | PLACEHOLDER     | name of SQL user              | 1     |
 # USAGE
 
   Configure setters using kpt as follows:
@@ -29,6 +29,11 @@ MySQL Private
   kpt cfg set . NAME VALUE
   ```
   Setting placeholder values is required, changing package-defaults is optional.
+
+  `password` should be set to a [base64 encoded](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) value.
+  ```
+  kpt cfg set . password $(echo -n 'your-password' | base64)
+  ```
 
   For this package to work properly, the following resources must be in a ready state before the SQLInstance YAML is applied:
   - `ComputeNetwork`

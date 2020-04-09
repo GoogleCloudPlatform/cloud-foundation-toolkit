@@ -14,7 +14,7 @@ openAPI:
           value: ${USER_NAME?}
           setBy: PLACEHOLDER
     io.k8s.cli.setters.password:
-      description: password of SQL user
+      description: SQL password (base64 encoded)
       x-k8s-cli:
         setter:
           name: password
