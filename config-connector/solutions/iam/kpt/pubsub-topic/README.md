@@ -11,13 +11,13 @@ Pub/Sub Topic
   ```
 # REQUIREMENTS
   A Config Connector installation managing a GCP project with the Pub/Sub API enabled.
-# USAGE
-## SETTERS
+# SETTERS
 |    NAME    |        VALUE        |     SET BY      |         DESCRIPTION          | COUNT |
 |------------|---------------------|-----------------|------------------------------|-------|
 | iam-member | ${IAM_MEMBER?}      | PLACEHOLDER     | identity to grant privileges | 1     |
 | role       | roles/pubsub.editor | package-default | IAM role to grant            | 1     |
 | topic-name | allowed-topic       | package-default | name of PubSub topic         | 2     |
+# USAGE
 
   Replace `${IAM_MEMBER?}` with the GCP identity to grant access to.
   ```
