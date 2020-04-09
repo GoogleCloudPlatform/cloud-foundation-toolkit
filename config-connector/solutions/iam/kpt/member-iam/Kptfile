@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: .
 packageMetadata:
-  shortDescription: sample description
+  shortDescription: Create a service account and grant it permissions to access the desired project.
 openAPI:
   definitions:
     io.k8s.cli.setters.project-id:
