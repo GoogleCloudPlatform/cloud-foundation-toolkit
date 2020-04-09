@@ -11,8 +11,7 @@ MySQL Private
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/sql/kpt/mysql-private mysql-private
   ```
-# USAGE
-## SETTERS
+# SETTERS
 |     NAME      |         VALUE          |     SET BY      |      DESCRIPTION       | COUNT |
 |---------------|------------------------|-----------------|------------------------|-------|
 | database-name | mysql-private-database | package-default | name of SQL database   | 1     |
@@ -20,6 +19,7 @@ MySQL Private
 | password      | ${PASSWORD?}           | PLACEHOLDER     | password of SQL user   | 1     |
 | region        | us-central1            | package-default | region of SQL instance | 1     |
 | user-name     | mysql-private-user     | package-default | name of SQL user       | 1     |
+# USAGE
 
   Configure setters using kpt as follows:
   ```
