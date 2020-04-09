@@ -5,7 +5,10 @@ MySQL Private
 # SYNOPSIS
   Config Connector compatible YAML files for creating a MySQL instance on a private network
 # REQUIREMENTS
-  A working Config Connector installation managing a project with Cloud SQL Admin API, Service Networking API, and Cloud Resource Manager API enabled.
+  A working Config Connector installation managing a project with the following APIs enabled:
+- Cloud SQL Admin
+- Service Networking
+- Cloud Resource Manager
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
