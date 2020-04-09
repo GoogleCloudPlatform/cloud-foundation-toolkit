@@ -14,7 +14,7 @@
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLUser
 metadata:
-  name: mysql-private-user # {"$ref":"#/definitions/io.k8s.cli.setters.user-name"}
+  name: ${USER_NAME?} # {"$ref":"#/definitions/io.k8s.cli.setters.user-name"}
 spec:
   instanceRef:
     name: mysql-private-instance # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}

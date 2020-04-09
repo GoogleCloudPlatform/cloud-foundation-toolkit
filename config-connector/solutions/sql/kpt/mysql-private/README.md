@@ -21,7 +21,7 @@ MySQL Private
 | instance-name | mysql-private-instance | package-default | name of SQL instance   | 3     |
 | password      | ${PASSWORD?}           | PLACEHOLDER     | password of SQL user   | 1     |
 | region        | us-central1            | package-default | region of SQL instance | 1     |
-| user-name     | mysql-private-user     | package-default | name of SQL user       | 1     |
+| user-name     | ${USER_NAME?}          | PLACEHOLDER     | name of SQL user       | 1     |
 # USAGE
 
   Configure setters using kpt as follows:

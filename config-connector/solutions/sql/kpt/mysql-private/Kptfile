@@ -11,8 +11,8 @@ openAPI:
       x-k8s-cli:
         setter:
           name: user-name
-          value: mysql-private-user
-          setBy: package-default
+          value: ${USER_NAME?}
+          setBy: PLACEHOLDER
     io.k8s.cli.setters.password:
       description: password of SQL user
       x-k8s-cli:
