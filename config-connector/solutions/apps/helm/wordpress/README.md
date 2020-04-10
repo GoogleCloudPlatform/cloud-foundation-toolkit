@@ -27,14 +27,14 @@ The WordPress application demonstrates how you can configure a WordPress site po
 ## REQUIREMENTS
 
 1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
-1. [Helm](https://helm.sh/docs/using_helm/)
+1. [Helm](../../../../README.md#helm)
 
 ## USAGE
 
 All steps are run from this directory.
 
-1. Review and update the values in `./charts/wordpress-gcp/values.yaml` .
-1. Validate and install the sample with Helm
+1. Review and update the values in `./charts/wordpress-gcp/values.yaml`.
+1. Validate and install the sample with Helm.
 
     ```bash
     # validate your chart
@@ -52,10 +52,10 @@ All steps are run from this directory.
 1. Clean up the installation:
 
     ```bash
-    # list Helm releases
+    # list Helm releases to obtain release name
     helm list
 
-    # delete release
+    # delete release specifying release name from the previous command output
     helm delete [release_name]
     ```
 
