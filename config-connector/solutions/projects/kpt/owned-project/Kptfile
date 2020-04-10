@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: owned-project
 packageMetadata:
-  shortDescription: Deploy a project under a folder with given IAM owner
+  shortDescription: Create a project under a folder and owner permission for the project
 openAPI:
   definitions:
     io.k8s.cli.setters.project-id:
@@ -28,7 +28,7 @@ openAPI:
           value: ${FOLDER_ID?}
           setBy: PLACEHOLDER
     io.k8s.cli.setters.iam-member:
-      description: IAM name of service account to give owner permission
+      description: cloud identity name to give project owner permission to
       x-k8s-cli:
         setter:
           name: iam-member

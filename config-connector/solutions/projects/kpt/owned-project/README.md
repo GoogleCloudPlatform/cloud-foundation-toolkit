@@ -20,8 +20,8 @@ Owned Project
 # REQUIREMENTS
 
   A working Config Connector cluster using a
-  service account with the following roles in
-  the folder:
+  cnrm-system service account with the following
+  roles in the target folder:
   - roles/resourcemanager.folderViewer
   - roles/resourcemanager.projectCreator
   - roles/iam.securityAdmin
@@ -43,7 +43,7 @@ Owned Project
   kpt cfg set . iam-member VALUE
   kpt cfg set . project-id VALUE
   ```
-  where the folder-id `VALUE` is the numeric folder ID of the folder to create the new project under, the iam-member `VALUE` is the fully qualified IAM name of target member, e.g. "user:me@example.com", and the project-id `VALUE` is the name you want your project to have.
+  where the folder-id `VALUE` is the numeric folder ID of the folder to create the new project under, the iam-member `VALUE` is the fully qualified IAM name of target member, e.g. "user:me@example.com", and the project-id `VALUE` is the globally unique name you want your project to have.
 
   Now you can fully apply this solution.
   ```
