@@ -14,7 +14,6 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeSharedVPCServiceProject
 metadata:
-  namespace: shared-vpc-host-project-annotated
   name: computesharedvpcserviceproject
 spec:
   projectRef:
