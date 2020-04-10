@@ -38,8 +38,8 @@ rm -rf "v${BATS_SUPPORT_VERSION}.zip" "bats-support-${BATS_SUPPORT_VERSION}"
 
 wget "https://github.com/jasonkarns/bats-assert-1/archive/v${BATS_ASSERT_VERSION}.zip"
 unzip "v${BATS_ASSERT_VERSION}.zip"
-cp -r "bats-assert-1-${BATS_ASSERT_VERSION}" /usr/local/bats-assert
-rm -rf "v${BATS_ASSERT_VERSION}.zip" "bats-assert-1-${BATS_ASSERT_VERSION}"
+cp -r "bats-assert-${BATS_ASSERT_VERSION}" /usr/local/bats-assert
+rm -rf "v${BATS_ASSERT_VERSION}.zip" "bats-assert-${BATS_ASSERT_VERSION}"
 
 wget "https://github.com/jasonkarns/bats-mock/archive/v${BATS_MOCK_VERSION}.zip"
 unzip "v${BATS_MOCK_VERSION}.zip"
