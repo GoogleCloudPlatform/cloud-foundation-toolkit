@@ -28,6 +28,11 @@ The WordPress application demonstrates how you can configure a WordPress site po
 
 1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
 1. [Helm](../../../../README.md#helm)
+1. Cloud Resource Manager API needs to be enabled on the project to use [ServiceUsage Resource](https://cloud.google.com/config-connector/docs/reference/resources#service). You can enable it by running:
+
+    ```bash
+    gcloud services enable cloudresourcemanager.googleapis.com --project [PROJECT_ID]
+    ```
 
 ## USAGE
 
