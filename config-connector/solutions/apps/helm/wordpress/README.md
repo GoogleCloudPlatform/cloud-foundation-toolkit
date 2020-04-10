@@ -12,9 +12,17 @@ The WordPress application demonstrates how you can configure a WordPress site po
 
 ## CONSUMPTION
 
-  ```bash
-   helm install ./charts/wordpress-gcp/ --set google.projectId=[PROJECT_ID]
-  ```
+  1. Clone GoogleCloudPlatform/cloud-foundation-toolkit repository
+  
+      ```bash
+      git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
+      ```
+
+  1. Go to the wordpress folder:
+
+      ```bash
+      cd cloud-foundation-toolkit/config-connector/solutions/apps/helm/wordpress
+      ```
 
 ## REQUIREMENTS
 
@@ -49,6 +57,7 @@ All steps are run from this directory.
 
     # delete release
     helm delete [release_name]
+    ```
 
 ## LICENSE
 

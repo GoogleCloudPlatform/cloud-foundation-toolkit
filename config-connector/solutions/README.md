@@ -19,7 +19,7 @@ that solution area and package format.
 
 The full list of solutions grouped by area:
 
-* **apps** - automate creation of a canonical sample application and provisioning required GCP services with Config Connector
+* **apps** - automate creation of a canonical sample application and provision required GCP services with Config Connector
   * wordpress [ [helm](apps/helm/wordpress) ] - provision Wordpress application powered by GCP MySQL database
 * **projects** - automate creation of GCP projects, folders and project services using Config Connector
   * project-hierarcy [ [kpt](projects/kpt/project-hierarchy) ] - enable GCP API for a project
