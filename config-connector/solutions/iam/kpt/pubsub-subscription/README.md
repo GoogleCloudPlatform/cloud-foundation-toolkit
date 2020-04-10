@@ -3,7 +3,7 @@ Pub/Sub Subscription
 # NAME
   pubsub-subscription
 # SYNOPSIS
-  This package configures permissions for a pubsub subscription by creating an IAMPolicyMember resource.
+  This package creates a pubsub subscription and configures permissions for it by creating an IAMPolicyMember resource.
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/):
   ```
