@@ -6,12 +6,12 @@ packageMetadata:
   shortDescription: configure private mysql instance
 openAPI:
   definitions:
-    io.k8s.cli.setters.user-name:
+    io.k8s.cli.setters.username:
       description: name of SQL user
       x-k8s-cli:
         setter:
-          name: user-name
-          value: ${USER_NAME?}
+          name: username
+          value: ${USERNAME?}
           setBy: PLACEHOLDER
     io.k8s.cli.setters.password:
       description: SQL password (base64 encoded)

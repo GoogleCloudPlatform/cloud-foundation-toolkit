@@ -21,7 +21,7 @@ MySQL Private
 | instance-name | mysql-private-instance | package-default | name of SQL instance          | 3     |
 | password      | ${PASSWORD?}           | PLACEHOLDER     | SQL password (base64 encoded) | 1     |
 | region        | us-central1            | package-default | region of SQL instance        | 1     |
-| user-name     | ${USER_NAME?}          | PLACEHOLDER     | name of SQL user              | 1     |
+| username      | ${USERNAME?}           | PLACEHOLDER     | name of SQL user              | 1     |
 # USAGE
 
   Configure setters using kpt as follows:
@@ -29,6 +29,15 @@ MySQL Private
   kpt cfg set . NAME VALUE
   ```
   Setting placeholder values is required, changing package-defaults is optional.
+
+  Set `username` to the SQL username that you will use to access the database.
+  ```
+  kpt cfg set . username your-username
+  ```
+  _Optionally_ set `database-name`, `instance-name`, and `region` in the same
+manner. Note that if your instance is deleted the name you used will be
+reserved for 7 days. You will need to use a new name in order to re-create the
+instance.
 
   `password` should be set to a [base64 encoded](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) value.
   ```
