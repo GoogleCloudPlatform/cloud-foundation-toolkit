@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: project-iam
 packageMetadata:
-  shortDescription: enable permissions for a project
+  shortDescription: configure permissions for a project
 openAPI:
   definitions:
     io.k8s.cli.setters.member:
