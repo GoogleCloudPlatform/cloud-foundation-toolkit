@@ -22,8 +22,8 @@ The full list of solutions grouped by area:
 * **apps** - automate creation of a canonical sample application and provision required GCP services with Config Connector
   * wordpress [ [helm](apps/helm/wordpress) ] - provision Wordpress application powered by GCP MySQL database
 * **projects** - automate creation of GCP projects, folders and project services using Config Connector
-  * project-hierarcy [ [kpt](projects/kpt/project-hierarchy) ] - enable GCP API for a project
-  * project-services [ [kpt](projects/kpt/project-services) ] - get started with a folder and a project
+  * project-hierarcy [ [kpt](projects/kpt/project-hierarchy) ] - get started with a folder and a project
+  * project-services [ [kpt](projects/kpt/project-services) ] - enable GCP API for a project
   * simple-project [ [kpt](projects/kpt/simple-project) ] - get started with a simple project
 
 ## Usage
@@ -45,6 +45,8 @@ Comprehensive documentation at
 
 These samples are consumable as [kpt
 packages](https://googlecontainertools.github.io/kpt/).
+Common targets for modification are provided kpt setters,
+and can be listed with `kpt cfg list-setters`.
 
 * Installing kpt: follow the instructions on [the kpt
 GitHub](https://github.com/GoogleContainerTools/kpt).
