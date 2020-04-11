@@ -4,13 +4,12 @@ go 1.12
 
 require (
 	cloud.google.com/go v0.38.0
-	github.com/GoogleCloudPlatform/terraform-validator v0.0.0-20190611191127-0aa9d709266e
 	github.com/briandowns/spinner v1.6.1
-	github.com/forseti-security/config-validator v0.0.0-20200214190434-b3da3b61dbb1
+	github.com/forseti-security/config-validator v0.0.0-20200317212309-6f70138af9ec
 	github.com/golang/protobuf v1.3.2
 	github.com/hashicorp/terraform v0.12.2 // indirect
 	github.com/inconshreveable/log15 v0.0.0-20180818164646-67afb5ed74ec
-	github.com/open-policy-agent/opa v0.16.2
+	github.com/open-policy-agent/opa v0.17.2
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.3.2

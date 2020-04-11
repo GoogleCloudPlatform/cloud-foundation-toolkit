@@ -18,5 +18,5 @@ import (
 	log "github.com/inconshreveable/log15"
 )
 
-// Scorecard log15 handler
+// Log (log15) handler for Scorecard  
 var Log = log.New()
