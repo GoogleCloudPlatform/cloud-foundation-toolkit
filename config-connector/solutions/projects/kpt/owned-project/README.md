@@ -15,11 +15,11 @@ Owned Project
 
   Fetch the package using [kpt](https://googlecontainertools.github.io/kpt/).
 
-  `kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/projects/kpt/owned-project owned-project`
+  `kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/projects/kpt/owned-project owned-project`
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using a
+  A working Config Connector cluster using the
   cnrm-system service account with the following
   roles in the target folder:
   - roles/resourcemanager.folderViewer
