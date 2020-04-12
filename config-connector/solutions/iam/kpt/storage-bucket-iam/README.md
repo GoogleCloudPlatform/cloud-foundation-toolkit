@@ -7,12 +7,12 @@ Storage Bucket IAM
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
-  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/iam/kpt/storage-bucket-iam storage-bucket-iam
+  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/storage-bucket-iam storage-bucket-iam
   ```
 # REQUIREMENTS
-- A working Config Connector installation.
+- A working Config Connector instance.
 - The cnrm-system service account must have `roles/storage.admin`.
-- A storage bucket managed by [IAM](https://cloud.google.com/storage/docs/access-control).
+- A storage bucket managed by [IAM](https://cloud.google.com/storage/docs/access-control#using_permissions_with_acls).
 
   Note: Using [uniform bucket-level access control](https://cloud.google.com/storage/docs/uniform-bucket-level-access) is recommended for this package.
 # SETTERS
