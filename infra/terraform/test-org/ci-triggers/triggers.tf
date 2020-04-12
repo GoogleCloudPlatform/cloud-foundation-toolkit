@@ -139,3 +139,18 @@ resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
   ]
 }
 
+resource "google_cloudbuild_trigger" "terraform_example_foundation_lint" {
+  provider    = google-beta
+  project     = local.project_id
+  description = "Lint tests on pull request for terraform-example-foundation"
+  github {
+    owner = "terraform-google-modules"
+    name  = "terraform-example-foundation"
+    pull_request {
+      branch = ".*"
+    }
+  }
+
+  filename = "build/cloudbuild.lint.yaml"
+}
+
