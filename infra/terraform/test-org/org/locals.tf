@@ -74,5 +74,6 @@ locals {
     "lb-internal",
     "utils",
     "composer",
+    "github-actions-runners",
   ]
 }
