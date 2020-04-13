@@ -1,4 +1,4 @@
-Folder-iam
+Folder IAM
 ==================================================
 
 # NAME
@@ -11,7 +11,7 @@ Folder-iam
 
 # CONSUMPTION
 
-  Using [kpt](https://googlecontainertools.github.io/kpt/):
+  Download the package using [kpt](https://googlecontainertools.github.io/kpt/):
 
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/folder-iam folder-iam
@@ -19,8 +19,8 @@ Folder-iam
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using a cnrm-system service account with _at least_ the following role in
-  the folder:
+  A working Config Connector cluster using the cnrm-system service account with _at least_ the following role in
+  the desired folder:
   - roles/resourcemanager.folderIamAdmin
 
 # USAGE
