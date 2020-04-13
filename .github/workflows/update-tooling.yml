@@ -55,7 +55,7 @@ jobs:
         if: env.LATEST_TERRAFORM != 'is latest' || env.LATEST_GCLOUD != 'is latest'
         uses: peter-evans/create-pull-request@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
           committer: "Update Tooling Action <cloud-foundation-bot@google.com>"
           title: "Update Tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}"
