@@ -27,7 +27,7 @@ The WordPress application demonstrates how you can configure a WordPress site po
 ## REQUIREMENTS
 
 1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
-1. [Helm](../../../../README.md#helm)
+1. [Helm](../../../README.md#helm)
 1. Cloud Resource Manager API needs to be enabled on the project to use [ServiceUsage Resource](https://cloud.google.com/config-connector/docs/reference/resources#service). You can enable it by running:
 
     ```bash
@@ -39,6 +39,8 @@ The WordPress application demonstrates how you can configure a WordPress site po
 All steps are run from this directory.
 
 1. Review and update the values in `./charts/wordpress-gcp/values.yaml`.
+
+    **Note:** Please ensure the value of `database.instanceName` (defaults to `wp-db`) is unique and hasn't been used as an SQL instance name in the last 7 days.
 1. Validate and install the sample with Helm.
 
     ```bash

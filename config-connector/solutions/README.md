@@ -33,7 +33,7 @@ The full list of solutions grouped by area:
 These samples are consumable as [helm charts](https://helm.sh/docs/topics/charts/).
 Common targets for modification are listed in `values.yaml`.
 
-* [Installing helm](https://helm.sh/docs/intro/install/)
+* [Installing helm 3.0](https://helm.sh/docs/intro/install/). These solutions have been verified with Helm v.3+.
 * Showing values: `helm show PATH_TO_CHART`
 * Validating chart: `helm template PATH_TO_CHART`
 * Setting chart: `helm install PATH_TO_CHART -generate-name`
