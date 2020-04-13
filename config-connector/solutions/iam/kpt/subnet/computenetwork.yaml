@@ -19,3 +19,4 @@ metadata:
 spec:
   routingMode: REGIONAL
   autoCreateSubnetworks: false
+  

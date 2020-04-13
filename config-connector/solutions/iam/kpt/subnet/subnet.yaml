@@ -21,7 +21,7 @@ spec:
   region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.subnet-region"} 
   privateIpGoogleAccess: false
   networkRef:
-    name: ${COMPUTE_NETWORK_NAME?} # {"$ref":"#/definitions/io.k8s.cli.setters.compute-network-name"} 
+    name: compute-network-example # {"$ref":"#/definitions/io.k8s.cli.setters.compute-network-name"} 
   logConfig:
     aggregationInterval: INTERVAL_10_MIN
     flowSampling: 0.5
