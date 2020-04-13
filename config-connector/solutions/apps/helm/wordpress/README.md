@@ -54,7 +54,22 @@ All steps are run from this directory.
     helm install ./charts/wordpress-gcp/ --set google.projectId=[PROJECT_ID] --generate-name
     ```
 
-1. Check the status of your database by running `kubectl describe sqlinstance wp-db`. Once the database is created, obtain the external IP address of your WordPress application by checking `kubectl get svc wordpress-external`. Navigate to this address and validate that you see WordPress installation page.
+1. The wordpress creation can take up to 10-15 minutes. Throughout the process you can check the status of various components:
+
+    ```bash
+    # check the status of sqlinstance
+    kubectl describe sqlinstance [VALUE of database.instanceName]
+    # check the status of wordpress pod (the output should show that both containers are ready)
+    kubectl get pods wordpress-0
+    ```
+
+    Once the pods are ready, obtain the external IP address of your WordPress application by checking:
+
+    ```bash
+    kubectl get svc wordpress-external
+    ```
+
+    Navigate to this address and validate that you see WordPress installation page.
 
 1. Clean up the installation:
 
