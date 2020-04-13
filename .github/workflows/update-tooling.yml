@@ -1,7 +1,7 @@
 name: Update Tooling
 on:
   schedule:
-    - cron: "* * * * *"
+    - cron: "0 2 * * *"
 env:
   TF_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
   GCLOUD_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
