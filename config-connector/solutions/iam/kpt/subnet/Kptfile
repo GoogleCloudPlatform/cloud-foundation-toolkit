@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: subnet
 packageMetadata:
-  shortDescription: Grant an IAM role to a member for accessing a given subnet
+  shortDescription: Create a subnet and grant a specific member a role to a member for the subnet
 openAPI:
   definitions:
     io.k8s.cli.setters.subnet-name:
@@ -31,8 +31,8 @@ openAPI:
       x-k8s-cli:
         setter:
           name: compute-network-name
-          value: ${COMPUTE_NETWORK_NAME?}
-          setBy: PLACEHOLDER
+          value: compute-network-example
+          setBy: package-default
       description: The name of a existing GCP compute network for which you want to create 
         the subnet.
     io.k8s.cli.setters.iam-member:

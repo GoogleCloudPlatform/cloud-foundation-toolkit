@@ -7,7 +7,7 @@ Subnet
 
 # SYNOPSIS
 
-  Config Connector compatible YAML files to create a subnet in your desired project, and grant a specific member a role (default to roles/compute.networkUser) for accessing the subnet that just created.
+  Config Connector compatible YAML files to create a subnet in your desired project, and grant a specific member a role (default to `roles/compute.networkUser`) for accessing the subnet that just created.
 
 # CONSUMPTION
 
@@ -26,18 +26,18 @@ Subnet
   ```
   kpt cfg set . iam-member user:name@example.com
   ```
-
-  Replace `${COMPUTE_NETWORK_NAME?}` with a GCP compute network name for which you want to create the subnet:
-  ```
-  kpt cfg set . compute-network-name VALUE
-  ```
-
+  
   Replace `${SUBNET_IP_RANGE?}` with a ip range of the subnet:
   ```
   kpt cfg set . subnet-ip-range VALUE
   ```
 
   _Optionally_, you can change the following fields before you apply the YAMLs:
+  - the name of the compute network
+  ```
+  kpt cfg set . compute-network-name VALUE
+  ```
+  
   - the name of the subnet
   ```
   kpt cfg set . subnet-name new-subnet-name
