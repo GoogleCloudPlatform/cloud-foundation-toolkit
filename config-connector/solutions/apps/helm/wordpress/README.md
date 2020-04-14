@@ -77,7 +77,7 @@ All steps are run from this directory.
     # list Helm releases to obtain release name
     helm list
 
-    # delete release specifying release name from the previous command output
+    # delete release specifying release name from the previous command output. Note that can take a few minutes before all K8s resources are fully deleted.
     helm delete [release_name]
     ```
 
