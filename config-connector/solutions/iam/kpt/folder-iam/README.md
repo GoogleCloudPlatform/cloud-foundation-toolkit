@@ -7,7 +7,7 @@ Folder IAM
 
 # SYNOPSIS
 
-  Config Connector compatible YAML files to grant a specific member a role (default to roles/resourcemanager.folderEditor) to an existing folder.
+  Config Connector compatible YAML files to grant a specific member a role (default to `roles/resourcemanager.folderEditor`) to an existing folder.
 
 # CONSUMPTION
 
