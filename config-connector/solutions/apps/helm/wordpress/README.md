@@ -63,6 +63,7 @@ All steps are run from this directory.
     kubectl get pods wordpress-0
     ```
 
+    **Note:** If the pods can't be scheduled because of `Insufficient CPU` issue, please increase the size of nodes in your cluster.
     Once the pods are ready, obtain the external IP address of your WordPress application by checking:
 
     ```bash
