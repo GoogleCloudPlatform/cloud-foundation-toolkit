@@ -15,7 +15,7 @@ PostgreSQL High Availability
 | database-1-name   | postgres-ha-database-1 | package-default | name of first SQL database     | 1     |
 | database-2-name   | postgres-ha-database-2 | package-default | name of second SQL database    | 1     |
 | external-ip-range | 192.10.10.10/32        | package-default | ip range to allow to connect   | 4     |
-| instance-name     | postgres-ha-solution   | package-default | name of SQL instance           | 9     |
+| instance-name     | postgres-ha-solution   | package-default | name of main SQL instance      | 9     |
 | password-1        | ${PASSWORD_1?}         | PLACEHOLDER     | password of  user              | 1     |
 | password-2        | ${PASSWORD_2?}         | PLACEHOLDER     | password of  user              | 1     |
 | password-3        | ${PASSWORD_3?}         | PLACEHOLDER     | password of  user              | 1     |
@@ -24,9 +24,9 @@ PostgreSQL High Availability
 | username-2        | ${USERNAME_2?}         | PLACEHOLDER     | name of  user                  | 1     |
 | username-3        | ${USERNAME_3?}         | PLACEHOLDER     | name of  user                  | 1     |
 | zone              | us-central1-c          | package-default | zone of main instance          | 1     |
-| zone-backup-1     | us-central1-a          | package-default | zone of first backup instance  | 1     |
-| zone-backup-2     | us-central1-b          | package-default | zone of second backup instance | 1     |
-| zone-backup-3     | us-central1-c          | package-default | zone of third backup instance  | 1     |
+| zone-replica-1    | us-central1-a          | package-default | zone of first replica instance | 1     |
+| zone-replica-2    | us-central1-b          | package-default | zone of second replica instance| 1     |
+| zone-replica-3    | us-central1-c          | package-default | zone of third replica instance | 1     |
 # USAGE
   Configure setters using kpt as follows:
   ```
@@ -49,7 +49,7 @@ values.
   kpt cfg set . password-3 $(echo -n 'third-password' | base64)
   ```
   _Optionally_ set `database-name`, `instance-name`, `region`, `zone`, and
-`zone-backup` in the same manner.
+`zone-replica` in the same manner.
 
   **Note:** If your SQL Instance is deleted, the name you used will be reserved
 for **7 days**. In order to re-apply this solution, you need to run

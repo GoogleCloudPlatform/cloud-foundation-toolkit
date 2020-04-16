@@ -7,7 +7,7 @@ packageMetadata:
 openAPI:
   definitions:
     io.k8s.cli.setters.instance-name:
-      description: name of SQL instance
+      description: name of main SQL instance
       x-k8s-cli:
         setter:
           name: instance-name
@@ -34,35 +34,35 @@ openAPI:
           name: database-2-name
           value: postgres-ha-database-2
           setBy: package-default
-    io.k8s.cli.substitutions.backup-instance-1-name:
+    io.k8s.cli.substitutions.replica-instance-1-name:
       x-k8s-cli:
         substitution:
-          name: backup-instance-1-name
-          pattern: INSTANCE_NAME_SETTER-backup-1
+          name: replica-instance-1-name
+          pattern: INSTANCE_NAME_SETTER-replica-1
           values:
           - marker: INSTANCE_NAME_SETTER
             ref: '#/definitions/io.k8s.cli.setters.instance-name'
-    io.k8s.cli.substitutions.backup-instance-2-name:
+    io.k8s.cli.substitutions.replica-instance-2-name:
       x-k8s-cli:
         substitution:
-          name: backup-instance-2-name
-          pattern: INSTANCE_NAME_SETTER-backup-2
+          name: replica-instance-2-name
+          pattern: INSTANCE_NAME_SETTER-replica-2
           values:
           - marker: INSTANCE_NAME_SETTER
             ref: '#/definitions/io.k8s.cli.setters.instance-name'
-    io.k8s.cli.substitutions.backup-instance-3-name:
+    io.k8s.cli.substitutions.replica-instance-3-name:
       x-k8s-cli:
         substitution:
-          name: backup-instance-3-name
-          pattern: INSTANCE_NAME_SETTER-backup-3
+          name: replica-instance-3-name
+          pattern: INSTANCE_NAME_SETTER-replica-3
           values:
           - marker: INSTANCE_NAME_SETTER
             ref: '#/definitions/io.k8s.cli.setters.instance-name'
-    io.k8s.cli.setters.zone-backup-3:
-      description: zone of third backup instance
+    io.k8s.cli.setters.zone-replica-3:
+      description: zone of third replica instance
       x-k8s-cli:
         setter:
-          name: zone-backup-3
+          name: zone-replica-3
           value: us-central1-c
           setBy: package-default
     io.k8s.cli.setters.zone:
@@ -72,18 +72,18 @@ openAPI:
           name: zone
           value: us-central1-c
           setBy: package-default
-    io.k8s.cli.setters.zone-backup-2:
-      description: zone of second backup instance
+    io.k8s.cli.setters.zone-replica-2:
+      description: zone of second replica instance
       x-k8s-cli:
         setter:
-          name: zone-backup-2
+          name: zone-replica-2
           value: us-central1-b
           setBy: package-default
-    io.k8s.cli.setters.zone-backup-1:
-      description: zone of first backup instance
+    io.k8s.cli.setters.zone-replica-1:
+      description: zone of first replica instance
       x-k8s-cli:
         setter:
-          name: zone-backup-1
+          name: zone-replica-1
           value: us-central1-a
           setBy: package-default
     io.k8s.cli.setters.password-1:

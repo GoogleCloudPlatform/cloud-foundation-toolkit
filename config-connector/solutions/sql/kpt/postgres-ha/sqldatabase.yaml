@@ -16,8 +16,8 @@ kind: SQLDatabase
 metadata:
   name: postgres-ha-database-1 # {"$ref":"#/definitions/io.k8s.cli.setters.database-1-name"}
 spec:
-  charset: utf8mb4
-  collation: utf8mb4_bin
+  charset: UTF8
+  collation: en_US.UTF8
   instanceRef:
     name: postgres-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
 ---
@@ -26,7 +26,7 @@ kind: SQLDatabase
 metadata:
   name: postgres-ha-database-2 # {"$ref":"#/definitions/io.k8s.cli.setters.database-2-name"}
 spec:
-  charset: utf8mb4
-  collation: utf8mb4_bin
+  charset: UTF8
+  collation: en_US.UTF8
   instanceRef:
     name: postgres-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}

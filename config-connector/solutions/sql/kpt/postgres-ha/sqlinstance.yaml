@@ -19,70 +19,135 @@ spec:
   databaseVersion: POSTGRES_9_6
   region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
   settings:
-    tier: db-custom-1-3840
+    activationPolicy: ALWAYS
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_SSD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-custom-2-13312
     availabilityType: REGIONAL
+    backupConfiguration:
+      binaryLogEnabled: false
+      enabled: true
+      startTime: 20:55
+    databaseFlags:
+    - name: autovacuum
+      value: "off"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: true
       authorizedNetworks:
-      - name: mysql-ha-solution-cidr
+      - name: postgres-ha-solution-cidr
         value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
     locationPreference:
       zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone"}
+    maintenanceWindow:
+      day: 7
+      hour: 12
+      updateTrack: stable
 ---
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLInstance
 metadata:
-  name: postgres-ha-solution-backup-1 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-1-name"}
+  name: postgres-ha-solution-replica-1 # {"$ref":"#/definitions/io.k8s.cli.substitutions.replica-instance-1-name"}
 spec:
   databaseVersion: POSTGRES_9_6
   region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  masterInstanceRef:
+    name: postgres-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
   settings:
-    tier: db-custom-1-3840
+    activationPolicy: ALWAYS
+    crashSafeReplication: true
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_HDD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-custom-2-13312
     availabilityType: ZONAL
+    databaseFlags:
+    - name: autovacuum
+      value: "off"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: false
       authorizedNetworks:
-      - name: mysql-ha-solution-cidr
+      - name: postgres-ha-solution-cidr
         value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
     locationPreference:
-      zone: us-central1-a # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup-1"}
+      zone: us-central1-a # {"$ref":"#/definitions/io.k8s.cli.setters.zone-replica-1"}
+    maintenanceWindow:
+      day: 7
+      hour: 12
+      updateTrack: stable
 ---
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLInstance
 metadata:
-  name: postgres-ha-solution-backup-2 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-2-name"}
+  name: postgres-ha-solution-replica-2 # {"$ref":"#/definitions/io.k8s.cli.substitutions.replica-instance-2-name"}
 spec:
   databaseVersion: POSTGRES_9_6
   region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  masterInstanceRef:
+    name: postgres-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
   settings:
-    tier: db-custom-1-3840
+    activationPolicy: ALWAYS
+    crashSafeReplication: true
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_HDD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-custom-2-13312
     availabilityType: ZONAL
+    databaseFlags:
+    - name: autovacuum
+      value: "off"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: false
       authorizedNetworks:
-      - name: mysql-ha-solution-cidr
+      - name: postgres-ha-solution-cidr
         value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
     locationPreference:
-      zone: us-central1-b # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup-2"}
+      zone: us-central1-b # {"$ref":"#/definitions/io.k8s.cli.setters.zone-replica-2"}
+    maintenanceWindow:
+      day: 7
+      hour: 12
+      updateTrack: stable
 ---
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLInstance
 metadata:
-  name: postgres-ha-solution-backup-3 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-3-name"}
+  name: postgres-ha-solution-replica-3 # {"$ref":"#/definitions/io.k8s.cli.substitutions.replica-instance-3-name"}
 spec:
   databaseVersion: POSTGRES_9_6
   region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  masterInstanceRef:
+    name: postgres-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
   settings:
-    tier: db-custom-1-3840
+    activationPolicy: ALWAYS
+    crashSafeReplication: true
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_HDD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-custom-2-13312
     availabilityType: ZONAL
+    databaseFlags:
+    - name: autovacuum
+      value: "off"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: false
       authorizedNetworks:
-      - name: mysql-ha-solution-cidr
+      - name: postgres-ha-solution-cidr
         value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
     locationPreference:
-      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup-3"}
+      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-replica-3"}
+    maintenanceWindow:
+      day: 7
+      hour: 12
+      updateTrack: stable
