@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: shared-vpc
 packageMetadata:
-  shortDescription: created a shared VPC network
+  shortDescription: create a VPC network inside a host project to be consumed from within a service project
 openAPI:
   definitions:
     io.k8s.cli.setters.host-project:

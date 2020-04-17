@@ -7,14 +7,14 @@ Shared VPC Network
 
 # SYNOPSIS
 
-  Config Connector YAML files to create a VPC network inside a host project,
-  which can be consumed from within a service project.
+  Config Connector YAML files to create a VPC network inside a
+  host project to be consumed from within a service project.
 
 ## Consumption
 
-  Using [kpt](https://googlecontainertools.github.io/kpt/):
+  Download the package using [kpt](https://googlecontainertools.github.io/kpt/):
   ```
-  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/projects/kpt/shared-vpc .
+  kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/projects/kpt/shared-vpc .
   ```
 
 ## Requirements
@@ -24,10 +24,11 @@ Shared VPC Network
   The cnrm-system service account, which must have:
   - `roles/resourcemanager.projectCreator` in the target organization if service and
 host projects do not yet exist, or the `owner` role in the projects if they already exist.
-  - `roles/compute.xpnAdmin` in the target organization
+  - `roles/compute.xpnAdmin` and `roles/billing.user` in the target organization
+  - Billing and Resource Manager APIs enabled in its associated project
 
 ## Usage
-  Set the ID for billing account, host project, and service project:
+  Set the ID for billing account, host project, service project, and organization:
   ```
   kpt cfg set . billing-account VALUE
   kpt cfg set . host-project VALUE
@@ -35,14 +36,14 @@ host projects do not yet exist, or the `owner` role in the projects if they alre
   kpt cfg set . org-id VALUE
   ```
 
-  You can also change the name of the VPC network, from the default value of `sharedvpcnetwork`.
+  Optionally, you can also change the name of the VPC network, from the default value of `sharedvpcnetwork`.
 
   Once your configuration is complete, simply apply:
   ```
   kubectl apply -f .
   ```
 
-  Note: services that have been applied will have type `gcpservice`
+  Note: To see the applied resources for a given namespace, run `kubectl get gcp --namespace <namespace>`, where `<namespace>` is replaced by the corresponding namespace in the `0-namespace.yaml` file. Services that have been applied will have type `gcpservice`.
 
 
 # License
