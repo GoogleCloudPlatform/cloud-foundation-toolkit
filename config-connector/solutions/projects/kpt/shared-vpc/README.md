@@ -35,6 +35,11 @@ host projects do not yet exist, or the `owner` role in the projects if they alre
   kpt cfg set . service-project VALUE
   kpt cfg set . org-id VALUE
   ```
+  Set the default namespace setter to reflect the namespace you will apply the solution YAMLs to. This may be the namespace you set [here](https://cloud.google.com/config-connector/docs/how-to/setting-default-namespace).
+  ```
+  kpt cfg set . default-namespace VALUE
+  ```
+  where `VALUE` is the name of the namespace you found to be applicable above.
 
   Optionally, you can also change the name of the VPC network, from the default value of `sharedvpcnetwork`.
 

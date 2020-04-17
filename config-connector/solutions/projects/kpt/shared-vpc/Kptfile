@@ -3,7 +3,8 @@ kind: Kptfile
 metadata:
   name: shared-vpc
 packageMetadata:
-  shortDescription: create a VPC network inside a host project to be consumed from within a service project
+  shortDescription: create a VPC network inside a host project to be consumed from
+    within a service project
 openAPI:
   definitions:
     io.k8s.cli.setters.host-project:
@@ -25,7 +26,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: billing-account
-          value: "${BILLING_ACCOUNT_ID?}"          
+          value: "${BILLING_ACCOUNT_ID?}"
           setBy: PLACEHOLDER
     io.k8s.cli.setters.network-name:
       description: name of VPC network
@@ -40,4 +41,11 @@ openAPI:
         setter:
           name: org-id
           value: ${ORG_ID?}
+          setBy: PLACEHOLDER
+    io.k8s.cli.setters.default-namespace:
+      description: namespace where solution will be applied
+      x-k8s-cli:
+        setter:
+          name: default-namespace
+          value: ${DEFAULT_NAMESPACE?}
           setBy: PLACEHOLDER

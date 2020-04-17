@@ -14,8 +14,11 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeSharedVPCServiceProject
 metadata:
+  namespace: shared-vpc-host-project-annotated
   name: computesharedvpcserviceproject
 spec:
   projectRef:
+    # Replace the ${DEFAULT_NAMESPACE?} below with your default namespace.
+    namespace: ${DEFAULT_NAMESPACE?} # {"$ref":"#/definitions/io.k8s.cli.setters.default-namespace"}
     # Replace the ${SERVICE_PROJECT_ID?} below with your desired project ID for VPC service.
     name: ${SERVICE_PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.service-project"}
