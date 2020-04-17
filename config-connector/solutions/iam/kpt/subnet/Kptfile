@@ -13,13 +13,6 @@ openAPI:
           value: subnet-solution
           setBy: package-default
       description: The name of the new subnet.
-    io.k8s.cli.setters.subnet-ip-range:
-      x-k8s-cli:
-        setter:
-          name: subnet-ip-range
-          value: ${SUBNET_IP_RANGE?}
-          setBy: PLACEHOLDER
-          description: The ip range of the new subnet.
     io.k8s.cli.setters.subnet-region:
       x-k8s-cli:
         setter:

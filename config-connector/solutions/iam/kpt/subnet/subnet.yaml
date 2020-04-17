@@ -17,7 +17,7 @@ kind: ComputeSubnetwork
 metadata:
   name: subnet-solution # {"$ref":"#/definitions/io.k8s.cli.setters.subnet-name"}
 spec:
-  ipCidrRange: ${SUBNET_IP_RANGE?} # {"$ref":"#/definitions/io.k8s.cli.setters.subnet-ip-range"} 
+  ipCidrRange: "10.0.0.0/9"
   region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.subnet-region"} 
   privateIpGoogleAccess: false
   networkRef:

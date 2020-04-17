@@ -26,11 +26,6 @@ Subnet
   ```
   kpt cfg set . iam-member user:name@example.com
   ```
-  
-  Replace `${SUBNET_IP_RANGE?}` with a ip range of the subnet:
-  ```
-  kpt cfg set . subnet-ip-range VALUE
-  ```
 
   _Optionally_, you can change the following fields before you apply the YAMLs:
   - the name of the compute network
