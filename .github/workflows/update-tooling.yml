@@ -63,5 +63,5 @@ jobs:
             Updated tools to ${{env.NEW_IMG_VERSION}} Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
           labels: automated pr
           assignees: bharathkkb,morgante
-          reviewers: bharathkkb,morgante
+          reviewers: morgante
           branch: create-pull-request/patch-tools-version

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 27.03.2020
+
+- BugFix Unmanaged Instance Group template to support network as selfLink
+
 ### 10.03.2020
 
 - Extending the IAM member binding template to support bindings on CloudFunctions with `gcp-types/cloudfunctions-v1:virtual.projects.locations.functions.iamMemberBinding`. [#591](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/591)
