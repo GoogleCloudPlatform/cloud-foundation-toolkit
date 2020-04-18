@@ -28,8 +28,8 @@ const (
 
 type getAssetFromJSONTestcase struct {
 	name          string
-	assetJSONFile     string
-	ancestryPath string
+	assetJSONFile string
+	ancestryPath  string
 	isResource    bool
 	isIamPolicy   bool
 }
@@ -44,14 +44,14 @@ func TestGetAssetFromJSON(t *testing.T) {
 		{
 			name:          "resource",
 			assetJSONFile: "/shared/resource.json",
-			ancestryPath: "organizations/56789/projects/1234",
+			ancestryPath:  "organizations/56789/projects/1234",
 			isResource:    true,
 			isIamPolicy:   false,
 		},
 		{
 			name:          "iam policy",
 			assetJSONFile: "/shared/iam_policy.json",
-			ancestryPath: "organizations/56789/folders/2345/projects/1234",
+			ancestryPath:  "organizations/56789/folders/2345/projects/1234",
 			isResource:    false,
 			isIamPolicy:   true,
 		},
@@ -86,8 +86,12 @@ func TestGetAssetFromJSON(t *testing.T) {
 func TestGetViolations(t *testing.T) {
 	var testCases = []getViolationsTestcase{
 		{
-			resource:   "//storage.googleapis.com/test-project",
-			constraint: "iam-gcs-blacklist-public-users",
+			resource:   "//storage.googleapis.com/test-bucket-public",
+			constraint: "GCPStorageBucketWorldReadableConstraintV1.iam-gcs-blacklist-public-users",
+		},
+		{
+			resource:   "//container.googleapis.com/projects/gke-networking/zones/us-central1-a/clusters/private-cluster-demo/k8s/namespaces/default/pods/hello-world-deploy-1234567d898-xqwf9",
+			constraint: "K8sDumpReview.dump-review",
 		},
 	}
 	inventory, err := NewInventory("", localCaiDir, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
@@ -117,4 +121,3 @@ func TestGetViolations(t *testing.T) {
 		})
 	}
 }
-
