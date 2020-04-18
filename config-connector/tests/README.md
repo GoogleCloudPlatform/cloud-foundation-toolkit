@@ -1,19 +1,17 @@
-Config Connector Solutions Testing CLI
+# Config Connector Solutions Testing CLI
 
-==================================================
-
-# Introduction
+## Introduction
 
 This folder contains the Go CLI and testcases for testing the Config Connector
-Solutions defined in [../solutions](../solutions).
+Solutions defined in [../solutions](../solutions) folder.
 
-*  [ccs-test/](./ccs-test/): Go CLI
-*  [testcases](./testcases/): Testcases for each solution. If has the same
-   folder structure as the solutions, i.e. if the solution is under 
-   <pre>../solutions/<b>iam/kpt/member-iam/</b></pre>, then the corresponding
-   testcases should be under <pre>./testcases/<b>iam/kpt/member-iam/</b></pre>
+*  **[ccs-test/](./ccs-test/)** - Go CLI
+*  **[testcases/](./testcases/)** - Testcases for each solution. If has
+   the same folder structure as the solutions, i.e. if the solution is under 
+   <code>../solutions/<b>iam/kpt/member-iam/</b></code>, then the corresponding
+   testcases should be under <code>./testcases/<b>iam/kpt/member-iam/</b></code>
 
-# Requirements
+## Requirements
 
 *  [Go](https://golang.org/doc/install)
 *  [kpt](../solutions/README.md#kpt)
@@ -21,9 +19,9 @@ Solutions defined in [../solutions](../solutions).
 *  a working Kubernetes cluster with Config Connector [installed and 
    configured](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall)
 
-# Consumption
+## Consumption
 
-1.  Clone GoogleCloudPlatform/cloud-foundation-toolkit repository under your $GOPATH:
+1.  Clone GoogleCloudPlatform/cloud-foundation-toolkit repository under your `$GOPATH`:
   
     ```
     git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
@@ -68,7 +66,7 @@ Solutions defined in [../solutions](../solutions).
 
     **Note:** This step will be automated in the upcoming changes.
 
-# How to run the tests?
+## How to run the tests?
 
 **Note:** Currently we only support testing one solution each time by setting
 the relative path of the solution using `--path` or `-p` flag.
@@ -80,7 +78,7 @@ Under the [tests](.) folder, run a test by providing the relative path:
 ccs-test run --path [RELATIVE_PATH]  # E.g. "iam/kpt/member-iam"
 ```
 
-# How to add new tests?
+## How to add new tests?
 
 **Note:** Currently we only support adding tests for kpt solutions.
 
@@ -129,7 +127,7 @@ If you want to create tests for solution
     ```
 
     **Note:** Please don't use $ENV_VAR directly in the command. The back slash
-    ("\") is necessary because here, it is a string, but not a variable. We
+    ("\\") is necessary because here, it is a string, but not a variable. We
     don't want to set the value of ENV_VAR in the testcase YAML file.
 
 1.  Check the environments template file
