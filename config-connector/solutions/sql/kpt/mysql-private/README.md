@@ -43,8 +43,7 @@ instance.
   ```
   kpt cfg set . password $(echo -n 'your-password' | base64)
   ```
-
-  For this package to work properly, the following resources must be in a ready state before the SQLInstance YAML is applied:
+  Due to the bug in Config Connector ([more details](https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/148)), the following resources must be in a ready state before the SQLInstance YAML is applied:
   - `ComputeNetwork`
   - `ComputeAddress`
   - `ServiceNetworkingConnection`
