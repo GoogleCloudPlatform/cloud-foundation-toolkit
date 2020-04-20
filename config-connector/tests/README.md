@@ -84,7 +84,7 @@ output of the test after you run the command.
 
 If you find the last line of the output is `======Successfully finished the test
 for solution [RELATIVE_PATH]======`, it means the test run is successful.
-Otherwise, it is the detailed error message of the failure.
+Otherwise, you'll find the detailed error message of the failure.
 
 ## How to add new tests?
 
