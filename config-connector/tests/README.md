@@ -107,10 +107,11 @@ If you want to create tests for solution
     mkdir -p [SOLUTION_AREA]/kpt/[SOLUTION_NAME]
     ```
 
-1.  Create the testcase YAML file `required_fields_only.yaml`:
+1.  Create the testcase YAML file `required_fields_only.yaml` from
+    `test_values.template` file:
 
     ```
-    touch [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
+    cp test_values.template [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
     ```
 
     **Note:** Currently we only support one testcase, which only set required
@@ -140,17 +141,18 @@ If you want to create tests for solution
 
 1.  Check the environments template file
     ([./environments.template](./environments.template)). For each environment
-    variable you need but doesn't exist in the environments template file, add
-    it:
+    variable you need but does **NOT** exist in the environments template file,
+    add it:
 
     ```
     echo "ENV_VAR: \${ENV_VAR?}" >> ./environments.template
     ```
 
-1.  Create the YAML file for the original values of the setters:
+1.  Create the YAML file for the original values of the setters from
+    `test_values.template` file:
 
     ```
-    touch [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/original_values.yaml
+    cp test_values.template [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/original_values.yaml
     ```
 
 1.  For each placeholder setter and its original value (you can find them by
@@ -164,3 +166,7 @@ If you want to create tests for solution
     echo "[SETTER_NAME]: \[ORIGINAL_VALUE]" >> \
     [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/original_values.yaml
     ```
+
+# License
+
+  Apache 2.0 - See [LICENSE](/LICENSE) for more information.
