@@ -71,12 +71,20 @@ Solutions defined in [../solutions](../solutions) folder.
 **Note:** Currently we only support testing one solution each time by setting
 the relative path of the solution using `--path` or `-p` flag.
 
-**Note:** Currently we only support testing kpt solutions.
+**Note:** Currently we only support testing kpt solutions specified under
+[testcases folder](./testcases).
 
 Under the [tests](.) folder, run a test by providing the relative path:
 ```
 ccs-test run --path [RELATIVE_PATH]  # E.g. "iam/kpt/member-iam"
 ```
+
+Each test should take less than 2 mins to finish. You'll find the detailed
+output of the test after you run the command.
+
+If you find the last line of the output is `======Successfully finished the test
+for solution [RELATIVE_PATH]======`, it means the test run is successful.
+Otherwise, it is the detailed error message of the failure.
 
 ## How to add new tests?
 
@@ -99,16 +107,16 @@ If you want to create tests for solution
     mkdir -p [SOLUTION_AREA]/kpt/[SOLUTION_NAME]
     ```
 
-1.  Create a testcase YAML file with a descriptive name, i.e. 
-    `required_fields_only.yaml`:
+1.  Create the testcase YAML file `required_fields_only.yaml`:
 
     ```
     touch [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
     ```
 
     **Note:** Currently we only support one testcase, which only set required
-    kpt setters (setters set by PLACEHOLDER). Exceptions like SQLInstance name
-    will be addressed in the upcoming changes.
+    kpt setters (setters set by PLACEHOLDER). Setting optional kpt setters in
+    tests is not necessary except for the SQLInstance name. This issue will be
+    addressed in the upcoming changes.
 
 1.  Check if the solution requires any PLACEHOLDERs to be set:
 
