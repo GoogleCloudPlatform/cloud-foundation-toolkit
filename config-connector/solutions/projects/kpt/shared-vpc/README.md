@@ -24,8 +24,9 @@ Shared VPC Network
   The cnrm-system service account, which must have:
   - `roles/resourcemanager.projectCreator` in the target organization if service and
 host projects do not yet exist, or the `owner` role in the projects if they already exist.
-  - `roles/compute.xpnAdmin` and `roles/billing.user` in the target organization
-  - Billing and Resource Manager APIs enabled in its associated project
+  - `roles/compute.xpnAdmin` in the target organization
+  - `roles/billing.user` in the target billing account
+  - Cloud Billing and Cloud Resource Manager APIs enabled in the project managed by Config Connector
 
 ## Usage
   Set the ID for billing account, host project, service project, and organization:
@@ -41,7 +42,7 @@ host projects do not yet exist, or the `owner` role in the projects if they alre
   ```
   where `VALUE` is the name of the namespace you found to be applicable above.
 
-  Optionally, you can also change the name of the VPC network, from the default value of `sharedvpcnetwork`.
+  _Optionally,_ you can also change the name of the VPC network, from the default value of `sharedvpcnetwork`.
 
   Once your configuration is complete, simply apply:
   ```
