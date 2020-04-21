@@ -12,24 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# <FIXME:password>: Admin passwords for SAP
+# <FIXME:bucket>: GCS Bucket for the deployment
+
 imports:
-  - path: templates/sap_hana/sap_hana_template.py
+  - path: sap_hana_template.py
     name: sap_hana_template.py
     
 resources:
   - name: sap_hana_standalone
     type: sap_hana_template.py
     properties:
-        primaryInstanceName: [NAME]
-        instanceType: [INSTANCE_TYPE]
-        region: [REGION]
-        primaryZone: [ZONE]
-        linuxImage: [LINUX_IMAGE]
-        linuxImageProject: [IMAGE_PROJECT]
-        sap_hana_deployment_bucket: [YOUR_BUCKET_NAME]
-        sap_hana_sid: [SID]
-        sap_hana_sidadm_password: [PASSWORD]
-        sap_hana_system_password: [PASSWORD]
+        primaryInstanceName: myhana
+        instanceType: n1-highmem-16
+        region: us-central1
+        primaryZone: us-central1-a
+        linuxImage: family/sles-12-sp3-sap
+        linuxImageProject: suse-sap-cloud
+        sap_hana_deployment_bucket: <FIXME:bucket>
+        sap_hana_sid: DI4
+        sap_hana_sidadm_password: <FIXME:password>
+        sap_hana_system_password: <FIXME:password>
         #
         # --- Advanced Options ---
         # The following advanced options are not usually needed. To use an advanced option, remove

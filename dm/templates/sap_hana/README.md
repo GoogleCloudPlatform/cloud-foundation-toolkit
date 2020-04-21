@@ -53,13 +53,13 @@ See `properties` section in the schema file(s):
 2. Go to the [dm](../../) directory:
 
 ```shell
-    cd dm
+    cd dm/templates/sap_hana
 ```
 
 3. Copy the example DM config to be used as a model for the deployment; in this case, [examples/hana_standalone_scenario.yaml](examples/hana_standalone_scenario.yaml) for standalone HANA or [examples/hana_ha_scenario.yaml](examples/hana_ha_scenario.yaml) for HANA HA scenario :
 
 ```shell
-    cp templates/sap_hana/examples/sap_hana_ha.yaml my_sap_hana_ha.yaml
+    cp examples/sap_hana_ha.yaml my_sap_hana_ha.yaml
 ```
 
 4. Change the values in the config file to match your specific GCP setup (for properties, refer to the schema files listed above):
@@ -86,7 +86,7 @@ You need to perform the the testing steps are the following:
 1) Deploy the template as described in step 5 above
 2) Wait until HANA is deployed successfully. This can be done by checking the Stackdriver Logs for **INSTANCE DEPLOYMENT COMPLETE**.
 3) Connect vis SSH to the Linux bastion host 
-4) From the bastion host, connect to the HANA instance using the command ```gcloud compute INSTANCE-NAME --internal-ip```, then:
+4) From the bastion host, connect to the HANA instance using the command ```gcloud compute ssh INSTANCE-NAME --internal-ip```, then:
     * For a standalone HANA deployment, follow the steps described [here](https://cloud.google.com/solutions/sap/docs/sap-hana-deployment-guide#verifying_deployment).
     * For a HANA HA deployment, follow the steps described [here](https://cloud.google.com/solutions/sap/docs/sap-hana-ha-deployment-guide#checking_the_configuration_of_the_vm_and_the_sap_hana_installation).
 

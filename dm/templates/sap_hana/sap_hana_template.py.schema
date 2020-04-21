@@ -25,6 +25,8 @@ info:
 imports:
     - path: ../network/network.py
       name: network.py
+    - path: ../network/subnetwork.py
+      name: subnetwork.py
     - path: ../cloud_router/cloud_router.py
       name: cloud_router.py
     - path: ../firewall/firewall.py
@@ -52,7 +54,8 @@ properties:
   primaryInstanceName:
     type: string
     description: |
-      The name of the HANA DB instance,
+      The name of the HANA DB instance.
+    pattern: ^[a-z][a-z0-9-]{4,15}[a-z0-9]$
   secondaryInstanceName:
     type: string
     description: |
