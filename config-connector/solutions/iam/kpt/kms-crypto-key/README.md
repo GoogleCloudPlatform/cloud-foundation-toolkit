@@ -3,7 +3,8 @@ KMS Crypto Key
 # NAME
   kms-crypto-key
 # SYNOPSIS
-  Config Connector compatible yaml files to create a kms key ring and crypto key, and apply an IAM role to the key.
+  Config Connector compatible yaml files to create a kms key ring, a kms crypto key,
+  and apply an IAM role to the crypto key.
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
