@@ -71,12 +71,16 @@ definitions:
           If unspecified, the default disk size is 100GB.
       imageType:
         type: string
-        default: cos
+        default: COS
         description: |
           The image type to use for this node. Note that for a given image type, the latest version of it will be used.
         enum:
-          - cos
-          - Ubuntu
+          - cos # backwards compatible spelling
+          - Ubuntu # backwards compatible spelling
+          - COS
+          - UBUNTU
+          - COS_CONTAINERD
+          - UBUNTU_CONTAINERD
       oauthScopes:
         type: array
         uniqueItems: True
@@ -208,48 +212,39 @@ definitions:
         additionalProperties: false
         description: |
           The workload metadata configuration for the node.
-        items:
-          type: object
-          additionalProperties: false
-          required:
-            - nodeMetadata
-          properties:
-            nodeMetadata:
-              type: array
-              uniqueItems: True
-              description: |
-                Configuration that defines how to expose the node metadata to the workload running on the node.
-              items:
-                type: string
-                enum:
-                  - UNSPECIFIED
-                  - SECURE
-                  - EXPOSE
-                  - GKE_METADATA_SERVER
+        required:
+          - nodeMetadata
+        properties:
+          nodeMetadata:
+            type: string
+            description: |
+              Configuration that defines how to expose the node metadata to the workload running on the node.
+            enum:
+              - UNSPECIFIED
+              - SECURE
+              - EXPOSE
+              - GKE_METADATA_SERVER
       shieldedInstanceConfig:
         type: object
         additionalProperties: false
         description: |
           Shielded Instance options.
-        items:
-          type: object
-          additionalProperties: false
-          properties:
-            enableSecureBoot:
-              type: boolean
-              description: |
-                Defines whether the instance has Secure Boot enabled.
+        properties:
+          enableSecureBoot:
+            type: boolean
+            description: |
+              Defines whether the instance has Secure Boot enabled.
 
-                Secure Boot helps ensure that the system only runs authentic software by verifying the digital
-                signature of all boot components, and halting the boot process if signature verification fails.
-            enableIntegrityMonitoring:
-              type: boolean
-              description: |
-                Defines whether the instance has integrity monitoring enabled.
+              Secure Boot helps ensure that the system only runs authentic software by verifying the digital
+              signature of all boot components, and halting the boot process if signature verification fails.
+          enableIntegrityMonitoring:
+            type: boolean
+            description: |
+              Defines whether the instance has integrity monitoring enabled.
 
-                Enables monitoring and attestation of the boot integrity of the instance. The attestation is
-                performed against the integrity policy baseline. This baseline is initially derived from the
-                implicitly trusted boot image when the instance is created.
+              Enables monitoring and attestation of the boot integrity of the instance. The attestation is
+              performed against the integrity policy baseline. This baseline is initially derived from the
+              implicitly trusted boot image when the instance is created.
       taints:
         type: array
         uniqueItems: True
@@ -466,7 +461,6 @@ properties:
                   Issue a client certificate.
       initialClusterVersion:
         type: string
-        default: latest
         description: |
           The initial Kubernetes version for this cluster. Valid versions are those found in validMasterVersions
           returned by getServerConfig. The version can be upgraded over time; such upgrades are reflected
@@ -566,14 +560,11 @@ properties:
           https://kubernetes.io/docs/concepts/services-networking/networkpolicies/
         properties:
           provider:
-            type: array
-            uniqueItems: True
+            type: string
             description: The selected network policy provider.
-            items:
-              type: string
-              enum:
-                - PROVIDER_UNSPECIFIED
-                - CALICO
+            enum:
+              - PROVIDER_UNSPECIFIED
+              - CALICO
           enabled:
             type: boolean
             description: |

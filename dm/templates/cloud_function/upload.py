@@ -55,11 +55,12 @@ def upload_source(context_name, project, function, imports, local_path, source_a
 
     # Creates an in-memory archive of the Cloud Function source files.
     sources = extract_source_files(imports, local_path)
-    archive_base64 = base64.b64encode(archive_files(sources))
+    archive = archive_files(sources)
+    archive_base64 = base64.b64encode(archive).decode("utf-8")
 
     # The Cloud Function knows it was updated when MD5 changes.
     md5 = hashlib.md5()
-    md5.update(archive_base64)
+    md5.update(archive)
 
     # Splits the upload path into the bucket and archive names.
     bucket_name = source_archive_url[:source_archive_url.index('/', GS_SCHEMA_LENGTH)] # pylint: disable=line-too-long

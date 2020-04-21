@@ -16,6 +16,7 @@ package scorecard
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/csv"
 	"encoding/json"
 	"flag"
@@ -23,6 +24,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	"github.com/forseti-security/config-validator/pkg/gcv"
@@ -47,7 +49,7 @@ func NewScoringConfigFromValidator(v *gcv.Validator) *ScoringConfig {
 // NewScoringConfig creates a scoring engine for the given policy library
 func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, error) {
 	flag.Parse()
-	v, err := gcv.NewValidator(ctx.Done(),
+	v, err := gcv.NewValidator(
 		[]string{filepath.Join(policyPath, "policies")},
 		filepath.Join(policyPath, "lib"),
 	)
@@ -76,7 +78,7 @@ func (c constraintCategory) Count() int {
 
 // constraintViolations holds violations for a particular constraint
 type constraintViolations struct {
-	constraint *validator.Constraint
+	constraint string
 	Violations []*validator.Violation `protobuf:"bytes,1,rep,name=violations,proto3" json:"violations,omitempty"`
 }
 
@@ -84,8 +86,8 @@ func (cv constraintViolations) Count() int {
 	return len(cv.Violations)
 }
 
-func (cv constraintViolations) GetName() string {
-	return cv.constraint.GetMetadata().GetStructValue().GetFields()["name"].GetStringValue()
+func getConstraintShortName(constraintName string) string {
+	return strings.Split(constraintName, ".")[1]
 }
 
 // RichViolation holds a violation with its category
@@ -117,15 +119,14 @@ func (config *ScoringConfig) getConstraintForViolation(violation *validator.Viol
 	key := violation.GetConstraint()
 	cv, found := config.constraints[key]
 	if !found {
-		constraint := violation.GetConstraintConfig()
+		constraint := key
 		cv = &constraintViolations{
 			constraint: constraint,
 		}
 		config.constraints[key] = cv
 
-		metadata := constraint.GetMetadata()
+		metadata := violation.GetMetadata().GetStructValue().GetFields()["constraint"]
 		annotations := metadata.GetStructValue().GetFields()["annotations"].GetStructValue().GetFields()
-
 		categoryKey := otherCategoryKey
 		categoryValue, found := annotations["bundles.validator.forsetisecurity.org/scorecard-v1"]
 		if found {
@@ -171,6 +172,9 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	if err != nil {
 		return err
 	}
+	Log.Debug("AuditResult from Config Validator", "# of Violations", len(auditResult.Violations))
+	auditResult.Violations = uniqueViolations(auditResult.Violations)
+	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(auditResult.Violations))
 
 	err = config.attachViolations(auditResult)
 	if err != nil {
@@ -198,7 +202,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 						}
 						if len(outputMetadataFields) > 0 {
 							newMetadata := make(map[string]interface{})
-							oldMetadata := v.Metadata.GetStructValue()
+							oldMetadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue()
 							for _, field := range outputMetadataFields {
 								newMetadata[field], _ = interfaceViaJSON(oldMetadata.Fields[field])
 							}
@@ -227,9 +231,9 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
-						record := []string{category.Name, v.Constraint, v.Resource, v.Message}
+						record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message}
 						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue().Fields[field]
+							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 							value, _ := stringViaJSON(metadata)
 							record = append(record, value)
 						}
@@ -245,11 +249,11 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				io.WriteString(dest, fmt.Sprintf("\n\n%v: %v issues found\n", category.Name, category.Count()))
 				io.WriteString(dest, fmt.Sprintf("----------\n"))
 				for _, cv := range category.constraints {
-					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", cv.GetName(), cv.Count()))
+					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", getConstraintShortName(cv.constraint), cv.Count()))
 					for _, v := range cv.Violations {
 						io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
 						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue().Fields[field]
+							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 							value, _ := stringViaJSON(metadata)
 							if value != "" {
 								io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
@@ -268,4 +272,18 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	}
 
 	return nil
+}
+
+func uniqueViolations(violations []*validator.Violation) []*validator.Violation {
+	uniqueViolationMap := make(map[string]*validator.Violation)
+	for _, v := range violations {
+		b, _ := json.Marshal(v)
+		hash := md5.Sum(b)
+		uniqueViolationMap[string(hash[:])] = v
+	}
+	uniqueViolations := make([]*validator.Violation, 0, len(uniqueViolationMap))
+	for _, v := range uniqueViolationMap {
+		uniqueViolations = append(uniqueViolations, v)
+	}
+	return uniqueViolations
 }

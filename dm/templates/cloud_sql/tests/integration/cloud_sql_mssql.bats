@@ -69,12 +69,16 @@ function teardown() {
 @test "Creating deployment ${DEPLOYMENT_NAME} from ${CONFIG}" {
     run gcloud deployment-manager deployments create "${DEPLOYMENT_NAME}" \
         --config "${CONFIG}" --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
 }
 
 @test "Verifying that both instances were created" {
     run gcloud sql instances list \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${MASTER_INSTANCE_NAME}" ]]
 }
@@ -82,6 +86,8 @@ function teardown() {
 @test "Verifying master instance" {
     run gcloud sql instances describe ${MASTER_INSTANCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${VERSION}" ]]
     [[ "$output" =~ "${MASTER_INSTANCE_TIER}" ]]
@@ -93,6 +99,8 @@ function teardown() {
 @test "Verifying master database list" {
     run gcloud sql databases list --instance ${MASTER_INSTANCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${DB1}" ]]
     [[ "$output" =~ "${DB2}" ]]
@@ -101,17 +109,19 @@ function teardown() {
 @test "Verifying master user list" {
     run gcloud sql users list --instance ${MASTER_INSTANCE_NAME} \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "${USER1_NAME}" ]]
     [[ "$output" =~ "${USER2_NAME}" ]]
-    [[ "$output" =~ "${USER1_HOST}" ]]
-    [[ "$output" =~ "${USER2_HOST}" ]]
 }
 
 @test "Verifying master backup settings" {
     run gcloud sql instances describe ${MASTER_INSTANCE_NAME} \
         --format="yaml(settings.backupConfiguration)" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "enabled: ${BACKUP_ENABLED}" ]]
     [[ "$output" =~ "startTime: ${BACKUP_START_TIME}" ]]
@@ -120,5 +130,7 @@ function teardown() {
 @test "Deleting deployment" {
     run gcloud deployment-manager deployments delete "${DEPLOYMENT_NAME}" -q \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
+    echo "status = ${status}"
+    echo "output = ${output}"
     [[ "$status" -eq 0 ]]
 }

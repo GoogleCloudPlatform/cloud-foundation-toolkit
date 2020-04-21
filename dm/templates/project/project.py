@@ -384,7 +384,7 @@ def create_bucket(context):
         'properties':
             {
                 'project': '$(ref.{}-project.projectId)'.format(context.env['name']),
-                'bucketName': 'gs://' + bucket_name
+                'bucketName': bucket_name
             },
         'metadata': {
             'dependsOn': [

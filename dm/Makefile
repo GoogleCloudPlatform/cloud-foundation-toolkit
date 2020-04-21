@@ -1,4 +1,4 @@
-PYTHON  ?= python
+PYTHON  ?= python3
 SHELL   := /bin/bash
 PACKAGE =  cloud_foundation_toolkit
 

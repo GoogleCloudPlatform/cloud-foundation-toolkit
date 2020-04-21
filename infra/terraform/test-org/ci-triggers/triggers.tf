@@ -46,7 +46,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
     _BILLING_ACCOUNT          = local.billing_account
     _FOLDER_ID                = each.value
     _ORG_ID                   = local.org_id
-    _BILLING_IAM_TEST_ACCOUNT = local.billing_iam_test_account
+    _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
   }
 
   filename = "build/int.cloudbuild.yaml"
@@ -137,5 +137,20 @@ resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
     "**/*.tf",
     "**/*.py"
   ]
+}
+
+resource "google_cloudbuild_trigger" "terraform_example_foundation_lint" {
+  provider    = google-beta
+  project     = local.project_id
+  description = "Lint tests on pull request for terraform-example-foundation"
+  github {
+    owner = "terraform-google-modules"
+    name  = "terraform-example-foundation"
+    pull_request {
+      branch = ".*"
+    }
+  }
+
+  filename = "build/cloudbuild.lint.yaml"
 }
 

@@ -1,0 +1,32 @@
+name: Build and push new dev tools image
+on:
+  push:
+    branches: 
+      - "master"
+    paths:
+      - "infra/build/**"
+env:
+  PROJECT_ID: ${{ secrets.GCR_PROJECT_ID }}
+
+jobs:
+  build-push-dev-tools:
+    name: Build and push new CFT dev tools image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "286.0.0"
+          service_account_key: ${{ secrets.GCR_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Build
+        run: |-
+          cd infra/build && make build-image-developer-tools
+
+      - name: Push
+        run: |-
+          gcloud auth configure-docker -q
+          cd infra/build && make release-image-developer-tools

@@ -17,6 +17,7 @@ package scorecard
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
@@ -31,7 +32,8 @@ func protoViaJSON(from interface{}, to proto.Message) error {
 		return errors.Wrap(err, "marshaling to json")
 	}
 
-	if err := jsonpb.UnmarshalString(string(jsn), to); err != nil {
+	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
+	if err := umar.Unmarshal(strings.NewReader(string(jsn)), to); err != nil {
 		return errors.Wrap(err, "unmarshaling to proto")
 	}
 
