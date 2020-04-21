@@ -3,14 +3,14 @@ KMS Crypto Key
 # NAME
   kms-crypto-key
 # SYNOPSIS
-  Config Connector compatible yaml files to create a kms key ring and crypto key and apply an IAM role to the key.
+  Config Connector compatible yaml files to create a kms key ring and crypto key, and apply an IAM role to the key.
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/kms-crypto-key kms-crypto-key
   ```
 # REQUIREMENTS
-  A Config Connector installation managing a project with Cloud Key Management Service API enabled
+  A working Config Connector instance managing a project with Cloud Key Management Service (KMS) API enabled
 # SETTERS
 |    NAME    |         VALUE         |     SET BY      |       DESCRIPTION        | COUNT |
 |------------|-----------------------|-----------------|--------------------------|-------|
@@ -28,7 +28,7 @@ KMS Crypto Key
   ```
   kpt cfg set . role roles/cloudkms.cryptoKeyDecrypter
   ```
-  _Optionally_ set the key and ring name and ring location:
+  _Optionally_ set the crypto key name, key ring name, and key ring location:
   ```
   kpt cfg set . key-name your-key
   kpt cfg set . ring-name your-ring
