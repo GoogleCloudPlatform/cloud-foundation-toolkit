@@ -3,7 +3,8 @@ kind: Kptfile
 metadata:
   name: kms-crypto-key
 packageMetadata:
-  shortDescription: create a kms key and apply an IAM role to it
+  shortDescription: create a kms key ring, a kms crypto key, and apply an IAM role
+    to the crypto key
 openAPI:
   definitions:
     io.k8s.cli.setters.iam-member:
