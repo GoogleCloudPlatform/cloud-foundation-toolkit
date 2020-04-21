@@ -79,7 +79,7 @@ def generate_config(context):
         if not '/' in network_name:
             network_propertie = { 'network': 'global/networks/{}'.format(network_name) }
         else:
-            network_propertie = { 'network': network_propertie }
+            network_propertie = { 'network': network_name }
     else:
         network_propertie = {}
 
