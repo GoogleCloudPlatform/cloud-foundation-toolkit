@@ -73,5 +73,7 @@ locals {
     "gcloud",
     "lb-internal",
     "utils",
+    "composer",
+    "github-actions-runners",
   ]
 }

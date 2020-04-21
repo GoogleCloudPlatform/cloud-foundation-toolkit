@@ -58,6 +58,9 @@ ENV BATS_ASSERT_VERSION ${BATS_ASSERT_VERSION}
 ARG BATS_MOCK_VERSION
 ENV BATS_MOCK_VERSION ${BATS_MOCK_VERSION}
 
+ARG TERRAGRUNT_VERSION
+ENV TERRAGRUNT_VERSION ${TERRAGRUNT_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -101,6 +104,9 @@ RUN /build/install_bats.sh ${BATS_VERSION} ${BATS_SUPPORT_VERSION} ${BATS_ASSERT
 ADD ./build/install_kubectl.sh /build/
 RUN /build/install_kubectl.sh
 
+ADD ./build/install_terragrunt.sh /build/
+RUN ./build/install_terragrunt.sh ${TERRAGRUNT_VERSION}
+
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
@@ -137,7 +143,8 @@ RUN terraform --version && \
     gcloud --version && \
     ruby --version && \
     bundle --version && \
-    kubectl version --client=true
+    kubectl version --client=true && \
+    terragrunt -version
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build
