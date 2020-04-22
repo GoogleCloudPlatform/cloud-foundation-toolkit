@@ -61,6 +61,12 @@ All steps are run from this directory.
     # install your chart with a new service account name
     helm install . --set serviceAccount.name=new-service-account --set iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```  
+    Or,
+    ```bash
+    # install your chart with a new service account name
+    helm install . --set iamPolicyMember.role=roles/iam.serviceAccountTokenCreator --set iamPolicyMember.iamMember=user:name@example.com --generate-name
+    ```
+    Or set them both in one command.
 
 1. Clean up the installation:
 

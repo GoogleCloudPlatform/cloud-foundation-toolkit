@@ -17,9 +17,9 @@ kind: IAMPolicyMember
 metadata:
   name: iampolicymember-service-account
 spec:
-  member: {{ required "IAM member is required!" .Values.iampolicymember.iammember }}
-  role: {{ .Values.iampolicymember.role | default "roles/iam.serviceAccountKeyAdmin" }}
+  member: {{ required "IAM member is required!" .Values.iamPolicyMember.iamMember }}
+  role: {{ .Values.iamPolicyMember.role | default "roles/iam.serviceAccountKeyAdmin" }}
   resourceRef:
     apiVersion: iam.cnrm.cloud.google.com/v1beta1
     kind: IAMServiceAccount
-    name: {{ .Values.serviceaccount.name | default "service-account-solution" }}
+    name: {{ .Values.serviceAccount.name | default "service-account-solution" }}
