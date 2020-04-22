@@ -35,11 +35,6 @@ All steps are run from this directory.
 
 1. Review and update the values in `./values.yaml`.
 
-        | value                      | is required? |
-        |----------------------------|--------------|
-        | iamPolicyMember.iamMember | Required     |
-        | serviceAccount.name       | opitonal     |
-
 1. Validate and install the sample with Helm.
 
     ```bash
@@ -56,7 +51,7 @@ All steps are run from this directory.
     helm install . --set iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
 
-1. _Optionaly_, you can costomize other optional values by explictly set them:
+1. _Optionaly_, you can costomize optional values by explictly set them when installing the solution:
     ```bash
     # install your chart with a new service account name
     helm install . --set serviceAccount.name=new-service-account --set iamPolicyMember.iamMember=user:name@example.com --generate-name
