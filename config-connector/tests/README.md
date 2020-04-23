@@ -5,7 +5,6 @@
 This folder contains the Go CLI and testcases for testing the Config Connector
 Solutions defined in [../solutions](../solutions) folder.
 
-*  **test-cli** - CLI for solutions test
 *  **[ccs-test/](./ccs-test/)** - Go code for testing CLI
 *  **[testcases/](./testcases/)** - Testcases for each solution. If has
    the same folder structure as the solutions, i.e. if the solution is under 
@@ -14,6 +13,7 @@ Solutions defined in [../solutions](../solutions) folder.
 
 ## Requirements
 
+*  [gsutil](https://cloud.google.com/storage/docs/gsutil_install)
 *  [kpt](../solutions/README.md#kpt)
 *  [helm](../solutions/README.md#helm)
 *  a working Kubernetes cluster with Config Connector [installed and 
@@ -31,6 +31,17 @@ Solutions defined in [../solutions](../solutions) folder.
 
     ```
     cd cloud-foundation-toolkit/config-connector/tests
+    ```
+
+1.  Download the `test-cli` executable file:
+
+    ```
+    gsutil cp gs://kcc-solutions-test/test-cli test-cli
+    ```
+1.  Change the file ACL to make it executable:
+
+    ```
+    chmod +x test-cli
     ```
 
 1.  Set the environment variables for the tests.
