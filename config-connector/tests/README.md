@@ -5,7 +5,7 @@
 This folder contains the Go CLI and testcases for testing the Config Connector
 Solutions defined in [../solutions](../solutions) folder.
 
-*  **[ccs-test/](./ccs-test/)** - Go code for testing CLI
+*  **[ccs-test/](./ccs-test/)** - Go code for the solutions test CLI
 *  **[testcases/](./testcases/)** - Testcases for each solution. If has
    the same folder structure as the solutions, i.e. if the solution is under 
    <code>../solutions/<b>iam/kpt/member-iam/</b></code>, then the corresponding
