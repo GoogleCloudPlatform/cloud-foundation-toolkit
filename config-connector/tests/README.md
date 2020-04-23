@@ -5,7 +5,7 @@
 This folder contains the Go CLI and testcases for testing the Config Connector
 Solutions defined in [../solutions](../solutions) folder.
 
-*  **[ccs-test/](./ccs-test/)** - Go CLI
+*  **[ccs-test/](./ccs-test/)** - Go code for the solutions test CLI
 *  **[testcases/](./testcases/)** - Testcases for each solution. If has
    the same folder structure as the solutions, i.e. if the solution is under 
    <code>../solutions/<b>iam/kpt/member-iam/</b></code>, then the corresponding
@@ -13,7 +13,7 @@ Solutions defined in [../solutions](../solutions) folder.
 
 ## Requirements
 
-*  [Go](https://golang.org/doc/install)
+*  [gsutil](https://cloud.google.com/storage/docs/gsutil_install)
 *  [kpt](../solutions/README.md#kpt)
 *  [helm](../solutions/README.md#helm)
 *  a working Kubernetes cluster with Config Connector [installed and 
@@ -21,7 +21,7 @@ Solutions defined in [../solutions](../solutions) folder.
 
 ## Consumption
 
-1.  Clone GoogleCloudPlatform/cloud-foundation-toolkit repository under your `$GOPATH`:
+1.  Clone GoogleCloudPlatform/cloud-foundation-toolkit repository:
   
     ```
     git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
@@ -33,10 +33,15 @@ Solutions defined in [../solutions](../solutions) folder.
     cd cloud-foundation-toolkit/config-connector/tests
     ```
 
-1.  Install ccs-test CLI:
+1.  Download the `test-cli` executable file:
 
     ```
-    go install ./ccs-test
+    gsutil cp gs://kcc-solutions-test/test-cli test-cli
+    ```
+1.  Change the file ACL to make it executable:
+
+    ```
+    chmod +x test-cli
     ```
 
 1.  Set the environment variables for the tests.
@@ -76,7 +81,7 @@ the relative path of the solution using `--path` or `-p` flag.
 
 Under the [tests](.) folder, run a test by providing the relative path:
 ```
-ccs-test run --path [RELATIVE_PATH]  # E.g. "iam/kpt/member-iam"
+./test-cli run --path [RELATIVE_PATH]  # E.g. "iam/kpt/member-iam"
 ```
 
 Each test should take less than 2 mins to finish. You'll find the detailed
