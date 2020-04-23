@@ -15,110 +15,192 @@ apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLInstance
 metadata:
   name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+  labels:
+    solution: mysql-ha
+    node: master
 spec:
   databaseVersion: MYSQL_5_7
-  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  region: us-central1
   settings:
-    tier: db-f1-micro
+    activationPolicy: ALWAYS
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_SSD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-n1-standard-1
     backupConfiguration:
       binaryLogEnabled: true
       enabled: true
+      startTime: 20:55
+    databaseFlags:
+    - name: long_query_time
+      value: "1"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: true
       authorizedNetworks:
       - name: mysql-ha-solution-cidr
-        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+        value: 192.10.10.10/32
     locationPreference:
-      zone: us-central1-b # {"$ref":"#/definitions/io.k8s.cli.setters.zone"}
+      zone: us-central1-c
+    maintenanceWindow:
+      day: 7
+      hour: 12
+      updateTrack: stable
 ---
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLInstance
 metadata:
-  name: mysql-ha-solution-backup-1 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-1-name"}
+  name: mysql-ha-solution-failover-test # {"$ref":"#/definitions/io.k8s.cli.substitutions.failover-instance-name"}
+  labels:
+    solution: mysql-ha
+    node: failover
 spec:
   databaseVersion: MYSQL_5_7
-  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  region: us-central1
   masterInstanceRef:
     name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
   replicaConfiguration:
-    connectRetryInterval: 30
+    connectRetryInterval: 5
   settings:
-    tier: db-f1-micro
+    activationPolicy: ALWAYS
+    crashSafeReplication: true
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_SSD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-n1-standard-1
+    databaseFlags:
+    - name: long_query_time
+      value: "1"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: false
-      authorizedNetworks:
-      - name: mysql-ha-solution-cidr
-        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
-    locationPreference:
-      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
----
-apiVersion: sql.cnrm.cloud.google.com/v1beta1
-kind: SQLInstance
-metadata:
-  name: mysql-ha-solution-backup-2 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-2-name"}
-spec:
-  databaseVersion: MYSQL_5_7
-  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
-  masterInstanceRef:
-    name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
-  replicaConfiguration:
-    connectRetryInterval: 30
-  settings:
-    tier: db-f1-micro
-    ipConfiguration:
-      ipv4Enabled: true
-      requireSsl: false
-      authorizedNetworks:
-        name: mysql-ha-solution-cidr
-        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
       authorizedNetworks:
       - name: mysql-ha-solution-cidr
         value: 192.10.10.10/32
     locationPreference:
-      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
+      zone: us-central1-a
+    maintenanceWindow:
+      day: 3
+      hour: 20
+      updateTrack: canary
 ---
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLInstance
 metadata:
-  name: mysql-ha-solution-backup-3 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-3-name"}
+  name: mysql-ha-solution-replica-test0 # {"$ref":"#/definitions/io.k8s.cli.substitutions.replica-instance-0-name"}
+  labels:
+    solution: mysql-ha
+    node: replica-test0
 spec:
   databaseVersion: MYSQL_5_7
-  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  region: us-central1
   masterInstanceRef:
     name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
   replicaConfiguration:
-    connectRetryInterval: 30
+    connectRetryInterval: 5
   settings:
-    tier: db-f1-micro
+    activationPolicy: ALWAYS
+    crashSafeReplication: true
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_HDD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-n1-standard-1
+    databaseFlags:
+    - name: long_query_time
+      value: "1"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: false
       authorizedNetworks:
       - name: mysql-ha-solution-cidr
-        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+        value: 192.10.10.10/32
     locationPreference:
-      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
+      zone: us-central1-a
+    maintenanceWindow:
+      day: 1
+      hour: 22
+      updateTrack: stable
 ---
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLInstance
 metadata:
-  name: mysql-ha-solution-backup-4 # {"$ref":"#/definitions/io.k8s.cli.substitutions.backup-instance-4-name"}
+  name: mysql-ha-solution-replica-test1 # {"$ref":"#/definitions/io.k8s.cli.substitutions.replica-instance-1-name"}
+  labels:
+    solution: mysql-ha
+    node: replica-test1
 spec:
   databaseVersion: MYSQL_5_7
-  region: us-central1 # {"$ref":"#/definitions/io.k8s.cli.setters.region"}
+  region: us-central1
   masterInstanceRef:
     name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
   replicaConfiguration:
-    connectRetryInterval: 30
+    connectRetryInterval: 5
   settings:
-    tier: db-f1-micro
+    activationPolicy: ALWAYS
+    crashSafeReplication: true
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_HDD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-n1-standard-1
+    databaseFlags:
+    - name: long_query_time
+      value: "1"
     ipConfiguration:
       ipv4Enabled: true
       requireSsl: false
       authorizedNetworks:
       - name: mysql-ha-solution-cidr
-        value: 192.10.10.10/32 # {"$ref":"#/definitions/io.k8s.cli.setters.external-ip-range"}
+        value: 192.10.10.10/32
     locationPreference:
-      zone: us-central1-c # {"$ref":"#/definitions/io.k8s.cli.setters.zone-backup"}
+      zone: us-central1-b
+    maintenanceWindow:
+      day: 1
+      hour: 22
+      updateTrack: stable
+---
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: mysql-ha-solution-replica-test2 # {"$ref":"#/definitions/io.k8s.cli.substitutions.replica-instance-2-name"}
+  labels:
+    solution: mysql-ha
+    node: replica-test2
+spec:
+  databaseVersion: MYSQL_5_7
+  region: us-central1
+  masterInstanceRef:
+    name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+  replicaConfiguration:
+    connectRetryInterval: 5
+  settings:
+    activationPolicy: ALWAYS
+    crashSafeReplication: true
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_HDD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-n1-standard-1
+    databaseFlags:
+    - name: long_query_time
+      value: "1"
+    ipConfiguration:
+      ipv4Enabled: true
+      requireSsl: false
+      authorizedNetworks:
+      - name: mysql-ha-solution-cidr
+        value: 192.10.10.10/32
+    locationPreference:
+      zone: us-central1-c
+    maintenanceWindow:
+      day: 1
+      hour: 22
+      updateTrack: stable

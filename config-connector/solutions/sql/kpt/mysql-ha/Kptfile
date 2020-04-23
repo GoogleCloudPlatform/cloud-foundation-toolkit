@@ -6,41 +6,27 @@ packageMetadata:
   shortDescription: creates a mysql high availability cluster
 openAPI:
   definitions:
-    io.k8s.cli.setters.password-1:
-      description: SQL password (base64 encoded)
+    io.k8s.cli.setters.test-pw:
+      description: password for SQL user "test" (base64 encoded)
       x-k8s-cli:
         setter:
-          name: password-1
+          name: test-pw
           value: "${PASSWORD_1?}"
           setBy: PLACEHOLDER
-    io.k8s.cli.setters.password-2:
-      description: SQL password (base64 encoded)
+    io.k8s.cli.setters.test2-pw:
+      description: password for SQL user "test2" (base64 encoded)
       x-k8s-cli:
         setter:
-          name: password-2
+          name: test2-pw
           value: "${PASSWORD_2?}"
           setBy: PLACEHOLDER
-    io.k8s.cli.setters.password-3:
-      description: SQL password (base64 encoded)
+    io.k8s.cli.setters.test3-pw:
+      description: password for SQL user "test3" (base64 encoded)
       x-k8s-cli:
         setter:
-          name: password-3
+          name: test3-pw
           value: "${PASSWORD_3?}"
           setBy: PLACEHOLDER
-    io.k8s.cli.setters.database-1-name:
-      description: name of first SQL database
-      x-k8s-cli:
-        setter:
-          name: database-1-name
-          value: mysql-ha-database-1
-          setBy: package-default
-    io.k8s.cli.setters.database-2-name:
-      description: name of second SQL database
-      x-k8s-cli:
-        setter:
-          name: database-2-name
-          value: mysql-ha-database-2
-          setBy: package-default
     io.k8s.cli.setters.instance-name:
       description: name of SQL instance
       x-k8s-cli:
@@ -48,84 +34,35 @@ openAPI:
           name: instance-name
           value: mysql-ha-solution
           setBy: package-default
-    io.k8s.cli.setters.region:
-      description: region of SQL instance
-      x-k8s-cli:
-        setter:
-          name: region
-          value: us-central1
-          setBy: package-default
-    io.k8s.cli.setters.username-1:
-      description: name of first SQL user
-      x-k8s-cli:
-        setter:
-          name: username-1
-          value: ${USERNAME_1?}
-          setBy: PLACEHOLDER
-    io.k8s.cli.setters.username-2:
-      description: name of second SQL user
-      x-k8s-cli:
-        setter:
-          name: username-2
-          value: ${USERNAME_2?}
-          setBy: PLACEHOLDER
-    io.k8s.cli.setters.username-3:
-      description: name of third SQL user
-      x-k8s-cli:
-        setter:
-          name: username-3
-          value: ${USERNAME_3?}
-          setBy: PLACEHOLDER
-    io.k8s.cli.substitutions.backup-instance-1-name:
+    io.k8s.cli.substitutions.failover-instance-name:
       x-k8s-cli:
         substitution:
-          name: backup-instance-1-name
-          pattern: INSTANCE_NAME_SETTER-backup-1
+          name: failover-instance-name
+          pattern: INSTANCE_NAME_SETTER-failover-test
           values:
           - marker: INSTANCE_NAME_SETTER
             ref: '#/definitions/io.k8s.cli.setters.instance-name'
-    io.k8s.cli.substitutions.backup-instance-2-name:
+    io.k8s.cli.substitutions.replica-instance-0-name:
       x-k8s-cli:
         substitution:
-          name: backup-instance-2-name
-          pattern: INSTANCE_NAME_SETTER-backup-2
+          name: replica-instance-0-name
+          pattern: INSTANCE_NAME_SETTER-replica-test0
           values:
           - marker: INSTANCE_NAME_SETTER
             ref: '#/definitions/io.k8s.cli.setters.instance-name'
-    io.k8s.cli.substitutions.backup-instance-3-name:
+    io.k8s.cli.substitutions.replica-instance-1-name:
       x-k8s-cli:
         substitution:
-          name: backup-instance-3-name
-          pattern: INSTANCE_NAME_SETTER-backup-3
+          name: replica-instance-1-name
+          pattern: INSTANCE_NAME_SETTER-replica-test1
           values:
           - marker: INSTANCE_NAME_SETTER
             ref: '#/definitions/io.k8s.cli.setters.instance-name'
-    io.k8s.cli.substitutions.backup-instance-4-name:
+    io.k8s.cli.substitutions.replica-instance-2-name:
       x-k8s-cli:
         substitution:
-          name: backup-instance-4-name
-          pattern: INSTANCE_NAME_SETTER-backup-4
+          name: replica-instance-2-name
+          pattern: INSTANCE_NAME_SETTER-replica-test2
           values:
           - marker: INSTANCE_NAME_SETTER
             ref: '#/definitions/io.k8s.cli.setters.instance-name'
-    io.k8s.cli.setters.zone:
-      description: zone of instance
-      x-k8s-cli:
-        setter:
-          name: zone
-          value: us-central1-b
-          setBy: package-default
-    io.k8s.cli.setters.zone-backup:
-      description: zone of backup instance
-      x-k8s-cli:
-        setter:
-          name: zone-backup
-          value: us-central1-c
-          setBy: package-default
-    io.k8s.cli.setters.external-ip-range:
-      description: ip range to allow to connect
-      x-k8s-cli:
-        setter:
-          name: external-ip-range
-          value: 192.10.10.10/32
-          setBy: package-default

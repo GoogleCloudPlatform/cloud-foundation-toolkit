@@ -14,19 +14,19 @@
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLDatabase
 metadata:
-  name: mysql-ha-database-1 # {"$ref":"#/definitions/io.k8s.cli.setters.database-1-name"}
+  name: mysql-ha-database
 spec:
   charset: utf8mb4
-  collation: utf8mb4_bin
+  collation: utf8mb4_general_ci
   instanceRef:
     name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
 ---
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLDatabase
 metadata:
-  name: mysql-ha-database-2 # {"$ref":"#/definitions/io.k8s.cli.setters.database-2-name"}
+  name: mysql-ha-database-additional
 spec:
   charset: utf8mb4
-  collation: utf8mb4_bin
+  collation: utf8mb4_general_ci
   instanceRef:
     name: mysql-ha-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
