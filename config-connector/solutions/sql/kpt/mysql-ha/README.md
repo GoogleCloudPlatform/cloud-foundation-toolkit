@@ -14,19 +14,14 @@ MySQL High Availability
 # SETTERS
 |       NAME        |        VALUE        |     SET BY      |          DESCRIPTION          | COUNT |
 |-------------------|---------------------|-----------------|-------------------------------|-------|
-| database-1-name   | mysql-ha-database-1 | package-default | name of first SQL database    | 1     |
-| database-2-name   | mysql-ha-database-2 | package-default | name of second SQL database   | 1     |
-| external-ip-range | 192.10.10.10/32     | package-default | ip range to allow to connect  | 6     |
 | instance-name     | mysql-ha-solution   | package-default | name of SQL instance          | 14    |
-| password-1        | ${PASSWORD_1?}      | PLACEHOLDER     | SQL password (base64 encoded) | 1     |
-| password-2        | ${PASSWORD_2?}      | PLACEHOLDER     | SQL password (base64 encoded) | 1     |
-| password-3        | ${PASSWORD_3?}      | PLACEHOLDER     | SQL password (base64 encoded) | 1     |
-| region            | us-central1         | package-default | region of SQL instance        | 5     |
-| username-1        | ${USERNAME_1?}      | PLACEHOLDER     | name of first SQL user        | 1     |
-| username-2        | ${USERNAME_2?}      | PLACEHOLDER     | name of second SQL user       | 1     |
-| username-3        | ${USERNAME_3?}      | PLACEHOLDER     | name of third SQL user        | 1     |
-| zone              | us-central1-b       | package-default | zone of instance              | 1     |
-| zone-backup       | us-central1-c       | package-default | zone of backup instance       | 4     |
+| test-pw           | ${PASSWORD_1?}      | PLACEHOLDER     | password for SQL user "test"  | 1     |
+|                   |                     |                 | (base64 encoded)              |       |
+| test2-pw          | ${PASSWORD_2?}      | PLACEHOLDER     | password for SQL user "test2" | 1     |
+|                   |                     |                 | (base64 encoded)              |       |
+| test3-pw          | ${PASSWORD_3?}      | PLACEHOLDER     | password for SQL user "test3" | 1     |
+|                   |                     |                 | (base64 encoded)              |       |
+
 # USAGE
   Configure setters using kpt as follows:
   ```
@@ -34,32 +29,27 @@ MySQL High Availability
   ```
   Setting placeholder values is required, changing package-defaults is optional.
 
-  Set `username-1`, `username-2', and `username-3` to the SQL usernames that you will use to access the database.
+  Set `test-pw`, `test2-pw`, and `test3-pw` to the [base64
+  encoded](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) passwords for user `test`,
+  user `test2`, and user `test3`.
   ```
-  kpt cfg set . username-1 first-username
-  kpt cfg set . username-2 second-username
-  kpt cfg set . username-3 third-username
+  kpt cfg set . test-pw $(echo -n 'first-password' | base64)
+  kpt cfg set . test2-pw $(echo -n 'second-password' | base64)
+  kpt cfg set . test3-pw $(echo -n 'third-password' | base64)
   ```
-  `password-1`, `password-2`, and `password-3` should be set to [base64
-encoded](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually)
-values.
-  ```
-  kpt cfg set . password-1 $(echo -n 'first-password' | base64)
-  kpt cfg set . password-2 $(echo -n 'second-password' | base64)
-  kpt cfg set . password-3 $(echo -n 'third-password' | base64)
-  ```
-  _Optionally_ set `database-name`, `instance-name`, `region`, `zone`, and
-`zone-backup` in the same manner.
+  _Optionally,_ set `instance-name` in the same manner.
 
   **Note:** If your SQL Instance is deleted, the name you used will be reserved
-for **7 days**. In order to re-apply this solution, you need to run
-`kpt cfg set . instance-name new-instance-name` to change to a new
-instance name that hasn't been used in the last 7 days.
+  for **7 days**. In order to re-apply this solution, you need to run
+  `kpt cfg set . instance-name new-instance-name` to change to a new
+  instance name that hasn't been used in the last 7 days.
  
   Once the configuration is satisfactory, apply:
   ```
   kubectl apply -f .
   ```
+  **Note:** It will take up to ~40 mins for all the resources to be `Ready`.
+  
 # LICENSE
   Apache 2.0 - See [LICENSE](/LICENSE) for more information.
 
