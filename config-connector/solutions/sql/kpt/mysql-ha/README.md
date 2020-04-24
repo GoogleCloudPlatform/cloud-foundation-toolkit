@@ -5,7 +5,7 @@ MySQL High Availability
 # SYNOPSIS
   Config Connector compatible YAMLs for creating a high availability MySQL cluster
 # CONSUMPTION
-  Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
+  Download the package using [kpt](https://googlecontainertools.github.io/kpt/):
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/sql/kpt/mysql-ha mysql-ha
   ```
@@ -15,12 +15,9 @@ MySQL High Availability
 |       NAME        |        VALUE        |     SET BY      |          DESCRIPTION          | COUNT |
 |-------------------|---------------------|-----------------|-------------------------------|-------|
 | instance-name     | mysql-ha-solution   | package-default | name of SQL instance          | 14    |
-| test-pw           | ${PASSWORD_1?}      | PLACEHOLDER     | password for SQL user "test"  | 1     |
-|                   |                     |                 | (base64 encoded)              |       |
-| test2-pw          | ${PASSWORD_2?}      | PLACEHOLDER     | password for SQL user "test2" | 1     |
-|                   |                     |                 | (base64 encoded)              |       |
-| test3-pw          | ${PASSWORD_3?}      | PLACEHOLDER     | password for SQL user "test3" | 1     |
-|                   |                     |                 | (base64 encoded)              |       |
+| test-pw           | ${PASSWORD_1?}      | PLACEHOLDER     | password for SQL user "test"<br>(base64 encoded)  | 1     |
+| test2-pw          | ${PASSWORD_2?}      | PLACEHOLDER     | password for SQL user "test2"<br>(base64 encoded) | 1     |
+| test3-pw          | ${PASSWORD_3?}      | PLACEHOLDER     | password for SQL user "test3"<br>(base64 encoded) | 1     |
 
 # USAGE
   Configure setters using kpt as follows:
@@ -31,7 +28,7 @@ MySQL High Availability
 
   Set `test-pw`, `test2-pw`, and `test3-pw` to the [base64
   encoded](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) passwords for user `test`,
-  user `test2`, and user `test3`.
+  user `test2`, and user `test3`:
   ```
   kpt cfg set . test-pw $(echo -n 'first-password' | base64)
   kpt cfg set . test2-pw $(echo -n 'second-password' | base64)
