@@ -31,7 +31,7 @@
 
 ## USAGE
 
-All steps are run from this directory.
+All steps are run from the current directory ([config-connector/solutions/iam/helm/service-account](.)).
 
 1. Review and update the values in `./values.yaml`.
 
@@ -44,7 +44,7 @@ All steps are run from this directory.
     # check the output of your chart
     helm template . --set iamPolicyMember.iamMember=user:name@example.com
 
-    # Dryrun your chart and address issues if there are any
+    # Do a dryrun on your chart and address issues if there are any
     helm install . --dry-run --set iamPolicyMember.iamMember=user:name@example.com --generate-name
 
     # install your chart
