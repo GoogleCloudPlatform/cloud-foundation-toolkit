@@ -1,0 +1,36 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: postgres-public
+packageMetadata:
+  shortDescription: a public PostgreSQL cluster
+openAPI:
+  definitions:
+    io.k8s.cli.setters.instance-name:
+      description: name of SQL instance
+      x-k8s-cli:
+        setter:
+          name: instance-name
+          value: postgres-ha-solution
+          setBy: package-default
+    io.k8s.cli.setters.password:
+      description: password for SQL user
+      x-k8s-cli:
+        setter:
+          name: password
+          value: ${PASSWORD?}
+          setBy: PLACEHOLDER
+    io.k8s.cli.setters.username:
+      description: name of SQL user
+      x-k8s-cli:
+        setter:
+          name: username
+          value: ${USERNAME?}
+          setBy: PLACEHOLDER
+    io.k8s.cli.setters.database-name:
+      description: name of SQL database
+      x-k8s-cli:
+        setter:
+          name: database-name
+          value: postgres-public-database
+          setBy: package-default
