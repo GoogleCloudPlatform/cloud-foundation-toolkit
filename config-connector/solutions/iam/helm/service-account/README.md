@@ -67,6 +67,10 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     ```bash
     helm list
     ```
+    You can also check the status of the service account resource by running: 
+    ```bash
+    kubectl describe iamserviceaccount [service account name]
+    ```
 
 1. Clean up the installation:
 
