@@ -63,6 +63,11 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     ```
     Or set them both in one command.
 
+1. Check the created helm release to verify the installation:
+    ```bash
+    helm list
+    ```
+
 1. Clean up the installation:
 
     ```bash
