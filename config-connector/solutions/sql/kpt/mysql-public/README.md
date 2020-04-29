@@ -3,37 +3,25 @@ MySQL Public
 # NAME
   mysql-public
 # SYNOPSIS
-  Config Connector compatible yaml files to configure a public mySQL cluster
+  Config Connector compatible yaml files to configure a public MySQL cluster
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/sql/kpt/mysql-public mysql-public
   ```
 # SETTERS
-|     NAME      |         VALUE         |     SET BY      |      DESCRIPTION      | COUNT |
-|---------------|-----------------------|-----------------|-----------------------|-------|
-| database-name | mysql-public-database | package-default | name of SQL database  | 1     |
-| instance-name | mysql-public-solution | package-default | name of SQL instance  | 3     |
-| password      | ${PASSWORD?}          | PLACEHOLDER     | password for SQL user | 1     |
-| username      | ${USERNAME?}          | PLACEHOLDER     | name of SQL user      | 1     |
+|          NAME           |            VALUE             |     SET BY      |          DESCRIPTION          | COUNT |
+|-------------------------|------------------------------|-----------------|-------------------------------|-------|
+| authorized-network      | mysql-public-solution-sample | package-default | name of authorized network    | 1     |
+| authorized-network-cidr | 130.211.0.0/28               | package-default | authorized network CIDR range | 1     |
+| instance-name           | mysql-public-solution        | package-default | name of SQL instance          | 3     |
 # USAGE
   Configure setters using kpt as follows:
   ```
   kpt cfg set . NAME VALUE
   ```
-  Setting placeholder values is required, changing package-defaults is optional.
 
-  Set `username` to the SQL username that you will use to access the database.
-  ```
-  kpt cfg set . username desired-username
-  ```
-  `password` should be set to a [base64
-encoded](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually)
-value.
-  ```
-  kpt cfg set . password $(echo -n 'password' | base64)
-  ```
-  _Optionally_ set `database-name` and `instance-name` in the same manner.
+  _Optionally_ set `authorized-network`, `authorized-network-cidr`, and `instance-name` in the manner specified above.
 
   **Note:** If your SQL Instance is deleted, the name you used will be reserved
 for **7 days**. In order to re-apply this solution, you need to run

@@ -14,7 +14,7 @@
 apiVersion: sql.cnrm.cloud.google.com/v1beta1
 kind: SQLDatabase
 metadata:
-  name: mysql-public-database # {"$ref":"#/definitions/io.k8s.cli.setters.database-name"}
+  name: mysql-public-database
 spec:
   charset: UTF8
   collation: en_US.UTF8
