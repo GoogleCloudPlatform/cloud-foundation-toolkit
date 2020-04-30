@@ -27,3 +27,10 @@ openAPI:
           name: authorized-network-cidr
           value: 130.211.0.0/28
           setBy: package-default
+    io.k8s.cli.setters.password:
+      description: SQL password (base64)
+      x-k8s-cli:
+        setter:
+          name: password
+          value: ${PASSWORD?}
+          setBy: PLACEHOLDER

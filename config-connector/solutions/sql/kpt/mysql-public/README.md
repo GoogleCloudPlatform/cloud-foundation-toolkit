@@ -15,10 +15,17 @@ MySQL Public
 | authorized-network      | mysql-public-solution-sample | package-default | name of authorized network    | 1     |
 | authorized-network-cidr | 130.211.0.0/28               | package-default | authorized network CIDR range | 1     |
 | instance-name           | mysql-public-solution        | package-default | name of SQL instance          | 3     |
+| password                | ${PASSWORD?}                 | PLACEHOLDER     | SQL password (base64)         | 1     |
 # USAGE
   Configure setters using kpt as follows:
   ```
   kpt cfg set . NAME VALUE
+  ```
+  Setting placeholder values is required, changing package-defaults is optional.
+  
+  `password` should be set to a [base64 encoded](https://kubernetes.io/docs/concepts/configuration/secret/#creating-a-secret-manually) value.
+  ```
+  kpt cfg set . password $(echo -n 'your-password' | base64)
   ```
 
   _Optionally_ set `authorized-network`, `authorized-network-cidr`, and `instance-name` in the manner specified above.
