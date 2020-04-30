@@ -16,7 +16,7 @@ kind: SQLDatabase
 metadata:
   name: mysql-public-database
 spec:
-  charset: UTF8
-  collation: en_US.UTF8
+  charset: utf8
+  collation: utf8_general_ci
   instanceRef:
     name: mysql-public-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
