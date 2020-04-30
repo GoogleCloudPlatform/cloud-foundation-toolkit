@@ -8,7 +8,7 @@
 
 ## SYNOPSIS
 
-  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to roles/iam.serviceAccountKeyAdmin) for accessing the service account that just created.
+  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to `roles/iam.serviceAccountKeyAdmin`) for accessing the service account that just created.
 
 ## CONSUMPTION
 
@@ -67,9 +67,13 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     ```bash
     helm list
     ```
-    You can also check the status of the service account resource by running: 
+    Check the status of the service account resource by running: 
     ```bash
     kubectl describe iamserviceaccount [service account name]
+    ```
+    Check the status of the IAM Policy Member:
+    ```bash
+    kubectl describe iampolicymember iampolicymember-service-account
     ```
 
 1. Clean up the installation:
