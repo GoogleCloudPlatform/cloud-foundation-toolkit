@@ -33,8 +33,8 @@ spec:
       ipv4Enabled: true
       requireSsl: true
       authorizedNetworks:
-      - name: postgres-public-solution-sample
-        value: 130.211.0.0/28
+      - name: postgres-public-solution-sample # {"$ref":"#/definitions/io.k8s.cli.setters.authorized-network"}
+        value: 130.211.0.0/28 # {"$ref":"#/definitions/io.k8s.cli.setters.authorized-network-cidr"}
     locationPreference:
       zone: us-central1-c
     maintenanceWindow:
