@@ -138,19 +138,37 @@ If you want to create tests for solution
     kpt cfg list-setters ../../solutions/[SOLUTION_AREA]/kpt/[SOLUTION_NAME]
     ```
 
-1.  For each setter that is a placeholder, append the follow key-value pair in
-    the testcase YAML file:
+1.  For each setter that is a placeholder, decide if the value should be
+    **globally unique**. For example, if the value of the setter is used as a
+    new project ID, then it must be globally unique. to create a new project
 
-    ```
-    # \$ENV_VAR is the placeholder to reference to ENV_VAR you've set in the
-    # environments file (./environments.yaml). E.g. `\$PROJECT_ID`.
-    echo "[SETTER_NAME]: \$ENV_VAR" >> \
-    [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
-    ```
+    1.  If the value **MUST** be globally unique, append the following key-value
+        pair in the testcase YAML file:
+
+        ```
+        # \$ENV_VAR is the placeholder to reference to ENV_VAR you've set in the
+        # environments file (./environments.yaml).
+        # In order to create globally unique resource names, you need to append
+        # `-\$RANDOM_ID` after the `\$ENV_VAR`. E.g. `\$PROJECT_ID-\$RANDOM_ID`.
+        echo "[SETTER_NAME]: \$ENV_VAR-\$RANDOM_ID" >> \
+        [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
+        ```
+
+    1.  If the value doesn't need to be globally unique, append the following
+        key-value pair in the testcase YAML file:
+        ```
+        # \$ENV_VAR is the placeholder to reference to ENV_VAR you've set in the
+        # environments file (./environments.yaml). E.g. `\$PROJECT_ID`.
+        echo "[SETTER_NAME]: \$ENV_VAR" >> \
+        [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
+        ```
 
     **Note:** Please don't use $ENV_VAR directly in the command. The back slash
     ("\\") is necessary because here, it is a string, but not a variable. We
     don't want to set the value of ENV_VAR in the testcase YAML file.
+
+    **Note:** `$RANDOM_ID` is a placeholder for the autogen randomized suffix,
+    and `RANDOM_ID` shouldn't be the name of the env var.
 
 1.  Check the environments template file
     ([./environments.template](./environments.template)). For each environment

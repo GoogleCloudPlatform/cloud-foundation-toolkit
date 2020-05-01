@@ -1,5 +1,3 @@
-module cloud-foundation-toolkit/config-connector/tests/ccs-test
-
 go 1.13
 
 require (
@@ -7,3 +5,5 @@ require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/spf13/cobra v1.0.0
 )
+
+module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/tests/ccs-test

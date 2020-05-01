@@ -11,10 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# RANDOM_ID should not be defined in the environments file.
-BILLING_ACCOUNT_ID: ${BILLING_ACCOUNT_ID?}
-DEFAULT_PROJECT_ID: ${DEFAULT_PROJECT_ID?}
-IAM_MEMBER: ${IAM_MEMBER?}
-ORG_ID: ${ORG_ID?}
-SIMPLE_PROJECT_ID: ${SIMPLE_PROJECT_ID?}
+billing-account: $BILLING_ACCOUNT_ID
+org-id: $ORG_ID
+project-id: $SIMPLE_PROJECT_ID-$RANDOM_ID
