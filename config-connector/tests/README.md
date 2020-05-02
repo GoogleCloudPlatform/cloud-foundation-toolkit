@@ -91,6 +91,14 @@ If you find the last line of the output is `======Successfully finished the test
 for solution [RELATIVE_PATH]======`, it means the test run is successful.
 Otherwise, you'll find the detailed error message of the failure.
 
+### Exceptions
+
+Solutions that require manual steps can't be tested using our `test-cli`. Here
+is the list of exceptions:
+
+*  [projects/kpt/project-hierarchy](../solutions/projects/kpt/project-hierarchy)
+   - need to manually figure out the folder ID before creating projects
+
 ## How to add new tests?
 
 **Note:** Currently we only support adding tests for kpt solutions.
