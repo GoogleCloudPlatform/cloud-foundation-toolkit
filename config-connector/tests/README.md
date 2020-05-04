@@ -138,9 +138,8 @@ If you want to create tests for solution
     kpt cfg list-setters ../../solutions/[SOLUTION_AREA]/kpt/[SOLUTION_NAME]
     ```
 
-1.  For each setter that is a placeholder, decide if the value should be
-    **globally unique**. For example, if the value of the setter is used as a
-    new project ID, then it must be globally unique. to create a new project
+1.  For each setter that is a placeholder, decide if the value should be a **new
+    globally unique** value. E.g., the value of a new project ID.
 
     1.  If the value **MUST** be globally unique, append the following key-value
         pair in the testcase YAML file:
