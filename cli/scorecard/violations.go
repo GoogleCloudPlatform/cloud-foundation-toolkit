@@ -21,10 +21,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	cvasset "github.com/forseti-security/config-validator/pkg/asset"
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/pkg/errors"
 )
 
@@ -74,7 +76,8 @@ func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Ass
 	for _, objectName := range destinationObjectNames {
 		reader, err := os.Open(filepath.Join(caiDirName, objectName))
 		if err != nil {
-			return nil, err
+			Log.Debug("getDataFromFile", objectName, "File does not exist")
+			continue
 		}
 		defer reader.Close()
 		assets, err := getDataFromReader(config, reader)
@@ -126,21 +129,22 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 
 // converts raw JSON into Asset proto
 func getAssetFromJSON(input []byte) (*validator.Asset, error) {
-	var asset map[string]interface{}
-	err := json.Unmarshal(input, &asset)
-	if err != nil {
-		return nil, err
-	}
 	pbAsset := &validator.Asset{}
-	err = protoViaJSON(asset, pbAsset)
-	if err != nil {
-		return nil, errors.Wrapf(err, "converting asset %s to proto", asset["name"])
-	}
-	err = cvasset.SanitizeAncestryPath(pbAsset)
-	if err != nil {
-		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset["name"])
+	Log.Debug("getAssetFromJSON", "input", string(input))
+	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
+	if err := umar.Unmarshal(strings.NewReader(string(input)), pbAsset); err != nil {
+		err2 := json.Unmarshal(input, &pbAsset)
+		if err2 != nil {
+			return nil, errors.Wrap(err2, "unmarshaling to proto")
+		}
+		Log.Debug("getAssetFromJSON", "Unmarshal", "Unable to unmarshal with jsonpb but able to unmarshal with json")
 	}
 
-	Log.Debug("Asset converted", "name", asset["name"], "ancestry", pbAsset.GetAncestryPath())
+	err := cvasset.SanitizeAncestryPath(pbAsset)
+	if err != nil {
+		return nil, errors.Wrapf(err, "fetching ancestry path for %s", pbAsset)
+	}
+
+	Log.Debug("Asset converted", "name", pbAsset, "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
 }

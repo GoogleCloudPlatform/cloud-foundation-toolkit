@@ -31,7 +31,6 @@ func protoViaJSON(from interface{}, to proto.Message) error {
 	if err != nil {
 		return errors.Wrap(err, "marshaling to json")
 	}
-
 	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
 	if err := umar.Unmarshal(strings.NewReader(string(jsn)), to); err != nil {
 		return errors.Wrap(err, "unmarshaling to proto")
