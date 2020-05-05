@@ -279,10 +279,17 @@ func verifyReadyCondition(solutionPath string) error {
 			continue
 		}
 
+		resourceFilePath := filepath.Join(solutionPath, fileName)
 		output, err := exec.Command("kubectl", "wait", "--for=condition=ready",
-			"-f", filepath.Join(solutionPath, fileName), "--timeout=60s").CombinedOutput()
+			"-f", resourceFilePath, "--timeout=60s").CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("resource in file %q is not ready in 60 seconds: %v\nstdout: %s", fileName, err, string(output))
+			errToReturn := fmt.Errorf("resource in file %q is not ready in 60 seconds: %v\nstdout: %s", fileName, err, string(output))
+			status, err := getResourceStatus(resourceFilePath)
+			if err != nil {
+				return concatErrors("error printing resource status", err, errToReturn)
+			}
+
+			return fmt.Errorf("%v\nResource status:\n%s", errToReturn, status)
 		}
 		log.Printf("%s\n", string(output))
 
@@ -290,6 +297,18 @@ func verifyReadyCondition(solutionPath string) error {
 
 	log.Println("======All the Config Connector resrouces are ready======")
 	return nil
+}
+
+func getResourceStatus(resourceFilePath string) (string, error) {
+	output, err := exec.Command("kubectl", "get", "-f", resourceFilePath,
+		"-o=custom-columns=NAME:.metadata.name,KIND:.kind,CONDITION.REASON:.status.conditions[0].reason,CONDITION.MESSAGE:.status.conditions[0].message").
+		CombinedOutput()
+
+	if err != nil {
+		return "", fmt.Errorf("error getting the resource status: %v\nstdout: %s", err, string(output))
+	}
+
+	return string(output), nil
 }
 
 func deleteResources(solutionPath string) error {
