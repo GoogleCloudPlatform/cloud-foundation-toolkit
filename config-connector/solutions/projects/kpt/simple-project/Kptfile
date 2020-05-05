@@ -18,8 +18,8 @@ openAPI:
       x-k8s-cli:
         setter:
           name: project-id
-          value: simple-project
-          setBy: package-default
+          value: ${PROJECT_ID?}
+          setBy: PLACEHOLDER
     io.k8s.cli.setters.billing-account:
       description: ID of billing account
       x-k8s-cli:
