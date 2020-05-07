@@ -85,10 +85,12 @@ Under the [tests](.) folder, run a test by providing the relative path:
 ```
 
 Most test should take a few minutes to finish. But you'll need to specify the
-timeout using `--timeout` or `-t` flag for special test cases:
+timeout using the optional `--timeout` or `-t` flag for special test cases:
 
-*   [projects/kpt/shared-vpc](../solutions/projects/kpt/shared-vpc): 
-    `--timeout=10m`
+*   [projects/kpt/shared-vpc](../solutions/projects/kpt/shared-vpc): 10m
+    ```
+    ./test-cli run --path projects/kpt/shared-vpc --timeout 10m
+    ```
 
 After you run the command, detailed output will be printed out. If you find the
 last line of the output is `======Successfully finished the test for solution
