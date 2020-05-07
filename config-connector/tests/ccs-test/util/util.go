@@ -12,15 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package util
 
 import (
-	"github.com/golang/glog"
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/tests/ccs-test/cmd"
+	"crypto/rand"
+	"encoding/base32"
+	"fmt"
+	"strings"
 )
 
-func main() {
-	defer glog.Flush()
+// Generates a random ID containing [2-7][a-z] (base32 alphabets) of length 4.
+func GenerateRandomizedSuffix() (string, error) {
+	// 3 bytes will generate base32 encoded string of length 5.
+	b := make([]byte, 3)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", fmt.Errorf("error generating random bytes: %v", err)
+	}
 
-	cmd.Execute()
+	return strings.ToLower(base32.StdEncoding.EncodeToString(b)[0:4]), nil
 }

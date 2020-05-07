@@ -22,9 +22,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/ghodss/yaml"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/tests/ccs-test/util"
 	"github.com/spf13/cobra"
 )
 
@@ -39,6 +41,10 @@ const (
 
 var (
 	relativePath string
+
+	// Regex of the env vars that require a randomized suffix.
+	// It should be in the format of $ENV_VAR-$RANDOM_ID.
+	re = regexp.MustCompile(`\$(?P<EnvName>[A-Z]+|[A-Z]+[A-Z_]*[A-Z]+)(-\$RANDOM_ID)`)
 
 	rootCmd = &cobra.Command{
 		Use:   "ccs-test",
@@ -102,7 +108,14 @@ var (
 				return
 			}
 
-			realValues, err := finalizeValuesFromEnv(envValues, testValues)
+			// Generate the random IDs first.
+			randomId, err := util.GenerateRandomizedSuffix()
+			if err != nil {
+				log.Fatalf("error generating the randomized suffix for resource names: %v", err)
+			}
+
+			// Then populate the values of the env var and the random id.
+			realValues, err := finalizeValues(randomId, envValues, testValues)
 			if err != nil {
 				log.Fatalf("error finalizing test values: %v", err)
 				return
@@ -144,15 +157,35 @@ func parseYamlToStringMap(filePath string, result map[string]string) error {
 	return nil
 }
 
-func finalizeValuesFromEnv(envValues map[string]string, testValues map[string]string) (map[string]string, error) {
+func finalizeValues(randomId string, envValues map[string]string, testValues map[string]string) (map[string]string, error) {
 	realValues := make(map[string]string)
 	for key, value := range testValues {
 		if !strings.HasPrefix(value, "$") {
 			return nil, fmt.Errorf("test value for setter %q is %q, expect a reference, e.g. $ENV_VAR", key, value)
 		}
-		realValue, ok := envValues[strings.TrimPrefix(value, "$")]
-		if !ok {
-			return nil, fmt.Errorf("couldn't find the env var %q", strings.TrimPrefix(value, "$"))
+		realValue := ""
+		ok := false
+		if re.MatchString(value) {
+			submatch := re.FindStringSubmatch(value)
+			if len(submatch) == 0 {
+				return nil, fmt.Errorf("env var name is invalid in test value %q", value)
+			}
+			subexpNames := re.SubexpNames()
+			for i, name := range subexpNames {
+				if name == "EnvName" {
+					prefix, ok := envValues[submatch[i]]
+					if !ok {
+						return nil, fmt.Errorf("couldn't find the env var %q", submatch[i])
+					}
+					realValue = fmt.Sprintf("%s-%s", prefix, randomId)
+					break
+				}
+			}
+		} else {
+			realValue, ok = envValues[strings.TrimPrefix(value, "$")]
+			if !ok {
+				return nil, fmt.Errorf("couldn't find the env var %q", strings.TrimPrefix(value, "$"))
+			}
 		}
 		realValues[key] = realValue
 	}
@@ -246,10 +279,17 @@ func verifyReadyCondition(solutionPath string) error {
 			continue
 		}
 
+		resourceFilePath := filepath.Join(solutionPath, fileName)
 		output, err := exec.Command("kubectl", "wait", "--for=condition=ready",
-			"-f", filepath.Join(solutionPath, fileName), "--timeout=60s").CombinedOutput()
+			"-f", resourceFilePath, "--timeout=60s").CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("resource in file %q is not ready in 60 seconds: %v\nstdout: %s", fileName, err, string(output))
+			errToReturn := fmt.Errorf("resource in file %q is not ready in 60 seconds: %v\nstdout: %s", fileName, err, string(output))
+			status, err := getResourceStatus(resourceFilePath)
+			if err != nil {
+				return concatErrors("error printing resource status", err, errToReturn)
+			}
+
+			return fmt.Errorf("%v\nResource status:\n%s", errToReturn, status)
 		}
 		log.Printf("%s\n", string(output))
 
@@ -257,6 +297,18 @@ func verifyReadyCondition(solutionPath string) error {
 
 	log.Println("======All the Config Connector resrouces are ready======")
 	return nil
+}
+
+func getResourceStatus(resourceFilePath string) (string, error) {
+	output, err := exec.Command("kubectl", "get", "-f", resourceFilePath,
+		"-o=custom-columns=NAME:.metadata.name,KIND:.kind,CONDITION.REASON:.status.conditions[0].reason,CONDITION.MESSAGE:.status.conditions[0].message").
+		CombinedOutput()
+
+	if err != nil {
+		return "", fmt.Errorf("error getting the resource status: %v\nstdout: %s", err, string(output))
+	}
+
+	return string(output), nil
 }
 
 func deleteResources(solutionPath string) error {
