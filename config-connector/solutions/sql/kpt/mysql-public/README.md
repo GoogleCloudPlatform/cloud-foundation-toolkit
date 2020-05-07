@@ -3,7 +3,7 @@ MySQL Public
 # NAME
   mysql-public
 # SYNOPSIS
-  Config Connector compatible yaml files to configure a public MySQL cluster
+  Config Connector compatible yaml files to configure a public MySQL database
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```

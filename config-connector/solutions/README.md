@@ -21,10 +21,49 @@ The full list of solutions grouped by area:
 
 * **apps** - automate creation of a canonical sample application and provision required GCP services with Config Connector
   * wordpress [ [helm](apps/helm/wordpress) ] - provision Wordpress application powered by GCP MySQL database
-* **projects** - automate creation of GCP projects, folders and project services using Config Connector
-  * project-hierarcy [ [kpt](projects/kpt/project-hierarchy) ] - get started with a folder and a project
-  * project-services [ [kpt](projects/kpt/project-services) ] - enable GCP API for a project
-  * simple-project [ [kpt](projects/kpt/simple-project) ] - get started with a simple project
+* **projects** - automate creation of GCP projects, folders and project services
+  using Config Connector
+  * owned-project [ [kpt](projects/kpt/owned-project) ] - grant the project
+    owner role
+  * project-hierarcy [ [kpt](projects/kpt/project-hierarchy) ] - get started
+    with a folder and a project
+  * project-services [ [kpt](projects/kpt/project-services) ] - enable GCP API
+    for a project
+  * shared-vpc [ [kpt](projects/kpt/shared-vpc) ] - create a shared VPC network
+  * simple-project [ [kpt](projects/kpt/simple-project) ] - get started with a
+    simple project
+* **iam** - automate the management of IAM roles for resources using Config
+  Connector
+  * folder-iam [ [kpt](iam/kpt/folder-iam) ] - grant an IAM role to a GCP folder
+  * kms-crypto-key [ [kpt](iam/kpt/kms-crypto-key) ] - grant an IAM role to a
+    KMS crypto key
+  * kms-key-ring [ [kpt](iam/kpt/kms-key-ring) ] - grant an IAM role to a KMS
+    key ring
+  * member-iam [ [kpt](iam/kpt/member-iam) ] - grant a service account an IAM
+    role to a project
+  * project-iam [ [kpt](iam/kpt/project-iam) ] - grant an IAM role to a project
+  * pubsub-subscription [ [kpt](iam/kpt/pubsub-subscription) ] - grant an IAM
+    role to a Pub/Sub subscription
+  * pubsub-topic [ [kpt](iam/kpt/pubsub-topic) ] - grant an IAM role to a
+    Pub/Sub topic
+  * service-account [ [helm](iam/helm/service-account) ] \[ [kpt](
+    iam/kpt/service-account) ] - grant an IAM role to a service account
+  * storage-bucket-iam [ [kpt](iam/kpt/storage-bucket-iam) ] - grant an IAM role
+    to a storage bucket
+  * subnet [ [kpt](iam/kpt/subnetp) ] - grant an IAM role to a subnetwork
+* **sql** - automate the creation of Cloud SQL instances, databases, and users
+  using Config Connector
+  * mysql-ha [ [kpt](sql/kpt/mysql-ha) ] - create a high availability MySQL
+    cluster
+  * mysql-private [ [kpt](sql/kpt/mysql-private) ] - create a private MySQL
+    database
+  * mysql-public [ [kpt](sql/kpt/mysql-public) ] - create a public MySQL
+    database
+  * postgres-ha [ [kpt](sql/kpt/postgres-ha) ] - create a high availability
+    PostgreSQL cluster
+  * postgres-public [ [kpt](sql/kpt/postgres-public) ] - create a public
+    PostgreSQL database
+
 
 ## Usage
 
