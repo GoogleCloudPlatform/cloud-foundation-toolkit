@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# RANDOM_ID should not be defined in the environments file.
-BILLING_ACCOUNT_ID: ${BILLING_ACCOUNT_ID?}
-DEFAULT_PROJECT_ID: ${DEFAULT_PROJECT_ID?}
-IAM_MEMBER: ${IAM_MEMBER?}
-ORG_ID: ${ORG_ID?}
-SIMPLE_PROJECT_ID: ${SIMPLE_PROJECT_ID?}
+iamPolicyMember:
+  iamMember: 
+  role: roles/iam.serviceAccountKeyAdmin
+
+serviceAccount:
+  name: service-account-solution

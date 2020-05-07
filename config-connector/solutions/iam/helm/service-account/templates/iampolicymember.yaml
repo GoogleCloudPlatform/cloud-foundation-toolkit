@@ -12,9 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# RANDOM_ID should not be defined in the environments file.
-BILLING_ACCOUNT_ID: ${BILLING_ACCOUNT_ID?}
-DEFAULT_PROJECT_ID: ${DEFAULT_PROJECT_ID?}
-IAM_MEMBER: ${IAM_MEMBER?}
-ORG_ID: ${ORG_ID?}
-SIMPLE_PROJECT_ID: ${SIMPLE_PROJECT_ID?}
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: iampolicymember-service-account
+spec:
+  member: {{ required "IAM member is required!" .Values.iamPolicyMember.iamMember }}
+  role: {{ .Values.iamPolicyMember.role }}
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: {{ .Values.serviceAccount.name }}

@@ -1,0 +1,43 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: sql.cnrm.cloud.google.com/v1beta1
+kind: SQLInstance
+metadata:
+  name: postgres-public-solution # {"$ref":"#/definitions/io.k8s.cli.setters.instance-name"}
+spec:
+  databaseVersion: POSTGRES_9_6
+  region: us-central1
+  settings:
+    activationPolicy: ALWAYS
+    diskAutoresize: true
+    diskSize: 10
+    diskType: PD_SSD
+    pricingPlan: PER_USE
+    replicationType: SYNCHRONOUS
+    tier: db-f1-micro
+    availabilityType: ZONAL
+    backupConfiguration:
+      enabled: false
+    ipConfiguration:
+      ipv4Enabled: true
+      requireSsl: true
+      authorizedNetworks:
+      - name: postgres-public-solution-sample # {"$ref":"#/definitions/io.k8s.cli.setters.authorized-network"}
+        value: 130.211.0.0/28 # {"$ref":"#/definitions/io.k8s.cli.setters.authorized-network-cidr"}
+    locationPreference:
+      zone: us-central1-c
+    maintenanceWindow:
+      day: 1
+      hour: 23
+      updateTrack: canary

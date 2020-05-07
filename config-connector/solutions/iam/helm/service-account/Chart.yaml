@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# RANDOM_ID should not be defined in the environments file.
-BILLING_ACCOUNT_ID: ${BILLING_ACCOUNT_ID?}
-DEFAULT_PROJECT_ID: ${DEFAULT_PROJECT_ID?}
-IAM_MEMBER: ${IAM_MEMBER?}
-ORG_ID: ${ORG_ID?}
-SIMPLE_PROJECT_ID: ${SIMPLE_PROJECT_ID?}
+apiVersion: v1
+name: service-account
+version: 0.1.0
+description: Grant an IAM role to a member for accessing a given service account
