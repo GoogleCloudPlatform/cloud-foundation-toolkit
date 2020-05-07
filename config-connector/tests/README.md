@@ -102,8 +102,10 @@ find the detailed error message for the failure.
 Solutions that require manual steps can't be tested using our `test-cli`. Here
 is the list of exceptions:
 
-*  [projects/kpt/project-hierarchy](../solutions/projects/kpt/project-hierarchy)
-   - need to manually figure out the folder ID before creating projects
+*   [projects/kpt/project-hierarchy](
+    ../solutions/projects/kpt/project-hierarchy) - need to manually figure out
+    the folder ID before creating projects ([GitHub issue](
+    https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/104))
 
 ## How to add new tests?
 

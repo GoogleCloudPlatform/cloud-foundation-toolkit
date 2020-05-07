@@ -61,7 +61,6 @@ var (
 			// Check the required flag.
 			if relativePath == "" {
 				log.Fatal("\"--path\" must be specified to run test")
-				return
 			}
 
 			log.Printf("======Testing solution %q...======\n", relativePath)
@@ -70,12 +69,10 @@ var (
 			current, err := os.Getwd()
 			if err != nil {
 				log.Fatalf("error retrieving the current directory: %v", err)
-				return
 			}
 			if !strings.HasSuffix(current, testsDirPath) {
 				log.Fatalf("error running tests under directory: %s. Please "+
 					"follow the instructions in the README.", current)
-				return
 			}
 			testCasePath := filepath.Join(current, "testcases", relativePath)
 			envFilePath := filepath.Join(current, envFileRelativePath)
@@ -87,26 +84,22 @@ var (
 			if err := deleteResources(solutionPath); err != nil {
 				log.Fatalf("error cleaning up resources before running the "+
 					"test. Please clean them up manually: %v", err)
-				return
 			}
 
 			// Fetch the testcase values and run the test.
 			envValues := make(map[string]string)
 			if err := parseYamlToStringMap(envFilePath, envValues); err != nil {
 				log.Fatalf("error retrieving envrionment variables: %v", err)
-				return
 			}
 
 			originalValues := make(map[string]string)
 			if err := parseYamlToStringMap(filepath.Join(testCasePath, originalValuesFileName), originalValues); err != nil {
 				log.Fatalf("error retrieving orginal values: %v", err)
-				return
 			}
 
 			testValues := make(map[string]string)
 			if err := parseYamlToStringMap(filepath.Join(testCasePath, requiredFieldsOnlyFileName), testValues); err != nil {
 				log.Fatalf("error retrieving test values: %v", err)
-				return
 			}
 
 			// Generate the random IDs first.
@@ -119,12 +112,10 @@ var (
 			realValues, err := finalizeValues(randomId, envValues, testValues)
 			if err != nil {
 				log.Fatalf("error finalizing test values: %v", err)
-				return
 			}
 
 			if err := runKptTestcase(solutionPath, timeout, realValues, originalValues); err != nil {
 				log.Fatalf("test failed for solution %q: %v", relativePath, err)
-				return
 			}
 
 			log.Printf("======Successfully finished the test for solution %q======\n", relativePath)
