@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: postgres-public
 packageMetadata:
-  shortDescription: configures a public PostgreSQL cluster
+  shortDescription: configures a public PostgreSQL database
 openAPI:
   definitions:
     io.k8s.cli.setters.instance-name:
