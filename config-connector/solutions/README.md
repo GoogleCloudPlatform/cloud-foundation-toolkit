@@ -33,11 +33,12 @@ The full list of solutions grouped by area:
 These solutions are consumable as [helm charts](https://helm.sh/docs/topics/charts/).
 Common targets for modification are listed in `values.yaml`.
 
-* [Installing helm 3.0](https://helm.sh/docs/intro/install/). These solutions have been verified with Helm v.3+.
+[Install helm](https://helm.sh/docs/intro/install/). These solutions support Helm v.3+.
+
+Common operations, where `PATH` is the path to the relevant solution folder:
 * Showing values: `helm show values PATH`
 * Validating chart: `helm template PATH`
 * Setting chart: `helm install PATH -generate-name`
-Where `PATH` is the path to the relevant solution folder.
 
 Comprehensive documentation at
 [https://helm.sh/docs/](https://helm.sh/docs/).
