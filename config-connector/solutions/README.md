@@ -30,13 +30,15 @@ The full list of solutions grouped by area:
 
 ### helm
 
-These samples are consumable as [helm charts](https://helm.sh/docs/topics/charts/).
+These solutions are consumable as [helm charts](https://helm.sh/docs/topics/charts/).
 Common targets for modification are listed in `values.yaml`.
 
-* [Installing helm 3.0](https://helm.sh/docs/intro/install/). These solutions have been verified with Helm v.3+.
-* Showing values: `helm show PATH_TO_CHART`
-* Validating chart: `helm template PATH_TO_CHART`
-* Setting chart: `helm install PATH_TO_CHART -generate-name`
+[Install helm](https://helm.sh/docs/intro/install/). These solutions support Helm v.3+.
+
+Common operations, where `PATH` is the path to the relevant solution folder:
+* Showing values: `helm show values PATH`
+* Validating chart: `helm template PATH`
+* Setting chart: `helm install PATH -generate-name`
 
 Comprehensive documentation at
 [https://helm.sh/docs/](https://helm.sh/docs/).
