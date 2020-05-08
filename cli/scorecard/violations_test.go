@@ -91,7 +91,15 @@ func TestGetViolations(t *testing.T) {
 		},
 		{
 			resource:   "//container.googleapis.com/projects/gke-networking/zones/us-central1-a/clusters/private-cluster-demo/k8s/namespaces/default/pods/hello-world-deploy-1234567d898-xqwf9",
-			constraint: "K8sDumpReview.dump-review",
+			constraint: "K8sPodImagePullPolicy.always-pull-image",
+		},
+		{
+			resource:   "//cloudresourcemanager.googleapis.com/organizations/567890",
+			constraint: "GCPOrgPolicySkipDefaultNetworkConstraintV1.org-policy-skip-default-network",
+		},
+		{
+			resource:   "//cloudresourcemanager.googleapis.com/organizations/56789",
+			constraint: "GCPVPCSCEnsureServicesConstraintV1.vpc-sc-ensure-services",
 		},
 	}
 	inventory, err := NewInventory("", localCaiDir, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
@@ -110,6 +118,7 @@ func TestGetViolations(t *testing.T) {
 	violationMap := make(map[string]int)
 	for _, v := range auditResult.Violations {
 		violationMap[v.Constraint+"-"+v.Resource] = 1
+		Log.Debug("Found violation", "constraint", v.Constraint, "resource", v.Resource)
 	}
 
 	for _, tc := range testCases {

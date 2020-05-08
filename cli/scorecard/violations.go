@@ -130,7 +130,6 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 // converts raw JSON into Asset proto
 func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 	pbAsset := &validator.Asset{}
-	Log.Debug("getAssetFromJSON", "input", string(input))
 	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
 	if err := umar.Unmarshal(strings.NewReader(string(input)), pbAsset); err != nil {
 		err2 := json.Unmarshal(input, &pbAsset)
@@ -145,6 +144,6 @@ func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 		return nil, errors.Wrapf(err, "fetching ancestry path for %s", pbAsset)
 	}
 
-	Log.Debug("Asset converted", "name", pbAsset, "ancestry", pbAsset.GetAncestryPath())
+	Log.Debug("Asset converted", "name", pbAsset.GetName(), "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
 }
