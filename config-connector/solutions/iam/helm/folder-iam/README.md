@@ -28,7 +28,7 @@
 
 1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
 
-1. A working Config Connector cluster using the cnrm-system service account with _at least_ the following role in the desired folder:
+1. A working Config Connector cluster using the cnrm-system service account with _minimally_ the permissions given by the following role on the desired folder:
     - roles/resourcemanager.folderIamAdmin    
 
 1. Install [Helm](../../../README.md#helm)
