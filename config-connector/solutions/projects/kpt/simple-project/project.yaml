@@ -16,10 +16,10 @@ kind: Project
 metadata:
   annotations:
     cnrm.cloud.google.com/organization-id: "${ORG_ID?}" # {"$ref":"#/definitions/io.k8s.cli.setters.org-id"}
-  name: simple-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
 spec:
   # This name can be changed to something more human-readable if desired.
-  name: simple-project # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
+  name: ${PROJECT_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.project-id"}
   billingAccountRef:
     # Replace "${BILLING_ACCOUNT_ID?}" with the numeric ID for your billing account
     external: "${BILLING_ACCOUNT_ID?}" # {"$ref":"#/definitions/io.k8s.cli.setters.billing-account"}

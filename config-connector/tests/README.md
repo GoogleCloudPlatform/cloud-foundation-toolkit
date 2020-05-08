@@ -84,20 +84,28 @@ Under the [tests](.) folder, run a test by providing the relative path:
 ./test-cli run --path [RELATIVE_PATH]  # E.g. "iam/kpt/member-iam"
 ```
 
-Each test should take less than 2 mins to finish. You'll find the detailed
-output of the test after you run the command.
+Most test should take a few minutes to finish. But you'll need to specify the
+timeout using the optional `--timeout` or `-t` flag for special test cases:
 
-If you find the last line of the output is `======Successfully finished the test
-for solution [RELATIVE_PATH]======`, it means the test run is successful.
-Otherwise, you'll find the detailed error message of the failure.
+*   [projects/kpt/shared-vpc](../solutions/projects/kpt/shared-vpc): 10m
+    ```
+    ./test-cli run --path projects/kpt/shared-vpc --timeout 10m
+    ```
+
+After you run the command, detailed output will be printed out. If you find the
+last line of the output is `======Successfully finished the test for solution
+RELATIVE_PATH]======`, it means the test run is successful. Otherwise, you'll
+find the detailed error message for the failure.
 
 ### Exceptions
 
 Solutions that require manual steps can't be tested using our `test-cli`. Here
 is the list of exceptions:
 
-*  [projects/kpt/project-hierarchy](../solutions/projects/kpt/project-hierarchy)
-   - need to manually figure out the folder ID before creating projects
+*   [projects/kpt/project-hierarchy](
+    ../solutions/projects/kpt/project-hierarchy) - need to manually figure out
+    the folder ID before creating projects ([GitHub issue](
+    https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/104))
 
 ## How to add new tests?
 
@@ -138,19 +146,36 @@ If you want to create tests for solution
     kpt cfg list-setters ../../solutions/[SOLUTION_AREA]/kpt/[SOLUTION_NAME]
     ```
 
-1.  For each setter that is a placeholder, append the follow key-value pair in
-    the testcase YAML file:
+1.  For each setter that is a placeholder, decide if the value should be a **new
+    globally unique** value. E.g., the value of a new project ID.
 
-    ```
-    # \$ENV_VAR is the placeholder to reference to ENV_VAR you've set in the
-    # environments file (./environments.yaml). E.g. `\$PROJECT_ID`.
-    echo "[SETTER_NAME]: \$ENV_VAR" >> \
-    [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
-    ```
+    1.  If the value **MUST** be globally unique, append the following key-value
+        pair in the testcase YAML file:
+
+        ```
+        # \$ENV_VAR is the placeholder to reference to ENV_VAR you've set in the
+        # environments file (./environments.yaml).
+        # In order to create globally unique resource names, you need to append
+        # `-\$RANDOM_ID` after the `\$ENV_VAR`. E.g. `\$PROJECT_ID-\$RANDOM_ID`.
+        echo "[SETTER_NAME]: \$ENV_VAR-\$RANDOM_ID" >> \
+        [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
+        ```
+
+    1.  If the value doesn't need to be globally unique, append the following
+        key-value pair in the testcase YAML file:
+        ```
+        # \$ENV_VAR is the placeholder to reference to ENV_VAR you've set in the
+        # environments file (./environments.yaml). E.g. `\$PROJECT_ID`.
+        echo "[SETTER_NAME]: \$ENV_VAR" >> \
+        [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
+        ```
 
     **Note:** Please don't use $ENV_VAR directly in the command. The back slash
     ("\\") is necessary because here, it is a string, but not a variable. We
     don't want to set the value of ENV_VAR in the testcase YAML file.
+
+    **Note:** `$RANDOM_ID` is a placeholder for the autogen randomized suffix,
+    and `RANDOM_ID` shouldn't be the name of the env var.
 
 1.  Check the environments template file
     ([./environments.template](./environments.template)). For each environment
