@@ -49,7 +49,31 @@ host projects do not yet exist, or the `owner` role in the projects if they alre
   kubectl apply -f .
   ```
 
-  Note: To see the applied resources for a given namespace, run `kubectl get gcp --namespace <namespace>`, where `<namespace>` is replaced by the corresponding namespace in the `0-namespace.yaml` file. Services that have been applied will have type `gcpservice`.
+  You can check the applied resources by running the following command:
+  ```
+  kubectl get -f .
+  ```
+
+  **Note:** To see the applied resources for a given namespace, run
+  `kubectl get gcp --namespace <namespace>`, where `<namespace>` is replaced by
+  the corresponding namespace in the `0-namespace.yaml` file. You'll need to use
+  type `gcpservice` to check the status of Service resources defined in
+  `service.yaml`.
+
+  If you want to clean up the resources, run;
+  ```
+  kubectl delete -f .
+  ```
+
+  **Note:** If `computesharedvpchostproject` can't be deleted with
+  the error message `Cannot disable project as a shared VPC host because it has
+  active service projects.` but `computesharedvpcserviceproject` is already
+  deleted, you'll need to [manually detach](
+  https://cloud.google.com/vpc/docs/deprovisioning-shared-vpc#detach_service_projects)
+  the service project (specificed using kpt setter `service-project`) from the
+  host project (specified using kpt setter `host-project`). More details about
+  the root cause can be found in [this GitHub issue](
+  https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/167).
 
 
 # License

@@ -84,20 +84,28 @@ Under the [tests](.) folder, run a test by providing the relative path:
 ./test-cli run --path [RELATIVE_PATH]  # E.g. "iam/kpt/member-iam"
 ```
 
-Each test should take less than 2 mins to finish. You'll find the detailed
-output of the test after you run the command.
+Most test should take a few minutes to finish. But you'll need to specify the
+timeout using the optional `--timeout` or `-t` flag for special test cases:
 
-If you find the last line of the output is `======Successfully finished the test
-for solution [RELATIVE_PATH]======`, it means the test run is successful.
-Otherwise, you'll find the detailed error message of the failure.
+*   [projects/kpt/shared-vpc](../solutions/projects/kpt/shared-vpc): 10m
+    ```
+    ./test-cli run --path projects/kpt/shared-vpc --timeout 10m
+    ```
+
+After you run the command, detailed output will be printed out. If you find the
+last line of the output is `======Successfully finished the test for solution
+RELATIVE_PATH]======`, it means the test run is successful. Otherwise, you'll
+find the detailed error message for the failure.
 
 ### Exceptions
 
 Solutions that require manual steps can't be tested using our `test-cli`. Here
 is the list of exceptions:
 
-*  [projects/kpt/project-hierarchy](../solutions/projects/kpt/project-hierarchy)
-   - need to manually figure out the folder ID before creating projects
+*   [projects/kpt/project-hierarchy](
+    ../solutions/projects/kpt/project-hierarchy) - need to manually figure out
+    the folder ID before creating projects ([GitHub issue](
+    https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/104))
 
 ## How to add new tests?
 

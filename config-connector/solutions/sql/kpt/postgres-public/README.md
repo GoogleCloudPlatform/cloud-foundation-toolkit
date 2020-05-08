@@ -3,7 +3,7 @@ PostgreSQL Public
 # NAME
   postgres-public
 # SYNOPSIS
-  Config Connector compatible yaml files to configure a public PostgreSQL cluster
+  Config Connector compatible yaml files to configure a public PostgreSQL database
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```

@@ -11,18 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: serviceusage.cnrm.cloud.google.com/v1beta1
-kind: Service
-metadata:
-  namespace: shared-vpc-host-project-annotated
-  name: compute.googleapis.com
-  annotations:
-    cnrm.cloud.google.com/deletion-policy: abandon
----
-apiVersion: serviceusage.cnrm.cloud.google.com/v1beta1
-kind: Service
-metadata:
-  namespace: shared-vpc-service-project-annotated
-  name: compute.googleapis.com
-  annotations:
-    cnrm.cloud.google.com/deletion-policy: abandon
+billing-account: $BILLING_ACCOUNT_ID
+default-namespace: $DEFAULT_NAMESPACE
+host-project: $HOST_PROJECT_ID-$RANDOM_ID
+org-id: $ORG_ID
+service-project: $SERVICE_PROJECT_ID-$RANDOM_ID
