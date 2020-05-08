@@ -24,6 +24,21 @@ import (
 	"github.com/pkg/errors"
 )
 
+func unMarshallAsset(from []byte, to proto.Message) error {
+	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
+	err := umar.Unmarshal(strings.NewReader(string(from)), to)
+	if err == nil {
+		return nil
+	}
+
+	err = json.Unmarshal(from, to)
+	if err == nil {
+		return nil
+	}
+
+	return err
+}
+
 // protoViaJSON uses JSON as an intermediary serialization to convert a value into
 // a protobuf message.
 func protoViaJSON(from interface{}, to proto.Message) error {

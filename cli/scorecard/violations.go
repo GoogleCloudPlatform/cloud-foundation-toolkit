@@ -17,16 +17,14 @@ package scorecard
 import (
 	"bufio"
 	"context"
-	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	cvasset "github.com/forseti-security/config-validator/pkg/asset"
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/pkg/errors"
 )
 
@@ -58,25 +56,7 @@ func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.A
 	for _, objectName := range destinationObjectNames {
 		reader, err := bucket.Object(objectName).NewReader(ctx)
 		if err != nil {
-			return nil, err
-		}
-		defer reader.Close()
-		assets, err := getDataFromReader(config, reader)
-		if err != nil {
-			return nil, err
-		}
-
-		pbAssets = append(pbAssets, assets...)
-	}
-	return pbAssets, nil
-}
-
-func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Asset, error) {
-	var pbAssets []*validator.Asset
-	for _, objectName := range destinationObjectNames {
-		reader, err := os.Open(filepath.Join(caiDirName, objectName))
-		if err != nil {
-			Log.Debug("getDataFromFile", objectName, "File does not exist")
+			fmt.Println("WARNING: Unable to read inventory file :", objectName, err)
 			continue
 		}
 		defer reader.Close()
@@ -86,6 +66,31 @@ func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Ass
 		}
 
 		pbAssets = append(pbAssets, assets...)
+	}
+	if len(pbAssets) == 0 {
+		return nil, fmt.Errorf("No inventory found")
+	}
+	return pbAssets, nil
+}
+
+func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Asset, error) {
+	var pbAssets []*validator.Asset
+	for _, objectName := range destinationObjectNames {
+		reader, err := os.Open(filepath.Join(caiDirName, objectName))
+		if err != nil {
+			fmt.Println("WARNING: Unable to read inventory file :", objectName, err)
+			continue
+		}
+		defer reader.Close()
+		assets, err := getDataFromReader(config, reader)
+		if err != nil {
+			return nil, err
+		}
+
+		pbAssets = append(pbAssets, assets...)
+	}
+	if len(pbAssets) == 0 {
+		return nil, fmt.Errorf("No inventory found")
 	}
 	return pbAssets, nil
 }
@@ -130,16 +135,12 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 // converts raw JSON into Asset proto
 func getAssetFromJSON(input []byte) (*validator.Asset, error) {
 	pbAsset := &validator.Asset{}
-	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
-	if err := umar.Unmarshal(strings.NewReader(string(input)), pbAsset); err != nil {
-		err2 := json.Unmarshal(input, &pbAsset)
-		if err2 != nil {
-			return nil, errors.Wrap(err2, "unmarshaling to proto")
-		}
-		Log.Debug("getAssetFromJSON", "Unmarshal", "Unable to unmarshal with jsonpb but able to unmarshal with json")
+	err := unMarshallAsset(input, pbAsset)
+	if err != nil {
+		return nil, errors.Wrapf(err, "converting asset %s to proto", string(input))
 	}
 
-	err := cvasset.SanitizeAncestryPath(pbAsset)
+	err = cvasset.SanitizeAncestryPath(pbAsset)
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetching ancestry path for %s", pbAsset)
 	}
