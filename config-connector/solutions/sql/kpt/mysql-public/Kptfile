@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: mysql-public
 packageMetadata:
-  shortDescription: configures a public MySQL cluster
+  shortDescription: configures a public MySQL database
 openAPI:
   definitions:
     io.k8s.cli.setters.instance-name:

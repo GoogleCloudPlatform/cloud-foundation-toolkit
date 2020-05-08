@@ -41,6 +41,7 @@ const (
 
 var (
 	relativePath string
+	timeout string
 
 	// Regex of the env vars that require a randomized suffix.
 	// It should be in the format of $ENV_VAR-$RANDOM_ID.
@@ -60,7 +61,6 @@ var (
 			// Check the required flag.
 			if relativePath == "" {
 				log.Fatal("\"--path\" must be specified to run test")
-				return
 			}
 
 			log.Printf("======Testing solution %q...======\n", relativePath)
@@ -69,12 +69,10 @@ var (
 			current, err := os.Getwd()
 			if err != nil {
 				log.Fatalf("error retrieving the current directory: %v", err)
-				return
 			}
 			if !strings.HasSuffix(current, testsDirPath) {
 				log.Fatalf("error running tests under directory: %s. Please "+
 					"follow the instructions in the README.", current)
-				return
 			}
 			testCasePath := filepath.Join(current, "testcases", relativePath)
 			envFilePath := filepath.Join(current, envFileRelativePath)
@@ -86,26 +84,22 @@ var (
 			if err := deleteResources(solutionPath); err != nil {
 				log.Fatalf("error cleaning up resources before running the "+
 					"test. Please clean them up manually: %v", err)
-				return
 			}
 
 			// Fetch the testcase values and run the test.
 			envValues := make(map[string]string)
 			if err := parseYamlToStringMap(envFilePath, envValues); err != nil {
 				log.Fatalf("error retrieving envrionment variables: %v", err)
-				return
 			}
 
 			originalValues := make(map[string]string)
 			if err := parseYamlToStringMap(filepath.Join(testCasePath, originalValuesFileName), originalValues); err != nil {
 				log.Fatalf("error retrieving orginal values: %v", err)
-				return
 			}
 
 			testValues := make(map[string]string)
 			if err := parseYamlToStringMap(filepath.Join(testCasePath, requiredFieldsOnlyFileName), testValues); err != nil {
 				log.Fatalf("error retrieving test values: %v", err)
-				return
 			}
 
 			// Generate the random IDs first.
@@ -118,12 +112,10 @@ var (
 			realValues, err := finalizeValues(randomId, envValues, testValues)
 			if err != nil {
 				log.Fatalf("error finalizing test values: %v", err)
-				return
 			}
 
-			if err := runKptTestcase(solutionPath, realValues, originalValues); err != nil {
+			if err := runKptTestcase(solutionPath, timeout, realValues, originalValues); err != nil {
 				log.Fatalf("test failed for solution %q: %v", relativePath, err)
-				return
 			}
 
 			log.Printf("======Successfully finished the test for solution %q======\n", relativePath)
@@ -133,6 +125,7 @@ var (
 
 func init() {
 	runCmd.PersistentFlags().StringVarP(&relativePath, "path", "p", "", "[Required] The relative path to the folder of the solution's testcases, e.g. `iam/kpt/member-iam`.")
+	runCmd.PersistentFlags().StringVarP(&timeout, "timeout", "t", "60s", "[Optional] The timeout used to wait for resources to be READY. Default: `60s`.")
 	rootCmd.AddCommand(runCmd)
 }
 
@@ -193,7 +186,7 @@ func finalizeValues(randomId string, envValues map[string]string, testValues map
 	return realValues, nil
 }
 
-func runKptTestcase(solutionPath string, testValues map[string]string, originalValues map[string]string) error {
+func runKptTestcase(solutionPath string, timeout string, testValues map[string]string, originalValues map[string]string) error {
 	// Set the kpt setters defined in the testcase.
 	log.Println("======Setting the kpt setters...======")
 	for key, value := range testValues {
@@ -234,7 +227,7 @@ func runKptTestcase(solutionPath string, testValues map[string]string, originalV
 	log.Println("======Successfully created the resources======")
 
 	// Wait for all the resources to be ready.
-	if err := verifyReadyCondition(solutionPath); err != nil {
+	if err := verifyReadyCondition(solutionPath, timeout); err != nil {
 		errToReturn := fmt.Errorf("error verifying the ready condition: %v", err)
 
 		// Clean up before exit with errors.
@@ -263,7 +256,7 @@ func cleanUp(solutionPath string, originalValues map[string]string) error {
 	return nil
 }
 
-func verifyReadyCondition(solutionPath string) error {
+func verifyReadyCondition(solutionPath string, timeout string) error {
 	log.Println("======Verifying that all the Config Connector resources are ready...======")
 
 	files, err := ioutil.ReadDir(solutionPath)
@@ -281,9 +274,9 @@ func verifyReadyCondition(solutionPath string) error {
 
 		resourceFilePath := filepath.Join(solutionPath, fileName)
 		output, err := exec.Command("kubectl", "wait", "--for=condition=ready",
-			"-f", resourceFilePath, "--timeout=60s").CombinedOutput()
+			"-f", resourceFilePath, fmt.Sprintf("--timeout=%s", timeout)).CombinedOutput()
 		if err != nil {
-			errToReturn := fmt.Errorf("resource in file %q is not ready in 60 seconds: %v\nstdout: %s", fileName, err, string(output))
+			errToReturn := fmt.Errorf("resource in file %q is not ready in timeout: %v\nstdout: %s", fileName, timeout, err, string(output))
 			status, err := getResourceStatus(resourceFilePath)
 			if err != nil {
 				return concatErrors("error printing resource status", err, errToReturn)

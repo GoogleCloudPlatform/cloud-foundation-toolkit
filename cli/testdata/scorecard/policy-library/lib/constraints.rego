@@ -1,4 +1,5 @@
-# Copyright 2020 Google LLC
+#
+# Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,18 +12,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: serviceusage.cnrm.cloud.google.com/v1beta1
-kind: Service
-metadata:
-  namespace: shared-vpc-host-project-annotated
-  name: compute.googleapis.com
-  annotations:
-    cnrm.cloud.google.com/deletion-policy: abandon
----
-apiVersion: serviceusage.cnrm.cloud.google.com/v1beta1
-kind: Service
-metadata:
-  namespace: shared-vpc-service-project-annotated
-  name: compute.googleapis.com
-  annotations:
-    cnrm.cloud.google.com/deletion-policy: abandon
+#
+
+package validator.gcp.lib
+
+# Function to fetch the constraint spec
+# Usage:
+# get_constraint_params(constraint, params)
+
+get_constraint_params(constraint) = params {
+	params := constraint.spec.parameters
+}
+
+# Function to fetch constraint info
+# Usage:
+# get_constraint_info(constraint, info)
+
+get_constraint_info(constraint) = info {
+	info := {
+		"name": constraint.metadata.name,
+		"kind": constraint.kind,
+	}
+}
