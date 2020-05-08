@@ -1,10 +1,12 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sDumpReview
+kind: K8sPodImagePullPolicy
 metadata:
-  name: dump-review
+  name: always-pull-image
 spec:
   enforcementAction: dryrun
   match:
     kinds:
       - apiGroups: [""]
-        kinds: ["*"]
+        kinds: ["Pod"]
+  parameters:
+    policy: "Always"
