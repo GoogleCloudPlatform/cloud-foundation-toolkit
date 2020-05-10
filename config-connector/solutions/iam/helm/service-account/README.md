@@ -12,7 +12,7 @@
 
 ## CONSUMPTION
 
-  1. Clone GoogleCloudPlatform/cloud-foundation-toolkit repository
+  1. Clone GoogleCloudPlatform/cloud-foundation-toolkit repository:
   
       ```bash
       git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
@@ -51,15 +51,15 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
 
-1. _Optionaly_, you can costomize optional values by explictly set them when installing the solution:
+1. _Optionaly_, you can customize optional values by explictly setting them when installing the solution:
     ```bash
     # install your chart with a new service account name
-    helm install . --set serviceAccount.name=new-service-account --set iamPolicyMember.iamMember=user:name@example.com --generate-name
+    helm install . --set serviceAccount.name=new-service-account,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```  
     Or,
     ```bash
-    # install your chart with a new service account name
-    helm install . --set iamPolicyMember.role=roles/iam.serviceAccountTokenCreator --set iamPolicyMember.iamMember=user:name@example.com --generate-name
+    # install your chart with a new role
+    helm install . --set iamPolicyMember.role=roles/iam.serviceAccountTokenCreator,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
     Or set them both in one command.
 
