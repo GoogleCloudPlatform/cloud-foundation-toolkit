@@ -21,4 +21,4 @@ spec:
   resourceRef:
     apiVersion: storage.cnrm.cloud.google.com/v1beta1
     kind: StorageBucket
-    external: project/${BUCKET_NAME?} # {"$ref":"#/definitions/io.k8s.cli.substitutions.bucket-name-sub"}
+    external: ${BUCKET_NAME?} # {"$ref":"#/definitions/io.k8s.cli.setters.bucket-name"}
