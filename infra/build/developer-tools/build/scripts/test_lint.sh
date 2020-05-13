@@ -30,7 +30,7 @@ MARKDOWN_STR=""
 CONTRIBUTING_GUIDE=""
 # shellcheck disable=SC2089,SC2016  # Quotes/backslashes will be treated literally, expressions don't expand
 messages='{
-  "check_generate_modules": "The modules need to be regenerated. Please run make_build.",
+  "check_generate_modules": "The modules need to be regenerated. Please run `make_build`.",
   "check_documentation": "The documentation needs to be regenerated. Please run `make generate_docs`.",
   "check_whitespace": "Failed whitespace check. More details below.",
   "check_shell": "Failed shell check. More info on running shellcheck locally [here](https://www.shellcheck.net).",
