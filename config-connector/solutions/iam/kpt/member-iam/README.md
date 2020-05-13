@@ -26,8 +26,8 @@ Member IAM
       -   roles/resourcemanager.projectIamAdmin
       -   roles/iam.serviceAccountAdmin
 
-  *   The project managed by Config Connector has Cloud Resource Manager API
-      enabled.
+  *   Cloud Resource Manager API enabled in the project where Config Connector
+      is installed
 
 # USAGE
 

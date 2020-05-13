@@ -10,7 +10,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: folder-id
-          value: ${FOLDER_ID?}
+          value: "${FOLDER_ID?}"
           setBy: PLACEHOLDER
         description: the numaric id of the folder
     io.k8s.cli.setters.iam-member:
