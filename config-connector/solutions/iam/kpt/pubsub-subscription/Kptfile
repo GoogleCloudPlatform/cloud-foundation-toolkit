@@ -3,7 +3,7 @@ kind: Kptfile
 metadata:
   name: pubsub-subscription
 packageMetadata:
-  shortDescription: creates a pubsub subscription and configures permissions for it 
+  shortDescription: creates a pubsub subscription and configures permissions for it
 openAPI:
   definitions:
     io.k8s.cli.setters.topic-name:
