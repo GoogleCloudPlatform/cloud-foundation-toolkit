@@ -19,7 +19,9 @@ Service Account
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using the cnrm-system service account.
+  A working Config Connector instance using the "cnrm-system" service account
+  with either `roles/iam.serviceAccountAdmin` or `roles/owner` in the project
+  managed by Config Connector.
 
 # USAGE
   Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:
