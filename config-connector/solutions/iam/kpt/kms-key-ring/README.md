@@ -11,7 +11,14 @@ KMS Key Ring
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/kms-key-ring kms-key-ring
   ```
 # REQUIREMENTS
-  A working cluster with Config Connector installed and configured to manage a project with Cloud Key Management Service (KMS) API enabled.
+  -   A working Config Connector instance using the "cnrm-system" service
+      account with either `roles/cloudkms.admin` or `roles/owner` in the project
+      managed by Config Connector.
+  -   Cloud Key Management Service (KMS) API enabled in the project where Config
+      Connector is installed
+  -   Cloud Key Management Service (KMS) API enabled in the project managed by
+      Config Connector if it is a different project
+
 # SETTERS
 |    NAME    |        VALUE         |     SET BY      |     DESCRIPTION      | COUNT |
 |------------|----------------------|-----------------|----------------------|-------|

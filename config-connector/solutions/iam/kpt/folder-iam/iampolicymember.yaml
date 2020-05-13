@@ -22,4 +22,4 @@ spec:
   resourceRef:
     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
     kind: Folder
-    external: ${FOLDER_ID?} # {"$ref":"#/definitions/io.k8s.cli.setters.folder-id"}
+    external: "${FOLDER_ID?}" # {"$ref":"#/definitions/io.k8s.cli.setters.folder-id"}
