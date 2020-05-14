@@ -10,7 +10,13 @@ Pub/Sub Topic
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/solutions/iam/kpt/pubsub-topic pubsub-topic
   ```
 # REQUIREMENTS
-  A Config Connector installation managing a GCP project with the Pub/Sub API enabled.
+  -   A working Config Connector instance using the "cnrm-system" service
+      account with either `roles/pubsub.admin` or `roles/owner` in the project
+      managed by Config Connector
+  -   Cloud Pub/Sub API enabled in the project where Config Connector is
+      installed
+  -   Cloud Pub/Sub API enabled in the project managed by Config Connector if it
+      is a different project
 # SETTERS
 |    NAME    |        VALUE        |     SET BY      |         DESCRIPTION          | COUNT |
 |------------|---------------------|-----------------|------------------------------|-------|

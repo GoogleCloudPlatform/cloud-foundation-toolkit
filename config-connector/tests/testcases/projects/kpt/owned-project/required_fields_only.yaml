@@ -11,4 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-project-id: ${PROJECT_ID?}
+billing-account: $BILLING_ACCOUNT_ID
+folder-id: $FOLDER_ID
+iam-member: $IAM_MEMBER
+project-id: $OWNED_PROJECT_ID-$RANDOM_ID

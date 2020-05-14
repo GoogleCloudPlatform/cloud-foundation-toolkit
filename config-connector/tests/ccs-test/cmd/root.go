@@ -193,6 +193,7 @@ func runKptTestcase(solutionPath string, timeout string, testValues map[string]s
 		output, err := exec.Command("kpt", "cfg", "set", solutionPath, key,
 			value, "--set-by", "test").CombinedOutput()
 		if err != nil {
+			log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
 			errToReturn := fmt.Errorf("error setting setter '%s' with value "+
 				"'%s': %v\nstdout: %s", key, value, err, string(output))
 
@@ -213,6 +214,7 @@ func runKptTestcase(solutionPath string, timeout string, testValues map[string]s
 	log.Println("======Creating the resources...======")
 	output, err := exec.Command("kubectl", "create", "-f", solutionPath).CombinedOutput()
 	if err != nil {
+		log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
 		errToReturn := fmt.Errorf("error creating resources: %v\nstdout: %s", err, string(output))
 
 		// Clean up before exit with errors.
@@ -276,8 +278,9 @@ func verifyReadyCondition(solutionPath string, timeout string) error {
 		output, err := exec.Command("kubectl", "wait", "--for=condition=ready",
 			"-f", resourceFilePath, fmt.Sprintf("--timeout=%s", timeout)).CombinedOutput()
 		if err != nil {
+			log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
 			errToReturn := fmt.Errorf("resource in file %q is not ready in timeout: %v\nstdout: %s", fileName, timeout, err, string(output))
-			status, err := getResourceStatus(resourceFilePath)
+			status, err := getSolutionResourceStatus(solutionPath)
 			if err != nil {
 				return concatErrors("error printing resource status", err, errToReturn)
 			}
@@ -292,13 +295,14 @@ func verifyReadyCondition(solutionPath string, timeout string) error {
 	return nil
 }
 
-func getResourceStatus(resourceFilePath string) (string, error) {
-	output, err := exec.Command("kubectl", "get", "-f", resourceFilePath,
+func getSolutionResourceStatus(solutionPath string) (string, error) {
+	output, err := exec.Command("kubectl", "get", "-f", solutionPath,
 		"-o=custom-columns=NAME:.metadata.name,KIND:.kind,CONDITION.REASON:.status.conditions[0].reason,CONDITION.MESSAGE:.status.conditions[0].message").
 		CombinedOutput()
 
 	if err != nil {
-		return "", fmt.Errorf("error getting the resource status: %v\nstdout: %s", err, string(output))
+		log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
+		return "", fmt.Errorf("error getting the status of the resource(s): %v\nstdout: %s", err, string(output))
 	}
 
 	return string(output), nil
@@ -308,6 +312,7 @@ func deleteResources(solutionPath string) error {
 	log.Println("======Deleting the resources...======")
 	output, err := exec.Command("kubectl", "delete", "-f", solutionPath, "--wait").CombinedOutput()
 	if err != nil {
+		log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
 		err = fmt.Errorf("error deleting resources: %v\nstdout: %s", err, string(output))
 		if isNotFoundErrorOnly(err) {
 			log.Println(err)
@@ -332,6 +337,7 @@ func resetKptSetters(solutionPath string, originalValues map[string]string) erro
 	for key, value := range originalValues {
 		output, err := exec.Command("kpt", "cfg", "set", solutionPath, key, value, "--set-by", "PLACEHOLDER").CombinedOutput()
 		if err != nil {
+			log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
 			return fmt.Errorf("error setting setter '%s' back to the original value '%s': %v\nstdout: %s", key, value, err, string(output))
 		}
 		log.Printf("%s\n", string(output))

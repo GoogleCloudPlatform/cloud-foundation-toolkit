@@ -19,9 +19,11 @@ Folder IAM
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using the cnrm-system service account with _at least_ the following role in
-  the desired folder:
-  - roles/resourcemanager.folderIamAdmin
+  -   A working Config Connector instance using the "cnrm-system" service
+      account with the following role in the desired folder:
+      -   roles/resourcemanager.folderIamAdmin
+  -   Cloud Resource Manager API enabled in the project where Config Connector
+      is installed
 
 # USAGE
 
