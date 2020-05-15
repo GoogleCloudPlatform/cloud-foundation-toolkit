@@ -11,4 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-project-id: ${PROJECT_ID?}
+
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeSubnetwork
+metadata:
+  name: {{ .Values.subnet.name }}
+spec:
+  ipCidrRange: 10.0.0.0/9
+  region: {{ .Values.subnet.region }}
+  privateIpGoogleAccess: false
+  networkRef:
+    name: {{ .Values.computeNetwork.name }} 
+  logConfig:
+    aggregationInterval: INTERVAL_10_MIN
+    flowSampling: 0.5
+    metadata: INCLUDE_ALL_METADATA

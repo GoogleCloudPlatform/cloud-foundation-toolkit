@@ -5,19 +5,26 @@
 This folder contains the Go CLI and testcases for testing the Config Connector
 Solutions defined in [../solutions](../solutions) folder.
 
-*  **[ccs-test/](./ccs-test/)** - Go code for the solutions test CLI
-*  **[testcases/](./testcases/)** - Testcases for each solution. If has
-   the same folder structure as the solutions, i.e. if the solution is under 
-   <code>../solutions/<b>iam/kpt/member-iam/</b></code>, then the corresponding
-   testcases should be under <code>./testcases/<b>iam/kpt/member-iam/</b></code>
+*   **[ccs-test/](./ccs-test/)** - Go code for the solutions test CLI
+*   **[testcases/](./testcases/)** - Testcases for each solution. If has
+    the same folder structure as the solutions, i.e. if the solution is under
+    <code>../solutions/<b>iam/kpt/member-iam/</b></code>, then the corresponding
+    testcases should be under <code>./testcases/<b>iam/kpt/member-iam/</b>
+    </code>
 
 ## Requirements
 
-*  [gsutil](https://cloud.google.com/storage/docs/gsutil_install)
-*  [kpt](../solutions/README.md#kpt)
-*  [helm](../solutions/README.md#helm)
-*  a working Kubernetes cluster with Config Connector [installed and 
-   configured](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall)
+*   [gsutil](https://cloud.google.com/storage/docs/gsutil_install)
+*   [kpt](../solutions/README.md#kpt)
+*   [helm](../solutions/README.md#helm)
+*   a working Kubernetes cluster with Config Connector [installed and
+    configured](
+    https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall)
+    *   [Default namespace](
+        https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall#setting_your_default_namespace)
+        should be [configured to the **project** where you want to manage the GCP
+        resources](
+        https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall#specify_where_to_create_your_resources).
 
 ## Consumption
 

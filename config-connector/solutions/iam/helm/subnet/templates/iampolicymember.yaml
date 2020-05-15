@@ -11,4 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-project-id: ${PROJECT_ID?}
+
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: iampolicymember-subnet
+spec:
+  member: {{ required "IAM member is required!" .Values.iamPolicyMember.iamMember }}
+  role: {{ .Values.iamPolicyMember.role }}
+  resourceRef:
+    apiVersion: compute.cnrm.cloud.google.com/v1beta1
+    kind: ComputeSubnetwork
+    name: {{ .Values.subnet.name }}

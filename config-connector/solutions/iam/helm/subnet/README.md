@@ -1,14 +1,14 @@
-# Service Account
+# Subnet
 
 ==================================================
 
 ## NAME
 
-  service account
+  subnet
 
 ## SYNOPSIS
 
-  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to `roles/iam.serviceAccountKeyAdmin`) for accessing the service account that just created.
+  Config Connector compatible YAML files to create a subnet in your desired project, and grant a specific member a role (default to `roles/compute.networkUser`) for accessing the subnet that just created.
 
 ## CONSUMPTION
 
@@ -18,10 +18,10 @@
       git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
       ```
 
-  1. Go to the service account folder:
+  1. Go to the subnet folder:
 
       ```bash
-      cd cloud-foundation-toolkit/config-connector/solutions/iam/helm/service-account
+      cd cloud-foundation-toolkit/config-connector/solutions/iam/helm/subnet
       ```
 
 ## REQUIREMENTS
@@ -31,7 +31,7 @@
 
 ## USAGE
 
-All steps are run from the current directory ([config-connector/solutions/iam/helm/service-account](.)).
+All steps are run from the current directory ([config-connector/solutions/iam/helm/subnet](.)).
 
 1. Review and update the values in `./values.yaml`.
 
@@ -44,7 +44,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     # check the output of your chart
     helm template . --set iamPolicyMember.iamMember=user:name@example.com
 
-    # Do a dryrun on your chart and address issues if there are any
+    # do a dryrun on your chart and address issues if there are any
     helm install . --dry-run --set iamPolicyMember.iamMember=user:name@example.com --generate-name
 
     # install your chart
@@ -53,27 +53,32 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
 
 1. _Optionaly_, you can customize optional values by explictly setting them when installing the solution:
     ```bash
-    # install your chart with a new service account name
-    helm install . --set serviceAccount.name=new-service-account,iamPolicyMember.iamMember=user:name@example.com --generate-name
+    # install your chart with a new subnet name
+    helm install . --set subnet.name=new-subnet,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```  
     Or,
     ```bash
-    # install your chart with a new role
-    helm install . --set iamPolicyMember.role=roles/iam.serviceAccountTokenCreator,iamPolicyMember.iamMember=user:name@example.com --generate-name
+    # install your chart with a IAM role
+    helm install . --set iamPolicyMember.role=roles/compute.networkViewer,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
-    Or set them both in one command.
+    Or,
+    ```bash
+    # install your chart with another compute network
+    helm install . --set computeNetwork.name=VALUE,iamPolicyMember.iamMember=user:name@example.com --generate-name
+    ```
+    Or set any of them at the same time in one command.
 
 1. Check the created helm release to verify the installation:
     ```bash
     helm list
     ```
-    Check the status of the service account resource by running: 
+    Check the status of the subnet resource by running: 
     ```bash
-    kubectl describe iamserviceaccount [service account name]
+    kubectl describe ComputeSubnetwork [subnet name]
     ```
     Check the status of the IAM Policy Member:
     ```bash
-    kubectl describe iampolicymember iampolicymember-service-account
+    kubectl describe iampolicymember iampolicymember-subnet
     ```
 
 1. Clean up the installation:
