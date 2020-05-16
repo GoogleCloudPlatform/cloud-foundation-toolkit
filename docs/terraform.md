@@ -1,5 +1,5 @@
 # Terraform Modules
-The Cloud Foundation Toolkit includes over **46** Terraform modules.
+The Cloud Foundation Toolkit includes over **45** Terraform modules.
 
 * [address](https://github.com/terraform-google-modules/terraform-google-address) - A Terraform module for managing Google Cloud IP addresses.
 * [bastion-host](https://github.com/terraform-google-modules/terraform-google-bastion-host) - This module will generate a bastion host vm compatible with OS Login and IAP Tunneling that can be used to access internal VMs.
@@ -95,9 +95,7 @@ The Cloud Foundation Toolkit includes over **46** Terraform modules.
   * [bigquery](https://github.com/terraform-google-modules/terraform-google-log-export/tree/master/modules/bigquery)
   * [pubsub](https://github.com/terraform-google-modules/terraform-google-log-export/tree/master/modules/pubsub)
   * [storage](https://github.com/terraform-google-modules/terraform-google-log-export/tree/master/modules/storage)
-* [managed-instance-group](https://github.com/GoogleCloudPlatform/terraform-google-managed-instance-group) - Modular Google Compute Engine managed instance group for Terraform.
 * [memorystore](https://github.com/terraform-google-modules/terraform-google-memorystore) - 
-* [nat-gateway](https://github.com/GoogleCloudPlatform/terraform-google-nat-gateway) - Modular NAT Gateway on Google Compute Engine for Terraform.
 * [network](https://github.com/terraform-google-modules/terraform-google-network) - A Terraform module that makes it easy to set up a new VPC Network in GCP.
   * [fabric-net-firewall](https://github.com/terraform-google-modules/terraform-google-network/tree/master/modules/fabric-net-firewall)
   * [fabric-net-svpc-access](https://github.com/terraform-google-modules/terraform-google-network/tree/master/modules/fabric-net-svpc-access)

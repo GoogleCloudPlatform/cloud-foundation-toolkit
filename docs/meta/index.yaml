@@ -337,6 +337,7 @@ children:
   source: https://github.com/terraform-google-modules/terraform-google-log-export
 - !module
   description: Modular Google Compute Engine managed instance group for Terraform.
+  exclude: true
   name: managed-instance-group
   source: https://github.com/GoogleCloudPlatform/terraform-google-managed-instance-group
 - !module
@@ -345,6 +346,7 @@ children:
   source: https://github.com/terraform-google-modules/terraform-google-memorystore
 - !module
   description: Modular NAT Gateway on Google Compute Engine for Terraform.
+  exclude: true
   name: nat-gateway
   source: https://github.com/GoogleCloudPlatform/terraform-google-nat-gateway
 - !module
