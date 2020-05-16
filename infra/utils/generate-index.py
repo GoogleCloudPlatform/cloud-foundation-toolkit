@@ -15,8 +15,6 @@
 # limitations under the License.
 
 import os
-import json
-import csv
 import sys
 import argparse
 import yaml
