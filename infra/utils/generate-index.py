@@ -121,6 +121,7 @@ def main(argv):
     root = yaml.load(f, Loader=yaml.Loader)
 
     generate_index(root, "terraform-google-modules")
+    generate_index(root, "googlecloudplatform")
 
     f.seek(0)
     f.truncate()

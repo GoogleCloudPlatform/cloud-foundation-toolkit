@@ -304,6 +304,23 @@ children:
   name: kubernetes-engine
   source: https://github.com/terraform-google-modules/terraform-google-kubernetes-engine
 - !module
+  description: Modular Regional TCP Load Balancer for GCE using target pool and forwarding
+    rule.
+  name: lb
+  source: https://github.com/GoogleCloudPlatform/terraform-google-lb
+- !module
+  children:
+  - !module
+    name: dynamic_backends
+    path: modules/dynamic_backends
+  description: Modular Global HTTP Load Balancer for GCE using forwarding rules.
+  name: lb-http
+  source: https://github.com/GoogleCloudPlatform/terraform-google-lb-http
+- !module
+  description: Modular Internal Load Balancer for GCE using forwarding rules.
+  name: lb-internal
+  source: https://github.com/GoogleCloudPlatform/terraform-google-lb-internal
+- !module
   children:
   - !module
     name: bigquery
@@ -319,9 +336,17 @@ children:
   name: log-export
   source: https://github.com/terraform-google-modules/terraform-google-log-export
 - !module
+  description: Modular Google Compute Engine managed instance group for Terraform.
+  name: managed-instance-group
+  source: https://github.com/GoogleCloudPlatform/terraform-google-managed-instance-group
+- !module
   description: ''
   name: memorystore
   source: https://github.com/terraform-google-modules/terraform-google-memorystore
+- !module
+  description: Modular NAT Gateway on Google Compute Engine for Terraform.
+  name: nat-gateway
+  source: https://github.com/GoogleCloudPlatform/terraform-google-nat-gateway
 - !module
   children:
   - !module
@@ -463,6 +488,23 @@ children:
     SLOs to GCP services and other systems.
   name: slo
   source: https://github.com/terraform-google-modules/terraform-google-slo
+- !module
+  children:
+  - !module
+    name: mysql
+    path: modules/mysql
+  - !module
+    name: postgresql
+    path: modules/postgresql
+  - !module
+    name: private_service_access
+    path: modules/private_service_access
+  - !module
+    name: safer_mysql
+    path: modules/safer_mysql
+  description: Modular Cloud SQL database instance for Terraform.
+  name: sql-db
+  source: https://github.com/GoogleCloudPlatform/terraform-google-sql-db
 - !module
   description: A library of useful startup scripts to embed in VMs created by Terraform
   name: startup-scripts

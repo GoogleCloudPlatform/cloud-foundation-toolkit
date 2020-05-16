@@ -1,5 +1,5 @@
 # Terraform Modules
-The Cloud Foundation Toolkit includes over **41** Terraform modules.
+The Cloud Foundation Toolkit includes over **47** Terraform modules.
 
 * [address](https://github.com/terraform-google-modules/terraform-google-address) - A Terraform module for managing Google Cloud IP addresses.
 * [bastion-host](https://github.com/terraform-google-modules/terraform-google-bastion-host) - This module will generate a bastion host vm compatible with OS Login and IAP Tunneling that can be used to access internal VMs.
@@ -87,11 +87,17 @@ The Cloud Foundation Toolkit includes over **41** Terraform modules.
   * [safer-cluster-update-variant](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/safer-cluster-update-variant)
   * [services](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/services)
   * [workload-identity](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/workload-identity)
+* [lb](https://github.com/GoogleCloudPlatform/terraform-google-lb) - Modular Regional TCP Load Balancer for GCE using target pool and forwarding rule.
+* [lb-http](https://github.com/GoogleCloudPlatform/terraform-google-lb-http) - Modular Global HTTP Load Balancer for GCE using forwarding rules.
+  * [dynamic_backends](https://github.com/GoogleCloudPlatform/terraform-google-lb-http/tree/master/modules/dynamic_backends)
+* [lb-internal](https://github.com/GoogleCloudPlatform/terraform-google-lb-internal) - Modular Internal Load Balancer for GCE using forwarding rules.
 * [log-export](https://github.com/terraform-google-modules/terraform-google-log-export) - This module allows you to create log exports at the project, folder, or organization level.
   * [bigquery](https://github.com/terraform-google-modules/terraform-google-log-export/tree/master/modules/bigquery)
   * [pubsub](https://github.com/terraform-google-modules/terraform-google-log-export/tree/master/modules/pubsub)
   * [storage](https://github.com/terraform-google-modules/terraform-google-log-export/tree/master/modules/storage)
+* [managed-instance-group](https://github.com/GoogleCloudPlatform/terraform-google-managed-instance-group) - Modular Google Compute Engine managed instance group for Terraform.
 * [memorystore](https://github.com/terraform-google-modules/terraform-google-memorystore) - 
+* [nat-gateway](https://github.com/GoogleCloudPlatform/terraform-google-nat-gateway) - Modular NAT Gateway on Google Compute Engine for Terraform.
 * [network](https://github.com/terraform-google-modules/terraform-google-network) - A Terraform module that makes it easy to set up a new VPC Network in GCP.
   * [fabric-net-firewall](https://github.com/terraform-google-modules/terraform-google-network/tree/master/modules/fabric-net-firewall)
   * [fabric-net-svpc-access](https://github.com/terraform-google-modules/terraform-google-network/tree/master/modules/fabric-net-svpc-access)
@@ -131,6 +137,11 @@ The Cloud Foundation Toolkit includes over **41** Terraform modules.
 * [slo](https://github.com/terraform-google-modules/terraform-google-slo) - Create SLOs on GCP from custom Stackdriver metrics. Capability to export SLOs to GCP services and other systems.
   * [slo](https://github.com/terraform-google-modules/terraform-google-slo/tree/master/modules/slo)
   * [slo-pipeline](https://github.com/terraform-google-modules/terraform-google-slo/tree/master/modules/slo-pipeline)
+* [sql-db](https://github.com/GoogleCloudPlatform/terraform-google-sql-db) - Modular Cloud SQL database instance for Terraform.
+  * [mysql](https://github.com/GoogleCloudPlatform/terraform-google-sql-db/tree/master/modules/mysql)
+  * [postgresql](https://github.com/GoogleCloudPlatform/terraform-google-sql-db/tree/master/modules/postgresql)
+  * [private_service_access](https://github.com/GoogleCloudPlatform/terraform-google-sql-db/tree/master/modules/private_service_access)
+  * [safer_mysql](https://github.com/GoogleCloudPlatform/terraform-google-sql-db/tree/master/modules/safer_mysql)
 * [startup-scripts](https://github.com/terraform-google-modules/terraform-google-startup-scripts) - A library of useful startup scripts to embed in VMs created by Terraform
 * [utils](https://github.com/terraform-google-modules/terraform-google-utils) - This module provides a way to get the shortnames for a given GCP region.
 * [vault](https://github.com/terraform-google-modules/terraform-google-vault) - Modular deployment of Vault on Google Compute Engine with Terraform
