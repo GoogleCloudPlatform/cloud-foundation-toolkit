@@ -1,5 +1,5 @@
 # Terraform Modules
-The Cloud Foundation Toolkit includes over **47** Terraform modules.
+The Cloud Foundation Toolkit includes over **46** Terraform modules.
 
 * [address](https://github.com/terraform-google-modules/terraform-google-address) - A Terraform module for managing Google Cloud IP addresses.
 * [bastion-host](https://github.com/terraform-google-modules/terraform-google-bastion-host) - This module will generate a bastion host vm compatible with OS Login and IAP Tunneling that can be used to access internal VMs.

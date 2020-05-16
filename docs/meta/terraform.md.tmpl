@@ -1,7 +1,7 @@
 # Terraform Modules
-The Cloud Foundation Toolkit includes over **{{ tf.children|length }}** Terraform modules.
+The Cloud Foundation Toolkit includes over **{{ modules|length }}** Terraform modules.
 
-{% for module in tf.children.values() %}
+{% for module in modules %}
 * [{{ module.name() }}]({{ module.url() }}) - {{ module.description() }}
 {% for child in module.children.values() %}
   * [{{ child.name() }}]({{ child.url() }})

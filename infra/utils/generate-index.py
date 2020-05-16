@@ -43,6 +43,9 @@ class IndexItem(yaml.YAMLObject):
     path = self.data.get("path")
     return f"{self.parent.url()}/tree/master/{path}"
 
+  def should_display(self):
+    return not self.data.get('exclude', False)
+
   def description(self):
     return self.data.get("description")
 
@@ -105,7 +108,8 @@ def render_index(index, templates_dir, docs_dir):
     output_file = os.path.basename(template_file.replace(".tmpl", ""))
 
     template = env.get_template(template_file)
-    rendered = template.render(tf=index)
+    modules = [mod for mod in index.children.values() if mod.should_display()]
+    rendered = template.render(modules=modules)
 
     with open(os.path.join(docs_dir, output_file), "w") as f:
       f.write(rendered)
@@ -120,8 +124,9 @@ def main(argv):
   with open(index_file, "r+") as f:
     root = yaml.load(f, Loader=yaml.Loader)
 
-    generate_index(root, "terraform-google-modules")
-    generate_index(root, "googlecloudplatform")
+    if not args.skip_refresh:
+      generate_index(root, "terraform-google-modules")
+      generate_index(root, "googlecloudplatform")
 
     f.seek(0)
     f.truncate()
@@ -132,6 +137,8 @@ def main(argv):
 def argparser():
   parser = argparse.ArgumentParser(description='Generate index of blueprints')
   parser.add_argument('docs_dir', metavar='F')
+
+  parser.add_argument('--skip-refresh', default=False, action='store_true')
 
   return parser
 
