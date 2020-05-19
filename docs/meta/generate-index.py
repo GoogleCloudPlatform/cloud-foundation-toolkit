@@ -94,7 +94,7 @@ def generate_index(root, org_name):
 def render_index(index, templates_dir, docs_dir):
   env = Environment(
     keep_trailing_newline=True,
-    loader=FileSystemLoader(docs_dir),
+    loader=FileSystemLoader(templates_dir),
     trim_blocks=True,
     lstrip_blocks=True,
   )
@@ -119,26 +119,28 @@ def main(argv):
   meta_dir = os.path.join(docs_dir, "meta")
 
   index_file = os.path.join(meta_dir, "index.yaml")
-  with open(index_file, "r+") as f:
-    root = yaml.load(f, Loader=yaml.Loader)
+  if os.path.isfile(index_file):
+    with open(index_file, "r") as f:
+      root = yaml.load(f, Loader=yaml.Loader)
+  else:
+    root = IndexItem({"name": "terraform"})
 
-    if not args.skip_refresh:
-      generate_index(root, "terraform-google-modules")
-      generate_index(root, "googlecloudplatform")
+  if not args.skip_refresh:
+    generate_index(root, "terraform-google-modules")
+    generate_index(root, "googlecloudplatform")
 
-    f.seek(0)
-    f.truncate()
+  with open(index_file, "w") as f:
     yaml.dump(root, f)
 
   render_index(root, meta_dir, docs_dir)
 
 def argparser():
   parser = argparse.ArgumentParser(description='Generate index of blueprints')
-  parser.add_argument('docs_dir', metavar='F')
+  parser.add_argument('docs_dir', metavar='F', nargs="?", default="docs/")
 
   parser.add_argument('--skip-refresh', default=False, action='store_true')
 
   return parser
 
 if __name__ == "__main__":
-    main(sys.argv)
+  main(sys.argv)
