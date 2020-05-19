@@ -136,7 +136,7 @@ def main(argv):
 
 def argparser():
   parser = argparse.ArgumentParser(description='Generate index of blueprints')
-  parser.add_argument('docs_dir', metavar='F', nargs="?", default="docs/")
+  parser.add_argument('docs_dir', nargs="?", default="docs/")
 
   parser.add_argument('--skip-refresh', default=False, action='store_true')
 
