@@ -1,0 +1,50 @@
+name: Release new CLI versions
+on:
+  push:
+    branches: 
+      - "master"
+      - "chore/release-cli-action"
+    paths:
+      - "cli/Makefile"
+env:
+  PROJECT_ID: ${{ secrets.GCR_PROJECT_ID }}
+  CLI_BUCKET: gs://cft-cli
+
+jobs:
+  release-new-cli:
+    name: Build and push new CFT dev tools image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "286.0.0"
+          service_account_key: ${{ secrets.GCR_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Retrieve last released version
+        run: |-
+          LAST_VERSION=$(curl --silent "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest" | \
+            grep '"tag_name":' |
+            sed -E 's/.*"([^"]+)".*/\1/')
+          echo ::set-env name=LAST_VERSION::$LAST_VERSION
+
+      - name: Build
+        working-directory: ./cli
+        run: |-
+          make release
+          chmod +x bin/*
+
+      - name: Retrieve current version
+        working-directory: ./cli
+        run: |-
+          CURRENT_VERSION=$(./bin/cft-linux-amd64 version)
+          echo ::set-env name=CURRENT_VERSION::$CURRENT_VERSION
+
+      - name: Release new version
+        if: env.LAST_RELEASE != env.CURRENT_VERSION
+        working-directory: ./cli
+        run: |-
+          make publish
