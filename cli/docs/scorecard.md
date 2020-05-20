@@ -107,7 +107,7 @@ Print a scorecard of your GCP environment, for resources and IAM policies in Clo
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --stdin
 
-	As of now, CAI export file names need to be resource_inventory.json and iam_inventory.json
+	As of now, CAI export file names need to be: resource_inventory.json, iam_inventory.json, org_policy_inventory.json, access_policy_inventory.json
 
 Usage:
   cft scorecard [flags]

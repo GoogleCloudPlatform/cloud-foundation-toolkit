@@ -1,0 +1,67 @@
+name: Update Tooling
+on:
+  schedule:
+    - cron: "0 2 * * *"
+env:
+  TF_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
+  GCLOUD_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
+
+jobs:
+  update-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update Terraform Version
+        run: |
+          CURRENT_TERRAFORM=$(cat infra/build/Makefile  | grep 'TERRAFORM_VERSION :=' | awk -F" " '{print $3}')
+          LATEST_TERRAFORM=$(curl -s ${{env.TF_URL}} | jq --raw-output .tag_name | tr -d "v")
+
+          if [ "$CURRENT_TERRAFORM" == "$LATEST_TERRAFORM" ]; then
+              echo "Terraform is latest"
+              echo ::set-env name=LATEST_TERRAFORM::$(echo "is latest")
+          else
+              echo "Terraform needs to be updated to ${LATEST_TERRAFORM}"
+              sed -i "s/TERRAFORM_VERSION := ${CURRENT_TERRAFORM}/TERRAFORM_VERSION := ${LATEST_TERRAFORM}/g" infra/build/Makefile
+              echo ::set-env name=LATEST_TERRAFORM::$LATEST_TERRAFORM
+          fi
+      - name: Update gCloud SDK Version
+        run: |
+          CURRENT_GCLOUD=$(cat infra/build/Makefile  | grep 'CLOUD_SDK_VERSION :=' | awk -F" " '{print $3}')
+          LATEST_GCLOUD=$(curl -s  ${{env.GCLOUD_URL}} | tar --to-stdout -xzf - google-cloud-sdk/VERSION)
+
+          if [ "$CURRENT_GCLOUD" == "$LATEST_GCLOUD" ]; then
+              echo "gcloud sdk is latest"
+              echo ::set-env name=LATEST_GCLOUD::$(echo "is latest")
+          else
+              echo "gcloud sdk needs to be updated to ${LATEST_GCLOUD}"
+              sed -i "s/CLOUD_SDK_VERSION := ${CURRENT_GCLOUD}/CLOUD_SDK_VERSION := ${LATEST_GCLOUD}/g" infra/build/Makefile
+              echo ::set-env name=LATEST_GCLOUD::$LATEST_GCLOUD
+          fi
+      - name: Bump image patch version
+        if: env.LATEST_TERRAFORM != 'is latest' || env.LATEST_GCLOUD != 'is latest'
+        run: |
+          CURRENT_IMG_VERSION=$(cat infra/build/Makefile  | grep 'DOCKER_TAG_VERSION_DEVELOPER_TOOLS :=' | awk -F" " '{print $3}')
+          NEW_IMG_VERSION=$(echo $CURRENT_IMG_VERSION | awk -F. '{$NF+=1; print $0}' OFS=".")
+          sed -i "s/DOCKER_TAG_VERSION_DEVELOPER_TOOLS := ${CURRENT_IMG_VERSION}/DOCKER_TAG_VERSION_DEVELOPER_TOOLS := ${NEW_IMG_VERSION}/g" infra/build/Makefile
+          echo ::set-env name=NEW_IMG_VERSION::$NEW_IMG_VERSION
+      - name: Commit Makefile
+        if: env.LATEST_TERRAFORM != 'is latest' || env.LATEST_GCLOUD != 'is latest'
+        run: |
+          git config user.name 'Cloud Foundation Bot'
+          git config user.email 'cloud-foundation-bot@google.com'
+          git add infra/build/Makefile
+          git diff-index --quiet HEAD || git commit -m "Update tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}"
+      - name: Create Pull Request
+        if: env.LATEST_TERRAFORM != 'is latest' || env.LATEST_GCLOUD != 'is latest'
+        uses: peter-evans/create-pull-request@v2
+        with:
+          token: ${{ secrets.CFT_ROBOT_PAT }}
+          commit-message: Update tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
+          committer: "Update Tooling Action <cloud-foundation-bot@google.com>"
+          title: "Update Tools to ${{env.NEW_IMG_VERSION}} - Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}"
+          body: |
+            Updated tools to ${{env.NEW_IMG_VERSION}} Terraform ${{env.LATEST_TERRAFORM}} & gCloud ${{env.LATEST_GCLOUD}}
+          labels: automated pr
+          assignees: bharathkkb,morgante
+          reviewers: morgante
+          branch: create-pull-request/patch-tools-version

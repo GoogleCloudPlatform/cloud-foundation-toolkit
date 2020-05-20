@@ -103,6 +103,11 @@ locals {
       color: "62a1db",
       description: "low priority issues"
     },
+    {
+      name: "release-please:force-run",
+      color: "e7d87d",
+      description: "Force release-please to check for changes."
+    }
   ]
 }
 

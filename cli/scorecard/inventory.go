@@ -94,6 +94,8 @@ func (inventory InventoryConfig) getParent() string {
 var destinationObjectNames = map[assetpb.ContentType]string{
 	assetpb.ContentType_RESOURCE:   "resource_inventory.json",
 	assetpb.ContentType_IAM_POLICY: "iam_inventory.json",
+	assetpb.ContentType_ORG_POLICY: "org_policy_inventory.json",
+	assetpb.ContentType_ACCESS_POLICY: "access_policy_inventory.json",
 }
 
 func (inventory InventoryConfig) getGcsDestination(contentType assetpb.ContentType) *assetpb.GcsDestination_Uri {
@@ -144,6 +146,16 @@ func (inventory *InventoryConfig) Export() error {
 		return err
 	}
 	err = inventory.exportToGcs(assetpb.ContentType_IAM_POLICY)
+	if err != nil {
+		s.Stop()
+		return err
+	}
+	err = inventory.exportToGcs(assetpb.ContentType_ORG_POLICY)
+	if err != nil {
+		s.Stop()
+		return err
+	}
+	err = inventory.exportToGcs(assetpb.ContentType_ACCESS_POLICY)
 	if err != nil {
 		s.Stop()
 		return err

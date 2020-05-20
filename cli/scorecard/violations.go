@@ -17,7 +17,7 @@ package scorecard
 import (
 	"bufio"
 	"context"
-	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -56,7 +56,8 @@ func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.A
 	for _, objectName := range destinationObjectNames {
 		reader, err := bucket.Object(objectName).NewReader(ctx)
 		if err != nil {
-			return nil, err
+			fmt.Println("WARNING: Unable to read inventory file :", objectName, err)
+			continue
 		}
 		defer reader.Close()
 		assets, err := getDataFromReader(config, reader)
@@ -66,6 +67,9 @@ func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.A
 
 		pbAssets = append(pbAssets, assets...)
 	}
+	if len(pbAssets) == 0 {
+		return nil, fmt.Errorf("No inventory found")
+	}
 	return pbAssets, nil
 }
 
@@ -74,7 +78,8 @@ func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Ass
 	for _, objectName := range destinationObjectNames {
 		reader, err := os.Open(filepath.Join(caiDirName, objectName))
 		if err != nil {
-			return nil, err
+			fmt.Println("WARNING: Unable to read inventory file :", objectName, err)
+			continue
 		}
 		defer reader.Close()
 		assets, err := getDataFromReader(config, reader)
@@ -83,6 +88,9 @@ func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Ass
 		}
 
 		pbAssets = append(pbAssets, assets...)
+	}
+	if len(pbAssets) == 0 {
+		return nil, fmt.Errorf("No inventory found")
 	}
 	return pbAssets, nil
 }
@@ -126,22 +134,17 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 
 // converts raw JSON into Asset proto
 func getAssetFromJSON(input []byte) (*validator.Asset, error) {
-	var asset map[string]interface{}
-	err := json.Unmarshal(input, &asset)
-	if err != nil {
-		return nil, err
-	}
 	pbAsset := &validator.Asset{}
-	err = protoViaJSON(asset, pbAsset)
+	err := unMarshallAsset(input, pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "converting asset %s to proto", asset["name"])
+		return nil, errors.Wrapf(err, "converting asset %s to proto", string(input))
 	}
+
 	err = cvasset.SanitizeAncestryPath(pbAsset)
 	if err != nil {
-		return nil, errors.Wrapf(err, "fetching ancestry path for %s", asset["name"])
+		return nil, errors.Wrapf(err, "fetching ancestry path for %s", pbAsset)
 	}
 
-	Log.Debug("Asset converted", "name", asset["name"], "ancestry", pbAsset.GetAncestryPath())
+	Log.Debug("Asset converted", "name", pbAsset.GetName(), "ancestry", pbAsset.GetAncestryPath())
 	return pbAsset, nil
 }
-
