@@ -7,6 +7,7 @@ on:
       - "cli/Makefile"
 env:
   CLI_BUCKET: gs://cft-cli
+  RELEASE_URL: https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest
 
 jobs:
   release-new-cli:
@@ -23,9 +24,8 @@ jobs:
 
       - name: Retrieve last released version
         run: |-
-          LAST_VERSION=$(curl --silent "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest" | \
-            grep '"tag_name":' |
-            sed -E 's/.*"([^"]+)".*/\1/')
+          LAST_VERSION=$(curl --silent "${{env.RELEASE_URL}}" | \
+            jq --raw-output .tag_name)
           echo ::set-env name=LAST_VERSION::$LAST_VERSION
 
       - name: Build
