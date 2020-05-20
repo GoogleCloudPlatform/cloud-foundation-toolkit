@@ -1,0 +1,98 @@
+name: Release new CLI versions
+on:
+  push:
+    branches: 
+      - "master"
+    paths:
+      - "cli/Makefile"
+env:
+  CLI_BUCKET: gs://cft-cli
+  RELEASE_URL: https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest
+
+jobs:
+  release-new-cli:
+    name: Build and push new CFT dev tools image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "286.0.0"
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Retrieve last released version
+        run: |-
+          LAST_VERSION=$(curl --silent "${{env.RELEASE_URL}}" | \
+            jq --raw-output .tag_name)
+          echo ::set-env name=LAST_VERSION::$LAST_VERSION
+
+      - name: Build
+        working-directory: ./cli
+        run: |-
+          make release
+          chmod +x bin/*
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: bin
+          path: cli/bin
+
+      - name: Retrieve current version
+        working-directory: ./cli
+        run: |-
+          CURRENT_VERSION=$(./bin/cft-linux-amd64 version)
+          echo ::set-env name=CURRENT_VERSION::$CURRENT_VERSION
+
+      - name: Release new version
+        if: env.LAST_VERSION != env.CURRENT_VERSION
+        working-directory: ./cli
+        run: |-
+          make publish
+
+      - name: Create Release
+        if: env.LAST_VERSION != env.CURRENT_VERSION
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.CURRENT_VERSION }}
+          release_name: CLI Release ${{ env.CURRENT_VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Linux Release
+        if: env.LAST_VERSION != env.CURRENT_VERSION
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./cli/bin/cft-linux-amd64
+          asset_name: cft-linux-amd64
+          asset_content_type: application/octet-stream
+
+      - name: Upload Darwin Release
+        if: env.LAST_VERSION != env.CURRENT_VERSION
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./cli/bin/cft-darwin-amd64
+          asset_name: cft-darwin-amd64
+          asset_content_type: application/octet-stream
+
+      - name: Upload Windows Release
+        if: env.LAST_VERSION != env.CURRENT_VERSION
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./cli/bin/cft-windows-amd64
+          asset_name: cft-windows-amd64
+          asset_content_type: application/octet-stream

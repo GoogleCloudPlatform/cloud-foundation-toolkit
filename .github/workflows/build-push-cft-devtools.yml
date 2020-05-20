@@ -19,7 +19,7 @@ jobs:
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: "286.0.0"
-          service_account_key: ${{ secrets.GCR_SA_KEY }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Build
