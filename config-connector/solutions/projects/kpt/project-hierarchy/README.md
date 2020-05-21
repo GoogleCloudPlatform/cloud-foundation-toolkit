@@ -22,8 +22,8 @@ Project Hierarchy
   A working Config Connector cluster using a
   service account with the following roles in
   the organization:
-  - roles/resourcemanager.folderCreator
-  - roles/resourcemanager.projectCreator
+  - `roles/resourcemanager.folderCreator`
+  - `roles/resourcemanager.projectCreator`
 
 # USAGE
 

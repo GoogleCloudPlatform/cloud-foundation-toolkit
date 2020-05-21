@@ -21,7 +21,7 @@ Project Services
 
   A working cluster with Config Connector installed.
 
-  The cnrm-system service account must have
+  The "cnrm-system" service account must have
 `roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
 
 
