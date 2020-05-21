@@ -19,7 +19,14 @@ Subnet
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using the cnrm-system service account.
+  -   A working Config Connector instance using the "cnrm-system" service
+      account with either both `roles/compute.networkAdmin` and
+      `roles/iam.securityAdmin` roles or `roles/owner` in the project
+      managed by Config Connector.
+  -   Compute Engine API enabled in the project where Config Connector is
+      installed
+  -   Compute Engine API enabled in the project managed by Config Connector if
+      it is a different project
 
 # USAGE
   Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:

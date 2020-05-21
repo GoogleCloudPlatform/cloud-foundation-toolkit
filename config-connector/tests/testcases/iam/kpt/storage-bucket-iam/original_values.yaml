@@ -11,16 +11,5 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# RANDOM_ID should not be defined in the environments file.
-BILLING_ACCOUNT_ID: ${BILLING_ACCOUNT_ID?}
-BUCKET_NAME: ${BUCKET_NAME?}
-DEFAULT_NAMESPACE: ${DEFAULT_NAMESPACE?}
-DEFAULT_PROJECT_ID: ${DEFAULT_PROJECT_ID?}
-FOLDER_ID: ${FOLDER_ID?}
-HOST_PROJECT_ID: ${HOST_PROJECT_ID?}
-IAM_MEMBER: ${IAM_MEMBER?}
-ORG_ID: ${ORG_ID?}
-OWNED_PROJECT_ID: ${OWNED_PROJECT_ID?}
-SERVICE_PROJECT_ID: ${SERVICE_PROJECT_ID?}
-SIMPLE_PROJECT_ID: ${SIMPLE_PROJECT_ID?}
+bucket-name: ${BUCKET_NAME?}
+iam-member: ${IAM_MEMBER?}
