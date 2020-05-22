@@ -35,6 +35,7 @@ const (
 	testsDirPath               = "config-connector/tests"
 	originalValuesFileName     = "original_values.yaml"
 	requiredFieldsOnlyFileName = "required_fields_only.yaml"
+	requiredFieldsWithSQLInstanceNameFileName = "required_fields_with_sql_instance_name.yaml"
 	envFileRelativePath        = "testcases/environments.yaml"
 	yamlFileSuffix             = ".yaml"
 )
@@ -98,8 +99,16 @@ var (
 			}
 
 			testValues := make(map[string]string)
-			if err := parseYamlToStringMap(filepath.Join(testCasePath, requiredFieldsOnlyFileName), testValues); err != nil {
-				log.Fatalf("error retrieving test values: %v", err)
+			if filePath, exists := hasTestFile(testCasePath, requiredFieldsOnlyFileName); exists {
+				if err := parseYamlToStringMap(filePath, testValues); err != nil {
+					log.Fatalf("error retrieving test values: %v", err)
+				}
+			} else if filePath, exists := hasTestFile(testCasePath, requiredFieldsWithSQLInstanceNameFileName); exists {
+				if err := parseYamlToStringMap(filePath, testValues); err != nil {
+					log.Fatalf("error retrieving test values: %v", err)
+				}
+			} else {
+				log.Fatal("can't find the test value file")
 			}
 
 			// Generate the random IDs first.
@@ -148,6 +157,14 @@ func parseYamlToStringMap(filePath string, result map[string]string) error {
 		return fmt.Errorf("error unmarshaling file '%s': %v", filePath, err)
 	}
 	return nil
+}
+
+func hasTestFile(testCasePath, fileName string) (string, bool) {
+	filePath := filepath.Join(testCasePath, fileName)
+	if _, err := os.Stat(filePath); err != nil {
+		return filePath, false
+	}
+	return filePath, true
 }
 
 func finalizeValues(randomId string, envValues map[string]string, testValues map[string]string) (map[string]string, error) {
@@ -270,7 +287,7 @@ func verifyReadyCondition(solutionPath string, timeout string) error {
 		// We should only verify the YAML config files for Config Connector
 		// resources.
 		fileName := file.Name()
-		if !strings.HasSuffix(fileName, yamlFileSuffix) || strings.Contains(fileName, "namespace") {
+		if ! isResourceYamlFile(fileName) {
 			continue
 		}
 
@@ -293,6 +310,12 @@ func verifyReadyCondition(solutionPath string, timeout string) error {
 
 	log.Println("======All the Config Connector resrouces are ready======")
 	return nil
+}
+
+func isResourceYamlFile(fileName string) bool {
+	return strings.HasSuffix(fileName, yamlFileSuffix) &&
+	  !strings.Contains(fileName, "namespace") &&
+	  !strings.Contains(fileName, "secret")
 }
 
 func getSolutionResourceStatus(solutionPath string) (string, error) {
@@ -335,7 +358,12 @@ func isNotFoundErrorOnly(err error) bool {
 func resetKptSetters(solutionPath string, originalValues map[string]string) error {
 	log.Println("======Resetting the kpt setters...======")
 	for key, value := range originalValues {
-		output, err := exec.Command("kpt", "cfg", "set", solutionPath, key, value, "--set-by", "PLACEHOLDER").CombinedOutput()
+		setByUser := "PLACEHOLDER"
+		if !strings.HasPrefix(value, "$") {
+			setByUser = "package-default"
+		}
+
+		output, err := exec.Command("kpt", "cfg", "set", solutionPath, key, value, "--set-by", setByUser).CombinedOutput()
 		if err != nil {
 			log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
 			return fmt.Errorf("error setting setter '%s' back to the original value '%s': %v\nstdout: %s", key, value, err, string(output))

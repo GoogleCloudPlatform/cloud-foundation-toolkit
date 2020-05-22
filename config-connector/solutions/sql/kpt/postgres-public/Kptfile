@@ -11,7 +11,7 @@ openAPI:
       x-k8s-cli:
         setter:
           name: instance-name
-          value: postgres-ha-solution
+          value: postgres-public-solution
           setBy: package-default
     io.k8s.cli.setters.password:
       description: password for SQL user
