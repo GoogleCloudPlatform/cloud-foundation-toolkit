@@ -8,7 +8,8 @@
 
 ## SYNOPSIS
 
-  Config Connector compatible YAML files to create a service account in your desired project, and grant a role to a particular IAM member for a PubSub topic (default to roles/pubsub.editor)
+  
+  Config Connector compatible YAML files to create a Pub/Sub topic in your desired project, and grant a specific member a role (default to roles/pubsub.editor) for accessing the Pub/Sub topic that just created
 
 ## CONSUMPTION
 
@@ -62,15 +63,18 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.role=roles/pubsub.viewer,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
     Or set them both in one command.
+    
+    Note: These will create the topic if it does not exist.
 
 1. Check the created helm release to verify the installation:
     ```bash
     helm list
     ```
-    Check the status of the service account resource by running:
+    Check the status of the pub/sub topic resource by running:
     ```bash
-    kubectl describe iamserviceaccount [service account name]
+    kubectl describe pubsubtopic [topic name]
     ```
+    Note: By default value of Pub/Sub topic name is ```allowed-topic```
     Check the status of the IAM Policy Member:
     ```bash
     kubectl describe iampolicymember iampolicymember-service-account
