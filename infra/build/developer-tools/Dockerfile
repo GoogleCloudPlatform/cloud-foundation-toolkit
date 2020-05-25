@@ -139,6 +139,9 @@ ADD ./build/scripts/test_lint.sh /usr/local/bin/
 # Helper script for dynamically generating env variable export statements out of terraform outputs.
 # It is used to pipe outputs from test/setup into the kitchen_do command.
 ADD ./build/scripts/export_tf_outputs.py /usr/local/bin/
+# Helper script for posting linting feedback to GitHub PR
+# Requires GitHub PAT with repo scope, set as an env var GITHUB_PAT_TOKEN
+ADD ./build/scripts/gh_lint_comment.py /usr/local/bin/
 
 # Intended to help developers iterate quickly
 ADD ./build/home/bash_history /root/.bash_history
