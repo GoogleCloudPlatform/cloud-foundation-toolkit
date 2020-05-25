@@ -11,14 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: iam.cnrm.cloud.google.com/v1beta1
-kind: IAMPolicyMember
+
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeNetwork
 metadata:
-  name: storage-bucket-iam-member
+  name: {{ .Values.computeNetwork.name }}
 spec:
-  member: ${IAM_MEMBER?} # {"$ref":"#/definitions/io.k8s.cli.setters.iam-member"}
-  role: roles/storage.objectViewer # {"$ref":"#/definitions/io.k8s.cli.setters.role"}
-  resourceRef:
-    apiVersion: storage.cnrm.cloud.google.com/v1beta1
-    kind: StorageBucket
-    external: ${BUCKET_NAME?} # {"$ref":"#/definitions/io.k8s.cli.setters.bucket-name"}
+  routingMode: REGIONAL
+  autoCreateSubnetworks: false
