@@ -77,7 +77,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     Note: By default value of Pub/Sub topic name is ```allowed-topic```
     Check the status of the IAM Policy Member:
     ```bash
-    kubectl describe iampolicymember iampolicymember-service-account
+    kubectl describe iampolicymember topic-iam-member
     ```
 
 1. Clean up the installation:
