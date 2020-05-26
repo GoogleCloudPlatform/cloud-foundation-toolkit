@@ -27,4 +27,3 @@ openAPI:
           name: role
           value: roles/storage.objectViewer
           setBy: package-default
-
