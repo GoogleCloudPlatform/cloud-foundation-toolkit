@@ -78,8 +78,11 @@ Solutions defined in [../solutions](../solutions) folder.
 
 ## How to run the tests?
 
-**Note:** Currently we only support testing one solution each time by setting
-the relative path of the solution using `--path` or `-p` flag.
+**Note:** We only support testing one solution each time by setting the relative
+path of the solution using `--path` or `-p` flag.
+
+**Note:** We only support testing **kpt** solutions specified under [testcases
+folder](./testcases).
 
 Under the [tests](.) folder, run a test by providing the relative path:
 ```
@@ -132,7 +135,7 @@ is the list of exceptions:
 
 ## How to add new tests?
 
-**Note:** Currently we only support adding tests for kpt solutions.
+**Note:** We only support adding tests for kpt solutions.
 
 If you want to create tests for solution 
 `[SOLUTION_AREA]/kpt/[SOLUTION_NAME]` (e.g. `iam/kpt/member-iam`):
@@ -158,12 +161,12 @@ If you want to create tests for solution
     cp test_values.template [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
     ```
 
-    **Note:** Currently we only support one testcase, which only set required
-    kpt setters (setters set by PLACEHOLDER). The only exception is test cases
-    for SQL solutions. If the test SQL Instance is deleted, the name will be
-    reserved for **7 days**. In order to redo the test, the `instance-name`
-    setter is required in SQL test cases, and the name of the test data file is
-    changed to `required_fields_with_sql_instance_name.yaml`.
+    **Note:** We only support one testcase, which only set required kpt setters
+    (setters set by PLACEHOLDER). The only exception is test cases for SQL
+    solutions. If the test SQL Instance is deleted, the name will be reserved
+    for **7 days**. In order to redo the test, the `instance-name` setter is
+    required in SQL test cases, and the name of the test data file is changed to
+    `required_fields_with_sql_instance_name.yaml`.
 
 1.  Check if the solution requires any PLACEHOLDERs to be set:
 
