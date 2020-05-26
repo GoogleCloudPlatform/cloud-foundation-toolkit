@@ -188,6 +188,13 @@ properties:
         name: wrench
         mass: 1.3kg
         count: 3
+  dependsOn:
+    type: array
+    description: |
+      The list of the resources that must be created before this template is applied.
+    items:
+      type: string
+      description: The resource name.
 
 outputs:
   properties:

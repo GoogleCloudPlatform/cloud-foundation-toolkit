@@ -85,6 +85,8 @@ def generate_config(context):
         dependson = {}
         dependson_root = []
 
+    bucket.update(dependson)
+
     if bindings:
         for role in bindings:
             for member in role['members']:

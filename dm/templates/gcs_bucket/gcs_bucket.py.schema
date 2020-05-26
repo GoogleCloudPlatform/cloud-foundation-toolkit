@@ -90,6 +90,13 @@ properties:
     type: string
     default: us-east1
     description: The region name where the bucket is deployed.
+  dependsOn:
+    type: array
+    description: |
+      The list of the resources that must be created before this template is applied.
+    items:
+      type: string
+      description: The resource name.
   defaultEventBasedHold:
     type: boolean
     description: Whether or not to automatically apply an eventBasedHold to new objects added to the bucket.

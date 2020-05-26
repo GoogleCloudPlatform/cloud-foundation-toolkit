@@ -229,7 +229,7 @@ properties:
       availabilityType:
         type: string
         description: |
-          The availability type (PostgreSQL instances only). Potential values:
+          The availability type. Potential values:
           ZONAL: The instance serves data from only one zone. Outages in that
           zone affect data accessibility.
           REGIONAL: The instance can serve data from more than one zone in a

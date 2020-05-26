@@ -78,6 +78,9 @@ def generate_config(context):
         }
     ]
 
+    if 'dependsOn' in context.properties:
+        resources[0]['metadata'] = {'dependsOn': context.properties['dependsOn']}
+
     outputs = [
         {
             'name': 'selfLink',
