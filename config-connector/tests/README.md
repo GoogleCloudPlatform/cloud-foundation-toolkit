@@ -74,7 +74,7 @@ Solutions defined in [../solutions](../solutions) folder.
         **Note:** Please remember to set **ALL** the environment variables.
 
 1.  Follow the README of each solution to configure permissions for the
-    cnrm-system service account, and enable necessary APIs.
+    "cnrm-system" service account, and enable necessary APIs.
 
     **Note:** This step will be automated in the upcoming changes.
 

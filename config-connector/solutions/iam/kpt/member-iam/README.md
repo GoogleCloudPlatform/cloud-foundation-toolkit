@@ -23,8 +23,8 @@ Member IAM
       that has the following roles in your desired project (it doesn't need to
       be the project managed by Config Connector):
 
-      -   roles/resourcemanager.projectIamAdmin
-      -   roles/iam.serviceAccountAdmin
+      -   `roles/resourcemanager.projectIamAdmin`
+      -   `roles/iam.serviceAccountAdmin`
 
   *   Cloud Resource Manager API enabled in the project where Config Connector
       is installed

@@ -21,7 +21,7 @@ Simple Project
   
   Cloud Resource Manager API and Cloud Billing API enabled in the project where Config Connector is installed.
   
-  The cnrm-system service account must have `roles/resourcemanager.projectCreator` in your organization and `roles/billing.user` for your billing account.
+  The "cnrm-system" service account must have `roles/resourcemanager.projectCreator` in your organization and `roles/billing.user` for your billing account.
   
 # USAGE
   In order to use, replace the `${PROJECT_ID?}`, `${BILLING_ACCOUNT_ID?}` and

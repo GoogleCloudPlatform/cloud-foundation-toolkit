@@ -21,7 +21,7 @@ Shared VPC Network
 
   A working cluster with Config Connector installed.
 
-  The cnrm-system service account, which must have:
+  The "cnrm-system" service account, which must have:
   - `roles/resourcemanager.projectCreator` in the target organization if service and
 host projects do not yet exist, or the `owner` role in the projects if they already exist.
   - `roles/compute.xpnAdmin` in the target organization
