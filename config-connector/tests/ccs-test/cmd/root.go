@@ -48,6 +48,8 @@ var (
 	// It should be in the format of $ENV_VAR-$RANDOM_ID.
 	re = regexp.MustCompile(`\$(?P<EnvName>[A-Z]+|[A-Z]+[A-Z_]*[A-Z]+)(-\$RANDOM_ID)`)
 
+	testFileNames = []string{requiredFieldsOnlyFileName, requiredFieldsWithSQLInstanceNameFileName}
+
 	rootCmd = &cobra.Command{
 		Use:   "ccs-test",
 		Short: "CLI to test Config Connector Solutions",
@@ -99,16 +101,13 @@ var (
 			}
 
 			testValues := make(map[string]string)
-			if filePath, exists := hasTestFile(testCasePath, requiredFieldsOnlyFileName); exists {
-				if err := parseYamlToStringMap(filePath, testValues); err != nil {
-					log.Fatalf("error retrieving test values: %v", err)
+			for _, testFileName := range testFileNames {
+				if filePath, exists := hasTestFile(testCasePath, testFileName); exists {
+					if err := parseYamlToStringMap(filePath, testValues); err != nil {
+						log.Fatalf("error retrieving test values: %v", err)
+					}
+					break
 				}
-			} else if filePath, exists := hasTestFile(testCasePath, requiredFieldsWithSQLInstanceNameFileName); exists {
-				if err := parseYamlToStringMap(filePath, testValues); err != nil {
-					log.Fatalf("error retrieving test values: %v", err)
-				}
-			} else {
-				log.Fatal("can't find the test value file")
 			}
 
 			// Generate the random IDs first.
@@ -287,7 +286,7 @@ func verifyReadyCondition(solutionPath string, timeout string) error {
 		// We should only verify the YAML config files for Config Connector
 		// resources.
 		fileName := file.Name()
-		if ! isResourceYamlFile(fileName) {
+		if !isResourceYamlFile(fileName) {
 			continue
 		}
 
