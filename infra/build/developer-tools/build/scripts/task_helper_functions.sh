@@ -312,6 +312,17 @@ function generate_modules() {
   fi
 }
 
+# Post a comment to GitHub informing PR author about linting checks status
+# requires a secret with PAT called gh-pat-token and cloud build SA with roles/secretmanager.secretAccessor
+function post_lint_status_pr_comment() {
+  export GITHUB_PAT_TOKEN=$(gcloud secrets versions access latest --secret="gh-pat-token")
+  final_message=$(/usr/local/bin/test_lint.sh --markdown --contrib-guide=../blob/master/CONTRIBUTING.md)
+  if [ -z "$final_message" ]; then
+  final_message="Thanks for the PR! 🚀<br/>✅ Lint checks have passed."
+  fi
+  python3 /usr/local/bin/gh_lint_comment.py -r "${REPO_NAME}" -p "${_PR_NUMBER}" -c "${final_message}"
+}
+
 # Check that module generation has happened
 function check_generate_modules() {
   if [[ -e /workspace/autogen_modules.json ]]; then
