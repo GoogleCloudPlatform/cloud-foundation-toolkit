@@ -41,8 +41,8 @@ func setOutput(rootCommand *cobra.Command, buf *bytes.Buffer) {
 func TestRootCommand(t *testing.T) {
 	rootCmd.SetArgs([]string{})
 	output, err := ExecuteCommand(rootCmd)
-	if output == "" {
-		t.Errorf("expected no output, got: %s", output)
+	if !strings.Contains(output, "Google Cloud Foundation Toolkit CLI") {
+		t.Errorf("expected help output, got: %s", output)
 	}
 	if err != nil {
 		t.Errorf("expected no error, got: %v", err)
@@ -66,6 +66,6 @@ func TestRootCommandWithUnknownCommand(t *testing.T) {
 		t.Errorf("expected to have prefix: %s, actual: %s", prefix, output)
 	}
 	if err == nil {
-		t.Errorf("expected to have erorr but it nil")
+		t.Errorf("expected to have error but it nil")
 	}
 }
