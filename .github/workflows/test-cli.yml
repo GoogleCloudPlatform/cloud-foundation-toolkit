@@ -1,0 +1,18 @@
+name: Run unit tests for the CLI
+on:
+  push:
+    paths:
+      - "cli/**"
+jobs:
+  checks:
+    name: run
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.13.1' # The Go version to download (if necessary) and use.
+    - run: go version
+    - run: make test
+      working-directory: cli/
