@@ -7,7 +7,7 @@ Service Account
 
 # SYNOPSIS
 
-  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to roles/iam.serviceAccountKeyAdmin) for accessing the service account that just created.
+  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to `roles/iam.serviceAccountKeyAdmin`) for accessing the service account that just created.
 
 # CONSUMPTION
 

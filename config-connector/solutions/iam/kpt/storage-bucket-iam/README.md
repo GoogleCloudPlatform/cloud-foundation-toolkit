@@ -11,8 +11,9 @@ Storage Bucket IAM
   ```
 # REQUIREMENTS
 - A working Config Connector instance.
-- The cnrm-system service account must have `roles/storage.admin`.
 - A storage bucket managed by [IAM](https://cloud.google.com/storage/docs/access-control#using_permissions_with_acls).
+- The "cnrm-system" service account with `roles/storage.admin` in either
+  the storage bucket or the project which owns the storage bucket.
 
   Note: Using [uniform bucket-level access control](https://cloud.google.com/storage/docs/uniform-bucket-level-access) is recommended for this package.
 # SETTERS
