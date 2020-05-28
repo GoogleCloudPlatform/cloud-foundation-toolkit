@@ -29,6 +29,10 @@
 
 1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
 1. [Helm](../../../README.md#helm)
+1. Cloud Pub/Sub API enabled in the project where Config Connector is
+      installed
+1. Cloud Pub/Sub API enabled in the project managed by Config Connector if it
+      is a different project
 
 ## USAGE
 
@@ -45,14 +49,15 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     # check the output of your chart
     helm template . --set iamPolicyMember.iamMember=user:name@example.com
 
-    # Do a dryrun on your chart and address issues if there are any
+    # do a dryrun on your chart and address issues if there are any
     helm install . --dry-run --set iamPolicyMember.iamMember=user:name@example.com --generate-name
 
     # install your chart
     helm install . --set iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
 
-1. _Optionaly_, you can customize optional values by explictly setting them when installing the solution:
+1. _Optionaly_, you can set the name of the PubSub topic (defaults to `allowed-topic`) and the role to grant (defaults to `roles/pubsub.editor`, full list of roles [here](https://cloud.google.com/iam/docs/understanding-roles#pub-sub-roles)) by explictly setting them when installing the solution:
+
     ```bash
     # install your chart with a difirent name of the PubSub topic
     helm install . --set PubSubTopic.name=your-topic,iamPolicyMember.iamMember=user:name@example.com --generate-name
@@ -63,18 +68,18 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.role=roles/pubsub.viewer,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
     Or set them both in one command.
-    
-    Note: These will create the topic if it does not exist.
 
 1. Check the created helm release to verify the installation:
     ```bash
     helm list
     ```
     Check the status of the pub/sub topic resource by running:
+
+    Note: By default value of Pub/Sub topic name is ```allowed-topic```
+    
     ```bash
     kubectl describe pubsubtopic [topic name]
     ```
-    Note: By default value of Pub/Sub topic name is ```allowed-topic```
     Check the status of the IAM Policy Member:
     ```bash
     kubectl describe iampolicymember topic-iam-member
