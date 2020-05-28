@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
 )
@@ -26,6 +26,8 @@ var rootCmd = &cobra.Command{
 			// discard logs
 			scorecard.Log.SetHandler(log.DiscardHandler())
 		}
+		// We want to dump to stdout by default
+		cmd.SetOut(cmd.OutOrStdout())
 	},
 }
 
