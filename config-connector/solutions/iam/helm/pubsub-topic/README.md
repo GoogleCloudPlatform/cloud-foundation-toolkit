@@ -29,6 +29,7 @@
 
 1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
 1. [Helm](../../../README.md#helm)
+1. A working Config Connector instance using the "cnrm-system" service account with either roles/pubsub.admin or roles/owner in the project managed by Config Connector
 1. Cloud Pub/Sub API enabled in the project where Config Connector is
       installed
 1. Cloud Pub/Sub API enabled in the project managed by Config Connector if it
