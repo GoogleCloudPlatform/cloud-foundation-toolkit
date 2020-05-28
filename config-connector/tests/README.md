@@ -76,15 +76,13 @@ Solutions defined in [../solutions](../solutions) folder.
 1.  Follow the README of each solution to configure permissions for the
     "cnrm-system" service account, and enable necessary APIs.
 
-    **Note:** This step will be automated in the upcoming changes.
-
 ## How to run the tests?
 
-**Note:** Currently we only support testing one solution each time by setting
-the relative path of the solution using `--path` or `-p` flag.
+**Note:** We only support testing one solution each time by setting the relative
+path of the solution using `--path` or `-p` flag.
 
-**Note:** Currently we only support testing kpt solutions specified under
-[testcases folder](./testcases).
+**Note:** We only support testing **kpt** solutions specified under [testcases
+folder](./testcases).
 
 Under the [tests](.) folder, run a test by providing the relative path:
 ```
@@ -94,9 +92,27 @@ Under the [tests](.) folder, run a test by providing the relative path:
 Most test should take a few minutes to finish. But you'll need to specify the
 timeout using the optional `--timeout` or `-t` flag for special test cases:
 
+**Note**: Running a special test case can take up to an hour.
+
 *   [projects/kpt/shared-vpc](../solutions/projects/kpt/shared-vpc): 10m
     ```
     ./test-cli run --path projects/kpt/shared-vpc --timeout 10m
+    ```
+*   [sql/kpt/mysql-ha](../solutions/sql/kpt/mysql-ha): 20m
+    ```
+    ./test-cli run --path sql/kpt/mysql-ha --timeout 20m
+    ```
+*   [sql/kpt/mysql-public](../solutions/sql/kpt/mysql-public): 10m
+    ```
+    ./test-cli run --path sql/kpt/mysql-public --timeout 10m
+    ```
+*   [sql/kpt/postgres-ha](../solutions/sql/kpt/postgres-ha): 20m
+    ```
+    ./test-cli run --path sql/kpt/postgres-ha --timeout 20m
+    ```
+*   [sql/kpt/postgres-public](../solutions/sql/kpt/postgres-public): 10m
+    ```
+    ./test-cli run --path sql/kpt/postgres-public --timeout 10m
     ```
 
 After you run the command, detailed output will be printed out. If you find the
@@ -113,10 +129,13 @@ is the list of exceptions:
     ../solutions/projects/kpt/project-hierarchy) - need to manually figure out
     the folder ID before creating projects ([GitHub issue](
     https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/104))
+*   [sql/kpt/mysql-private](../solutions/sql/kpt/mysql-private) - need to create
+    resources following the specific order ([GitHub issue](
+    https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/148))
 
 ## How to add new tests?
 
-**Note:** Currently we only support adding tests for kpt solutions.
+**Note:** We only support adding tests for kpt solutions.
 
 If you want to create tests for solution 
 `[SOLUTION_AREA]/kpt/[SOLUTION_NAME]` (e.g. `iam/kpt/member-iam`):
@@ -142,10 +161,12 @@ If you want to create tests for solution
     cp test_values.template [SOLUTION_AREA]/kpt/[SOLUTION_NAME]/required_fields_only.yaml
     ```
 
-    **Note:** Currently we only support one testcase, which only set required
-    kpt setters (setters set by PLACEHOLDER). Setting optional kpt setters in
-    tests is not necessary except for the SQLInstance name. This issue will be
-    addressed in the upcoming changes.
+    **Note:** We only support one testcase, which only set required kpt setters
+    (setters set by PLACEHOLDER). The only exception is test cases for SQL
+    solutions. If the test SQL Instance is deleted, the name will be reserved
+    for **7 days**. In order to redo the test, the `instance-name` setter is
+    required in SQL test cases, and the name of the test data file is changed to
+    `required_fields_with_sql_instance_name.yaml`.
 
 1.  Check if the solution requires any PLACEHOLDERs to be set:
 
