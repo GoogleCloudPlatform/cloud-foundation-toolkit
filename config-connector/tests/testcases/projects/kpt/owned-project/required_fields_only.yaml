@@ -14,4 +14,4 @@
 billing-account: $BILLING_ACCOUNT_ID
 folder-id: $FOLDER_ID
 iam-member: $IAM_MEMBER
-project-id: $OWNED_PROJECT_ID-$RANDOM_ID
+project-id: $PROJECT_ID-$RANDOM_ID
