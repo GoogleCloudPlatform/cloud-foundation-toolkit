@@ -61,6 +61,10 @@ ENV BATS_MOCK_VERSION ${BATS_MOCK_VERSION}
 ARG TERRAGRUNT_VERSION
 ENV TERRAGRUNT_VERSION ${TERRAGRUNT_VERSION}
 
+# Required to download and install Kustomize
+ARG KUSTOMIZE_VERSION
+ENV KUSTOMIZE_VERSION ${KUSTOMIZE_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -107,6 +111,9 @@ RUN /build/install_kubectl.sh
 ADD ./build/install_terragrunt.sh /build/
 RUN ./build/install_terragrunt.sh ${TERRAGRUNT_VERSION}
 
+ADD ./build/install_kustomize.sh /build/
+RUN ./build/install_kustomize.sh ${KUSTOMIZE_VERSION}
+
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
@@ -132,6 +139,9 @@ ADD ./build/scripts/test_lint.sh /usr/local/bin/
 # Helper script for dynamically generating env variable export statements out of terraform outputs.
 # It is used to pipe outputs from test/setup into the kitchen_do command.
 ADD ./build/scripts/export_tf_outputs.py /usr/local/bin/
+# Helper script for posting linting feedback to GitHub PR
+# Requires GitHub PAT with repo scope, set as an env var GITHUB_PAT_TOKEN
+ADD ./build/scripts/gh_lint_comment.py /usr/local/bin/
 
 # Intended to help developers iterate quickly
 ADD ./build/home/bash_history /root/.bash_history
@@ -144,7 +154,8 @@ RUN terraform --version && \
     ruby --version && \
     bundle --version && \
     kubectl version --client=true && \
-    terragrunt -version
+    terragrunt -version && \
+    kustomize version
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build
