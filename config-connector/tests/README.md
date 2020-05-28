@@ -12,11 +12,12 @@ Solutions defined in [../solutions](../solutions) folder.
     testcases should be under <code>./testcases/<b>iam/kpt/member-iam/</b>
     </code>
 
+**Note:** We only support testing kpt solutions.
+
 ## Requirements
 
 *   [gsutil](https://cloud.google.com/storage/docs/gsutil_install)
 *   [kpt](../solutions/README.md#kpt)
-*   [helm](../solutions/README.md#helm)
 *   a working Kubernetes cluster with Config Connector [installed and
     configured](
     https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall)
@@ -78,7 +79,9 @@ Solutions defined in [../solutions](../solutions) folder.
 
 ## How to run the tests?
 
-**Note:** We only support testing one solution each time by setting the relative
+### Running a single test
+
+In order to run the test for a specific solution, you need to set the relative
 path of the solution using `--path` or `-p` flag.
 
 **Note:** We only support testing **kpt** solutions specified under [testcases
@@ -119,6 +122,25 @@ After you run the command, detailed output will be printed out. If you find the
 last line of the output is `======Successfully finished the test for solution
 RELATIVE_PATH]======`, it means the test run is successful. Otherwise, you'll
 find the detailed error message for the failure.
+
+### Running all the tests
+
+You can also run all the tests at once using `--all` or `-a` flag. You'll need
+to also set the timeout to be 20m or more in order to provide sufficient timeout
+for the edge cases mentioned above.
+
+Under the [tests](.) folder, run all the tests:
+
+**Note:** It will take up to a few hours to finish running this command.
+
+```
+./test-cli run --all --timeout 20m
+```
+
+After you run the command, detailed output will be printed out. If you find the
+last line of the output is `======Successfully finished all the tests======`, it
+means all the tests have been completed successfully. Otherwise, you'll find the
+detailed error message for the failure.
 
 ### Exceptions
 

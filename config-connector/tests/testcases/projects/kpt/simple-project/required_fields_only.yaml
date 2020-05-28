@@ -13,4 +13,4 @@
 # limitations under the License.
 billing-account: $BILLING_ACCOUNT_ID
 org-id: $ORG_ID
-project-id: $SIMPLE_PROJECT_ID-$RANDOM_ID
+project-id: $PROJECT_ID-$RANDOM_ID
