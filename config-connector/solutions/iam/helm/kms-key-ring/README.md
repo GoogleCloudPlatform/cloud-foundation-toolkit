@@ -8,7 +8,7 @@
 
 ## SYNOPSIS
 
-  Config Connector compatible YAML files to create a KMS key ring in your desired project, and grant a specific member a role (default to roles/cloudkms.admin) for accessing the kMS key ring that just created
+  Config Connector compatible YAML files to create a KMS key ring in your desired project, and grant a specific member a role (default to roles/cloudkms.admin) for accessing the KMS key ring that just created
 
 ## CONSUMPTION
 
@@ -28,12 +28,9 @@
 
 1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
 1. [Helm](../../../README.md#helm)
-1. The "cnrm-system" service account assigned with either `roles/cloudkms.admin` or `roles/owner` in the
-  project managed by Config Connector
-1. Cloud Key Management Service (KMS) API enabled in the project where Config
-      Connector is installed
-1. Cloud Key Management Service (KMS) API enabled in the project managed by
-      Config Connector if it is a different project
+1. The "cnrm-system" service account assigned with either `roles/cloudkms.admin` or `roles/owner` in the project managed by Config Connector
+1. Cloud Key Management Service (KMS) API enabled in the project where Config Connector is installed
+1. Cloud Key Management Service (KMS) API enabled in the project managed by Config Connector if it is a different project
 
 ## USAGE
 
