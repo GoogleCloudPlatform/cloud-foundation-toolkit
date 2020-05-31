@@ -24,25 +24,27 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
-	"github.com/ghodss/yaml"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/config-connector/tests/ccs-test/util"
+	"github.com/ghodss/yaml"
 	"github.com/spf13/cobra"
 )
 
 const (
-	kubectlBinaryName          = "kubectl"
-	testsDirPath               = "config-connector/tests"
-	originalValuesFileName     = "original_values.yaml"
-	requiredFieldsOnlyFileName = "required_fields_only.yaml"
+	kubectlBinaryName                         = "kubectl"
+	testsDirPath                              = "config-connector/tests"
+	originalValuesFileName                    = "original_values.yaml"
+	requiredFieldsOnlyFileName                = "required_fields_only.yaml"
 	requiredFieldsWithSQLInstanceNameFileName = "required_fields_with_sql_instance_name.yaml"
-	envFileRelativePath        = "testcases/environments.yaml"
-	yamlFileSuffix             = ".yaml"
+	envFileRelativePath                       = "testcases/environments.yaml"
+	yamlFileSuffix                            = ".yaml"
 )
 
 var (
 	relativePath string
-	timeout string
+	timeout      string
+	testAll      bool
 
 	// Regex of the env vars that require a randomized suffix.
 	// It should be in the format of $ENV_VAR-$RANDOM_ID.
@@ -62,78 +64,113 @@ var (
 		Long:  "Run a given test by the relative path --path",
 		Run: func(cmd *cobra.Command, args []string) {
 			// Check the required flag.
-			if relativePath == "" {
-				log.Fatal("\"--path\" must be specified to run test")
+			if relativePath == "" && !testAll {
+				log.Fatal("either \"--path\" or \"--all\" must be specified to run test")
 			}
 
-			log.Printf("======Testing solution %q...======\n", relativePath)
-
-			// Calculate the path to testcase directory and solution directory.
-			current, err := os.Getwd()
-			if err != nil {
-				log.Fatalf("error retrieving the current directory: %v", err)
-			}
-			if !strings.HasSuffix(current, testsDirPath) {
-				log.Fatalf("error running tests under directory: %s. Please "+
-					"follow the instructions in the README.", current)
-			}
-			testCasePath := filepath.Join(current, "testcases", relativePath)
-			envFilePath := filepath.Join(current, envFileRelativePath)
-
-			parent := filepath.Dir(current)
-			solutionPath := filepath.Join(parent, "solutions", relativePath)
-
-			// Clean up the left over resources if there are any.
-			if err := deleteResources(solutionPath); err != nil {
-				log.Fatalf("error cleaning up resources before running the "+
-					"test. Please clean them up manually: %v", err)
+			if relativePath != "" && testAll {
+				log.Fatal("\"--path\" and \"--all\" are mutually exclusive flags")
 			}
 
-			// Fetch the testcase values and run the test.
-			envValues := make(map[string]string)
-			if err := parseYamlToStringMap(envFilePath, envValues); err != nil {
-				log.Fatalf("error retrieving envrionment variables: %v", err)
-			}
-
-			originalValues := make(map[string]string)
-			if err := parseYamlToStringMap(filepath.Join(testCasePath, originalValuesFileName), originalValues); err != nil {
-				log.Fatalf("error retrieving orginal values: %v", err)
-			}
-
-			testValues := make(map[string]string)
-			for _, testFileName := range testFileNames {
-				if filePath, exists := hasTestFile(testCasePath, testFileName); exists {
-					if err := parseYamlToStringMap(filePath, testValues); err != nil {
-						log.Fatalf("error retrieving test values: %v", err)
-					}
-					break
+			relativePaths := []string{}
+			if testAll {
+				minTimeout, _ := time.ParseDuration("20m")
+				currentTimeout, err := time.ParseDuration(timeout)
+				if err != nil {
+					log.Fatalf("error setting the timeout to %q: %v", timeout, err)
 				}
+
+				if currentTimeout < minTimeout {
+					log.Fatalf("\"--timeout\" must be set to 20m or more if --all is set")
+				}
+
+				if relativePaths, err = getAllRelativePaths(); err != nil {
+					log.Fatalf("error retrieving the relative paths for all the test cases: %v", err)
+				}
+
+				// Go through all the folders recursively under "./testcases"
+				log.Println("======Running all the tests...======\n")
+
+			} else {
+				relativePaths = append(relativePaths, relativePath)
 			}
 
-			// Generate the random IDs first.
-			randomId, err := util.GenerateRandomizedSuffix()
-			if err != nil {
-				log.Fatalf("error generating the randomized suffix for resource names: %v", err)
+			for _, relativePath := range relativePaths {
+				log.Printf("======Testing solution %q...======\n", relativePath)
+
+				// Calculate the path to testcase directory and solution directory.
+				current, err := os.Getwd()
+				if err != nil {
+					log.Fatalf("error retrieving the current directory: %v", err)
+				}
+				if !strings.HasSuffix(current, testsDirPath) {
+					log.Fatalf("error running tests under directory: %s. Please "+
+						"follow the instructions in the README.", current)
+				}
+				testCasePath := filepath.Join(current, "testcases", relativePath)
+				envFilePath := filepath.Join(current, envFileRelativePath)
+
+				parent := filepath.Dir(current)
+				solutionPath := filepath.Join(parent, "solutions", relativePath)
+
+				// Clean up the left over resources if there are any.
+				if err := deleteResources(solutionPath); err != nil {
+					log.Fatalf("error cleaning up resources before running the "+
+						"test. Please clean them up manually: %v", err)
+				}
+
+				// Fetch the testcase values and run the test.
+				envValues := make(map[string]string)
+				if err := parseYamlToStringMap(envFilePath, envValues); err != nil {
+					log.Fatalf("error retrieving envrionment variables: %v", err)
+				}
+
+				originalValues := make(map[string]string)
+				if err := parseYamlToStringMap(filepath.Join(testCasePath, originalValuesFileName), originalValues); err != nil {
+					log.Fatalf("error retrieving orginal values: %v", err)
+				}
+
+				testValues := make(map[string]string)
+				for _, testFileName := range testFileNames {
+					if filePath, exists := hasTestFile(testCasePath, testFileName); exists {
+						if err := parseYamlToStringMap(filePath, testValues); err != nil {
+							log.Fatalf("error retrieving test values: %v", err)
+						}
+						break
+					}
+				}
+
+				// Generate the random IDs first.
+				randomId, err := util.GenerateRandomizedSuffix()
+				if err != nil {
+					log.Fatalf("error generating the randomized suffix for resource names: %v", err)
+				}
+
+				// Then populate the values of the env var and the random id.
+				realValues, err := finalizeValues(randomId, envValues, testValues)
+				if err != nil {
+					log.Fatalf("error finalizing test values: %v", err)
+				}
+
+				if err := runKptTestcase(solutionPath, timeout, realValues, originalValues); err != nil {
+					log.Fatalf("test failed for solution %q: %v", relativePath, err)
+				}
+
+				log.Printf("======Successfully finished the test for solution %q======\n", relativePath)
+
 			}
 
-			// Then populate the values of the env var and the random id.
-			realValues, err := finalizeValues(randomId, envValues, testValues)
-			if err != nil {
-				log.Fatalf("error finalizing test values: %v", err)
+			if testAll {
+				log.Println("======Successfully finished all the tests======\n")
 			}
-
-			if err := runKptTestcase(solutionPath, timeout, realValues, originalValues); err != nil {
-				log.Fatalf("test failed for solution %q: %v", relativePath, err)
-			}
-
-			log.Printf("======Successfully finished the test for solution %q======\n", relativePath)
 		},
 	}
 )
 
 func init() {
-	runCmd.PersistentFlags().StringVarP(&relativePath, "path", "p", "", "[Required] The relative path to the folder of the solution's testcases, e.g. `iam/kpt/member-iam`.")
+	runCmd.PersistentFlags().StringVarP(&relativePath, "path", "p", "", "[Required][Mutually Exclusive with --all] The relative path to the folder of the solution's test cases, e.g. `iam/kpt/member-iam`.")
 	runCmd.PersistentFlags().StringVarP(&timeout, "timeout", "t", "60s", "[Optional] The timeout used to wait for resources to be READY. Default: `60s`.")
+	runCmd.PersistentFlags().BoolVarP(&testAll, "all", "a", false, "[Required][Mutually Exclusive with --path] Running all the solution test cases. Meanwhile, --timeout MUST be set to `20m` or more. Default: `false`.")
 	rootCmd.AddCommand(runCmd)
 }
 
@@ -144,6 +181,51 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func getAllRelativePaths() ([]string, error) {
+	var queue []string
+	var relativePaths []string
+
+	current, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving the current directory: %v", err)
+	}
+	if !strings.HasSuffix(current, testsDirPath) {
+		return nil, fmt.Errorf("error running tests under directory: %s. "+
+			"Please follow the instructions in the README.", current)
+	}
+
+	queue = append(queue, filepath.Join(current, "testcases"))
+	for len(queue) > 0 {
+		curDir := queue[0]
+		if len(queue) == 1 {
+			queue = []string{}
+		} else {
+			queue = queue[1:]
+		}
+
+		fileInfos, err := ioutil.ReadDir(curDir)
+		if err != nil {
+			return nil, fmt.Errorf("error reading directory %q: %v", curDir, err)
+		}
+		// Loop through all the files under current directory.
+		for _, fileInfo := range fileInfos {
+			if fileInfo.IsDir() {
+				queue = append(queue, filepath.Join(curDir, fileInfo.Name()))
+				continue
+			}
+			// If any file under this directory is a YAML file, it means that
+			// we've reached the test values files and we should record the
+			// relative path.
+			if strings.HasSuffix(fileInfo.Name(), ".yaml") && fileInfo.Name() != "environments.yaml" {
+				relativePaths = append(relativePaths, strings.Split(curDir, "testcases/")[1])
+				break
+			}
+		}
+	}
+
+	return relativePaths, nil
 }
 
 func parseYamlToStringMap(filePath string, result map[string]string) error {
@@ -295,7 +377,7 @@ func verifyReadyCondition(solutionPath string, timeout string) error {
 			"-f", resourceFilePath, fmt.Sprintf("--timeout=%s", timeout)).CombinedOutput()
 		if err != nil {
 			log.Printf("stderr:\n%v\nstdout:\n%s\n", err, string(output))
-			errToReturn := fmt.Errorf("resource in file %q is not ready in timeout: %v\nstdout: %s", fileName, timeout, err, string(output))
+			errToReturn := fmt.Errorf("resource in file %q is not ready in %s: %v\nstdout: %s", fileName, timeout, err, string(output))
 			status, err := getSolutionResourceStatus(solutionPath)
 			if err != nil {
 				return concatErrors("error printing resource status", err, errToReturn)
@@ -313,8 +395,8 @@ func verifyReadyCondition(solutionPath string, timeout string) error {
 
 func isResourceYamlFile(fileName string) bool {
 	return strings.HasSuffix(fileName, yamlFileSuffix) &&
-	  !strings.Contains(fileName, "namespace") &&
-	  !strings.Contains(fileName, "secret")
+		!strings.Contains(fileName, "namespace") &&
+		!strings.Contains(fileName, "secret")
 }
 
 func getSolutionResourceStatus(solutionPath string) (string, error) {
