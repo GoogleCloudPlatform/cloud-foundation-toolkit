@@ -57,11 +57,12 @@ spec:
              
              	asset.asset_type == "cloudresourcemanager.googleapis.com/Organization"
              	lib.has_field(asset, "org_policy")
-                constraint_item := asset.org_policy[_]
-                constraint_item.constraint == "constraints/compute.skipDefaultNetworkCreation"
-                boolean_policy := lib.get_default(constraint_item, "boolean_policy", {})
-                enforced := lib.get_default(boolean_policy, "enforced", false)
-                enforced == false
+              constraint_item := asset.org_policy[_]
+              lib.has_field(constraint_item, "boolean_policy")
+              constraint_item.constraint == "constraints/compute.skipDefaultNetworkCreation"
+              boolean_policy := lib.get_default(constraint_item, "boolean_policy", {})
+              enforced := lib.get_default(boolean_policy, "enforced", false)
+              enforced == false
              
              	message := "Required enforcement of skipDefaultNetworkCreation at org level"
              	metadata := {"resource": asset.name, "constraint_name": constraint_item.constraint}

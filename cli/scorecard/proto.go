@@ -25,17 +25,31 @@ import (
 )
 
 func unMarshallAsset(from []byte, to proto.Message) error {
-	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
-	err := umar.Unmarshal(strings.NewReader(string(from)), to)
+	// CAI export returns org_policy [1] with update_time if Timestamp format in Seconds and Nanos
+	// but in jsonpb, Timestamp is expected to be a string in the RFC 3339 format [2].
+	// i.e. "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+	// Hence doing a workaround to remove the field so that jsonpb.Unmarshaler can handle org policy.
+	// [1] https://github.com/googleapis/googleapis/blob/master/google/cloud/orgpolicy/v1/orgpolicy.proto
+	// [2] https://godoc.org/google.golang.org/protobuf/types/known/timestamppb#Timestamp
+
+	// Using json.Unmarshal will return no error
+	// but this approach will lose the "oneof" proto fields in org_policy and access_policy
+
+	var temp map[string]interface{}
+	err := json.Unmarshal(from, &temp)
+	if err != nil {
+		return errors.Wrap(err, "marshaling to interface")
+	}
+	if val, ok := temp["org_policy"]; ok {
+		for _, op := range val.([]interface{}) {
+			orgPolicy := op.(map[string]interface{})
+			delete(orgPolicy, "update_time")
+		}
+	}
+	err = protoViaJSON(temp, to)
 	if err == nil {
 		return nil
 	}
-
-	err = json.Unmarshal(from, to)
-	if err == nil {
-		return nil
-	}
-
 	return err
 }
 
