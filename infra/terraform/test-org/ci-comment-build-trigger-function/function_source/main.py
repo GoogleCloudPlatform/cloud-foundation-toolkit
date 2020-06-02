@@ -75,7 +75,7 @@ def main(event, context):
         '-c',
         'git clone $$REPO_URL && cd $$REPO_NAME && git checkout $$COMMIT_SHA && git status',
     ]
-    if not PR_NUMBER or _HEAD_REPO_URL:
+    if not (PR_NUMBER or _HEAD_REPO_URL):
         logging.warn('Unable to infer PR number via Cloud Build. Trying via GH API')
         # get list of github PRs that have this SHA
         response = requests.get(
