@@ -28,10 +28,14 @@ module "gcf_service_account" {
   ]
 }
 
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 module "pr_comment_build_function" {
   source                = "terraform-google-modules/event-function/google"
   version               = "~> 1.0"
-  name                  = "pr-comment-downstream-builder"
+  name                  = "pr-comment-downstream-builder-${random_id.suffix.hex}"
   project_id            = local.project_id
   region                = "us-central1"
   description           = "Launches a downstream build that comments on a PR."
