@@ -32,6 +32,10 @@ def main(event, context):
         logging.warn('Triggered by CF, Ignoring')
         return
     logging.info('Parent build not triggered by CF')
+    # if parent build is not a lint build, ignore
+    if 'lint' not in data['tags']:
+        logging.warn('Parent build is not a lint build')
+        return
     # if parent build has not started, or is in any other state, ignore
     if data['status'] != 'WORKING':
         logging.warn('Parent build is not in WORKING status')
