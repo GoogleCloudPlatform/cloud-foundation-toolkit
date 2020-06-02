@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-billing-account: $BILLING_ACCOUNT_ID
-folder-id: $FOLDER_ID
-iam-member: $IAM_MEMBER
-project-id: $PROJECT_ID-$RANDOM_ID
+apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
+kind: PubSubTopic
+metadata:
+  name: {{ .Values.PubSubTopic.name }}
