@@ -66,7 +66,7 @@ def main(event, context):
         CFT_TOOLS_DEFAULT_IMAGE_VERSION = data['substitutions'][
             '_DOCKER_TAG_VERSION_DEVELOPER_TOOLS'
         ]
-    # Cloud Build seems to have a bug where if a build is re run thought Github UI, it will not set _PR_NUMBER or _HEAD_REPO_URL
+    # Cloud Build seems to have a bug where if a build is re run through Github UI, it will not set _PR_NUMBER or _HEAD_REPO_URL
     # workaround using the GH API to infer PR number and _HEAD_REPO_URL
     PR_NUMBER = data['substitutions'].get('_PR_NUMBER', False)
     _HEAD_REPO_URL = data['substitutions'].get('_HEAD_REPO_URL', False)
