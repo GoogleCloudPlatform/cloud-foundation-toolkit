@@ -1,0 +1,8 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeNetwork
+metadata:
+  name: default
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: abandon
+spec:
+  description: Default network for the project

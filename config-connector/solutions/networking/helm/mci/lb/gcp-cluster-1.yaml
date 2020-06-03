@@ -1,0 +1,23 @@
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerCluster
+metadata:
+  name: {{ required "name is required!" .Values.cluster1.name }}
+spec:
+  ipAllocationPolicy:
+    useIpAliases: true
+  location: {{ required "location is required!" .Values.cluster1.zone }}
+  initialNodeCount: 1
+  removeDefaultNodePool: false
+  loggingService: none
+  nodeConfig:
+    oauthScopes:
+    - "https://www.googleapis.com/auth/cloud-platform"
+  masterAuth:
+    username: "user"
+    password:
+      valueFrom:
+        secretKeyRef:
+          name: cluster-1-secret-pwd
+          key: password
+    clientCertificateConfig:
+      issueClientCertificate: false

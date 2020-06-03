@@ -1,0 +1,9 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeTargetHTTPProxy
+metadata:
+  name: node-app-target-proxy
+spec:
+  description: Proxy for node app
+  urlMapRef:
+    name: node-app-url-map
+  location: global

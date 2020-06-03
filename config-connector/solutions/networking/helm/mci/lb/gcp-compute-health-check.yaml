@@ -1,0 +1,9 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeHealthCheck
+metadata:
+  name: node-app-backend-healthcheck
+spec:
+  checkIntervalSec: 10
+  tcpHealthCheck:
+    port: 8080
+  location: global

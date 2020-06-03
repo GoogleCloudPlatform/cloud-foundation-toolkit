@@ -1,0 +1,12 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: fw-allow-mci-neg
+spec:
+  allow:
+    - protocol: tcp
+  sourceRanges:
+    - "130.211.0.0/22"
+    - "35.191.0.0/16"
+  networkRef:
+    name: default
