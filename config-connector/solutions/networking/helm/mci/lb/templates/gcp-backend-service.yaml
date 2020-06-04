@@ -3,7 +3,8 @@ kind: ComputeBackendService
 metadata:
   name: node-app-backend-service
 spec:
-  healthCheckRef:
-    name: node-app-backend-healthcheck
+  healthChecks:
+  - healthCheckRef:
+      name: node-app-backend-healthcheck
   protocol: HTTP
   location: global

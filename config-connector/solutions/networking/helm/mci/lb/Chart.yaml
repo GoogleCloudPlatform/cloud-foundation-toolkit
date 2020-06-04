@@ -1,0 +1,6 @@
+apiVersion: v1
+appVersion: "1.0"
+description: A Helm chart to deploy load balancing resources for GCP multi-cluster ingress
+name: gcp-mci-lb
+version: 0.1.0
+icon: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Globe_icon.svg/1024px-Globe_icon.svg.png

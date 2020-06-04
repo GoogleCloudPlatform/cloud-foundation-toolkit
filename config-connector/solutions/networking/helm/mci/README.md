@@ -40,37 +40,19 @@ All steps are run from this directory.
 
 1. Review and update the values in `./values.yaml`.
 
-    **Note:** Please ensure the value of `database.instanceName` (defaults to `wp-db`) is unique and hasn't been used as an SQL instance name in the last 7 days.
-1. Validate and install the sample with Helm.
+
+1. Configure clusters and load balancing resources with Helm:
 
     ```bash
     # validate your chart
-    helm lint ./charts/wordpress-gcp/ --set google.projectId=[PROJECT_ID]
+    helm lint ./lb/ --set projectId=[PROJECT_ID]
 
     # check the output of your chart
-    helm template ./charts/wordpress-gcp/ --set google.projectId=[PROJECT_ID]
+    helm template ./lb/ --set projectId=[PROJECT_ID]
 
     # install your chart
-    helm install ./charts/wordpress-gcp/ --set google.projectId=[PROJECT_ID] --generate-name
+    helm install ./lb/ --set projectId=[PROJECT_ID] --generate-name
     ```
-
-1. The wordpress creation can take up to 10-15 minutes. Throughout the process you can check the status of various components:
-
-    ```bash
-    # check the status of sqlinstance
-    kubectl describe sqlinstance [VALUE of database.instanceName]
-    # check the status of wordpress pod (the output should show that both containers are ready)
-    kubectl get pods wordpress-0
-    ```
-
-    **Note:** If the pods can't be scheduled because of `Insufficient CPU` issue, please increase the size of nodes in your cluster.
-    Once the pods are ready, obtain the external IP address of your WordPress application by checking:
-
-    ```bash
-    kubectl get svc wordpress-external
-    ```
-
-    Navigate to this address and validate that you see WordPress installation page.
 
 1. Clean up the installation:
 

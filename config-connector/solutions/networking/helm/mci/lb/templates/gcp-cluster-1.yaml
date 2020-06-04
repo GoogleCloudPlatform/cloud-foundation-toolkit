@@ -3,17 +3,16 @@ kind: ContainerCluster
 metadata:
   name: {{ required "name is required!" .Values.cluster1.name }}
 spec:
-  ipAllocationPolicy:
-    useIpAliases: true
   location: {{ required "location is required!" .Values.cluster1.zone }}
   initialNodeCount: 1
-  removeDefaultNodePool: false
   loggingService: none
   nodeConfig:
     oauthScopes:
     - "https://www.googleapis.com/auth/cloud-platform"
+  workloadIdentityConfig:
+    identityNamespace: '{{ required "identityNamespace is required!" .Values.projectId }}.svc.id.goog'
   masterAuth:
-    username: "user"
+    username: '{{ required "username is required!" .Values.cluster1.masterAuthUser }}'
     password:
       valueFrom:
         secretKeyRef:

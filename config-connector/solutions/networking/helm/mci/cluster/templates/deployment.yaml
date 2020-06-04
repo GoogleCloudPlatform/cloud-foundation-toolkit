@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: node-app-eu-deployment
+  name: node-app-deployment
   labels:
     app: node-app
 spec:
@@ -19,7 +19,7 @@ spec:
         image: bulankou/node-hello-world
         env:
         - name: HELLO_MESSAGE
-          value: "Hello from Europe!"
+          value: {{ .Values.localMessage}}
         ports:
         - containerPort: 8080
         readinessProbe:
