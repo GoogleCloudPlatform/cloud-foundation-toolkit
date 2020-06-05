@@ -8,7 +8,7 @@
 
 ## SYNOPSIS
 
-Multi-cluster ingress solution connects provisions load balancing across multiple clusters
+Multi-cluster ingress solution uses network endpoint groups to provision load balancing across multiple clusters.
 
 ## CONSUMPTION
 
