@@ -7,7 +7,7 @@ cluster1:
   masterAuthPwd: password12345678
 cluster2:
   name: cluster-eu
-  zone: us-central1-a
+  zone: europe-west2-a
   masterAuthUser: user
   masterAuthPwd: password12345678
 localMessage:

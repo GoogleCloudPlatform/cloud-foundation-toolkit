@@ -4,7 +4,7 @@ metadata:
   name: iampolicymember-autoneg-custom
 spec:
   member: serviceAccount:autoneg-system@{{ required "projectId is required!" .Values.projectId }}.iam.gserviceaccount.com
-  role: projects/{{ required "projectId is required!" .Values.projectId }}/roles/iamcustomrolesample
+  role: projects/{{ required "projectId is required!" .Values.projectId }}/roles/autonegrole
   resourceRef:
     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
     kind: Project

@@ -4,8 +4,11 @@ metadata:
   name: {{ required "name is required!" .Values.cluster2.name }}
 spec:
   location: {{ required "location is required!" .Values.cluster2.zone }}
-  initialNodeCount: 1
-  loggingService: none
+  initialNodeCount: 2
+  loggingService: logging.googleapis.com/kubernetes
+  monitoringService: monitoring.googleapis.com/kubernetes
+  ipAllocationPolicy:
+    servicesIpv4CidrBlock: ""
   nodeConfig:
     oauthScopes:
     - "https://www.googleapis.com/auth/cloud-platform"
