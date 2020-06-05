@@ -9,6 +9,8 @@
 ## SYNOPSIS
 
 Multi-cluster ingress solution uses network endpoint groups to provision load balancing across multiple clusters.
+This solution uses [gke-autoneg-controller](https://github.com/GoogleCloudPlatform/gke-autoneg-controller).
+For demonstration purposes it uses a docker image with a simple Node.js service (bulankou/node-hello-world) with a single endpoint that prints out a message.
 
 ## CONSUMPTION
 
