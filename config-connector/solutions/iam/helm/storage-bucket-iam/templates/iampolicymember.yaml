@@ -22,4 +22,4 @@ spec:
   resourceRef:
     apiVersion: storage.cnrm.cloud.google.com/v1beta1
     kind: StorageBucket
-    external: {{ .Values.StorageBucket.name }}
+    external: {{ required "Existing Storage Bucket name is required" .Values.StorageBucket.name }}
