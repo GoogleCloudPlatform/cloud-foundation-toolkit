@@ -75,5 +75,6 @@ locals {
     "utils",
     "composer",
     "github-actions-runners",
+    "healthcare",
   ]
 }

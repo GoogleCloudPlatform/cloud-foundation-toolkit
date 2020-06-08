@@ -9,6 +9,15 @@ MySQL Public
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/sql/kpt/mysql-public mysql-public
   ```
+# REQUIREMENTS
+  -   A working Config Connector instance using the "cnrm-system" service
+      account with either `roles/cloudsql.admin` or `roles/owner` in the project
+      managed by Config Connector
+  -   Cloud SQL Admin API enabled in the project where Config Connector is
+      installed
+  -   Cloud SQL Admin API enabled in the project managed by Config Connector if
+      it is a different project
+
 # SETTERS
 |          NAME           |            VALUE             |     SET BY      |          DESCRIPTION          | COUNT |
 |-------------------------|------------------------------|-----------------|-------------------------------|-------|

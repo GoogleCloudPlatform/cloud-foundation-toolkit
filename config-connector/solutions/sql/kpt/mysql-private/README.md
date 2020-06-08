@@ -4,16 +4,26 @@ MySQL Private
   mysql-private
 # SYNOPSIS
   Config Connector compatible YAML files for creating a MySQL instance on a private network
-# REQUIREMENTS
-  A working Config Connector installation managing a project with the following APIs enabled:
-- Cloud SQL Admin
-- Service Networking
-- Cloud Resource Manager
 # CONSUMPTION
   Download the package using [kpt](https://googlecontainertools.github.io/kpt/).
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/sql/kpt/mysql-private mysql-private
   ```
+
+# REQUIREMENTS
+  -   A working Config Connector instance using the "cnrm-system" service
+      account with either both `roles/cloudsql.admin` and
+      `roles/compute.networkAdmin` roles or `roles/owner` in the project managed
+      by Config Connector
+  -   The following APIs enabled in the project where Config Connector is
+      installed:
+      -   Cloud SQL Admin API
+      -   Compute Engine API
+  -   The following APIs enabled in the project managed by Config Connector:
+      -   Cloud SQL Admin API
+      -   Compute Engine API
+      -   Service Networking API
+
 # SETTERS
 |     NAME      |         VALUE          |     SET BY      |          DESCRIPTION          | COUNT |
 |---------------|------------------------|-----------------|-------------------------------|-------|
@@ -22,6 +32,7 @@ MySQL Private
 | password      | ${PASSWORD?}           | PLACEHOLDER     | SQL password (base64 encoded) | 1     |
 | region        | us-central1            | package-default | region of SQL instance        | 1     |
 | username      | ${USERNAME?}           | PLACEHOLDER     | name of SQL user              | 1     |
+
 # USAGE
 
   Configure setters using kpt as follows:
@@ -57,4 +68,3 @@ instance.
 
 # LICENSE
   Apache 2.0 - See [LICENSE](/LICENSE) for more information.
-
