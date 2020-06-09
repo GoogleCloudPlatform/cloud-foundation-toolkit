@@ -12,9 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: iam.cnrm.cloud.google.com/v1beta1
-kind: IAMServiceAccount
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeURLMap
 metadata:
-  name: autoneg-system
+  name: node-app-url-map
+  labels:
+    retry: again
 spec:
-  displayName: Autoneg Service Account
+  defaultService:
+    backendServiceRef:
+      name: node-app-backend-service
+  location: global
+

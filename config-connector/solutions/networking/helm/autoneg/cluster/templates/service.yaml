@@ -13,8 +13,16 @@
 # limitations under the License.
 
 apiVersion: v1
-kind: Secret
+kind: Service
 metadata:
-  name: cluster-1-secret-pwd
-stringData:
-  password: {{ required "password is required!" .Values.cluster1.masterAuthPwd }}
+  name: node-app-backend
+  annotations:
+    cloud.google.com/neg: '{"exposed_ports": {"80":{}}}'
+    anthos.cft.dev/autoneg: '{"name":"node-app-backend-service", "max_rate_per_endpoint":100}'
+spec:
+  type: ClusterIP
+  selector:
+    app: node-app
+  ports:
+  - port: 80
+    targetPort: 8080

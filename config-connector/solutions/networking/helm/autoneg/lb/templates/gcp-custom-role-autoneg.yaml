@@ -12,18 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-projectId:
-region: us-central1
-cluster1:
-  name: cluster-na
-  zone: us-central1-a
-  masterAuthUser: user
-  masterAuthPwd: password12345678
-cluster2:
-  name: cluster-eu
-  zone: europe-west2-a
-  masterAuthUser: user
-  masterAuthPwd: password12345678
-localMessage:
-
-
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMCustomRole
+metadata:
+  name: autonegrole
+spec:
+  title: Autoneg role
+  permissions:
+    - compute.backendServices.get
+    - compute.backendServices.update
+    - compute.networkEndpointGroups.use
+    - compute.healthChecks.useReadOnly

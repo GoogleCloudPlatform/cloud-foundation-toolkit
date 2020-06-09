@@ -12,13 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: compute.cnrm.cloud.google.com/v1beta1
-kind: ComputeBackendService
-metadata:
-  name: node-app-backend-service
-spec:
-  healthChecks:
-  - healthCheckRef:
-      name: node-app-backend-healthcheck
-  protocol: HTTP
-  location: global
+apiVersion: v1
+appVersion: "1.0"
+description: A Helm chart to deploy load balancing resources for GCP multi-cluster ingress
+name: gcp-mci-lb
+version: 0.1.0
+icon: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Globe_icon.svg/1024px-Globe_icon.svg.png

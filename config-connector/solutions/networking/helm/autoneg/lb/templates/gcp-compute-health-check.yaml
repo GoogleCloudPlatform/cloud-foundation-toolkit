@@ -13,10 +13,12 @@
 # limitations under the License.
 
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
-kind: ComputeNetwork
+kind: ComputeHealthCheck
 metadata:
-  name: default
-  annotations:
-    cnrm.cloud.google.com/deletion-policy: abandon
+  name: node-app-backend-healthcheck
 spec:
-  description: Default network for the project
+  checkIntervalSec: 10
+  tcpHealthCheck:
+    port: 8080
+  location: global
+

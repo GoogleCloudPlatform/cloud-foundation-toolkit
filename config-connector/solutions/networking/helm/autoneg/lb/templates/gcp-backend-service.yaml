@@ -13,11 +13,13 @@
 # limitations under the License.
 
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
-kind: ComputeTargetHTTPProxy
+kind: ComputeBackendService
 metadata:
-  name: node-app-target-proxy
+  name: node-app-backend-service
 spec:
-  description: Proxy for node app
-  urlMapRef:
-    name: node-app-url-map
+  healthChecks:
+  - healthCheckRef:
+      name: node-app-backend-healthcheck
+  protocol: HTTP
   location: global
+

@@ -1,15 +1,15 @@
-# Multi-cluster ingress
+# Autoneg
 
 ==================================================
 
 ## NAME
 
-  multi-cluster ingress
+  autoneg
 
 ## SYNOPSIS
 
-Multi-cluster ingress solution uses network endpoint groups to provision load balancing across multiple clusters.
-This solution uses [gke-autoneg-controller](https://github.com/GoogleCloudPlatform/gke-autoneg-controller).
+Autoneg solution uses network endpoint groups to provision load balancing across multiple clusters.
+This solution uses `./cluster/templates/autoneg.yaml` from [gke-autoneg-controller](https://github.com/GoogleCloudPlatform/gke-autoneg-controller).
 For demonstration purposes it uses a docker image with a simple Node.js service (bulankou/node-hello-world) with a single endpoint that prints out a message.
 
 ## CONSUMPTION
@@ -20,45 +20,34 @@ For demonstration purposes it uses a docker image with a simple Node.js service 
       git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
       ```
 
-  1. Go to the mci folder:
+  1. Go to the autoneg folder:
 
       ```bash
-      cd cloud-foundation-toolkit/config-connector/solutions/networking/helm/mci
+      cd cloud-foundation-toolkit/config-connector/solutions/networking/helm/autoneg
       ```
 
 ## REQUIREMENTS
 
 1. GKE Cluster with Config Connector
 1. [Helm](../../../README.md#helm)
-1. Cloud Resource Manager API needs to be enabled on the project to use [ServiceUsage Resource](https://cloud.google.com/config-connector/docs/reference/resources#service). You can enable it by running:
-
-    ```bash
-    gcloud services enable cloudresourcemanager.googleapis.com --project [PROJECT_ID]
-    ```
 
 ## USAGE
 
 All steps are run from this directory.
 
-1. Review and update the values in `./values.yaml`.
+1. Review and update the values in `./lb/values.yaml`. Note that if you change cluster name and locaiton, you will need to change how they are used in `gcloud container clusters get-credentials` commands below. [PROJECT_ID] refers to the project where all the GCP resources will be created.  
 
-1. Subsequent steps will use $PROJECT_ID variable
-
-    ```bash
-    export PROJECT_ID=[PROJECT_ID]
-    ```
-
-1. Configure clusters and load balancing resources with Helm:
+1. Configure clusters and load balancing resources with Helm
 
     ```bash
     # validate your chart
-    helm lint ./lb/ --set projectId=$PROJECT_ID
+    helm lint ./lb/ --set projectId=[PROJECT_ID]
 
     # check the output of your chart
-    helm template ./lb/ --set projectId=$PROJECT_ID
+    helm template ./lb/ --set projectId=[PROJECT_ID]
 
     # install your chart
-    helm install ./lb/ --set projectId=$PROJECT_ID --generate-name
+    helm install ./lb/ --set projectId=[PROJECT_ID] --generate-name
     ```
 
 1. Wait for clusters to be created
@@ -75,13 +64,13 @@ All steps are run from this directory.
     gcloud container clusters get-credentials cluster-na --zone=us-central1-a
 
     # validate your chart
-    helm lint ./cluster/ --set projectId=$PROJECT_ID --set localMessage="Hello from North America!"
+    helm lint ./cluster/ --set projectId=[PROJECT_ID] --set localMessage="Hello from North America!"
 
     # install your chart
-    helm install ./cluster/ --set projectId=$PROJECT_ID --set localMessage="Hello from North America!" --generate-name
+    helm install ./cluster/ --set projectId=[PROJECT_ID] --set localMessage="Hello from North America!" --generate-name
 
      # annotate service account
-    kubectl annotate sa -n autoneg-system default iam.gke.io/gcp-service-account=autoneg-system@${PROJECT_ID}.iam.gserviceaccount.com
+    kubectl annotate sa -n autoneg-system default iam.gke.io/gcp-service-account=autoneg-system@[PROJECT_ID].iam.gserviceaccount.com
 
     # ensure pods are ready
     kubectl wait --for=condition=Ready pods --all
@@ -94,14 +83,14 @@ All steps are run from this directory.
     gcloud container clusters get-credentials cluster-eu --zone=europe-west2-a
 
     # validate your chart
-    helm lint ./cluster/ --set projectId=$PROJECT_ID --set localMessage="Hello from Europe"
+    helm lint ./cluster/ --set projectId=[PROJECT_ID] --set localMessage="Hello from Europe"
 
 
     # install your chart
-    helm install ./cluster/ --set projectId=$PROJECT_ID --set localMessage="Hello from Europe" --generate-name
+    helm install ./cluster/ --set projectId=[PROJECT_ID] --set localMessage="Hello from Europe" --generate-name
 
      # annotate service account
-    kubectl annotate sa -n autoneg-system default iam.gke.io/gcp-service-account=autoneg-system@${PROJECT_ID}.iam.gserviceaccount.com
+    kubectl annotate sa -n autoneg-system default iam.gke.io/gcp-service-account=autoneg-system@[PROJECT_ID].iam.gserviceaccount.com
 
     # ensure pods are ready
     kubectl wait --for=condition=Ready pods --all
@@ -114,7 +103,7 @@ All steps are run from this directory.
     gcloud container clusters get-credentials [CLUSTER NAME] --zone=[CLUSTER ZONE]
 
     # curl the external address of the forwarding rule. Note that it might take around 5-10 minutes for load balancing to start working.
-    # You will see the message ("Hello from North America" or "Hello from Europe" backed on your location).
+    # You will see the message ("Hello from North America" or "Hello from Europe" based on your location).
     curl $(kubectl get  computeforwardingrule -o=jsonpath='{.items[0].spec.ipAddress.addressRef.external}')
 
 1. Clean up the installation:

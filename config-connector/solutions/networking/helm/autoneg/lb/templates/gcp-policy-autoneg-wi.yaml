@@ -12,12 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: compute.cnrm.cloud.google.com/v1beta1
-kind: ComputeHealthCheck
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicy
 metadata:
-  name: node-app-backend-healthcheck
+  name: iampolicy-autoneg-workloadidentity
 spec:
-  checkIntervalSec: 10
-  tcpHealthCheck:
-    port: 8080
-  location: global
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: autoneg-system
+  bindings:
+    - role: roles/iam.workloadIdentityUser
+      members:
+        - serviceAccount:{{ required "projectId is required!" .Values.projectId }}.svc.id.goog[autoneg-system/default]
+
