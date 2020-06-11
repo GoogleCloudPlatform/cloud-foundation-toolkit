@@ -14,14 +14,3 @@
 
 projectId:
 region: us-central1
-cluster1:
-  name: cluster-na
-  zone: us-central1-a
-  masterAuthUser: user
-  masterAuthPwd: password12345678
-cluster2:
-  name: cluster-eu
-  zone: europe-west2-a
-  masterAuthUser: user
-  masterAuthPwd: password12345678
-localMessage:

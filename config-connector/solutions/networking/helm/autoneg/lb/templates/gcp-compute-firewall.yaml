@@ -15,7 +15,7 @@
 apiVersion: compute.cnrm.cloud.google.com/v1beta1
 kind: ComputeFirewall
 metadata:
-  name: fw-allow-mci-neg
+  name: fw-allow-autoneg
 spec:
   allow:
     - protocol: tcp
