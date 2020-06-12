@@ -29,9 +29,9 @@ For demonstration purposes it uses a docker image with a simple Node.js service 
 ## REQUIREMENTS
 
 1. [Helm](../../../README.md#helm)
-1. GKE Cluster with Config Connector. This solution assumes that all resources are installed in the same project, where the cluster with Config Connector is installed, and that load balancing resources are installed on the same cluster where Config Connector is installed. If you would like to configure your resources in a different project, the easiest approach would be to give your Config Connector service account (`cnrm-system`) owner permissions on this. target project.
+1. GKE Cluster with Config Connector. This solution assumes that all resources are installed in the same project, where the cluster with Config Connector is installed, and that load balancing resources are installed on the same cluster where Config Connector is installed. If you would like to configure your resources in a different project, the easiest approach would be to give your Config Connector service account (`cnrm-system`) owner permissions on this target project.
 1. If your Config Connector version is earlier than [1.11.2](https://github.com/GoogleCloudPlatform/k8s-config-connector/releases) you need to apply [this workaround](https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/78#issuecomment-577285402) to `iampolicymembers.iam.cnrm.cloud.google.com` CRD.
-1. `compute.googleapis.com` and `container.googleapis.com` API should be enabled on the project managed by Config Connector, in addition to the default services enabled.
+1. `compute.googleapis.com` and `container.googleapis.com` APIs should be enabled on the project managed by Config Connector, in addition to the default services enabled.
 
 ## USAGE
 
@@ -89,14 +89,11 @@ All steps are run from this directory.
      # annotate service account
     kubectl annotate sa -n autoneg-system default iam.gke.io/gcp-service-account=autoneg-system@[PROJECT_ID].iam.gserviceaccount.com
 
-    # check the service and ensure that `anthos.cft.dev/autoneg-status` annotation is present in the output
-    get svc node-app-backend -o=jsonpath='{.metadata.annotations}'
-
     # ensure pods are ready
     kubectl wait --for=condition=Ready pods --all
 
     # check the service and ensure that `anthos.cft.dev/autoneg-status` annotation is present in the output
-    get svc node-app-backend -o=jsonpath='{.metadata.annotations}'
+    kubectl get svc node-app-backend -o=jsonpath='{.metadata.annotations}'
     ```
 
 1. Repeat the step for the other cluster
@@ -119,7 +116,7 @@ All steps are run from this directory.
     kubectl wait --for=condition=Ready pods --all
 
     # check the service and ensure that `anthos.cft.dev/autoneg-status` annotation is present in the output
-    get svc node-app-backend -o=jsonpath='{.metadata.annotations}'
+    kubectl get svc node-app-backend -o=jsonpath='{.metadata.annotations}'
     ```
 
 1. Switch the context to the cluster that contains the configs for load balancing resources and run verify that multi-cluster ingress is configured
@@ -132,7 +129,27 @@ All steps are run from this directory.
 
     # verify that your backend service has 2 backends attached (select index of "global" if prompted)
     gcloud compute backend-services describe node-app-backend-service
+    ```
 
+    The backends section of the output should list both backends, for example:
+
+    ```yaml
+    backends:
+    - balancingMode: RATE
+      capacityScaler: 1.0
+      group: https://www.googleapis.com/compute/v1/projects/<project_id>/zones/us-central1-b/networkEndpointGroups/k8s1-37f1db7d-default-node-app-backend-80-486adca6
+      maxRatePerEndpoint: 100.0
+    - balancingMode: RATE
+      capacityScaler: 1.0
+      group: https://www.googleapis.com/compute/v1/projects/<project_id>/zones/europe-west2-a/networkEndpointGroups/k8s1-292a63d7-default-node-app-backend-80-636c84c5
+      maxRatePerEndpoint: 100.0
+      connectionDraining:
+      drainingTimeoutSec: 300
+    ```
+
+    Verify that load balancing resources are forwarding the request to the backend:
+
+    ```bash
     # curl the external address of the forwarding rule. Note that it might take around 5-10 minutes for load balancing to start working.
     # You will see the message ("Hello from North America!" or "Hello from Europe!" based on your location).
     curl $(kubectl get computeforwardingrule -o=jsonpath='{.items[0].spec.ipAddress.addressRef.external}')
