@@ -16,7 +16,7 @@ apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
 kind: Project
 metadata:
   annotations:
-    cnrm.cloud.google.com/folder-id: {{ required "Folder ID is required!" .Values.folderID }}
+    cnrm.cloud.google.com/folder-id: {{ required "Folder ID is required!" .Values.folderID | quote }}
   name: {{ required "Project ID is required!" .Values.projectID }}
 spec:
   name: {{ required "Project ID is required!" .Values.projectID }}
