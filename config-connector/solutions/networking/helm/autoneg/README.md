@@ -126,6 +126,7 @@ All steps are run from this directory.
     gcloud container clusters get-credentials [CLUSTER NAME] --zone=[CLUSTER ZONE]
 
     # if you created the load balancing resources in the namespace, other than default, switch the context to that namespace
+    kubectl config set-context --current --namespace [NAMESPACE]
 
     # verify that your backend service has 2 backends attached (select index of "global" if prompted)
     gcloud compute backend-services describe node-app-backend-service
@@ -177,6 +178,9 @@ All steps are run from this directory.
 
      # switch the context to the cluster that contains the configs for load balancing resources
     gcloud container clusters get-credentials [CLUSTER NAME] --zone=[CLUSTER ZONE]
+
+    # if you created the load balancing resources in the namespace, other than default, switch the context to that namespace
+    kubectl config set-context --current --namespace [NAMESPACE]
 
     # list Helm releases to obtain release name
     helm list
