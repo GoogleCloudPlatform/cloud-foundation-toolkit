@@ -31,7 +31,7 @@ For demonstration purposes it uses a docker image with a simple Node.js service 
 1. [Helm](../../../README.md#helm)
 1. GKE Cluster with Config Connector. This solution assumes that all resources are installed in the same project, where the cluster with Config Connector is installed, and that load balancing resources are installed on the same cluster where Config Connector is installed. If you would like to configure your resources in a different project, the easiest approach would be to give your Config Connector service account (`cnrm-system`) owner permissions on this target project.
 1. If your Config Connector version is earlier than [1.11.2](https://github.com/GoogleCloudPlatform/k8s-config-connector/releases) you need to apply [this workaround](https://github.com/GoogleCloudPlatform/k8s-config-connector/issues/78#issuecomment-577285402) to `iampolicymembers.iam.cnrm.cloud.google.com` CRD.
-1. `compute.googleapis.com` and `container.googleapis.com` APIs should be enabled on the project managed by Config Connector, in addition to the default services enabled.
+1. `compute.googleapis.com`, `container.googleapis.com` and `cloudresourcemanager.googleapis.com` APIs should be enabled on the project managed by Config Connector, in addition to the default services enabled.
 
 ## USAGE
 
