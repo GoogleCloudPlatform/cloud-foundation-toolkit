@@ -33,9 +33,9 @@ allOf:
     - required:
       - defaultUrlRedirect
     - required:
-      - defaultUrlRedirect
+      - defaultRouteAction
     - required:
-      - defaultUrlRedirect
+      - defaultService
 
 properties:
   name:
