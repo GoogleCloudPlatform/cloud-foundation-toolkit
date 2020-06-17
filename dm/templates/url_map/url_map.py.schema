@@ -28,6 +28,15 @@ info:
 
 additionalProperties: false
 
+allOf:
+  - oneOf:
+    - required:
+      - defaultUrlRedirect
+    - required:
+      - defaultUrlRedirect
+    - required:
+      - defaultUrlRedirect
+
 properties:
   name:
     type: string
@@ -45,6 +54,41 @@ properties:
   description:
     type: string
     description: The resource description (optional).
+  defaultUrlRedirect:
+    type: object
+    additionalProperties: false
+    properties:
+      hostRedirect:
+        type: string
+        description: |
+          The host that will be used in the redirect response instead of the one that was supplied in the request.
+      pathRedirect:
+        type: string
+        description: |
+          The path that will be used in the redirect response instead of the one that was supplied in the request.
+          pathRedirect cannot be supplied together with prefixRedirect. Supply one alone or neither. If neither is supplied, the path of the original request will be used for the redirect.
+      prefixRedirect:
+        type: string
+        description: |
+          The prefix that replaces the prefixMatch specified in the HttpRouteRuleMatch, retaining the remaining portion of the URL before redirecting the request.
+          prefixRedirect cannot be supplied together with pathRedirect. Supply one alone or neither. If neither is supplied, the path of the original request will be used for the redirect.
+      redirectResponseCode:
+        type: string
+        description: The HTTP Status code to use for this RedirectAction.
+        enum:
+        - MOVED_PERMANENTLY_DEFAULT
+        - FOUND
+        - SEE_OTHER
+        - TEMPORARY_REDIRECT
+        - PERMANENT_REDIRECT
+      httpsRedirect:
+        type: boolean
+        description: |
+          If set to true, the URL scheme in the redirected request is set to https. If set to false, the URL scheme of the redirected request will remain the same as that of the request.
+          This must only be set for UrlMaps used in TargetHttpProxys. Setting this true for TargetHttpsProxy is not permitted.
+      stripQuery:
+        type: boolean
+        description: If set to true, any accompanying query portion of the original URL is removed prior to redirecting the request. If set to false, the query portion of the original URL is retained.
   defaultService:
     type: string
     description: |
