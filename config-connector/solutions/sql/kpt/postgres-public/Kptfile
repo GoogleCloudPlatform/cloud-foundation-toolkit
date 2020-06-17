@@ -1,0 +1,36 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: postgres-public
+packageMetadata:
+  shortDescription: configures a public PostgreSQL database
+openAPI:
+  definitions:
+    io.k8s.cli.setters.instance-name:
+      description: name of SQL instance
+      x-k8s-cli:
+        setter:
+          name: instance-name
+          value: postgres-public-solution
+          setBy: package-default
+    io.k8s.cli.setters.password:
+      description: password for SQL user
+      x-k8s-cli:
+        setter:
+          name: password
+          value: ${PASSWORD?}
+          setBy: PLACEHOLDER
+    io.k8s.cli.setters.authorized-network:
+      description: name of authorized network
+      x-k8s-cli:
+        setter:
+          name: authorized-network
+          value: postgres-public-solution-sample
+          setBy: package-default
+    io.k8s.cli.setters.authorized-network-cidr:
+      description: authorized network CIDR range
+      x-k8s-cli:
+        setter:
+          name: authorized-network-cidr
+          value: 130.211.0.0/28
+          setBy: package-default

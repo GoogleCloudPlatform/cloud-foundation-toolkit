@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
-# need to change this to VERSION=`git describe --tags`
-VERSION=v0.3.1
+# Changing this value will trigger a new release
+VERSION=v0.3.4
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin

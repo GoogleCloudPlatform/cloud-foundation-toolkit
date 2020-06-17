@@ -27,11 +27,3 @@ openAPI:
           name: role
           value: roles/storage.objectViewer
           setBy: package-default
-    io.k8s.cli.substitutions.bucket-name-sub:
-      x-k8s-cli:
-        substitution:
-          name: bucket-name-sub
-          pattern: project/BUCKET_NAME_SETTER
-          values:
-          - marker: BUCKET_NAME_SETTER
-            ref: '#/definitions/io.k8s.cli.setters.bucket-name'

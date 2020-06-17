@@ -19,12 +19,13 @@ Owned Project
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using the
-  cnrm-system service account with the following
-  roles in the target folder:
-  - roles/resourcemanager.folderViewer
-  - roles/resourcemanager.projectCreator
-  - roles/iam.securityAdmin
+  -   A working Config Connector cluster using the cnrm-system service account
+      with the following roles in the target folder:
+      -   `roles/resourcemanager.folderViewer`
+      -   `roles/resourcemanager.projectCreator`
+      -   `roles/iam.securityAdmin`
+  -   The IAM member meets the requirements specified
+      [here](https://cloud.google.com/resource-manager/reference/rest/v1/projects/setIamPolicy#top_of_page).
 
 # USAGE
 

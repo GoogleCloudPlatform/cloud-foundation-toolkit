@@ -10,6 +10,12 @@ Project IAM
   ```
   kpt pkg get https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git/config-connector/solutions/iam/kpt/project-iam project-iam
   ```
+# REQUIREMENTS
+  *   A working Config Connector cluster using "cnrm-system" service account
+      that has the `roles/resourcemanager.projectIamAdmin` role in your desired
+      project (it doesn't need to be the project managed by Config Connector).
+  *   The project managed by Config Connector has Cloud Resource Manager API
+      enabled.
 # SETTERS
 |    NAME    |        VALUE         |     SET BY      |       DESCRIPTION        | COUNT |
 |------------|----------------------|-----------------|--------------------------|-------|

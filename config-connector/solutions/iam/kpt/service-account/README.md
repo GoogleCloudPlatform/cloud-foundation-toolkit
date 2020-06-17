@@ -7,7 +7,7 @@ Service Account
 
 # SYNOPSIS
 
-  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to roles/iam.serviceAccountKeyAdmin) for accessing the service account that just created.
+  Config Connector compatible YAML files to create a service account in your desired project, and grant a specific member a role (default to `roles/iam.serviceAccountKeyAdmin`) for accessing the service account that just created.
 
 # CONSUMPTION
 
@@ -19,7 +19,9 @@ Service Account
 
 # REQUIREMENTS
 
-  A working Config Connector cluster using the cnrm-system service account.
+  A working Config Connector instance using the "cnrm-system" service account
+  with either `roles/iam.serviceAccountAdmin` or `roles/owner` in the project
+  managed by Config Connector.
 
 # USAGE
   Replace `${IAM_MEMBER?}` with the GCP identity to grant access to:

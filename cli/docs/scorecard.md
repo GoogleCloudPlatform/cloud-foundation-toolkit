@@ -45,6 +45,7 @@ This tutorial will walk you through setting up Scorecard for a single project.
         # could also use --folder or --organization
     ```
     The alternative is to use [integrated inventory refresh feature](#Using-integrated-inventory-refresh-feature) `cft scorecard --refresh`
+
 7. Download the CFT CLI and make it executable:
     ```
     # OS X
@@ -53,7 +54,12 @@ This tutorial will walk you through setting up Scorecard for a single project.
     curl -o cft https://storage.googleapis.com/cft-cli/latest/cft-linux-amd64
     # executable
     chmod +x cft
+
+    # Windows
+    curl -o cft.exe https://storage.googleapis.com/cft-cli/latest/cft-windows-amd64
     ```
+The user guide in rest of this document provides examples for Linux and OS X environment. For Windows, update file names and directory paths accordingly.
+
 8. Download the sample policy library and add a sample constraint for detecting public buckets:
     ```
     git clone https://github.com/forseti-security/policy-library.git
@@ -107,7 +113,7 @@ Print a scorecard of your GCP environment, for resources and IAM policies in Clo
 		  cft scorecard --policy-path <path-to>/policy-library \
 			  --stdin
 
-	As of now, CAI export file names need to be resource_inventory.json and iam_inventory.json
+	As of now, CAI export file names need to be: resource_inventory.json, iam_inventory.json, org_policy_inventory.json, access_policy_inventory.json
 
 Usage:
   cft scorecard [flags]

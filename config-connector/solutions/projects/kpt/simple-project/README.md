@@ -21,21 +21,21 @@ Simple Project
   
   Cloud Resource Manager API and Cloud Billing API enabled in the project where Config Connector is installed.
   
-  The cnrm-system service account must have `roles/resourcemanager.projectCreator` in your organization and `roles/billing.user` for your billing account.
+  The "cnrm-system" service account must have `roles/resourcemanager.projectCreator` in your organization and `roles/billing.user` for your billing account.
   
 # USAGE
-  In order to use, replace the `${BILLING_ACCOUNT_ID?}` and `${ORG_ID?}` values with your billing account and organization id. You can do this with kpt setters:
+  In order to use, replace the `${PROJECT_ID?}`, `${BILLING_ACCOUNT_ID?}` and
+  `${ORG_ID?}` values with a unique new project ID, your billing account and
+  your organization id. You can do this with kpt setters:
   ```
+  kpt cfg set . project-id VALUE
   kpt cfg set . billing-account VALUE 
   kpt cfg set . org-id VALUE 
   ```
 
-  To set the project ID:
-  ```
-  kpt cfg set . project-id VALUE
-  ```
-
-  Note: this will set both the project's ID and name to the same value, if you want a different value for project name, edit `project.yaml` and replace spec.name with your preferred project name.
+  Note: Updating the project-id will set both the project's ID and name to the
+  same value, if you want a different value for project name, edit
+  `project.yaml` and replace spec.name with your preferred project name.
   
   Once your information is in the configs, simply apply.
 
