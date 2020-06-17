@@ -40,6 +40,7 @@ def generate_config(context):
 
     optional_properties = [
         'defaultService',
+        'defaultUrlRedirect',
         'description',
         'hostRules',
         'pathMatchers',

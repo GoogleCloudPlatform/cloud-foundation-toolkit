@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 17.06.2020
+
+- Extending the url_map template to support defaultUrlRedirect
+
 ### 27.03.2020
 
-- BugFix Unmanaged Instance Group template to support network as selfLink
+- BugFix Unmanaged Instance Group template to support network as selfLink. [#616](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/616)
 
 ### 10.03.2020
 
