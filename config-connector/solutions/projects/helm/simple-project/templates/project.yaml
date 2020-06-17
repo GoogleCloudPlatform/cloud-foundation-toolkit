@@ -16,7 +16,7 @@ apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
 kind: Project
 metadata:
   annotations:
-    cnrm.cloud.google.com/organization-id: {{ required "Organization ID is required!" .Values.orgID }}
+    cnrm.cloud.google.com/organization-id: {{ required "Organization ID is required!" .Values.orgID | quote }}
   name: {{ required "Project ID is required!" .Values.projectID }}
 spec:
   name: {{ required "Project ID is required!" .Values.projectID }}
