@@ -76,5 +76,6 @@ locals {
     "composer",
     "github-actions-runners",
     "healthcare",
+    "gke-gitlab",
   ]
 }
