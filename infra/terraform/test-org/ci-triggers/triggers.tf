@@ -132,7 +132,7 @@ resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
     }
   }
 
-  filename       = ".ci/cloudbuild.test.yaml"
+  filename = ".ci/cloudbuild.test.yaml"
   included_files = [
     "**/*.tf",
     "**/*.py"
@@ -152,5 +152,30 @@ resource "google_cloudbuild_trigger" "terraform_example_foundation_lint" {
   }
 
   filename = "build/cloudbuild.lint.yaml"
+}
+
+resource "google_folder" "ci-example-foundation" {
+  display_name = "ci-example-foundation"
+  parent       = "organizations/${local.org_id}"
+}
+
+resource "google_cloudbuild_trigger" "terraform_example_foundation_int" {
+  provider    = google-beta
+  project     = local.project_id
+  description = "Integration tests on pull request for terraform-example-foundation"
+  github {
+    owner = "terraform-google-modules"
+    name  = "terraform-example-foundation"
+    pull_request {
+      branch = ".*"
+    }
+  }
+  substitutions = {
+    _BILLING_ACCOUNT = local.billing_account
+    _FOLDER_ID       = google_folder.ci-example-foundation.name
+    _ORG_ID          = local.org_id
+  }
+
+  filename = "build/cloudbuild.int.yaml"
 }
 
