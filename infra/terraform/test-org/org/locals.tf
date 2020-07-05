@@ -77,5 +77,6 @@ locals {
     "github-actions-runners",
     "healthcare",
     "gke-gitlab",
+    "example-foundation",
   ]
 }
