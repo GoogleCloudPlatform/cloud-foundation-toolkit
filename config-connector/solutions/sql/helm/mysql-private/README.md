@@ -44,7 +44,7 @@
 
 All steps are run from the current directory ([config-connector/solutions/sql/helm/mysql-private](.)).
 
-1. Review and update the values in `./values.yaml`.
+1. Review and update the values in `./sql/values.yaml`.
 
 1. install and check the private network with Helm.
 
