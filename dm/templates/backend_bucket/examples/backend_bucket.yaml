@@ -1,0 +1,20 @@
+# Example of the backend service template usage.
+#
+# In this example, an internal regional TCP backend service is created.
+#
+# Replace the following placeholders with valid values:
+#   <FIXME:backendBucketName>: the name of the backend bucket resource
+#   <FIXME:bucketName>: the name of the cloud storage bucket
+#
+
+imports:
+  - path: templates/backend_service/backend_bucket.py
+    name: backend_bucket.py
+
+resources:
+  - name: backend-bucket
+    type: backend_bucket.py
+    properties:
+      name: <FIXME:backendBucketName>
+      bucketName: <FIXME:bucketName>
+      enableCdn: false
