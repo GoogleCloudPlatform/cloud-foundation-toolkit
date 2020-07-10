@@ -1,6 +1,6 @@
-# Backend Service
+# Backend Bucket
 
-This template creates a backend service.
+This template creates a backend bucket.
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ See the `properties` section in the schema file(s):
 case, [examples/backend\_bucket.yaml](examples/backend_bucket.yaml):
 
 ```shell
-    cp templates/backend_service/examples/backend_bucket.yaml \
+    cp templates/backend_bucket/examples/backend_bucket.yaml \
        my_backend_bucket.yaml
 ```
 

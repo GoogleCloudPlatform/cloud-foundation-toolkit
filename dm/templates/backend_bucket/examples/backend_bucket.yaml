@@ -1,6 +1,6 @@
-# Example of the backend service template usage.
+# Example of the backend bucket template usage.
 #
-# In this example, an internal regional TCP backend service is created.
+# In this example, an internal regional TCP backend bucket is created.
 #
 # Replace the following placeholders with valid values:
 #   <FIXME:backendBucketName>: the name of the backend bucket resource
@@ -8,7 +8,7 @@
 #
 
 imports:
-  - path: templates/backend_service/backend_bucket.py
+  - path: templates/backend_bucket/backend_bucket.py
     name: backend_bucket.py
 
 resources:
