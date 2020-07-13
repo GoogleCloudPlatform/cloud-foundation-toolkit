@@ -21,7 +21,10 @@ locals {
     "ci-projects",
     "ci-shared",
   ]
-  repo_folder              = {for key, value in data.terraform_remote_state.org.outputs.folders : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key)}
+  exclude_repos = [
+    "ci-example-foundation",
+  ]
+  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.exclude_repos, key) ? replace(key, "ci-", "terraform-") : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key) }
   org_id                   = data.terraform_remote_state.org.outputs.org_id
   billing_account          = data.terraform_remote_state.org.outputs.billing_account
   tf_validator_project_id  = data.terraform_remote_state.tf-validator.outputs.project_id
