@@ -40,13 +40,13 @@ All steps are run from the current directory ([config-connector/solutions/projec
 
 1. Review and update the values in `./folder/values.yaml` and `./project/values.yaml`, except folderID, which you will find in a later step.
 
-1. Install the folder Helm chart.
+1. Install the folder Helm chart:
 
     ```bash
     # validate your chart
     helm lint ./folder
     
-    # Do a dryrun on your chart and address issues if there are any
+    # do a dryrun on your chart and address issues if there are any
     helm install ./folder --dry-run --generate-name
 
     # install your chart
@@ -78,8 +78,8 @@ All steps are run from the current directory ([config-connector/solutions/projec
     # validate your chart
     helm lint ./project
 
-    # Do a dryrun on your chart and address issues if there are any
-    helm install ./folder --dry-run --generate-name
+    # do a dryrun on your chart and address issues if there are any
+    helm install ./project --dry-run --generate-name
 
     # install your chart
     helm install ./project --generate-name
