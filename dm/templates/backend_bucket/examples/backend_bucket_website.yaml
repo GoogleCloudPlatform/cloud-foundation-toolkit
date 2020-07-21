@@ -1,0 +1,40 @@
+# Example of the backend bucket template used with a bucket with a policy
+# which allows anonymous user access and sets the website properties for
+# a default main page and a 404 page
+#
+# In this example, a backend bucket is created without CDN caching
+#
+# Replace the following placeholders with valid values:
+#   <FIXME:backendBucketName>: the name of the backend bucket resource
+#   <FIXME:bucketName>: the name of the cloud storage bucket
+#
+
+imports:
+  - path: templates/backend_bucket/backend_bucket.py
+    name: backend_bucket.py
+  - path: templates/gcs_bucket/gcs_bucket.py
+    name: gcs_bucket.py
+
+resources:
+  - name: <FIXME:backendBucketName>
+    type: backend_bucket.py
+    properties:
+      name: <FIXME:backendBucketName>
+      bucketName: '$(ref.<FIXME:bucketName>.name)'
+      enableCdn: true
+
+  - name: <FIXME:bucketName>
+    type: gcs_bucket.py
+    properties:
+      name: <FIXME:bucketName>
+      location: us-east1
+      versioning:
+        enabled: True
+      bindings:
+        - role: roles/storage.objectViewer
+          members:
+            - allUsers
+      website:
+        mainPageSuffix: index.html
+        notFoundPage: 404.html
+

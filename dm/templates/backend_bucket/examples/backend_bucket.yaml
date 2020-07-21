@@ -1,6 +1,6 @@
 # Example of the backend bucket template usage.
 #
-# In this example, an internal regional TCP backend bucket is created.
+# In this example, a backend bucket is created without CDN caching
 #
 # Replace the following placeholders with valid values:
 #   <FIXME:backendBucketName>: the name of the backend bucket resource
@@ -12,9 +12,10 @@ imports:
     name: backend_bucket.py
 
 resources:
-  - name: backend-bucket
+  - name: <FIXME:backendBucketName>
     type: backend_bucket.py
     properties:
       name: <FIXME:backendBucketName>
       bucketName: <FIXME:bucketName>
       enableCdn: false
+
