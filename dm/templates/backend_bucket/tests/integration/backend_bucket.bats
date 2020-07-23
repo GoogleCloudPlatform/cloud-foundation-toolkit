@@ -20,7 +20,10 @@ if [[ -e "${RANDOM_FILE}" ]]; then
     DEPLOYMENT_NAME=${DEPLOYMENT_NAME//_/-}
     CONFIG=".${DEPLOYMENT_NAME}.yaml"
     # Test specific variables:
+    export BACKEND_BUCKET_NAME="test-backend-bucket-${RAND}"
     export BUCKET_NAME="test-bucket-${RAND}"
+    export SA_NAME="allUsers"
+    export ROLE="roles/storage.objectViewer"
     export ENABLE_CDN="true"
 fi
 

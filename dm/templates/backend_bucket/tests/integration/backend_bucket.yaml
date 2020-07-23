@@ -6,8 +6,21 @@ imports:
 
 resources:
 
-  - name: ${BUCKET_NAME}
+  - name: ${BACKEND_BUCKET_NAME}
     type: backend_bucket.py
     properties:
-      bucketName: ${BUCKET_NAME}
+      bucketName: '$(ref.${BUCKET_NAME}.name)'
       enableCdn: true
+
+  # Prerequisite bucket resource
+  - name: ${BUCKET_NAME}
+    type: gcs_bucket.py
+    properties:
+      name: ${BUCKET_NAME}
+      location: us-east1
+      versioning:
+        enabled: False
+      bindings:
+        - role: ${ROLE}
+          members:
+            - ${SA_NAME}
