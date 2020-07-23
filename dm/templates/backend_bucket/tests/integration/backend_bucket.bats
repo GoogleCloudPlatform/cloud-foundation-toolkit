@@ -66,9 +66,9 @@ function teardown() {
     [[ "$status" -eq 0 ]]
 }
 
-@test "Verifying global external backend service" {
+@test "Verifying backend bucket" {
     run gcloud compute backend-buckets describe \
-        "${BUCKET_NAME}" \
+        "${BACKEND_BUCKET_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
     [[ "$output" =~ "enableCDN: ${ENABLE_CDN}" ]]
@@ -79,7 +79,7 @@ function teardown() {
         --project "${CLOUD_FOUNDATION_PROJECT_ID}" -q
     [[ "$status" -eq 0 ]]
 
-    run gsutil ls
+    run gcloud compute backend-buckets list
     [[ "$status" -eq 0 ]]
-    [[ ! "$output" =~ "gs://${BUCKET_NAME}/" ]]
+    [[ ! "$output" =~ "${BACKEND_BUCKET_NAME}" ]]
 }
