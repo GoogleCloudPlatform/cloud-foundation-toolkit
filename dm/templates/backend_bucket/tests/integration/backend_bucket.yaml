@@ -1,0 +1,13 @@
+# Test of the backend service template.
+
+imports:
+  - path: templates/backend_bucket/backend_bucket.py
+    name: backend_bucket.py
+
+resources:
+
+  - name: ${BUCKET_NAME}
+    type: backend_bucket.py
+    properties:
+      bucketName: ${BUCKET_NAME}
+      enableCdn: true
