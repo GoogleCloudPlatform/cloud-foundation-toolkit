@@ -3,6 +3,8 @@
 imports:
   - path: templates/backend_bucket/backend_bucket.py
     name: backend_bucket.py
+  - path: templates/gcs_bucket/gcs_bucket.py
+    name: gcs_bucket.py
 
 resources:
 
