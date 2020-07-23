@@ -12,7 +12,7 @@ resources:
     type: backend_bucket.py
     properties:
       bucketName: '$(ref.${BUCKET_NAME}.name)'
-      enableCdn: true
+      enableCdn: ${ENABLE_CDN}
 
   # Prerequisite bucket resource
   - name: ${BUCKET_NAME}

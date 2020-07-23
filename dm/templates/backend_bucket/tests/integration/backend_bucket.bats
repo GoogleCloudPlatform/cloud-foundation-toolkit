@@ -71,7 +71,7 @@ function teardown() {
         "${BACKEND_BUCKET_NAME}" \
         --project "${CLOUD_FOUNDATION_PROJECT_ID}"
     [[ "$status" -eq 0 ]]
-    [[ "$output" =~ "enableCDN: ${ENABLE_CDN}" ]]
+    [[ "$output" =~ "enableCdn: ${ENABLE_CDN}" ]]
 }
 
 @test "Deleting deployment ${DEPLOYMENT_NAME}" {
