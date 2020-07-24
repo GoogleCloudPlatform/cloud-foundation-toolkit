@@ -78,5 +78,8 @@ locals {
     "healthcare",
     "gke-gitlab",
     "example-foundation",
+
+    # Not Modules
+    "anthos-platform"
   ]
 }
