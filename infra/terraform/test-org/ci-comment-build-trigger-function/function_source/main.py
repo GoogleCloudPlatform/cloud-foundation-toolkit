@@ -21,6 +21,7 @@ import requests
 
 from google.cloud.devtools.cloudbuild_v1 import CloudBuildClient as cloudbuild
 from google.cloud.devtools.cloudbuild_v1.types import BuildStep, Build, BuildOptions
+from google.protobuf import duration_pb2 as duration
 
 CFT_TOOLS_DEFAULT_IMAGE = 'gcr.io/cloud-foundation-cicd/cft/developer-tools'
 CFT_TOOLS_DEFAULT_IMAGE_VERSION = '0.11.0'
@@ -136,7 +137,7 @@ def main(event, context):
         steps=[get_repo_step, lint_step],
         options=BuildOptions(substitution_option='ALLOW_LOOSE'),
         substitutions=sub,
-        timeout=1200,
+        timeout=duration.Duration(seconds=1200),
     )
     response = cloudbuild().create_build(os.getenv('CLOUDBUILD_PROJECT'), build)
     logging.info(response)
