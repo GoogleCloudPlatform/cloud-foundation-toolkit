@@ -136,6 +136,7 @@ def main(event, context):
         steps=[get_repo_step, lint_step],
         options=BuildOptions(substitution_option='ALLOW_LOOSE'),
         substitutions=sub,
+        timeout=1200,
     )
     response = cloudbuild().create_build(os.getenv('CLOUDBUILD_PROJECT'), build)
     logging.info(response)
