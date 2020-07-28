@@ -116,7 +116,7 @@ def main(event, context):
     # lint comment step
     lint_args = [
         '-c',
-        'source /usr/local/bin/task_helper_functions.sh && printenv && post_lint_status_pr_comment',
+        'source /usr/local/bin/task_helper_functions.sh && printenv && cd $$REPO_NAME && post_lint_status_pr_comment',
     ]
     lint_step = BuildStep(
         name=f'{CFT_TOOLS_DEFAULT_IMAGE}:{CFT_TOOLS_DEFAULT_IMAGE_VERSION}',
