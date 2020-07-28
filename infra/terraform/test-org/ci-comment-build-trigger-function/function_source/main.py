@@ -26,6 +26,8 @@ CFT_TOOLS_DEFAULT_IMAGE = 'gcr.io/cloud-foundation-cicd/cft/developer-tools'
 CFT_TOOLS_DEFAULT_IMAGE_VERSION = '0.11.0'
 ENABLED_MODULES = [
     'terraform-google-cloud-storage',
+    'terraform-google-kubernetes-engine',
+    'terraform-google-gcloud'
 ]
 
 
