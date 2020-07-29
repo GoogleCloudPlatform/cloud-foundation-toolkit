@@ -224,7 +224,7 @@ properties:
         executableFile:
           type: string
           description: The Cloud Storage URI of the executable file.
-        executableTimeout:
+        executionTimeout:
           type: string
           description: |
             The executable completion timeout, e.g. "3.5s". The default value
