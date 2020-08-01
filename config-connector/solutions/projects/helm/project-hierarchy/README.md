@@ -3,7 +3,7 @@
 
 ## NAME
 
-  project-hierarchy
+David English
 
 ## SYNOPSIS
 
