@@ -62,7 +62,11 @@ def generate_config(context):
 
     for prop in optional_properties:
         if prop in context.properties:
-            res_properties[prop] = str(context.properties[prop])
+            if prop == "prefixLength":
+                # Unlike other optional props, prefixLength is an integer, not a string
+                res_properties[prop] = context.properties[prop]
+            else:
+                res_properties[prop] = str(context.properties[prop])
 
     resources = [
         {
