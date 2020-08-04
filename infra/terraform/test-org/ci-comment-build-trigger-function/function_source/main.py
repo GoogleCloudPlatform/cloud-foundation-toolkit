@@ -21,11 +21,14 @@ import requests
 
 from google.cloud.devtools.cloudbuild_v1 import CloudBuildClient as cloudbuild
 from google.cloud.devtools.cloudbuild_v1.types import BuildStep, Build, BuildOptions
+from google.protobuf import duration_pb2 as duration
 
 CFT_TOOLS_DEFAULT_IMAGE = 'gcr.io/cloud-foundation-cicd/cft/developer-tools'
 CFT_TOOLS_DEFAULT_IMAGE_VERSION = '0.11.0'
 ENABLED_MODULES = [
     'terraform-google-cloud-storage',
+    'terraform-google-kubernetes-engine',
+    'terraform-google-gcloud'
 ]
 
 
@@ -116,7 +119,7 @@ def main(event, context):
     # lint comment step
     lint_args = [
         '-c',
-        'source /usr/local/bin/task_helper_functions.sh && printenv && post_lint_status_pr_comment',
+        'source /usr/local/bin/task_helper_functions.sh && printenv && cd $$REPO_NAME && post_lint_status_pr_comment',
     ]
     lint_step = BuildStep(
         name=f'{CFT_TOOLS_DEFAULT_IMAGE}:{CFT_TOOLS_DEFAULT_IMAGE_VERSION}',
@@ -134,6 +137,7 @@ def main(event, context):
         steps=[get_repo_step, lint_step],
         options=BuildOptions(substitution_option='ALLOW_LOOSE'),
         substitutions=sub,
+        timeout=duration.Duration(seconds=1200),
     )
     response = cloudbuild().create_build(os.getenv('CLOUDBUILD_PROJECT'), build)
     logging.info(response)

@@ -1,1 +1,2 @@
  google-cloud-build==1.0.0
+ protobuf3==0.2.1
