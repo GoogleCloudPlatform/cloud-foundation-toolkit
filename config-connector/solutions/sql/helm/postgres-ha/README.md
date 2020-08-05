@@ -75,7 +75,7 @@ for **7 days**. In order to re-apply this solution, you need to run
     ```
     Check the status of the sqlinstances,sqldatabase,sqlusers:
     ```bash
-    kubectl describe sqldatabase,sqlinstance,sqluser
+    kubectl describe sqldatabase,sqlinstance,sqluser,secret
     ```
 
 1. Clean up both installation:
