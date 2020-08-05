@@ -66,7 +66,7 @@ All steps are run from the current directory ([config-connector/solutions/sql/he
 for **7 days**. In order to re-apply this solution, you need to run
 
     ```bash
-    helm install ./sql --set User1.Name=first-username,User2.Name=second-username,User3.Name=third-username,User1.Password=$(echo -n 'first-password' | base64),User2.Password=$(echo -n 'second-password' | base64),User3.Password=$(echo -n 'third-password' | base64), PostgreSQLInstance.Name=new-instance-name --generate-name
+    helm install . --set User1.Name=first-username,User2.Name=second-username,User3.Name=third-username,User1.Password=$(echo -n 'first-password' | base64),User2.Password=$(echo -n 'second-password' | base64),User3.Password=$(echo -n 'third-password' | base64), PostgreSQLInstance.Name=new-instance-name --generate-name
     ```
 
 1. Check the created helm release to verify the installation:
