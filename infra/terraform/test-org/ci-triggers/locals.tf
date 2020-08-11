@@ -20,6 +20,7 @@ locals {
     "ci-terraform-validator",
     "ci-projects",
     "ci-shared",
+    "ci-anthos-platform"
   ]
   exclude_repos = [
     "ci-example-foundation",
