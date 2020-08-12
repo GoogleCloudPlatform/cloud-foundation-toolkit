@@ -1,0 +1,36 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+    name: simple-project
+upstream:
+    type: git
+    git:
+        commit: 56d8d19344f1348678eff3e11623dc0a8dd1d091
+        repo: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
+        directory: /config-connector/solutions/projects/kpt/simple-project
+        ref: master
+packageMetadata:
+    shortDescription: A simple project
+openAPI:
+    definitions:
+        io.k8s.cli.setters.billing-account:
+            description: ID of billing account
+            x-k8s-cli:
+                setter:
+                    name: billing-account
+                    setBy: PLACEHOLDER
+                    value: ${BILLING_ACCOUNT_ID?}
+        io.k8s.cli.setters.org-id:
+            description: organization ID for associated services
+            x-k8s-cli:
+                setter:
+                    name: org-id
+                    setBy: PLACEHOLDER
+                    value: ${ORG_ID?}
+        io.k8s.cli.setters.project-id:
+            description: ID of project
+            x-k8s-cli:
+                setter:
+                    name: project-id
+                    setBy: PLACEHOLDER
+                    value: ${PROJECT_ID?}
