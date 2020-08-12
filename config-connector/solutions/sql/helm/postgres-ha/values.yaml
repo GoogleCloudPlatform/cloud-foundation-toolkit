@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 PostgreSQLInstance:
-  Name: postgres-ha-solution1
-  Region: us-central1
-  Zone: us-central1-c
+  Name: postgres-ha-solution
+  Region: us-central
+  Zone: us-central-c
   Replica1:
-    Name: replica-instance1-1-name
-    Zone: us-central1-a
+    Name: replica-instance-1-name
+    Zone: us-central-a
   Replica2:
-    Name: replica-instance1-2-name
-    Zone: us-central1-b
+    Name: replica-instance-2-name
+    Zone: us-central-b
   Replica3:
-    Name: replica-instance1-3-name
-    Zone: us-central1-c
+    Name: replica-instance-3-name
+    Zone: us-central-c
 
 User1:
   Name:
@@ -38,10 +38,10 @@ User3:
   Password:
 
 Database1:
-  Name: postgres-ha-database1-1
+  Name: postgres-ha-database-1
 
 Database2:
-  Name: postgres-ha-database1-2
+  Name: postgres-ha-database-2
 
 ExternalIP:
   Range: 199.10.10.10/32
