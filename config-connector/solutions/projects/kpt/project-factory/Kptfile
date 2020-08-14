@@ -1,36 +1,85 @@
 apiVersion: kpt.dev/v1alpha1
 kind: Kptfile
 metadata:
-    name: simple-project
+  name: simple-project
 upstream:
-    type: git
-    git:
-        commit: 56d8d19344f1348678eff3e11623dc0a8dd1d091
-        repo: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
-        directory: /config-connector/solutions/projects/kpt/simple-project
-        ref: master
+  type: git
+  git:
+    commit: 8a5ddcaa37480fe824336bb7cb0ef9e10c61c55c
+    repo: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
+    directory: /config-connector/solutions/projects/kpt/project-factory
+    ref: master
 packageMetadata:
-    shortDescription: A simple project
+  shortDescription: A simple project
 openAPI:
-    definitions:
-        io.k8s.cli.setters.billing-account:
-            description: ID of billing account
-            x-k8s-cli:
-                setter:
-                    name: billing-account
-                    setBy: PLACEHOLDER
-                    value: ${BILLING_ACCOUNT_ID?}
-        io.k8s.cli.setters.org-id:
-            description: organization ID for associated services
-            x-k8s-cli:
-                setter:
-                    name: org-id
-                    setBy: PLACEHOLDER
-                    value: ${ORG_ID?}
-        io.k8s.cli.setters.project-id:
-            description: ID of project
-            x-k8s-cli:
-                setter:
-                    name: project-id
-                    setBy: PLACEHOLDER
-                    value: ${PROJECT_ID?}
+  definitions:
+    io.k8s.cli.setters.billing-account:
+      description: ID of billing account
+      x-k8s-cli:
+        setter:
+          name: billing-account
+          value: 018E0A-48857B-79EB94
+    io.k8s.cli.setters.org-id:
+      description: organization ID for associated services
+      x-k8s-cli:
+        setter:
+          name: org-id
+          value: "816421441114"
+    io.k8s.cli.setters.project-id:
+      description: ID of project
+      x-k8s-cli:
+        setter:
+          name: project-id
+          value: clf-anthos-cicd-test
+          isSet: true
+    io.k8s.cli.setters.cnrm-project-id:
+      description: ID of the CNRM host project
+      x-k8s-cli:
+        setter:
+          name: cnrm-project-id
+          value: "clf-gke-acm-dev"
+          isSet: true
+    io.k8s.cli.substitutions.sa-name:
+      x-k8s-cli:
+        substitution:
+          name: sa-name
+          pattern: ${PROJECT_ID}-cnrm
+          values:
+          - marker: ${PROJECT_ID}
+            ref: '#/definitions/io.k8s.cli.setters.project-id'
+    io.k8s.cli.substitutions.sa-email:
+      x-k8s-cli:
+        substitution:
+          name: sa-email
+          pattern: ${SA_NAME}@${CNRM_PROJECT_ID}.iam.gserviceaccount.com
+          values:
+          - marker: ${CNRM_PROJECT_ID}
+            ref: '#/definitions/io.k8s.cli.setters.cnrm-project-id'
+          - marker: ${SA_NAME}
+            ref: '#/definitions/io.k8s.cli.substitutions.sa-name'
+    io.k8s.cli.substitutions.sa-member:
+      x-k8s-cli:
+        substitution:
+          name: sa-member
+          pattern: serviceAccount:${SA_EMAIL}
+          values:
+          - marker: ${SA_EMAIL}
+            ref: '#/definitions/io.k8s.cli.substitutions.sa-email'
+    io.k8s.cli.substitutions.gsa-ksa-name:
+      x-k8s-cli:
+        substitution:
+          name: gsa-ksa-name
+          pattern: ${PROJECT_ID}-gsa-ksa
+          values:
+          - marker: ${PROJECT_ID}
+            ref: '#/definitions/io.k8s.cli.setters.project-id'
+    io.k8s.cli.substitutions.ksa-member:
+      x-k8s-cli:
+        substitution:
+          name: ksa-member
+          pattern: serviceAccount:${CNRM_PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager-${NAMESPACE}]"
+          values:
+          - marker: ${NAMESPACE}
+            ref: '#/definitions/io.k8s.cli.setters.project-id'
+          - marker: ${CNRM_PROJECT_ID}
+            ref: '#/definitions/io.k8s.cli.setters.cnrm-project-id'
