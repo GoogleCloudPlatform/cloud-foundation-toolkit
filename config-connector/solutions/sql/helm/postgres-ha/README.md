@@ -29,7 +29,7 @@
 1. GKE Cluster with [Config Connector installed using a GKE Workload Identity](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall#workload-identity).
 1. [Helm](../../../README.md#helm).
 1. Cloud SQL Admin API enabled in the project where Config Connector is installed.
-1. Cloud SQL Admin API enabled in the project managed by Config Connector is installed in a different project.
+1. Cloud SQL Admin API enabled in the project managed by Config Connector if it is installed in a different project.
 1. The "cnrm-system" service account with either `roles/cloudsql.admin` or `roles/owner` in the project managed by Config Connector.
 
 ## USAGE
