@@ -40,13 +40,13 @@ All steps are run from the current directory ([config-connector/solutions/projec
 
 1. Review and update the values in `./values.yaml`.
 
-1. _Optionally_ Create a namespace. If you want to use your existing namespace skip this step and use your own namespace name instead of `project-annotated` in all other steps.
+1. Create a namespace. If you want to use your existing namespace skip this step and use your own namespace name instead of `project-annotated` in all other steps.
 
     ```bash
     kubectl create namespace project-annotated
     ```
 
-1. Validate and install the sample with Helm.`ProjectID` should be a new project ID unique within GCS.
+1. Validate and install the sample with Helm.`ProjectID` should be a new project ID unique within GCP.
 
     ```bash
     # validate your chart
