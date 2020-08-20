@@ -15,7 +15,7 @@
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMPolicyMember
 metadata:
-  name: project-iam-memberv4
+  name: project-iam-member
 spec:
   member: "serviceAccount:{{ .Values.IAM.Member }}@{{ .Values.ProjectID }}.iam.gserviceaccount.com"
   role: {{ .Values.Role }}
