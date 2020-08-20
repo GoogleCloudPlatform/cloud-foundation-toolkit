@@ -8,7 +8,7 @@
 
 ## SYNOPSIS
 
-  Config Connector compatible YAML files to enable services on a project.
+  Config Connector compatible YAML files to enable services on a desired project.
 
 ## CONSUMPTION
 
