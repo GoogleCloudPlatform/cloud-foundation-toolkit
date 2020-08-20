@@ -83,7 +83,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     Check the status of Service Account :
 
     ```bash
-    kubectl describe kmskeyring [Service account name]
+    kubectl describe iamserviceaccount [Service account name]
     ```
 
     Check the status of the IAM Policy Member:
