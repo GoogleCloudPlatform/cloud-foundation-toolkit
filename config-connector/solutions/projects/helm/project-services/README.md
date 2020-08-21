@@ -46,7 +46,7 @@ All steps are run from the current directory ([config-connector/solutions/projec
     kubectl create namespace project-annotated
     ```
 
-1. Validate and install the sample with Helm.`Project_ID` should be a new project ID unique within GCP.
+1. Validate and install the sample with Helm.`PROJECT_ID` should be a new project ID unique within GCP.
 
     ```bash
     # validate your chart
