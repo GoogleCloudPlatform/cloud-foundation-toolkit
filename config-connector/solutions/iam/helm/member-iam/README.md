@@ -44,20 +44,20 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     kubectl create namespace member-iam-solution
     ```
 
-1. Validate and install the sample with Helm.`Project_ID` should be your desired project ID unique with in GCP.
+1. Validate and install the sample with Helm.`PROJECT_ID` should be your desired project ID unique with in GCP.
 
     ```bash
     # validate your chart
-    helm lint . --set ProjectID=Project_ID --namespace member-iam-solution
+    helm lint . --set ProjectID=PROJECT_ID --namespace member-iam-solution
 
     # check the output of your chart
-    helm template . --set ProjectID=Project_ID --namespace member-iam-solution
+    helm template . --set ProjectID=PROJECT_ID --namespace member-iam-solution
 
     # do a dryrun on your chart and address issues if there are any
-    helm install . --dry-run --set ProjectID=Project_ID --namespace member-iam-solution --generate-name
+    helm install . --dry-run --set ProjectID=PROJECT_ID --namespace member-iam-solution --generate-name
 
     # install your chart
-    helm install . --set ProjectID=Project_ID --namespace member-iam-solution --generate-name
+    helm install . --set ProjectID=PROJECT_ID --namespace member-iam-solution --generate-name
     ```
 
 1. _Optionally_, you can also change the service account name `IAM.Member` (defaults to `member-iam-test`) and role `Role` (defaults to `roles/compute.networkAdmin`)
@@ -65,12 +65,12 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
 
     ```bash
     # install your chart with a diffirent service account name
-    helm install . --set ProjectID=Project_ID,IAM.Member=service-account-name --namespace member-iam-solution --generate-name
+    helm install . --set ProjectID=PROJECT_ID,IAM.Member=service-account-name --namespace member-iam-solution --generate-name
     ```
     Or,
     ```bash
     # install your chart with a diffirent role
-    helm install . --set ProjectID=Project_ID,Role=roles/compute.networkUser --namespace member-iam-solution --generate-name
+    helm install . --set ProjectID=PROJECT_ID,Role=roles/compute.networkUser --namespace member-iam-solution --generate-name
     ```
     Or set there in one command.
 
