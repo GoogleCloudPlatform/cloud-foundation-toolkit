@@ -18,7 +18,7 @@
       git clone https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit.git
       ```
 
-  1. Go to the service account folder:
+  1. Go to the member-iam folder:
 
       ```bash
       cd cloud-foundation-toolkit/config-connector/solutions/iam/helm/member-iam
@@ -26,7 +26,7 @@
 
 ## REQUIREMENTS
 
-1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
+1. GKE Cluster with [Config Connector installed using a GKE Workload Identity](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall#workload-identity).
 1. [Helm](../../../README.md#helm)
 1. The "cnrm-system" service account assigned with `roles/resourcemanager.projectIamAdmin` and `roles/iam.serviceAccountAdmin` or `roles/owner`
     role in your desired project (it doesn't need to be the project managed by Config Connector)
@@ -44,20 +44,20 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     kubectl create namespace member-iam-solution
     ```
 
-1. Validate and install the sample with Helm.`PROJECT_ID` should be your desired project ID unique with in GCP.
+1. Validate and install the sample with Helm. `PROJECT_ID` should be your desired project ID unique with in GCP.
 
     ```bash
     # validate your chart
-    helm lint . --set ProjectID=PROJECT_ID --namespace member-iam-solution
+    helm lint . --set projectID=PROJECT_ID --namespace member-iam-solution
 
     # check the output of your chart
-    helm template . --set ProjectID=PROJECT_ID --namespace member-iam-solution
+    helm template . --set projectID=PROJECT_ID --namespace member-iam-solution
 
     # do a dryrun on your chart and address issues if there are any
-    helm install . --dry-run --set ProjectID=PROJECT_ID --namespace member-iam-solution --generate-name
+    helm install . --dry-run --set projectID=PROJECT_ID --namespace member-iam-solution --generate-name
 
     # install your chart
-    helm install . --set ProjectID=PROJECT_ID --namespace member-iam-solution --generate-name
+    helm install . --set projectID=PROJECT_ID --namespace member-iam-solution --generate-name
     ```
 
 1. _Optionally_, you can also change the service account name `IAM.Member` (defaults to `member-iam-test`) and role `Role` (defaults to `roles/compute.networkAdmin`)
@@ -65,14 +65,14 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
 
     ```bash
     # install your chart with a diffirent service account name
-    helm install . --set ProjectID=PROJECT_ID,IAM.Member=service-account-name --namespace member-iam-solution --generate-name
+    helm install . --set projectID=PROJECT_ID,iamPolicyMember.iamMember=service-account-name --namespace member-iam-solution --generate-name
     ```
     Or,
     ```bash
     # install your chart with a diffirent role
-    helm install . --set ProjectID=PROJECT_ID,Role=roles/compute.networkUser --namespace member-iam-solution --generate-name
+    helm install . --set projectID=PROJECT_ID,Role=roles/compute.networkUser --namespace member-iam-solution --generate-name
     ```
-    Or set there in one command.
+    Or set both in one command.
 
 1. Check the created helm release to verify the installation:
 
@@ -80,10 +80,10 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm list
     ```
 
-    Check the status of Service Account :
+    Check the status of the IAM Service Account:
 
     ```bash
-    kubectl describe iamserviceaccount [Service account name]
+    kubectl describe iamserviceaccount [Values of iamPolicyMember.iamMember]
     ```
 
     Check the status of the IAM Policy Member:

@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ProjectID:
+projectID:
 
-IAM:
-  Member: member-iam-test
+iamPolicyMember:
+  iamMember: member-iam-test
 
-Role: roles/compute.networkAdmin
+role: roles/compute.networkAdmin
