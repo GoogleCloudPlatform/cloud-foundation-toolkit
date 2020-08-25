@@ -78,6 +78,7 @@ locals {
     "healthcare",
     "gke-gitlab",
     "example-foundation",
+    "cloud-router",
 
     # Not Modules
     "anthos-platform"
