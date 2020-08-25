@@ -21,4 +21,4 @@ spec:
   resourceRef:
     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
     kind: Project
-    external: "projects/{{ required "Desired Project_ID is required" .Values.ProjectID }}"
+    external: "projects/{{ required "Desired Project ID is required" .Values.projectID }}"
