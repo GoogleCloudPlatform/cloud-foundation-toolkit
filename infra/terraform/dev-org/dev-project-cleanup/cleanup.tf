@@ -26,7 +26,7 @@ module "projects_cleanup" {
   version = "~> 1.5.1"
 
   job_schedule             = "17 * * * *"
-  max_project_age_in_hours = "6"
+  max_project_age_in_hours = "24"
   organization_id          = local.org_id
   project_id               = module.project.project_id
   region                   = local.region
