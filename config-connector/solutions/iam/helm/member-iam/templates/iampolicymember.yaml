@@ -18,7 +18,7 @@ metadata:
   name: project-iam-member
 spec:
   member: "serviceAccount:{{ .Values.iamPolicyMember.iamMember }}@{{ required "Desired Project ID is required" .Values.projectID }}.iam.gserviceaccount.com"
-  role: {{ .Values.role }}
+  role: {{ .Values.iamPolicyMember.role }}
   resourceRef:
     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
     kind: Project

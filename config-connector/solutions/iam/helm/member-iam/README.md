@@ -60,7 +60,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set projectID=PROJECT_ID --namespace member-iam-solution --generate-name
     ```
 
-1. _Optionally_, you can also change the service account name `IAM.Member` (defaults to `member-iam-test`) and role `Role` (defaults to `roles/compute.networkAdmin`)
+1. _Optionally_, you can also change the service account name `iamPolicyMember.iamMember` (defaults to `member-iam-test`) and role `iamPolicyMember.role` (defaults to `roles/compute.networkAdmin`)
   (you can find all the predefined GCP IAM roles [here](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles)):
 
     ```bash
@@ -70,7 +70,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     Or,
     ```bash
     # install your chart with a diffirent role
-    helm install . --set projectID=PROJECT_ID,Role=roles/compute.networkUser --namespace member-iam-solution --generate-name
+    helm install . --set projectID=PROJECT_ID,iamPolicyMember.role=roles/compute.networkUser --namespace member-iam-solution --generate-name
     ```
     Or set both in one command.
 
@@ -83,7 +83,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     Check the status of the IAM Service Account:
 
     ```bash
-    kubectl describe iamserviceaccount [Values of iamPolicyMember.iamMember]
+    kubectl describe iamserviceaccount [Value of iamPolicyMember.iamMember]
     ```
 
     Check the status of the IAM Policy Member:

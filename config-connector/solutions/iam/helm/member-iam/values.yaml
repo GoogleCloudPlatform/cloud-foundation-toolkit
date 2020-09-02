@@ -16,5 +16,4 @@ projectID:
 
 iamPolicyMember:
   iamMember: member-iam-test
-
-role: roles/compute.networkAdmin
+  role: roles/compute.networkAdmin
