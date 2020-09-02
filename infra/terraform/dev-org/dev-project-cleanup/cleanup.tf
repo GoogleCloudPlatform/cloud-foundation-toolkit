@@ -31,6 +31,6 @@ module "projects_cleanup" {
   project_id               = module.project.project_id
   region                   = local.region
   target_excluded_labels   = local.exclude_labels
-  target_folder_id         = local.org_id
+  target_folder_id         = local.cleanup_folder
 }
 
