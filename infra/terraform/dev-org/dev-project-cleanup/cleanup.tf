@@ -22,8 +22,8 @@ module "app-engine" {
 }
 
 module "projects_cleanup" {
-  source = "github.com/terraform-google-modules/terraform-google-scheduled-function//modules/project_cleanup?ref=bucket-name-default"
-  # version = "~> 1.5"
+  source = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
+  version = "~> 1.5.1"
 
   job_schedule             = "17 * * * *"
   max_project_age_in_hours = "6"

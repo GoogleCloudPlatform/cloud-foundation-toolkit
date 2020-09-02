@@ -16,7 +16,7 @@
 
 terraform {
   backend "gcs" {
-    bucket = "cft-infra-dev-tfstate-test"
+    bucket = "cft-infra-dev-tfstate"
     prefix = "state/test-cleanup"
   }
 }

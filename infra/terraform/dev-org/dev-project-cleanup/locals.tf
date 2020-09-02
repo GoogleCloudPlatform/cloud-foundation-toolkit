@@ -15,9 +15,9 @@
  */
 
 locals {
-  org_id          = "tbd"
-  billing_account = "tbd"
-  cleanup_folder  = "tbd"
+  org_id          = "684124036889"
+  billing_account = "01B29E-828C10-4D001A"
+  cleanup_folder  = "690527133635" // cft-infra-dev
   exclude_labels  = { "cft-ci" = "permanent" }
   region          = "us-central1"
   app_location    = "us-central"
