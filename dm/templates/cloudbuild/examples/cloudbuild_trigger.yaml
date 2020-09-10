@@ -28,7 +28,7 @@ resources:
       triggerTemplate:
         repoName: '<FIXME:repo_name>'
         branchName: 'master'
-      buildTemplate:
+      build:
         steps:
           - name: 'gcr.io/cloud-builders/docker'
             args:
