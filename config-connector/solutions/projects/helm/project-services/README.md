@@ -30,7 +30,7 @@
 
 1. Cloud Resource Manager API enabled in the project where Config Connector is installed.
 
-1. The "cnrm-system" service account of project where Config Connector is installed that has `roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
+1. The "cnrm-system" service account that has the `roles/serviceusage.serviceUsageAdmin` or `roles/owner` role in your desired project (it doesn't need to be the project managed by Config Connector).
 
 1. [Helm](../../../README.md#helm)
 
