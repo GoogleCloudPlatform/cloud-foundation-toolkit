@@ -26,11 +26,11 @@
 
 ## REQUIREMENTS
 
-1. GKE Cluster with Config Connector and [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_workload_identity_on_a_new_cluster).
+1. GKE Cluster with [Config Connector installed using a GKE Workload Identity](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall#workload-identity).
 
 1. Cloud Resource Manager API enabled in the project where Config Connector is installed.
 
-1. A working Config Connector cluster using the "cnrm-system" service account must have `roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
+1. The "cnrm-system" service account that has `roles/serviceusage.serviceUsageAdmin` or `roles/owner` for the desired project.
 
 1. [Helm](../../../README.md#helm)
 
@@ -46,7 +46,7 @@ All steps are run from the current directory ([config-connector/solutions/projec
     kubectl create namespace project-annotated
     ```
 
-1. Validate and install the sample with Helm.`PROJECT_ID` should be a new project ID unique within GCP.
+1. Validate and install the sample with Helm.`PROJECT_ID` should be the project ID of the desired project.
 
     ```bash
     # validate your chart
