@@ -30,7 +30,7 @@
 
 1. Cloud Resource Manager API enabled in the project where Config Connector is installed.
 
-1. The "cnrm-system" service account that has the `roles/serviceusage.serviceUsageAdmin` or `roles/owner` role in your desired project (it doesn't need to be the project managed by Config Connector).
+1. The "cnrm-system" service account that has the `roles/serviceusage.serviceUsageAdmin` or `roles/owner` role in your desired project.
 
 1. [Helm](../../../README.md#helm)
 
@@ -46,7 +46,7 @@ All steps are run from the current directory ([config-connector/solutions/projec
     kubectl create namespace project-annotated
     ```
 
-1. Validate and install the sample with Helm.`PROJECT_ID` should be the project ID of the desired project.
+1. Validate and install the sample with Helm. `PROJECT_ID` should be the project ID of the desired project.
 
     ```bash
     # validate your chart
