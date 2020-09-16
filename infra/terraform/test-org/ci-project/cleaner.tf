@@ -37,7 +37,8 @@ resource "google_cloud_scheduler_job" "job" {
   name        = "trigger-test-org-iam-reset-build"
   description = "Trigger reset test org IAM build"
   region      = "us-central1"
-  schedule    = "* * * * *"
+  # run every week at 13:00 on Saturday
+  schedule = "0 13 * * 6"
 
   http_target {
     http_method = "POST"
