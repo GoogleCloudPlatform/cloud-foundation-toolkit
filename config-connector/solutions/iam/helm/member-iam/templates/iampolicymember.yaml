@@ -1,4 +1,4 @@
-# Copyright 2018 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 5.4"
-  gem "kubeclient", "~> 4.0"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.10'
-end
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: project-iam-member
+spec:
+  member: "serviceAccount:{{ .Values.iamPolicyMember.iamMember }}@{{ required "Desired Project ID is required" .Values.projectID }}.iam.gserviceaccount.com"
+  role: {{ .Values.iamPolicyMember.role }}
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: "projects/{{ required "Desired Project ID is required"  .Values.projectID }}"

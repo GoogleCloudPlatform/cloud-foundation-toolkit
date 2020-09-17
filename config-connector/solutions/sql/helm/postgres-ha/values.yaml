@@ -1,4 +1,4 @@
-# Copyright 2018 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,10 +11,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+PostgreSQLInstance:
+  Name: postgres-ha-solution
+  Region: us-central
+  Zone: us-central-c
+  Replica1:
+    Name: replica-instance-1-name
+    Zone: us-central-a
+  Replica2:
+    Name: replica-instance-2-name
+    Zone: us-central-b
+  Replica3:
+    Name: replica-instance-3-name
+    Zone: us-central-c
 
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 5.4"
-  gem "kubeclient", "~> 4.0"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.10'
-end
+User1:
+  Name:
+  Password:
+
+User2:
+  Name:
+  Password:
+
+User3:
+  Name:
+  Password:
+
+Database1:
+  Name: postgres-ha-database-1
+
+Database2:
+  Name: postgres-ha-database-2
+
+ExternalIP:
+  Range: 199.10.10.10/32
