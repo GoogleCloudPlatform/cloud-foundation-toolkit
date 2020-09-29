@@ -14,6 +14,8 @@
 
 steps:
   - name: 'bash'
+    args: ['ls', '-la']
+  - name: 'bash'
     dir: 'infra/terraform/test-org/org-iam-cleaner'
     args: ['ls', '-la']
   - name: 'bash'
