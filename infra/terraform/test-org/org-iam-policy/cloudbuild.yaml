@@ -13,12 +13,6 @@
 # limitations under the License.
 
 steps:
-  - name: 'bash'
-    dir: 'infra/terraform/test-org/org-iam-policy'
-    args: ['ls', '-la']
-  - name: 'bash'
-    dir: 'infra/terraform/test-org/org-iam-policy'
-    args: ['pwd']
   - name: 'gcr.io/cloud-foundation-cicd/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS'
     dir: 'infra/terraform/test-org/org-iam-policy'
     id: 'terraform-init'
