@@ -22,6 +22,6 @@ resource "github_actions_secret" "infra_secret_gcr_project" {
 
 resource "github_actions_secret" "infra_secret_gcr_key" {
   repository      = local.gh_repos.infra
-  secret_name     = "GCR_SA_KEY"
+  secret_name     = "GCP_SA_KEY"
   plaintext_value = module.service_accounts.key
 }

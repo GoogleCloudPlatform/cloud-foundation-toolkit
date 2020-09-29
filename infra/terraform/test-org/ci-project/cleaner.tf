@@ -37,7 +37,7 @@ resource "google_service_account" "service_account" {
 
 resource "google_project_iam_custom_role" "create_build_role" {
   project     = local.project_id
-  role_id     = "Create Build"
+  role_id     = "CreateBuild"
   title       = "Create Builds"
   description = "Role used by Cloud Scheduler SA for triggering IAM cleanup builds"
 
@@ -50,13 +50,6 @@ resource "google_project_iam_custom_role" "create_build_role" {
 resource "google_project_iam_member" "project" {
   role   = google_project_iam_custom_role.create_build_role.id
   member = "serviceAccount:${google_service_account.service_account.email}"
-}
-
-module "app-engine" {
-  source      = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version     = "~> 9.0"
-  location_id = "us-central"
-  project_id  = local.project_id
 }
 
 resource "google_cloud_scheduler_job" "job" {
@@ -74,5 +67,5 @@ resource "google_cloud_scheduler_job" "job" {
       service_account_email = google_service_account.service_account.email
     }
   }
-  depends_on = [google_project_iam_member.project, module.app-engine]
+  depends_on = [google_project_iam_member.project]
 }
