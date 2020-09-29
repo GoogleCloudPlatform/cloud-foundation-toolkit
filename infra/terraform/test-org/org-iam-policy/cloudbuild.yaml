@@ -15,7 +15,7 @@
 steps:
   - name: 'bash'
     dir: 'infra/terraform/test-org/org-iam-cleaner'
-    args: ['ls -la']
+    args: ['ls']
   - name: 'bash'
     dir: 'infra/terraform/test-org/org-iam-cleaner'
     args: ['pwd']
