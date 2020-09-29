@@ -19,19 +19,17 @@ locals {
   cft_ci_group          = "cft-ci-robots@test.infra.cft.tips"
   cft_dev_group         = "cft-developers@dev.infra.cft.tips"
   gcp_admins_group_test = "gcp-admins@test.infra.cft.tips"
-  gcp_admins_group_dev  = "gcp-admins@dev.infra.cft.tips"
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
   policy = {
     "roles/accesscontextmanager.policyAdmin" : ["serviceAccount:project-factory-manager@gcp-foundation-shared-devops.iam.gserviceaccount.com"],
-    "roles/billing.admin" : ["group:${local.gcp_admins_group_dev}", "group:${local.gcp_admins_group_test}"],
-    "roles/billing.user" : ["group:${local.gcp_admins_group_dev}"],
+    "roles/billing.admin" : ["group:${local.gcp_admins_group_test}"],
     "roles/compute.xpnAdmin" : ["group:${local.cft_ci_group}"],
     "roles/containeranalysis.admin" : ["group:${local.cft_ci_group}"],
     "roles/orgpolicy.policyAdmin" : ["group:${local.gcp_admins_group_test}"],
     "roles/resourcemanager.folderAdmin" : ["group:${local.gcp_admins_group_test}"],
     "roles/resourcemanager.folderViewer" : ["serviceAccount:${local.project_cleaner}"],
     "roles/resourcemanager.lienModifier" : ["serviceAccount:${local.project_cleaner}"],
-    "roles/resourcemanager.organizationAdmin" : ["group:${local.cft_ci_group}", "group:${local.gcp_admins_group_dev}", "group:${local.gcp_admins_group_test}", ],
+    "roles/resourcemanager.organizationAdmin" : ["group:${local.cft_ci_group}", "group:${local.gcp_admins_group_test}", ],
     "roles/resourcemanager.organizationViewer" : ["group:${local.cft_ci_group}"],
     "roles/resourcemanager.projectDeleter" : ["serviceAccount:${local.project_cleaner}"],
     "roles/owner" : ["group:${local.gcp_admins_group_test}", "serviceAccount:${local.project_cleaner}"],
