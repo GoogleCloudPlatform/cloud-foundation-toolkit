@@ -63,7 +63,7 @@ The user guide in rest of this document provides examples for Linux and OS X env
 8. Download the sample policy library and add a sample constraint for detecting public buckets:
     ```
     git clone https://github.com/forseti-security/policy-library.git
-    cp policy-library/samples/storage_blacklist_public.yaml policy-library/policies/constraints/
+    cp policy-library/samples/storage_denylist_public.yaml policy-library/policies/constraints/
     ```
 9. Run CFT Scorecard:
     ```
