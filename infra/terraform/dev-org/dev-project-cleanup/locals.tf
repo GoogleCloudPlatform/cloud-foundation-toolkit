@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-resource "github_actions_secret" "infra_secret_gcr_project" {
-  repository      = local.gh_repos.infra
-  secret_name     = "GCR_PROJECT_ID"
-  plaintext_value = local.project_id
+locals {
+  org_id          = "684124036889"
+  billing_account = "01B29E-828C10-4D001A"
+  cleanup_folder  = "690527133635" // cft-infra-dev
+  exclude_labels  = { "cft-ci" = "permanent" }
+  region          = "us-central1"
+  app_location    = "us-central"
 }
 
-resource "github_actions_secret" "infra_secret_gcr_key" {
-  repository      = local.gh_repos.infra
-  secret_name     = "GCP_SA_KEY"
-  plaintext_value = module.service_accounts.key
-}
