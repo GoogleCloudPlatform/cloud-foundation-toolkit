@@ -24,6 +24,7 @@ locals {
   ]
   exclude_repos = [
     "ci-example-foundation",
+    "ci-cloud-foundation-training"
   ]
   repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.exclude_repos, key) ? replace(key, "ci-", "terraform-") : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key) }
   org_id                   = data.terraform_remote_state.org.outputs.org_id
