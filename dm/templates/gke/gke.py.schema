@@ -835,6 +835,17 @@ properties:
                   type: integer
                   description: |
                     Maximum amount of the resource in the cluster.
+          autoscalingProfile:
+            type: string
+            description: |
+              Defines autoscaling behaviour.
+              PROFILE_UNSPECIFIED: No change to autoscaling configuration.
+              OPTIMIZE_UTILIZATION: Prioritize optimizing utilization of resources.
+              BALANCED: Use default (balanced) autoscaling configuration.
+            enum:
+              - PROFILE_UNSPECIFIED
+              - OPTIMIZE_UTILIZATION
+              - BALANCED
           autoprovisioningNodePoolDefaults:
             type: object
             additionalProperties: false
