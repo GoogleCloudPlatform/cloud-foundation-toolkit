@@ -77,8 +77,9 @@ locals {
     "github-actions-runners",
     "healthcare",
     "gke-gitlab",
-    "example-foundation",
+    "example-foundation", # Not module
     "anthos-platform",  # Not module
     "cloud-operations",
+    "cloud-foundation-training", # Not module
   ]
 }
