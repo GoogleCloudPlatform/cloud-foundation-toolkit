@@ -41,7 +41,7 @@ apk add --no-cache jq
 apk add --no-cache make
 
 # musl-dev provides the standard C headers
-apk add --no-cache musl-dev
+apk add --no-cache python3-dev musl-dev
 
 # openssh is used for ssh-ing into bastion hosts
 apk add --no-cache openssh
