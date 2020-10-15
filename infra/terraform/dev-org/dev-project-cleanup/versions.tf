@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-resource "github_actions_secret" "infra_secret_gcr_project" {
-  repository      = local.gh_repos.infra
-  secret_name     = "GCR_PROJECT_ID"
-  plaintext_value = local.project_id
+terraform {
+  required_version = ">= 0.12"
 }
 
-resource "github_actions_secret" "infra_secret_gcr_key" {
-  repository      = local.gh_repos.infra
-  secret_name     = "GCP_SA_KEY"
-  plaintext_value = module.service_accounts.key
+provider "archive" {
+  version = "~> 1.3"
+}
+
+provider "google" {
+  version = "~> 3.35"
+}
+
+provider "google-beta" {
+  version = "~> 3.35"
+}
+
+provider "null" {
+  version = "~> 2.1"
+}
+
+provider "random" {
+  version = "~> 2.2"
 }

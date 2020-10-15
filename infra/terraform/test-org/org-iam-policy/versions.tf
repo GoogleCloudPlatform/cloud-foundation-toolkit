@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-resource "github_actions_secret" "infra_secret_gcr_project" {
-  repository      = local.gh_repos.infra
-  secret_name     = "GCR_PROJECT_ID"
-  plaintext_value = local.project_id
+terraform {
+  required_version = ">= 0.12"
 }
 
-resource "github_actions_secret" "infra_secret_gcr_key" {
-  repository      = local.gh_repos.infra
-  secret_name     = "GCP_SA_KEY"
-  plaintext_value = module.service_accounts.key
+provider "google" {
+  version = "~> 3.39"
 }
