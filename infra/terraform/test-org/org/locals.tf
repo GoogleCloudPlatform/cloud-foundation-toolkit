@@ -81,5 +81,6 @@ locals {
     "anthos-platform",  # Not module
     "cloud-operations",
     "cloud-foundation-training", # Not module
+    "cloud-router",
   ]
 }
