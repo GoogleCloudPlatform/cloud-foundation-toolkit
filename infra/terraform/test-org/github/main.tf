@@ -107,7 +107,17 @@ locals {
       name: "release-please:force-run",
       color: "e7d87d",
       description: "Force release-please to check for changes."
-    }
+    },
+    {
+      name: "waiting-response",
+      color: "5319e7",
+      description: "Waiting for issue author to respond."
+    },
+    {
+      name: "v0.13",
+      color: "edb761",
+      description: "Terraform v0.13 issue."
+    },
   ]
 }
 
