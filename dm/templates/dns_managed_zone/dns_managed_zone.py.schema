@@ -38,14 +38,6 @@ oneOf:
 additionalProperties: false
 
 properties:
-  zoneName:
-    type: string
-    pattern: ^[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?$
-    description: |
-      Old resource name to support backward compatablility.
-      Value is rescricted by API pattern for `resource.name`
-      The name must be 1-63 characters long, must begin with a letter, end
-      with a letter or digit, and only contain lowercase letters, digits or dashes.
   project:
     type: string
     description: |
