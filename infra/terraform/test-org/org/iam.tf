@@ -15,31 +15,6 @@
  * limitations under the License.
  */
 
-module "org_bindings" {
-  source  = "terraform-google-modules/iam/google"
-  version = "~> 2.0"
-
-  organizations = [local.org_id]
-
-  bindings = {
-    "roles/resourcemanager.organizationViewer" = [
-      "group:${local.cft_ci_group}",
-    ]
-    "roles/resourcemanager.organizationAdmin" = [
-      "group:${local.cft_ci_group}",
-    ]
-    "roles/compute.xpnAdmin" = [
-      "group:${local.cft_ci_group}",
-    ]
-    "roles/browser" = [
-      "group:${local.cft_dev_group}"
-    ]
-    "roles/viewer" = [
-      "group:${local.cft_dev_group}"
-    ]
-  }
-}
-
 module "admin_bindings" {
   source  = "terraform-google-modules/iam/google"
   version = "~> 2.0"

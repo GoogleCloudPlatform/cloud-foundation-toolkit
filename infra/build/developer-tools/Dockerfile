@@ -21,6 +21,15 @@ ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
 
+FROM golang:$GOLANG_VERSION-alpine AS terraform-bundle-builder
+# Builds terraform-bundle
+ARG TERRAFORM_VERSION
+ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
+RUN apk add git unzip
+RUN git clone --depth 1 --branch v"$TERRAFORM_VERSION" https://github.com/hashicorp/terraform && \
+    cd terraform/tools/terraform-bundle && \
+    go install .
+
 FROM golang:$GOLANG_VERSION-alpine AS go
 
 FROM ruby:$RUBY_VERSION-alpine
@@ -72,7 +81,7 @@ ENV WORKSPACE="/workspace"
 ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
 
 # bash is preferred over /bin/sh
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash parallel
 
 # All package-level dependencies are handled by install_dependencies.sh
 ADD ./build/install_dependencies.sh /build/
@@ -92,6 +101,9 @@ COPY --from=installer /software/terraform /usr/local/bin/terraform
 COPY --from=go /usr/local/go/ /usr/local/go/
 RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
 RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+
+# Installs terraform-bundler
+COPY --from=terraform-bundle-builder /go/bin/terraform-bundle /bin/terraform-bundle
 
 ADD ./build/install_shellcheck.sh /build/
 RUN /build/install_shellcheck.sh
