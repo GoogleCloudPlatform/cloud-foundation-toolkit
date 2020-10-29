@@ -240,7 +240,6 @@ properties:
       type: object
       required:
         - accountId
-        - roles
       properties:
         accountId:
           type: string
@@ -253,7 +252,6 @@ properties:
             is used as the display name.
         roles:
           type: array
-          minItems: 1
           items:
             type: string
             description: The list of roles to grant the service account.
