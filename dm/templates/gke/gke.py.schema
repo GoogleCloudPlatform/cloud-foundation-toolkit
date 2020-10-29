@@ -906,6 +906,28 @@ properties:
                       Time within the maintenance window to start the 
                       maintenance operations. It must be in the HH:MM
                       format, where HH 00-23 and MM 00-59 GMT.
+              recurringWindow:
+                type: object
+                additionalProperties: false
+                description: Some number of recurring time periods for maintenance to occur
+                properties:
+                  window:
+                    type: object
+                    additionalProperties: false
+                    description: The window of the first recurrence
+                    properties:
+                      startTime:
+                        type: string
+                        additionalProperties: false
+                        description: The time that the window first starts
+                      endTime:
+                        type: string
+                        additionalProperties: false
+                        description: The time that the window first ends
+                  recurrence:
+                    type: string
+                    additionalProperties: false
+                    description: The recurrence rule for how the window reccurs
       defaultMaxPodsConstraint:
         type: object
         additionalProperties: false
