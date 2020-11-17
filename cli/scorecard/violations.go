@@ -28,7 +28,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func getDataFromReader(config *ScoringConfig, reader io.Reader) ([]*validator.Asset, error) {
+func getDataFromReader(reader io.Reader) ([]*validator.Asset, error) {
 	const maxCapacity = 1024 * 1024
 	scanner := bufio.NewScanner(reader)
 	buf := make([]byte, maxCapacity)
@@ -44,7 +44,7 @@ func getDataFromReader(config *ScoringConfig, reader io.Reader) ([]*validator.As
 	return pbAssets, nil
 }
 
-func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.Asset, error) {
+func getDataFromBucket(bucketName string) ([]*validator.Asset, error) {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -60,7 +60,7 @@ func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.A
 			continue
 		}
 		defer reader.Close()
-		assets, err := getDataFromReader(config, reader)
+		assets, err := getDataFromReader(reader)
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +73,7 @@ func getDataFromBucket(config *ScoringConfig, bucketName string) ([]*validator.A
 	return pbAssets, nil
 }
 
-func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Asset, error) {
+func getDataFromFile(caiDirName string) ([]*validator.Asset, error) {
 	var pbAssets []*validator.Asset
 	for _, objectName := range destinationObjectNames {
 		reader, err := os.Open(filepath.Join(caiDirName, objectName))
@@ -82,7 +82,7 @@ func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Ass
 			continue
 		}
 		defer reader.Close()
-		assets, err := getDataFromReader(config, reader)
+		assets, err := getDataFromReader(reader)
 		if err != nil {
 			return nil, err
 		}
@@ -95,8 +95,8 @@ func getDataFromFile(config *ScoringConfig, caiDirName string) ([]*validator.Ass
 	return pbAssets, nil
 }
 
-func getDataFromStdin(config *ScoringConfig) ([]*validator.Asset, error) {
-	return getDataFromReader(config, os.Stdin)
+func getDataFromStdin() ([]*validator.Asset, error) {
+	return getDataFromReader(os.Stdin)
 }
 
 // getViolations finds all Config Validator violations for a given Inventory
@@ -104,17 +104,17 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 	var err error
 	var pbAssets []*validator.Asset
 	if inventory.bucketName != "" {
-		pbAssets, err = getDataFromBucket(config, inventory.bucketName)
+		pbAssets, err = getDataFromBucket(inventory.bucketName)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
 		}
 	} else if inventory.dirPath != "" {
-		pbAssets, err = getDataFromFile(config, inventory.dirPath)
+		pbAssets, err = getDataFromFile(inventory.dirPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "Fetching inventory from local directory")
 		}
 	} else if inventory.readFromStdin {
-		pbAssets, err = getDataFromStdin(config)
+		pbAssets, err = getDataFromStdin()
 		if err != nil {
 			return nil, errors.Wrap(err, "Reading from stdin")
 		}
