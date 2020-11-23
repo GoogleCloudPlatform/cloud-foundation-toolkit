@@ -25,6 +25,10 @@ locals {
     "roles/billing.projectManager",
   ]
 
+  ci_gsuite_sa_org_roles = [
+    "roles/resourcemanager.organizationViewer",
+  ]
+
   ci_gsuite_sa_folder_roles = [
     "roles/owner",
     "roles/resourcemanager.projectCreator",
@@ -66,6 +70,7 @@ module "ci_gsuite_sa_project" {
     "admin.googleapis.com",
     "appengine.googleapis.com",
     "cloudbilling.googleapis.com",
+    "cloudidentity.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "iam.googleapis.com",
@@ -93,6 +98,14 @@ resource "google_folder_iam_member" "ci_gsuite_sa_folder" {
   for_each = toset(local.ci_gsuite_sa_folder_roles)
 
   folder = google_folder.ci_gsuite_sa_folder.name
+  role   = each.value
+  member = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
+}
+
+resource "google_organization_iam_member" "ci_gsuite_sa_folder" {
+  for_each = toset(local.ci_gsuite_sa_org_roles)
+
+  org_id = local.org_id
   role   = each.value
   member = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
 }
