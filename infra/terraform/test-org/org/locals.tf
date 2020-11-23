@@ -82,5 +82,6 @@ locals {
     "cloud-operations",
     "cloud-foundation-training", # Not module
     "cloud-router",
+    "group",
   ]
 }
