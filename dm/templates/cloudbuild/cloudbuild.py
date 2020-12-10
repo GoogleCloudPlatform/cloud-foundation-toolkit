@@ -30,9 +30,6 @@ def generate_config(context):
         'properties': {
             'projectId': project_id,
             'steps': build_steps
-        },
-        'metadata': {
-            'runtimePolicy': ['UPDATE_ALWAYS']
         }
     }
 
