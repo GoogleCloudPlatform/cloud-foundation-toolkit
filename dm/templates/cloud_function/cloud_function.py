@@ -33,22 +33,12 @@ def append_cloud_storage_sources(function, project, context):
 
     properties = context.properties
     upload_path = properties.get('sourceArchiveUrl')
-    local_path = properties.get('localUploadPath')
 
     resources = []
     outputs = [get_source_url_output(function['name'], context)]
-
-    if local_path:
-        # The 'upload.py' file must be imported into the YAML file first.
-        from upload import generate_upload_path, upload_source
-
-        upload_path = upload_path or generate_upload_path()
-        res = upload_source(context.env['name'], project, function, context.imports, local_path, upload_path)
-        source_resources, source_outputs = res
-        resources += source_resources
-        outputs += source_outputs
-    elif not upload_path:
-        msg = "Either localUploadPath or sourceArchiveUrl must be provided"
+    
+    if not upload_path:
+        msg = "sourceArchiveUrl must be provided"
         raise Exception(msg)
 
     function['properties']['sourceArchiveUrl'] = upload_path

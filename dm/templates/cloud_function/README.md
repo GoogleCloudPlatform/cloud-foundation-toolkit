@@ -68,16 +68,7 @@ See the `properties` section in the schema file(s):
     gcloud deployment-manager deployments delete <YOUR_DEPLOYMENT_NAME>
 ```
 
-`Note:` To upload local source code to a GS bucket, the corresponding feature must be enabled first. This can be achieved by importing `upload.py` into your config file:
-
-```yaml
-    - path: templates/cloud_function/upload.py
-      name: upload.py
-```
-
-`Note:` For Cloud Functions created from the local source code, deployment deletion will not delete the bucket to which that source code was uploaded during the build. Also, it will not clean up the [Cloud Build](https://cloud.google.com/cloud-build/) history.
-
 ## Examples
 
 - [Cloud Function](examples/cloud_function.yaml)
-- [Cloud Function with local source code upload](examples/cloud_function_upload.yaml)
+
