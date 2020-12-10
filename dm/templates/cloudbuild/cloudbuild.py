@@ -26,7 +26,7 @@ def generate_config(context):
     cloud_build = {
         'name': name,
         # https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.builds/create
-        'action': 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create',
+        'type': 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create',
         'properties': {
             'projectId': project_id,
             'steps': build_steps
