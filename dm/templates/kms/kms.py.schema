@@ -14,7 +14,7 @@
 
 info:
   title: Google Cloud KMS KeyRing and Keys
-  version: 1.0.0
+  version: 1.1.0
   author: Sourced Group Inc.
   description: |
     Creates a Cloud KMS KeyRing and cryptographic keys.

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## CFT Templates
 
+### 11.12.2020
+
+*BREAKING CHANGE*
+- The CFT maintener team decided to drop support for alpha features such as `actions`. In some cases this mean loosing functionalities. This is in due to improve the codebase maintanability.
+- [#850](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/pull/850) removes the use of `DM actions (alpha)`
+
 ### 17.06.2020
 
 - Extending the url_map template to support defaultUrlRedirect

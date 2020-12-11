@@ -15,7 +15,7 @@
 info:
   title: Unmanaged Instance Group
   author: Google Cloud PSO and partners
-  version: 1.0.0
+  version: 1.2.0
   description: |
     Creates a unmanaged instance group.
 
