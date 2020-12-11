@@ -10,9 +10,6 @@ resources:
     properties:
       name: ${UMIG_NAME}
       zone: ${ZONE}
-      instances:
-        add:
-        - ${INSTANCE_NAME}
       namedPorts:
         - name: ${PORT_NAME}
           port: ${PORT}

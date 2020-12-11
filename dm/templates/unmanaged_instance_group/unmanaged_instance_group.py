@@ -34,37 +34,6 @@ def generate_instance_url(project, zone, instance):
     return instance_url
 
 
-def generate_instance_resource(flag, instance, name, project_id, zone):
-
-    if flag == "add":
-        action_type = 'gcp-types/compute-v1:compute.instanceGroups.addInstances'
-        resource_name = '{}-addinstance-{}'.format(name, instance)
-    else:
-        action_type = 'gcp-types/compute-v1:compute.instanceGroups.removeInstances'
-        resource_name = '{}-rminstance-{}'.format(name, instance)
-
-    instance_resource = {
-        'name': resource_name,
-        'action': action_type,
-        'metadata': {
-            'runtimePolicy': ['UPDATE_ON_CHANGE'],
-        },
-        'properties':
-            {
-                'zone': zone,
-                'instanceGroup': '$(ref.{}.name)'.format(name),
-                'instances': [{
-                    'instance': generate_instance_url(
-                        project_id,
-                        zone,
-                        instance
-                    )
-                }]
-            }
-    }
-    return instance_resource
-
-
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
@@ -117,20 +86,6 @@ def generate_config(context):
         'add': [],
         'delete': []
     })
-
-    # Generate addInstance action resources
-    instances_add_list = instances.get('add', [])
-    if instances_add_list:
-        for instance_name in instances_add_list:
-            add_instance = generate_instance_resource('add', instance_name, name, project_id, zone)
-            add_instances_resources.append(add_instance)
-
-    # Generate removeInstance action resources
-    instances_remove_list = instances.get('remove', [])
-    if instances_remove_list:
-        for instance_name in instances_remove_list:
-            remove_instance = generate_instance_resource('remove', instance_name, name, project_id, zone)
-            remove_instances_resources.append(remove_instance)
 
     # Generate outputs
     umig_outputs = [

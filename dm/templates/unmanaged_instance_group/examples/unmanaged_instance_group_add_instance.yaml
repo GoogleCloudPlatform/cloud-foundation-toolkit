@@ -13,7 +13,3 @@ resources:
       project: <FIXME:projectID>
       name: <FIXME:groupName>
       zone: <FIXME:zone>
-      instances:
-        add:
-        - <FIXME:instance-1>
-        - <FIXME:instance-2>
