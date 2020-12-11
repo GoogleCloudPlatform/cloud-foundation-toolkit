@@ -850,27 +850,6 @@ properties:
             name: wrench
             mass: 1.3kg
             count: 3
-  healthChecks:
-    type: array
-    uniqueItems: true
-    description: |
-      An array that defines how individual instances must be checked for
-      health.
-    items:
-      type: object
-      additionalProperties: false
-      requried:
-        - initialDelaySec
-        - healthCheck
-      properties:
-        initialDelaySec:
-          type: integer
-          description: |
-            The time period to allow an instance to boot, and its applications
-            to fully start, before the first healthcheck.
-        healthCheck:
-          type: string
-          description: The healthcheck resource URL.
   distributionPolicy:
     type: object
     additionalProperties: false

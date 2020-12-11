@@ -30,6 +30,3 @@ resources:
             accessConfigs:
               - type: ONE_TO_ONE_NAT
         machineType: f1-micro
-      healthChecks:
-        - initialDelaySec: 500
-          healthCheck: <FIXME:healthCheckUri>
