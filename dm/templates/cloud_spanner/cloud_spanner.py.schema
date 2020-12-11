@@ -79,29 +79,6 @@ properties:
         name: wrench
         mass: 1.3kg
         count: 3
-  bindings:
-    type: array
-    description: IAM policies applied at the CLUSTER level.
-    items:
-      type: object
-      additionalProperties: false
-      required:
-        - role
-        - members
-      properties:
-        role:
-          type: string
-          description: The IAM role assigned as part of the IAM policy.
-          enum:
-            - roles/spanner.admin
-            - roles/spanner.viewer
-            - roles/spanner.databaseAdmin
-        members:
-          type: array
-          description: A list of members granted the given role for the IAM policy.
-          items:
-            type: string
-            pattern: user:.*|serviceAccount:.*|group:.*
   databases:
     type: array
     description: A list of databases created under the instance cluster.
@@ -114,29 +91,6 @@ properties:
         name:
           type: string
           description: The name of the database created under the instance cluster.
-        bindings:
-          type: array
-          description: A list of IAM policies applied at the DATABASE level.
-          items:
-            type: object
-            additionalProperties: false
-            required:
-              - role
-              - members
-            properties:
-              role:
-                type: string
-                description: The role assigned as part for the IAM policy.
-                enum:
-                  - roles/spanner.databaseAdmin
-                  - roles/spanner.databaseReader
-                  - roles/spanner.databaseUser
-              members:
-                type: array
-                description: A list of members granted the given role for the IAM policy.
-                items:
-                  type: string
-                  pattern: user:.*|serviceAccount:.*|group:.*
 
 outputs:
   properties:
