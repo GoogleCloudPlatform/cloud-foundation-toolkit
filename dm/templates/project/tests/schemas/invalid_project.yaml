@@ -17,7 +17,6 @@ groups:
       - roles/editor
       - roles/viewer
     networkAccess: false
-usageExportBucket: true
 sharedVPCHost: true
 #      sharedVPC: FOOBAR
 #      sharedVPCSubnets:

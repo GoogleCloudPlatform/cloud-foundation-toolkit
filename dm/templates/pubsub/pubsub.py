@@ -58,24 +58,6 @@ def create_subscription(resource_name, project_id, spec):
             'pushEndpoint': push_endpoint,
         }
 
-    if spec.get('accessControl'):
-        policy = {
-            'name': "{}-{}".format(subscription['name'], 'setIamPolicy'),
-            # https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/setIamPolicy
-            'action': 'gcp-types/pubsub-v1:pubsub.projects.subscriptions.setIamPolicy',
-            'properties':
-                {
-                    'resource': '$(ref.{}.name)'.format(subscription['name']),
-                    'policy': {
-                        'bindings': spec['accessControl']
-                    }
-                },
-            'metadata': {
-                'dependsOn': [subscription['name']]
-            }
-        }
-        resources_list.append(policy)
-
     return resources_list
 
 def generate_config(context):
@@ -95,24 +77,6 @@ def generate_config(context):
         }
     }
     resources_list = [topic]
-
-    if properties.get('accessControl'):
-        policy = {
-            'name': "{}-{}".format(context.env['name'], 'setIamPolicy'),
-            # https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/setIamPolicy
-            'action': 'gcp-types/pubsub-v1:pubsub.projects.topics.setIamPolicy',
-            'properties':
-                {
-                    'resource': '$(ref.{}.name)'.format(context.env['name']),
-                    'policy': {
-                        'bindings': properties['accessControl']
-                    }
-                },
-            'metadata': {
-                'dependsOn': [context.env['name']]
-            }
-        }
-        resources_list.append(policy)
 
     optional_properties = [
         'labels',

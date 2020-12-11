@@ -14,7 +14,7 @@
 
 info:
   title: Pub/Sub (publish-subscribe) service
-  version: 1.0.0
+  version: 1.1.0
   author: Sourced Group Inc.
   description: |
     Creates a topic, optionally with multiple subscriptions.
@@ -194,44 +194,7 @@ properties:
                 of the associated resource, as well. If ttl is not set, the associated resource never expires.
 
                 A duration in seconds with up to nine fractional digits, terminated by 's'. Example: "3.5s".
-        accessControl:
-          type: array
-          uniqueItems: True
-          description: |
-            The subscription's IAM policy.
-            For details, see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy.
-          item:
-            type: object
-            properties:
-              role:
-                type: string
-                description: |
-                  The IAM role. 
-                  For details, see https://cloud.google.com/iam/docs/understanding-roles
-              members:
-                type: array
-                description: A list of identities of the members to be granted access to the resource.
-                item:
-                  type: string
-  accessControl:
-    type: array
-    uniqueItems: True
-    description: |
-      The topic's IAM policy.
-      For details, see https://cloud.google.com/pubsub/docs/reference/rest/v1/Policy
-    item:
-      type: object
-      properties:
-        role:
-          type: string
-          description: |
-            The IAM role. 
-            For details, see https://cloud.google.com/iam/docs/understanding-roles
-        members:
-          type: array
-          description: A list of identities of the members to be granted access to the resource.
-          item:
-            type: string
+        
 
 outputs:
   properties:

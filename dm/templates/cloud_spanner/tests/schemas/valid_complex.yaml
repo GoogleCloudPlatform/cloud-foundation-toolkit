@@ -1,13 +1,5 @@
 displayName: "Spanner Cluster 1"
 nodeCount: 2
 instanceConfig: nam3
-bindings:
-  - role: "roles/spanner.admin"
-    members:
-      - "user:myuser@mycompany.com"
 databases:
   - name: "spannerdb1"
-    bindings:
-      - role: "roles/spanner.databaseAdmin"
-        members:
-          - "user:myotheruser@mycompany.com"

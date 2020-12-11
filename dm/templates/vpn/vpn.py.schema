@@ -15,7 +15,7 @@
 info:
   title: VPN
   author: Sourced Group
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Creates a VPN tunnel, gateway, and fowarding rules.
 

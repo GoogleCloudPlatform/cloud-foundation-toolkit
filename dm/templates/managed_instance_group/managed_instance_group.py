@@ -149,72 +149,6 @@ def is_reference(candidate):
 
     return candidate.strip().startswith('$(ref.')
 
-
-def create_health_checks_assignment(healthchecks, igm_resource, project):
-    """ Create resource for IGMs health checks assignment. """
-
-    igm_properties = igm_resource['properties']
-    igm_name = igm_properties['name']
-
-    properties = {
-        'instanceGroupManager': igm_name,
-        'autoHealingPolicies': healthchecks,
-        'project': project
-    }
-
-    dependencies = []
-    metadata = {'dependsOn': dependencies}
-    # Have to use a type-provider for health checks assignment
-    # https://cloud.google.com/compute/docs/reference/rest/beta/regionInstanceGroupManagers/setAutoHealingPolicies
-    # https://cloud.google.com/compute/docs/reference/rest/beta/instanceGroupManagers/setAutoHealingPolicies
-    type_provider = 'gcp-types/compute-beta'
-    action = '{}:compute.{}GroupManagers.setAutoHealingPolicies'.format(
-        type_provider,
-        'regionInstance' if 'region' in igm_properties else 'instance'
-    )
-
-    assign_healthcheck_resource = {
-        'action': action,
-        'name': igm_resource['name'] + '-set-hc',
-        'properties': properties,
-        'metadata': metadata
-    }
-
-    for healthcheck in healthchecks:
-        if is_reference(healthcheck['healthCheck']):
-            hc_resource_name = dereference_name(healthcheck['healthCheck'])
-            dependencies.append(hc_resource_name)
-
-    if dependencies:
-        # instanceGroupManager must have a dependsOn metadata for all the
-        # healthchecks it's going to use, so when the time comes, it's deleted
-        # first
-        igm_resource['metadata'] = copy.deepcopy(metadata)
-
-    # setAutoHealingPolicies depends both on the health checks and IGM
-    # resource
-    dependencies.append(igm_resource['name'])
-
-    for location in ['region', 'zone']:
-        set_optional_property(properties, igm_properties, location)
-
-    return assign_healthcheck_resource
-
-
-def get_health_checks(properties, igm_resource, project):
-    """ Assign health checks to IGM, if there're any. """
-
-    if 'healthChecks' in properties:
-        healthcheck_resources = create_health_checks_assignment(
-            properties['healthChecks'],
-            igm_resource,
-            project
-        )
-        return [healthcheck_resources]
-
-    return []
-
-
 def get_igm(context, template_link):
     """ Creates the IGM resource with its outputs. """
 
@@ -272,13 +206,9 @@ def generate_config(context):
     autoscaler = get_autoscaler(context, igm)
     autoscaler_resources, autoscaler_outputs = autoscaler
 
-    # Health checks
-    healthcheck_resources = get_health_checks(properties, igm, project_id)
-
     return {
         'resources':
-            igm_resources + template_resources + autoscaler_resources +
-            healthcheck_resources,
+            igm_resources + template_resources + autoscaler_resources,
         'outputs':
             igm_outputs + template_outputs + autoscaler_outputs
     }

@@ -22,7 +22,3 @@ resources:
       keys:
         - cryptoKeyName: my-crypto-key
           nextRotationTime: <FIXME:next_rotation_time>
-          iamPolicyBinding:
-            - role: roles/cloudkms.admin
-              members:
-                - user:<FIXME:user_account_email_address>

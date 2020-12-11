@@ -40,7 +40,6 @@ resources:
             - roles/editor
             - roles/viewer
           networkAccess: true
-      usageExportBucket: true
       sharedVPC: <FIXME:vpc_host>
       sharedVPCSubnets:
         - subnetId: <FIXME:vpc_host_subnet>

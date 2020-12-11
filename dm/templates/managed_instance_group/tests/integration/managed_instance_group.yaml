@@ -28,9 +28,6 @@ resources:
           - network: ${IT_NETWORK}
             accessConfigs:
               - type: ONE_TO_ONE_NAT
-      healthChecks:
-        - initialDelaySec: ${INITIAL_DELAY_SEC}
-          healthCheck: projects/${CLOUD_FOUNDATION_PROJECT_ID}/global/httpHealthChecks/${SECOND_HEALTH_CHECK_NAME}
   - name: ${REGIONAL_MIG_NAME}
     type: managed_instance_group.py
     properties:
@@ -41,9 +38,6 @@ resources:
       targetSize: ${TARGET_SIZE}
       instanceTemplate:
         url: $(ref.${ZONAL_MIG_RES_NAME}.instanceTemplateSelfLink)
-      healthChecks:
-        - initialDelaySec: ${INITIAL_DELAY_SEC}
-          healthCheck: $(ref.${HEALTH_CHECK_NAME}.selfLink)
 
 # Test prerequisites:
   - name: ${HEALTH_CHECK_NAME}

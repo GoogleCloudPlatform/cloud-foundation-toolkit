@@ -60,29 +60,7 @@ def generate_config(context):
     resources.extend(api_resources)
     resources.extend(create_service_accounts(context, project_id))
 
-    if isinstance(properties.get('usageExportBucket', True), bool):
-        properties['usageExportBucket'] = {
-            'enabled': properties.get('usageExportBucket', True),
-        }
-    if (
-        properties.get('usageExportBucket', {}).get('enabled', True) and
-        "{}-api-compute.googleapis.com".format(context.env['name']) in api_names_list
-    ):
-        resources.extend(create_bucket(context))
-
     resources.extend(create_shared_vpc(context))
-
-    if (
-        properties.get('removeDefaultVPC', True) and
-        "{}-api-compute.googleapis.com".format(context.env['name']) in api_names_list
-    ):
-        resources.extend(delete_default_network(context, api_names_list))
-
-    if (
-        properties.get('removeDefaultSA', True) and
-        "{}-api-compute.googleapis.com".format(context.env['name']) in api_names_list
-    ):
-        resources.extend(delete_default_service_account(context, api_names_list))
 
     return {
         'resources':
@@ -96,10 +74,6 @@ def generate_config(context):
                 {
                     'name': 'projectNumber',
                     'value': '$(ref.{}-project.projectNumber)'.format(context.env['name'])
-                },
-                {
-                    'name': 'usageExportBucketName',
-                    'value': '$(ref.{}-project.projectId)-usage-export'.format(context.env['name'])
                 },
                 {
                     'name': 'serviceAccountDisplayName',
@@ -350,57 +324,6 @@ def create_service_accounts(context, project_id):
     return resources
 
 
-def create_bucket(context):
-    """ Resources for the usage export bucket. """
-    properties = context.properties
-
-    resources = []
-
-    bucket_name = '$(ref.{}-project.projectId)-usage-export'.format(context.env['name'])
-
-    # Create the bucket.
-    resources.append({
-        'name': '{}-create-usage-export-bucket'.format(context.env['name']),
-        # https://cloud.google.com/storage/docs/json_api/v1/buckets/insert
-        'type': 'gcp-types/storage-v1:buckets',
-        'properties':
-            {
-                'project': '$(ref.{}-project.projectId)'.format(context.env['name']),
-                'name': bucket_name
-            },
-        'metadata':
-            {
-                'dependsOn': ['{}-api-storage-component.googleapis.com'.format(context.env['name'])]
-            }
-    })
-
-    # Set the project's usage export bucket.
-    usage_resource = {
-        'name':
-            '{}-set-usage-export-bucket'.format(context.env['name']),
-        'action':
-        # https://cloud.google.com/compute/docs/reference/rest/v1/projects/setUsageExportBucket
-            'gcp-types/compute-v1:compute.projects.setUsageExportBucket',  # pylint: disable=line-too-long
-        'properties':
-            {
-                'project': '$(ref.{}-project.projectId)'.format(context.env['name']),
-                'bucketName': bucket_name
-            },
-        'metadata': {
-            'dependsOn': [
-                '{}-create-usage-export-bucket'.format(context.env['name']),
-                '{}-api-compute.googleapis.com'.format(context.env['name']),
-            ]
-        }
-    }
-    if properties.get('usageExportBucket', {}).get('reportNamePrefix'):
-        usage_resource['properties']['reportNamePrefix'] = properties.get('usageExportBucket', {}).get('reportNamePrefix')
-    resources.append(usage_resource)
-
-
-    return resources
-
-
 def create_shared_vpc(context):
     """ Configure the project Shared VPC properties. """
 
@@ -444,76 +367,3 @@ def create_shared_vpc(context):
         )
 
     return resources
-
-
-def delete_default_network(context, api_names_list):
-    """ Delete the default network. """
-
-    default_firewalls = [
-        'default-allow-icmp',
-        'default-allow-internal',
-        'default-allow-rdp',
-        'default-allow-ssh',
-    ]
-
-    resources = []
-    for firewall_name in default_firewalls:
-        resources.append({
-            'name': '{}-delete-{}'.format(context.env['name'], firewall_name),
-            # https://cloud.google.com/compute/docs/reference/rest/v1/firewalls/delete
-            'action': 'gcp-types/compute-v1:compute.firewalls.delete',
-            'metadata': {
-                'dependsOn': api_names_list
-            },
-            'properties':
-                {
-                    'firewall': firewall_name,
-                    'project': '$(ref.{}-project.projectId)'.format(context.env['name']),
-                }
-        })
-
-    # Ensure the firewall rules are removed before deleting the VPC.
-    network_dependency = copy.copy(api_names_list)
-    network_dependency.extend([row['name'] for row in resources])
-
-    resources.append(
-        {
-            'name': '{}-delete-default-network'.format(context.env['name']),
-            # https://cloud.google.com/compute/docs/reference/rest/v1/networks/delete
-            'action': 'gcp-types/compute-v1:compute.networks.delete',
-            'metadata': {
-                'dependsOn': network_dependency
-            },
-            'properties':
-                {
-                    'network': 'default',
-                    'project': '$(ref.{}-project.projectId)'.format(context.env['name'])
-                }
-        }
-    )
-
-    return resources
-
-
-def delete_default_service_account(context, api_names_list):
-    """ Delete the default service account. """
-
-    resource = [
-        {
-            'name': '{}-delete-default-sa'.format(context.env['name']),
-            # https://cloud.google.com/iam/reference/rest/v1/projects.serviceAccounts/delete
-            'action': 'gcp-types/iam-v1:iam.projects.serviceAccounts.delete',
-            'metadata':
-                {
-                    'dependsOn': api_names_list,
-                    'runtimePolicy': ['CREATE']
-                },
-            'properties':
-                {
-                    'name':
-                        'projects/$(ref.{}-project.projectId)/serviceAccounts/$(ref.{}-project.projectNumber)-compute@developer.gserviceaccount.com'.format(context.env['name'], context.env['name'])  # pylint: disable=line-too-long
-                }
-        }
-    ]
-
-    return resource

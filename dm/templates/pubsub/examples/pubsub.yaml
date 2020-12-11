@@ -18,9 +18,5 @@ resources:
             - user:demo@user.com
       subscriptions:
         - name: first-subscription
-          accessControl:
-            - role: roles/pubsub.subscriber
-              members:
-               - user:demo@user.com
         - name: second-subscription
           ackDeadlineSeconds: 15

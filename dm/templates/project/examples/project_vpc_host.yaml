@@ -37,5 +37,4 @@ resources:
           roles:
             - roles/editor
             - roles/viewer
-      usageExportBucket: true
       sharedVPCHost: true

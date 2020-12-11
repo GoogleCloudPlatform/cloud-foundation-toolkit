@@ -15,7 +15,7 @@
 info:
   title: Project
   author: Sourced Group Inc.
-  version: 1.1.5
+  version: 1.2.5
   description: |
     Supports creation of a single project. The project is created with a
     billing account attached, permissions altered, APIs activated, and
@@ -212,26 +212,6 @@ properties:
     items:
       type: string
     description: The list of APIs to enable for each project.
-  usageExportBucket:
-    oneOf:
-      - $ref: '#/definitions/usageExportBucket-enabled'
-      - type: object
-        additionalProperties: false
-        description: |
-          Defines usage export bucket config.
-        required:
-          - enabled
-        properties:
-          enabled:
-            $ref: '#/definitions/usageExportBucket-enabled'
-          reportNamePrefix:
-            type: string
-            description: |
-              An optional prefix for the name of the usage report object stored in bucketName. If not supplied,
-              defaults to usage. The report is stored as a CSV file named report_name_prefix_gce_YYYYMMDD.csv
-              where YYYYMMDD is the day of the usage according to Pacific Time. If you supply a prefix,
-              it should conform to Cloud Storage object naming conventions.
-
   serviceAccounts:
     type: array
     uniqueItems: True
@@ -342,18 +322,6 @@ properties:
       roles/compute.networkUser IAM binding.
       If true, *container.googleapis.com* will be enabled.
       If this project is *NOT* a guest project, this value is ignored. 
-  removeDefaultVPC:
-    type: boolean
-    default: True
-    description: |
-      If True, removes the default VPC that is provisioned when a project
-      is created.
-  removeDefaultSA:
-    type: boolean
-    default: True
-    description: |
-      If True, removes the default service account. This SA is in the 
-      <projectID>-compute@developer.gserviceaccount.com form.
 
 outputs:
   properties:
@@ -369,9 +337,6 @@ outputs:
     - containerSADisplayName:
         type: string
         description: The built-in ServieAccount name for container services. ( Only exists if container.googleapis.com is enabled.)
-    - usageExportBucketName:
-        type: string
-        description: The usage export bucket name.
     - serviceAccountDisplayName:
         type: string
         description: Name of the default service account for the project.
