@@ -1,0 +1,23 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: simple-bucket
+packageMetadata:
+  shortDescription: configures a simple GCS bucket.
+openAPI:
+  definitions:
+    io.k8s.cli.setters.bucket-name:
+      description: globally unique name for the GCS bucket
+      x-k8s-cli:
+        setter:
+          name: bucket-name
+          value: bucket-name
+          setBy: bucket-name
+          required: true
+    io.k8s.cli.setters.namespace:
+      description: namespace for storing the bucket
+      x-k8s-cli:
+        setter:
+          name: namespace
+          value: buckets
+          setBy: namespace
