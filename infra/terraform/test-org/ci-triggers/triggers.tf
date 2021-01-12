@@ -18,7 +18,7 @@ resource "google_cloudbuild_trigger" "lint_trigger" {
   provider    = google-beta
   project     = local.project_id
   description = "Lint tests on pull request for ${each.key}"
-  for_each    = local.repo_folder
+  for_each    = merge(local.repo_folder, { "${local.example_foundation.repo}" = local.example_foundation.folder_id })
   github {
     owner = "terraform-google-modules"
     name  = each.key
@@ -137,4 +137,27 @@ resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
     "**/*.tf",
     "**/*.py"
   ]
+}
+
+# example-foundation-int tests
+resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
+  provider    = google-beta
+  project     = local.project_id
+  description = "Integration tests on pull request for example_foundations in ${each.value} mode"
+  for_each    = toset(local.example_foundation_int_test_modes)
+  github {
+    owner = "terraform-google-modules"
+    name  = local.example_foundation.repo
+    pull_request {
+      branch = ".*"
+    }
+  }
+  substitutions = {
+    _BILLING_ACCOUNT               = local.billing_account
+    _FOLDER_ID                     = local.example_foundation.folder_id
+    _ORG_ID                        = local.org_id
+    _EXAMPLE_FOUNDATIONS_TEST_MODE = each.value
+  }
+
+  filename = "build/int.cloudbuild.yaml"
 }

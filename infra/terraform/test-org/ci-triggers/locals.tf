@@ -20,15 +20,15 @@ locals {
     "ci-terraform-validator",
     "ci-projects",
     "ci-shared",
-    "ci-anthos-platform"
+    "ci-anthos-platform",
+    "ci-example-foundation"
   ]
-  exclude_repos = [
-    "ci-example-foundation",
-  ]
+  example_foundation                = { repo = "terraform-example-foundation", folder_id = replace(data.terraform_remote_state.org.outputs.folders["ci-example-foundation"], "folders/", "") }
+  example_foundation_int_test_modes = ["default", "HubAndSpoke"]
   training_repos = [
     "ci-cloud-foundation-training"
   ]
-  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.exclude_repos, key) ? replace(key, "ci-", "terraform-") : contains(local.training_repos, key) ? replace(key, "ci-", "") : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key) }
+  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.training_repos, key) ? replace(key, "ci-", "") : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key) }
   org_id                   = data.terraform_remote_state.org.outputs.org_id
   billing_account          = data.terraform_remote_state.org.outputs.billing_account
   tf_validator_project_id  = data.terraform_remote_state.tf-validator.outputs.project_id
