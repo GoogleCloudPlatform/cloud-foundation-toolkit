@@ -193,6 +193,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		}
 		switch outputFormat {
 		case "json":
+			var richViolations []*RichViolation
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
@@ -211,15 +212,16 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 								return err
 							}
 						}
-						byteContent, err := json.MarshalIndent(richViolation, "", "  ")
-						if err != nil {
-							return err
-						}
-						io.WriteString(dest, string(byteContent)+"\n")
+						richViolations = append(richViolations, richViolation)
 						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 					}
 				}
 			}
+			byteContent, err := json.MarshalIndent(richViolations, "", "  ")
+			if err != nil {
+				return err
+			}
+			io.WriteString(dest, string(byteContent)+"\n")
 		case "csv":
 			w := csv.NewWriter(dest)
 			header := []string{"Category", "Constraint", "Resource", "Message"}
