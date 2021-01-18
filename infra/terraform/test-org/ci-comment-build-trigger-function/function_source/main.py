@@ -76,7 +76,7 @@ def main(event, context):
     # default clone repo step
     get_repo_args = [
         '-c',
-        'git clone $$REPO_URL && cd $$REPO_NAME && git checkout $$COMMIT_SHA && git status',
+        'git clone $$REPO_URL . && git checkout $$COMMIT_SHA && git status',
     ]
     if not (PR_NUMBER or _HEAD_REPO_URL):
         logging.warn('Unable to infer PR number via Cloud Build. Trying via GH API')
@@ -99,7 +99,7 @@ def main(event, context):
         # fetch PR at head using PR number
         get_repo_args = [
             '-c',
-            'git clone $$REPO_URL && cd $$REPO_NAME && git fetch origin pull/$$_PR_NUMBER/head:$$_PR_NUMBER && git checkout $$_PR_NUMBER && git show --name-only',
+            'git clone $$REPO_URL . && git fetch origin pull/$$_PR_NUMBER/head:$$_PR_NUMBER && git checkout $$_PR_NUMBER && git show --name-only',
         ]
 
     # prepare env vars
@@ -119,7 +119,7 @@ def main(event, context):
     # lint comment step
     lint_args = [
         '-c',
-        'source /usr/local/bin/task_helper_functions.sh && printenv && cd $$REPO_NAME && post_lint_status_pr_comment',
+        'source /usr/local/bin/task_helper_functions.sh && printenv && post_lint_status_pr_comment',
     ]
     lint_step = BuildStep(
         name=f'{CFT_TOOLS_DEFAULT_IMAGE}:{CFT_TOOLS_DEFAULT_IMAGE_VERSION}',
