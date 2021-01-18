@@ -82,10 +82,15 @@ properties:
       https://cloud.google.com/functions/docs/concepts/exec#runtimes.
     enum:
       - go111
+      - go113
       - nodejs6 # deprecated!
-      - nodejs8
+      - nodejs8 # deprecated!
       - nodejs10
+      - nodejs12
       - python37
+      - python38
+      - java11
+      - dotnet3
     default: nodejs10
   availableMemoryMb:
     type: integer
