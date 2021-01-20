@@ -16,5 +16,5 @@
 
 
 provider "google" {
-  version = "~> 3.24.0"
+  version = "~> 3.38.0"
 }
