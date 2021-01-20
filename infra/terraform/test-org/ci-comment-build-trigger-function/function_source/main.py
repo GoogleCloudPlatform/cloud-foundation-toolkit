@@ -25,10 +25,7 @@ from google.protobuf import duration_pb2 as duration
 
 CFT_TOOLS_DEFAULT_IMAGE = 'gcr.io/cloud-foundation-cicd/cft/developer-tools'
 CFT_TOOLS_DEFAULT_IMAGE_VERSION = '0.11.0'
-ENABLED_MODULES = [
-    'terraform-google-cloud-storage',
-    'terraform-google-kubernetes-engine',
-    'terraform-google-gcloud'
+DISABLED_MODULES = [
 ]
 
 
@@ -58,9 +55,9 @@ def main(event, context):
         logging.warn('Parent build is not in WORKING status')
         return
     logging.info('Parent build is in WORKING status')
-    # if repo ref for the parent build has not enabled PR bot, ignore
-    if data['substitutions']['REPO_NAME'] not in ENABLED_MODULES:
-        logging.warn('Not a supported repo')
+    # if repo ref for the parent build has disabled PR bot, ignore
+    if data['substitutions']['REPO_NAME'] in DISABLED_MODULES:
+        logging.warn('Comment bot is disabled for this repo')
         return
     if data['substitutions'].get('_DOCKER_TAG_VERSION_DEVELOPER_TOOLS', False):
         logging.info(
