@@ -24,9 +24,8 @@ from google.cloud.devtools.cloudbuild_v1.types import BuildStep, Build, BuildOpt
 from google.protobuf import duration_pb2 as duration
 
 CFT_TOOLS_DEFAULT_IMAGE = 'gcr.io/cloud-foundation-cicd/cft/developer-tools'
-CFT_TOOLS_DEFAULT_IMAGE_VERSION = '0.11.0'
-DISABLED_MODULES = [
-]
+CFT_TOOLS_DEFAULT_IMAGE_VERSION = '0.12'
+DISABLED_MODULES = ["terraform-example-foundation"]
 
 
 def main(event, context):
