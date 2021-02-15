@@ -151,23 +151,22 @@ properties:
             of the Stackdriver Monitoring metric is expressed.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The autoscaler name.
-    - selfLink:
-        type: string
-        description: The autoscaler URL.
-    - region:
-        type: string
-        description: |
-          The region where the instance group resides (for regionally
-          scoped autoscalers).
-    - zone:
-        type: string
-        description: |
-          The zone where the instance group resides (for zonally scoped
-          autoscalers).
+  name:
+    type: string
+    description: The autoscaler name.
+  selfLink:
+    type: string
+    description: The autoscaler URL.
+  region:
+    type: string
+    description: |
+      The region where the instance group resides (for regionally
+      scoped autoscalers).
+  zone:
+    type: string
+    description: |
+      The zone where the instance group resides (for zonally scoped
+      autoscalers).
 
 documentation:
   - templates/autoscaler/README.md

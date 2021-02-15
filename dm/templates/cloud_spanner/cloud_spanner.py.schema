@@ -93,33 +93,32 @@ properties:
           description: The name of the database created under the instance cluster.
 
 outputs:
-  properties:
-    name:
-      type: string
-      description: The name of the cloud spanner instance.
-    state:
-      type: string
-      description: |
-        The current cloud spanner instance state. For more information:
-        - https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances#State
-    databases:
-      type: array
-      description: |
-        Array of database details. For example, the output can be referenced
-        as: `$(ref.<my-instance>.databases.<database-name>.state)`
-      items:
-        description: The name of the address resource.
-        patternProperties:
-          ".*":
-            type: object
-            additionalProperties: false
-            description: Details for an address resource.
-            properties:
-              state:
-                type: string
-                description: |
-                  The current database state. For more information:
-                  - https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances.databases#Database
+  name:
+    type: string
+    description: The name of the cloud spanner instance.
+  state:
+    type: string
+    description: |
+      The current cloud spanner instance state. For more information:
+      - https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances#State
+  databases:
+    type: array
+    description: |
+      Array of database details. For example, the output can be referenced
+      as: `$(ref.<my-instance>.databases.<database-name>.state)`
+    items:
+      description: The name of the address resource.
+      patternProperties:
+        ".*":
+          type: object
+          additionalProperties: false
+          description: Details for an address resource.
+          properties:
+            state:
+              type: string
+              description: |
+                The current database state. For more information:
+                - https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances.databases#Database
 
 documentation:
   - templates/cloud_spanner/README.md

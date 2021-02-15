@@ -132,28 +132,27 @@ properties:
       IP address will be created.
 
 outputs:
-  properties:
-    - targetVpnGateway:
-        type: string
-        description: The name of the target VPN gateway resource.
-    - staticIp:
-        type: string
-        description: The name of the reserved address resource.
-    - espRule:
-        type: string
-        description: The name of the ForwardingRule resource for the ESP traffic.
-    - udp4500Rule:
-        type: string
-        description: The name of the ForwardingRule resource for the UDP 4500 traffic.
-    - udp500Rule:
-        type: string
-        description: The name of the ForwardingRule resource for the UDP 500 traffic.
-    - vpnTunnel:
-        type: string
-        description: The name of the VPN tunnel resource.
-    - vpnTunnelUri:
-        type: string
-        description: The URI of the VPN tunnel resource.
+  targetVpnGateway:
+    type: string
+    description: The name of the target VPN gateway resource.
+  staticIp:
+    type: string
+    description: The name of the reserved address resource.
+  espRule:
+    type: string
+    description: The name of the ForwardingRule resource for the ESP traffic.
+  udp4500Rule:
+    type: string
+    description: The name of the ForwardingRule resource for the UDP 4500 traffic.
+  udp500Rule:
+    type: string
+    description: The name of the ForwardingRule resource for the UDP 500 traffic.
+  vpnTunnel:
+    type: string
+    description: The name of the VPN tunnel resource.
+  vpnTunnelUri:
+    type: string
+    description: The URI of the VPN tunnel resource.
 
 documentation:
   - templates/vpn/README.md

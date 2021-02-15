@@ -967,37 +967,36 @@ properties:
                 Stackdriver Monitoring metric is expressed.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The name of the managed instance group manager resource.
-    - selfLink:
-        type: string
-        description: |
-          The URL (SelfLink) of the managed instance group manager resource.
-    - instanceGroupSelfLink:
-        type: string
-        description: The URL (SelfLink) of the managed instance group resource.
-    - region:
-        type: string
-        description: |
-          The URL of the region where the managed instance group resides
-          (for regional resources).
-    - zone:
-        type: string
-        description: |
-          The URL of the zone where the managed instance group is located
-          (for zonal resources).
-    - autoscalerSelfLink:
-        type: string
-        description: |
-          The URL (SelfLink) of the autoscaler resource (if the group is used
-          with the autoscaler).
-    - instanceTemplateSelfLink:
-        type: string
-        description: |
-          The URL (SelfLink) of the instance template resource (if new instance
-          template was created for the group).
+  name:
+    type: string
+    description: The name of the managed instance group manager resource.
+  selfLink:
+    type: string
+    description: |
+      The URL (SelfLink) of the managed instance group manager resource.
+  instanceGroupSelfLink:
+    type: string
+    description: The URL (SelfLink) of the managed instance group resource.
+  region:
+    type: string
+    description: |
+      The URL of the region where the managed instance group resides
+      (for regional resources).
+  zone:
+    type: string
+    description: |
+      The URL of the zone where the managed instance group is located
+      (for zonal resources).
+  autoscalerSelfLink:
+    type: string
+    description: |
+      The URL (SelfLink) of the autoscaler resource (if the group is used
+      with the autoscaler).
+  instanceTemplateSelfLink:
+    type: string
+    description: |
+      The URL (SelfLink) of the instance template resource (if new instance
+      template was created for the group).
 
 documentation:
   - templates/managed_instance_group/README.md

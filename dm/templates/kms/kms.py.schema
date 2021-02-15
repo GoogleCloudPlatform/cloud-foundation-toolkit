@@ -139,10 +139,9 @@ properties:
             https://cloud.google.com/kms/docs/labeling-keys.
 
 outputs:
-  properties:
-    - keyRing:
-        type: string
-        description: Path to the KeyRing resource.
+  keyRing:
+    type: string
+    description: Path to the KeyRing resource.
 
 documentation:
   - templates/kms/README.md

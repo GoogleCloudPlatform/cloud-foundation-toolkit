@@ -408,16 +408,15 @@ properties:
       DEPRECATED. Alias for bgp->asn
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The name of the Cloud Router resource.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the Cloud Router resource.
-    - creationTimestamp:
-        type: string
-        description: Creation timestamp in RFC3339 text format.
+  name:
+    type: string
+    description: The name of the Cloud Router resource.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the Cloud Router resource.
+  creationTimestamp:
+    type: string
+    description: Creation timestamp in RFC3339 text format.
 
 documentation:
   - templates/cloud_router/README.md

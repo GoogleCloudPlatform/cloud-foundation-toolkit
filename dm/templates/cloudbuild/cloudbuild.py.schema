@@ -442,35 +442,34 @@ definitions:
     description: The explicit commit SHA to build.
 
 outputs:
-  properties:
-    - id:
-        type: string
-        description: Build Unique identifier.
-    - status:
-        type: string
-        description: The build status.
-    - results:
-        type: object
-        description: The build results.
-    - createTime:
-        type: string
-        description: | 
-          The time the build was requested, in the RFC3339 UTC "Zulu" format.
-    - startTime:
-        type: string
-        description: |
-          The time the build execution started, in the RFC3339 UTC "Zulu" format.
-    - finishTime:
-        type: string
-        description: |
-          The time the build finished, in the RFC3339 UTC "Zulu" format.
-    - logUrl:
-        type: string
-        description: The URL to the build logs in the Google Cloud console.
-    - sourceProvenance:
-        type: object
-        description: |
-          Fixed identifier to used to describe the original source, or verify that some source was used for this build.
+  id:
+    type: string
+    description: Build Unique identifier.
+  status:
+    type: string
+    description: The build status.
+  results:
+    type: object
+    description: The build results.
+  createTime:
+    type: string
+    description: | 
+      The time the build was requested, in the RFC3339 UTC "Zulu" format.
+  startTime:
+    type: string
+    description: |
+      The time the build execution started, in the RFC3339 UTC "Zulu" format.
+  finishTime:
+    type: string
+    description: |
+      The time the build finished, in the RFC3339 UTC "Zulu" format.
+  logUrl:
+    type: string
+    description: The URL to the build logs in the Google Cloud console.
+  sourceProvenance:
+    type: object
+    description: |
+      Fixed identifier to used to describe the original source, or verify that some source was used for this build.
             
 documentation:
   - templates/cloudbuild/README.md

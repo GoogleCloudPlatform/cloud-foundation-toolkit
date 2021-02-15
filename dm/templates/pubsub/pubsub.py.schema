@@ -194,13 +194,11 @@ properties:
                 of the associated resource, as well. If ttl is not set, the associated resource never expires.
 
                 A duration in seconds with up to nine fractional digits, terminated by 's'. Example: "3.5s".
-        
 
 outputs:
-  properties:
-    - topicName:
-        type: string
-        description: The created topic's name.
+  topicName:
+    type: string
+    description: The created topic's name.
 
 documentation:
   - templates/pubsub/README.md

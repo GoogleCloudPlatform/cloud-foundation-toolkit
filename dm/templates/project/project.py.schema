@@ -324,28 +324,27 @@ properties:
       If this project is *NOT* a guest project, this value is ignored. 
 
 outputs:
-  properties:
-    - projectId:
-        type: string
-        description: The unique, user-assigned ID of the Project.
-    - projectNumber:
-        type: string
-        description: The number uniquely identifying the project.
-    - containerSA:
-        type: string
-        description: The built-in ServieAccount name for container services. (With 'śerviceAccount:' prefix.) ( Only exists if container.googleapis.com is enabled.)
-    - containerSADisplayName:
-        type: string
-        description: The built-in ServieAccount name for container services. ( Only exists if container.googleapis.com is enabled.)
-    - serviceAccountDisplayName:
-        type: string
-        description: Name of the default service account for the project.
-    - resources:
-        type: array
-        description: |
-          Names of the resources the template creates. This output can be used
-          by other templates for explicit waiting for all project configuration
-          steps to finish.
+  projectId:
+    type: string
+    description: The unique, user-assigned ID of the Project.
+  projectNumber:
+    type: string
+    description: The number uniquely identifying the project.
+  containerSA:
+    type: string
+    description: The built-in ServieAccount name for container services. (With 'śerviceAccount:' prefix.) ( Only exists if container.googleapis.com is enabled.)
+  containerSADisplayName:
+    type: string
+    description: The built-in ServieAccount name for container services. ( Only exists if container.googleapis.com is enabled.)
+  serviceAccountDisplayName:
+    type: string
+    description: Name of the default service account for the project.
+  resources:
+    type: array
+    description: |
+      Names of the resources the template creates. This output can be used
+      by other templates for explicit waiting for all project configuration
+      steps to finish.
 
 documentation:
   - templates/project/README.md

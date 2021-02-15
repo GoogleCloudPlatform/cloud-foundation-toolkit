@@ -59,20 +59,19 @@ properties:
         - destRange
 
 outputs:
-  properties:
-    routes:
-      type: array
-      description: Array of route information.
-      items:
-        description: |
-          The name of the firewall rule resource. For example, the output can
-          be referenced as: $(ref.<my-routes>.routes.<route-name>.selfLink)
-        patternProperties:
-          ".*":
-            type: object
-            description: |
-              Details for a route resource. Please check the outputs in
-              single_route.py.schema for details.
+  routes:
+    type: array
+    description: Array of route information.
+    items:
+      description: |
+        The name of the firewall rule resource. For example, the output can
+        be referenced as: $(ref.<my-routes>.routes.<route-name>.selfLink)
+      patternProperties:
+        ".*":
+          type: object
+          description: |
+            Details for a route resource. Please check the outputs in
+            single_route.py.schema for details.
 
 documentation:
   - templates/route/README.md

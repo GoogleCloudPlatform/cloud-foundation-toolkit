@@ -164,23 +164,22 @@ properties:
       - DISABLE
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The resource name.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the URL target proxy resource.
-    - kind:
-        type: string
-        description: The resource kind.
-    - certificateName:
-        type: string
-        description: The name of the SSL certificate, if one is to be created.
-    - certificateSelfLink:
-        type: string
-        description: |
-          The URI (SelfLink) of the SSL certificate, if one is to be created.
+  name:
+    type: string
+    description: The resource name.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the URL target proxy resource.
+  kind:
+    type: string
+    description: The resource kind.
+  certificateName:
+    type: string
+    description: The name of the SSL certificate, if one is to be created.
+  certificateSelfLink:
+    type: string
+    description: |
+      The URI (SelfLink) of the SSL certificate, if one is to be created.
 
 documentation:
   - templates/target_proxy/README.md

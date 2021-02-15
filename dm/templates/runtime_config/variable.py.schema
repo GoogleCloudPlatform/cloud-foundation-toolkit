@@ -84,10 +84,9 @@ properties:
       A base64-encoded string.
 
 outputs:
-  properties:
-    - updateTime:
-        type: string
-        description: The time when the variable was last updated.
+  updateTime:
+    type: string
+    description: The time when the variable was last updated.
 
 documentation:
   - templates/runtime_config/README.md

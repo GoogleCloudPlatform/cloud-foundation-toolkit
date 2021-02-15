@@ -525,49 +525,48 @@ properties:
       description: The resource name.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The resource name.
-    - selfLink:
-        type: string
-        description: |
-          The URL (SelfLink) of the Cloud SQL instance resource.
-    - gceZone:
-        type: string
-        description: |
-          The Compute Engine zone the instance is currently serving from.
-          This value could be different from the zone that was specified when
-          the instance was created if the instance has failed over to its
-          secondary zone.
-    - connectionName:
-        type: string
-        description: |
-          The connection name of the Cloud SQL instance (used in connection
-          strings).
-    - backendType:
-        type: string
-        description: Database generation.
-    - ipAddress:
-        type: string
-        description: |
-          The first IP address assigned to the instance.
-    - userNames:
-        type: array
-        description: The names of the created users.
-    - databaseNames:
-        type: array
-        description: The names of the created databases.
-    - databaseSelfLinks:
-        type: array
-        description: |
-          The URLs (SelfLinks) of the Cloud SQL database resources.
-    - resources:
-        type: array
-        description: |
-          Names of the resources the template creates. Because Cloud SQL
-          usually requires resources to be created sequentially, this output
-          can be used as synchronization context.
+  name:
+    type: string
+    description: The resource name.
+  selfLink:
+    type: string
+    description: |
+      The URL (SelfLink) of the Cloud SQL instance resource.
+  gceZone:
+    type: string
+    description: |
+      The Compute Engine zone the instance is currently serving from.
+      This value could be different from the zone that was specified when
+      the instance was created if the instance has failed over to its
+      secondary zone.
+  connectionName:
+    type: string
+    description: |
+      The connection name of the Cloud SQL instance (used in connection
+      strings).
+  backendType:
+    type: string
+    description: Database generation.
+  ipAddress:
+    type: string
+    description: |
+      The first IP address assigned to the instance.
+  userNames:
+    type: array
+    description: The names of the created users.
+  databaseNames:
+    type: array
+    description: The names of the created databases.
+  databaseSelfLinks:
+    type: array
+    description: |
+      The URLs (SelfLinks) of the Cloud SQL database resources.
+  resources:
+    type: array
+    description: |
+      Names of the resources the template creates. Because Cloud SQL
+      usually requires resources to be created sequentially, this output
+      can be used as synchronization context.
 
 documentation:
   - templates/cloud_sql/README.md

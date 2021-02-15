@@ -172,28 +172,27 @@ properties:
               earlier).
 
 outputs:
-  properties:
-    - forwardingRuleName:
-        type: string
-        description: The name of the internal load balancer's forwarding rule.
-    - backendServiceName:
-        type: string
-        description: The name of the internal load balancer's backend service.
-    - region:
-        type: string
-        description: |
-            The URL of the region where the internal load balancer resides.
-    - forwardingRuleSelfLink:
-        type: string
-        description: The URI (SelfLink) of the forwarding rule resource.
-    - backendServiceSelfLink:
-        type: string
-        description: The URI (SelfLink) of the backend service resource.
-    - IPAddress:
-        type: string
-        description: |
-          The IP address on whose behalf the internal load balancer
-          (the forwarding rule) operates.
+  forwardingRuleName:
+    type: string
+    description: The name of the internal load balancer's forwarding rule.
+  backendServiceName:
+    type: string
+    description: The name of the internal load balancer's backend service.
+  region:
+    type: string
+    description: |
+        The URL of the region where the internal load balancer resides.
+  forwardingRuleSelfLink:
+    type: string
+    description: The URI (SelfLink) of the forwarding rule resource.
+  backendServiceSelfLink:
+    type: string
+    description: The URI (SelfLink) of the backend service resource.
+  IPAddress:
+    type: string
+    description: |
+      The IP address on whose behalf the internal load balancer
+      (the forwarding rule) operates.
 
 documentation:
   - templates/internal_load_balancer/README.md

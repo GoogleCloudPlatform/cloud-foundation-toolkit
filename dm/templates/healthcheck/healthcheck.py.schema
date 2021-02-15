@@ -171,17 +171,16 @@ properties:
       - USE_SERVING_PORT
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The HealthCheck resource name.
-    - selfLink:
-        type: string
-        description: The Deployment Manager-defined URL for the resource.
-    - creationTimestamp:
-        type: datetime
-        description: |
-          The resource creation timestamp in the RFC3339 text format.
+  name:
+    type: string
+    description: The HealthCheck resource name.
+  selfLink:
+    type: string
+    description: The Deployment Manager-defined URL for the resource.
+  creationTimestamp:
+    type: datetime
+    description: |
+      The resource creation timestamp in the RFC3339 text format.
 
 documentation:
   - templates/healthcheck/README.md

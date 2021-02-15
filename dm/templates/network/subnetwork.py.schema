@@ -105,28 +105,27 @@ properties:
     description: If "true", enables flow logging for the subnetwork.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The subnet resource name.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the subnet resource.
-    - region:
-        type: string
-        description: The name of the region where the subnetwork resides.
-    - network:
-        type: string
-        description: The URL of the network to which the subnetwork belongs.
-    - ipCidrRange:
-        type: string
-        description: |
-          The range of internal addresses owned by the subnetwork.
-    - gatewayAddress:
-        type: string
-        description: |
-          The gateway address for default routes to reach destination addresses
-          outside this subnetwork.
+  name:
+    type: string
+    description: The subnet resource name.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the subnet resource.
+  region:
+    type: string
+    description: The name of the region where the subnetwork resides.
+  network:
+    type: string
+    description: The URL of the network to which the subnetwork belongs.
+  ipCidrRange:
+    type: string
+    description: |
+      The range of internal addresses owned by the subnetwork.
+  gatewayAddress:
+    type: string
+    description: |
+      The gateway address for default routes to reach destination addresses
+      outside this subnetwork.
 
 documentation:
   - templates/network/README.md
