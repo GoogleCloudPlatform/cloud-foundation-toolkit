@@ -721,27 +721,27 @@ properties:
       Specifies instance template to create the instance.
       This field is optional. It can be a full or partial URL.
       See https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert for details.
+
 outputs:
-  properties:
-    - networkInterfaces:
-      type: array
-      description: |
-        A list of network interfaces of the new instance.
-      items:
-        type: object
-        properties:
-          externalIp:
-            type: string
-            description: Reference to the external ip address of the new instance
-          internalIp:
-            type: string
-            description: Reference to tbe internal ip address of the new instance
-    - name:
+  networkInterfaces:
+  type: array
+  description: |
+    A list of network interfaces of the new instance.
+  items:
+    type: object
+    properties:
+      externalIp:
         type: string
-        description: A name of the instance resource
-    - selfLink:
+        description: Reference to the external ip address of the new instance
+      internalIp:
         type: string
-        description: The URI (SelfLink) of the instance resource.
+        description: Reference to tbe internal ip address of the new instance
+  name:
+    type: string
+    description: A name of the instance resource
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the instance resource.
 
 documentation:
   - templates/instance/README.md

@@ -500,53 +500,52 @@ properties:
         count: 3
 
 outputs:
-  properties:
-    - selfLink:
-        type: string
-        description: The URI of the created resource.
-    - etag:
-        type: string
-        description: The hash of the resource.
-    - creationTime:
-        type: string
-        description: |
-          The time when the dataset was created, in milliseconds since
-          epoch.
-    - lastModifiedTime:
-        type: string
-        description: |
-          The date when the dataset (or any of its tables) was last 
-          modified, in milliseconds since the epoch.
-    - location:
-        type: string
-        description: |
-          The geographic location where the table resides. This value is
-          inherited from the dataset.
-    - numBytes:
-        type: string
-        description: |
-          The size of the table in bytes, excluding data in the streaming
-          buffer.
-    - numLongTermBytes:
-        type: string
-        format: int64
-        description: |
-          The number of bytes in the table that are considered
-          \"long-term storage\".
-    - numRows:
-        type: string
-        description: |
-          The number of rows of data in the table, excluding data in the
-          streaming buffer.
-    - type:
-        type: string
-        description: |
-          The table type. The following values are supported: 
-           TABLE - a normal BigQuery table
-           VIEW - a virtual table defined by an SQL query
-           EXTERNAL - a table that references data stored in an external
-           storage system, such as Google Cloud Storage. 
-          The default value is TABLE.
+  selfLink:
+    type: string
+    description: The URI of the created resource.
+  etag:
+    type: string
+    description: The hash of the resource.
+  creationTime:
+    type: string
+    description: |
+      The time when the dataset was created, in milliseconds since
+      epoch.
+  lastModifiedTime:
+    type: string
+    description: |
+      The date when the dataset (or any of its tables) was last
+      modified, in milliseconds since the epoch.
+  location:
+    type: string
+    description: |
+      The geographic location where the table resides. This value is
+      inherited from the dataset.
+  numBytes:
+    type: string
+    description: |
+      The size of the table in bytes, excluding data in the streaming
+      buffer.
+  numLongTermBytes:
+    type: string
+    format: int64
+    description: |
+      The number of bytes in the table that are considered
+      \"long-term storage\".
+  numRows:
+    type: string
+    description: |
+      The number of rows of data in the table, excluding data in the
+      streaming buffer.
+  type:
+    type: string
+    description: |
+      The table type. The following values are supported:
+       TABLE - a normal BigQuery table
+       VIEW - a virtual table defined by an SQL query
+       EXTERNAL - a table that references data stored in an external
+       storage system, such as Google Cloud Storage.
+      The default value is TABLE.
 
 documentation:
   - templates/bigquery/README.md

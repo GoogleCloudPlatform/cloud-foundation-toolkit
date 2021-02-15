@@ -184,24 +184,23 @@ properties:
     $ref: '#/definitions/policy/properties/etag'
 
 outputs:
-  properties:
-    policies:
-      type: array
-      description: Array of IAM policy resource information.
-      items:
-        description: |
-          IAM policy resource name. Will be in the format
-          'iam-subnet-policy-<subnetId>'. For example, the output
-          can be referenced as:
-          $(ref.<my-policies>.policies.iam-subnet-policy-<subnet1>.selfLink)
-        patternProperties:
-          ".*":
-            type: object
-            description: Details for a subnetwork IAM policy.
-            properties:
-              etag:
-                type: string
-                description: The etag of the subnetwork's IAM policy.
+  policies:
+    type: array
+    description: Array of IAM policy resource information.
+    items:
+      description: |
+        IAM policy resource name. Will be in the format
+        'iam-subnet-policy-<subnetId>'. For example, the output
+        can be referenced as:
+        $(ref.<my-policies>.policies.iam-subnet-policy-<subnet1>.selfLink)
+      patternProperties:
+        ".*":
+          type: object
+          description: Details for a subnetwork IAM policy.
+          properties:
+            etag:
+              type: string
+              description: The etag of the subnetwork's IAM policy.
 
 documentation:
   - templates/shared_vpc_subnet_iam/README.md

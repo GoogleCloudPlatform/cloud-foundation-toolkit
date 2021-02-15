@@ -230,10 +230,9 @@ properties:
             The region where the VPN tunnel resides.
 
 outputs:
-  properties:
-    selfLink:
-      type: string
-      description: The URI (SelfLink) of the firewall rule resource.
-    nextHopNetwork:
-      type: string
-      description: URL to a Network that should handle matching packets.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the firewall rule resource.
+  nextHopNetwork:
+    type: string
+    description: URL to a Network that should handle matching packets.

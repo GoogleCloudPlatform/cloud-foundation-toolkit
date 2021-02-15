@@ -205,43 +205,42 @@ properties:
           type: string
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The name of the Bastion host.
-    - selfLink:
-        type: string
-        description: |
-          The URI (SelfLink) of the Bastion host.
-    - internalIp:
-        type: string
-        description: |
-          The internal IP address of the Bastion host.
-    - externalIp:
-        type: array
-        description: |
-          The external IP address of the Bastion host.
-    - sshToBastionRuleName:
-        type: array
-        description: |
-          If created, the name of the firewall rule controlling the SSH traffic
-          flow to the Bastion host.
-    - sshToBastionRuleSelfLink:
-        type: array
-        description: |
-          If created, the URI (SelfLink) of the firewall rule controlling the
-          SSH traffic flow to the Bastion host.
-    - sshFromBastionRuleName:
-        type: array
-        description: |
-          If created, the name of the firewall rule controlling the SSH traffic
-          flow from the Bastion host to other instances in the same network.
-    - sshFromBastionRuleSelfLink:
-        type: array
-        description: |
-          If created, the URI (SelfLink) of the firewall rule controlling the
-          SSH traffic flow from the Bastion host to other instances in the
-          same network.
+  name:
+    type: string
+    description: The name of the Bastion host.
+  selfLink:
+    type: string
+    description: |
+      The URI (SelfLink) of the Bastion host.
+  internalIp:
+    type: string
+    description: |
+      The internal IP address of the Bastion host.
+  externalIp:
+    type: array
+    description: |
+      The external IP address of the Bastion host.
+  sshToBastionRuleName:
+    type: array
+    description: |
+      If created, the name of the firewall rule controlling the SSH traffic
+      flow to the Bastion host.
+  sshToBastionRuleSelfLink:
+    type: array
+    description: |
+      If created, the URI (SelfLink) of the firewall rule controlling the
+      SSH traffic flow to the Bastion host.
+  sshFromBastionRuleName:
+    type: array
+    description: |
+      If created, the name of the firewall rule controlling the SSH traffic
+      flow from the Bastion host to other instances in the same network.
+  sshFromBastionRuleSelfLink:
+    type: array
+    description: |
+      If created, the URI (SelfLink) of the firewall rule controlling the
+      SSH traffic flow from the Bastion host to other instances in the
+      same network.
 
 documentation:
   - templates/bastion/README.md

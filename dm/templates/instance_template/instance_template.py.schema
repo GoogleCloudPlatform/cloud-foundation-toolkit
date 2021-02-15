@@ -754,13 +754,12 @@ properties:
         count: 3
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The instance template name.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the instance template resource.
+  name:
+    type: string
+    description: The instance template name.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the instance template resource.
 
 documentation:
   - templates/instance_template/README.md

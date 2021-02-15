@@ -120,10 +120,9 @@ properties:
             overlap with either existing subnets or assigned IP address ranges for other Cloud Filestore instances in the selected VPC network.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The resource name of the instance.
+  name:
+    type: string
+    description: The resource name of the instance.
 
 documentation:
   - templates/cloud_filestore/README.md

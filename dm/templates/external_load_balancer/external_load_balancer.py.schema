@@ -591,46 +591,45 @@ properties:
 
 
 outputs:
-  properties:
-    - forwardingRuleName:
-        type: string
-        description: The name of the external load balancer's forwarding rule.
-    - forwardingRuleSelfLink:
-        type: string
-        description: |
-          The URI (SelfLink) of the external load balancer's forwarding rule.
-    - IPAddress:
-        type: string
-        description: |
-          The IP address on whose behalf the external load balancer
-          (the forwarding rule) operates.
-    - backendServiceNames:
-        type: array
-        description: |
-          The names of the external load balancer's backend services.
-    - backendServiceSelfLinks:
-        type: string
-        description: The URIs (SelfLinks) of the backend service resources.
-    - targetProxyName:
-        type: string
-        description: |
-          The name of the target proxy resource created for the load balancer.
-    - targetProxySelfLink:
-        type: string
-        description: |
-          The URI (SelfLink) of the URL target proxy resource.
-    - targetProxyKind:
-        type: string
-        description: |
-          The type of the target proxy resource created for the load balancer.
-    - certificateName:
-        type: string
-        description: |
-          The name of the SSL certificate, if one is to be created.
-    - certificateSelfLink:
-        type: string
-        description: |
-          The URI (SelfLink) of the SSL certificate, if one is to be created.
+  forwardingRuleName:
+    type: string
+    description: The name of the external load balancer's forwarding rule.
+  forwardingRuleSelfLink:
+    type: string
+    description: |
+      The URI (SelfLink) of the external load balancer's forwarding rule.
+  IPAddress:
+    type: string
+    description: |
+      The IP address on whose behalf the external load balancer
+      (the forwarding rule) operates.
+  backendServiceNames:
+    type: array
+    description: |
+      The names of the external load balancer's backend services.
+  backendServiceSelfLinks:
+    type: string
+    description: The URIs (SelfLinks) of the backend service resources.
+  targetProxyName:
+    type: string
+    description: |
+      The name of the target proxy resource created for the load balancer.
+  targetProxySelfLink:
+    type: string
+    description: |
+      The URI (SelfLink) of the URL target proxy resource.
+  targetProxyKind:
+    type: string
+    description: |
+      The type of the target proxy resource created for the load balancer.
+  certificateName:
+    type: string
+    description: |
+      The name of the SSL certificate, if one is to be created.
+  certificateSelfLink:
+    type: string
+    description: |
+      The URI (SelfLink) of the SSL certificate, if one is to be created.
 
 documentation:
   - templates/external_load_balancer/README.md

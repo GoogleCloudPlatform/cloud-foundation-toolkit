@@ -198,13 +198,12 @@ properties:
       - AVAILABILITY_DOMAIN_ANY
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The created attachments name.
-    - selfLink:
-        type: string
-        description: Server-defined URL for the resource.
+  name:
+    type: string
+    description: The created attachments name.
+  selfLink:
+    type: string
+    description: Server-defined URL for the resource.
 
 documentation:
   - templates/interconnect_attachment/README.md

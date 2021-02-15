@@ -171,23 +171,22 @@ properties:
       The region where the regional address resides.
 
 outputs:
-  properties:
-    selfLink:
-      type: string
-      description: The URI (SelfLink) of the address resource.
-    address:
-      type: string
-      description: |
-        The static IP address represented by this resource.
-    status:
-      type: string
-      description: |
-        The status of the address, which can be one of RESERVING,
-        RESERVED, or IN_USE. An address that is RESERVING is
-        currently in the process of being reserved. A RESERVED
-        address is currently reserved and available to use. An IN_USE
-        address is currently being used by another resource and is
-        not available.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the address resource.
+  address:
+    type: string
+    description: |
+      The static IP address represented by this resource.
+  status:
+    type: string
+    description: |
+      The status of the address, which can be one of RESERVING,
+      RESERVED, or IN_USE. An address that is RESERVING is
+      currently in the process of being reserved. A RESERVED
+      address is currently reserved and available to use. An IN_USE
+      address is currently being used by another resource and is
+      not available.
 
 documentation:
   - templates/ip_reservation/README.md

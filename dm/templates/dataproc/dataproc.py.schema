@@ -261,32 +261,32 @@ properties:
       The Compute Engine config settings for additional worker instances in
       the cluster.
     $ref: '#/definitions/nodeConfig'
+
 outputs:
-  properties:
-    - masterInstanceNames:
-        type: array
-        description: When configured, the list of master instance names.
-        items:
-          type: string
-    - workerInstanceNames:
-        type: array
-        description: When configured, the list of worker instance names.
-        items:
-          type: string
-    - secondaryWorkerInstanceNames:
-        type: array
-        description: |
-          When configured, the list of additional worker instance names.
-        items:
-          type: string
-    - name:
-        type: string
-        description: The cluster name.
-    - configBucket:
-        type: string
-        description: |
-          A Cloud Storage staging bucket used for sharing generated SSH keys
-          and config.
+  masterInstanceNames:
+    type: array
+    description: When configured, the list of master instance names.
+    items:
+      type: string
+  workerInstanceNames:
+    type: array
+    description: When configured, the list of worker instance names.
+    items:
+      type: string
+  secondaryWorkerInstanceNames:
+    type: array
+    description: |
+      When configured, the list of additional worker instance names.
+    items:
+      type: string
+  name:
+    type: string
+    description: The cluster name.
+  configBucket:
+    type: string
+    description: |
+      A Cloud Storage staging bucket used for sharing generated SSH keys
+      and config.
 
 documentation:
   - templates/dataproc/README.md

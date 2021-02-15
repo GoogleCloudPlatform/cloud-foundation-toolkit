@@ -215,34 +215,34 @@ properties:
       Acceptable values are "private" and "public".
 
 outputs:
-  properties:
-    - dnsName:
-        type: string
-        description: The DNS name of the managed zone.
-    - managedZoneDescription:
-        type: string
-        description: The description of the managed zone.
-    - nameServers:
-        type: array
-        description: |
-          The list of nameservers that will be authoritative for this domain.
-    - managedZoneName:
-        type: string
-        description: The managed zone's resource name.
-    - visibility:
-        type: string
-        description: |
-          The zone's visibility. Public zones are exposed to the Internet,
-          while private zones are visible only to Virtual Private Cloud
-          resources.
-    - privateVisibilityConfig:
-        type: object
-        description: |
-          For privately visible zones, the set of Virtual Private Cloud
-          resources that the zone is visible from.
-    - dnssecConfig:
-        type: object
-        description: DNSSEC configuration.
+  dnsName:
+    type: string
+    description: The DNS name of the managed zone.
+  managedZoneDescription:
+    type: string
+    description: The description of the managed zone.
+  nameServers:
+    type: array
+    description: |
+      The list of nameservers that will be authoritative for this domain.
+  managedZoneName:
+    type: string
+    description: The managed zone's resource name.
+  visibility:
+    type: string
+    description: |
+      The zone's visibility. Public zones are exposed to the Internet,
+      while private zones are visible only to Virtual Private Cloud
+      resources.
+  privateVisibilityConfig:
+    type: object
+    description: |
+      For privately visible zones, the set of Virtual Private Cloud
+      resources that the zone is visible from.
+  dnssecConfig:
+    type: object
+    description: DNSSEC configuration.
+
 documentation:
   - templates/dns_managed_zone/README.md
 

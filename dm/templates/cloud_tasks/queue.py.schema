@@ -206,18 +206,17 @@ properties:
               https://cloud.google.com/appengine/docs/flexible/python/how-requests-are-routed
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The queue name.
-    - state:
-        type: string
-        description: The state of the queue.
-        enum:
-          - STATE_UNSPECIFIED
-          - RUNNING
-          - PAUSED
-          - DISABLED
+  name:
+    type: string
+    description: The queue name.
+  state:
+    type: string
+    description: The state of the queue.
+    enum:
+      - STATE_UNSPECIFIED
+      - RUNNING
+      - PAUSED
+      - DISABLED
 
 documentation:
   - templates/cloud_tasks/README.md

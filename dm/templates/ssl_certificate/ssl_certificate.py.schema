@@ -125,13 +125,12 @@ properties:
       If this flag is enabled, beta properties can be used and the beta type will be used.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The resource name.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the SSL certificate resource.
+  name:
+    type: string
+    description: The resource name.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the SSL certificate resource.
 
 documentation:
   - templates/ssl_certificate/README.md

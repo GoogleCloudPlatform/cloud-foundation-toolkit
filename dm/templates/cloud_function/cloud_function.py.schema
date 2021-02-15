@@ -188,24 +188,23 @@ properties:
       This feature is currently in alpha, available only for whitelisted users.
 
 outputs:
-  properties:
-    - region:
-      description: The region where the function is deployed.
-      type: string
-    - name:
-      description: The function name.
-      type: string
-    - httpsTriggerUrl:
-      description: For HTTPS-triggered functions, the trigger URL.
-      type: string
-    - sourceRepositoryUrl:
-      description: |
-        For functions deployed from cloud repositories, 
-        the repository URL.
-      type: string
-    - sourceArchiveUrl:
-      description: For functions deployed from Cloud Storage, the bucket URL.
-      type: string
+  region:
+    description: The region where the function is deployed.
+    type: string
+  name:
+    description: The function name.
+    type: string
+  httpsTriggerUrl:
+    description: For HTTPS-triggered functions, the trigger URL.
+    type: string
+  sourceRepositoryUrl:
+    description: |
+      For functions deployed from cloud repositories,
+      the repository URL.
+    type: string
+  sourceArchiveUrl:
+    description: For functions deployed from Cloud Storage, the bucket URL.
+    type: string
 
 documentation:
   - templates/cloud_function/README.md
