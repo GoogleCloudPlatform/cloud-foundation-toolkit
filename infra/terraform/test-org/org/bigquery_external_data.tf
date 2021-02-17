@@ -23,10 +23,10 @@ module "ci_bq_external_data_project" {
   source  = "terraform-google-modules/project-factory/google"
   version = "~> 4.0"
 
-  name       = "ci-bq-external-data-project"
-  project_id = "ci-bq-external-data-project"
+  name            = "ci-bq-external-data-project"
+  project_id      = "ci-bq-external-data-project"
   org_id          = local.org_id
-  folder_id = google_folder.ci_bq_external_data_folder.id
+  folder_id       = google_folder.ci_bq_external_data_folder.id
   billing_account = local.billing_account
 
   labels = {
@@ -39,7 +39,7 @@ module "ci_bq_external_data_project" {
 }
 
 resource "google_storage_bucket" "ci_bq_external_data_storage_bucket" {
-  name                        = "ci-bq-external-data"
+  name    = "ci-bq-external-data"
   project = module.ci_bq_external_data_project.project_id
 }
 
