@@ -58,3 +58,27 @@ output "ci_gsuite_sa_bucket" {
 output "ci_gsuite_sa_bucket_path" {
   value = google_storage_bucket_object.ci_gsuite_sa_json.name
 }
+
+output "ci_bq_external_data_folder_id" {
+  value = google_folder.ci_bq_external_data_folder.id
+}
+
+output "ci_bq_external_data_project_id" {
+  value = module.ci_bq_external_data_project.project_id
+}
+
+output "ci_bq_external_data_storage_bucket" {
+  value = google_storage_bucket.ci_bq_external_data_storage_bucket.name
+}
+
+output "ci_bq_external_csv_file" {
+  value = google_storage_bucket_object.ci_bq_external_csv_file.name
+}
+
+output "ci_bq_external_hive_file_foo" {
+  value = google_storage_bucket_object.ci_bq_external_hive_file_foo.name
+}
+
+output "ci_bq_external_hive_file_bar" {
+  value = google_storage_bucket_object.ci_bq_external_hive_file_bar.name
+}
