@@ -39,6 +39,7 @@ def generate_config(context):
         'expirationTime',
         'schema',
         'timePartitioning',
+        'externalDataConfiguration',
         'view'
     ]
 
