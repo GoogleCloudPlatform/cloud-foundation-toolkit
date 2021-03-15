@@ -24,9 +24,9 @@ jobs:
 
       - name: Build
         run: |-
+          gcloud auth configure-docker -q
           cd infra/build && make build-image-developer-tools
 
       - name: Push
         run: |-
-          gcloud auth configure-docker -q
           cd infra/build && make release-image-developer-tools
