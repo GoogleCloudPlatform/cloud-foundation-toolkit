@@ -21,7 +21,7 @@ RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
 
 FROM alpine:3.12
 RUN apk add --no-cache \
-		ca-certificates \
+        ca-certificates \
         bash \
         git \
         python3 \
