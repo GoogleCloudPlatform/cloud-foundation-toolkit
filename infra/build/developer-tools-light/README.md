@@ -1,6 +1,6 @@
 # Developer Tools Image Light
 
-This image is light version of developer-tools with Terraform and Cloud SDK.
+This image is a light version of developer-tools with Terraform and Cloud SDK.
 
 ## Building and Releasing
 
@@ -10,4 +10,3 @@ To release a local Docker image to the registry, update the value of `DOCKER_TAG
 in the `Makefile` following Semantic Versioning and run `release-image-developer-tools`.
 
 Review the `Makefile` to identify other variable inputs to the build and release workflow.
-
