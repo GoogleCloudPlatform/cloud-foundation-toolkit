@@ -57,10 +57,10 @@ build-image-developer-tools:
 		--build-arg BASE_IMAGE_VERSION=${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
 		--build-arg PACKER_VERSION=${PACKER_VERSION} \
 		-t ${DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools-jenkins"
-	docker build \
+	docker build . \
 		--build-arg TERRAFORM_VERSION=${TERRAFORM_VERSION} \
 		--build-arg CLOUD_SDK_VERSION=${CLOUD_SDK_VERSION} \
-		-t ${DOCKER_IMAGE_DEVELOPER_LIGHT}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools-light"
+		-t ${DOCKER_IMAGE_DEVELOPER_LIGHT}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} -f "./developer-tools-light/Dockerfile"
 
 .PHONY: release-image-developer-tools
 release-image-developer-tools:

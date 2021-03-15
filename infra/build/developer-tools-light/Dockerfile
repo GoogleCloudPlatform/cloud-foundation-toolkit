@@ -33,7 +33,7 @@ COPY --from=installer /software/terraform /usr/local/bin/terraform
 ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
 ARG CLOUD_SDK_VERSION
 ENV CLOUD_SDK_VERSION ${CLOUD_SDK_VERSION}
-ADD ./build/install_cloud_sdk.sh /build/
+ADD developer-tools/build/install_cloud_sdk.sh /build/
 RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 RUN rm -rf /build
 
