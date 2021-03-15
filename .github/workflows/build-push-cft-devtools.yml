@@ -1,10 +1,11 @@
 name: Build and push new dev tools image
 on:
   push:
-    branches: 
+    branches:
       - "master"
     paths:
       - "infra/build/**"
+      - ".github/workflows/build-push-cft-devtools.yml"
 env:
   PROJECT_ID: ${{ secrets.GCR_PROJECT_ID }}
 
