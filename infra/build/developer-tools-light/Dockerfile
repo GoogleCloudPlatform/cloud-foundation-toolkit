@@ -19,13 +19,11 @@ ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
 
-FROM alpine:3.12
-RUN apk add --no-cache \
-        ca-certificates \
-        bash \
+FROM gcr.io/cloud-marketplace/google/ubuntu1804:latest
+RUN apt-get update -y && apt-get install -y -q \
         git \
+        wget \
         python3 \
-        grep \
         jq
 
 # Install Terraform
