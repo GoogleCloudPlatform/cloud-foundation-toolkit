@@ -1,4 +1,4 @@
 google-api-python-client~=1.7
 google-auth~=1.6
-Jinja2==2.10.1
+Jinja2==2.11.3
 PyGithub==1.51
