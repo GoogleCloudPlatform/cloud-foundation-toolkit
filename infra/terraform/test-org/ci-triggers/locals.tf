@@ -21,14 +21,18 @@ locals {
     "ci-projects",
     "ci-shared",
     "ci-anthos-platform",
-    "ci-example-foundation"
+    "ci-example-foundation",
+    "ci-gcp-example-foundation-app"
   ]
-  example_foundation                = { repo = "terraform-example-foundation", folder_id = replace(data.terraform_remote_state.org.outputs.folders["ci-example-foundation"], "folders/", "") }
+  gcp_org_prefix                    = "gcp-"
+  example_foundation                = { "terraform-example-foundation" = { folder_id = replace(data.terraform_remote_state.org.outputs.folders["ci-example-foundation"], "folders/", ""), gh_org = "terraform-google-modules" } }
+  example_foundation_app            = { "terraform-example-foundation-app" = { folder_id = replace(data.terraform_remote_state.org.outputs.folders["ci-gcp-example-foundation-app"], "folders/", ""), gh_org = "GoogleCloudPlatform" } }
   example_foundation_int_test_modes = ["default", "HubAndSpoke"]
   training_repos = [
     "ci-cloud-foundation-training"
   ]
-  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.training_repos, key) ? replace(key, "ci-", "") : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key) }
+  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.training_repos, key) ? replace(key, "ci-", "") : replace(key, "ci-", "terraform-google-") => { "folder_id" = replace(value, "folders/", ""), "gh_org" = "terraform-google-modules" } if ! contains(local.exclude_folders, key) && ! (replace(key, local.gcp_org_prefix, "") != key) }
+  repo_folder_gcp_org      = merge({ for key, value in data.terraform_remote_state.org.outputs.folders : replace(key, "ci-gcp-", "terraform-google-") => { "folder_id" = replace(value, "folders/", ""), "gh_org" = "GoogleCloudPlatform" } if ! contains(local.exclude_folders, key) && replace(key, local.gcp_org_prefix, "") != key }, local.example_foundation_app)
   org_id                   = data.terraform_remote_state.org.outputs.org_id
   billing_account          = data.terraform_remote_state.org.outputs.billing_account
   tf_validator_project_id  = data.terraform_remote_state.tf-validator.outputs.project_id

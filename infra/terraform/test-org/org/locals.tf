@@ -83,5 +83,6 @@ locals {
     "cloud-foundation-training", # Not module
     "cloud-router",
     "group",
+    "gcp-example-foundation-app", # Not module, in GoogleCloudPlatform org
   ]
 }
