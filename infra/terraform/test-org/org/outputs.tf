@@ -18,6 +18,10 @@ output "folders" {
   value = merge(local.folders, local.ci_folders)
 }
 
+output "ci_repos_folders" {
+  value = local.ci_repos_folders
+}
+
 output "org_id" {
   value = local.org_id
 }

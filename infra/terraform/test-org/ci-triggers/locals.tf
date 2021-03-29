@@ -22,17 +22,17 @@ locals {
     "ci-shared",
     "ci-anthos-platform",
     "ci-example-foundation",
-    "ci-gcp-example-foundation-app"
   ]
-  gcp_org_prefix                    = "gcp-"
-  example_foundation                = { "terraform-example-foundation" = { folder_id = replace(data.terraform_remote_state.org.outputs.folders["ci-example-foundation"], "folders/", ""), gh_org = "terraform-google-modules" } }
-  example_foundation_app            = { "terraform-example-foundation-app" = { folder_id = replace(data.terraform_remote_state.org.outputs.folders["ci-gcp-example-foundation-app"], "folders/", ""), gh_org = "GoogleCloudPlatform" } }
+  # custom mapping of the form name => repo_name used for overriding `terraform-google` prefix
+  custom_repo_mapping = {
+    "cloud-foundation-training" = "cloud-foundation-training",
+    "example-foundation-app"    = "terraform-example-foundation-app"
+  }
+  # example foundation has custom test modes
+  example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
   example_foundation_int_test_modes = ["default", "HubAndSpoke"]
-  training_repos = [
-    "ci-cloud-foundation-training"
-  ]
-  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.training_repos, key) ? replace(key, "ci-", "") : replace(key, "ci-", "terraform-google-") => { "folder_id" = replace(value, "folders/", ""), "gh_org" = "terraform-google-modules" } if ! contains(local.exclude_folders, key) && ! (replace(key, local.gcp_org_prefix, "") != key) }
-  repo_folder_gcp_org      = merge({ for key, value in data.terraform_remote_state.org.outputs.folders : replace(key, "ci-gcp-", "terraform-google-") => { "folder_id" = replace(value, "folders/", ""), "gh_org" = "GoogleCloudPlatform" } if ! contains(local.exclude_folders, key) && replace(key, local.gcp_org_prefix, "") != key }, local.example_foundation_app)
+
+  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.ci_repos_folders : contains(keys(local.custom_repo_mapping), key) ? local.custom_repo_mapping[key] : "terraform-google-${key}" => value if ! contains(local.exclude_folders, value.folder_name) }
   org_id                   = data.terraform_remote_state.org.outputs.org_id
   billing_account          = data.terraform_remote_state.org.outputs.billing_account
   tf_validator_project_id  = data.terraform_remote_state.tf-validator.outputs.project_id

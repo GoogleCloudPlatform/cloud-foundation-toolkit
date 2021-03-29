@@ -18,7 +18,7 @@ resource "google_cloudbuild_trigger" "lint_trigger" {
   provider    = google-beta
   project     = local.project_id
   description = "Lint tests on pull request for ${each.key}"
-  for_each    = merge(local.repo_folder, local.example_foundation, local.repo_folder_gcp_org)
+  for_each    = merge(local.repo_folder, local.example_foundation)
   github {
     owner = each.value.gh_org
     name  = each.key
@@ -34,7 +34,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   provider    = google-beta
   project     = local.project_id
   description = "Integration tests on pull request for ${each.key}"
-  for_each    = merge(local.repo_folder, local.repo_folder_gcp_org)
+  for_each    = local.repo_folder
   github {
     owner = each.value.gh_org
     name  = each.key

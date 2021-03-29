@@ -20,14 +20,17 @@ locals {
   cft_ci_group     = "cft-ci-robots@test.infra.cft.tips"
   cft_dev_group    = "cft-developers@dev.infra.cft.tips"
   gcp_admins_group = "gcp-admins@test.infra.cft.tips"
+  tgm_org_name     = "terraform-google-modules"
+  gcp_org_name     = "GoogleCloudPlatform"
 
   folders = {
     "ci-projects" = module.folders-root.ids["ci-projects"]
     "ci-shared"   = module.folders-root.ids["ci-shared"]
   }
 
-  ci_folders = module.folders-ci.ids
-  modules = [
+  ci_folders       = module.folders-ci.ids
+  ci_repos_folders = merge({ for m in local.tgm_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = local.tgm_org_name } }, { for m in local.gcp_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = local.gcp_org_name } })
+  tgm_org_modules = [
     "kms",
     "network",
     "folders",
@@ -83,6 +86,8 @@ locals {
     "cloud-foundation-training", # Not module
     "cloud-router",
     "group",
-    "gcp-example-foundation-app", # Not module, in GoogleCloudPlatform org
+  ]
+  gcp_org_modules = [
+    "example-foundation-app", # Not module
   ]
 }
