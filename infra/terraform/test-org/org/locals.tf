@@ -20,8 +20,6 @@ locals {
   cft_ci_group     = "cft-ci-robots@test.infra.cft.tips"
   cft_dev_group    = "cft-developers@dev.infra.cft.tips"
   gcp_admins_group = "gcp-admins@test.infra.cft.tips"
-  tgm_org_name     = "terraform-google-modules"
-  gcp_org_name     = "GoogleCloudPlatform"
 
   folders = {
     "ci-projects" = module.folders-root.ids["ci-projects"]
@@ -29,7 +27,10 @@ locals {
   }
 
   ci_folders       = module.folders-ci.ids
-  ci_repos_folders = merge({ for m in local.tgm_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = local.tgm_org_name } }, { for m in local.gcp_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = local.gcp_org_name } })
+  ci_repos_folders = merge(
+                          { for m in local.tgm_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = "terraform-google-modules" } },
+                          { for m in local.gcp_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = "GoogleCloudPlatform" } }
+                        )
   tgm_org_modules = [
     "kms",
     "network",
