@@ -18,9 +18,9 @@ resource "google_cloudbuild_trigger" "lint_trigger" {
   provider    = google-beta
   project     = local.project_id
   description = "Lint tests on pull request for ${each.key}"
-  for_each    = merge(local.repo_folder, { "${local.example_foundation.repo}" = local.example_foundation.folder_id })
+  for_each    = merge(local.repo_folder, local.example_foundation)
   github {
-    owner = "terraform-google-modules"
+    owner = each.value.gh_org
     name  = each.key
     pull_request {
       branch = ".*"
@@ -36,7 +36,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   description = "Integration tests on pull request for ${each.key}"
   for_each    = local.repo_folder
   github {
-    owner = "terraform-google-modules"
+    owner = each.value.gh_org
     name  = each.key
     pull_request {
       branch = ".*"
@@ -44,7 +44,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   }
   substitutions = {
     _BILLING_ACCOUNT          = local.billing_account
-    _FOLDER_ID                = each.value
+    _FOLDER_ID                = each.value.folder_id
     _ORG_ID                   = local.org_id
     _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
   }
@@ -146,15 +146,15 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
   description = "Integration tests on pull request for example_foundations in ${each.value} mode"
   for_each    = toset(local.example_foundation_int_test_modes)
   github {
-    owner = "terraform-google-modules"
-    name  = local.example_foundation.repo
+    owner = values(local.example_foundation)[0]["gh_org"]
+    name  = keys(local.example_foundation)[0]
     pull_request {
       branch = ".*"
     }
   }
   substitutions = {
     _BILLING_ACCOUNT               = local.billing_account
-    _FOLDER_ID                     = local.example_foundation.folder_id
+    _FOLDER_ID                     = values(local.example_foundation)[0]["folder_id"]
     _ORG_ID                        = local.org_id
     _EXAMPLE_FOUNDATIONS_TEST_MODE = each.value
   }
