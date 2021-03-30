@@ -30,6 +30,12 @@ RUN git clone --depth 1 --branch v"$TERRAFORM_VERSION" https://github.com/hashic
     cd terraform/tools/terraform-bundle && \
     go install .
 
+# Builds module-swapper
+FROM golang:$GOLANG_VERSION-alpine AS module-swapper-builder
+WORKDIR /go/src/github.com/GoogleCloudPlatform/infra/developer-tools/build/scripts/module-swapper
+COPY ./build/scripts/module-swapper ./
+RUN go build -v -o /usr/local/bin/module-swapper
+
 FROM golang:$GOLANG_VERSION-alpine AS go
 
 FROM ruby:$RUBY_VERSION-alpine
@@ -104,6 +110,9 @@ RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
 # Installs terraform-bundler
 COPY --from=terraform-bundle-builder /go/bin/terraform-bundle /bin/terraform-bundle
+
+# Install module swapper
+COPY --from=module-swapper-builder /usr/local/bin/module-swapper /usr/local/bin/module-swapper
 
 ADD ./build/install_shellcheck.sh /build/
 RUN /build/install_shellcheck.sh
