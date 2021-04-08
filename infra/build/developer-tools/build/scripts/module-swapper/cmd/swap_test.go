@@ -132,7 +132,7 @@ func Test_processFile(t *testing.T) {
 			defer func() {
 				log.SetOutput(os.Stderr)
 			}()
-			got, err := disableModules(tt.args.f, tt.args.p)
+			got, err := replaceLocalModules(tt.args.f, tt.args.p)
 			t.Log(buf.String())
 			if (err != nil) != tt.wantErr {
 				t.Errorf("processFile() error = %v, wantErr %v", err, tt.wantErr)
