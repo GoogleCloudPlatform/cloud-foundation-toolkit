@@ -8,7 +8,11 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
+
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
 )
 
 var (
@@ -142,6 +146,74 @@ func Test_processFile(t *testing.T) {
 				t.Errorf("processFile() = %v, want %v", string(got), string(tt.want))
 			}
 			tearDownProcessFileTest()
+		})
+	}
+}
+
+func getTempDir() string {
+	d, err := ioutil.TempDir("", "gitrmtest")
+	if err != nil {
+		log.Fatalf("Error creating tempdir: %v", err)
+	}
+	return d
+}
+
+func tempGitRepoWithRemote(repoURL, remote string) string {
+	dir := getTempDir()
+	r, err := git.PlainInit(dir, true)
+	if err != nil {
+		log.Fatalf("Error creating repo in tempdir: %v", err)
+	}
+	_, err = r.CreateRemote(&config.RemoteConfig{
+		Name: remote,
+		URLs: []string{repoURL},
+	})
+	if err != nil {
+		log.Fatalf("Error creating remote in tempdir repo: %v", err)
+	}
+	return dir
+}
+
+func Test_getModuleNameRegistry(t *testing.T) {
+	type args struct {
+		dir string
+	}
+	tests := []struct {
+		name       string
+		args       args
+		want       string
+		want1      string
+		wantErr    bool
+		wantErrStr string
+	}{
+		{"simple", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar", "origin")}, "bar", "foo", false, ""},
+		{"simple-with-trailing-slash", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar/", "origin")}, "bar", "foo", false, ""},
+		{"simple-with-trailing-git", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar.git", "origin")}, "bar", "foo", false, ""},
+		{"err-no-remote-origin", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar", "foo")}, "", "", true, ""},
+		{"err-not-git-repo", args{getTempDir()}, "", "", true, ""},
+		{"err-not-github-repo", args{tempGitRepoWithRemote("https://gitlab.com/foo/terraform-google-bar", "origin")}, "", "", true, "Expected GitHub remote of form https://github.com/ModuleRegistry/ModuleRepo"},
+		{"err-not-prefixed-repo", args{tempGitRepoWithRemote("https://github.com/foo/bar", "origin")}, "", "", true, "Expected to find repo name prefixed with terraform-google-"},
+		{"err-malformed-remote", args{tempGitRepoWithRemote("https://github.com/footerraform-google-bar", "origin")}, "", "", true, "Expected GitHub org/owner of form ModuleRegistry/ModuleRepo"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1, err := getModuleNameRegistry(tt.args.dir)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getModuleNameRegistry() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			} else {
+				if tt.wantErrStr != "" {
+					if !strings.Contains(err.Error(), tt.wantErrStr) {
+						t.Errorf("getModuleNameRegistry() error = %v, expected to contain %v", err, tt.wantErrStr)
+					}
+				}
+			}
+			if got != tt.want {
+				t.Errorf("getModuleNameRegistry() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("getModuleNameRegistry() got1 = %v, want %v", got1, tt.want1)
+			}
 		})
 	}
 }

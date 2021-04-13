@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
+	"github.com/go-git/go-git/v5"
 	"github.com/pmezard/go-difflib/difflib"
 )
 
@@ -24,6 +24,60 @@ var (
 	linebreak          = "\n"
 	localModules       = []LocalTerraformModule{}
 )
+
+// getRemoteURL gets the URL of a given remote from git repo at dir
+func getRemoteURL(dir, remoteName string) (string, error) {
+	r, err := git.PlainOpen(dir)
+	if err != nil {
+		return "", err
+	}
+	rm, err := r.Remote(remoteName)
+	if err != nil {
+		return "", err
+	}
+	return rm.Config().URLs[0], nil
+}
+
+// trimAnySuffixes trims first matching suffix from slice of suffixes
+func trimAnySuffixes(s string, suffixes []string) string {
+	for _, suffix := range suffixes {
+		if strings.HasSuffix(s, suffix) {
+			s = s[:len(s)-len(suffix)]
+			return s
+		}
+	}
+	return s
+}
+
+// getModuleNameRegistry returns module name and registry by parsing git remote
+func getModuleNameRegistry(dir string) (string, string, error) {
+	remote, err := getRemoteURL(dir, "origin")
+	if err != nil {
+		return "", "", err
+	}
+
+	// GH remote will be of form https://github.com/ModuleRegistry/ModuleName
+	if !strings.Contains(remote, "https://github.com/") {
+		return "", "", fmt.Errorf("Expected GitHub remote of form https://github.com/ModuleRegistry/ModuleRepo. Got: %s", remote)
+	}
+
+	// remotes maybe suffixed with a trailing / or .git
+	remote = trimAnySuffixes(remote, []string{"/", ".git"})
+	namePrefix := strings.ReplaceAll(remote, "https://github.com/", "")
+	if !strings.Contains(namePrefix, "/") {
+		return "", "", fmt.Errorf("Expected GitHub org/owner of form ModuleRegistry/ModuleRepo. Got: %s", namePrefix)
+	}
+	moduleRegistry := namePrefix[:strings.LastIndex(namePrefix, "/")]
+	repoName := namePrefix[strings.LastIndex(namePrefix, "/")+1:]
+
+	// module repos are prefixed with terraform-google-
+	if !strings.HasPrefix(repoName, "terraform-google-") {
+		return "", "", fmt.Errorf("Expected to find repo name prefixed with terraform-google-. Got: %s", repoName)
+	}
+	moduleName := strings.ReplaceAll(repoName, "terraform-google-", "")
+	log.Printf("Module name set from remote to %s", moduleName)
+	return moduleName, moduleRegistry, nil
+}
 
 // findSubModules generates slice of LocalTerraformModule for submodules
 func findSubModules(path, rootModuleFQN string) []LocalTerraformModule {
@@ -47,16 +101,6 @@ func findSubModules(path, rootModuleFQN string) []LocalTerraformModule {
 		}
 	}
 	return subModules
-}
-
-// fmtTF uses the Terraform binary to format a tf file
-func fmtTF(path string) error {
-	cmd := exec.Command("terraform", "fmt", path)
-	_, err := cmd.Output()
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // restoreModules restores old config as marked by restoreMarker
@@ -101,10 +145,13 @@ func replaceLocalModules(f []byte, p string) ([]byte, error) {
 		for i, line := range lines {
 			if strings.Contains(line, fmt.Sprintf("\"%s\"", localModule.ModuleFQN)) && !strings.Contains(line, restoreMarker) {
 				// swap with local module and add restore point
-				lines[i] = strings.ReplaceAll(line, localModule.ModuleFQN, newModulePath) + fmt.Sprintf("# %s %s", restoreMarker, line)
+				leadingWhiteSpace := line[:strings.Index(line, "source")]
+				newSource := fmt.Sprintf("source = \"%s\"", newModulePath)
+				lines[i] = leadingWhiteSpace + newSource + fmt.Sprintf(" # %s %s", restoreMarker, line)
 				// if next line is a version declaration, disable that as well
 				if i < len(lines)-1 && strings.Contains(lines[i+1], "version") {
-					lines[i+1] = fmt.Sprintf("# %s %s", restoreMarker, lines[i+1])
+					leadingWhiteSpace = lines[i+1][:strings.Index(lines[i+1], "version")]
+					lines[i+1] = fmt.Sprintf("%s# %s %s", leadingWhiteSpace, restoreMarker, lines[i+1])
 				}
 			}
 		}
@@ -129,18 +176,6 @@ func replaceLocalModules(f []byte, p string) ([]byte, error) {
 
 }
 
-// rootModuleName returns root module name from env var or path
-func rootModuleName(p string) string {
-	if os.Getenv("MODULE_NAME") != "" {
-		moduleName := strings.ReplaceAll(os.Getenv("MODULE_NAME"), "terraform-google-", "")
-		log.Printf("Module name set from envvar to %s", moduleName)
-		return moduleName
-	}
-	moduleName := strings.ReplaceAll(filepath.Base(p), "terraform-google-", "")
-	log.Printf("Module name set from path to %s", moduleName)
-	return moduleName
-}
-
 // getTFFiles returns a slice of valid TF file paths
 func getTFFiles(path string) []string {
 	// validate path
@@ -162,8 +197,11 @@ func getTFFiles(path string) []string {
 
 }
 
-func SwapModules(rootPath, moduleRegistryPrefix, moduleRegistrySuffix, subModulesDir, examplesDir string, restore bool) {
-	moduleName := rootModuleName(rootPath)
+func SwapModules(rootPath, moduleRegistrySuffix, subModulesDir, examplesDir string, restore bool) {
+	moduleName, moduleRegistryPrefix, err := getModuleNameRegistry(rootPath)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// add root module to slice of localModules
 	localModules = append(localModules, LocalTerraformModule{moduleName, rootPath, fmt.Sprintf("%s/%s/%s", moduleRegistryPrefix, moduleName, moduleRegistrySuffix)})
@@ -197,7 +235,6 @@ func SwapModules(rootPath, moduleRegistryPrefix, moduleRegistrySuffix, subModule
 			if err != nil {
 				log.Printf("Error writing file: %v", err)
 			}
-			fmtTF(TFFilePath)
 		}
 
 	}

@@ -12,7 +12,6 @@ func main() {
 	workDir := flag.String("workdir", "", "Absolute path to root module where examples should be swapped. Defaults to working directory")
 	subModulesDir := flag.String("submods-path", "modules", "Path to a submodules if any that maybe referenced. Defaults to working dir/modules")
 	examplesDir := flag.String("examples-path", "examples", "Path to examples that should be swapped. Defaults to cwd/examples")
-	moduleRegistryPrefix := flag.String("registry-prefix", "terraform-google-modules", "Module registry prefix")
 	moduleRegistrySuffix := flag.String("registry-suffix", "google", "Module registry suffix")
 	restore := flag.Bool("restore", false, "Restores disabled modules")
 	flag.Parse()
@@ -25,5 +24,5 @@ func main() {
 		}
 		rootPath = cwd
 	}
-	cmd.SwapModules(rootPath, *moduleRegistryPrefix, *moduleRegistrySuffix, *subModulesDir, *examplesDir, *restore)
+	cmd.SwapModules(rootPath, *moduleRegistrySuffix, *subModulesDir, *examplesDir, *restore)
 }

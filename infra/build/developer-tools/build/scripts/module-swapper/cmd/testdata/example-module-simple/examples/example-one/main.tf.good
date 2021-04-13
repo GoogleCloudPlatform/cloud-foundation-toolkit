@@ -20,8 +20,8 @@ provider "google" {
 
 # [START cloudrouter_create]
 module "cloud_router" {
-  source  = "../.."# [restore-marker]   source  = "terraform-google-modules/example-module-simple/google"
-# [restore-marker]   version = "~> 0.4"
+  source = "../.." # [restore-marker]   source  = "terraform-google-modules/example-module-simple/google"
+  # [restore-marker]   version = "~> 0.4"
 
   name   = "my-router"
   region = "us-central1"
