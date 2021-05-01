@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-module "project" {
+module "cft-manager-project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 3.0"
+  version = "~> 10.0"
 
   name              = "cft-project-manager"
   random_project_id = true
@@ -28,6 +28,7 @@ module "project" {
   activate_apis = [
     "cloudresourcemanager.googleapis.com",
     "cloudscheduler.googleapis.com",
+    "cloudbuild.googleapis.com",
     "cloudfunctions.googleapis.com",
     "pubsub.googleapis.com",
     "storage-api.googleapis.com",
