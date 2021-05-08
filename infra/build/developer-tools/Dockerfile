@@ -15,7 +15,7 @@
 ARG RUBY_VERSION
 ARG GOLANG_VERSION
 
-FROM sethvargo/hashicorp-installer:0.1.3 AS installer
+FROM sethvargo/hashicorp-installer:0.2.0 AS installer
 # Required to download and install Terraform
 ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}

@@ -7,6 +7,7 @@ require (
 	github.com/briandowns/spinner v1.6.1
 	github.com/forseti-security/config-validator v0.0.0-20200505040130-17dc60b21dc8
 	github.com/golang/protobuf v1.3.3
+	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/hashicorp/terraform v0.12.2 // indirect
 	github.com/inconshreveable/log15 v0.0.0-20180818164646-67afb5ed74ec
 	github.com/open-policy-agent/opa v0.17.2

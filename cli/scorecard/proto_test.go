@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/forseti-security/config-validator/pkg/api/validator"
+	"github.com/google/go-cmp/cmp"
 )
 
 func jsonToInterface(jsonStr string) map[string]interface{} {
@@ -58,13 +59,27 @@ func TestDataTypeTransformation(t *testing.T) {
 		}
 	})
 	t.Run("stringViaJSON", func(t *testing.T) {
+		// Compare as structured JSON objects, since eventually this
+		// should use the protojson package, which does not support
+		// stable serialization. See
+		// https://github.com/golang/protobuf/issues/1121#issuecomment-627554847
 		gotStr, err := stringViaJSON(pbAsset)
-		wantedStr := `{"name":"//cloudresourcemanager.googleapis.com/projects/23456","assetType":"cloudresourcemanager.googleapis.com/Project","iamPolicy":{"version":1,"bindings":[{"role":"roles/owner","members":["user:user@example.com"]}],"etag":"WwAA1Aaa/BA="},"ancestors":["projects/1234","organizations/56789"]}`
 		if err != nil {
 			t.Fatal("unexpected error", err)
 		}
-		if gotStr != wantedStr {
-			t.Errorf("wanted %s, got %s", wantedStr, gotStr)
+		var gotJSON map[string]interface{}
+		if err := json.Unmarshal([]byte(gotStr), &gotJSON); err != nil {
+			t.Fatalf("failed to parse JSON string %v: %v", gotStr, err)
+		}
+
+		wantStr := `{"name":"//cloudresourcemanager.googleapis.com/projects/23456","assetType":"cloudresourcemanager.googleapis.com/Project","iamPolicy":{"version":1,"bindings":[{"role":"roles/owner","members":["user:user@example.com"]}],"etag":"WwAA1Aaa/BA="},"ancestors":["projects/1234","organizations/56789"]}`
+		var wantJSON map[string]interface{}
+		if err := json.Unmarshal([]byte(wantStr), &wantJSON); err != nil {
+			t.Fatalf("failed to parse JSON string %v: %v", wantStr, err)
+		}
+
+		if diff := cmp.Diff(wantJSON, gotJSON); diff != "" {
+			t.Errorf("stringViaJSON() returned unexpected difference (-want +got):\n%s", diff)
 		}
 	})
 }

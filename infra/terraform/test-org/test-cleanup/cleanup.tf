@@ -14,23 +14,22 @@
  * limitations under the License.
 */
 
-module "app-engine" {
+module "scheduler-app-engine" {
   source      = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version     = "~> 3.0"
+  version     = "~> 10.0"
   location_id = local.app_location
-  project_id  = module.project.project_id
+  project_id  = module.cft-manager-project.project_id
 }
 
-module "projects_cleanup" {
+module "projects_cleaner" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 1.1"
+  version = "~> 2.0"
 
   job_schedule             = "17 * * * *"
   max_project_age_in_hours = "6"
   organization_id          = local.org_id
-  project_id               = module.project.project_id
+  project_id               = module.cft-manager-project.project_id
   region                   = local.region
   target_excluded_labels   = local.exclude_labels
   target_folder_id         = local.cleanup_folder
 }
-

@@ -15,7 +15,7 @@
  */
 
 output "project_id" {
-  value = module.project.project_id
+  value = module.cft-manager-project.project_id
 }
 
 output "excluded_labels" {
