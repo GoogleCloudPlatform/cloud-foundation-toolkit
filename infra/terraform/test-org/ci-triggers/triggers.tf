@@ -49,7 +49,8 @@ resource "google_cloudbuild_trigger" "int_trigger" {
     _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
   }
 
-  filename = "build/int.cloudbuild.yaml"
+  filename      = "build/int.cloudbuild.yaml"
+  ignored_files = ["*.md", ".gitignore"]
 }
 
 resource "google_cloudbuild_trigger" "tf_validator" {
@@ -159,5 +160,6 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
     _EXAMPLE_FOUNDATIONS_TEST_MODE = each.value
   }
 
-  filename = "build/int.cloudbuild.yaml"
+  filename      = "build/int.cloudbuild.yaml"
+  ignored_files = ["*.md", ".gitignore"]
 }
