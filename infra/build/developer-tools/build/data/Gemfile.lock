@@ -318,10 +318,11 @@ GEM
       regexp_parser (~> 1.5)
       uri_template (~> 0.7)
     jwt (2.2.2)
-    kitchen-terraform (5.5.0)
+    kitchen-terraform (5.7.2)
+      delegate (~> 0.1.0)
       dry-validation (~> 0.13)
       inspec (>= 3, < 5)
-      json (~> 2.2)
+      json (~> 2.3)
       mixlib-shellout (~> 3.0)
       test-kitchen (~> 2.1)
       tty-which (~> 0.4.0)
@@ -575,7 +576,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  kitchen-terraform (~> 5.5)!
+  kitchen-terraform (~> 5.7)!
   kubeclient (~> 4.0)!
   nokogiri (~> 1.11)!
   rest-client (~> 2.0)!
