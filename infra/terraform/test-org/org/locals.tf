@@ -90,5 +90,6 @@ locals {
   ]
   gcp_org_modules = [
     "example-foundation-app", # Not module
+    "anthos-samples"
   ]
 }
