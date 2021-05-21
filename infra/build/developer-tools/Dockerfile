@@ -80,6 +80,10 @@ ENV TERRAGRUNT_VERSION ${TERRAGRUNT_VERSION}
 ARG KUSTOMIZE_VERSION
 ENV KUSTOMIZE_VERSION ${KUSTOMIZE_VERSION}
 
+# Required to download and install Kpt
+ARG KPT_VERSION
+ENV KPT_VERSION ${KPT_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -134,6 +138,9 @@ RUN ./build/install_terragrunt.sh ${TERRAGRUNT_VERSION}
 
 ADD ./build/install_kustomize.sh /build/
 RUN ./build/install_kustomize.sh ${KUSTOMIZE_VERSION}
+
+ADD ./build/install_kpt.sh /build/
+RUN ./build/install_kpt.sh ${KPT_VERSION}
 
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
