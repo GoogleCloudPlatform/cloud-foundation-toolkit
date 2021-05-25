@@ -33,7 +33,6 @@ gcloud config set component_manager/disable_update_check true
 gcloud config set survey/disable_prompts true
 gcloud components install beta --quiet
 gcloud components install alpha --quiet
-gcloud components install kpt --quiet
 
 gcloud --version
 gsutil version -l

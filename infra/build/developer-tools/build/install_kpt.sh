@@ -1,4 +1,5 @@
-# Copyright 2018 Google LLC
+#! /bin/bash
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 5.8"
-  gem "kubeclient", "~> 4.0"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.11'
-end
+set -e
+set -u
+
+KPT_VERSION=$1
+
+cd /build
+
+wget "https://github.com/GoogleContainerTools/kpt/releases/download/v${KPT_VERSION}/kpt_linux_amd64-${KPT_VERSION}.tar.gz"
+tar xzf "kpt_linux_amd64-${KPT_VERSION}.tar.gz"
+rm "kpt_linux_amd64-${KPT_VERSION}.tar.gz"
+install -o 0 -g 0 -m 0755 kpt /usr/local/bin/
