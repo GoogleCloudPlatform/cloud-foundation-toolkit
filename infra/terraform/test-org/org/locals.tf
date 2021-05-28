@@ -90,6 +90,7 @@ locals {
   ]
   gcp_org_modules = [
     "example-foundation-app", # Not module
-    "anthos-samples"
+    "anthos-samples",
+    "secure-cicd",
   ]
 }
