@@ -26,8 +26,12 @@ locals {
     "ci-shared"   = module.folders-root.ids["ci-shared"]
   }
 
-  ci_folders = module.folders-ci.ids
-  modules = [
+  ci_folders       = module.folders-ci.ids
+  ci_repos_folders = merge(
+                          { for m in local.tgm_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = "terraform-google-modules" } },
+                          { for m in local.gcp_org_modules : m => { folder_name = "ci-${m}", folder_id = replace(module.folders-ci.ids["ci-${m}"], "folders/", ""), gh_org = "GoogleCloudPlatform" } }
+                        )
+  tgm_org_modules = [
     "kms",
     "network",
     "folders",
@@ -77,9 +81,16 @@ locals {
     "github-actions-runners",
     "healthcare",
     "gke-gitlab",
-    "example-foundation",
-
-    # Not Modules
-    "anthos-platform"
+    "example-foundation", # Not module
+    "anthos-platform",    # Not module
+    "cloud-operations",
+    "cloud-foundation-training", # Not module
+    "cloud-router",
+    "group",
+  ]
+  gcp_org_modules = [
+    "example-foundation-app", # Not module
+    "anthos-samples",
+    "secure-cicd",
   ]
 }

@@ -124,13 +124,12 @@ properties:
               this condition. If not specified, defaults to 1.
 
 outputs:
- properties:
-   - createTime:
-       type: string
-       description: |
-         The instant at which the waiter resource was created.
-         A timestamp in the RFC3339 UTC "Zulu" format, accurate to nanoseconds.
-         Example: "2014-10-02T15:01:23.045123456Z".
+  createTime:
+   type: string
+   description: |
+     The instant at which the waiter resource was created.
+     A timestamp in the RFC3339 UTC "Zulu" format, accurate to nanoseconds.
+     Example: "2014-10-02T15:01:23.045123456Z".
 
 documentation:
   - templates/runtime_config/README.md

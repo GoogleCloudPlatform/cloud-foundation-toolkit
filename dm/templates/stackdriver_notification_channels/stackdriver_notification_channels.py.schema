@@ -115,38 +115,37 @@ properties:
           type: string
           default: text/markdown
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The name of the Metric Descriptor.
-    - type:
-        type: string
-        description: The metric type as defined in the descriptor.
-    - labels:
-        type: array
-        description: List of the defined labels.
-        minItems: 0
-        items:
-          type: string
-    - metricKind:
-        type: string
-        description: The metric kind as defined.
-    - valueType:
-        type: string
-        description: The measurement type (int, string, etc.).
-    - unit:
-        type: string
-        description: The unit in which the metric value is reported.
-    - description:
-        type: string
-        description: The metric description.
-    - displayName:
-        type: string
-        description: The display name of the metric.
-    - metadata:
-        type: object
-        additionalProperties: false
-        description: Metadata associated with the metric.
+  name:
+    type: string
+    description: The name of the Metric Descriptor.
+  type:
+    type: string
+    description: The metric type as defined in the descriptor.
+  labels:
+    type: array
+    description: List of the defined labels.
+    minItems: 0
+    items:
+      type: string
+  metricKind:
+    type: string
+    description: The metric kind as defined.
+  valueType:
+    type: string
+    description: The measurement type (int, string, etc.).
+  unit:
+    type: string
+    description: The unit in which the metric value is reported.
+  description:
+    type: string
+    description: The metric description.
+  displayName:
+    type: string
+    description: The display name of the metric.
+  metadata:
+    type: object
+    additionalProperties: false
+    description: Metadata associated with the metric.
 
 documentation:
   - templates/stackdriver_metric_descriptor/README.md

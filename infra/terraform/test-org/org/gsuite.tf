@@ -66,6 +66,7 @@ module "ci_gsuite_sa_project" {
     "admin.googleapis.com",
     "appengine.googleapis.com",
     "cloudbilling.googleapis.com",
+    "cloudidentity.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "iam.googleapis.com",

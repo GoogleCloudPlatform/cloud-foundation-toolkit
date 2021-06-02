@@ -23,11 +23,11 @@ provider "archive" {
 }
 
 provider "google" {
-  version = "~> 2.19"
+  version = "~> 3.38"
 }
 
 provider "google-beta" {
-  version = "~> 2.19"
+  version = "~> 3.38"
 }
 
 provider "null" {

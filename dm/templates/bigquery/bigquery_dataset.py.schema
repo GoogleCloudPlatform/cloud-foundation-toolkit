@@ -190,24 +190,23 @@ properties:
         count: 3
 
 outputs:
-  properties:
-    - selfLink:
-        type: string
-        description: The URI of the created resource.
-    - etag:
-        type: string
-        description: The hash of the resource.
-    - creationTime:
-        type: string
-        description: |
-          The time when the dataset was created, in milliseconds since
-          epoch. For example, 1535739430.
-    - lastModifiedTime:
-        type: string
-        description: |
-          The time when the dataset or any of its tables was last
-          modified, in milliseconds since the epoch. For example,
-          1535739430.
+  selfLink:
+    type: string
+    description: The URI of the created resource.
+  etag:
+    type: string
+    description: The hash of the resource.
+  creationTime:
+    type: string
+    description: |
+      The time when the dataset was created, in milliseconds since
+      epoch. For example, 1535739430.
+  lastModifiedTime:
+    type: string
+    description: |
+      The time when the dataset or any of its tables was last
+      modified, in milliseconds since the epoch. For example,
+      1535739430.
 
 documentation:
   - templates/bigquery/README.md

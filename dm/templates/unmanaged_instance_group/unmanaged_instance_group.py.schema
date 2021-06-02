@@ -15,7 +15,7 @@
 info:
   title: Unmanaged Instance Group
   author: Google Cloud PSO and partners
-  version: 1.0.0
+  version: 1.2.0
   description: |
     Creates a unmanaged instance group.
 
@@ -73,33 +73,18 @@ properties:
     type: string
     description: |
       The URL of the network to which all instances in the instance group belong.
-  instances:
-    type: object
-    description: |
-      Instances to manipulate within the group.
-    properties:
-      add:
-        type: array
-        uniqueItems: True
-        description: |
-          List of instances to add to the unmanaged instance group.
-      remove:        
-        type: array
-        uniqueItems: True
-        description: |
-          List of instances to remove from the unmanaged instance group.
+      
 outputs:
-  properties:
-    - selfLink:
-        type: string
-        description: The URL (SelfLink) of the unmanaged instance group resource.
-    - name:
-        type: string
-        description: The name of the unmanaged instance group resource.
-    - zone:
-        type: string
-        description: |
-          The name of the zone where the unmanaged instance group is located.
+  selfLink:
+    type: string
+    description: The URL (SelfLink) of the unmanaged instance group resource.
+  name:
+    type: string
+    description: The name of the unmanaged instance group resource.
+  zone:
+    type: string
+    description: |
+      The name of the zone where the unmanaged instance group is located.
 
 documentation:
   - templates/unmanaged_instance_group/README.md

@@ -15,13 +15,5 @@ resources:
       displayName: "Spanner Cluster 1"
       nodeCount: 2
       instanceConfig: nam3
-      bindings:
-        - role: "roles/spanner.admin"
-          members:
-            - "serviceAccount:${PROJECT_NUMBER}@cloudservices.gserviceaccount.com"
       databases:
         - name: "spannerdb1"
-          bindings:
-            - role: "roles/spanner.databaseAdmin"
-              members:
-                - "serviceAccount:${PROJECT_NUMBER}@cloudservices.gserviceaccount.com"

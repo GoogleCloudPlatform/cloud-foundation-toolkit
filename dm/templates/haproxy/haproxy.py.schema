@@ -117,23 +117,22 @@ properties:
           Specifies how often the list of instances should be refreshed.
 
 outputs:
-  properties:
-    - externalIp:
-        type: string
-        description: Reference to an external IP address of the load balancer.
-    - internalIp:
-        type: string
-        description: Reference to an internal IP address of the load balancer.
-    - name:
-        type: string
-        description: The load balancer name.
-    - selfLink:
-        type: string
-        description: Link to the load balancer instance.
-    - port:
-        type: integer
-        description: |
-          Number of the port where the HAProxy load balancer will accept requests.
+  externalIp:
+    type: string
+    description: Reference to an external IP address of the load balancer.
+  internalIp:
+    type: string
+    description: Reference to an internal IP address of the load balancer.
+  name:
+    type: string
+    description: The load balancer name.
+  selfLink:
+    type: string
+    description: Link to the load balancer instance.
+  port:
+    type: integer
+    description: |
+      Number of the port where the HAProxy load balancer will accept requests.
 
 documentation:
   - templates/haproxy/README.md

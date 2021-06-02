@@ -79,24 +79,6 @@ def generate_config(context):
         append_optional_property(resource, properties, prop)
     resources_list.append(resource)
 
-    if context.properties.get('bindings'):
-        policy = {
-            'name': "{}{}".format(name, '-setIamPolicy'),
-            # https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances/setIamPolicy
-            'action': 'gcp-types/spanner-v1:spanner.projects.instances.setIamPolicy',  # pylint: disable=line-too-long
-            'properties':
-                {
-                    'resource': instance_id,
-                    'policy': {
-                        'bindings': context.properties['bindings']
-                    }
-                },
-            'metadata': {
-                'dependsOn': [name]
-            }
-        }
-        resources_list.append(policy)
-
     out = {}
     for database in context.properties.get("databases", []):
         database_resource_name = "{}{}{}".format(
@@ -118,26 +100,6 @@ def generate_config(context):
             }
         }
         resources_list.append(database_resource)
-
-        if database.get('bindings'):
-            database_policy = {
-                'name':
-                    "{}{}".format(database_resource_name,
-                                  "-setIamPolicy"),
-                # https://cloud.google.com/spanner/docs/reference/rest/v1/projects.instances.databases/setIamPolicy
-                'action': 'gcp-types/spanner-v1:spanner.projects.instances.databases.setIamPolicy',  # pylint: disable=line-too-long
-                'properties':
-                    {
-                        'resource': database_resource_name,
-                        'policy': {
-                            'bindings': database['bindings']
-                        }
-                    },
-                'metadata': {
-                    'dependsOn': [database_resource_name]
-                }
-            }
-            resources_list.append(database_policy)
 
         out[database_resource_name] = {
             'state': '$(ref.' + database_resource_name + '.state)'

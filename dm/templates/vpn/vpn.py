@@ -151,36 +151,6 @@ def generate_config(context):
                                 udp_500_rule,
                                 udp_4500_rule]
                 }
-            },
-            {
-                # An action that is executed after the vpn_tunnel function.
-                # It calls the method patch by ID on the descriptor document
-                # https://cloud.google.com/compute/docs/reference/rest/v1/routers/patch
-                'name': router_vpn_binding,
-                'action': 'gcp-types/compute-v1:compute.routers.patch',
-                'properties':
-                    {
-                        'project': project_id,
-                        'router':
-                            context.properties[router_name_tag],
-                        'region':
-                            context.properties['region'],
-                        'name':
-                            context.properties[router_name_tag],
-                        'asn':
-                            context.properties['asn'],
-                        'interfaces':
-                            [
-                                {
-                                    'ipRange':
-                                        '169.254.1.1/31',
-                                    'linkedVpnTunnel':
-                                        '$(ref.' + vpn_tunnel + '.selfLink)',
-                                    'name':
-                                        'if-1'
-                                }
-                            ]
-                    }
             }])
     else:
         # Create static routing VPN

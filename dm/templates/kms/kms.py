@@ -67,27 +67,6 @@ def generate_config(context):
                 crypto_key['properties'][prop] = key.get(prop)
         resources.append(crypto_key)
 
-        # IAM policy bindings for the crypto key
-        if 'iamPolicyBinding' in key:
-            provider = 'gcp-types/cloudkms-v1:cloudkms.projects.locations.keyRings'
-            key_resource_name = '{}/cryptoKeys/{}'.format(keyring_id, key_name)
-            crypto_key_iam = {
-                'name': '{}-iamPolicy'.format(key_resource),
-                # https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings.cryptoKeys/setIamPolicy
-                # https://cloudkms.googleapis.com/$discovery/rest?version=v1
-                'action': provider + '.cryptoKeys.setIamPolicy',
-                'properties':
-                    {
-                        'resource': key_resource_name,
-                        'policy': {
-                            'bindings': key.get('iamPolicyBinding')
-                        }
-                    },
-                'metadata': {
-                    'dependsOn': [key_resource]
-                }
-            }
-            resources.append(crypto_key_iam)
 
     return {
         'resources':

@@ -91,13 +91,12 @@ properties:
       such as Stackdriver log alerting and Cloud Notifications.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The Interconnect name.
-    - selfLink:
-        type: string
-        description: The server-defined URL for the resource.
+  name:
+    type: string
+    description: The Interconnect name.
+  selfLink:
+    type: string
+    description: The server-defined URL for the resource.
 
 documentation:
   - templates/interconnect/README.md

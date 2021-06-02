@@ -17,7 +17,6 @@ This template creates a Google Cloud Build.
 ### Resources
 
 - [projects.builds](https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.builds)
-- [projects.triggers](https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.triggers)
 - [cloud builders](https://cloud.google.com/cloud-build/docs/cloud-builders)
 - [cloud builders community](https://github.com/GoogleCloudPlatform/cloud-builders-community)
 
@@ -26,7 +25,6 @@ This template creates a Google Cloud Build.
 See the `properties` section in the schema file(s):
 
 - [CloudBuild build schema](cloudbuild.py.schema)
-- [CloudBuild trigger schema](trigger.py.schema)
 
 ### Usage
 
@@ -74,4 +72,3 @@ See the `properties` section in the schema file(s):
 - [Cloud Build](examples/cloudbuild.yaml)
 - [Cloud Build with StorageSource](examples/cloudbuild_storagesource.yaml)
 - [Cloud Build with RepoSource](examples/cloudbuild_reposource.yaml)
-- [Cloud Build Trigger](examples/cloudbuild_trigger.yaml)

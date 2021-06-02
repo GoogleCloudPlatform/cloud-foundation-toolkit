@@ -20,12 +20,20 @@ locals {
     "ci-terraform-validator",
     "ci-projects",
     "ci-shared",
-    "ci-anthos-platform"
-  ]
-  exclude_repos = [
+    "ci-anthos-platform",
     "ci-example-foundation",
   ]
-  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.folders : contains(local.exclude_repos, key) ? replace(key, "ci-", "terraform-") : replace(key, "ci-", "terraform-google-") => replace(value, "folders/", "") if ! contains(local.exclude_folders, key) }
+  # custom mapping of the form name => repo_name used for overriding `terraform-google` prefix
+  custom_repo_mapping = {
+    "cloud-foundation-training" = "cloud-foundation-training",
+    "example-foundation-app"    = "terraform-example-foundation-app",
+    "anthos-samples"            = "anthos-samples"
+  }
+  # example foundation has custom test modes
+  example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
+  example_foundation_int_test_modes = ["default", "HubAndSpoke"]
+
+  repo_folder              = { for key, value in data.terraform_remote_state.org.outputs.ci_repos_folders : contains(keys(local.custom_repo_mapping), key) ? local.custom_repo_mapping[key] : "terraform-google-${key}" => value if !contains(local.exclude_folders, value.folder_name) }
   org_id                   = data.terraform_remote_state.org.outputs.org_id
   billing_account          = data.terraform_remote_state.org.outputs.billing_account
   tf_validator_project_id  = data.terraform_remote_state.tf-validator.outputs.project_id
@@ -33,4 +41,3 @@ locals {
   forseti_ci_folder_id     = "542927601143"
   billing_iam_test_account = "0151A3-65855E-5913CF"
 }
-

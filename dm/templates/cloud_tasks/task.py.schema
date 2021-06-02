@@ -164,28 +164,27 @@ properties:
               with an incompatible HttpMethod. A base64-encoded string.
 
 outputs:
-  properties:
-    name:
-      type: string
-      description: The name of the task resource.
-    createTime:
-      type: string
-      description: |
-        The time when the task was created. createTime is truncated to the
-        nearest second.
-    view:
-      type: string
-      description: The subset of the Task data.
-      enum:
-        - VIEW_UNSPECIFIED
-        - BASIC
-        - FULL
-    scheduleTime:
-      type: string
-      description: |
-        The time when the task is scheduled to be attempted. For App Engine
-        queues, this is when the task will be attempted or retried.
-        `schedule_time` will be truncated to the nearest microsecond.
+  name:
+    type: string
+    description: The name of the task resource.
+  createTime:
+    type: string
+    description: |
+      The time when the task was created. createTime is truncated to the
+      nearest second.
+  view:
+    type: string
+    description: The subset of the Task data.
+    enum:
+      - VIEW_UNSPECIFIED
+      - BASIC
+      - FULL
+  scheduleTime:
+    type: string
+    description: |
+      The time when the task is scheduled to be attempted. For App Engine
+      queues, this is when the task will be attempted or retried.
+      `schedule_time` will be truncated to the nearest microsecond.
 
 documentation:
   - templates/cloud_tasks/README.md

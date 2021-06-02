@@ -94,7 +94,7 @@ properties:
           Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified.
           Also, the '*' wildcard character is not allowed.
         items:
-          type: object
+          type: string
       schema:
         type: object
         description: |
@@ -114,6 +114,7 @@ properties:
           - AVRO
           - DATASTORE_BACKUP
           - BIGTABLE
+          - PARQUET
       maxBadRecords:
         type: number
         description: |
@@ -329,18 +330,31 @@ properties:
             type: string
             description: |
               [Beta] Range of a sheet to query from. Only used when non-empty.
-      hivePartitioningMode:
-        type: string
-        description: |
-          [Experimental] When set, what mode of hive partitioning to use when reading data.
-          Two modes are supported:
-          - AUTO: automatically infer partition key name(s) and type(s).
-          - STRINGS: automatically infer partition key name(s). All types are strings.
-          Not all storage formats support hive partitioning -- requesting hive partitioning
-          on an unsupported format will lead to an error.
-        enum:
-          - AUTO
-          - STRINGS
+      hivePartitioningOptions:
+        type: object
+        properties:
+          mode:
+            type: string
+            description: |
+              [Experimental] When set, what mode of hive partitioning to use when reading data.
+              Two modes are supported:
+              - AUTO: automatically infer partition key name(s) and type(s).
+              - STRINGS: automatically infer partition key name(s). All types are strings.
+              Not all storage formats support hive partitioning -- requesting hive partitioning
+              on an unsupported format will lead to an error.
+            enum:
+              - AUTO
+              - STRINGS
+          sourceUriPrefix:
+            type: string
+            description: |
+              When hive partition detection is requested, a common prefix for all source uris must be required.
+              The prefix must end immediately before the partition key encoding begins.
+              For example, consider files following this data layout:
+              - gs://bucket/path_to_table/dt=2019-06-01/country=USA/id=7/file.avro
+              - gs://bucket/path_to_table/dt=2019-05-31/country=CA/id=3/file.avro
+              When hive partitioning is requested with either AUTO or STRINGS detection, the common prefix can be either
+              of gs://bucket/path_to_table or gs://bucket/path_to_table/.
   clustering:
     type: object
     additionalProperties: false
@@ -500,53 +514,52 @@ properties:
         count: 3
 
 outputs:
-  properties:
-    - selfLink:
-        type: string
-        description: The URI of the created resource.
-    - etag:
-        type: string
-        description: The hash of the resource.
-    - creationTime:
-        type: string
-        description: |
-          The time when the dataset was created, in milliseconds since
-          epoch.
-    - lastModifiedTime:
-        type: string
-        description: |
-          The date when the dataset (or any of its tables) was last 
-          modified, in milliseconds since the epoch.
-    - location:
-        type: string
-        description: |
-          The geographic location where the table resides. This value is
-          inherited from the dataset.
-    - numBytes:
-        type: string
-        description: |
-          The size of the table in bytes, excluding data in the streaming
-          buffer.
-    - numLongTermBytes:
-        type: string
-        format: int64
-        description: |
-          The number of bytes in the table that are considered
-          \"long-term storage\".
-    - numRows:
-        type: string
-        description: |
-          The number of rows of data in the table, excluding data in the
-          streaming buffer.
-    - type:
-        type: string
-        description: |
-          The table type. The following values are supported: 
-           TABLE - a normal BigQuery table
-           VIEW - a virtual table defined by an SQL query
-           EXTERNAL - a table that references data stored in an external
-           storage system, such as Google Cloud Storage. 
-          The default value is TABLE.
+  selfLink:
+    type: string
+    description: The URI of the created resource.
+  etag:
+    type: string
+    description: The hash of the resource.
+  creationTime:
+    type: string
+    description: |
+      The time when the dataset was created, in milliseconds since
+      epoch.
+  lastModifiedTime:
+    type: string
+    description: |
+      The date when the dataset (or any of its tables) was last
+      modified, in milliseconds since the epoch.
+  location:
+    type: string
+    description: |
+      The geographic location where the table resides. This value is
+      inherited from the dataset.
+  numBytes:
+    type: string
+    description: |
+      The size of the table in bytes, excluding data in the streaming
+      buffer.
+  numLongTermBytes:
+    type: string
+    format: int64
+    description: |
+      The number of bytes in the table that are considered
+      \"long-term storage\".
+  numRows:
+    type: string
+    description: |
+      The number of rows of data in the table, excluding data in the
+      streaming buffer.
+  type:
+    type: string
+    description: |
+      The table type. The following values are supported:
+       TABLE - a normal BigQuery table
+       VIEW - a virtual table defined by an SQL query
+       EXTERNAL - a table that references data stored in an external
+       storage system, such as Google Cloud Storage.
+      The default value is TABLE.
 
 documentation:
   - templates/bigquery/README.md

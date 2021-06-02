@@ -18,9 +18,9 @@ resource "google_cloudbuild_trigger" "lint_trigger" {
   provider    = google-beta
   project     = local.project_id
   description = "Lint tests on pull request for ${each.key}"
-  for_each    = local.repo_folder
+  for_each    = merge(local.repo_folder, local.example_foundation)
   github {
-    owner = "terraform-google-modules"
+    owner = each.value.gh_org
     name  = each.key
     pull_request {
       branch = ".*"
@@ -36,7 +36,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   description = "Integration tests on pull request for ${each.key}"
   for_each    = local.repo_folder
   github {
-    owner = "terraform-google-modules"
+    owner = each.value.gh_org
     name  = each.key
     pull_request {
       branch = ".*"
@@ -44,12 +44,13 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   }
   substitutions = {
     _BILLING_ACCOUNT          = local.billing_account
-    _FOLDER_ID                = each.value
+    _FOLDER_ID                = each.value.folder_id
     _ORG_ID                   = local.org_id
     _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
   }
 
-  filename = "build/int.cloudbuild.yaml"
+  filename      = "build/int.cloudbuild.yaml"
+  ignored_files = ["*.md", ".gitignore"]
 }
 
 resource "google_cloudbuild_trigger" "tf_validator" {
@@ -137,4 +138,28 @@ resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
     "**/*.tf",
     "**/*.py"
   ]
+}
+
+# example-foundation-int tests
+resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
+  provider    = google-beta
+  project     = local.project_id
+  description = "Integration tests on pull request for example_foundations in ${each.value} mode"
+  for_each    = toset(local.example_foundation_int_test_modes)
+  github {
+    owner = values(local.example_foundation)[0]["gh_org"]
+    name  = keys(local.example_foundation)[0]
+    pull_request {
+      branch = ".*"
+    }
+  }
+  substitutions = {
+    _BILLING_ACCOUNT               = local.billing_account
+    _FOLDER_ID                     = values(local.example_foundation)[0]["folder_id"]
+    _ORG_ID                        = local.org_id
+    _EXAMPLE_FOUNDATIONS_TEST_MODE = each.value
+  }
+
+  filename      = "build/int.cloudbuild.yaml"
+  ignored_files = ["*.md", ".gitignore"]
 }

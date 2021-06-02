@@ -14,7 +14,7 @@
 
 info:
   title: Google Cloud KMS KeyRing and Keys
-  version: 1.0.0
+  version: 1.1.0
   author: Sourced Group Inc.
   description: |
     Creates a Cloud KMS KeyRing and cryptographic keys.
@@ -137,36 +137,11 @@ properties:
           description: |
             Labels with user-defined metadata. For more info, see
             https://cloud.google.com/kms/docs/labeling-keys.
-        iamPolicyBinding:
-          type: array
-          uniqueItems: True
-          description: The IAM bindings for the CryptoKey.
-          items:
-            type: object
-            additionalProperties: false
-            required:
-              - role
-              - members
-            properties:
-              role:
-                type: string
-                pattern: ^roles\/
-                description: The role to assign to the members.
-              members:
-                type: array
-                items:
-                  type: string
-                  description: |
-                    The member to add the binding to, in the format
-                    user|group|serviceAccount:email or domain:domain.
-                    Can also be one of the special values - allUsers or
-                    allAuthenticatedUsers.
 
 outputs:
-  properties:
-    - keyRing:
-        type: string
-        description: Path to the KeyRing resource.
+  keyRing:
+    type: string
+    description: Path to the KeyRing resource.
 
 documentation:
   - templates/kms/README.md

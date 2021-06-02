@@ -233,13 +233,12 @@ properties:
             to.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The resource name.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the URL map rule resource.
+  name:
+    type: string
+    description: The resource name.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the URL map rule resource.
 
 documentation:
   - templates/url_map/README.md

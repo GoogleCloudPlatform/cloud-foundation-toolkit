@@ -392,17 +392,16 @@ properties:
           served in responses are not altered.
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The backend name.
-    - region:
-        type: string
-        description: |
-            The URL of the region where the regional backend service resides.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the backend service resource.
+  name:
+    type: string
+    description: The backend name.
+  region:
+    type: string
+    description: |
+        The URL of the region where the regional backend service resides.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the backend service resource.
 
 documentation:
   - templates/backend_service/README.md

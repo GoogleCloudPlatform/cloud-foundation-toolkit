@@ -13,7 +13,3 @@ resources:
       keys:
         - cryptoKeyName: ${KEY_NAME}
           cryptoKeyPurpose: ${KEY_PURPOSE}
-          iamPolicyBinding:
-            - role: ${ROLE}
-              members:
-                - serviceAccount:${SA_FQDN}

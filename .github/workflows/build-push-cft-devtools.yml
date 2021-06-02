@@ -1,10 +1,11 @@
 name: Build and push new dev tools image
 on:
   push:
-    branches: 
+    branches:
       - "master"
     paths:
       - "infra/build/**"
+      - ".github/workflows/build-push-cft-devtools.yml"
 env:
   PROJECT_ID: ${{ secrets.GCR_PROJECT_ID }}
 
@@ -16,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@master
         with:
           version: "286.0.0"
           service_account_key: ${{ secrets.GCP_SA_KEY }}
@@ -24,9 +25,9 @@ jobs:
 
       - name: Build
         run: |-
+          gcloud auth configure-docker -q
           cd infra/build && make build-image-developer-tools
 
       - name: Push
         run: |-
-          gcloud auth configure-docker -q
           cd infra/build && make release-image-developer-tools

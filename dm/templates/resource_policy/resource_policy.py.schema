@@ -214,10 +214,9 @@ schemas:
     type: object
 
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The resource policy name.
+  name:
+    type: string
+    description: The resource policy name.
 
 documentation:
   - templates/resource_policy/README.md

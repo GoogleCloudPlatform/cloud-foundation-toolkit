@@ -122,68 +122,67 @@ properties:
     maximum: 65535
 
 outputs:
-  properties:
-    natGateways:
-      type: array
-      description: |
-        The list of the NAT gateways created. For example, the output can be
-        referenced as:
-        $(ref.<my-natgateway>.natGateways.<natgatewaybasename>.externalIP).
-        Note that `natgatewaybasename` is the base instance name to use for
-        instances in the group, and is not the exact name for the deployed
-        instance. For example, if the `natgatewaybasename` value is `my-nat`,
-        the provisioned instance name could be `my-nat-xkje`.
-      items:
-        instanceGroupManagerName:
-          type: string
-          description: |
-            The name of the Instance Group Manager used for monitoring and
-            autohealing.
-        instanceGroupManagerSelflink:
-          type: string
-          description: The URI of the Instance Group Manager resource.
-        externalIP:
-          type: string
-          description: The external IP addresses set to the NAT gateway VM.
-        internalIP:
-          type: string
-          description: The internal IP addresses set to the NAT gateway VM.
-        instanceTemplateName:
-          type: string
-          description: |
-            The name of the Instance Template to be used by the Instance
-            Group Manager for monitoring and autohealing.
-        baseInstanceName:
-          type: string
-          description: The base instance name to use for instances in the group.
-        routeName:
-          type: string
-          description: |
-            The name of the route that forwards traffic through the NAT
-            gateways.
-        zones:
-          type: array
-          description: Zones where the NAT gateways are deployed for HA.
-      networkName:
-        type: string
-        description: The VPC network on which the NAT is performed.
-      subnetworkName:
-        type: string
-        description: The NAT'd subnet/IP range.
-      natGatewayTag:
-        type: string
-        description: The tag used to pin the NAT gateway VMs.
-      nattedVmTag:
-        type: string
-        description: The tag used for the internal VMs to be NAT'd.
-      region:
-        type: string
-        description: The region where the NAT gateways are deployed.
-      healthCheckName:
+  natGateways:
+    type: array
+    description: |
+      The list of the NAT gateways created. For example, the output can be
+      referenced as:
+      $(ref.<my-natgateway>.natGateways.<natgatewaybasename>.externalIP).
+      Note that `natgatewaybasename` is the base instance name to use for
+      instances in the group, and is not the exact name for the deployed
+      instance. For example, if the `natgatewaybasename` value is `my-nat`,
+      the provisioned instance name could be `my-nat-xkje`.
+    items:
+      instanceGroupManagerName:
         type: string
         description: |
-          The name of the healthCheck counter used by the Instance Group
-          Manager.
+          The name of the Instance Group Manager used for monitoring and
+          autohealing.
+      instanceGroupManagerSelflink:
+        type: string
+        description: The URI of the Instance Group Manager resource.
+      externalIP:
+        type: string
+        description: The external IP addresses set to the NAT gateway VM.
+      internalIP:
+        type: string
+        description: The internal IP addresses set to the NAT gateway VM.
+      instanceTemplateName:
+        type: string
+        description: |
+          The name of the Instance Template to be used by the Instance
+          Group Manager for monitoring and autohealing.
+      baseInstanceName:
+        type: string
+        description: The base instance name to use for instances in the group.
+      routeName:
+        type: string
+        description: |
+          The name of the route that forwards traffic through the NAT
+          gateways.
+      zones:
+        type: array
+        description: Zones where the NAT gateways are deployed for HA.
+    networkName:
+      type: string
+      description: The VPC network on which the NAT is performed.
+    subnetworkName:
+      type: string
+      description: The NAT'd subnet/IP range.
+    natGatewayTag:
+      type: string
+      description: The tag used to pin the NAT gateway VMs.
+    nattedVmTag:
+      type: string
+      description: The tag used for the internal VMs to be NAT'd.
+    region:
+      type: string
+      description: The region where the NAT gateways are deployed.
+    healthCheckName:
+      type: string
+      description: |
+        The name of the healthCheck counter used by the Instance Group
+        Manager.
 
 documentation:
   - templates/nat_gateway/README.md

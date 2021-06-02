@@ -479,17 +479,16 @@ properties:
           content for the 404 Not Found result if the requested object path
           is missing, and no mainPageSuffix object is provided.
 outputs:
-  properties:
-    - name:
-        type: string
-        description: The name of the storage bucket resource.
-    - selfLink:
-        type: string
-        description: The URI (SelfLink) of the storage bucket resource.
-    - url:
-        type: string
-        description: |
-          The base URL of the bucket in the gs://<bucket-name> format.
+  name:
+    type: string
+    description: The name of the storage bucket resource.
+  selfLink:
+    type: string
+    description: The URI (SelfLink) of the storage bucket resource.
+  url:
+    type: string
+    description: |
+      The base URL of the bucket in the gs://<bucket-name> format.
 
 documentation:
   - templates/gcs_bucket/README.md
