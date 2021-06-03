@@ -34,7 +34,11 @@ def generate_config(context):
         'projectId': project_id,
     }
 
-    optional_properties = ['description', 'defaultTableExpirationMs']
+    optional_properties = [
+        'description',
+        'defaultTableExpirationMs',
+        'defaultPartitionExpirationMs'
+    ]
 
     for prop in optional_properties:
         if prop in context.properties:
