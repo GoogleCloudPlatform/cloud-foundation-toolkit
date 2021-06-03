@@ -18,4 +18,4 @@ FROM cft/developer-tools:$BASE_IMAGE_VERSION
 RUN apk update && apk add --no-cache docker-cli nodejs-current nodejs-npm
 
 # Additional go tooling
-RUN GO111MODULE=on go get -u github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
+RUN GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
