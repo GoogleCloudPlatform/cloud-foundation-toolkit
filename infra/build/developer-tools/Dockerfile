@@ -21,15 +21,6 @@ ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
 
-FROM golang:$GOLANG_VERSION-alpine AS terraform-bundle-builder
-# Builds terraform-bundle
-ARG TERRAFORM_VERSION
-ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
-RUN apk add git unzip
-RUN git clone --depth 1 --branch v"$TERRAFORM_VERSION" https://github.com/hashicorp/terraform && \
-    cd terraform/tools/terraform-bundle && \
-    go install .
-
 # Builds module-swapper
 FROM golang:$GOLANG_VERSION-alpine AS module-swapper-builder
 WORKDIR /go/src/github.com/GoogleCloudPlatform/infra/developer-tools/build/scripts/module-swapper
@@ -112,9 +103,6 @@ COPY --from=go /usr/local/go/ /usr/local/go/
 RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
 RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
-# Installs terraform-bundler
-COPY --from=terraform-bundle-builder /go/bin/terraform-bundle /bin/terraform-bundle
-
 # Install module swapper
 COPY --from=module-swapper-builder /usr/local/bin/module-swapper /usr/local/bin/module-swapper
 
@@ -174,6 +162,10 @@ ADD ./build/scripts/gh_lint_comment.py /usr/local/bin/
 # Intended to help developers iterate quickly
 ADD ./build/home/bash_history /root/.bash_history
 ADD ./build/home/bashrc /root/.bashrc
+
+# Set TF cache dir
+ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
+RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 
 WORKDIR $WORKSPACE
 RUN terraform --version && \
