@@ -134,17 +134,6 @@ function check_terraform() {
   set -e
   local rval rc
   rval=0
-  # if bundler filer exists, download
-  BUNDLE=/workspace/test/bundle.hcl
-if [[ -f "$BUNDLE" ]]; then
-    echo "Attempting to download $BUNDLE bundle."
-    mkdir -p /tmp/bundler
-    pushd /tmp/bundler
-    terraform-bundle package -os=linux -arch=amd64 $BUNDLE
-    # -n so that unzip does not overwrite any existing files
-    unzip -n -d /usr/local/bin terraform_*.zip
-    popd
-fi
 
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
