@@ -19,8 +19,9 @@ ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
 
-FROM alpine
+FROM alpine:3.13
 RUN apk update && apk add --no-cache \
+        bash \
         git \
         wget \
         python3 \
@@ -28,9 +29,6 @@ RUN apk update && apk add --no-cache \
 
 # Install Terraform
 COPY --from=installer /software/terraform /usr/local/bin/terraform
-
-# bash is preferred over /bin/sh
-RUN apk add --no-cache bash parallel
 
 # Install cloud SDK
 ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
