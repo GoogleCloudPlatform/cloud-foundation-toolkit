@@ -19,8 +19,8 @@ ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
 
-FROM gcr.io/cloud-marketplace/google/ubuntu1804:latest
-RUN apt-get update -y && apt-get install -y -q \
+FROM alpine
+RUN apk update && apk add --no-cache \
         git \
         wget \
         python3 \
@@ -28,6 +28,9 @@ RUN apt-get update -y && apt-get install -y -q \
 
 # Install Terraform
 COPY --from=installer /software/terraform /usr/local/bin/terraform
+
+# bash is preferred over /bin/sh
+RUN apk add --no-cache bash parallel
 
 # Install cloud SDK
 ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
