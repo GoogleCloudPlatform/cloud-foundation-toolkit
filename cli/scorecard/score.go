@@ -224,7 +224,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 			io.WriteString(dest, string(byteContent)+"\n")
 		case "csv":
 			w := csv.NewWriter(dest)
-			header := []string{"Category", "Constraint", "Resource", "Message"}
+			header := []string{"Category", "Constraint", "Resource", "Message", "Parent"}
 			for _, field := range outputMetadataFields {
 				header = append(header, field)
 			}
@@ -233,7 +233,8 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 			for _, category := range config.categories {
 				for _, cv := range category.constraints {
 					for _, v := range cv.Violations {
-						record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message}
+						parent := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().Fields["ancestors"].GetListValue().Values[0].GetStringValue()
+						record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message, parent}
 						for _, field := range outputMetadataFields {
 							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 							value, _ := stringViaJSON(metadata)
