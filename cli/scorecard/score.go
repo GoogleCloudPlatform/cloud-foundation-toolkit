@@ -60,6 +60,14 @@ func NewScoringConfig(ctx context.Context, policyPath string) (*ScoringConfig, e
 	return config, nil
 }
 
+func (c ScoringConfig) CountViolations() int {
+	sum := 0
+	for _, cv := range c.constraints {
+		sum += cv.Count()
+	}
+	return sum
+}
+
 const otherCategoryKey = "other"
 
 // constraintCategory holds constraints by category
@@ -166,6 +174,91 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 	return nil
 }
 
+// writeResults writes scorecard results to the provided destination
+func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, outputMetadataFields []string) error {
+	switch outputFormat {
+	case "json":
+		var richViolations []*RichViolation
+		for _, category := range config.categories {
+			for _, cv := range category.constraints {
+				for _, v := range cv.Violations {
+					richViolation, err := NewRichViolation(category.Name, v)
+					if err != nil {
+						return err
+					}
+					if len(outputMetadataFields) > 0 {
+						newMetadata := make(map[string]interface{})
+						oldMetadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue()
+						for _, field := range outputMetadataFields {
+							newMetadata[field], _ = interfaceViaJSON(oldMetadata.Fields[field])
+						}
+						err := protoViaJSON(newMetadata, richViolation.Metadata)
+						if err != nil {
+							return err
+						}
+					}
+					richViolations = append(richViolations, richViolation)
+					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+				}
+			}
+		}
+		byteContent, err := json.MarshalIndent(richViolations, "", "  ")
+		if err != nil {
+			return err
+		}
+		io.WriteString(dest, string(byteContent)+"\n")
+		return nil
+	case "csv":
+		w := csv.NewWriter(dest)
+		header := []string{"Category", "Constraint", "Resource", "Message", "Parent"}
+		for _, field := range outputMetadataFields {
+			header = append(header, field)
+		}
+		w.Write(header)
+		w.Flush()
+		for _, category := range config.categories {
+			for _, cv := range category.constraints {
+				for _, v := range cv.Violations {
+					parent := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().Fields["ancestors"].GetListValue().Values[0].GetStringValue()
+					record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message, parent}
+					for _, field := range outputMetadataFields {
+						metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
+						value, _ := stringViaJSON(metadata)
+						record = append(record, value)
+					}
+					w.Write(record)
+					w.Flush()
+					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+				}
+			}
+		}
+		return nil
+	case "txt":
+		io.WriteString(dest, fmt.Sprintf("\n\n%v total issues found\n", config.CountViolations()))
+		for _, category := range config.categories {
+			io.WriteString(dest, fmt.Sprintf("\n\n%v: %v issues found\n", category.Name, category.Count()))
+			io.WriteString(dest, fmt.Sprintf("----------\n"))
+			for _, cv := range category.constraints {
+				io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", getConstraintShortName(cv.constraint), cv.Count()))
+				for _, v := range cv.Violations {
+					io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
+					for _, field := range outputMetadataFields {
+						metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
+						value, _ := stringViaJSON(metadata)
+						if value != "" {
+							io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
+						}
+					}
+					io.WriteString(dest, "\n")
+					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+				}
+			}
+		}
+		return nil
+	}
+	return fmt.Errorf("Unsupported output format %v", outputFormat)
+}
+
 // Score creates a Scorecard for an inventory
 func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadataFields []string) error {
 	auditResult, err := getViolations(inventory, config)
@@ -191,85 +284,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				return err
 			}
 		}
-		switch outputFormat {
-		case "json":
-			var richViolations []*RichViolation
-			for _, category := range config.categories {
-				for _, cv := range category.constraints {
-					for _, v := range cv.Violations {
-						richViolation, err := NewRichViolation(category.Name, v)
-						if err != nil {
-							return err
-						}
-						if len(outputMetadataFields) > 0 {
-							newMetadata := make(map[string]interface{})
-							oldMetadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue()
-							for _, field := range outputMetadataFields {
-								newMetadata[field], _ = interfaceViaJSON(oldMetadata.Fields[field])
-							}
-							err := protoViaJSON(newMetadata, richViolation.Metadata)
-							if err != nil {
-								return err
-							}
-						}
-						richViolations = append(richViolations, richViolation)
-						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
-					}
-				}
-			}
-			byteContent, err := json.MarshalIndent(richViolations, "", "  ")
-			if err != nil {
-				return err
-			}
-			io.WriteString(dest, string(byteContent)+"\n")
-		case "csv":
-			w := csv.NewWriter(dest)
-			header := []string{"Category", "Constraint", "Resource", "Message", "Parent"}
-			for _, field := range outputMetadataFields {
-				header = append(header, field)
-			}
-			w.Write(header)
-			w.Flush()
-			for _, category := range config.categories {
-				for _, cv := range category.constraints {
-					for _, v := range cv.Violations {
-						parent := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().Fields["ancestors"].GetListValue().Values[0].GetStringValue()
-						record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message, parent}
-						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
-							value, _ := stringViaJSON(metadata)
-							record = append(record, value)
-						}
-						w.Write(record)
-						w.Flush()
-						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
-					}
-				}
-			}
-		case "txt":
-			io.WriteString(dest, fmt.Sprintf("\n\n%v total issues found\n", len(auditResult.Violations)))
-			for _, category := range config.categories {
-				io.WriteString(dest, fmt.Sprintf("\n\n%v: %v issues found\n", category.Name, category.Count()))
-				io.WriteString(dest, fmt.Sprintf("----------\n"))
-				for _, cv := range category.constraints {
-					io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", getConstraintShortName(cv.constraint), cv.Count()))
-					for _, v := range cv.Violations {
-						io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
-						for _, field := range outputMetadataFields {
-							metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
-							value, _ := stringViaJSON(metadata)
-							if value != "" {
-								io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
-							}
-						}
-						io.WriteString(dest, "\n")
-						Log.Debug("Violation metadata", "metadata", v.GetMetadata())
-					}
-				}
-			}
-		default:
-			return fmt.Errorf("Unsupported output format %v", outputFormat)
-		}
+		writeResults(config, dest, outputFormat, outputMetadataFields)
 	} else {
 		fmt.Println("No issues found found! You have a perfect score.")
 	}
