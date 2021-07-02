@@ -152,6 +152,11 @@ func (config *ScoringConfig) getConstraintForViolation(violation *validator.Viol
 
 // attachViolations puts violations into their appropriate categories
 func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) error {
+	// make violations unique
+	Log.Debug("AuditResult from Config Validator", "# of Violations", len(audit.Violations))
+	audit.Violations = uniqueViolations(audit.Violations)
+	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(audit.Violations))
+
 	// Build map of categories
 	config.categories = make(map[string]*constraintCategory)
 	for k, name := range availableCategories {
@@ -219,7 +224,15 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 		for _, category := range config.categories {
 			for _, cv := range category.constraints {
 				for _, v := range cv.Violations {
-					parent := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().Fields["ancestors"].GetListValue().Values[0].GetStringValue()
+					assetFields := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().GetFields()
+					parent := ""
+					if ancestorsField, ok := assetFields["ancestors"]; ok {
+						parent = fmt.Sprintf("%v", ancestorsField)
+						ancestors := ancestorsField.GetListValue().Values
+						if len(ancestors) > 0 {
+							parent = ancestors[0].GetStringValue()
+						}
+					}
 					record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message, parent}
 					for _, field := range outputMetadataFields {
 						metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
@@ -265,9 +278,6 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	if err != nil {
 		return err
 	}
-	Log.Debug("AuditResult from Config Validator", "# of Violations", len(auditResult.Violations))
-	auditResult.Violations = uniqueViolations(auditResult.Violations)
-	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(auditResult.Violations))
 
 	err = config.attachViolations(auditResult)
 	if err != nil {
