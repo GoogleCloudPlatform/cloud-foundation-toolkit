@@ -46,7 +46,7 @@ func TestWriteViolations(t *testing.T) {
 	csvOutput := new(bytes.Buffer)
 	expectedLines := []string{
 		"Category,Constraint,Resource,Message,Parent",
-		"Other,forbit-subnets,//compute.googleapis.com/projects/my-cai-project/regions/europe-north1/subnetworks/default,//compute.googleapis.com/projects/my-cai-project/regions/europe-north1/subnetworks/default is in violation.,",
+		"Other,forbid-subnets,//compute.googleapis.com/projects/my-cai-project/regions/europe-north1/subnetworks/default,//compute.googleapis.com/projects/my-cai-project/regions/europe-north1/subnetworks/default is in violation.,",
 		"Other,org-policy-skip-default-network,//cloudresourcemanager.googleapis.com/organizations/567890,Required enforcement of skipDefaultNetworkCreation at org level,",
 		"Other,vpc-sc-ensure-services,//cloudresourcemanager.googleapis.com/organizations/56789,Required services compute.googleapis.com missing from service perimeter: accessPolicies/12345/servicePerimeters/perimeter_gcs.,",
 		"Security,iam-gcs-blacklist-public-users,//storage.googleapis.com/test-bucket-public,//storage.googleapis.com/test-bucket-public is publicly accessable,",

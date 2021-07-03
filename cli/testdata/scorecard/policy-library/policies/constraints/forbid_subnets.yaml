@@ -1,7 +1,7 @@
 apiVersion: constraints.gatekeeper.sh/v1alpha1
 kind: GCPAllowedResourceTypesConstraintV2
 metadata:
-  name: forbit-subnets
+  name: forbid-subnets
   annotations:
     description: Forbid compute subnets
 spec:
