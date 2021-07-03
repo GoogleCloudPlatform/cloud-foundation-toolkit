@@ -272,8 +272,8 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 	return fmt.Errorf("Unsupported output format %v", outputFormat)
 }
 
-// Score creates a Scorecard for an inventory
-func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadataFields []string) error {
+// findViolations gets violations for the inventory and attaches them
+func (inventory *InventoryConfig) findViolations(config *ScoringConfig) error {
 	auditResult, err := getViolations(inventory, config)
 	if err != nil {
 		return err
@@ -283,8 +283,18 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+// Score creates a Scorecard for an inventory
+func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string, outputFormat string, outputMetadataFields []string) error {
+	err := inventory.findViolations(config)
+	if err != nil {
+		return err
+	}
+
 	var dest io.Writer
-	if len(auditResult.Violations) > 0 {
+	if config.CountViolations() > 0 {
 		if outputPath == "" {
 			dest = os.Stdout
 		} else {

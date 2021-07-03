@@ -25,7 +25,7 @@ import (
 
 func TestWriteViolations(t *testing.T) {
 	// Prepare violations
-	inventory, err := NewInventory("", localCaiDir, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
+	inventory, err := NewInventory("", localCaiDir, false, false, TargetOrg("56789"))
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
@@ -34,11 +34,7 @@ func TestWriteViolations(t *testing.T) {
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
-	auditResult, err := getViolations(inventory, config)
-	if err != nil {
-		t.Fatal("unexpected error", err)
-	}
-	err = config.attachViolations(auditResult)
+	err = inventory.findViolations(config)
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
