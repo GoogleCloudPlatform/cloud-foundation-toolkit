@@ -18,6 +18,8 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"encoding/json"
+	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -39,6 +41,26 @@ func TestWriteViolations(t *testing.T) {
 		t.Fatal("unexpected error", err)
 	}
 
+	// Test JSON output
+	jsonOutput := new(bytes.Buffer)
+	fileContent, err := ioutil.ReadFile(testRoot + "/output/violations.json")
+	if err != nil {
+		t.Fatal("unexpected error", err)
+	}
+	var expectedJSON []interface{}
+	if err = json.Unmarshal(fileContent, &expectedJSON); err != nil {
+		t.Fatal("unexpected error", err)
+	}
+
+	writeResults(config, jsonOutput, "json", nil)
+	var actualJSON []interface{}
+	if err = json.Unmarshal(jsonOutput.Bytes(), &actualJSON); err != nil {
+		t.Fatal("unexpected error", err)
+	}
+
+	assert.ElementsMatch(t, expectedJSON, actualJSON, "The JSON output should be equivalent.")
+
+	// Test CSV output
 	csvOutput := new(bytes.Buffer)
 	expectedLines := []string{
 		"Category,Constraint,Resource,Message,Parent",
