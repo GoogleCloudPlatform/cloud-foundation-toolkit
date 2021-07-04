@@ -41,24 +41,48 @@ func TestWriteViolations(t *testing.T) {
 		t.Fatal("unexpected error", err)
 	}
 
-	// Test JSON output
-	jsonOutput := new(bytes.Buffer)
-	fileContent, err := ioutil.ReadFile(testRoot + "/output/violations.json")
-	if err != nil {
-		t.Fatal("unexpected error", err)
-	}
-	var expectedJSON []interface{}
-	if err = json.Unmarshal(fileContent, &expectedJSON); err != nil {
-		t.Fatal("unexpected error", err)
+	tests := []struct {
+		format    string
+		filename  string
+		message   string
+		listMaker func([]byte) []interface{}
+	}{
+		{
+			format: "json", filename: "violations.json", message: "The JSON output should be equivalent.",
+			listMaker: func(output []byte) []interface{} {
+				var outputJSON []interface{}
+				if err = json.Unmarshal(output, &outputJSON); err != nil {
+					t.Fatal("unexpected error", err)
+				}
+				return outputJSON
+			},
+		},
+		{
+			format: "txt", filename: "violations.txt", message: "The text output should be equivalent.",
+			listMaker: func(output []byte) []interface{} {
+				outputLines := make([]interface{}, 1)
+				scanner := bufio.NewScanner(bytes.NewReader(output))
+				for scanner.Scan() {
+					outputLines = append(outputLines, scanner.Text())
+				}
+				return outputLines
+			},
+		},
 	}
 
-	writeResults(config, jsonOutput, "json", nil)
-	var actualJSON []interface{}
-	if err = json.Unmarshal(jsonOutput.Bytes(), &actualJSON); err != nil {
-		t.Fatal("unexpected error", err)
-	}
+	for _, tc := range tests {
+		output := new(bytes.Buffer)
+		fileContent, err := ioutil.ReadFile(testRoot + "/output/" + tc.filename)
+		if err != nil {
+			t.Fatal("unexpected error", err)
+		}
+		expected := tc.listMaker(fileContent)
 
-	assert.ElementsMatch(t, expectedJSON, actualJSON, "The JSON output should be equivalent.")
+		writeResults(config, output, tc.format, nil)
+		actual := tc.listMaker(output.Bytes())
+
+		assert.ElementsMatch(t, expected, actual, tc.message)
+	}
 
 	// Test CSV output
 	csvOutput := new(bytes.Buffer)
