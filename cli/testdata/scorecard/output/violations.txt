@@ -1,6 +1,6 @@
 
 
-4 total issues found
+3 total issues found
 
 
 Operational Efficiency: 0 issues found
@@ -18,14 +18,11 @@ Reliability: 0 issues found
 ----------
 
 
-Other: 3 issues found
+Other: 2 issues found
 ----------
 org-policy-skip-default-network: 1 issues
 - Required enforcement of skipDefaultNetworkCreation at org level
 
 vpc-sc-ensure-services: 1 issues
 - Required services compute.googleapis.com missing from service perimeter: accessPolicies/12345/servicePerimeters/perimeter_gcs.
-
-forbid-subnets: 1 issues
-- //compute.googleapis.com/projects/my-cai-project/regions/europe-north1/subnetworks/default is in violation.
 
