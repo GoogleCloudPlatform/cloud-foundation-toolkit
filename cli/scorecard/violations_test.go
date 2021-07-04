@@ -90,10 +90,6 @@ func TestGetViolations(t *testing.T) {
 			constraint: "GCPStorageBucketWorldReadableConstraintV1.iam-gcs-blacklist-public-users",
 		},
 		{
-			resource:   "//container.googleapis.com/projects/gke-networking/zones/us-central1-a/clusters/private-cluster-demo/k8s/namespaces/default/pods/hello-world-deploy-1234567d898-xqwf9",
-			constraint: "K8sPodImagePullPolicy.always-pull-image",
-		},
-		{
 			resource:   "//cloudresourcemanager.googleapis.com/organizations/567890",
 			constraint: "GCPOrgPolicySkipDefaultNetworkConstraintV1.org-policy-skip-default-network",
 		},
@@ -111,12 +107,12 @@ func TestGetViolations(t *testing.T) {
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
-	auditResult, err := getViolations(inventory, config)
+	violations, err := getViolations(inventory, config)
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
 	violationMap := make(map[string]int)
-	for _, v := range auditResult.Violations {
+	for _, v := range violations {
 		violationMap[v.Constraint+"-"+v.Resource] = 1
 		Log.Debug("Found violation", "constraint", v.Constraint, "resource", v.Resource)
 	}

@@ -92,9 +92,9 @@ func (inventory InventoryConfig) getParent() string {
 
 // destinationObjectNames maps the different export types to their expected file location
 var destinationObjectNames = map[assetpb.ContentType]string{
-	assetpb.ContentType_RESOURCE:   "resource_inventory.json",
-	assetpb.ContentType_IAM_POLICY: "iam_inventory.json",
-	assetpb.ContentType_ORG_POLICY: "org_policy_inventory.json",
+	assetpb.ContentType_RESOURCE:      "resource_inventory.json",
+	assetpb.ContentType_IAM_POLICY:    "iam_inventory.json",
+	assetpb.ContentType_ORG_POLICY:    "org_policy_inventory.json",
 	assetpb.ContentType_ACCESS_POLICY: "access_policy_inventory.json",
 }
 

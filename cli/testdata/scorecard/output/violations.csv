@@ -1,0 +1,4 @@
+Category,Constraint,Resource,Message,Parent
+Other,org-policy-skip-default-network,//cloudresourcemanager.googleapis.com/organizations/567890,Required enforcement of skipDefaultNetworkCreation at org level,organizations/567890
+Other,vpc-sc-ensure-services,//cloudresourcemanager.googleapis.com/organizations/56789,Required services compute.googleapis.com missing from service perimeter: accessPolicies/12345/servicePerimeters/perimeter_gcs.,organizations/56789
+Security,iam-gcs-blacklist-public-users,//storage.googleapis.com/test-bucket-public,//storage.googleapis.com/test-bucket-public is publicly accessable,projects/1234

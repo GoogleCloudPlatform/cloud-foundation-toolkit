@@ -1,0 +1,28 @@
+
+
+3 total issues found
+
+
+Operational Efficiency: 0 issues found
+----------
+
+
+Security: 1 issues found
+----------
+iam-gcs-blacklist-public-users: 1 issues
+- //storage.googleapis.com/test-bucket-public is publicly accessable
+
+
+
+Reliability: 0 issues found
+----------
+
+
+Other: 2 issues found
+----------
+org-policy-skip-default-network: 1 issues
+- Required enforcement of skipDefaultNetworkCreation at org level
+
+vpc-sc-ensure-services: 1 issues
+- Required services compute.googleapis.com missing from service perimeter: accessPolicies/12345/servicePerimeters/perimeter_gcs.
+

@@ -100,7 +100,7 @@ func getDataFromStdin() ([]*validator.Asset, error) {
 }
 
 // getViolations finds all Config Validator violations for a given Inventory
-func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
+func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichViolation, error) {
 	var err error
 	var pbAssets []*validator.Asset
 	if inventory.bucketName != "" {
@@ -120,16 +120,19 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 		}
 	}
 
-	auditResult := &validator.AuditResponse{}
+	richViolations := make([]*RichViolation, 0)
 	for _, asset := range pbAssets {
 		violations, err := config.validator.ReviewAsset(context.Background(), asset)
 
 		if err != nil {
 			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
 		}
-		auditResult.Violations = append(auditResult.Violations, violations...)
+		for _, violation := range violations {
+			richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
+			richViolations = append(richViolations, &richViolation)
+		}
 	}
-	return auditResult, nil
+	return richViolations, nil
 }
 
 // converts raw JSON into Asset proto
