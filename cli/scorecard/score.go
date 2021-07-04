@@ -105,7 +105,7 @@ type RichViolation struct {
 	Resource            string
 	Message             string
 	Metadata            *_struct.Value   `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	Asset               *validator.Asset `json:"-"`
+	asset               *validator.Asset `json:"-"`
 }
 
 var availableCategories = map[string]string{
@@ -213,16 +213,9 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 		for _, category := range config.categories {
 			for _, cv := range category.constraints {
 				for _, v := range cv.Violations {
-					fmt.Printf("asset %v", v.Metadata.GetStructValue().Fields["details"])
-					assetFields := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().GetFields()
-					Log.Debug("Violation details", "asset", v.Resource, "details", v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].String())
 					parent := ""
-					if ancestorsField, ok := assetFields["ancestors"]; ok {
-						// parent = fmt.Sprintf("%v", ancestorsField)
-						ancestors := ancestorsField.GetListValue().Values
-						if len(ancestors) > 0 {
-							parent = ancestors[0].GetStringValue()
-						}
+					if len(v.asset.Ancestors) > 0 {
+						parent = v.asset.Ancestors[0]
 					}
 					record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message, parent}
 					for _, field := range outputMetadataFields {

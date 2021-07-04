@@ -120,7 +120,6 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichVi
 		}
 	}
 
-	auditResult := &validator.AuditResponse{}
 	richViolations := make([]*RichViolation, 0)
 	for _, asset := range pbAssets {
 		violations, err := config.validator.ReviewAsset(context.Background(), asset)
@@ -129,12 +128,9 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichVi
 			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
 		}
 		for _, violation := range violations {
-			richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, nil}
+			richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
 			richViolations = append(richViolations, &richViolation)
-			fmt.Printf("result %v", richViolation)
 		}
-
-		auditResult.Violations = append(auditResult.Violations, violations...)
 	}
 	return richViolations, nil
 }
