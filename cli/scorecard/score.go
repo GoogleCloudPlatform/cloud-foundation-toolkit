@@ -87,7 +87,7 @@ func (c constraintCategory) Count() int {
 // constraintViolations holds violations for a particular constraint
 type constraintViolations struct {
 	constraint string
-	Violations []*validator.Violation `protobuf:"bytes,1,rep,name=violations,proto3" json:"violations,omitempty"`
+	Violations []*RichViolation `protobuf:"bytes,1,rep,name=violations,proto3" json:"violations,omitempty"`
 }
 
 func (cv constraintViolations) Count() int {
@@ -100,20 +100,12 @@ func getConstraintShortName(constraintName string) string {
 
 // RichViolation holds a violation with its category
 type RichViolation struct {
-	Category string // category of violation
-	Resource string
-	Message  string
-	Metadata *_struct.Value `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
-}
-
-// NewRichViolation creates a new RichViolation
-func NewRichViolation(categoryName string, violation *validator.Violation) (*RichViolation, error) {
-	richViolation := &RichViolation{}
-	richViolation.Category = categoryName
-	richViolation.Resource = violation.Resource
-	richViolation.Message = violation.Message
-	richViolation.Metadata = violation.Metadata
-	return richViolation, nil
+	validator.Violation `json:"-"`
+	Category            string // category of violation
+	Resource            string
+	Message             string
+	Metadata            *_struct.Value   `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Asset               *validator.Asset `json:"-"`
 }
 
 var availableCategories = map[string]string{
@@ -123,7 +115,7 @@ var availableCategories = map[string]string{
 	otherCategoryKey:         "Other",
 }
 
-func (config *ScoringConfig) getConstraintForViolation(violation *validator.Violation) (*constraintViolations, error) {
+func (config *ScoringConfig) getConstraintForViolation(violation *RichViolation) (*constraintViolations, error) {
 	key := violation.GetConstraint()
 	cv, found := config.constraints[key]
 	if !found {
@@ -151,11 +143,11 @@ func (config *ScoringConfig) getConstraintForViolation(violation *validator.Viol
 }
 
 // attachViolations puts violations into their appropriate categories
-func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) error {
+func (config *ScoringConfig) attachViolations(violations []*RichViolation) error {
 	// make violations unique
-	Log.Debug("AuditResult from Config Validator", "# of Violations", len(audit.Violations))
-	audit.Violations = uniqueViolations(audit.Violations)
-	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(audit.Violations))
+	Log.Debug("AuditResult from Config Validator", "# of Violations", len(violations))
+	violations = uniqueViolations(violations)
+	Log.Debug("AuditResult from Config Validator", "# of Unique Violations", len(violations))
 
 	// Build map of categories
 	config.categories = make(map[string]*constraintCategory)
@@ -167,7 +159,7 @@ func (config *ScoringConfig) attachViolations(audit *validator.AuditResponse) er
 
 	// Categorize violations
 	config.constraints = make(map[string]*constraintViolations)
-	for _, v := range audit.Violations {
+	for _, v := range violations {
 		cv, err := config.getConstraintForViolation(v)
 		if err != nil {
 			return errors.Wrap(err, "Categorizing violation")
@@ -187,22 +179,19 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 		for _, category := range config.categories {
 			for _, cv := range category.constraints {
 				for _, v := range cv.Violations {
-					richViolation, err := NewRichViolation(category.Name, v)
-					if err != nil {
-						return err
-					}
+					v.Category = category.Name
 					if len(outputMetadataFields) > 0 {
 						newMetadata := make(map[string]interface{})
 						oldMetadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue()
 						for _, field := range outputMetadataFields {
 							newMetadata[field], _ = interfaceViaJSON(oldMetadata.Fields[field])
 						}
-						err := protoViaJSON(newMetadata, richViolation.Metadata)
+						err := protoViaJSON(newMetadata, v.Metadata)
 						if err != nil {
 							return err
 						}
 					}
-					richViolations = append(richViolations, richViolation)
+					richViolations = append(richViolations, v)
 					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 				}
 			}
@@ -224,7 +213,9 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 		for _, category := range config.categories {
 			for _, cv := range category.constraints {
 				for _, v := range cv.Violations {
+					fmt.Printf("asset %v", v.Metadata.GetStructValue().Fields["details"])
 					assetFields := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().GetFields()
+					Log.Debug("Violation details", "asset", v.Resource, "details", v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].String())
 					parent := ""
 					if ancestorsField, ok := assetFields["ancestors"]; ok {
 						// parent = fmt.Sprintf("%v", ancestorsField)
@@ -274,12 +265,12 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 
 // findViolations gets violations for the inventory and attaches them
 func (inventory *InventoryConfig) findViolations(config *ScoringConfig) error {
-	auditResult, err := getViolations(inventory, config)
+	violations, err := getViolations(inventory, config)
 	if err != nil {
 		return err
 	}
 
-	err = config.attachViolations(auditResult)
+	err = config.attachViolations(violations)
 	if err != nil {
 		return err
 	}
@@ -312,14 +303,14 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 	return nil
 }
 
-func uniqueViolations(violations []*validator.Violation) []*validator.Violation {
-	uniqueViolationMap := make(map[string]*validator.Violation)
+func uniqueViolations(violations []*RichViolation) []*RichViolation {
+	uniqueViolationMap := make(map[string]*RichViolation)
 	for _, v := range violations {
 		b, _ := json.Marshal(v)
 		hash := md5.Sum(b)
 		uniqueViolationMap[string(hash[:])] = v
 	}
-	uniqueViolations := make([]*validator.Violation, 0, len(uniqueViolationMap))
+	uniqueViolations := make([]*RichViolation, 0, len(uniqueViolationMap))
 	for _, v := range uniqueViolationMap {
 		uniqueViolations = append(uniqueViolations, v)
 	}

@@ -107,12 +107,12 @@ func TestGetViolations(t *testing.T) {
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
-	auditResult, err := getViolations(inventory, config)
+	violations, err := getViolations(inventory, config)
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
 	violationMap := make(map[string]int)
-	for _, v := range auditResult.Violations {
+	for _, v := range violations {
 		violationMap[v.Constraint+"-"+v.Resource] = 1
 		Log.Debug("Found violation", "constraint", v.Constraint, "resource", v.Resource)
 	}
