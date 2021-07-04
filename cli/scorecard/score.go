@@ -227,7 +227,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 					assetFields := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields["asset"].GetStructValue().GetFields()
 					parent := ""
 					if ancestorsField, ok := assetFields["ancestors"]; ok {
-						parent = fmt.Sprintf("%v", ancestorsField)
+						// parent = fmt.Sprintf("%v", ancestorsField)
 						ancestors := ancestorsField.GetListValue().Values
 						if len(ancestors) > 0 {
 							parent = ancestors[0].GetStringValue()

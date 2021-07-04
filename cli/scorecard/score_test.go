@@ -25,6 +25,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func makeLineList(output []byte) []interface{} {
+	outputLines := make([]interface{}, 1)
+	scanner := bufio.NewScanner(bytes.NewReader(output))
+	for scanner.Scan() {
+		outputLines = append(outputLines, scanner.Text())
+	}
+	return outputLines
+}
+
 func TestWriteViolations(t *testing.T) {
 	// Prepare violations
 	inventory, err := NewInventory("", localCaiDir, false, false, TargetOrg("56789"))
@@ -59,14 +68,11 @@ func TestWriteViolations(t *testing.T) {
 		},
 		{
 			format: "txt", filename: "violations.txt", message: "The text output should be equivalent.",
-			listMaker: func(output []byte) []interface{} {
-				outputLines := make([]interface{}, 1)
-				scanner := bufio.NewScanner(bytes.NewReader(output))
-				for scanner.Scan() {
-					outputLines = append(outputLines, scanner.Text())
-				}
-				return outputLines
-			},
+			listMaker: makeLineList,
+		},
+		{
+			format: "csv", filename: "violations.csv", message: "The csv output should be equivalent.",
+			listMaker: makeLineList,
 		},
 	}
 
@@ -83,23 +89,4 @@ func TestWriteViolations(t *testing.T) {
 
 		assert.ElementsMatch(t, expected, actual, tc.message)
 	}
-
-	// Test CSV output
-	csvOutput := new(bytes.Buffer)
-	expectedLines := []string{
-		"Category,Constraint,Resource,Message,Parent",
-		"Other,forbid-subnets,//compute.googleapis.com/projects/my-cai-project/regions/europe-north1/subnetworks/default,//compute.googleapis.com/projects/my-cai-project/regions/europe-north1/subnetworks/default is in violation.,",
-		"Other,org-policy-skip-default-network,//cloudresourcemanager.googleapis.com/organizations/567890,Required enforcement of skipDefaultNetworkCreation at org level,",
-		"Other,vpc-sc-ensure-services,//cloudresourcemanager.googleapis.com/organizations/56789,Required services compute.googleapis.com missing from service perimeter: accessPolicies/12345/servicePerimeters/perimeter_gcs.,",
-		"Security,iam-gcs-blacklist-public-users,//storage.googleapis.com/test-bucket-public,//storage.googleapis.com/test-bucket-public is publicly accessable,",
-	}
-	writeResults(config, csvOutput, "csv", nil)
-
-	// assert equality without caring about order
-	scanner := bufio.NewScanner(csvOutput)
-	var outputLines []string
-	for scanner.Scan() {
-		outputLines = append(outputLines, scanner.Text())
-	}
-	assert.ElementsMatch(t, expectedLines, outputLines, "The CSV output should contain the same values.")
 }
