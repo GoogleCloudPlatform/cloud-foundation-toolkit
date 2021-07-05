@@ -93,5 +93,6 @@ locals {
     "anthos-samples",
     "secure-cicd",
     "secured-data-warehouse",
+    "cloud-run",
   ]
 }
