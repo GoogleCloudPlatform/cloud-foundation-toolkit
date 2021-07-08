@@ -383,6 +383,7 @@ function prepare_test_variables() {
 function check_headers() {
   echo "Checking file headers"
   # remove any existing check files from previous runs
+  FILES="files.log"
   LEGACY_CHECK_FILE="legacy_headder_check.log"
   NEW_CHECK_FILE="new_header_check.log"
   if [ -f "$LEGACY_CHECK_FILE" ] ; then
@@ -391,11 +392,12 @@ function check_headers() {
   if [ -f "$NEW_CHECK_FILE" ] ; then
     rm "$NEW_CHECK_FILE"
   fi
+  rm "$FILES"
 
   # Use the exclusion behavior of find_files
-  find_files . -type f -print0 > files.log
+  find_files . -type f -print0 > "$FILES"
   # run the legacy header checker for each of the files from find_files
-  cat files.log \
+  cat "$FILES" \
     | compat_xargs -0 python /usr/local/verify_boilerplate/verify_boilerplate.py 2>&1 \
     | grep -v 'have incorrect boilerplate headers' >> "$LEGACY_CHECK_FILE"
   # for every line that doesn't have an absolute path prefix it with './'
@@ -409,10 +411,10 @@ function check_headers() {
     do
       SKIP_STRING="$SKIP_STRING -skip $file"
     done
-    stored_cmd="cat files.log | compat_xargs -0 addlicense -check $SKIP_STRING 2>&1 | grep -v 'skipping this file'"
+    stored_cmd="cat $FILES | compat_xargs -0 addlicense -check $SKIP_STRING 2>&1 | grep -v 'skipping this file'"
     eval "$stored_cmd" >> "$NEW_CHECK_FILE"
   else
-    cat files.log | compat_xargs -0 addlicense -check 2>&1 >> "$NEW_CHECK_FILE"
+    cat "$FILES" | compat_xargs -0 addlicense -check 2>&1 >> "$NEW_CHECK_FILE"
   fi
   # list only the files caught by both methods, if not assume success header check
   # return value of grep is negated so that if there is an output then header check failed
