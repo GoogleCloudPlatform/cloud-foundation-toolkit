@@ -135,6 +135,11 @@ function check_terraform() {
   local rval rc
   rval=0
 
+  # if TF_PLUGIN_CACHE_DIR is set, create TF_PLUGIN_CACHE_DIR
+  if [[ ! -z "${TF_PLUGIN_CACHE_DIR}" ]]; then
+    mkdir -p ${TF_PLUGIN_CACHE_DIR}
+  fi
+
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
   echo "Running terraform fmt"
