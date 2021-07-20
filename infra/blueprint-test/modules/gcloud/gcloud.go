@@ -20,8 +20,6 @@ package gcloud
 import (
 	"strings"
 
-	gotest "testing"
-
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/modules/utils"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/shell"
@@ -30,51 +28,67 @@ import (
 )
 
 type Options struct {
-	GCloudBinary string         // path to gcloud binary
-	CommonArgs   []string       // common arguments to pass to gcloud calls
-	Logger       *logger.Logger // custom logger
+	gcloudBinary string         // path to gcloud binary
+	commonArgs   []string       // common arguments to pass to gcloud calls
+	logger       *logger.Logger // custom logger
 }
 
-// getCommonOptions sets defaults and validates values for gcloud Options
-func getCommonOptions(options *Options, args ...string) (*Options, []string, error) {
-	if options.GCloudBinary == "" {
+type option func(*Options)
+
+func WithBinary(gcloudBinary string) option {
+	return func(f *Options) {
+		f.gcloudBinary = gcloudBinary
+	}
+}
+
+func WithCommonArgs(commonArgs []string) option {
+	return func(f *Options) {
+		f.commonArgs = commonArgs
+	}
+}
+
+func WithLogger(logger *logger.Logger) option {
+	return func(f *Options) {
+		f.logger = logger
+	}
+}
+
+// getCommonOptions sets defaults and validates values for gcloud Options.
+func GetCommonOptions(opts ...option) (*Options, error) {
+	gOpts := &Options{}
+	// apply options
+	for _, opt := range opts {
+		opt(gOpts)
+	}
+	if gOpts.gcloudBinary == "" {
 		err := utils.BinaryInPath("gcloud")
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		options.GCloudBinary = "gcloud"
+		gOpts.gcloudBinary = "gcloud"
 	}
-	if options.CommonArgs == nil {
-		options.CommonArgs = []string{"--format", "json"}
+	if gOpts.commonArgs == nil {
+		gOpts.commonArgs = []string{"--format", "json"}
 	}
-	if options.Logger == nil {
-		if gotest.Verbose() {
-			options.Logger = logger.Default
-		} else {
-			options.Logger = logger.Discard
-		}
-
+	if gOpts.logger == nil {
+		gOpts.logger = utils.GetLoggerFromT()
 	}
-	return options, args, nil
+	return gOpts, nil
 }
 
-// generateCmd prepares gcloud command to be executed
+// generateCmd prepares gcloud command to be executed.
 func generateCmd(opts *Options, args ...string) shell.Command {
 	cmd := shell.Command{
 		Command: "gcloud",
-		Args:    append(args, opts.CommonArgs...),
-		Logger:  opts.Logger,
+		Args:    append(args, opts.commonArgs...),
+		Logger:  opts.logger,
 	}
 	return cmd
 }
 
-// RunCmd executes a gcloud command and fails test if there are any errors
-func RunCmd(t testing.TB, additionalOptions *Options, additionalArgs ...string) string {
-	options, args, err := getCommonOptions(additionalOptions, additionalArgs...)
-	if err != nil {
-		t.Fatal(err)
-	}
-	cmd := generateCmd(options, args...)
+// RunCmd executes a gcloud command and fails test if there are any errors.
+func RunCmd(t testing.TB, options *Options, additionalArgs ...string) string {
+	cmd := generateCmd(options, additionalArgs...)
 	op, err := shell.RunCommandAndGetStdOutE(t, cmd)
 	if err != nil {
 		t.Fatal(err)
@@ -82,20 +96,17 @@ func RunCmd(t testing.TB, additionalOptions *Options, additionalArgs ...string) 
 	return op
 }
 
-// RunWithOptsAndOutput executes a gcloud command with custom options and returns value as gjson.Result
-// It fails the test if there are any errors executing the gcloud command or parsing the output value
-func RunWithOptsAndOutput(t testing.TB, options *Options, cmd string) gjson.Result {
+// Run executes a gcloud command and returns value as gjson.Result.
+// It fails the test if there are any errors executing the gcloud command or parsing the output value.
+func Run(t testing.TB, cmd string, opts ...option) gjson.Result {
 	args := strings.Fields(cmd)
-	op := RunCmd(t, options, args...)
-
+	gOpts, err := GetCommonOptions(opts...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	op := RunCmd(t, gOpts, args...)
 	if !gjson.Valid(op) {
 		t.Fatalf("Error parsing output, invalid json: %s", op)
 	}
 	return gjson.Parse(op)
-}
-
-// Run executes a gcloud command with default options and returns value as gjson.Result
-// It fails the test if there are any errors executing the gcloud command or parsing the output value
-func Run(t testing.TB, cmd string) gjson.Result {
-	return RunWithOptsAndOutput(t, &Options{}, cmd)
 }
