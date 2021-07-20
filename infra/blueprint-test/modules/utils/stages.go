@@ -23,8 +23,8 @@ import (
 
 const RUN_STAGE_ENV_VAR = "RUN_STAGE"
 
-// RunStage runs stage if stageName matches RUN_STAGE env var or RUN_STAGE is unset
-// Similar to terratest RunStage but instead of skipping using env var, we match using envvar
+// RunStage runs stage if stageName matches RUN_STAGE env var or RUN_STAGE is unset.
+// Similar to terratest RunStage but instead of skipping using env var, we match using envvar.
 func RunStage(stageName string, stage func()) {
 	if shouldRunStage(stageName) {
 		log.Printf("Running stage %s", stageName)
@@ -35,7 +35,7 @@ func RunStage(stageName string, stage func()) {
 
 }
 
-// shouldRunStage returns true if no expilcit stage set via RUN_STAGE env var or if stageName matches value in RUN_STAGE
+// shouldRunStage returns true if no explicit stage set via RUN_STAGE env var or if stageName matches value in RUN_STAGE.
 func shouldRunStage(stageName string) bool {
 	// no env var set, run all
 	if os.Getenv(RUN_STAGE_ENV_VAR) == "" {

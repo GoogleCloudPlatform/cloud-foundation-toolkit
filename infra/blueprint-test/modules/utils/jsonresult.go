@@ -17,17 +17,21 @@
 package utils
 
 import (
-	"os"
+	"io/ioutil"
 
 	"github.com/mitchellh/go-testing-interface"
+	"github.com/tidwall/gjson"
 )
 
-// ValFromEnv checks if a value is set as an env var.
-// It fails test if not set.
-func ValFromEnv(t testing.TB, k string) string {
-	v, found := os.LookupEnv(k)
-	if !found {
-		t.Fatalf("envvar %s not set", k)
+// LoadJSON reads and parses a json file into a gjson.Result.
+// It fails test if not unable to parse.
+func LoadJSON(t testing.TB, path string) gjson.Result {
+	j, err := ioutil.ReadFile(path)
+	if err != nil {
+		t.Fatalf("Error reading json file %s", path)
 	}
-	return v
+	if !gjson.ValidBytes(j) {
+		t.Fatalf("Error parsing output, invalid json: %s", path)
+	}
+	return gjson.ParseBytes(j)
 }

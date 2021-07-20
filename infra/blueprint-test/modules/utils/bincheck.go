@@ -18,7 +18,7 @@ package utils
 
 import "os/exec"
 
-//BinaryInPath checks if a given binary is in path
+// BinaryInPath checks if a given binary is in path.
 func BinaryInPath(bin string) error {
 	if _, err := exec.LookPath(bin); err != nil {
 		return err

@@ -38,9 +38,9 @@ func Poll(t testing.TB, condition func() (bool, error), numRetries int, interval
 	for count := 0; retry && count <= numRetries; count++ {
 		time.Sleep(interval)
 		if err != nil {
-			t.Logf("Received error while polling: %v", err)
+			GetLoggerFromT().Logf(t, "Received error while polling: %v", err)
 		}
-		t.Logf("Retrying... %d", count+1)
+		GetLoggerFromT().Logf(t, "Retrying... %d", count+1)
 		retry, err = condition()
 	}
 

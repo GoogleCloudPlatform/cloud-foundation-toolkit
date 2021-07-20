@@ -17,17 +17,15 @@
 package utils
 
 import (
-	"os"
+	"testing"
 
-	"github.com/mitchellh/go-testing-interface"
+	"github.com/gruntwork-io/terratest/modules/logger"
 )
 
-// ValFromEnv checks if a value is set as an env var.
-// It fails test if not set.
-func ValFromEnv(t testing.TB, k string) string {
-	v, found := os.LookupEnv(k)
-	if !found {
-		t.Fatalf("envvar %s not set", k)
+// GetLoggerFromT returns a logger based on test verbosity
+func GetLoggerFromT() *logger.Logger {
+	if testing.Verbose() {
+		return logger.Default
 	}
-	return v
+	return logger.Discard
 }
