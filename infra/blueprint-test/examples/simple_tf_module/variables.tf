@@ -20,4 +20,5 @@ variable "project_id" {
 
 variable "network_name" {
   description = "The name of the VPC network being created"
+  default     = "test-network"
 }

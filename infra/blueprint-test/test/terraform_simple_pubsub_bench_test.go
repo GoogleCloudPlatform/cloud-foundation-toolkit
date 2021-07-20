@@ -20,9 +20,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/modules/tf"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/modules/tft"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/modules/utils"
-	"github.com/gruntwork-io/terratest/modules/logger"
 )
 
 func generateNTopicsPerProject(projects []string, topicCount int) map[string]interface{} {
@@ -38,30 +37,32 @@ func generateNTopicsPerProject(projects []string, topicCount int) map[string]int
 	return m
 }
 
-func BenchmarkPubSub(b *testing.B) {
+func BenchmarkTFPubSub(b *testing.B) {
 	// benchmarks to run
-	topicCounts := []int{10, 50, 100, 500, 1000}
+	// topicCounts := []int{10, 50, 100, 500, 1000}
+	topicCounts := []int{10}
 	for _, topicCount := range topicCounts {
 		b.Run(fmt.Sprintf("PubSub Bench mark with %d topics", topicCount), func(b *testing.B) {
-			pubSubTest := tf.Init(b, &tf.TFBlueprintTest{
-				SetupPath: "setup/simple_tf_bench",
-				TFDir:     "benchmark_fixtures/simple_pubsub_tf",
-				Logger:    logger.Discard,
-			})
+			pubSubTest := tft.Init(b,
+				tft.WithSetupPath("setup/simple_tf_bench"),
+				tft.WithTFDir("benchmark_fixtures/simple_pubsub_tf"),
+				// tft.WithLogger(logger.Discard),
+			)
 			// get list of available projects that have been setup
-			project_ids := pubSubTest.GetTFSetupOPListVal(b, "project_ids")
+			project_ids := pubSubTest.GetTFSetupOPListVal("project_ids")
 			// create input as vars for TF config with topics split across available projects
-			pubSubTest.Vars = map[string]interface{}{"project_topic_map": generateNTopicsPerProject(project_ids, topicCount)}
+			tfVars := map[string]interface{}{"project_topic_map": generateNTopicsPerProject(project_ids, topicCount)}
+			tft.WithVars(tfVars)(pubSubTest)
 			// run tf init to download provider(s)
-			utils.RunStage("init", func() { pubSubTest.TFInit(b) })
+			utils.RunStage("setup", func() { pubSubTest.Setup() })
 			// reset benchmark timer to ignore previous time
 			b.ResetTimer()
 			for n := 0; n < b.N; n++ {
 				// start apply benchmark
-				utils.RunStage("apply", func() { pubSubTest.TFApply(b) })
+				utils.RunStage("apply", func() { pubSubTest.Apply() })
 				//stop timer for cleanup
 				b.StopTimer()
-				utils.RunStage("destroy", func() { pubSubTest.Teardown(b) })
+				utils.RunStage("destroy", func() { pubSubTest.Teardown() })
 				// restart timer
 				b.StartTimer()
 			}
