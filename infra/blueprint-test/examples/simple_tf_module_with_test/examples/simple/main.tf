@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-variable "project_id" {
-  description = "The project ID to host the network in"
-}
-
-variable "network_name" {
-  description = "The name of the VPC network being created"
+module "test-vpc-example" {
+  source       = "../../"
+  project_id   = var.project_id
+  network_name = "test-network-ex"
 }

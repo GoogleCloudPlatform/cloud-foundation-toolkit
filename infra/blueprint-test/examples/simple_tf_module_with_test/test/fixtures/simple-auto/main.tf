@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-module "test-vpc-fixture" {
+module "test-vpc-example" {
   source       = "../../../"
   project_id   = var.project_id
-  network_name = var.network_name
+  network_name = "test-network-auto"
 }
