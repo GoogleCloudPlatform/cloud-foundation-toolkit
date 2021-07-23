@@ -20,6 +20,7 @@ var flags struct {
 	outputPath      string
 	outputFormat    string
 	metadataFields  []string
+	concurrency     bool
 }
 
 func init() {
@@ -40,6 +41,7 @@ func init() {
 	Cmd.Flags().StringVar(&flags.dirPath, "dir-path", "", "Local directory path for storing inventory (conflicts with --bucket or --stdin)")
 	Cmd.Flags().BoolVar(&flags.stdin, "stdin", false, "Passed Cloud Asset Inventory json string as standard input (conflicts with --dir-path or --bucket)")
 	Cmd.Flags().BoolVar(&flags.refresh, "refresh", false, "Refresh Cloud Asset Inventory export files in GCS bucket. If set, Application Default Credentials must be a service account (Works with --bucket)")
+	Cmd.Flags().BoolVar(&flags.concurrency, "concurrency", false, "Concurrent Violations Review. If set, the CFT application will run the violations review concurrently and may improve the total execution time of the application.")
 	Cmd.Flags().StringVar(&flags.targetProjectID, "target-project", "", "Project ID to analyze (Works with --bucket and --refresh; conflicts with --target-folder or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetFolderID, "target-folder", "", "Folder ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--organization)")
 	Cmd.Flags().StringVar(&flags.targetOrgID, "target-organization", "", "Organization ID to analyze (Works with --bucket and --refresh; conflicts with --target-project or --target--folder)")
@@ -69,10 +71,10 @@ var Cmd = &cobra.Command{
 	`,
 	Args: cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if (flags.bucketName == "" && flags.dirPath == "" && !flags.stdin) ||
-			(flags.bucketName != "" && flags.stdin) ||
-			(flags.bucketName != "" && flags.dirPath != "") ||
-			(flags.dirPath != "" && flags.stdin) {
+		if (flags.bucketName == "" && flags.dirPath == "" && !flags.stdin && flags.concurrency) ||
+			(flags.bucketName != "" && flags.stdin && flags.concurrency) ||
+			(flags.bucketName != "" && flags.dirPath != "" && flags.concurrency) ||
+			(flags.dirPath != "" && flags.stdin && flags.concurrency) {
 			return fmt.Errorf("One and only one of bucket, dir-path, or stdin should be set")
 		}
 
@@ -95,7 +97,7 @@ var Cmd = &cobra.Command{
 				return fmt.Errorf("When using --refresh and --bucket, one and only one of target-project, target-folder, or target-org should be set")
 			}
 		}
-		inventory, err := NewInventory(flags.bucketName, flags.dirPath, flags.stdin, flags.refresh,
+		inventory, err := NewInventory(flags.bucketName, flags.dirPath, flags.stdin, flags.refresh, flags.concurrency,
 			TargetProject(targetProjectID), TargetFolder(flags.targetFolderID), TargetOrg(flags.targetOrgID))
 		if err != nil {
 			return err

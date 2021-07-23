@@ -98,7 +98,7 @@ func TestGetViolations(t *testing.T) {
 			constraint: "GCPVPCSCEnsureServicesConstraintV1.vpc-sc-ensure-services",
 		},
 	}
-	inventory, err := NewInventory("", localCaiDir, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
+	inventory, err := NewInventory("", localCaiDir, false, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
@@ -108,6 +108,50 @@ func TestGetViolations(t *testing.T) {
 		t.Fatal("unexpected error", err)
 	}
 	violations, err := getViolations(inventory, config)
+	if err != nil {
+		t.Fatal("unexpected error", err)
+	}
+	violationMap := make(map[string]int)
+	for _, v := range violations {
+		violationMap[v.Constraint+"-"+v.Resource] = 1
+		Log.Debug("Found violation", "constraint", v.Constraint, "resource", v.Resource)
+	}
+
+	for _, tc := range testCases {
+		key := tc.constraint + "-" + tc.resource
+		t.Run(key, func(t *testing.T) {
+			if violationMap[key] != 1 {
+				t.Errorf("wanted violation for resource %s & constraint %s, got none", tc.resource, tc.constraint)
+			}
+		})
+	}
+}
+
+func TestGetViolationsConcurrently(t *testing.T) {
+	var testCases = []getViolationsTestcase{
+		{
+			resource:   "//storage.googleapis.com/test-bucket-public",
+			constraint: "GCPStorageBucketWorldReadableConstraintV1.iam-gcs-blacklist-public-users",
+		},
+		{
+			resource:   "//cloudresourcemanager.googleapis.com/organizations/567890",
+			constraint: "GCPOrgPolicySkipDefaultNetworkConstraintV1.org-policy-skip-default-network",
+		},
+		{
+			resource:   "//cloudresourcemanager.googleapis.com/organizations/56789",
+			constraint: "GCPVPCSCEnsureServicesConstraintV1.vpc-sc-ensure-services",
+		},
+	}
+	inventory, err := NewInventory("", localCaiDir, false, false, true, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
+	if err != nil {
+		t.Fatal("unexpected error", err)
+	}
+	ctx := context.Background()
+	config, err := NewScoringConfig(ctx, localPolicyDir)
+	if err != nil {
+		t.Fatal("unexpected error", err)
+	}
+	violations, err := getViolationsConcurrently(inventory, config)
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}

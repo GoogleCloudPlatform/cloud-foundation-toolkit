@@ -258,16 +258,29 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 
 // findViolations gets violations for the inventory and attaches them
 func (inventory *InventoryConfig) findViolations(config *ScoringConfig) error {
-	violations, err := getViolations(inventory, config)
-	if err != nil {
-		return err
-	}
+	if inventory.concurrency {
+		violations, err := getViolationsConcurrently(inventory, config)
+		if err != nil {
+			return err
+		}
 
-	err = config.attachViolations(violations)
-	if err != nil {
-		return err
+		err = config.attachViolations(violations)
+		if err != nil {
+			return err
+		}
+		return nil
+	} else {
+		violations, err := getViolations(inventory, config)
+		if err != nil {
+			return err
+		}
+
+		err = config.attachViolations(violations)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
-	return nil
 }
 
 // Score creates a Scorecard for an inventory
@@ -288,6 +301,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				return err
 			}
 		}
+		// Code to measure
 		writeResults(config, dest, outputFormat, outputMetadataFields)
 	} else {
 		fmt.Println("No issues found found! You have a perfect score.")
