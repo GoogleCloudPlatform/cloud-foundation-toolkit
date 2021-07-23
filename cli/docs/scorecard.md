@@ -121,6 +121,7 @@ Usage:
 
 Flags:
       --bucket string                GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)
+      --concurrency                  Concurrent Violations Review. If set, the CFT application will run the violations review concurrently and may improve the total execution time of the application.
       --dir-path string              Local directory path for storing inventory (conflicts with --bucket or --stdin)
   -h, --help                         help for scorecard
       --output-format string         Format of scorecard outputs, can be txt, json or csv, default is txt

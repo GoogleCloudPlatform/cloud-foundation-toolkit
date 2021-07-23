@@ -21,10 +21,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"cloud.google.com/go/storage"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	cvasset "github.com/forseti-security/config-validator/pkg/asset"
+	"github.com/gammazero/workerpool"
 	"github.com/pkg/errors"
 )
 
@@ -103,6 +105,7 @@ func getDataFromStdin() ([]*validator.Asset, error) {
 func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichViolation, error) {
 	var err error
 	var pbAssets []*validator.Asset
+
 	if inventory.bucketName != "" {
 		pbAssets, err = getDataFromBucket(inventory.bucketName)
 		if err != nil {
@@ -133,6 +136,74 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichVi
 		}
 	}
 	return richViolations, nil
+}
+
+// getViolationsConcurrently finds all Config Validator violations for a given Inventory concurrently
+func getViolationsConcurrently(inventory *InventoryConfig, config *ScoringConfig) ([]*RichViolation, error) {
+	var err error
+	var pbAssets []*validator.Asset
+
+	if inventory.bucketName != "" {
+		pbAssets, err = getDataFromBucket(inventory.bucketName)
+		if err != nil {
+			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
+		}
+	} else if inventory.dirPath != "" {
+		pbAssets, err = getDataFromFile(inventory.dirPath)
+		if err != nil {
+			return nil, errors.Wrap(err, "Fetching inventory from local directory")
+		}
+	} else if inventory.readFromStdin {
+		pbAssets, err = getDataFromStdin()
+		if err != nil {
+			return nil, errors.Wrap(err, "Reading from stdin")
+		}
+	}
+
+	richViolations := make([]*RichViolation, 0)
+	wp := workerpool.New(numWorkers())
+	var badAsset *validator.Asset
+	for _, asset := range pbAssets {
+		asset := asset
+		wp.Submit(func() {
+			violations, errAsset := config.validator.ReviewAsset(context.Background(), asset)
+			if errAsset != nil {
+				err = errAsset
+				badAsset = asset
+				wp.Stop()
+			}
+			for _, violation := range violations {
+				richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
+				richViolations = append(richViolations, &richViolation)
+			}
+		})
+	}
+	wp.StopWait()
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "reviewing asset %s", badAsset)
+	} else {
+		return richViolations, nil
+	}
+}
+
+// numWorkers finds available cpus or procs that can be used to execute worker pools. Limiting the number of worker pools to 4 if finds more than or equal to 4 CPUs
+func numWorkers() int {
+	maxProcs := runtime.GOMAXPROCS(0)
+	numCPU := runtime.NumCPU()
+	if maxProcs < numCPU {
+		if maxProcs >= 4 {
+			return 4
+		} else {
+			return maxProcs
+		}
+	} else {
+		if numCPU >= 4 {
+			return 4
+		} else {
+			return numCPU
+		}
+	}
 }
 
 // converts raw JSON into Asset proto

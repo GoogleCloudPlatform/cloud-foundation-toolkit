@@ -34,6 +34,7 @@ type InventoryConfig struct {
 	bucketName     string
 	dirPath        string
 	readFromStdin  bool
+	concurrency    bool
 }
 
 // Option for NewInventory
@@ -61,11 +62,12 @@ func TargetOrg(organizationID string) Option {
 }
 
 // NewInventory creates a new CAI inventory manager
-func NewInventory(bucketName, dirPath string, readFromStdin bool, refresh bool, options ...Option) (*InventoryConfig, error) {
+func NewInventory(bucketName, dirPath string, readFromStdin bool, refresh bool, concurrency bool, options ...Option) (*InventoryConfig, error) {
 	inventory := new(InventoryConfig)
 	inventory.bucketName = bucketName
 	inventory.dirPath = dirPath
 	inventory.readFromStdin = readFromStdin
+	inventory.concurrency = concurrency
 
 	for _, option := range options {
 		option(inventory)
