@@ -56,9 +56,14 @@ maketemp() {
 
 # find_files is a helper to exclude .git directories and match only regular
 # files to avoid double-processing symlinks.
-# You can ignore directories by setting an environment variable of
+# You can ignore directories by setting two different environment variables of
 #   relative escaped paths separated by a pipe
-# Ex: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
+# (1) EXCLUDE_LINT_DIRS - all files pointed to by this variable are skipped
+#                         during ANY USE of the find_files function
+#     E.g.: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
+# (2) EXCLUDE_HEADER_CHECK - all files pointed to by this variable are skipped
+#                            ONLY WHEN the "for_header_check" flag is passed in
+#     E.g.: EXCLUDE_HEADER_CHECK="\./config/foo_resource.yml|\./scripts/bar_script.sh"
 find_files() {
   local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
     ".*/\.terraform"
@@ -83,6 +88,16 @@ find_files() {
   if [[ -n "${EXCLUDE_LINT_DIRS-}" ]]; then
     find_path_regex+="${EXCLUDE_LINT_DIRS}"
     find_path_regex+="|"
+  fi
+
+  # if find_files is used for validating license headers
+  if [ $1 = "for_header_check" ]; then
+    # Add any files to be skipped for header check
+    if [[ -n "${EXCLUDE_HEADER_CHECK-}" ]]; then
+      find_path_regex+="${EXCLUDE_HEADER_CHECK}"
+      find_path_regex+="|"
+    fi
+    shift
   fi
 
   # Concat last dir, along with closing paren
@@ -391,11 +406,26 @@ function prepare_test_variables() {
 
 function check_headers() {
   echo "Checking file headers"
-  # Use the exclusion behavior of find_files
-  find_files . -type f -print0 \
-    | compat_xargs -0 python /usr/local/verify_boilerplate/verify_boilerplate.py
+  # Use the exclusion behavior of find_files(); a second argument
+  # "for_header_check" is passed in, to ensure filtering based on the evironment
+  # variable EXCLUDE_HEADER_CHECK is done only when find_files is called here
+  find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -check 2>&1
 }
 
+# Add license headers to the files in the project. If a list of files are provided
+# as an input argument then those files are updated to have the license header.
+# If not find_files() function is used to get the list of applicable files from
+# the current directory and those files are updated.
+function fix_headers() {
+  echo "Adding file license headers"
+  YEAR=$(date +'%Y')
+  if [ $# -eq 0 ]
+  then
+    find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -y $YEAR
+  else
+    addlicense -y $YEAR "$@"
+  fi
+}
 
 # Given SERVICE_ACCOUNT_JSON with the JSON string of a service account key,
 # initialize the SA credentials for use with:
