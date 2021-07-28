@@ -59,6 +59,7 @@ maketemp() {
 # You can ignore directories by setting an environment variable of
 #   relative escaped paths separated by a pipe
 # Ex: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
+# Ex: EXCLUDE_HEADER_CHECK="\./config/foo_resource.yml|\./scripts/bar_script.sh"
 find_files() {
   local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
     ".*/\.terraform"
@@ -83,6 +84,16 @@ find_files() {
   if [[ -n "${EXCLUDE_LINT_DIRS-}" ]]; then
     find_path_regex+="${EXCLUDE_LINT_DIRS}"
     find_path_regex+="|"
+  fi
+
+  # if find_files is used for validating license headers
+  if [ $1 = "for_header_check" ]; then
+    # Add any files to be skipped for header check
+    if [[ -n "${EXCLUDE_HEADER_CHECK-}" ]]; then
+      find_path_regex+="${EXCLUDE_HEADER_CHECK}"
+      find_path_regex+="|"
+    fi
+    shift
   fi
 
   # Concat last dir, along with closing paren
@@ -382,45 +393,26 @@ function prepare_test_variables() {
 
 function check_headers() {
   echo "Checking file headers"
-  # remove any existing check files from previous runs
-  FILES="files.log"
-  LEGACY_CHECK_FILE="legacy_headder_check.log"
-  NEW_CHECK_FILE="new_header_check.log"
-  if [ -f "$LEGACY_CHECK_FILE" ] ; then
-    rm "$LEGACY_CHECK_FILE"
-  fi
-  if [ -f "$NEW_CHECK_FILE" ] ; then
-    rm "$NEW_CHECK_FILE"
-  fi
-  rm "$FILES"
-
-  # Use the exclusion behavior of find_files
-  find_files . -type f -print0 > "$FILES"
-  # run the legacy header checker for each of the files from find_files
-  cat "$FILES" \
-    | compat_xargs -0 python /usr/local/verify_boilerplate/verify_boilerplate.py 2>&1 \
-    | grep -v 'have incorrect boilerplate headers' >> "$LEGACY_CHECK_FILE"
-  # for every line that doesn't have an absolute path prefix it with './'
-  # this is done in order to match the output of addlicense so we can compare them
-  sed -i -e '/^\//! s/^/.\//' "$LEGACY_CHECK_FILE"
-
-  # check if the exclusion variable is set for the addlicense check
-  if [[ -v EXCLUDE_HEADER_CHECK ]]; then
-    SKIP_STRING=""
-    for file in ${EXCLUDE_HEADER_CHECK}
-    do
-      SKIP_STRING="$SKIP_STRING -skip $file"
-    done
-    stored_cmd="cat $FILES | compat_xargs -0 addlicense -check $SKIP_STRING 2>&1 | grep -v 'skipping this file'"
-    eval "$stored_cmd" >> "$NEW_CHECK_FILE"
-  else
-    cat "$FILES" | compat_xargs -0 addlicense -check 2>&1 >> "$NEW_CHECK_FILE"
-  fi
-  # list only the files caught by both methods, if not assume success header check
-  # return value of grep is negated so that if there is an output then header check failed
-  ! grep -F -x -f "$LEGACY_CHECK_FILE" "$NEW_CHECK_FILE"
+  # Use the exclusion behavior of find_files(); a second argument
+  # "for_header_check" is passed in, to ensure filtering based on the evironment
+  # variable EXCLUDE_HEADER_CHECK is done only when find_files is called here
+  find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -check 2>&1
 }
 
+# Add license headers to the files in the project. If a list of files are provided
+# as an input argument then those files are updated to have the license header.
+# If not find_files() funciton is used to get the list of applicable files from
+# the current directory and those files are updated.
+function fix_headers() {
+  echo "Adding file license headers"
+  YEAR=$(date +'%Y')
+  if [ $# -eq 0 ]
+  then
+    find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -y $YEAR
+  else
+    addlicense -y $YEAR "$@"
+  fi
+}
 
 # Given SERVICE_ACCOUNT_JSON with the JSON string of a service account key,
 # initialize the SA credentials for use with:
