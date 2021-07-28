@@ -36,64 +36,7 @@ func makeLineList(output []byte) []interface{} {
 
 func TestWriteViolations(t *testing.T) {
 	// Prepare violations
-	inventory, err := NewInventory("", localCaiDir, false, false, false, TargetOrg("56789"))
-	if err != nil {
-		t.Fatal("unexpected error", err)
-	}
-	ctx := context.Background()
-	config, err := NewScoringConfig(ctx, localPolicyDir)
-	if err != nil {
-		t.Fatal("unexpected error", err)
-	}
-	err = inventory.findViolations(config)
-	if err != nil {
-		t.Fatal("unexpected error", err)
-	}
-
-	tests := []struct {
-		format    string
-		filename  string
-		message   string
-		listMaker func([]byte) []interface{}
-	}{
-		{
-			format: "json", filename: "violations.json", message: "The JSON output should be equivalent.",
-			listMaker: func(output []byte) []interface{} {
-				var outputJSON []interface{}
-				if err = json.Unmarshal(output, &outputJSON); err != nil {
-					t.Fatal("unexpected error", err)
-				}
-				return outputJSON
-			},
-		},
-		{
-			format: "txt", filename: "violations.txt", message: "The text output should be equivalent.",
-			listMaker: makeLineList,
-		},
-		{
-			format: "csv", filename: "violations.csv", message: "The csv output should be equivalent.",
-			listMaker: makeLineList,
-		},
-	}
-
-	for _, tc := range tests {
-		output := new(bytes.Buffer)
-		fileContent, err := ioutil.ReadFile(testRoot + "/output/" + tc.filename)
-		if err != nil {
-			t.Fatal("unexpected error", err)
-		}
-		expected := tc.listMaker(fileContent)
-
-		writeResults(config, output, tc.format, nil)
-		actual := tc.listMaker(output.Bytes())
-
-		assert.ElementsMatch(t, expected, actual, tc.message)
-	}
-}
-
-func TestWriteViolationsConcurrently(t *testing.T) {
-	// Prepare violations
-	inventory, err := NewInventory("", localCaiDir, false, false, true, TargetOrg("56789"))
+	inventory, err := NewInventory("", localCaiDir, false, false, WorkerSize(1), TargetOrg("56789"))
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}

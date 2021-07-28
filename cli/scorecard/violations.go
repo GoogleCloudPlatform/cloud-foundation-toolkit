@@ -21,7 +21,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"runtime"
+	"sync"
 
 	"cloud.google.com/go/storage"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
@@ -124,45 +124,9 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichVi
 	}
 
 	richViolations := make([]*RichViolation, 0)
-	for _, asset := range pbAssets {
-		violations, err := config.validator.ReviewAsset(context.Background(), asset)
-
-		if err != nil {
-			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
-		}
-		for _, violation := range violations {
-			richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
-			richViolations = append(richViolations, &richViolation)
-		}
-	}
-	return richViolations, nil
-}
-
-// getViolationsConcurrently finds all Config Validator violations for a given Inventory concurrently
-func getViolationsConcurrently(inventory *InventoryConfig, config *ScoringConfig) ([]*RichViolation, error) {
-	var err error
-	var pbAssets []*validator.Asset
-
-	if inventory.bucketName != "" {
-		pbAssets, err = getDataFromBucket(inventory.bucketName)
-		if err != nil {
-			return nil, errors.Wrap(err, "Fetching inventory from Bucket")
-		}
-	} else if inventory.dirPath != "" {
-		pbAssets, err = getDataFromFile(inventory.dirPath)
-		if err != nil {
-			return nil, errors.Wrap(err, "Fetching inventory from local directory")
-		}
-	} else if inventory.readFromStdin {
-		pbAssets, err = getDataFromStdin()
-		if err != nil {
-			return nil, errors.Wrap(err, "Reading from stdin")
-		}
-	}
-
-	richViolations := make([]*RichViolation, 0)
-	wp := workerpool.New(numWorkers())
+	wp := workerpool.New(inventory.workers)
 	var badAsset *validator.Asset
+	var mu sync.Mutex
 	for _, asset := range pbAssets {
 		asset := asset
 		wp.Submit(func() {
@@ -174,7 +138,9 @@ func getViolationsConcurrently(inventory *InventoryConfig, config *ScoringConfig
 			}
 			for _, violation := range violations {
 				richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
+				mu.Lock()
 				richViolations = append(richViolations, &richViolation)
+				mu.Unlock()
 			}
 		})
 	}
@@ -184,25 +150,6 @@ func getViolationsConcurrently(inventory *InventoryConfig, config *ScoringConfig
 		return nil, errors.Wrapf(err, "reviewing asset %s", badAsset)
 	} else {
 		return richViolations, nil
-	}
-}
-
-// numWorkers finds available cpus or procs that can be used to execute worker pools. Limiting the number of worker pools to 4 if finds more than or equal to 4 CPUs
-func numWorkers() int {
-	maxProcs := runtime.GOMAXPROCS(0)
-	numCPU := runtime.NumCPU()
-	if maxProcs < numCPU {
-		if maxProcs >= 4 {
-			return 4
-		} else {
-			return maxProcs
-		}
-	} else {
-		if numCPU >= 4 {
-			return 4
-		} else {
-			return numCPU
-		}
 	}
 }
 

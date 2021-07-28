@@ -258,29 +258,16 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 
 // findViolations gets violations for the inventory and attaches them
 func (inventory *InventoryConfig) findViolations(config *ScoringConfig) error {
-	if inventory.concurrency {
-		violations, err := getViolationsConcurrently(inventory, config)
-		if err != nil {
-			return err
-		}
-
-		err = config.attachViolations(violations)
-		if err != nil {
-			return err
-		}
-		return nil
-	} else {
-		violations, err := getViolations(inventory, config)
-		if err != nil {
-			return err
-		}
-
-		err = config.attachViolations(violations)
-		if err != nil {
-			return err
-		}
-		return nil
+	violations, err := getViolations(inventory, config)
+	if err != nil {
+		return err
 	}
+
+	err = config.attachViolations(violations)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Score creates a Scorecard for an inventory
