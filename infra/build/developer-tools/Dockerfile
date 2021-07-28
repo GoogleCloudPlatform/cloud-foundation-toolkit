@@ -130,6 +130,9 @@ RUN ./build/install_kustomize.sh ${KUSTOMIZE_VERSION}
 ADD ./build/install_kpt.sh /build/
 RUN ./build/install_kpt.sh ${KPT_VERSION}
 
+ADD ./build/install_addlicense.sh /build/
+RUN /build/install_addlicense.sh
+
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
@@ -175,7 +178,8 @@ RUN terraform --version && \
     bundle --version && \
     kubectl version --client=true && \
     terragrunt -version && \
-    kustomize version
+    kustomize version && \
+    addlicense -help
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build
