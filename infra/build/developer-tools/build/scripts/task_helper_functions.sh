@@ -414,7 +414,7 @@ function check_headers() {
 
 # Add license headers to the files in the project. If a list of files are provided
 # as an input argument then those files are updated to have the license header.
-# If not find_files() funciton is used to get the list of applicable files from
+# If not find_files() function is used to get the list of applicable files from
 # the current directory and those files are updated.
 function fix_headers() {
   echo "Adding file license headers"
