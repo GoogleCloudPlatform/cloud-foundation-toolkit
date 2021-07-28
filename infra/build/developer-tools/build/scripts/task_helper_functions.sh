@@ -56,10 +56,14 @@ maketemp() {
 
 # find_files is a helper to exclude .git directories and match only regular
 # files to avoid double-processing symlinks.
-# You can ignore directories by setting an environment variable of
+# You can ignore directories by setting two different environment variables of
 #   relative escaped paths separated by a pipe
-# Ex: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
-# Ex: EXCLUDE_HEADER_CHECK="\./config/foo_resource.yml|\./scripts/bar_script.sh"
+# (1) EXCLUDE_LINT_DIRS - all files pointed to by this variable are skipped
+#                         during ANY USE of the find_files function
+#     E.g.: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
+# (2) EXCLUDE_HEADER_CHECK - all files pointed to by this variable are skipped
+#                            ONLY WHEN the "for_header_check" flag is passed in
+#     E.g.: EXCLUDE_HEADER_CHECK="\./config/foo_resource.yml|\./scripts/bar_script.sh"
 find_files() {
   local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
     ".*/\.terraform"
