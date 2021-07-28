@@ -7,4 +7,5 @@ if [[ -z "${CFT_DISABLE_INIT_CREDENTIALS:-}" ]]; then
   echo 'Invoking init_credentials from ~/.bashrc' >&2
   echo 'Disable this behavior by setting CFT_DISABLE_INIT_CREDENTIALS=yes' >&2
   init_credentials
+  init_tf_plugin_cache
 fi

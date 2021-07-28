@@ -128,6 +128,13 @@ function lint_docker() {
     | compat_xargs -0 hadolint
 }
 
+# This function creates TF_PLUGIN_CACHE_DIR if TF_PLUGIN_CACHE_DIR envvar is set
+function init_tf_plugin_cache() {
+  if [[ ! -z "${TF_PLUGIN_CACHE_DIR}" ]]; then
+    mkdir -p ${TF_PLUGIN_CACHE_DIR}
+  fi
+}
+
 # This function runs 'terraform validate' against all
 # directory paths which contain *.tf files.
 function check_terraform() {
@@ -135,10 +142,7 @@ function check_terraform() {
   local rval rc
   rval=0
 
-  # if TF_PLUGIN_CACHE_DIR is set, create TF_PLUGIN_CACHE_DIR
-  if [[ ! -z "${TF_PLUGIN_CACHE_DIR}" ]]; then
-    mkdir -p ${TF_PLUGIN_CACHE_DIR}
-  fi
+  init_tf_plugin_cache
 
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
