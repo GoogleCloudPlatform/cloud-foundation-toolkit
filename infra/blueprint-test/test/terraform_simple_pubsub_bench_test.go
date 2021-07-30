@@ -54,7 +54,7 @@ func BenchmarkTFPubSub(b *testing.B) {
 			tfVars := map[string]interface{}{"project_topic_map": generateNTopicsPerProject(project_ids, topicCount)}
 			tft.WithVars(tfVars)(pubSubTest)
 			// run tf init to download provider(s)
-			utils.RunStage("setup", func() { pubSubTest.Setup() })
+			utils.RunStage("init", func() { pubSubTest.Init() })
 			// reset benchmark timer to ignore previous time
 			b.ResetTimer()
 			for n := 0; n < b.N; n++ {

@@ -33,14 +33,15 @@ func TestSimpleTFModule(t *testing.T) {
 		tft.WithEnvVars(map[string]string{"network_name": fmt.Sprintf("foo-%s", utils.RandStr(5))}),
 	)
 
-	utils.RunStage("setup", func() { nt.Setup() })
+	utils.RunStage("init", func() { nt.Init() })
 	defer utils.RunStage("teardown", func() { nt.Teardown() })
 
 	utils.RunStage("apply", func() { nt.Apply() })
 
 	utils.RunStage("verify", func() {
-		op := gcloud.Run(t, fmt.Sprintf("compute networks subnets describe subnet-01 --project %s --region us-west1", nt.GetStringOutput("project_id")))
 		assert := assert.New(t)
+		nt.Verify(assert)
+		op := gcloud.Run(t, fmt.Sprintf("compute networks subnets describe subnet-01 --project %s --region us-west1", nt.GetStringOutput("project_id")))
 		assert.Equal(op.Get("ipCidrRange").String(), "10.10.10.0/24", "should have the right CIDR")
 		assert.Equal(op.Get("logConfig.enable").String(), "false", "logConfig should not be enabled")
 	})
