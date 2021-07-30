@@ -22,6 +22,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
+	"github.com/gruntwork-io/terratest/modules/logger"
 )
 
 func generateNTopicsPerProject(projects []string, topicCount int) map[string]interface{} {
@@ -46,7 +47,7 @@ func BenchmarkTFPubSub(b *testing.B) {
 			pubSubTest := tft.Init(b,
 				tft.WithSetupPath("setup/simple_tf_bench"),
 				tft.WithTFDir("benchmark_fixtures/simple_pubsub_tf"),
-				// tft.WithLogger(logger.Discard),
+				tft.WithLogger(logger.Discard),
 			)
 			// get list of available projects that have been setup
 			project_ids := pubSubTest.GetTFSetupOPListVal("project_ids")
@@ -54,15 +55,15 @@ func BenchmarkTFPubSub(b *testing.B) {
 			tfVars := map[string]interface{}{"project_topic_map": generateNTopicsPerProject(project_ids, topicCount)}
 			tft.WithVars(tfVars)(pubSubTest)
 			// run tf init to download provider(s)
-			utils.RunStage("init", func() { pubSubTest.Init() })
+			utils.RunStage("init", func() { pubSubTest.Init(nil) })
 			// reset benchmark timer to ignore previous time
 			b.ResetTimer()
 			for n := 0; n < b.N; n++ {
 				// start apply benchmark
-				utils.RunStage("apply", func() { pubSubTest.Apply() })
+				utils.RunStage("apply", func() { pubSubTest.Apply(nil) })
 				//stop timer for cleanup
 				b.StopTimer()
-				utils.RunStage("destroy", func() { pubSubTest.Teardown() })
+				utils.RunStage("destroy", func() { pubSubTest.Teardown(nil) })
 				// restart timer
 				b.StartTimer()
 			}

@@ -33,10 +33,10 @@ func TestSimpleTFModule(t *testing.T) {
 		tft.WithEnvVars(map[string]string{"network_name": fmt.Sprintf("foo-%s", utils.RandStr(5))}),
 	)
 
-	utils.RunStage("init", func() { nt.Init() })
-	defer utils.RunStage("teardown", func() { nt.Teardown() })
+	utils.RunStage("init", func() { nt.Init(nil) })
+	defer utils.RunStage("teardown", func() { nt.Teardown(nil) })
 
-	utils.RunStage("apply", func() { nt.Apply() })
+	utils.RunStage("apply", func() { nt.Apply(nil) })
 
 	utils.RunStage("verify", func() {
 		assert := assert.New(t)
