@@ -25,9 +25,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Blueprint represents a config that can be setup, applied, verified and torndown.
+// Blueprint represents a config that can be initialized, applied, verified and torndown.
 type Blueprint interface {
-	Setup()
+	Init()
 	Apply()
 	Verify(*assert.Assertions)
 	Teardown()
@@ -35,14 +35,14 @@ type Blueprint interface {
 
 // BlueprintTest implements a generic blueprint
 type BlueprintTest struct {
-	Setup    func()
+	Init     func()
 	Apply    func()
 	Verify   func(*assert.Assertions)
 	Teardown func()
 }
 
-func (b *BlueprintTest) DefineSetup(setup func()) {
-	b.Setup = setup
+func (b *BlueprintTest) DefineInit(init func()) {
+	b.Init = init
 
 }
 func (b *BlueprintTest) DefineApply(apply func()) {
@@ -57,7 +57,7 @@ func (b *BlueprintTest) DefineVerify(verify func(*assert.Assertions)) {
 	b.Verify = verify
 }
 
-// TestBlueprint runs setup, apply, verify, teardown in order for a given blueprint
+// TestBlueprint runs init, apply, verify, teardown in order for a given blueprint
 func TestBlueprint(t testing.TB, bp Blueprint, bptf func(*BlueprintTest)) {
 	bpt := &BlueprintTest{}
 	// apply any overrides to default bp methods
@@ -66,8 +66,8 @@ func TestBlueprint(t testing.TB, bp Blueprint, bptf func(*BlueprintTest)) {
 	}
 	a := assert.New(t)
 	// set default blueprint methods if not overriden by blueprint test
-	if bpt.Setup == nil {
-		bpt.Setup = func() { bp.Setup() }
+	if bpt.Init == nil {
+		bpt.Init = func() { bp.Init() }
 	}
 	if bpt.Apply == nil {
 		bpt.Apply = func() { bp.Apply() }
@@ -79,7 +79,7 @@ func TestBlueprint(t testing.TB, bp Blueprint, bptf func(*BlueprintTest)) {
 		bpt.Verify = func(a *assert.Assertions) { bp.Verify(a) }
 	}
 	// run stages
-	utils.RunStage("setup", func() { bpt.Setup() })
+	utils.RunStage("init", func() { bpt.Init() })
 	defer utils.RunStage("teardown", func() { bpt.Teardown() })
 	utils.RunStage("apply", func() { bpt.Apply() })
 	utils.RunStage("verify", func() { bpt.Verify(a) })
