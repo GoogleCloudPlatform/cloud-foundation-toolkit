@@ -19,68 +19,97 @@
 package bpt
 
 import (
-	"github.com/mitchellh/go-testing-interface"
-
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
+	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
 )
 
 // Blueprint represents a config that can be initialized, applied, verified and torndown.
 type Blueprint interface {
-	Init()
-	Apply()
+	Init(*assert.Assertions)
+	Apply(*assert.Assertions)
 	Verify(*assert.Assertions)
-	Teardown()
+	Teardown(*assert.Assertions)
 }
 
 // BlueprintTest implements a generic blueprint
 type BlueprintTest struct {
-	Init     func()
-	Apply    func()
-	Verify   func(*assert.Assertions)
-	Teardown func()
+	init     func(*assert.Assertions) // custom init function
+	apply    func(*assert.Assertions) // custom apply function
+	verify   func(*assert.Assertions) // custom verify function
+	teardown func(*assert.Assertions) // custom teardown function
+	bp       Blueprint                // blueprint to be tested
 }
 
-func (b *BlueprintTest) DefineInit(init func()) {
-	b.Init = init
+type bptOption func(*BlueprintTest)
 
+func DefineInit(init func(*assert.Assertions)) bptOption {
+	return func(bt *BlueprintTest) {
+		bt.init = init
+	}
 }
-func (b *BlueprintTest) DefineApply(apply func()) {
-	b.Apply = apply
 
+func DefineApply(apply func(*assert.Assertions)) bptOption {
+	return func(bt *BlueprintTest) {
+		bt.apply = apply
+	}
 }
-func (b *BlueprintTest) DefineTeardown(teardown func()) {
-	b.Teardown = teardown
 
+func DefineTeardown(teardown func(*assert.Assertions)) bptOption {
+	return func(bt *BlueprintTest) {
+		bt.teardown = teardown
+	}
 }
-func (b *BlueprintTest) DefineVerify(verify func(*assert.Assertions)) {
-	b.Verify = verify
+
+func DefineVerify(verify func(*assert.Assertions)) bptOption {
+	return func(bt *BlueprintTest) {
+		bt.verify = verify
+	}
+}
+
+func (bt *BlueprintTest) Init(a *assert.Assertions) {
+	if bt.init != nil {
+		bt.init(a)
+	} else {
+		bt.bp.Init(a)
+	}
+}
+
+func (bt *BlueprintTest) Apply(a *assert.Assertions) {
+	if bt.apply != nil {
+		bt.apply(a)
+	} else {
+		bt.bp.Apply(a)
+	}
+}
+
+func (bt *BlueprintTest) Teardown(a *assert.Assertions) {
+	if bt.teardown != nil {
+		bt.teardown(a)
+	} else {
+		bt.bp.Teardown(a)
+	}
+}
+
+func (bt *BlueprintTest) Verify(a *assert.Assertions) {
+	if bt.verify != nil {
+		bt.verify(a)
+	} else {
+		bt.bp.Verify(a)
+	}
 }
 
 // TestBlueprint runs init, apply, verify, teardown in order for a given blueprint
-func TestBlueprint(t testing.TB, bp Blueprint, bptf func(*BlueprintTest)) {
-	bpt := &BlueprintTest{}
+func TestBlueprint(t testing.TB, bp Blueprint, opts ...bptOption) {
+	bpt := &BlueprintTest{bp: bp}
 	// apply any overrides to default bp methods
-	if bptf != nil {
-		bptf(bpt)
+	for _, opt := range opts {
+		opt(bpt)
 	}
 	a := assert.New(t)
-	// set default blueprint methods if not overriden by blueprint test
-	if bpt.Init == nil {
-		bpt.Init = func() { bp.Init() }
-	}
-	if bpt.Apply == nil {
-		bpt.Apply = func() { bp.Apply() }
-	}
-	if bpt.Teardown == nil {
-		bpt.Teardown = func() { bp.Teardown() }
-	}
-	if bpt.Verify == nil {
-		bpt.Verify = func(a *assert.Assertions) { bp.Verify(a) }
-	}
 	// run stages
-	utils.RunStage("init", func() { bpt.Init() })
-	defer utils.RunStage("teardown", func() { bpt.Teardown() })
-	utils.RunStage("apply", func() { bpt.Apply() })
+	utils.RunStage("init", func() { bpt.Init(a) })
+	defer utils.RunStage("teardown", func() { bpt.Teardown(a) })
+	utils.RunStage("apply", func() { bpt.Apply(a) })
 	utils.RunStage("verify", func() { bpt.Verify(a) })
 }
