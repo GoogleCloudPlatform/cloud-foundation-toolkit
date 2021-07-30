@@ -205,13 +205,13 @@ func AutoDiscoverAndTest(t *gotest.T) {
 		testName := fmt.Sprintf("test-%s-%s", path.Base(path.Dir(dir)), path.Base(dir))
 		t.Run(testName, func(t *gotest.T) {
 			nt := Init(t, WithTFDir(dir))
-			bpt.TestBlueprint(t, nt, nil)
+			bpt.TestBlueprint(t, nt)
 		})
 	}
 }
 
 // Teardown runs TF destroy on a blueprint.
-func (b *TFBlueprintTest) Teardown() {
+func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
 	terraform.Destroy(b.t, b.getTFOptions())
 }
 
@@ -225,7 +225,7 @@ func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
 }
 
 // Init runs TF init and validate on a blueprint.
-func (b *TFBlueprintTest) Init() {
+func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
 	terraform.Init(b.t, b.getTFOptions())
 	// if vars are set for common options, this seems to trigger -var flag when calling validate
 	// using custom tfOptions as a workaround
@@ -236,6 +236,6 @@ func (b *TFBlueprintTest) Init() {
 }
 
 // Apply runs TF apply on a blueprint.
-func (b *TFBlueprintTest) Apply() {
+func (b *TFBlueprintTest) Apply(assert *assert.Assertions) {
 	terraform.Apply(b.t, b.getTFOptions())
 }
