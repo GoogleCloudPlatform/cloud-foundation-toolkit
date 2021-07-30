@@ -35,65 +35,75 @@ import (
 
 // TFBlueprintTest implements bpt.Blueprint and stores information associated with a Terraform blueprint test.
 type TFBlueprintTest struct {
-	name        string                 // descriptive name for the test
-	fixtureName string                 // fixture name which will be used to compute TFDir
-	tfDir       string                 // directory containing Terraform configs
-	envVars     map[string]string      // variables to pass to Terraform as environment variables
-	setupPath   string                 // optional directory containing applied TF configs to import outputs as variables for the test
-	vars        map[string]interface{} // variables to pass to Terraform as flags
-	logger      *logger.Logger         // custom logger
-	t           testing.TB             // TestingT or TestingB
+	name      string                 // descriptive name for the test
+	tfDir     string                 // directory containing Terraform configs
+	tfEnvVars map[string]string      // variables to pass to Terraform as environment variables prefixed with tfEnvVars
+	setupDir  string                 // optional directory containing applied TF configs to import outputs as variables for the test
+	vars      map[string]interface{} // variables to pass to Terraform as flags
+	logger    *logger.Logger         // custom logger
+	t         testing.TB             // TestingT or TestingB
 }
 
-type option func(*TFBlueprintTest)
+const (
+	setupDir   = "setup"
+	fixtureDir = "fixtures"
+)
 
-func WithName(name string) option {
+type tftOption func(*TFBlueprintTest)
+
+func WithName(name string) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.name = name
 	}
 }
 
-func WithFixtureName(fixtureName string) option {
+func WithFixtureName(fixtureName string) tftOption {
 	return func(f *TFBlueprintTest) {
-		f.fixtureName = fixtureName
+		// when a test is invoked for an explicit blueprint fixture
+		// expect fixture path to be ../../fixtures/fixtureName
+		tfModFixtureDir := path.Join("..", "..", fixtureDir, fixtureName)
+		f.tfDir = tfModFixtureDir
 	}
 }
 
-func WithTFDir(tfDir string) option {
+func WithTFDir(tfDir string) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.tfDir = tfDir
 	}
 }
 
-func WithEnvVars(envVars map[string]string) option {
+func WithEnvVars(envVars map[string]string) tftOption {
 	return func(f *TFBlueprintTest) {
-		f.envVars = envVars
+		tfEnvVars := make(map[string]string)
+		loadTFEnvVar(tfEnvVars, envVars)
+		f.tfEnvVars = tfEnvVars
 	}
 }
 
-func WithSetupPath(setupPath string) option {
+func WithSetupPath(setupPath string) tftOption {
 	return func(f *TFBlueprintTest) {
-		f.setupPath = setupPath
+		f.setupDir = setupPath
 	}
 }
 
-func WithVars(vars map[string]interface{}) option {
+func WithVars(vars map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.vars = vars
 	}
 }
 
-func WithLogger(logger *logger.Logger) option {
+func WithLogger(logger *logger.Logger) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.logger = logger
 	}
 }
 
 // Init sets defaults, validates and returns a TFBlueprintTest.
-func Init(t testing.TB, opts ...option) *TFBlueprintTest {
+func Init(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	tft := &TFBlueprintTest{
-		name: fmt.Sprintf("%s TF Blueprint", t.Name()),
-		t:    t,
+		name:      fmt.Sprintf("%s TF Blueprint", t.Name()),
+		t:         t,
+		tfEnvVars: make(map[string]string),
 	}
 	// apply options
 	for _, opt := range opts {
@@ -103,12 +113,13 @@ func Init(t testing.TB, opts ...option) *TFBlueprintTest {
 	if tft.logger == nil {
 		tft.logger = utils.GetLoggerFromT()
 	}
-	// one of fixture name or tfDir should be provided
-	if tft.fixtureName != "" && tft.tfDir != "" {
-		t.Fatalf("Only one of FixtureName or TFDir must be provided, found FixtureName=%s, TFDir=%s", tft.fixtureName, tft.tfDir)
-	}
-	// if both fixture name and tfDir are empty, auto discover tfDir based on cwd
-	if tft.fixtureName == "" && tft.tfDir == "" {
+	// if explicit tfDir is provided, validate it else try auto discovery
+	if tft.tfDir != "" {
+		_, err := os.Stat(tft.tfDir)
+		if os.IsNotExist(err) {
+			t.Fatalf("TFDir path %s does not exist", tft.tfDir)
+		}
+	} else {
 		cwd, err := os.Getwd()
 		if err != nil {
 			t.Fatalf("unable to get wd :%v", err)
@@ -119,63 +130,39 @@ func Init(t testing.TB, opts ...option) *TFBlueprintTest {
 		}
 		tft.tfDir = tfdir
 	}
-	// if fixture name compute tfDir from given fixture name
-	if tft.fixtureName != "" {
-		tfModFixtureDir := getTFModuleFixtureDir(tft.fixtureName)
-		if _, err := os.Stat(tfModFixtureDir); os.IsNotExist(err) {
-			t.Fatalf("TFDir path derived from %s as %s does not exist", tft.fixtureName, tfModFixtureDir)
+	// setupDir is empty, try known setupDir paths
+	if tft.setupDir == "" {
+		setupDir, err := discovery.GetKnownDirInParents(setupDir)
+		if err != nil {
+			t.Logf("Setup dir not found, skipping loading setup outputs as fixture inputs: %v", err)
+		} else {
+			tft.setupDir = setupDir
 		}
-		tft.tfDir = tfModFixtureDir
 	}
-	// setupPath is empty, try known setupPath
-	if tft.setupPath == "" {
-		tfModSetupDir := getTFModuleSetupDir()
-		if _, err := os.Stat(tfModSetupDir); os.IsNotExist(err) {
-			t.Logf("Setup dir %s not found, skipping loading setup outputs as fixture inputs", tfModSetupDir)
-		}
-		tft.setupPath = tfModSetupDir
+	//load TFEnvVars from setup outputs
+	if tft.setupDir != "" {
+		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
+		loadTFEnvVar(tft.tfEnvVars, tft.getTFSetupOutputMap())
 	}
-	// load TFEnvVars
-	tfEnvVars := make(map[string]string)
-	//load from setup outputs
-	if tft.setupPath != "" {
-		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupPath)
-		loadTFEnvVar(tfEnvVars, tft.getTFSetupOPMap())
-	}
-	// load additional env variables
-	if tft.envVars != nil {
-		loadTFEnvVar(tfEnvVars, tft.envVars)
-	}
-	tft.envVars = tfEnvVars
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
 	return tft
-}
-
-// getTFModuleFixtureDir gets TF fixture config path from a fixture name.
-func getTFModuleFixtureDir(fixture string) string {
-	return fmt.Sprintf("../../test/fixtures/%s", fixture)
-}
-
-// getTFModuleSetupDir returns well known setup path.
-func getTFModuleSetupDir() string {
-	return "../../setup"
 }
 
 // getTFOptions generates terraform.Options used by Terratest.
 func (b *TFBlueprintTest) getTFOptions() *terraform.Options {
 	return terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
 		TerraformDir: b.tfDir,
-		EnvVars:      b.envVars,
+		EnvVars:      b.tfEnvVars,
 		Vars:         b.vars,
 		Logger:       b.logger,
 	})
 }
 
-// getTFSetupOPMap computes a map of TF outputs from setup.
+// getTFSetupOutputMap computes a map of TF outputs from setup.
 // Currently only returns string outputs.
-func (b *TFBlueprintTest) getTFSetupOPMap() map[string]string {
-	o := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupPath, Logger: b.logger})
+func (b *TFBlueprintTest) getTFSetupOutputMap() map[string]string {
+	o := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger})
 	n := make(map[string]string)
 	for k, v := range o {
 		s, ok := v.(string)
@@ -197,10 +184,10 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 // GetTFSetupOPListVal returns TF output from setup for a given key as list.
 // It fails test if given key does not output a list type.
 func (b *TFBlueprintTest) GetTFSetupOPListVal(key string) []string {
-	if b.setupPath == "" {
+	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
-	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupPath, Logger: b.logger}, key)
+	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger}, key)
 }
 
 // loadTFEnvVar adds new env variables prefixed with TF_VAR_ to an existing map of variables.
@@ -214,10 +201,10 @@ func loadTFEnvVar(m map[string]string, new map[string]string) {
 func AutoDiscoverAndTest(t *gotest.T) {
 	configs := discovery.FindTestConfigs(t, "./")
 	for _, dir := range configs {
-		// dir must be of the form ../fixture/name or ../examples/name
+		// dir must be of the form ../fixture/name or ../../examples/name
 		testName := fmt.Sprintf("test-%s-%s", path.Base(path.Dir(dir)), path.Base(dir))
 		t.Run(testName, func(t *gotest.T) {
-			nt := Init(t, WithTFDir(dir), WithSetupPath("../setup"))
+			nt := Init(t, WithTFDir(dir))
 			bpt.TestBlueprint(t, nt, nil)
 		})
 	}
@@ -233,13 +220,19 @@ func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
 	e := terraform.PlanExitCode(b.t, b.getTFOptions())
 	// exit code 0 is success with no diffs, 2 is success with non-empty diff
 	// https://www.terraform.io/docs/cli/commands/plan.html#detailed-exitcode
-	assert.Equal(e, 0, "plan after apply should have exit code 0")
+	assert.NotEqual(e, 1, "plan after apply should not fail")
+	assert.NotEqual(e, 2, "plan after apply should have non-empty diff")
 }
 
-// Setup runs TF init and validate on a blueprint.
-func (b *TFBlueprintTest) Setup() {
+// Init runs TF init and validate on a blueprint.
+func (b *TFBlueprintTest) Init() {
 	terraform.Init(b.t, b.getTFOptions())
-	terraform.Validate(b.t, b.getTFOptions())
+	// if vars are set for common options, this seems to trigger -var flag when calling validate
+	// using custom tfOptions as a workaround
+	terraform.Validate(b.t, terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
+		TerraformDir: b.tfDir,
+		Logger:       b.logger,
+	}))
 }
 
 // Apply runs TF apply on a blueprint.
