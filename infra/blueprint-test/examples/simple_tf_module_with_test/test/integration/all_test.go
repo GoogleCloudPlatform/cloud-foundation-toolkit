@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/modules/tft"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
 )
 
 func TestAll(t *testing.T) {
