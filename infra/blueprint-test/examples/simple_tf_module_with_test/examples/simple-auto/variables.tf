@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-module "project" {
-  source  = "terraform-google-modules/project-factory/google"
-  version = "~> 11.0"
-
-  name              = "ci-bptest"
-  random_project_id = "true"
-  org_id            = var.org_id
-  folder_id         = var.folder_id
-  billing_account   = var.billing_account
-
-  activate_apis = [
-    "cloudresourcemanager.googleapis.com",
-    "compute.googleapis.com",
-    "serviceusage.googleapis.com",
-    "vpcaccess.googleapis.com"
-  ]
+variable "project_id" {
+  description = "The project ID to host the network in"
 }

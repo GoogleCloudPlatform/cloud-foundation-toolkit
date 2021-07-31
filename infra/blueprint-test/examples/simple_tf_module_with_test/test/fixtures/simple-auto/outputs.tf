@@ -15,6 +15,6 @@
  */
 
 output "project_id" {
-  value       = module.test-vpc-example.project_id
+  value       = module.test-vpc-fixture.project_id
   description = "VPC project id"
 }

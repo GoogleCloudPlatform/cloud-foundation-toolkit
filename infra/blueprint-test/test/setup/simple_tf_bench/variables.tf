@@ -28,5 +28,5 @@ variable "billing_account" {
 
 variable "project_count" {
   description = "Number of projects required"
-  default = 2
+  default     = 2
 }

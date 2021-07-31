@@ -15,7 +15,7 @@
  */
 
 resource "google_pubsub_topic" "topics" {
-    for_each = var.project_topic_map
-    project = each.value.project
-    name = each.value.topic
+  for_each = var.project_topic_map
+  project  = each.value.project
+  name     = each.value.topic
 }

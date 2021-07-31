@@ -17,6 +17,6 @@
 variable "project_topic_map" {
   type = map(object({
     project = string,
-    topic = string
+    topic   = string
   }))
 }
