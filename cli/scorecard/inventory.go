@@ -34,6 +34,7 @@ type InventoryConfig struct {
 	bucketName     string
 	dirPath        string
 	readFromStdin  bool
+	workers        int
 }
 
 // Option for NewInventory
@@ -57,6 +58,13 @@ func TargetFolder(folderID string) Option {
 func TargetOrg(organizationID string) Option {
 	return func(inventory *InventoryConfig) {
 		inventory.organizationID = organizationID
+	}
+}
+
+// WorkerSize sets the number of workers for running violations review concurrently
+func WorkerSize(workers int) Option {
+	return func(inventory *InventoryConfig) {
+		inventory.workers = workers
 	}
 }
 

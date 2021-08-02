@@ -288,6 +288,7 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 				return err
 			}
 		}
+		// Code to measure
 		writeResults(config, dest, outputFormat, outputMetadataFields)
 	} else {
 		fmt.Println("No issues found found! You have a perfect score.")

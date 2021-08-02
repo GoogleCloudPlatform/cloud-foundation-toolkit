@@ -36,7 +36,7 @@ func makeLineList(output []byte) []interface{} {
 
 func TestWriteViolations(t *testing.T) {
 	// Prepare violations
-	inventory, err := NewInventory("", localCaiDir, false, false, TargetOrg("56789"))
+	inventory, err := NewInventory("", localCaiDir, false, false, WorkerSize(1), TargetOrg("56789"))
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
