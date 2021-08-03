@@ -26,17 +26,23 @@ import (
 	"github.com/mitchellh/go-testing-interface"
 )
 
-// ConfigDirFromCWD attempts to autodiscover config for a given explicit test based on dirpath for the test.
-func ConfigDirFromCWD(cwd string) (string, error) {
+const (
+	SetupDir    = "setup"    // known setup directory
+	FixtureDir  = "fixtures" // known fixtures directory
+	ExamplesDir = "examples" // known fixtures directory
+)
+
+// GetConfigDirFromTestDir attempts to autodiscover config for a given explicit test based on dirpath for the test.
+func GetConfigDirFromTestDir(cwd string) (string, error) {
 	name := path.Base(cwd)
 	// check if fixture dir exists at ../../fixture/fixtureName
-	fixturePath := fmt.Sprintf("../../fixture/%s", name)
+	fixturePath := path.Join("../../", FixtureDir, name)
 	_, err := os.Stat(fixturePath)
 	if err == nil {
 		return fixturePath, nil
 	}
 	// check if example dir exists at ../../../examples/exampleName
-	examplePath := fmt.Sprintf("../../../examples/%s", name)
+	examplePath := path.Join("../../../", ExamplesDir, name)
 	_, err = os.Stat(examplePath)
 	if err == nil {
 		return examplePath, nil
@@ -49,8 +55,8 @@ func ConfigDirFromCWD(cwd string) (string, error) {
 // Order of discovery is all explicit tests, followed by all fixtures that do not have explicit tests, followed by all examples that do not have fixtures nor explicit tests.
 func FindTestConfigs(t testing.TB, intTestDir string) []string {
 	testBase := intTestDir
-	examplesBase := path.Join(testBase, "../../examples")
-	fixturesBase := path.Join(testBase, "../fixtures")
+	examplesBase := path.Join(testBase, "../../", ExamplesDir)
+	fixturesBase := path.Join(testBase, "../", FixtureDir)
 	explicitTests, err := findDirs(testBase)
 	if err != nil {
 		t.Logf("Error discovering explicit tests: %v", err)
@@ -63,13 +69,13 @@ func FindTestConfigs(t testing.TB, intTestDir string) []string {
 	if err != nil {
 		t.Logf("Error discovering examples: %v", err)
 	}
-	configsToRun := make([]string, 0)
+	testCases := make([]string, 0)
 	//TODO(bharathkkb): add overrides
 	// if a fixture exists but no explicit test defined
 	for n := range fixtures {
 		_, ok := explicitTests[n]
 		if !ok {
-			configsToRun = append(configsToRun, path.Join(fixturesBase, n))
+			testCases = append(testCases, path.Join(fixturesBase, n))
 		}
 	}
 	// if an example exists that does not have a fixture nor explicit test defined
@@ -77,10 +83,11 @@ func FindTestConfigs(t testing.TB, intTestDir string) []string {
 		_, okTest := explicitTests[n]
 		_, okFixture := fixtures[n]
 		if !okTest && !okFixture {
-			configsToRun = append(configsToRun, path.Join(examplesBase, n))
+			testCases = append(testCases, path.Join(examplesBase, n))
 		}
 	}
-	return configsToRun
+	// explicit tests in integration/test_name are not gathered since they are invoked directly
+	return testCases
 
 }
 
