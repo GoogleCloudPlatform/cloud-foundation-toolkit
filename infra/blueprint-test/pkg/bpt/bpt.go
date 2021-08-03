@@ -68,40 +68,30 @@ func DefineVerify(verify func(*assert.Assertions)) bptOption {
 }
 
 func (bt *BlueprintTest) Init(a *assert.Assertions) {
-	if bt.init != nil {
-		bt.init(a)
-	} else {
-		bt.bp.Init(a)
-	}
+	bt.init(a)
 }
 
 func (bt *BlueprintTest) Apply(a *assert.Assertions) {
-	if bt.apply != nil {
-		bt.apply(a)
-	} else {
-		bt.bp.Apply(a)
-	}
+	bt.apply(a)
 }
 
 func (bt *BlueprintTest) Teardown(a *assert.Assertions) {
-	if bt.teardown != nil {
-		bt.teardown(a)
-	} else {
-		bt.bp.Teardown(a)
-	}
+	bt.teardown(a)
 }
 
 func (bt *BlueprintTest) Verify(a *assert.Assertions) {
-	if bt.verify != nil {
-		bt.verify(a)
-	} else {
-		bt.bp.Verify(a)
-	}
+	bt.verify(a)
 }
 
 // TestBlueprint runs init, apply, verify, teardown in order for a given blueprint
 func TestBlueprint(t testing.TB, bp Blueprint, opts ...bptOption) {
-	bpt := &BlueprintTest{bp: bp}
+	bpt := &BlueprintTest{
+		bp:       bp,
+		init:     bp.Init,
+		apply:    bp.Apply,
+		verify:   bp.Verify,
+		teardown: bp.Teardown,
+	}
 	// apply any overrides to default bp methods
 	for _, opt := range opts {
 		opt(bpt)
