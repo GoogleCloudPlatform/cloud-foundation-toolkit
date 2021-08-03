@@ -21,7 +21,7 @@ import (
 	"time"
 )
 
-// RandStr generates rand lowercase strings for length l
+// RandStr generates rand lowercase strings of length l
 func RandStr(l int) string {
 	charSet := "abcdefghijklmnopqrstuvwxyz"
 	rand.Seed(time.Now().UnixNano())
