@@ -76,24 +76,19 @@ func newCmdConfig(opts ...cmdOption) (*CmdCfg, error) {
 	return gOpts, nil
 }
 
-// generateCmd prepares gcloud command to be executed.
-func generateCmd(opts *CmdCfg, args ...string) shell.Command {
-	cmd := shell.Command{
-		Command: "gcloud",
-		Args:    append(args, opts.commonArgs...),
-		Logger:  opts.logger,
-	}
-	return cmd
-}
-
 // RunCmd executes a gcloud command and fails test if there are any errors.
 func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
-	args := strings.Fields(cmd)
 	gOpts, err := newCmdConfig(opts...)
 	if err != nil {
 		t.Fatal(err)
 	}
-	gcloudCmd := generateCmd(gOpts, args...)
+	// split command into args
+	args := strings.Fields(cmd)
+	gcloudCmd := shell.Command{
+		Command: "gcloud",
+		Args:    append(args, gOpts.commonArgs...),
+		Logger:  gOpts.logger,
+	}
 	op, err := shell.RunCommandAndGetStdOutE(t, gcloudCmd)
 	if err != nil {
 		t.Fatal(err)
