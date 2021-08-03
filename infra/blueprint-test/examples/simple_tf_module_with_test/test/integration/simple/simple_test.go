@@ -14,6 +14,7 @@ func TestCFTSimpleModule(t *testing.T) {
 	nt := tft.Init(t)
 	bpt.TestBlueprint(t, nt,
 		bpt.DefineVerify(func(assert *assert.Assertions) {
+			nt.Verify(assert)
 			op := gcloud.Run(t, fmt.Sprintf("compute networks subnets describe subnet-01 --project %s --region us-west1", nt.GetStringOutput("project_id")))
 			assert.Equal(op.Get("ipCidrRange").String(), "10.10.10.0/24", "should have the right CIDR")
 			assert.Equal(op.Get("logConfig.enable").String(), "false", "logConfig should not be enabled")

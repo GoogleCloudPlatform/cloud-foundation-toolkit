@@ -50,7 +50,7 @@ func BenchmarkTFPubSub(b *testing.B) {
 				tft.WithLogger(logger.Discard),
 			)
 			// get list of available projects that have been setup
-			project_ids := pubSubTest.GetTFSetupOPListVal("project_ids")
+			project_ids := pubSubTest.GetTFSetupOutputListVal("project_ids")
 			// create input as vars for TF config with topics split across available projects
 			tfVars := map[string]interface{}{"project_topic_map": generateNTopicsPerProject(project_ids, topicCount)}
 			tft.WithVars(tfVars)(pubSubTest)

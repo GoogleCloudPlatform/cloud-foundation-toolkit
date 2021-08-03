@@ -37,17 +37,12 @@ import (
 type TFBlueprintTest struct {
 	name      string                 // descriptive name for the test
 	tfDir     string                 // directory containing Terraform configs
-	tfEnvVars map[string]string      // variables to pass to Terraform as environment variables prefixed with tfEnvVars
+	tfEnvVars map[string]string      // variables to pass to Terraform as environment variables prefixed with TF_VAR_
 	setupDir  string                 // optional directory containing applied TF configs to import outputs as variables for the test
 	vars      map[string]interface{} // variables to pass to Terraform as flags
 	logger    *logger.Logger         // custom logger
 	t         testing.TB             // TestingT or TestingB
 }
-
-const (
-	setupDir   = "setup"
-	fixtureDir = "fixtures"
-)
 
 type tftOption func(*TFBlueprintTest)
 
@@ -61,7 +56,7 @@ func WithFixtureName(fixtureName string) tftOption {
 	return func(f *TFBlueprintTest) {
 		// when a test is invoked for an explicit blueprint fixture
 		// expect fixture path to be ../../fixtures/fixtureName
-		tfModFixtureDir := path.Join("..", "..", fixtureDir, fixtureName)
+		tfModFixtureDir := path.Join("..", "..", discovery.FixtureDir, fixtureName)
 		f.tfDir = tfModFixtureDir
 	}
 }
@@ -124,7 +119,7 @@ func Init(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		if err != nil {
 			t.Fatalf("unable to get wd :%v", err)
 		}
-		tfdir, err := discovery.ConfigDirFromCWD(cwd)
+		tfdir, err := discovery.GetConfigDirFromTestDir(cwd)
 		if err != nil {
 			t.Fatalf("unable to detect TFDir :%v", err)
 		}
@@ -132,7 +127,7 @@ func Init(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 	// setupDir is empty, try known setupDir paths
 	if tft.setupDir == "" {
-		setupDir, err := discovery.GetKnownDirInParents(setupDir)
+		setupDir, err := discovery.GetKnownDirInParents(discovery.SetupDir)
 		if err != nil {
 			t.Logf("Setup dir not found, skipping loading setup outputs as fixture inputs: %v", err)
 		} else {
@@ -181,9 +176,9 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 	return terraform.Output(b.t, b.getTFOptions(), name)
 }
 
-// GetTFSetupOPListVal returns TF output from setup for a given key as list.
+// GetTFSetupOutputListVal returns TF output from setup for a given key as list.
 // It fails test if given key does not output a list type.
-func (b *TFBlueprintTest) GetTFSetupOPListVal(key string) []string {
+func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
