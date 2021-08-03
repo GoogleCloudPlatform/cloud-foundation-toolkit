@@ -45,7 +45,7 @@ func ConfigDirFromCWD(cwd string) (string, error) {
 
 }
 
-// FindTestConfigs attempts to auto discover configs to test and expected to be executed from directory containing explicit integration tests.
+// FindTestConfigs attempts to auto discover configs to test and is expected to be executed from a directory containing explicit integration tests.
 // Order of discovery is all explicit tests, followed by all fixtures that do not have explicit tests, followed by all examples that do not have fixtures nor explicit tests.
 func FindTestConfigs(t testing.TB, intTestDir string) []string {
 	testBase := intTestDir
