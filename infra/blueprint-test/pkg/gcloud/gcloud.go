@@ -27,35 +27,35 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type Options struct {
+type CmdCfg struct {
 	gcloudBinary string         // path to gcloud binary
 	commonArgs   []string       // common arguments to pass to gcloud calls
 	logger       *logger.Logger // custom logger
 }
 
-type option func(*Options)
+type cmdOption func(*CmdCfg)
 
-func WithBinary(gcloudBinary string) option {
-	return func(f *Options) {
+func WithBinary(gcloudBinary string) cmdOption {
+	return func(f *CmdCfg) {
 		f.gcloudBinary = gcloudBinary
 	}
 }
 
-func WithCommonArgs(commonArgs []string) option {
-	return func(f *Options) {
+func WithCommonArgs(commonArgs []string) cmdOption {
+	return func(f *CmdCfg) {
 		f.commonArgs = commonArgs
 	}
 }
 
-func WithLogger(logger *logger.Logger) option {
-	return func(f *Options) {
+func WithLogger(logger *logger.Logger) cmdOption {
+	return func(f *CmdCfg) {
 		f.logger = logger
 	}
 }
 
-// getCommonOptions sets defaults and validates values for gcloud Options.
-func GetCommonOptions(opts ...option) (*Options, error) {
-	gOpts := &Options{}
+// newCmdConfig sets defaults and validates values for gcloud Options.
+func newCmdConfig(opts ...cmdOption) (*CmdCfg, error) {
+	gOpts := &CmdCfg{}
 	// apply options
 	for _, opt := range opts {
 		opt(gOpts)
@@ -77,7 +77,7 @@ func GetCommonOptions(opts ...option) (*Options, error) {
 }
 
 // generateCmd prepares gcloud command to be executed.
-func generateCmd(opts *Options, args ...string) shell.Command {
+func generateCmd(opts *CmdCfg, args ...string) shell.Command {
 	cmd := shell.Command{
 		Command: "gcloud",
 		Args:    append(args, opts.commonArgs...),
@@ -87,9 +87,14 @@ func generateCmd(opts *Options, args ...string) shell.Command {
 }
 
 // RunCmd executes a gcloud command and fails test if there are any errors.
-func RunCmd(t testing.TB, options *Options, additionalArgs ...string) string {
-	cmd := generateCmd(options, additionalArgs...)
-	op, err := shell.RunCommandAndGetStdOutE(t, cmd)
+func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
+	args := strings.Fields(cmd)
+	gOpts, err := newCmdConfig(opts...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gcloudCmd := generateCmd(gOpts, args...)
+	op, err := shell.RunCommandAndGetStdOutE(t, gcloudCmd)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,13 +103,8 @@ func RunCmd(t testing.TB, options *Options, additionalArgs ...string) string {
 
 // Run executes a gcloud command and returns value as gjson.Result.
 // It fails the test if there are any errors executing the gcloud command or parsing the output value.
-func Run(t testing.TB, cmd string, opts ...option) gjson.Result {
-	args := strings.Fields(cmd)
-	gOpts, err := GetCommonOptions(opts...)
-	if err != nil {
-		t.Fatal(err)
-	}
-	op := RunCmd(t, gOpts, args...)
+func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
+	op := RunCmd(t, cmd, opts...)
 	if !gjson.Valid(op) {
 		t.Fatalf("Error parsing output, invalid json: %s", op)
 	}
