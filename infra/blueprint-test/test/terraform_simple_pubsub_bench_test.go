@@ -44,7 +44,7 @@ func BenchmarkTFPubSub(b *testing.B) {
 	topicCounts := []int{10}
 	for _, topicCount := range topicCounts {
 		b.Run(fmt.Sprintf("PubSub Bench mark with %d topics", topicCount), func(b *testing.B) {
-			pubSubTest := tft.Init(b,
+			pubSubTest := tft.NewTFBlueprintTest(b,
 				tft.WithSetupPath("setup/simple_tf_bench"),
 				tft.WithTFDir("benchmark_fixtures/simple_pubsub_tf"),
 				tft.WithLogger(logger.Discard),

@@ -35,13 +35,17 @@ import (
 
 // TFBlueprintTest implements bpt.Blueprint and stores information associated with a Terraform blueprint test.
 type TFBlueprintTest struct {
-	name      string                 // descriptive name for the test
-	tfDir     string                 // directory containing Terraform configs
-	tfEnvVars map[string]string      // variables to pass to Terraform as environment variables prefixed with TF_VAR_
-	setupDir  string                 // optional directory containing applied TF configs to import outputs as variables for the test
-	vars      map[string]interface{} // variables to pass to Terraform as flags
-	logger    *logger.Logger         // custom logger
-	t         testing.TB             // TestingT or TestingB
+	name      string                   // descriptive name for the test
+	tfDir     string                   // directory containing Terraform configs
+	tfEnvVars map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
+	setupDir  string                   // optional directory containing applied TF configs to import outputs as variables for the test
+	vars      map[string]interface{}   // variables to pass to Terraform as flags
+	logger    *logger.Logger           // custom logger
+	t         testing.TB               // TestingT or TestingB
+	init      func(*assert.Assertions) // init function
+	apply     func(*assert.Assertions) // apply function
+	verify    func(*assert.Assertions) // verify function
+	teardown  func(*assert.Assertions) // teardown function
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -93,13 +97,18 @@ func WithLogger(logger *logger.Logger) tftOption {
 	}
 }
 
-// Init sets defaults, validates and returns a TFBlueprintTest.
-func Init(t testing.TB, opts ...tftOption) *TFBlueprintTest {
+// NewTFBlueprintTest sets defaults, validates and returns a TFBlueprintTest.
+func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	tft := &TFBlueprintTest{
 		name:      fmt.Sprintf("%s TF Blueprint", t.Name()),
-		t:         t,
 		tfEnvVars: make(map[string]string),
+		t:         t,
 	}
+	// default TF blueprint methods
+	tft.init = tft.DefaultInit
+	tft.apply = tft.DefaultApply
+	tft.verify = tft.DefaultVerify
+	tft.teardown = tft.DefaultTeardown
 	// apply options
 	for _, opt := range opts {
 		opt(tft)
@@ -199,19 +208,39 @@ func AutoDiscoverAndTest(t *gotest.T) {
 		// dir must be of the form ../fixture/name or ../../examples/name
 		testName := fmt.Sprintf("test-%s-%s", path.Base(path.Dir(dir)), path.Base(dir))
 		t.Run(testName, func(t *gotest.T) {
-			nt := Init(t, WithTFDir(dir))
+			nt := NewTFBlueprintTest(t, WithTFDir(dir))
 			bpt.TestBlueprint(t, nt)
 		})
 	}
 }
 
-// Teardown runs TF destroy on a blueprint.
-func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
+// DefineInit defines a custom init function for the blueprint.
+func (b *TFBlueprintTest) DefineInit(init func(*assert.Assertions)) {
+	b.init = init
+}
+
+// DefineApply defines a custom apply function for the blueprint.
+func (b *TFBlueprintTest) DefineApply(apply func(*assert.Assertions)) {
+	b.apply = apply
+}
+
+// DefineVerify defines a custom verify function for the blueprint.
+func (b *TFBlueprintTest) DefineVerify(verify func(*assert.Assertions)) {
+	b.verify = verify
+}
+
+// DefineTeardown defines a custom teardown function for the blueprint.
+func (b *TFBlueprintTest) DefineTeardown(teardown func(*assert.Assertions)) {
+	b.teardown = teardown
+}
+
+// DefaultTeardown runs TF destroy on a blueprint.
+func (b *TFBlueprintTest) DefaultTeardown(assert *assert.Assertions) {
 	terraform.Destroy(b.t, b.getTFOptions())
 }
 
-// Verify asserts no resource changes exist after apply.
-func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
+// DefaultVerify asserts no resource changes exist after apply.
+func (b *TFBlueprintTest) DefaultVerify(assert *assert.Assertions) {
 	e := terraform.PlanExitCode(b.t, b.getTFOptions())
 	// exit code 0 is success with no diffs, 2 is success with non-empty diff
 	// https://www.terraform.io/docs/cli/commands/plan.html#detailed-exitcode
@@ -219,8 +248,8 @@ func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
 	assert.NotEqual(e, 2, "plan after apply should have non-empty diff")
 }
 
-// Init runs TF init and validate on a blueprint.
-func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
+// DefaultInit runs TF init and validate on a blueprint.
+func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	terraform.Init(b.t, b.getTFOptions())
 	// if vars are set for common options, this seems to trigger -var flag when calling validate
 	// using custom tfOptions as a workaround
@@ -230,7 +259,27 @@ func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
 	}))
 }
 
-// Apply runs TF apply on a blueprint.
-func (b *TFBlueprintTest) Apply(assert *assert.Assertions) {
+// DefaultApply runs TF apply on a blueprint.
+func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
 	terraform.Apply(b.t, b.getTFOptions())
+}
+
+// Init runs the default or custom init function for the blueprint.
+func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
+	b.init(assert)
+}
+
+// Apply runs the default or custom apply function for the blueprint.
+func (b *TFBlueprintTest) Apply(assert *assert.Assertions) {
+	b.apply(assert)
+}
+
+// Verify runs the default or custom verify function for the blueprint.
+func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
+	b.verify(assert)
+}
+
+// Teardown runs the default or custom teardown function for the blueprint.
+func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
+	b.teardown(assert)
 }

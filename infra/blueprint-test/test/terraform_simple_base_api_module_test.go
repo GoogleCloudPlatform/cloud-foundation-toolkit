@@ -27,7 +27,7 @@ import (
 )
 
 func TestSimpleTFModule(t *testing.T) {
-	nt := tft.Init(t,
+	nt := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("../examples/simple_tf_module"),
 		tft.WithSetupPath("setup/simple_tf_module"),
 		tft.WithEnvVars(map[string]string{"network_name": fmt.Sprintf("foo-%s", utils.RandStr(5))}),
