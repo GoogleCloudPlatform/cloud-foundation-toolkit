@@ -24,7 +24,6 @@ import (
 
 	gotest "testing"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/bpt"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/logger"
@@ -209,7 +208,7 @@ func AutoDiscoverAndTest(t *gotest.T) {
 		testName := fmt.Sprintf("test-%s-%s", path.Base(path.Dir(dir)), path.Base(dir))
 		t.Run(testName, func(t *gotest.T) {
 			nt := NewTFBlueprintTest(t, WithTFDir(dir))
-			bpt.TestBlueprint(t, nt)
+			nt.Test()
 		})
 	}
 }
@@ -282,4 +281,14 @@ func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
 // Teardown runs the default or custom teardown function for the blueprint.
 func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
 	b.teardown(assert)
+}
+
+// Test runs init, apply, verify, teardown in order for the blueprint.
+func (b *TFBlueprintTest) Test() {
+	a := assert.New(b.t)
+	// run stages
+	utils.RunStage("init", func() { b.Init(a) })
+	defer utils.RunStage("teardown", func() { b.Teardown(a) })
+	utils.RunStage("apply", func() { b.Apply(a) })
+	utils.RunStage("verify", func() { b.Verify(a) })
 }

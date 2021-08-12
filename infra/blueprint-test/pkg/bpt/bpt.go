@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-// Package bpt defines a blueprint and implements default stages and execution order for a blueprint test
+// Package bpt defines a blueprint
 
 package bpt
 
 import (
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
-	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,14 +28,4 @@ type Blueprint interface {
 	Apply(*assert.Assertions)
 	Verify(*assert.Assertions)
 	Teardown(*assert.Assertions)
-}
-
-// TestBlueprint runs init, apply, verify, teardown in order for a given blueprint
-func TestBlueprint(t testing.TB, bp Blueprint) {
-	a := assert.New(t)
-	// run stages
-	utils.RunStage("init", func() { bp.Init(a) })
-	defer utils.RunStage("teardown", func() { bp.Teardown(a) })
-	utils.RunStage("apply", func() { bp.Apply(a) })
-	utils.RunStage("verify", func() { bp.Verify(a) })
 }

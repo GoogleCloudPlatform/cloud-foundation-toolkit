@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/bpt"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
 	"github.com/stretchr/testify/assert"
@@ -19,5 +18,5 @@ func TestCFTSimpleModule(t *testing.T) {
 			assert.Equal(op.Get("ipCidrRange").String(), "10.10.10.0/24", "should have the right CIDR")
 			assert.Equal(op.Get("logConfig.enable").String(), "false", "logConfig should not be enabled")
 		})
-	bpt.TestBlueprint(t, networkBlueprint)
+	networkBlueprint.Test()
 }
