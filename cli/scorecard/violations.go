@@ -21,10 +21,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"cloud.google.com/go/storage"
 	"github.com/forseti-security/config-validator/pkg/api/validator"
 	cvasset "github.com/forseti-security/config-validator/pkg/asset"
+	"github.com/gammazero/workerpool"
 	"github.com/pkg/errors"
 )
 
@@ -100,9 +102,10 @@ func getDataFromStdin() ([]*validator.Asset, error) {
 }
 
 // getViolations finds all Config Validator violations for a given Inventory
-func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validator.AuditResponse, error) {
+func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichViolation, error) {
 	var err error
 	var pbAssets []*validator.Asset
+
 	if inventory.bucketName != "" {
 		pbAssets, err = getDataFromBucket(inventory.bucketName)
 		if err != nil {
@@ -120,16 +123,34 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) (*validato
 		}
 	}
 
-	auditResult := &validator.AuditResponse{}
+	richViolations := make([]*RichViolation, 0)
+	wp := workerpool.New(inventory.workers)
+	var badAsset *validator.Asset
+	var mu sync.Mutex
 	for _, asset := range pbAssets {
-		violations, err := config.validator.ReviewAsset(context.Background(), asset)
-
-		if err != nil {
-			return nil, errors.Wrapf(err, "reviewing asset %s", asset)
-		}
-		auditResult.Violations = append(auditResult.Violations, violations...)
+		asset := asset
+		wp.Submit(func() {
+			violations, errAsset := config.validator.ReviewAsset(context.Background(), asset)
+			if errAsset != nil {
+				err = errAsset
+				badAsset = asset
+				wp.Stop()
+			}
+			for _, violation := range violations {
+				richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
+				mu.Lock()
+				richViolations = append(richViolations, &richViolation)
+				mu.Unlock()
+			}
+		})
 	}
-	return auditResult, nil
+	wp.StopWait()
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "reviewing asset %s", badAsset)
+	} else {
+		return richViolations, nil
+	}
 }
 
 // converts raw JSON into Asset proto
