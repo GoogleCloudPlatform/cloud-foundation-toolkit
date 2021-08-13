@@ -15,8 +15,8 @@ func TestCFTSimpleModule(t *testing.T) {
 		func(assert *assert.Assertions) {
 			networkBlueprint.DefaultVerify(assert)
 			op := gcloud.Run(t, fmt.Sprintf("compute networks subnets describe subnet-01 --project %s --region us-west1", networkBlueprint.GetStringOutput("project_id")))
-			assert.Equal(op.Get("ipCidrRange").String(), "10.10.10.0/24", "should have the right CIDR")
-			assert.Equal(op.Get("logConfig.enable").String(), "false", "logConfig should not be enabled")
+			assert.Equal("10.10.10.0/24", op.Get("ipCidrRange").String(), "should have the right CIDR")
+			assert.Equal("false", op.Get("logConfig.enable").String(), "logConfig should not be enabled")
 		})
 	networkBlueprint.Test()
 }

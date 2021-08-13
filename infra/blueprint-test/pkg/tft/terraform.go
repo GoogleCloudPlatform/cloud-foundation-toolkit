@@ -243,8 +243,8 @@ func (b *TFBlueprintTest) DefaultVerify(assert *assert.Assertions) {
 	e := terraform.PlanExitCode(b.t, b.getTFOptions())
 	// exit code 0 is success with no diffs, 2 is success with non-empty diff
 	// https://www.terraform.io/docs/cli/commands/plan.html#detailed-exitcode
-	assert.NotEqual(e, 1, "plan after apply should not fail")
-	assert.NotEqual(e, 2, "plan after apply should have non-empty diff")
+	assert.NotEqual(1, e, "plan after apply should not fail")
+	assert.NotEqual(2, e, "plan after apply should have non-empty diff")
 }
 
 // DefaultInit runs TF init and validate on a blueprint.
