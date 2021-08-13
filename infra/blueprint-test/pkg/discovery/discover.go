@@ -91,19 +91,17 @@ func FindTestConfigs(t testing.TB, intTestDir string) []string {
 
 }
 
-// getKnownDirInParents checks if a well known dir exists in parent or grandparent directory.
-func GetKnownDirInParents(dir string) (string, error) {
+// GetKnownDirInParents checks if a well known dir exists in parent dir upto max parents.
+func GetKnownDirInParents(dir string, max int) (string, error) {
+	if max <= 0 {
+		return "", fmt.Errorf("unable to find %s dir, searched upto %s", path.Base(dir), dir)
+	}
 	dirInParent := path.Join("..", dir)
 	_, err := os.Stat(dirInParent)
 	if !os.IsNotExist(err) {
 		return dirInParent, err
 	}
-	dirInGrandparent := path.Join("..", dirInParent)
-	_, err = os.Stat(dirInGrandparent)
-	if !os.IsNotExist(err) {
-		return dirInGrandparent, err
-	}
-	return "nil", fmt.Errorf("unable to find %s nor %s", dirInParent, dirInGrandparent)
+	return GetKnownDirInParents(path.Join("..", dir), max-1)
 }
 
 // findDirs returns a map of directories in path

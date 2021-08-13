@@ -135,7 +135,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 	// setupDir is empty, try known setupDir paths
 	if tft.setupDir == "" {
-		setupDir, err := discovery.GetKnownDirInParents(discovery.SetupDir)
+		setupDir, err := discovery.GetKnownDirInParents(discovery.SetupDir, 2)
 		if err != nil {
 			t.Logf("Setup dir not found, skipping loading setup outputs as fixture inputs: %v", err)
 		} else {
