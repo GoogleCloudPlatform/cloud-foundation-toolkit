@@ -2,3 +2,4 @@
 .idea
 credentials.json
 config-connector/tests/testcases/environments.yaml
+.DS_Store

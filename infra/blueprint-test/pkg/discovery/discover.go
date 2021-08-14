@@ -1,0 +1,120 @@
+/**
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Package discovery attempts to discover test configs from well known directories.
+package discovery
+
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
+
+	"github.com/mitchellh/go-testing-interface"
+)
+
+const (
+	SetupDir    = "setup"    // known setup directory
+	FixtureDir  = "fixtures" // known fixtures directory
+	ExamplesDir = "examples" // known fixtures directory
+)
+
+// GetConfigDirFromTestDir attempts to autodiscover config for a given explicit test based on dirpath for the test.
+func GetConfigDirFromTestDir(cwd string) (string, error) {
+	name := path.Base(cwd)
+	// check if fixture dir exists at ../../fixture/fixtureName
+	fixturePath := path.Join("../../", FixtureDir, name)
+	_, err := os.Stat(fixturePath)
+	if err == nil {
+		return fixturePath, nil
+	}
+	// check if example dir exists at ../../../examples/exampleName
+	examplePath := path.Join("../../../", ExamplesDir, name)
+	_, err = os.Stat(examplePath)
+	if err == nil {
+		return examplePath, nil
+	}
+	return "", fmt.Errorf("unable to find config in %s nor %s", fixturePath, examplePath)
+
+}
+
+// FindTestConfigs attempts to auto discover configs to test and is expected to be executed from a directory containing explicit integration tests.
+// Order of discovery is all explicit tests, followed by all fixtures that do not have explicit tests, followed by all examples that do not have fixtures nor explicit tests.
+func FindTestConfigs(t testing.TB, intTestDir string) []string {
+	testBase := intTestDir
+	examplesBase := path.Join(testBase, "../../", ExamplesDir)
+	fixturesBase := path.Join(testBase, "../", FixtureDir)
+	explicitTests, err := findDirs(testBase)
+	if err != nil {
+		t.Logf("Error discovering explicit tests: %v", err)
+	}
+	fixtures, err := findDirs(fixturesBase)
+	if err != nil {
+		t.Logf("Error discovering fixtures: %v", err)
+	}
+	examples, err := findDirs(examplesBase)
+	if err != nil {
+		t.Logf("Error discovering examples: %v", err)
+	}
+	testCases := make([]string, 0)
+	//TODO(bharathkkb): add overrides
+	// if a fixture exists but no explicit test defined
+	for n := range fixtures {
+		_, ok := explicitTests[n]
+		if !ok {
+			testCases = append(testCases, path.Join(fixturesBase, n))
+		}
+	}
+	// if an example exists that does not have a fixture nor explicit test defined
+	for n := range examples {
+		_, okTest := explicitTests[n]
+		_, okFixture := fixtures[n]
+		if !okTest && !okFixture {
+			testCases = append(testCases, path.Join(examplesBase, n))
+		}
+	}
+	// explicit tests in integration/test_name are not gathered since they are invoked directly
+	return testCases
+
+}
+
+// GetKnownDirInParents checks if a well known dir exists in parent dir upto max parents.
+func GetKnownDirInParents(dir string, max int) (string, error) {
+	if max <= 0 {
+		return "", fmt.Errorf("unable to find %s dir, searched upto %s", path.Base(dir), dir)
+	}
+	dirInParent := path.Join("..", dir)
+	_, err := os.Stat(dirInParent)
+	if !os.IsNotExist(err) {
+		return dirInParent, err
+	}
+	return GetKnownDirInParents(path.Join("..", dir), max-1)
+}
+
+// findDirs returns a map of directories in path
+func findDirs(path string) (map[string]bool, error) {
+	dirs := make(map[string]bool)
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return dirs, err
+	}
+	for _, f := range files {
+		if f.IsDir() {
+			dirs[f.Name()] = true
+		}
+	}
+	return dirs, nil
+}
