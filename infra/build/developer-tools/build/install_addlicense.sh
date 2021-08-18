@@ -18,5 +18,5 @@ set -u
 
 cd /build
 
-go get -u github.com/google/addlicense
+go get -u github.com/google/addlicense@v1.0.0
 ln -s $(go env GOPATH)/bin/addlicense /usr/local/bin/
