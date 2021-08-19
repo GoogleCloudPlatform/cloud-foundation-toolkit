@@ -17,17 +17,15 @@
 package utils
 
 import (
+	"fmt"
 	"os"
-
-	"github.com/mitchellh/go-testing-interface"
 )
 
-// ValFromEnv checks if a value is set as an env var.
-// It fails test if not set.
-func ValFromEnv(t testing.TB, k string) string {
+// ValFromEnv returns value for a given env var.
+func ValFromEnv(k string) (string, error) {
 	v, found := os.LookupEnv(k)
 	if !found {
-		t.Fatalf("envvar %s not set", k)
+		return "", fmt.Errorf("envvar %s not set", k)
 	}
-	return v
+	return v, nil
 }
