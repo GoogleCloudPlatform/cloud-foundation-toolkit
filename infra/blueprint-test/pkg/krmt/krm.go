@@ -167,15 +167,6 @@ func (b *KRMBlueprintTest) getKnownSettersFromEnv() {
 	b.setters = kpt.MergeSetters(setters, b.setters)
 }
 
-// ValFromEnv returns value for a given env var, fails test if env var is not set.
-func (b *KRMBlueprintTest) ValFromEnv(k string) string {
-	v, err := utils.ValFromEnv(k)
-	if err != nil {
-		b.t.Fatal(err)
-	}
-	return v
-}
-
 // setupBuildDir prepares build dir with configs from exampleDir.
 func (b *KRMBlueprintTest) setupBuildDir() {
 	// remove buildDir if exists
