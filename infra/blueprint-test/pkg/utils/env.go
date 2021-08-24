@@ -22,7 +22,7 @@ import (
 	"github.com/mitchellh/go-testing-interface"
 )
 
-// ValFromEnv checks if a value is set as an env var.
+// ValFromEnv returns value for a given env var.
 // It fails test if not set.
 func ValFromEnv(t testing.TB, k string) string {
 	v, found := os.LookupEnv(k)
