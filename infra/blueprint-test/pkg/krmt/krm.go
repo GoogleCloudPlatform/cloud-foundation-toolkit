@@ -25,12 +25,12 @@ var CommonSetters = []string{"PROJECT_ID", "BILLING_ACCOUNT_ID", "ORG_ID"}
 // KRMBlueprintTest implements bpt.Blueprint and stores information associated with a KRM blueprint test.
 type KRMBlueprintTest struct {
 	name         string                   // descriptive name for the test
-	bpDir        string                   // directory containing KRM blueprint configs
+	exampleDir   string                   // directory containing KRM blueprint example
 	buildDir     string                   // directory to hydrated blueprint configs pre apply
 	kpt          *kpt.CmdCfg              // kpt cmd config
 	timeout      string                   // timeout for KRM resource status
 	setters      map[string]string        // additional setters to populate
-	updatePkgs   bool                     // whether to update packages in bpDir
+	updatePkgs   bool                     // whether to update packages in exampleDir
 	updateCommit string                   // specific commit to update to
 	logger       *logger.Logger           // custom logger
 	t            testing.TB               // TestingT or TestingB
@@ -50,7 +50,7 @@ func WithName(name string) krmtOption {
 
 func WithDir(dir string) krmtOption {
 	return func(f *KRMBlueprintTest) {
-		f.bpDir = dir
+		f.exampleDir = dir
 	}
 }
 
@@ -100,22 +100,22 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 	if krmt.logger == nil {
 		krmt.logger = utils.GetLoggerFromT()
 	}
-	// if explicit bpDir is provided, validate it else try auto discovery
-	if krmt.bpDir != "" {
-		_, err := os.Stat(krmt.bpDir)
+	// if explicit exampleDir is provided, validate it else try auto discovery
+	if krmt.exampleDir != "" {
+		_, err := os.Stat(krmt.exampleDir)
 		if os.IsNotExist(err) {
-			t.Fatalf("Dir path %s does not exist", krmt.bpDir)
+			t.Fatalf("Dir path %s does not exist", krmt.exampleDir)
 		}
 	} else {
 		cwd, err := os.Getwd()
 		if err != nil {
 			t.Fatalf("unable to get wd :%v", err)
 		}
-		bpDir, err := discovery.GetConfigDirFromTestDir(cwd)
+		exampleDir, err := discovery.GetConfigDirFromTestDir(cwd)
 		if err != nil {
 			t.Fatalf("unable to detect KRM dir :%v", err)
 		}
-		krmt.bpDir = bpDir
+		krmt.exampleDir = exampleDir
 	}
 	// if no explicit build directory is provided, setup build directory
 	if krmt.buildDir == "" {
@@ -126,7 +126,7 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 	// get well known setters from env vars
 	krmt.getKnownSettersFromEnv()
 
-	krmt.logger.Logf(krmt.t, "Running tests KRM configs in %s", krmt.bpDir)
+	krmt.logger.Logf(krmt.t, "Running tests KRM configs in %s", krmt.exampleDir)
 	return krmt
 }
 
@@ -176,7 +176,7 @@ func (b *KRMBlueprintTest) ValFromEnv(k string) string {
 	return v
 }
 
-// setupBuildDir prepares build dir with configs from bpDir.
+// setupBuildDir prepares build dir with configs from exampleDir.
 func (b *KRMBlueprintTest) setupBuildDir() {
 	// remove buildDir if exists
 	err := os.RemoveAll(b.buildDir)
@@ -184,9 +184,9 @@ func (b *KRMBlueprintTest) setupBuildDir() {
 		b.t.Fatalf("unable to remove %s :%v", b.buildDir, err)
 	}
 	// copy over configs into build dir
-	err = copy.Copy(b.bpDir, b.buildDir)
+	err = copy.Copy(b.exampleDir, b.buildDir)
 	if err != nil {
-		b.t.Fatalf("unable to copy %s to %s :%v", b.bpDir, b.buildDir, err)
+		b.t.Fatalf("unable to copy %s to %s :%v", b.exampleDir, b.buildDir, err)
 	}
 	// subsequent kpt pkg update requires a clean git repo without uncommitted changes
 	// init a new git repo in build dir and commit changes
@@ -211,7 +211,7 @@ func (b *KRMBlueprintTest) updateSetters() {
 
 // updatePkg updates a kpt pkg to a specified commit or the latest commit.
 func (b *KRMBlueprintTest) updatePkg() {
-	g := git.NewCmdConfig(b.t, git.WithDir(b.bpDir))
+	g := git.NewCmdConfig(b.t, git.WithDir(b.exampleDir))
 	commit := b.updateCommit
 	if commit == "" {
 		commit = g.GetLatestCommit()
@@ -230,16 +230,30 @@ func (b *KRMBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	kpt.NewCmdConfig(b.t, kpt.WithDir(b.buildDir)).RunCmd("fn", "render")
 }
 
-// DefaultApply installs resource-group, initializes inventory and apply pkg.
+// DefaultApply installs resource-group, initializes inventory, applies pkg and polls resource statuses until current.
 func (b *KRMBlueprintTest) DefaultApply(assert *assert.Assertions) {
 	b.kpt.RunCmd("live", "install-resource-group")
 	b.kpt.RunCmd("live", "init")
 	b.kpt.RunCmd("live", "apply")
+	b.kpt.RunCmd("live", "status", "--output", "json", "--poll-until", "current", "--timeout", b.timeout)
 }
 
-// DefaultVerify polls resource statuses until current.
+// DefaultVerify asserts no resource changes exist after apply.
 func (b *KRMBlueprintTest) DefaultVerify(assert *assert.Assertions) {
-	b.kpt.RunCmd("live", "status", "--output", "json", "--poll-until", "current", "--timeout", b.timeout)
+	jsonOp := b.kpt.RunCmd("live", "apply", "--output", "json")
+
+	// assert each resource is unchanged from initial apply
+	resourceStatus, err := kpt.GetPkgApplyResourcesStatus(jsonOp)
+	assert.NoError(err, "Resource statuses should be parsable")
+	for _, r := range resourceStatus {
+		assert.Equal(kpt.ResourceOperationUnchanged, r.Operation, "Resource should be unchanged")
+	}
+
+	// assert count of resources applied equals count of resources unchanged
+	groupStatus, err := kpt.GetPkgApplyGroupStatus(jsonOp)
+	assert.NoError(err, "Group status should be parsable")
+	assert.Equal(groupStatus.Count, groupStatus.UnchangedCount, "All resources should be unchanged")
+
 }
 
 // DefaultTeardown destroys resources from cluster and polls until deleted.
