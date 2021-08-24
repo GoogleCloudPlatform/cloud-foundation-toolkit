@@ -11,11 +11,10 @@ import (
 )
 
 type CmdCfg struct {
-	gitBinary   string         // git binary
-	dir         string         // dir to execute commands in
-	commitFlags []string       // additional flags when running git commit
-	logger      *logger.Logger // custom logger
-	t           testing.TB     // TestingT or TestingB
+	gitBinary string         // git binary
+	dir       string         // dir to execute commands in
+	logger    *logger.Logger // custom logger
+	t         testing.TB     // TestingT or TestingB
 }
 
 type cmdOption func(*CmdCfg)
@@ -23,12 +22,6 @@ type cmdOption func(*CmdCfg)
 func WithDir(dir string) cmdOption {
 	return func(f *CmdCfg) {
 		f.dir = dir
-	}
-}
-
-func WithCommitFlags(commitFlags []string) cmdOption {
-	return func(f *CmdCfg) {
-		f.commitFlags = commitFlags
 	}
 }
 
@@ -41,9 +34,8 @@ func WithLogger(logger *logger.Logger) cmdOption {
 // NewCmdConfig sets defaults and validates values for git Options.
 func NewCmdConfig(t testing.TB, opts ...cmdOption) *CmdCfg {
 	gitOpts := &CmdCfg{
-		logger:      utils.GetLoggerFromT(),
-		commitFlags: []string{"--author", "BlueprintsTest <blueprints-ci-test@google.com>"},
-		t:           t,
+		logger: utils.GetLoggerFromT(),
+		t:      t,
 	}
 	// apply options
 	for _, opt := range opts {
@@ -96,8 +88,8 @@ func (g *CmdCfg) AddAll() {
 }
 
 // CommitWithMsg commits changes with commit msg.
-func (g *CmdCfg) CommitWithMsg(msg string) {
-	_, err := g.RunCmdE(append([]string{"commit", "-m", fmt.Sprintf("%q", msg)}, g.commitFlags...)...)
+func (g *CmdCfg) CommitWithMsg(msg string, commitFlags []string) {
+	_, err := g.RunCmdE(append([]string{"commit", "-m", fmt.Sprintf("%q", msg)}, commitFlags...)...)
 	if err != nil {
 		g.t.Fatalf("error running git commit: %v", err)
 	}
@@ -106,5 +98,5 @@ func (g *CmdCfg) CommitWithMsg(msg string) {
 // CommitWithMsg commits changes with a generated commit msg.
 func (g *CmdCfg) Commit() {
 	currentTime := time.Now()
-	g.CommitWithMsg(fmt.Sprintf("commit %s", currentTime.Format(time.RFC1123)))
+	g.CommitWithMsg(fmt.Sprintf("commit %s", currentTime.Format(time.RFC1123)), []string{"--author", "BlueprintsTest <blueprints-ci-test@google.com>"})
 }
