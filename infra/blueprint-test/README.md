@@ -32,3 +32,378 @@ Primarily, there are two types of tests that are executed as part of the framewo
 - Custom tests are written explicitly against examples that leverage the blueprint. The intent of these tests is to expand or modify the default behavior of a test stage, with custom assertions being the most common example, against the resources provisioned by the blueprint in GCP.
 
 For the purpose of this user guide, the [terraform-google-sql-db blueprint](https://github.com/terraform-google-modules/terraform-google-sql-db) is used to demonstrate the usage of the framework.
+
+## 2.1 Blueprint directory structure
+
+```
+├── ...
+├── modules/submodules/*.tf
+├── examples
+│   ├── mssql-public/*.tf
+│   ├── mysql-ha/*.tf
+│   ├── mysql-private/*.tf
+│   ├── mysql-public/*.tf
+│   ├── postgresql-ha/*.tf
+│   ├── postgresql-public/*.tf
+│   └── postgresql-public-iam/*.tf
+├── test
+│   ├── fixtures
+│   │   ├── mssql-ha/*.tf
+│   │   ├── mysql-ha/*.tf
+│   │   ├── mysql-private/*.tf
+│   │   ├── mysql-public/*.tf
+│   │   ├── postgresql-ha/*.tf
+│   │   ├── postgresql-public/*.tf
+│   │   └── postgresql-public-iam/*.tf
+│   ├── integration
+│   │   ├── testing.yaml
+│   │   ├── discover_test.go
+│   │   ├── mssql-ha/*
+│   │   ├── mysql-ha/*
+│   │   ├── mysql-public/*
+│   │   │   └── mysql_public_test.go
+│   │   ├── postgresql-ha/*
+│   │   ├── postgresql-public/*
+│   │   ├── postgresql-public-iam/*
+│   └── setup/*.tf
+└── ...
+```
+
+Before jumping into the specifics for test development, let’s review how the blueprint directory is structured.
+- `examples`  - this directory holds examples that may call the main blueprint or sub-blueprints (for Terraform, these are in the  modules  directory).
+- `test/fixtures`  - this directory contains “fixture” configuration. In most cases, this should be configured to wrap examples that need additional inputs and unify the interface for testing. Usage of fixtures is discouraged unless necessary.
+- `test/integration`  - this directory is intended to hold integration tests that are responsible for running and asserting test values for a given fixture.
+- `test/setup`  - this directory holds the GCP project and initial resource setup modules that are a prerequisite for the blueprint tests to run.
+
+# 3. Test Development
+This section aims at explaining the process of developing a custom integration test which consists of the following steps:
+
+## 3.1 Terraform based blueprints
+
+### 3.1.1 Prepare a test example 
+The first step in the process is to create an example that leverages a TF module from the blueprint as illustrated in section 2.1. The example creation process consists of two critical steps:
+
+#### 3.1.1.1 Create the example configuration
+In this step you will create an example directory under the `examples` directory that uses a module or submodule from the `modules` as the source as follows:
+1. cd into `examples` directory
+2. Choose a name, such as `mysql-public` for the example and create a new directory with that name and cd into it
+3. Create a new file named `main.tf` with the following content
+
+```hcl
+// name for your example module
+module "mysql-db" { 
+ // set the source for the module being tested as part of the 
+ // example
+ source               = "../../modules/mysql"
+ ...
+}
+```
+
+4. Create a new file named `variables.tf` for organizing and defining variables that need to be passed into the example module as follows:
+
+```hcl
+...
+variable "project_id" {
+ description = "The ID of the project in which resources will be provisioned."
+ type        = string
+}
+ 
+variable "db_name" {
+ description = "The name of the SQL Database instance"
+ default     = "example-mysql-public"
+}
+...
+```
+
+These variables are now available for access within the `main.tf` file and can be set in the example module. The following example shows how to reference the `project_id` variable in `main.tf`.
+
+```hcl
+// name for your example module
+module "mysql-db" { 
+ ...
+ // variables required by the source module
+ random_instance_name = true
+ database_version     = "MYSQL_5_6"
+ 
+ // variable being set from the example module variables configuration. 
+ project_id           = var.project_id
+ ...
+}
+```
+
+```
+Note:
+Variables defined in the example module’s variables (normally variables.tf) configuration can be set 1) from 
+upstream modules calling the example module (e.g. fixtures) or 2) using environment variables by prefixing 
+the environment variable with “TF_VAR”. E.g. to set the project_id variable (above), setting the value in a 
+“TF_VAR_project_id” environment variable would automatically populate its value upon execution.
+```
+
+#### 3.1.1.2 Output variables for the test
+Upon successful execution of your example module, you will most likely need outputs for resources being provisioned to validate and assert in your test. This is done using outputs in Terraform. 
+1. In the `examples/mysql-public` directory create a file `outputs.tf`. The content for the file should be as follows:
+
+```hcl
+// The output value is set using the value attribute and is either computed in place or pulled from one of the recursive modules being called. In this case, it is being pulled from the mysql module that the example module is calling as its source.
+...
+output "mysql_user_pass" {
+ value       = module.mysql-db.generated_user_password
+ description = "The password for the default user. If not set, a random one will be generated and available in the generated_user_password output variable."
+}
+...
+```
+
+Complete code files for the example module can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/tree/master/test/integration/mysql-public).
+
+### 3.1.2 Write an integration test
+After creating the example configuration, your example will automatically be tested and no further action is required.
+However, if you want to make custom assertions about what resources the blueprint will create, you should create an integration test in Go using the (testing)[https://pkg.go.dev/testing] package.
+The entire integration test explained below can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/blob/master/test/integration/mysql-public/mysql_public_test.go).
+
+The first step in writing the test is to wire it up with the required packages and methods signatures that the test framework expects as follows:
+1. Cd in the `test/integration/mysql-public` directory or create it if it's not present already in the blueprint and the cd into it.
+2. Create file in `mysql_public_test.go` with the following content: 
+
+As a good practice use this convention to name your test files: <example_name>_test.go
+     
+```go
+// define test package name
+package mysql_public
+ 
+import (
+  "fmt"
+  "testing"
+ 
+  // import the blueprints test framework modules for testing and assertions
+  "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"   
+  "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+  "github.com/stretchr/testify/assert"
+)
+ 
+// name the function as Test*
+func TestMySqlPublicModule(t *testing.T) {
+   ...
+   // initialize Terraform test from the blueprint test framework
+   mySqlT := tft.NewTFBlueprintTest(t)
+   // define and write a custom verifier for this test case call the default verify for confirming no additional changes
+   mySqlT.DefineVerify(func(assert *assert.Assertions) {
+       mySqlT.DefaultVerify(assert)    
+       // custom logic for the test continues below
+       ...   
+   })
+   // call the test function to execute the integration test
+   mySqlT.Test()
+}
+```
+
+The next step in the process is to write the logic for assertions.
+
+1. In most cases, you will be asserting against values retrieved from the GCP environment. This can be done by using the (gcloud)[https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/blueprint-test/pkg/gcloud/gcloud.go] helper in our test framework, which executes gcloud commands and stores their JSON outputs as. The gcloud helper can be initialized as follows:
+
+```go
+// The tft struct can be used to pull output variables of the TF module being invoked by this test
+op := gcloud.Run(t, fmt.Sprintf("sql instances describe %s --project %s", mySqlT.GetStringOutput("name"), mySqlT.GetStringOutput("project_id")))
+```
+
+2. Once you have retrieved values from GCP, use the (assert)[https://pkg.go.dev/github.com/stretchr/testify/assert] package to perform custom validations with respect to the resources provisioned. Here are some common assertions that can be useful in most test scenarios.
+
+   1. Contains
+
+    ```go
+    // assert values that are contained in the expected output
+    assert.Contains(op.Get("gceZone").String(), region, "GCE region is valid")
+    ```
+
+   2. Boolean (True)
+
+    ```go
+    // assert boolean values
+    assert.True(op.Get("settings.ipConfiguration.ipv4Enabled").Bool(), "ipv4 is enabled")
+    ```
+
+   3. GreaterOrEqual
+
+    ```go
+    // assert values that are greater than or equal to the expected value
+    assert.GreaterOrEqual(op.Get("settings.dataDiskSizeGb").Float(), 10.0, "at least 5 backups are retained")
+    ```
+
+   4. Empty
+
+    ```go
+    // assert values that are supposed to be empty or nil
+    assert.Empty(op.Get("settings.userLabels"), "no labels are set")
+    ```
+
+   5. Equal
+
+    ```go
+    // assert values that are supposed to be equal to the expected values
+    assert.Equal(databaseVersion, op.Get("databaseVersion").String(), "database versions is valid is set to "+databaseVersion)
+    ```
+
+The entire integration test can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/blob/master/test/integration/mysql-public/mysql_public_test.go).
+
+# 4. Test Execution
+As mentioned in section 2 above, the blueprints test framework executes tests in two ways: auto-discovered and custom tests. Each type of test undergoes 4 stages of test execution:
+
+1. init - runs `terraform init` and `terraform validate`
+2. apply - runs `terraform apply`
+3. verify - runs `terraform plan` to verify apply successful apply with no more resources to add/destroy
+4. destroy - runs `terraform destroy`
+
+By default, tests go through 4 stages above. You can also explicitly run individual stages one at a time.
+
+## 4.1 Test prerequisites
+In order for the test to execute, certain prerequisite resources and components need to be in place. These can be set up using the TF modules under `test/setup`. Running `terraform apply` in this directory will set up all resources required for the test.
+
+```
+Note: Output values from `test/setup` are automatically loaded as Terraform environment variables and are available to both auto discovered and custom/explicit tests as inputs.
+```
+
+## 4.2 Default and stage specific execution
+1. Cd into the `test/integration` directory
+2. Run one following command(s) that will run all tests by default going through all 4 stages:
+   - `go test`  OR
+   - `go test -v`  (for verbose output)
+3. To run the tests for a specific stage, use the following format/command to run the test & stage: 
+   - `RUN_STAGE=<stage_name> go test`
+   E.g. to run a test for just the init stage the use the following command:
+   - `RUN_STAGE=init go test`
+
+## 4.3 Auto-discovered tests
+All blueprints come pre-wired with an auto-discovered test located in the `test/integration` folder. Following are the contents of the test module and can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/blob/master/test/integration/discover_test.go) as well.
+
+```go
+package test
+
+import (  
+  // should be imported to enable testing for GO modules
+  "testing"
+
+  // should be imported to use terraform helpers in blueprints test framework
+  "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+)
+
+// entry function for the test; can be named as Test*
+func TestAll(t *testing.T) {
+   // the helper to autodiscover and test blueprint examples
+   tft.AutoDiscoverAndTest(t)
+}
+```
+
+We’ll use the blueprint structure highlighted in section 2.1 for explaining how auto-discovered test execution works.
+
+The auto-discovered test can be triggered as follow:
+- cd into  test/integration  and run: 
+  - `go test` OR
+  - `go test -v`  (for verbose output)
+
+By default, this triggers the following steps:
+- The auto-discovery module iterates through all tests defined under the `test/fixtures` directory and builds a list of tests that are only found under the `test/fixtures` directory and do not match any tests (by directory name) under `test/integration`. For this example, the following tests will be queued:
+  - `test/fixtures/mysql-private`
+- Next, the auto-discovery module goes through all example modules defined under the `examples` directory and adds to the list any example modules that do not exist in either the `test/fixtures` directory or the `test/integration` directory (matched by directory name). For this example, one additional test is queued to the list:
+  - `examples/mssql-public`
+- Next, the framework will run through the test stages requested by the issued test command. In this case it will run through all 4 stages and produce an output for the test.
+
+### 4.3.1 Auto-discovered test output
+This section shows the execution for auto-discovered tests and the output illustrating the execution of various stages of the test(s).
+
+1. Beginning of test execution
+   ![1](https://user-images.githubusercontent.com/21246369/131234070-7066854f-d71d-4faf-bd3a-b62dba4ef440.jpg)
+
+   This shows the `mysql-private` auto-discovered test has started executing and loading environment variables from the blueprint’s setup run.
+
+2. Beginning of the `init` stage
+   ![2](https://user-images.githubusercontent.com/21246369/131234078-674e5e64-18fa-448c-a7ff-0ae87587adec.jpg)
+   
+   This illustrates the start of `init` stage of the test execution. At this point TF init and plan is applied on the `mysql-private` example
+   
+3. Beginning of `apply` stage
+   ![3](https://user-images.githubusercontent.com/21246369/131234092-8c095158-5262-47b2-8137-41d20a78d5d2.jpg)
+   
+   This illustrates the execution of the `apply` stage and also shows the simulated FAIL scenario where an output variable is not configured as “sensitive”. At this point, the test will be marked as failed.
+
+4. Beginning of `verify` stage
+
+   ```
+   Note: this illustration is from the 2nd test case (mssql-public) that made it through the apply stage successfully.
+   ```
+   ![4](https://user-images.githubusercontent.com/21246369/131234120-6a3bdb62-0437-4d93-a1b7-2ef7b0191d40.jpg)
+   This illustrates the execution of the verify stage where TF plan is executed to refresh the TF state and confirm no permadiffs occur and all resources were successfully provisioned.
+
+5. Beginning of `destroy` stage
+
+   ![5](https://user-images.githubusercontent.com/21246369/131234147-b0235cc3-9f5f-4c19-892f-1b4fc6cc12f4.jpg)
+   
+   This illustrates the execution of the `destroy` stage where `terraform destroy` is executed to teardown all resources provisioned by the example. 
+   Lastly, a status of the complete test run is shown with a tally of all passed and failed tests and eventually showing the overall status of the test run which is FAIL in this case.
+
+## 4.4 Custom tests
+Unlike auto-discovered tests, custom tests are written specifically for examples that require custom assertions and validations. Even though custom tests are run as part of the default test run as explained in section 4.2, we can also execute them in isolation as explained below. In this section we will use the integration test created in section 3.3  and show how to execute it.
+
+1. Cd into `test/integration`
+   Instead of running the whole test suite, we will target our custom test by name i.e. `TestMySqlPublicModule` in file `test/integration/mysql-public/mysql_public_test.go`
+   
+2. Run the one of the following commands for execution:
+   - `go test -run TestMySqlPublicModule ./...`  OR
+   - `go test -run TestMySqlPublicModule ./...` -v  (for verbose output)
+
+   In the above commands the test module name is specified with the `-run` parameter. This name can also be in the form of a regular expression as explained in the tip below.
+   The usage of `./…` in the above commands allows for golang to execute tests in subdirectories as well.
+   
+   ```
+   Tip: Targeting Specific Tests
+   
+   Apart from running tests by default, specific or all tests can be targeted using RegEx expressions.
+   
+   To run all tests regardless if they are custom or auto-discovered, use the following command:
+   `go test -v ./... -p 1 .`
+   
+   To run a specific test or a set of tests using a regular expression, use the following command:
+   `go test -run TestAll/*`  - will target all tests that are supposed to be invoked as part of the auto-discovery process.
+   `go test -run MySql ./...`  - will target all tests that are written for MySql i.e. have ‘MySql’ as part of their test module name.
+   
+   Furthermore, to run a specific stage of a test or a set of tests, set the RUN_STAGE environment variable:
+   This command specifically runs only the setup stage for all tests that are auto-discovered
+   `RUN_STAGE=setup go test -run TestAll/* .`
+   ```
+   
+### 4.4.1. Custom test stage specific execution
+By default, a custom test also goes through 4 stages as auto-discovered tests do. However, depending on the custom test configuration, there can be additional test logic that is executed in one or more stages of the test(s). 
+
+E.g., in order to run only the `verify` stage for a custom test, run one of the following command: 
+
+```
+RUN_STAGE=verify go test -run TestMySqlPublicModule ./...
+```
+
+The following illustration shows how custom assertions as part of the verify stage are executed and simulated to fail.
+![6](https://user-images.githubusercontent.com/21246369/131234391-4ca9efdd-e59b-45cf-a425-56a856b6cec6.jpg)
+
+Here, the custom assertion failed since the expected region and zone configured in the test was us-west1 and us-west1-a respectively. However, the actual values for the region and zone for the Cloud SQL resource were different.
+
+# 5. Appendix
+
+## 5.1 Advanced Topic
+
+### 5.1.1 Terraform Fixtures
+Fixtures can also be used to test similar examples and modules when the only thing changing is the data. The following example illustrates the usage of the `examples/mysql-public` as the source and passing in the data required to execute the test. 
+
+1. Cd into `test/fixtures` directory
+2. Create a directory `mysql-public` and cd into it
+3. Create a file `main.tf` with the following content:
+
+```hcl
+module "mysql-fixture" {
+ // setup the source for the fixture as the example for the test
+ source              = "../../../examples/mysql-public"
+ // set variables as required by the example module
+ db_name             = var.db_name
+ project_id          = var.project_id
+ authorized_networks = var.authorized_networks
+}
+```
+
+Similar to the example module, outputs can be configured for the fixture module as well, especially for the generated values that need to be asserted in the test.
+Complete code files for the fixture module can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/tree/master/test/fixtures/mysql-public).
