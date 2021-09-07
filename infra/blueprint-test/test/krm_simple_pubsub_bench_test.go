@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/benchmark"
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/kpt"
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/krmt"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 )
 
@@ -28,24 +26,14 @@ func BenchmarkKRMPubSubBlueprint(b *testing.B) {
 	topicCounts := []int{10}
 	for _, topicCount := range topicCounts {
 		b.Run(fmt.Sprintf("PubSub Bench mark with %d topics", topicCount), func(b *testing.B) {
-			// we precreate a custom build directory to generate variants for a given resource blueprint
-			buildDir, cleanup := benchmark.GetBuildDir(b)
-			defer cleanup()
-			// init empty kpt pkg in the build dir
-			kptHelper := kpt.NewCmdConfig(b, kpt.WithDir(buildDir))
-			kptHelper.RunCmd("pkg", "init")
-			// generate package variants into the build dir
+			// generate setters for each variants
 			topicNames := generateNTopics(topicCount)
+			variantSetters := make(map[string]map[string]string)
 			for _, name := range topicNames {
-				benchmark.CreateVariant(b, blueprintDir, buildDir, name, map[string]string{"topic-name": name, "project-id": projectID})
+				variantSetters[name] = map[string]string{"topic-name": name, "project-id": projectID}
 			}
-			// render variants
-			// TODO(bharathkkb): this is currently done in serial by kpt and can be slow for bigger topicCounts
-			// We should look into doing this in parallel possibly bundling variant creation with rendering
-			kptHelper.RunCmd("fn", "render")
-			kptHelper.RunCmd("live", "install-resource-group")
-			kptHelper.RunCmd("live", "init")
-			pubsubTest := krmt.NewKRMBlueprintTest(b, krmt.WithDir(buildDir), krmt.WithBuildDir(buildDir), krmt.WithUpdatePkgs(false))
+			pubsubTest, buildDir, cleanup := benchmark.CreateTestVariant(b, blueprintDir, variantSetters)
+			defer cleanup()
 			b.ResetTimer()
 			// start benchmark
 			for n := 0; n < b.N; n++ {

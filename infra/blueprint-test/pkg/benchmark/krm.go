@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/kpt"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/krmt"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/mitchellh/go-testing-interface"
@@ -74,4 +75,25 @@ func GetBuildDir(b testing.TB) (string, func()) {
 		os.RemoveAll(buildDir)
 	}
 	return abs, rmBuildDir
+}
+
+// CreateTestVariant creates variants of a baseBlueprint and renders them with variantSetters
+func CreateTestVariant(b testing.TB, baseBlueprintDir string, variantSetters map[string]map[string]string) (*krmt.KRMBlueprintTest, string, func()) {
+	// precreate a custom build directory to generate variants for a given resource blueprint
+	buildDir, cleanup := GetBuildDir(b)
+	// init empty kpt pkg in the build dir
+	kptHelper := kpt.NewCmdConfig(b, kpt.WithDir(buildDir))
+	// generate package variants into the build dir
+	kptHelper.RunCmd("pkg", "init")
+	// generate variants of the base blueprint
+	for name, setters := range variantSetters {
+		CreateVariant(b, baseBlueprintDir, buildDir, name, setters)
+	}
+	// render variants
+	// TODO(bharathkkb): this is currently done in serial by kpt and can be slow for bigger topicCounts
+	// We should look into doing this in parallel possibly bundling variant creation with rendering
+	kptHelper.RunCmd("fn", "render")
+	kptHelper.RunCmd("live", "install-resource-group")
+	kptHelper.RunCmd("live", "init")
+	return krmt.NewKRMBlueprintTest(b, krmt.WithDir(buildDir), krmt.WithBuildDir(buildDir), krmt.WithUpdatePkgs(false)), buildDir, cleanup
 }
