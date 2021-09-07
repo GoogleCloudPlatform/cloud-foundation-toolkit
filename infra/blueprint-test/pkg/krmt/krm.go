@@ -8,6 +8,7 @@ import (
 
 	gotest "testing"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/binary"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/git"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/kpt"
@@ -128,7 +129,7 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 		krmt.buildDir = krmt.getDefaultBuildDir()
 	}
 	// configure kpt to run in buildDir
-	krmt.kpt = kpt.NewCmdConfig(t, kpt.WithDir(krmt.buildDir))
+	krmt.kpt = kpt.NewCmdConfig(t, kpt.WithBinaryOptions(binary.WithDir(krmt.buildDir)))
 	// get well known setters from env vars
 	krmt.getKnownSettersFromEnv()
 
@@ -187,7 +188,7 @@ func (b *KRMBlueprintTest) setupBuildDir() {
 	}
 	// subsequent kpt pkg update requires a clean git repo without uncommitted changes
 	// init a new git repo in build dir and commit changes
-	git := git.NewCmdConfig(b.t, git.WithDir(b.buildDir))
+	git := git.NewCmdConfig(b.t, git.WithBinaryOptions(binary.WithDir(b.buildDir)))
 	git.Init()
 	git.AddAll()
 	git.Commit()
@@ -208,7 +209,7 @@ func (b *KRMBlueprintTest) updateSetters() {
 
 // updatePkg updates a kpt pkg to a specified commit or the latest commit.
 func (b *KRMBlueprintTest) updatePkg() {
-	g := git.NewCmdConfig(b.t, git.WithDir(b.exampleDir))
+	g := git.NewCmdConfig(b.t, git.WithBinaryOptions(binary.WithDir(b.exampleDir)))
 	commit := b.updateCommit
 	if commit == "" {
 		commit = g.GetLatestCommit()
@@ -224,7 +225,7 @@ func (b *KRMBlueprintTest) DefaultInit(assert *assert.Assertions) {
 		b.updatePkg()
 	}
 	b.updateSetters()
-	kpt.NewCmdConfig(b.t, kpt.WithDir(b.buildDir)).RunCmd("fn", "render")
+	kpt.NewCmdConfig(b.t, kpt.WithBinaryOptions(binary.WithDir(b.buildDir))).RunCmd("fn", "render")
 }
 
 // DefaultApply installs resource-group, initializes inventory, applies pkg and polls resource statuses until current.

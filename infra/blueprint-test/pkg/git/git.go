@@ -4,60 +4,45 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
-	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/binary"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/mitchellh/go-testing-interface"
 )
 
 type CmdCfg struct {
-	gitBinary string         // git binary
-	dir       string         // dir to execute commands in
-	logger    *logger.Logger // custom logger
-	t         testing.TB     // TestingT or TestingB
+	*binary.BinaryCfg                       // binary config
+	bOpts             []binary.BinaryOption // binary options
+	t                 testing.TB            // TestingT or TestingB
 }
 
 type cmdOption func(*CmdCfg)
 
-func WithDir(dir string) cmdOption {
+func WithBinaryOptions(bOpts ...binary.BinaryOption) cmdOption {
 	return func(f *CmdCfg) {
-		f.dir = dir
-	}
-}
-
-func WithLogger(logger *logger.Logger) cmdOption {
-	return func(f *CmdCfg) {
-		f.logger = logger
+		f.bOpts = append(f.bOpts, bOpts...)
 	}
 }
 
 // NewCmdConfig sets defaults and validates values for git Options.
 func NewCmdConfig(t testing.TB, opts ...cmdOption) *CmdCfg {
 	gitOpts := &CmdCfg{
-		logger: utils.GetLoggerFromT(),
-		t:      t,
+		t: t,
 	}
 	// apply options
 	for _, opt := range opts {
 		opt(gitOpts)
 	}
-	if gitOpts.gitBinary == "" {
-		err := utils.BinaryInPath("git")
-		if err != nil {
-			t.Fatalf("unable to find git in path: %v", err)
-		}
-		gitOpts.gitBinary = "git"
-	}
+	gitOpts.BinaryCfg = binary.NewBinaryConfig(t, "git", gitOpts.bOpts...)
 	return gitOpts
 }
 
 // RunCmd executes a git command
 func (g *CmdCfg) RunCmdE(args ...string) (string, error) {
 	kptCmd := shell.Command{
-		Command:    g.gitBinary,
+		Command:    g.GetBinary(),
 		Args:       args,
-		Logger:     g.logger,
-		WorkingDir: g.dir,
+		Logger:     g.GetLogger(),
+		WorkingDir: g.GetDir(),
 	}
 	return shell.RunCommandAndGetStdOutE(g.t, kptCmd)
 }

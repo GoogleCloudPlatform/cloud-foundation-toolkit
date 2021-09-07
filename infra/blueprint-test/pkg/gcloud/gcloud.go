@@ -20,24 +20,23 @@ package gcloud
 import (
 	"strings"
 
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
-	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/binary"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/tidwall/gjson"
 )
 
 type CmdCfg struct {
-	gcloudBinary string         // path to gcloud binary
-	commonArgs   []string       // common arguments to pass to gcloud calls
-	logger       *logger.Logger // custom logger
+	*binary.BinaryCfg                       // binary config
+	bOpts             []binary.BinaryOption // binary options
+	commonArgs        []string              // common arguments to pass to gcloud calls
 }
 
 type cmdOption func(*CmdCfg)
 
-func WithBinary(gcloudBinary string) cmdOption {
+func WithBinaryOptions(bOpts ...binary.BinaryOption) cmdOption {
 	return func(f *CmdCfg) {
-		f.gcloudBinary = gcloudBinary
+		f.bOpts = append(f.bOpts, bOpts...)
 	}
 }
 
@@ -47,47 +46,32 @@ func WithCommonArgs(commonArgs []string) cmdOption {
 	}
 }
 
-func WithLogger(logger *logger.Logger) cmdOption {
-	return func(f *CmdCfg) {
-		f.logger = logger
-	}
-}
-
 // newCmdConfig sets defaults and validates values for gcloud Options.
-func newCmdConfig(opts ...cmdOption) (*CmdCfg, error) {
+func newCmdConfig(t testing.TB, opts ...cmdOption) (*CmdCfg, error) {
 	gOpts := &CmdCfg{}
 	// apply options
 	for _, opt := range opts {
 		opt(gOpts)
 	}
-	if gOpts.gcloudBinary == "" {
-		err := utils.BinaryInPath("gcloud")
-		if err != nil {
-			return nil, err
-		}
-		gOpts.gcloudBinary = "gcloud"
-	}
+	gOpts.BinaryCfg = binary.NewBinaryConfig(t, "gcloud", gOpts.bOpts...)
 	if gOpts.commonArgs == nil {
 		gOpts.commonArgs = []string{"--format", "json"}
-	}
-	if gOpts.logger == nil {
-		gOpts.logger = utils.GetLoggerFromT()
 	}
 	return gOpts, nil
 }
 
 // RunCmd executes a gcloud command and fails test if there are any errors.
 func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
-	gOpts, err := newCmdConfig(opts...)
+	gOpts, err := newCmdConfig(t, opts...)
 	if err != nil {
 		t.Fatal(err)
 	}
 	// split command into args
 	args := strings.Fields(cmd)
 	gcloudCmd := shell.Command{
-		Command: "gcloud",
+		Command: gOpts.GetBinary(),
 		Args:    append(args, gOpts.commonArgs...),
-		Logger:  gOpts.logger,
+		Logger:  gOpts.GetLogger(),
 	}
 	op, err := shell.RunCommandAndGetStdOutE(t, gcloudCmd)
 	if err != nil {
