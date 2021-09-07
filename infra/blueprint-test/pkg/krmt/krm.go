@@ -84,6 +84,12 @@ func WithLogger(logger *logger.Logger) krmtOption {
 	}
 }
 
+func WithSetters(setters map[string]string) krmtOption {
+	return func(f *KRMBlueprintTest) {
+		f.setters = setters
+	}
+}
+
 // NewKRMBlueprintTest sets defaults, validates and returns a KRMBlueprintTest.
 func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 	krmt := &KRMBlueprintTest{
