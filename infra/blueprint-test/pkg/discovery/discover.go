@@ -53,7 +53,7 @@ func GetConfigDirFromTestDir(cwd string) (string, error) {
 
 // FindTestConfigs attempts to auto discover configs to test and is expected to be executed from a directory containing explicit integration tests.
 // Order of discovery is all explicit tests, followed by all fixtures that do not have explicit tests, followed by all examples that do not have fixtures nor explicit tests.
-func FindTestConfigs(t testing.TB, intTestDir string) []string {
+func FindTestConfigs(t testing.TB, intTestDir string) map[string]string {
 	testBase := intTestDir
 	examplesBase := path.Join(testBase, "../../", ExamplesDir)
 	fixturesBase := path.Join(testBase, "../", FixtureDir)
@@ -69,21 +69,31 @@ func FindTestConfigs(t testing.TB, intTestDir string) []string {
 	if err != nil {
 		t.Logf("Error discovering examples: %v", err)
 	}
-	testCases := make([]string, 0)
-	//TODO(bharathkkb): add overrides
+	testCases := make(map[string]string)
+	testConfig, err := getTestConfig(defaultTestConfigFilename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(testConfig.Spec.Skip) > 0 {
+		t.Logf("Skipping tests %+q", testConfig.Spec.Skip)
+	}
 	// if a fixture exists but no explicit test defined
 	for n := range fixtures {
 		_, ok := explicitTests[n]
-		if !ok {
-			testCases = append(testCases, path.Join(fixturesBase, n))
+		if !ok && !testConfig.ShouldSkipTest(n) {
+			testDir := path.Join(fixturesBase, n)
+			testName := fmt.Sprintf(path.Base(path.Dir(testDir)), path.Base(testDir))
+			testCases[testName] = testDir
 		}
 	}
 	// if an example exists that does not have a fixture nor explicit test defined
 	for n := range examples {
 		_, okTest := explicitTests[n]
 		_, okFixture := fixtures[n]
-		if !okTest && !okFixture {
-			testCases = append(testCases, path.Join(examplesBase, n))
+		if !okTest && !okFixture && !testConfig.ShouldSkipTest(n) {
+			testDir := path.Join(examplesBase, n)
+			testName := fmt.Sprintf(path.Base(path.Dir(testDir)), path.Base(testDir))
+			testCases[testName] = testDir
 		}
 	}
 	// explicit tests in integration/test_name are not gathered since they are invoked directly

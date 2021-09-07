@@ -262,9 +262,7 @@ func (b *KRMBlueprintTest) DefaultTeardown(assert *assert.Assertions) {
 // AutoDiscoverAndTest discovers KRM config from examples/fixtures and runs tests.
 func AutoDiscoverAndTest(t *gotest.T) {
 	configs := discovery.FindTestConfigs(t, "./")
-	for _, dir := range configs {
-		// dir must be of the form ../fixture/name or ../../examples/name
-		testName := fmt.Sprintf("test-%s-%s", path.Base(path.Dir(dir)), path.Base(dir))
+	for testName, dir := range configs {
 		t.Run(testName, func(t *gotest.T) {
 			nt := NewKRMBlueprintTest(t, WithDir(dir))
 			nt.Test()
