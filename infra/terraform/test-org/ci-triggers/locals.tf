@@ -22,6 +22,7 @@ locals {
     "ci-shared",
     "ci-anthos-platform",
     "ci-example-foundation",
+    "ci-blueprints"
   ]
   # custom mapping of the form name => repo_name used for overriding `terraform-google` prefix
   custom_repo_mapping = {
