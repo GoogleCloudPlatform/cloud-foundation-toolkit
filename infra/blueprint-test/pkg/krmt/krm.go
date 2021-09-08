@@ -266,6 +266,11 @@ func (b *KRMBlueprintTest) DefaultTeardown(assert *assert.Assertions) {
 	b.kpt.RunCmd("live", "status", "--output", "json", "--poll-until", "deleted", "--timeout", b.timeout)
 }
 
+// ShouldSkip checks if a test should be skipped
+func (b *KRMBlueprintTest) ShouldSkip() bool {
+	return b.testConfig.Spec.Skip
+}
+
 // AutoDiscoverAndTest discovers KRM config from examples/fixtures and runs tests.
 func AutoDiscoverAndTest(t *gotest.T) {
 	configs := discovery.FindTestConfigs(t, "./")
@@ -319,7 +324,7 @@ func (b *KRMBlueprintTest) Teardown(assert *assert.Assertions) {
 
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *KRMBlueprintTest) Test() {
-	if b.testConfig.ShouldSkipTest() {
+	if b.ShouldSkip() {
 		b.logger.Logf(b.t, "Skipping test due to config %s", b.testConfig.Path)
 		return
 	}

@@ -57,7 +57,7 @@ spec:
 				assert.Contains(err.Error(), tt.errMsg)
 			} else {
 				assert.NoError(err)
-				assert.Equal(tt.shouldSkip, bpTestCfg.ShouldSkipTest())
+				assert.Equal(tt.shouldSkip, bpTestCfg.Spec.Skip)
 			}
 		})
 	}

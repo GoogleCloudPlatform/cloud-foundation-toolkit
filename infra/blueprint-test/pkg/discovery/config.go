@@ -21,11 +21,6 @@ type BlueprintTestConfig struct {
 	Path string
 }
 
-// ShouldSkipTest checks if a test should be skipped
-func (b BlueprintTestConfig) ShouldSkipTest() bool {
-	return b.Spec.Skip
-}
-
 // GetTestConfig returns BlueprintTestConfig if found
 func GetTestConfig(path string) (*BlueprintTestConfig, error) {
 	_, err := os.Stat(path)

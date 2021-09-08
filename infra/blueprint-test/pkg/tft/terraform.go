@@ -207,6 +207,11 @@ func loadTFEnvVar(m map[string]string, new map[string]string) {
 	}
 }
 
+// ShouldSkip checks if a test should be skipped
+func (b *TFBlueprintTest) ShouldSkip() bool {
+	return b.testConfig.Spec.Skip
+}
+
 // AutoDiscoverAndTest discovers TF config from examples/fixtures and runs tests.
 func AutoDiscoverAndTest(t *gotest.T) {
 	configs := discovery.FindTestConfigs(t, "./")
@@ -290,7 +295,7 @@ func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
 
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *TFBlueprintTest) Test() {
-	if b.testConfig.ShouldSkipTest() {
+	if b.ShouldSkip() {
 		b.logger.Logf(b.t, "Skipping test due to config %s", b.testConfig.Path)
 		return
 	}
