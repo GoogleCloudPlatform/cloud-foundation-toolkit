@@ -86,3 +86,7 @@ output "ci_bq_external_hive_file_foo" {
 output "ci_bq_external_hive_file_bar" {
   value = google_storage_bucket_object.ci_bq_external_hive_file_bar.name
 }
+
+output "prow_int_sa" {
+  value = module.prow-int-sa-wi.gcp_service_account_email
+}

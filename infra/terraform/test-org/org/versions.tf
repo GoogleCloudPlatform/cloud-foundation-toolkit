@@ -23,11 +23,11 @@ provider "external" {
 }
 
 provider "google" {
-  version = "~> 2.19"
+  version = "~> 3.19"
 }
 
 provider "google-beta" {
-  version = "~> 2.19"
+  version = "~> 3.19"
 }
 
 provider "null" {
