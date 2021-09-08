@@ -24,20 +24,21 @@ var CommonSetters = []string{"PROJECT_ID", "BILLING_ACCOUNT_ID", "ORG_ID"}
 
 // KRMBlueprintTest implements bpt.Blueprint and stores information associated with a KRM blueprint test.
 type KRMBlueprintTest struct {
-	name         string                   // descriptive name for the test
-	exampleDir   string                   // directory containing KRM blueprint example
-	buildDir     string                   // directory to hydrated blueprint configs pre apply
-	kpt          *kpt.CmdCfg              // kpt cmd config
-	timeout      string                   // timeout for KRM resource status
-	setters      map[string]string        // additional setters to populate
-	updatePkgs   bool                     // whether to update packages in exampleDir
-	updateCommit string                   // specific commit to update to
-	logger       *logger.Logger           // custom logger
-	t            testing.TB               // TestingT or TestingB
-	init         func(*assert.Assertions) // init function
-	apply        func(*assert.Assertions) // apply function
-	verify       func(*assert.Assertions) // verify function
-	teardown     func(*assert.Assertions) // teardown function
+	name         string                         // descriptive name for the test
+	exampleDir   string                         // directory containing KRM blueprint example
+	testConfig   *discovery.BlueprintTestConfig // additional blueprint test configs
+	buildDir     string                         // directory to hydrated blueprint configs pre apply
+	kpt          *kpt.CmdCfg                    // kpt cmd config
+	timeout      string                         // timeout for KRM resource status
+	setters      map[string]string              // additional setters to populate
+	updatePkgs   bool                           // whether to update packages in exampleDir
+	updateCommit string                         // specific commit to update to
+	logger       *logger.Logger                 // custom logger
+	t            testing.TB                     // TestingT or TestingB
+	init         func(*assert.Assertions)       // init function
+	apply        func(*assert.Assertions)       // apply function
+	verify       func(*assert.Assertions)       // verify function
+	teardown     func(*assert.Assertions)       // teardown function
 }
 
 type krmtOption func(*KRMBlueprintTest)
@@ -122,6 +123,12 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 			t.Fatalf("unable to detect KRM dir :%v", err)
 		}
 		krmt.exampleDir = exampleDir
+	}
+	// discover test config
+	var err error
+	krmt.testConfig, err = discovery.GetTestConfig(path.Join(krmt.exampleDir, discovery.DefaultTestConfigFilename))
+	if err != nil {
+		t.Fatal(err)
 	}
 	// if no explicit build directory is provided, setup build directory
 	if krmt.buildDir == "" {
@@ -312,6 +319,10 @@ func (b *KRMBlueprintTest) Teardown(assert *assert.Assertions) {
 
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *KRMBlueprintTest) Test() {
+	if b.testConfig.ShouldSkipTest() {
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.testConfig.Path)
+		return
+	}
 	a := assert.New(b.t)
 	// run stages
 	utils.RunStage("init", func() { b.Init(a) })

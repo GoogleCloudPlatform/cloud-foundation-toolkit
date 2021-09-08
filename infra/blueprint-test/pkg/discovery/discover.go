@@ -70,19 +70,13 @@ func FindTestConfigs(t testing.TB, intTestDir string) map[string]string {
 		t.Logf("Error discovering examples: %v", err)
 	}
 	testCases := make(map[string]string)
-	testConfig, err := getTestConfig(defaultTestConfigFilename)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(testConfig.Spec.Skip) > 0 {
-		t.Logf("Skipping tests %+q", testConfig.Spec.Skip)
-	}
+
 	// if a fixture exists but no explicit test defined
 	for n := range fixtures {
 		_, ok := explicitTests[n]
-		if !ok && !testConfig.ShouldSkipTest(n) {
+		if !ok {
 			testDir := path.Join(fixturesBase, n)
-			testName := fmt.Sprintf(path.Base(path.Dir(testDir)), path.Base(testDir))
+			testName := fmt.Sprintf("%s/%s", path.Base(path.Dir(testDir)), path.Base(testDir))
 			testCases[testName] = testDir
 		}
 	}
@@ -90,9 +84,9 @@ func FindTestConfigs(t testing.TB, intTestDir string) map[string]string {
 	for n := range examples {
 		_, okTest := explicitTests[n]
 		_, okFixture := fixtures[n]
-		if !okTest && !okFixture && !testConfig.ShouldSkipTest(n) {
+		if !okTest && !okFixture {
 			testDir := path.Join(examplesBase, n)
-			testName := fmt.Sprintf(path.Base(path.Dir(testDir)), path.Base(testDir))
+			testName := fmt.Sprintf("%s/%s", path.Base(path.Dir(testDir)), path.Base(testDir))
 			testCases[testName] = testDir
 		}
 	}
