@@ -9,10 +9,8 @@ Apart from the necessity of including a testing framework as part of our GCP blu
 
 Considering the above, our test framework has been developed (details in the following sections) with backward compatibility to allow for current tests to keep functioning.
 
-```
-Note: If you have a question about the test framework, feel free to ask it on our user group. 
-Feature requests can also be submitted as Issues.
-```
+*Note: If you have a question about the test framework, feel free to ask it on our user group. 
+Feature requests can also be submitted as Issues.*
 
 # 2. Framework Concepts
 
@@ -65,11 +63,11 @@ For the purpose of this user guide, the [terraform-google-sql-db blueprint](http
 └── ...
 ```
 
-Before jumping into the specifics for test development, let’s review how the blueprint directory is structured.
-- `examples`  - this directory holds examples that may call the main blueprint or sub-blueprints (for Terraform, these are in the  modules  directory).
+Let’s review how the blueprint directory is structured.
+- `examples`  - this directory holds examples that may call the main blueprint or sub-blueprints (for Terraform, this is the main module or sub-modules within the modules directory).
 - `test/fixtures`  - this directory contains “fixture” configuration. In most cases, this should be configured to wrap examples that need additional inputs and unify the interface for testing. Usage of fixtures is discouraged unless necessary.
 - `test/integration`  - this directory is intended to hold integration tests that are responsible for running and asserting test values for a given fixture.
-- `test/setup`  - this directory holds the GCP project and initial resource setup modules that are a prerequisite for the blueprint tests to run.
+- `test/setup`  - this directory holds configuration for creating the GCP project and initial resources that are a prerequisite for the blueprint tests to run.
 
 # 3. Test Development
 This section aims at explaining the process of developing a custom integration test which consists of the following steps:
@@ -186,6 +184,7 @@ func TestMySqlPublicModule(t *testing.T) {
    mySqlT := tft.NewTFBlueprintTest(t)
    // define and write a custom verifier for this test case call the default verify for confirming no additional changes
    mySqlT.DefineVerify(func(assert *assert.Assertions) {
+       // perform default verification ensuring Terraform reports no additional changes on an applied blueprint
        mySqlT.DefaultVerify(assert)    
        // custom logic for the test continues below
        ...   
@@ -206,39 +205,39 @@ op := gcloud.Run(t, fmt.Sprintf("sql instances describe %s --project %s", mySqlT
 
 2. Once you have retrieved values from GCP, use the (assert)[https://pkg.go.dev/github.com/stretchr/testify/assert] package to perform custom validations with respect to the resources provisioned. Here are some common assertions that can be useful in most test scenarios.
 
-   1. Contains
+   1. Equal
+
+    ```go
+    // assert values that are supposed to be equal to the expected values
+    assert.Equal(databaseVersion, op.Get("databaseVersion").String(), "database versions is valid is set to "+databaseVersion)
+    ```
+   
+   2. Contains
 
     ```go
     // assert values that are contained in the expected output
     assert.Contains(op.Get("gceZone").String(), region, "GCE region is valid")
     ```
 
-   2. Boolean (True)
+   3. Boolean (True)
 
     ```go
     // assert boolean values
     assert.True(op.Get("settings.ipConfiguration.ipv4Enabled").Bool(), "ipv4 is enabled")
     ```
 
-   3. GreaterOrEqual
+   4. GreaterOrEqual
 
     ```go
     // assert values that are greater than or equal to the expected value
     assert.GreaterOrEqual(op.Get("settings.dataDiskSizeGb").Float(), 10.0, "at least 5 backups are retained")
     ```
 
-   4. Empty
+   5. Empty
 
     ```go
     // assert values that are supposed to be empty or nil
     assert.Empty(op.Get("settings.userLabels"), "no labels are set")
-    ```
-
-   5. Equal
-
-    ```go
-    // assert values that are supposed to be equal to the expected values
-    assert.Equal(databaseVersion, op.Get("databaseVersion").String(), "database versions is valid is set to "+databaseVersion)
     ```
 
 The entire integration test can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/blob/master/test/integration/mysql-public/mysql_public_test.go).
@@ -257,7 +256,7 @@ By default, tests go through 4 stages above. You can also explicitly run individ
 In order for the test to execute, certain prerequisite resources and components need to be in place. These can be set up using the TF modules under `test/setup`. Running `terraform apply` in this directory will set up all resources required for the test.
 
 ```
-Note: Output values from `test/setup` are automatically loaded as Terraform environment variables and are available to both auto discovered and custom/explicit tests as inputs.
+Note: Output values from `test/setup` are automatically loaded as Terraform environment variables and are available to both auto discovered and custom/explicit tests as inputs. This is also illustrated in the (Create the example configuration - Step 4)[https://github.com/g-awmalik/cloud-foundation-toolkit/tree/feat/add-bp-test-doc/infra/blueprint-test#3111-create-the-example-configuration] above where the `project_id` variable output by the `test/setup` is consumed as a variable for the example.
 ```
 
 ## 4.2 Default and stage specific execution
@@ -299,7 +298,7 @@ The auto-discovered test can be triggered as follow:
   - `go test -v`  (for verbose output)
 
 By default, this triggers the following steps:
-- The auto-discovery module iterates through all tests defined under the `test/fixtures` directory and builds a list of tests that are only found under the `test/fixtures` directory and do not match any tests (by directory name) under `test/integration`. For this example, the following tests will be queued:
+- The auto-discovery module iterates through all tests defined under the `test/fixtures` directory and builds a list of tests that are only found under the `test/fixtures` directory and do not match any explicit tests (by directory name) under `test/integration`. For this example, the following tests will be queued:
   - `test/fixtures/mysql-private`
 - Next, the auto-discovery module goes through all example modules defined under the `examples` directory and adds to the list any example modules that do not exist in either the `test/fixtures` directory or the `test/integration` directory (matched by directory name). For this example, one additional test is queued to the list:
   - `examples/mssql-public`
@@ -346,7 +345,7 @@ Unlike auto-discovered tests, custom tests are written specifically for examples
    
 2. Run the one of the following commands for execution:
    - `go test -run TestMySqlPublicModule ./...`  OR
-   - `go test -run TestMySqlPublicModule ./...` -v  (for verbose output)
+   - `go test -run TestMySqlPublicModule ./... -v`  (for verbose output)
 
    In the above commands the test module name is specified with the `-run` parameter. This name can also be in the form of a regular expression as explained in the tip below.
    The usage of `./…` in the above commands allows for golang to execute tests in subdirectories as well.
