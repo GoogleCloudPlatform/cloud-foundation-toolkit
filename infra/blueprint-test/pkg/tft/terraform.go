@@ -34,18 +34,18 @@ import (
 
 // TFBlueprintTest implements bpt.Blueprint and stores information associated with a Terraform blueprint test.
 type TFBlueprintTest struct {
-	name       string                         // descriptive name for the test
-	tfDir      string                         // directory containing Terraform configs
-	testConfig *discovery.BlueprintTestConfig // additional blueprint test configs
-	tfEnvVars  map[string]string              // variables to pass to Terraform as environment variables prefixed with TF_VAR_
-	setupDir   string                         // optional directory containing applied TF configs to import outputs as variables for the test
-	vars       map[string]interface{}         // variables to pass to Terraform as flags
-	logger     *logger.Logger                 // custom logger
-	t          testing.TB                     // TestingT or TestingB
-	init       func(*assert.Assertions)       // init function
-	apply      func(*assert.Assertions)       // apply function
-	verify     func(*assert.Assertions)       // verify function
-	teardown   func(*assert.Assertions)       // teardown function
+	discovery.BlueprintTestConfig                          // additional blueprint test configs
+	name                          string                   // descriptive name for the test
+	tfDir                         string                   // directory containing Terraform configs
+	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
+	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
+	vars                          map[string]interface{}   // variables to pass to Terraform as flags
+	logger                        *logger.Logger           // custom logger
+	t                             testing.TB               // TestingT or TestingB
+	init                          func(*assert.Assertions) // init function
+	apply                         func(*assert.Assertions) // apply function
+	verify                        func(*assert.Assertions) // verify function
+	teardown                      func(*assert.Assertions) // teardown function
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -136,7 +136,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 	// discover test config
 	var err error
-	tft.testConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
+	tft.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -209,7 +209,7 @@ func loadTFEnvVar(m map[string]string, new map[string]string) {
 
 // ShouldSkip checks if a test should be skipped
 func (b *TFBlueprintTest) ShouldSkip() bool {
-	return b.testConfig.Spec.Skip
+	return b.Spec.Skip
 }
 
 // AutoDiscoverAndTest discovers TF config from examples/fixtures and runs tests.
@@ -296,7 +296,7 @@ func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *TFBlueprintTest) Test() {
 	if b.ShouldSkip() {
-		b.logger.Logf(b.t, "Skipping test due to config %s", b.testConfig.Path)
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
 		return
 	}
 	a := assert.New(b.t)

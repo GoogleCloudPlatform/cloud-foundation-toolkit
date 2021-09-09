@@ -22,29 +22,29 @@ type BlueprintTestConfig struct {
 }
 
 // GetTestConfig returns BlueprintTestConfig if found
-func GetTestConfig(path string) (*BlueprintTestConfig, error) {
+func GetTestConfig(path string) (BlueprintTestConfig, error) {
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		// BlueprintTestConfig does not exist, so we return an equivalent empty config
 		emptyCfg := BlueprintTestConfig{}
 		emptyCfg.Spec.Skip = false
-		return &emptyCfg, nil
+		return emptyCfg, nil
 	}
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("error reading %s: %v", path, err)
+		return BlueprintTestConfig{}, fmt.Errorf("error reading %s: %v", path, err)
 	}
 	var bpc BlueprintTestConfig
 	err = yaml.Unmarshal(data, &bpc)
 	if err != nil {
-		return nil, fmt.Errorf("error unmarshalling %s: %v", data, err)
+		return BlueprintTestConfig{}, fmt.Errorf("error unmarshalling %s: %v", data, err)
 	}
 	bpc.Path = path
 	err = isValidTestConfig(bpc)
 	if err != nil {
-		return nil, fmt.Errorf("error validating testconfig in %s: %v", path, err)
+		return BlueprintTestConfig{}, fmt.Errorf("error validating testconfig in %s: %v", path, err)
 	}
-	return &bpc, nil
+	return bpc, nil
 }
 
 // isValidTestConfig validates a given BlueprintTestConfig
