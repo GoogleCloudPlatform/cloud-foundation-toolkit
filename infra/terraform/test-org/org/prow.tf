@@ -40,3 +40,16 @@ module "prow-int-sa-wi" {
   namespace  = "test-pods"
   project_id = local.prow_project_id
 }
+
+resource "kubernetes_config_map" "test-constants" {
+  metadata {
+    name      = "test-constants"
+    namespace = "test-pods"
+  }
+
+  data = {
+    ORG_ID          = local.org_id
+    BILLING_ACCOUNT = local.billing_account
+    FOLDER_ID       = replace(module.folders-ci.ids["ci-blueprints"], "folders/", "")
+  }
+}
