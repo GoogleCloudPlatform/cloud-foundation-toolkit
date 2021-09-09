@@ -55,6 +55,12 @@ func WithDir(dir string) krmtOption {
 	}
 }
 
+func WithBuildDir(buildDir string) krmtOption {
+	return func(f *KRMBlueprintTest) {
+		f.buildDir = buildDir
+	}
+}
+
 func WithUpdatePkgs(update bool) krmtOption {
 	return func(f *KRMBlueprintTest) {
 		f.updatePkgs = update
@@ -232,12 +238,12 @@ func (b *KRMBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	}
 	b.updateSetters()
 	kpt.NewCmdConfig(b.t, kpt.WithDir(b.buildDir)).RunCmd("fn", "render")
+	b.kpt.RunCmd("live", "install-resource-group")
+	b.kpt.RunCmd("live", "init")
 }
 
 // DefaultApply installs resource-group, initializes inventory, applies pkg and polls resource statuses until current.
 func (b *KRMBlueprintTest) DefaultApply(assert *assert.Assertions) {
-	b.kpt.RunCmd("live", "install-resource-group")
-	b.kpt.RunCmd("live", "init")
 	b.kpt.RunCmd("live", "apply")
 	b.kpt.RunCmd("live", "status", "--output", "json", "--poll-until", "current", "--timeout", b.timeout)
 }

@@ -95,5 +95,6 @@ locals {
     "secured-data-warehouse",
     "cloud-run",
     "network-forensics",
+    "blueprints", # Not module
   ]
 }
