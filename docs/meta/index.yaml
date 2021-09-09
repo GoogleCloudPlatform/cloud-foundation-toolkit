@@ -42,7 +42,7 @@ children:
   source: https://github.com/terraform-google-modules/terraform-google-cloud-datastore
 - !module
   description: This module makes it easy to create and manage Google Cloud DNS public
-    or private zones, and their records. https://registry.terraform.io/modules/terraform-google-modules/cloud-dns/google/
+    or private zones, and their records.
   name: cloud-dns
   source: https://github.com/terraform-google-modules/terraform-google-cloud-dns
 - !module
@@ -50,6 +50,15 @@ children:
     and configuration.
   name: cloud-nat
   source: https://github.com/terraform-google-modules/terraform-google-cloud-nat
+- !module
+  children:
+  - !module
+    name: agent-policy
+    path: modules/agent-policy
+  description: This module is a collection of submodules related to Google Cloud Operations
+    (Logging and Monitoring).
+  name: cloud-operations
+  source: https://github.com/terraform-google-modules/terraform-google-cloud-operations
 - !module
   children:
   - !module
@@ -62,6 +71,11 @@ children:
   name: cloud-router
   source: https://github.com/terraform-google-modules/terraform-google-cloud-router
 - !module
+  description: Terraform Module for deploying apps to Cloud Run, along with option
+    to map custom domain
+  name: cloud-run
+  source: https://github.com/GoogleCloudPlatform/terraform-google-cloud-run
+- !module
   children:
   - !module
     name: simple_bucket
@@ -70,6 +84,14 @@ children:
     basic permissions on them to arbitrary users.
   name: cloud-storage
   source: https://github.com/terraform-google-modules/terraform-google-cloud-storage
+- !module
+  children:
+  - !module
+    name: create_environment
+    path: modules/create_environment
+  description: Terraform Module for managing Cloud Composer
+  name: composer
+  source: https://github.com/terraform-google-modules/terraform-google-composer
 - !module
   children:
   - !module
@@ -84,6 +106,29 @@ children:
   description: This module simplifies deploying containers on GCE instances.
   name: container-vm
   source: https://github.com/terraform-google-modules/terraform-google-container-vm
+- !module
+  children:
+  - !module
+    name: dataproc_profile
+    path: modules/dataproc_profile
+  - !module
+    name: hub_artifact
+    path: modules/hub_artifact
+  - !module
+    name: instance
+    path: modules/instance
+  - !module
+    name: namespace
+    path: modules/namespace
+  - !module
+    name: private_network
+    path: modules/private_network
+  - !module
+    name: wait_healthy
+    path: modules/wait_healthy
+  description: '[ALPHA] Terraform module for managing Cloud Data Fusion'
+  name: data-fusion
+  source: https://github.com/terraform-google-modules/terraform-google-data-fusion
 - !module
   children:
   - !module
@@ -179,13 +224,35 @@ children:
   name: forseti
   source: https://github.com/terraform-google-modules/terraform-google-forseti
 - !module
+  children:
+  - !module
+    name: kubectl-wrapper
+    path: modules/kubectl-wrapper
   description: A module for executing gcloud commands within Terraform.
   name: gcloud
   source: https://github.com/terraform-google-modules/terraform-google-gcloud
 - !module
+  children:
+  - !module
+    name: gh-runner-gke
+    path: modules/gh-runner-gke
+  - !module
+    name: gh-runner-mig-container-vm
+    path: modules/gh-runner-mig-container-vm
+  - !module
+    name: gh-runner-mig-vm
+    path: modules/gh-runner-mig-vm
+  description: '[ALPHA] Module to create self-hosted GitHub Actions Runners on GCP'
+  name: github-actions-runners
+  source: https://github.com/terraform-google-modules/terraform-google-github-actions-runners
+- !module
   description: Installs GitLab on Kubernetes Engine
   name: gke-gitlab
   source: https://github.com/terraform-google-modules/terraform-google-gke-gitlab
+- !module
+  description: A Terraform module for managing Google Groups
+  name: group
+  source: https://github.com/terraform-google-modules/terraform-google-group
 - !module
   description: ''
   name: gsuite-export
@@ -197,6 +264,9 @@ children:
   source: https://github.com/terraform-google-modules/terraform-google-healthcare
 - !module
   children:
+  - !module
+    name: artifact_registry_iam
+    path: modules/artifact_registry_iam
   - !module
     name: audit_config
     path: modules/audit_config
@@ -234,6 +304,9 @@ children:
     name: pubsub_topics_iam
     path: modules/pubsub_topics_iam
   - !module
+    name: secret_manager_iam
+    path: modules/secret_manager_iam
+  - !module
     name: service_accounts_iam
     path: modules/service_accounts_iam
   - !module
@@ -265,6 +338,9 @@ children:
     name: acm
     path: modules/acm
   - !module
+    name: asm
+    path: modules/asm
+  - !module
     name: auth
     path: modules/auth
   - !module
@@ -277,8 +353,17 @@ children:
     name: beta-public-cluster
     path: modules/beta-public-cluster
   - !module
+    name: beta-public-cluster-update-variant
+    path: modules/beta-public-cluster-update-variant
+  - !module
+    name: binary-authorization
+    path: modules/binary-authorization
+  - !module
     name: config-sync
     path: modules/config-sync
+  - !module
+    name: hub
+    path: modules/hub
   - !module
     name: k8s-operator-crd-support
     path: modules/k8s-operator-crd-support
@@ -313,6 +398,9 @@ children:
   - !module
     name: dynamic_backends
     path: modules/dynamic_backends
+  - !module
+    name: serverless_negs
+    path: modules/serverless_negs
   description: Modular Global HTTP Load Balancer for GCE using forwarding rules.
   name: lb-http
   source: https://github.com/GoogleCloudPlatform/terraform-google-lb-http
@@ -325,6 +413,9 @@ children:
   - !module
     name: bigquery
     path: modules/bigquery
+  - !module
+    name: bq-log-alerting
+    path: modules/bq-log-alerting
   - !module
     name: pubsub
     path: modules/pubsub
@@ -341,7 +432,12 @@ children:
   name: managed-instance-group
   source: https://github.com/GoogleCloudPlatform/terraform-google-managed-instance-group
 - !module
-  description: ''
+  children:
+  - !module
+    name: memcache
+    path: modules/memcache
+  description: A Terraform module for creating a fully functional Google Memorystore
+    (redis) instance.
   name: memorystore
   source: https://github.com/terraform-google-modules/terraform-google-memorystore
 - !module
@@ -357,6 +453,9 @@ children:
   - !module
     name: fabric-net-svpc-access
     path: modules/fabric-net-svpc-access
+  - !module
+    name: firewall-rules
+    path: modules/firewall-rules
   - !module
     name: network-peering
     path: modules/network-peering
@@ -375,6 +474,9 @@ children:
   - !module
     name: vpc
     path: modules/vpc
+  - !module
+    name: vpc-serverless-connector-beta
+    path: modules/vpc-serverless-connector-beta
   description: A Terraform module that makes it easy to set up a new VPC Network in
     GCP.
   name: network
@@ -420,8 +522,17 @@ children:
     name: project_services
     path: modules/project_services
   - !module
+    name: quota_manager
+    path: modules/quota_manager
+  - !module
     name: shared_vpc
     path: modules/shared_vpc
+  - !module
+    name: shared_vpc_access
+    path: modules/shared_vpc_access
+  - !module
+    name: svpc_service_project
+    path: modules/svpc_service_project
   description: Opinionated Google Cloud Platform project creation and configuration
     with Shared VPC, IAM, APIs, etc.
   name: project-factory
@@ -474,6 +585,10 @@ children:
   name: secret
   source: https://github.com/terraform-google-modules/terraform-google-secret
 - !module
+  children:
+  - !module
+    name: key-distributor
+    path: modules/key-distributor
   description: This module allows easy creation of one or more service accounts, and
     granting them basic roles.
   name: service-accounts
@@ -484,6 +599,9 @@ children:
     name: slo
     path: modules/slo
   - !module
+    name: slo-native
+    path: modules/slo-native
+  - !module
     name: slo-pipeline
     path: modules/slo-pipeline
   description: Create SLOs on GCP from custom Stackdriver metrics. Capability to export
@@ -492,6 +610,9 @@ children:
   source: https://github.com/terraform-google-modules/terraform-google-slo
 - !module
   children:
+  - !module
+    name: mssql
+    path: modules/mssql
   - !module
     name: mysql
     path: modules/mysql
@@ -516,11 +637,18 @@ children:
   name: utils
   source: https://github.com/terraform-google-modules/terraform-google-utils
 - !module
+  children:
+  - !module
+    name: cluster
+    path: modules/cluster
   description: Modular deployment of Vault on Google Compute Engine with Terraform
   name: vault
   source: https://github.com/terraform-google-modules/terraform-google-vault
 - !module
   children:
+  - !module
+    name: compute_disk_snapshot
+    path: modules/compute_disk_snapshot
   - !module
     name: compute_instance
     path: modules/compute_instance
