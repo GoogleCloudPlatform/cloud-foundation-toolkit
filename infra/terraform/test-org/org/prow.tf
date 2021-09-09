@@ -16,6 +16,7 @@
 
 locals {
   prow_project_id = "blueprints-prow"
+  test_ns         = "test-pods"
 }
 
 data "google_container_cluster" "prow_build_cluster" {
@@ -37,14 +38,14 @@ module "prow-int-sa-wi" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version    = "~> 16.0"
   name       = "int-test-sa"
-  namespace  = "test-pods"
+  namespace  = local.test_ns
   project_id = local.prow_project_id
 }
 
 resource "kubernetes_config_map" "test-constants" {
   metadata {
     name      = "test-constants"
-    namespace = "test-pods"
+    namespace = local.test_ns
   }
 
   data = {
