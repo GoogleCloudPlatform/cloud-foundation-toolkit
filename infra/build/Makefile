@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 TERRAFORM_VERSION := 1.0.6
-CLOUD_SDK_VERSION := 355.0.0
+CLOUD_SDK_VERSION := 356.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.10.1
 RUBY_VERSION := 2.6.3
@@ -28,7 +28,7 @@ TERRAGRUNT_VERSION := 0.25.3
 KUSTOMIZE_VERSION := 3.6.0
 KPT_VERSION := 1.0.0-beta.4
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.1.2
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.1.3
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
@@ -64,9 +64,9 @@ build-image-developer-tools:
 		--build-arg TERRAFORM_VERSION=${TERRAFORM_VERSION} \
 		--build-arg CLOUD_SDK_VERSION=${CLOUD_SDK_VERSION} \
 		-t ${DOCKER_IMAGE_DEVELOPER_LIGHT}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} -f "./developer-tools-light/Dockerfile"
-	docker build . \
+	docker build \
 		--build-arg BASE_IMAGE_VERSION=${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
-		-t ${DOCKER_IMAGE_DEVELOPER_KRM}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} -f "./developer-tools-krm/Dockerfile"
+		-t ${DOCKER_IMAGE_DEVELOPER_KRM}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools-krm"
 
 .PHONY: release-image-developer-tools
 release-image-developer-tools:
