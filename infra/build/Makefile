@@ -64,9 +64,9 @@ build-image-developer-tools:
 		--build-arg TERRAFORM_VERSION=${TERRAFORM_VERSION} \
 		--build-arg CLOUD_SDK_VERSION=${CLOUD_SDK_VERSION} \
 		-t ${DOCKER_IMAGE_DEVELOPER_LIGHT}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} -f "./developer-tools-light/Dockerfile"
-	docker build . \
+	docker build \
 		--build-arg BASE_IMAGE_VERSION=${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
-		-t ${DOCKER_IMAGE_DEVELOPER_KRM}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} -f "./developer-tools-krm/Dockerfile"
+		-t ${DOCKER_IMAGE_DEVELOPER_KRM}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools-krm"
 
 .PHONY: release-image-developer-tools
 release-image-developer-tools:
