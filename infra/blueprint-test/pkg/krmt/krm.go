@@ -18,7 +18,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const tmpBuildDir = ".build"
+const (
+	tmpBuildDir = ".build"
+	prowPullSha = "PULL_PULL_SHA"
+)
 
 var CommonSetters = []string{"PROJECT_ID", "BILLING_ACCOUNT_ID", "ORG_ID"}
 
@@ -219,12 +222,19 @@ func (b *KRMBlueprintTest) updateSetters() {
 	}
 }
 
-// updatePkg updates a kpt pkg to a specified commit or the latest commit.
+// updatePkg updates a kpt pkg to a specified commit, prow PR commit or the latest commit.
 func (b *KRMBlueprintTest) updatePkg() {
 	g := git.NewCmdConfig(b.t, git.WithDir(b.exampleDir))
 	commit := b.updateCommit
+	// no explicit commit specified
 	if commit == "" {
-		commit = g.GetLatestCommit()
+		// check if prow PR commit exists
+		prowCommit, found := os.LookupEnv(prowPullSha)
+		if found {
+			commit = prowCommit
+		} else {
+			commit = g.GetLatestCommit()
+		}
 	}
 	b.kpt.RunCmd("pkg", "update", fmt.Sprintf(".@%s", commit))
 
