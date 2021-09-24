@@ -18,8 +18,7 @@ module "service_accounts" {
   source  = "terraform-google-modules/service-accounts/google"
   version = "~> 2.0"
 
-  project_id    = local.project_id
-  generate_keys = true
+  project_id = local.project_id
 
   names = ["cft-github-actions"]
   project_roles = [
