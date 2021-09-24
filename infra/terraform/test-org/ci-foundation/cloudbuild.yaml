@@ -14,7 +14,7 @@
 
 steps:
   - name: 'gcr.io/cloud-foundation-cicd/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS'
-    dir: 'infra/terraform/test-org/foundation'
+    dir: 'infra/terraform/test-org/ci-foundation'
     entrypoint: /bin/bash
     args: ['reconcile.sh']
 substitutions:
