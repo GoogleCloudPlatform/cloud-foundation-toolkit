@@ -29,7 +29,7 @@ resource "google_cloudbuild_trigger" "foundation_reconciler" {
 
   filename = "infra/terraform/test-org/ci-foundation/cloudbuild.yaml"
   substitutions = {
-    _FOUNDATION_CICD_PROJECT = local.foundation_cicd_project_id
+    _FOUNDATION_CICD_PROJECT_ID = local.foundation_cicd_project_id
   }
 }
 
