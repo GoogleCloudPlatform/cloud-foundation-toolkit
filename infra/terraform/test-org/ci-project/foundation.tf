@@ -43,7 +43,7 @@ resource "google_cloud_scheduler_job" "reconcile_job" {
   http_target {
     http_method = "POST"
     uri         = "https://cloudbuild.googleapis.com/v1/projects/${local.project_id}/triggers/${google_cloudbuild_trigger.foundation_reconciler.trigger_id}:run"
-    body        = base64encode("{\"branchName\": \"foundation-reconcile\"}")
+    body        = base64encode("{\"branchName\": \"master\"}")
     oauth_token {
       service_account_email = google_service_account.service_account.email
     }
