@@ -14,8 +14,3 @@
  * limitations under the License.
  */
 
-output "sa_key_github" {
-  description = "Service Account key for GitHub actions"
-  value       = module.service_accounts.key
-  sensitive   = true
-}

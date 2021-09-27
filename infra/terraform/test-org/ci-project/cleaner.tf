@@ -43,7 +43,8 @@ resource "google_project_iam_custom_role" "create_build_role" {
 
   permissions = [
     "cloudbuild.builds.create",
-    "cloudbuild.builds.get"
+    "cloudbuild.builds.get",
+    "cloudbuild.builds.list"
   ]
 }
 

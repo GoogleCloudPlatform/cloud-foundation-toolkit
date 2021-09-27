@@ -15,7 +15,8 @@
  */
 
 locals {
-  project_id = "cloud-foundation-cicd"
+  project_id                 = "cloud-foundation-cicd"
+  foundation_cicd_project_id = "prj-b-cicd-9f11"
   gh_orgs = {
     infra = "GoogleCloudPlatform"
   }
