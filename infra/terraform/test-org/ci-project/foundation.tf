@@ -28,6 +28,9 @@ resource "google_cloudbuild_trigger" "foundation_reconciler" {
   }
 
   filename = "infra/terraform/test-org/ci-foundation/cloudbuild.yaml"
+  substitutions = {
+    _FOUNDATION_CICD_PROJECT = local.foundation_cicd_project_id
+  }
 }
 
 resource "google_cloud_scheduler_job" "reconcile_job" {
