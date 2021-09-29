@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	gotest "testing"
 
@@ -170,17 +171,25 @@ func (b *TFBlueprintTest) getTFOptions() *terraform.Options {
 }
 
 // getTFSetupOutputMap computes a map of TF outputs from setup.
-// Currently only returns string outputs.
 func (b *TFBlueprintTest) getTFSetupOutputMap() map[string]string {
 	o := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger})
 	n := make(map[string]string)
-	for k, v := range o {
-		s, ok := v.(string)
-		if !ok {
-			b.logger.Logf(b.t, "Unable to convert output %s value in setup dir to string", k)
+	// TF requires complex values to be an HCL expression passed literally.
+	// However, Terratest only exposes a way to format strings as HCL expressions to be used as var flags.
+	// Var flags requires the root module to declare a variable of that name.
+	// Hence, we extract the HCL formated string from the var arg slice of form [-var, key1=value1, -var, key2={"complex"="data"}...]
+	for _, v := range terraform.FormatTerraformVarsAsArgs(o) {
+		if v == "-var" {
 			continue
 		}
-		n[k] = s
+		// v of format key1=value1
+		kv := strings.SplitN(v, "=", 2)
+		if len(kv) < 2 {
+			b.t.Logf("Unable to parse output %s from setup", kv)
+			continue
+		}
+
+		n[kv[0]] = kv[1]
 	}
 	return n
 }
