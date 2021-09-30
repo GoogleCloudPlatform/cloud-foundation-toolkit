@@ -28,7 +28,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTFBlueprintTest_getTFOutputsAsInputs(t *testing.T) {
+func TestGetTFOutputsAsInputs(t *testing.T) {
 	tests := []struct {
 		name  string
 		input string
