@@ -95,7 +95,7 @@ func getTFOutputMap(t *testing.T, tf string) map[string]interface{} {
 	return terraform.OutputAll(t, tOpts)
 }
 
-func Test_getKVFromOutputString(t *testing.T) {
+func TestGetKVFromOutputString(t *testing.T) {
 	tests := []struct {
 		name    string
 		kv      string
