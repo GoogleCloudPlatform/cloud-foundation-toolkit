@@ -153,7 +153,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	//load TFEnvVars from setup outputs
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
-		loadTFEnvVar(tft.tfEnvVars, tft.getTFSetupOutputMap())
+		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger})))
 	}
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
@@ -170,9 +170,8 @@ func (b *TFBlueprintTest) getTFOptions() *terraform.Options {
 	})
 }
 
-// getTFSetupOutputMap computes a map of TF outputs from setup.
-func (b *TFBlueprintTest) getTFSetupOutputMap() map[string]string {
-	o := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger})
+// getTFOutputsAsInputs computes a map of TF inputs from outputs map.
+func (b *TFBlueprintTest) getTFOutputsAsInputs(o map[string]interface{}) map[string]string {
 	n := make(map[string]string)
 	// TF requires complex values to be an HCL expression passed literally.
 	// However, Terratest only exposes a way to format strings as HCL expressions to be used as var flags.
@@ -182,16 +181,24 @@ func (b *TFBlueprintTest) getTFSetupOutputMap() map[string]string {
 		if v == "-var" {
 			continue
 		}
-		// v of format key1=value1
-		kv := strings.SplitN(v, "=", 2)
-		if len(kv) < 2 {
-			b.t.Logf("Unable to parse output %s from setup", kv)
+		parsedKey, parsedVal, err := getKVFromOutputString(v)
+		if err != nil {
+			b.t.Logf("Unable to parse output from setup: %v", err)
 			continue
 		}
-
-		n[kv[0]] = kv[1]
+		n[parsedKey] = parsedVal
 	}
 	return n
+}
+
+// getKVFromOutputString parses string kv pairs of form k=v
+func getKVFromOutputString(v string) (string, string, error) {
+	// v of format key1=value1
+	kv := strings.SplitN(v, "=", 2)
+	if len(kv) < 2 {
+		return "", "", fmt.Errorf("error parsing %s", v)
+	}
+	return kv[0], kv[1], nil
 }
 
 // GetStringOutput returns TF output for a given key as string.
