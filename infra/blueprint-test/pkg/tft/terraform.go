@@ -160,8 +160,8 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	return tft
 }
 
-// getTFOptions generates terraform.Options used by Terratest.
-func (b *TFBlueprintTest) getTFOptions() *terraform.Options {
+// GetTFOptions generates terraform.Options used by Terratest.
+func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 	return terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
 		TerraformDir: b.tfDir,
 		EnvVars:      b.tfEnvVars,
@@ -204,7 +204,7 @@ func getKVFromOutputString(v string) (string, string, error) {
 // GetStringOutput returns TF output for a given key as string.
 // It fails test if given key does not output a primitive.
 func (b *TFBlueprintTest) GetStringOutput(name string) string {
-	return terraform.Output(b.t, b.getTFOptions(), name)
+	return terraform.Output(b.t, b.GetTFOptions(), name)
 }
 
 // GetTFSetupOutputListVal returns TF output from setup for a given key as list.
@@ -261,12 +261,12 @@ func (b *TFBlueprintTest) DefineTeardown(teardown func(*assert.Assertions)) {
 
 // DefaultTeardown runs TF destroy on a blueprint.
 func (b *TFBlueprintTest) DefaultTeardown(assert *assert.Assertions) {
-	terraform.Destroy(b.t, b.getTFOptions())
+	terraform.Destroy(b.t, b.GetTFOptions())
 }
 
 // DefaultVerify asserts no resource changes exist after apply.
 func (b *TFBlueprintTest) DefaultVerify(assert *assert.Assertions) {
-	e := terraform.PlanExitCode(b.t, b.getTFOptions())
+	e := terraform.PlanExitCode(b.t, b.GetTFOptions())
 	// exit code 0 is success with no diffs, 2 is success with non-empty diff
 	// https://www.terraform.io/docs/cli/commands/plan.html#detailed-exitcode
 	assert.NotEqual(1, e, "plan after apply should not fail")
@@ -275,7 +275,7 @@ func (b *TFBlueprintTest) DefaultVerify(assert *assert.Assertions) {
 
 // DefaultInit runs TF init and validate on a blueprint.
 func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
-	terraform.Init(b.t, b.getTFOptions())
+	terraform.Init(b.t, b.GetTFOptions())
 	// if vars are set for common options, this seems to trigger -var flag when calling validate
 	// using custom tfOptions as a workaround
 	terraform.Validate(b.t, terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
@@ -286,7 +286,7 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 
 // DefaultApply runs TF apply on a blueprint.
 func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
-	terraform.Apply(b.t, b.getTFOptions())
+	terraform.Apply(b.t, b.GetTFOptions())
 }
 
 // Init runs the default or custom init function for the blueprint.
