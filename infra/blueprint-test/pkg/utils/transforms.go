@@ -17,29 +17,26 @@
 package utils
 
 import (
-	"io/ioutil"
-
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/tidwall/gjson"
 )
 
-// LoadJSON reads and parses a json file into a gjson.Result.
-// It fails test if not unable to parse.
-func LoadJSON(t testing.TB, path string) gjson.Result {
-	j, err := ioutil.ReadFile(path)
-	if err != nil {
-		t.Fatalf("Error reading json file %s", path)
+// GetFirstMatchResult returns the first matching result with a given k/v
+func GetFirstMatchResult(t testing.TB, rs []gjson.Result, k, v string) gjson.Result {
+	for _, r := range rs {
+		if r.Get(k).Exists() && r.Get(k).String() == v {
+			return r
+		}
 	}
-	if !gjson.ValidBytes(j) {
-		t.Fatalf("Error parsing output, invalid json: %s", path)
-	}
-	return gjson.ParseBytes(j)
+	t.Fatalf("unable to find key %s with value %s in %s", k, v, rs)
+	return gjson.Result{}
 }
 
-// ParseJSONResult converts a JSON string into gjson result
-func ParseJSONResult(t testing.TB, j string) gjson.Result {
-	if !gjson.Valid(j) {
-		t.Fatalf("Error parsing output, invalid json: %s", j)
+// GetResultStrSlice parses results into a string slice
+func GetResultStrSlice(rs []gjson.Result) []string {
+	s := make([]string, 0)
+	for _, r := range rs {
+		s = append(s, r.String())
 	}
-	return gjson.Parse(j)
+	return s
 }
