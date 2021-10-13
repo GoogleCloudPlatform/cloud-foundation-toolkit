@@ -94,6 +94,13 @@ RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 ADD ./build/install_gsuite_terraform_provider.sh /build/
 RUN /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION}
 
+
+# Required to download and install Terraform Validator
+ARG TERRAFORM_VALIDATOR_VERSION
+ENV TERRAFORM_VALIDATOR_VERSION ${TERRAFORM_VALIDATOR_VERSION}
+ADD ./build/install_terraform_validator.sh /build/
+RUN /build/install_terraform_validator.sh ${TERRAFORM_VALIDATOR_VERSION}
+
 #ADD ./build/install_terraform.sh /build/
 #RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
 COPY --from=installer /software/terraform /usr/local/bin/terraform
@@ -173,6 +180,7 @@ RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 WORKDIR $WORKSPACE
 RUN terraform --version && \
     terraform-docs --version && \
+    terraform-validator version && \
     gcloud --version && \
     ruby --version && \
     bundle --version && \
