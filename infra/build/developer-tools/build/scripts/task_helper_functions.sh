@@ -562,6 +562,56 @@ finish_integration() {
   exit "${rv}"
 }
 
+
+# This function is called by /usr/local/bin/test_integration.sh and can be
+# overridden on a per-module basis to implement additional steps.
+run_terraform_validator() {
+  source_test_env
+
+  init_credentials
+  tf_name=$1
+  tf_full_path=$2
+  project=$3
+  policy_file_path=$4
+
+  export base_dir=$(pwd)
+  export tmp_plan="$base_dir/tmp_plan"
+
+
+  echo "*************** TERRAFORM VALIDATE ******************"
+  echo "      Validating $tf_name at path $tf_full_path"
+  echo "      Using policy from: $policy_file_path "
+  echo "      at project: $project"
+  echo "*****************************************************"
+
+
+  if [ ! -d "$tmp_plan" ]; then
+      mkdir "$tmp_plan/" || exit 29
+  fi
+
+  if [ -z "$policy_file_path" ]; then
+      echo "no policy repo found! Check the argument provided for policysource to this script."
+      echo "https://github.com/GoogleCloudPlatform/terraform-validator/blob/main/docs/policy_library.md"
+      exit 30
+  else
+      if [ -d "$tf_full_path" ]; then
+
+          cd "$tf_full_path" || exit 31
+
+          terraform plan -input=false -out "$tmp_plan/$tf_name.tfplan"  || exit 32
+          terraform show -json "$tmp_plan/$tf_name.tfplan" > "$tf_name.json" || exit 33
+
+          terraform-validator validate "$tf_name.json" --policy-path="$policy_file_path" --project="$project" || exit 34
+
+          cd "$base_dir" || exit
+      else
+        echo "ERROR:  $tf_full_path does not exist"
+        exit 35
+      fi
+  fi
+}
+
+
 # Intended to allow a module to customize a particular check or behavior.  For
 # example, the pubsub module runs "kitchen converge" twice instead of the
 # default one time.
