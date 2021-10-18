@@ -67,7 +67,9 @@ maketemp() {
 find_files() {
   local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
     ".*/\.terraform"
+    ".*/\.terraform.lock.hcl"
     ".*/\.kitchen"
+    ".*/.*\.class"
     ".*/.*\.png"
     ".*/.*\.jpg"
     ".*/.*\.jpeg"
