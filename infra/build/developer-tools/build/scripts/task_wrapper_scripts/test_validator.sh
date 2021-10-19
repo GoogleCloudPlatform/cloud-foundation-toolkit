@@ -12,8 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-set -eu
+set -e
 
 source /usr/local/bin/task_helper_functions.sh
 
-run_terraform_validator $1 $2 $3 $4
+terraform_path=$1
+project_id=$2
+policy_file_path=${3:-/workspace/policy-library}
+
+run_terraform_validator $terraform_path $project_id $policy_file_path

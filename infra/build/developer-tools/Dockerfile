@@ -168,8 +168,6 @@ ADD ./build/scripts/export_tf_outputs.py /usr/local/bin/
 # Helper script for posting linting feedback to GitHub PR
 # Requires GitHub PAT with repo scope, set as an env var GITHUB_PAT_TOKEN
 ADD ./build/scripts/gh_lint_comment.py /usr/local/bin/
-# Execute the terraform validator.
-ADD ./build/scripts/test_validator.sh /usr/local/bin/
 
 # Intended to help developers iterate quickly
 ADD ./build/home/bash_history /root/.bash_history
@@ -178,6 +176,10 @@ ADD ./build/home/bashrc /root/.bashrc
 # Set TF cache dir
 ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
 RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
+
+# Set TF Validator temporary plan dir
+ENV TF_VALIDATOR_TMP_PLAN_DIR /workspace/test/integration/tmp/tfvt/
+RUN mkdir -p ${TF_VALIDATOR_TMP_PLAN_DIR}
 
 WORKDIR $WORKSPACE
 RUN terraform --version && \
