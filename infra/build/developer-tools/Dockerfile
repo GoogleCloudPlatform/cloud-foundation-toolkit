@@ -94,6 +94,13 @@ RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 ADD ./build/install_gsuite_terraform_provider.sh /build/
 RUN /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION}
 
+
+# Required to download and install Terraform Validator
+ARG TERRAFORM_VALIDATOR_VERSION
+ENV TERRAFORM_VALIDATOR_VERSION ${TERRAFORM_VALIDATOR_VERSION}
+ADD ./build/install_terraform_validator.sh /build/
+RUN /build/install_terraform_validator.sh ${TERRAFORM_VALIDATOR_VERSION}
+
 #ADD ./build/install_terraform.sh /build/
 #RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
 COPY --from=installer /software/terraform /usr/local/bin/terraform
@@ -129,6 +136,9 @@ RUN ./build/install_kustomize.sh ${KUSTOMIZE_VERSION}
 
 ADD ./build/install_kpt.sh /build/
 RUN ./build/install_kpt.sh ${KPT_VERSION}
+
+ADD ./build/install_addlicense.sh /build/
+RUN /build/install_addlicense.sh
 
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
@@ -167,15 +177,21 @@ ADD ./build/home/bashrc /root/.bashrc
 ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
 RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 
+# Set TF Validator temporary plan dir
+ENV TF_VALIDATOR_TMP_PLAN_DIR /workspace/test/integration/tmp/tfvt/
+RUN mkdir -p ${TF_VALIDATOR_TMP_PLAN_DIR}
+
 WORKDIR $WORKSPACE
 RUN terraform --version && \
     terraform-docs --version && \
+    terraform-validator version && \
     gcloud --version && \
     ruby --version && \
     bundle --version && \
     kubectl version --client=true && \
     terragrunt -version && \
-    kustomize version
+    kustomize version && \
+    addlicense -help
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build

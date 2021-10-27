@@ -98,7 +98,7 @@ func TestGetViolations(t *testing.T) {
 			constraint: "GCPVPCSCEnsureServicesConstraintV1.vpc-sc-ensure-services",
 		},
 	}
-	inventory, err := NewInventory("", localCaiDir, false, false, TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
+	inventory, err := NewInventory("", localCaiDir, false, false, WorkerSize(1), TargetProject("1234"), TargetFolder("2345"), TargetOrg("56789"))
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}

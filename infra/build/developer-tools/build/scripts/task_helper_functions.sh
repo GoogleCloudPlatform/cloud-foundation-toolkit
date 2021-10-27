@@ -56,13 +56,20 @@ maketemp() {
 
 # find_files is a helper to exclude .git directories and match only regular
 # files to avoid double-processing symlinks.
-# You can ignore directories by setting an environment variable of
+# You can ignore directories by setting two different environment variables of
 #   relative escaped paths separated by a pipe
-# Ex: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
+# (1) EXCLUDE_LINT_DIRS - all files pointed to by this variable are skipped
+#                         during ANY USE of the find_files function
+#     E.g.: EXCLUDE_LINT_DIRS="\./scripts/foo|\./scripts/bar"
+# (2) EXCLUDE_HEADER_CHECK - all files pointed to by this variable are skipped
+#                            ONLY WHEN the "for_header_check" flag is passed in
+#     E.g.: EXCLUDE_HEADER_CHECK="\./config/foo_resource.yml|\./scripts/bar_script.sh"
 find_files() {
   local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
     ".*/\.terraform"
+    ".*/\.terraform.lock.hcl"
     ".*/\.kitchen"
+    ".*/.*\.class"
     ".*/.*\.png"
     ".*/.*\.jpg"
     ".*/.*\.jpeg"
@@ -83,6 +90,16 @@ find_files() {
   if [[ -n "${EXCLUDE_LINT_DIRS-}" ]]; then
     find_path_regex+="${EXCLUDE_LINT_DIRS}"
     find_path_regex+="|"
+  fi
+
+  # if find_files is used for validating license headers
+  if [ $1 = "for_header_check" ]; then
+    # Add any files to be skipped for header check
+    if [[ -n "${EXCLUDE_HEADER_CHECK-}" ]]; then
+      find_path_regex+="${EXCLUDE_HEADER_CHECK}"
+      find_path_regex+="|"
+    fi
+    shift
   fi
 
   # Concat last dir, along with closing paren
@@ -128,6 +145,13 @@ function lint_docker() {
     | compat_xargs -0 hadolint
 }
 
+# This function creates TF_PLUGIN_CACHE_DIR if TF_PLUGIN_CACHE_DIR envvar is set
+function init_tf_plugin_cache() {
+  if [[ ! -z "${TF_PLUGIN_CACHE_DIR}" ]]; then
+    mkdir -p ${TF_PLUGIN_CACHE_DIR}
+  fi
+}
+
 # This function runs 'terraform validate' against all
 # directory paths which contain *.tf files.
 function check_terraform() {
@@ -135,10 +159,7 @@ function check_terraform() {
   local rval rc
   rval=0
 
-  # if TF_PLUGIN_CACHE_DIR is set, create TF_PLUGIN_CACHE_DIR
-  if [[ ! -z "${TF_PLUGIN_CACHE_DIR}" ]]; then
-    mkdir -p ${TF_PLUGIN_CACHE_DIR}
-  fi
+  init_tf_plugin_cache
 
   # fmt is before validate for faster feedback, validate requires terraform
   # init which takes time.
@@ -387,11 +408,26 @@ function prepare_test_variables() {
 
 function check_headers() {
   echo "Checking file headers"
-  # Use the exclusion behavior of find_files
-  find_files . -type f -print0 \
-    | compat_xargs -0 python /usr/local/verify_boilerplate/verify_boilerplate.py
+  # Use the exclusion behavior of find_files(); a second argument
+  # "for_header_check" is passed in, to ensure filtering based on the evironment
+  # variable EXCLUDE_HEADER_CHECK is done only when find_files is called here
+  find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -check 2>&1
 }
 
+# Add license headers to the files in the project. If a list of files are provided
+# as an input argument then those files are updated to have the license header.
+# If not find_files() function is used to get the list of applicable files from
+# the current directory and those files are updated.
+function fix_headers() {
+  echo "Adding file license headers"
+  YEAR=$(date +'%Y')
+  if [ $# -eq 0 ]
+  then
+    find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -y $YEAR
+  else
+    addlicense -y $YEAR "$@"
+  fi
+}
 
 # Given SERVICE_ACCOUNT_JSON with the JSON string of a service account key,
 # initialize the SA credentials for use with:
@@ -527,6 +563,57 @@ finish_integration() {
   finish
   exit "${rv}"
 }
+
+
+# This function is called by /usr/local/bin/test_validator.sh and can be
+# overridden on a per-module basis to implement additional steps.
+run_terraform_validator() {
+  source_test_env
+  init_credentials
+
+  tf_full_path="$1"
+  project="$2"
+  policy_file_path="$3"
+
+
+  export tf_name=$(basename -- $tf_full_path)
+  export base_dir=$(pwd)
+  export tmp_plan="${base_dir}/test/integration/tmp/tfvt/${tf_name}"
+
+
+  echo "*************** TFV VALIDATE ************************"
+  echo "      Validating $tf_name at path $tf_full_path"
+  echo "      Using policy from: $policy_file_path "
+  echo "      in project: $project"
+  echo "*****************************************************"
+
+
+  if [ ! -d "$tmp_plan" ]; then
+      mkdir -p "$tmp_plan/" || exit 1
+  fi
+
+  if [ -z "$policy_file_path" ]; then
+      echo "no policy repo found! Check the argument provided for policysource to this script."
+      echo "https://github.com/GoogleCloudPlatform/terraform-validator/blob/main/docs/policy_library.md"
+      exit 1
+  else
+      if [ -d "$tf_full_path" ]; then
+
+          cd "$tf_full_path" || exit 1
+
+          terraform plan -input=false -out "$tmp_plan/plan.tfplan"  || exit 1
+          terraform show -json "$tmp_plan/plan.tfplan" > "$tmp_plan/plan.json" || exit 1
+
+          terraform-validator validate "$tmp_plan/plan.json" --policy-path="$policy_file_path" --project="$project" || exit 1
+
+          cd "$base_dir" || exit
+      else
+        echo "ERROR:  $tf_full_path does not exist"
+        exit 1
+      fi
+  fi
+}
+
 
 # Intended to allow a module to customize a particular check or behavior.  For
 # example, the pubsub module runs "kitchen converge" twice instead of the
