@@ -26,11 +26,11 @@ resource "google_project_iam_member" "int_test" {
 resource "google_project_iam_member" "kokoro_test_0" {
   project = module.terraform_validator_test_project.project_id
   role    = "roles/editor"
-  member  = "user:kokoro-build@magic-modules.iam.gserviceaccount.com"
+  member  = "serviceAccount:kokoro-build@magic-modules.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "kokoro_test_1" {
   project = module.terraform_validator_test_project.project_id
   role    = "roles/editor"
-  member  = "user:kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com"
+  member  = "serviceAccount:kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com"
 }
