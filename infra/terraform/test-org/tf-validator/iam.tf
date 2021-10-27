@@ -32,5 +32,5 @@ resource "google_project_iam_member" "kokoro_test_0" {
 resource "google_project_iam_member" "kokoro_test_1" {
   project = module.terraform_validator_test_project.project_id
   role    = "roles/editor"
-  member  = "user:kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com	"
+  member  = "user:kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com"
 }
