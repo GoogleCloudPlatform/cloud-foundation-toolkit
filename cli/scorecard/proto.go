@@ -56,6 +56,13 @@ func unMarshallAsset(from []byte, to proto.Message) error {
 // protoViaJSON uses JSON as an intermediary serialization to convert a value into
 // a protobuf message.
 func protoViaJSON(from interface{}, to proto.Message) error {
+	if m, ok := from.(map[string]interface{}); ok {
+		if val, ok := m["iam_policy"]; ok {
+			if m, ok := val.(map[string]interface{}); ok {
+				delete(m, "etag")
+			}
+		}
+	}
 	jsn, err := json.Marshal(from)
 	if err != nil {
 		return errors.Wrap(err, "marshaling to json")
