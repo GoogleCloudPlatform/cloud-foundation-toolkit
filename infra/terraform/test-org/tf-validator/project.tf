@@ -26,6 +26,7 @@ module "terraform_validator_test_project" {
   org_id            = local.org_id
   folder_id         = local.folder_id
   billing_account   = local.billing_account
+  labels            = data.terraform_remote_state.cleaner.outputs.excluded_labels
 
   activate_apis = [
     "cloudresourcemanager.googleapis.com"

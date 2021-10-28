@@ -20,8 +20,8 @@ locals {
     "roles/editor"
   ]
 
-  folder_id           = data.terraform_remote_state.org.outputs.folders["ci-terraform-validator"]
-  org_id              = data.terraform_remote_state.org.outputs.org_id
-  billing_account     = data.terraform_remote_state.org.outputs.billing_account
-  cft_ci_group        = data.terraform_remote_state.org.outputs.cft_ci_group
+  folder_id       = data.terraform_remote_state.org.outputs.folders["ci-terraform-validator"]
+  org_id          = data.terraform_remote_state.org.outputs.org_id
+  billing_account = data.terraform_remote_state.org.outputs.billing_account
+  cft_ci_group    = data.terraform_remote_state.org.outputs.cft_ci_group
 }
