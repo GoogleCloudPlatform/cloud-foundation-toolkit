@@ -17,20 +17,19 @@ package scorecard
 import (
 	"encoding/json"
 	"strconv"
-	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 func unMarshallAsset(from []byte, to proto.Message) error {
 	// CAI export returns org_policy [1] with update_time if Timestamp format in Seconds and Nanos
-	// but in jsonpb, Timestamp is expected to be a string in the RFC 3339 format [2].
+	// but in protojson, Timestamp is expected to be a string in the RFC 3339 format [2].
 	// i.e. "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-	// Hence doing a workaround to remove the field so that jsonpb.Unmarshaler can handle org policy.
+	// Hence doing a workaround to remove the field so that protojson.Unmarshaler can handle org policy.
 	// [1] https://github.com/googleapis/googleapis/blob/master/google/cloud/orgpolicy/v1/orgpolicy.proto
-	// [2] https://godoc.org/google.golang.org/protobuf/types/known/timestamppb#Timestamp
+	// [2] https://github.com/protocolbuffers/protobuf-go/blob/fb30439f551a7e79e413e7b4f5f4dfb58e117d73/types/known/timestamppb/timestamp.pb.go#L153
 
 	// Using json.Unmarshal will return no error
 	// but this approach will lose the "oneof" proto fields in org_policy and access_policy
@@ -67,8 +66,8 @@ func protoViaJSON(from interface{}, to proto.Message) error {
 	if err != nil {
 		return errors.Wrap(err, "marshaling to json")
 	}
-	umar := &jsonpb.Unmarshaler{AllowUnknownFields: true}
-	if err := umar.Unmarshal(strings.NewReader(string(jsn)), to); err != nil {
+	umar := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err := umar.Unmarshal(jsn, to); err != nil {
 		return errors.Wrap(err, "unmarshaling to proto")
 	}
 
@@ -78,14 +77,13 @@ func protoViaJSON(from interface{}, to proto.Message) error {
 // interfaceViaJSON uses JSON as an intermediary serialization to convert a protobuf message
 // into an interface value
 func interfaceViaJSON(from proto.Message) (interface{}, error) {
-	marshaler := &jsonpb.Marshaler{}
-	jsn, err := marshaler.MarshalToString(from)
+	jsn, err := protojson.Marshal(from)
 	if err != nil {
 		return nil, errors.Wrap(err, "marshaling to json")
 	}
 
 	var to interface{}
-	if err := json.Unmarshal([]byte(jsn), &to); err != nil {
+	if err := json.Unmarshal(jsn, &to); err != nil {
 		return nil, errors.Wrap(err, "unmarshaling to interface")
 	}
 
@@ -95,11 +93,11 @@ func interfaceViaJSON(from proto.Message) (interface{}, error) {
 // stringViaJSON uses JSON as an intermediary serialization to convert a protobuf message
 // into an string value
 func stringViaJSON(from proto.Message) (string, error) {
-	marshaler := &jsonpb.Marshaler{}
-	jsn, err := marshaler.MarshalToString(from)
+	bjsn, err := protojson.Marshal(from)
 	if err != nil {
 		return "", errors.Wrap(err, "marshaling to json")
 	}
+	jsn := string(bjsn)
 	str, err := strconv.Unquote(jsn)
 	if err != nil {
 		// return original json string if it's not a quoted string
