@@ -36,7 +36,7 @@ module "oidc" {
   sa_mapping = {
     cft-github-actions = {
       sa_name   = module.service_accounts.service_account.name
-      attribute = "attribute.repository/google-github-actions/auth"
+      attribute = "attribute.repository/GoogleCloudPlatform/cloud-foundation-toolkit"
     }
   }
 }
