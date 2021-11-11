@@ -19,6 +19,5 @@ require (
 	google.golang.org/api v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20200319113533-08878b785e9c
 	gopkg.in/yaml.v2 v2.2.4
-	gopkg.in/yaml.v3 v3.0.0-20191105164941-196cff6ef4b6
 
 )
