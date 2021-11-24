@@ -34,3 +34,9 @@ resource "google_project_iam_member" "kokoro_test_1" {
   role    = "roles/editor"
   member  = "serviceAccount:kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com"
 }
+
+resource "google_project_iam_member" "magic_modules_cloudbuild_SA" {
+  project = module.terraform_validator_test_project.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:2843445864@cloudbuild.gserviceaccount.com"
+}
