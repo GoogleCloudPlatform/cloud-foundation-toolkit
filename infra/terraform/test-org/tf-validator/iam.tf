@@ -38,5 +38,9 @@ resource "google_project_iam_member" "kokoro_test_1" {
 resource "google_project_iam_member" "magic_modules_cloudbuild_sa" {
   project = module.terraform_validator_test_project.project_id
   role    = "roles/editor"
+<<<<<<< HEAD
   member  = "serviceAccount:673497134629@cloudbuild.gserviceaccount.com"
+=======
+  member  = "serviceAccount:2843445864@cloudbuild.gserviceaccount.com"
+>>>>>>> 6451af77fe3eb18bbf8b5ca9ca267226c4786101
 }
