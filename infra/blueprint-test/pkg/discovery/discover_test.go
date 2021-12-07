@@ -27,7 +27,7 @@ import (
 const (
 	baseDir     = "testdata/tf"
 	testDir     = "test"
-	intDir      = "intergration"
+	intDir      = "integration"
 	testFixture = "foo"
 	testExample = "bar"
 	testInvalid = "baz"
