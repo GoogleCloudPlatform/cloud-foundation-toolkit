@@ -33,16 +33,16 @@ const (
 )
 
 // GetConfigDirFromTestDir attempts to autodiscover config for a given explicit test based on dirpath for the test.
-func GetConfigDirFromTestDir(cwd string) (string, error) {
-	name := path.Base(cwd)
+func GetConfigDirFromTestDir(testDir string) (string, error) {
+	name := path.Base(testDir)
 	// check if fixture dir exists at ../../fixture/fixtureName
-	fixturePath := path.Join("../../", FixtureDir, name)
+	fixturePath := path.Clean(path.Join(testDir, "../../", FixtureDir, name))
 	_, err := os.Stat(fixturePath)
 	if err == nil {
 		return fixturePath, nil
 	}
 	// check if example dir exists at ../../../examples/exampleName
-	examplePath := path.Join("../../../", ExamplesDir, name)
+	examplePath := path.Clean(path.Join(testDir, "../../../", ExamplesDir, name))
 	_, err = os.Stat(examplePath)
 	if err == nil {
 		return examplePath, nil
