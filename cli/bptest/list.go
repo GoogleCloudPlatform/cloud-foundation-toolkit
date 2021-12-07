@@ -80,7 +80,7 @@ func getExplicitTests(path string) ([]bpTest, error) {
 	}
 	// each dir within test/integration could contain explict tests
 	for _, dir := range dirs {
-		testCfg, err := GetConfigDirFromTestDir(dir)
+		testCfg, err := discovery.GetConfigDirFromTestDir(dir)
 		if err != nil {
 			Log.Warn(fmt.Sprintf("unable to discover configs for %s: %v", dir, err))
 		}
