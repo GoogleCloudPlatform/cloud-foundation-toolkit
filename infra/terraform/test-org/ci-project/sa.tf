@@ -28,7 +28,7 @@ module "service_accounts" {
 
 module "oidc" {
   source  = "terraform-google-modules/github-actions-runners/google//modules/gh-oidc"
-  version = "~> 1.1"
+  version = "~> 2.0"
 
   project_id  = local.project_id
   pool_id     = "cft-pool"
