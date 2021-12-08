@@ -23,3 +23,5 @@ require (
 	google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+replace github.com/open-policy-agent/gatekeeper v3.0.4-beta.2+incompatible => github.com/open-policy-agent/gatekeeper v0.0.0-20210409021048-9b5e4cfe5d7e
