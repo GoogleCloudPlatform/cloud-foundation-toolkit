@@ -22,3 +22,21 @@ resource "google_project_iam_member" "int_test" {
   role    = local.terraform_validator_int_required_roles[count.index]
   member  = "group:${local.cft_ci_group}"
 }
+
+resource "google_project_iam_member" "kokoro_test_0" {
+  project = module.terraform_validator_test_project.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:kokoro-build@magic-modules.iam.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "kokoro_test_1" {
+  project = module.terraform_validator_test_project.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "magic_modules_cloudbuild_sa" {
+  project = module.terraform_validator_test_project.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:673497134629@cloudbuild.gserviceaccount.com"
+}

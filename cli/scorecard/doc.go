@@ -15,5 +15,5 @@
 // Package scorecard handles the generation of "scores" for GCP infrastructure
 // It uses a combination of:
 //   - Cloud Asset Inventory: https://cloud.google.com/resource-manager/docs/cloud-asset-inventory/overview
-//   - Config Validator: https://github.com/forseti-security/config-validator
+//   - Config Validator: https://github.com/GoogleCloudPlatform/config-validator
 package scorecard

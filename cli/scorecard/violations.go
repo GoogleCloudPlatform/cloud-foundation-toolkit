@@ -24,8 +24,8 @@ import (
 	"sync"
 
 	"cloud.google.com/go/storage"
-	"github.com/forseti-security/config-validator/pkg/api/validator"
-	cvasset "github.com/forseti-security/config-validator/pkg/asset"
+	"github.com/GoogleCloudPlatform/config-validator/pkg/api/validator"
+	cvasset "github.com/GoogleCloudPlatform/config-validator/pkg/asset"
 	"github.com/gammazero/workerpool"
 	"github.com/pkg/errors"
 )

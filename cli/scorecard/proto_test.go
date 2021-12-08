@@ -19,7 +19,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/forseti-security/config-validator/pkg/api/validator"
+	"github.com/GoogleCloudPlatform/config-validator/pkg/api/validator"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -72,7 +72,7 @@ func TestDataTypeTransformation(t *testing.T) {
 			t.Fatalf("failed to parse JSON string %v: %v", gotStr, err)
 		}
 
-		wantStr := `{"name":"//cloudresourcemanager.googleapis.com/projects/23456","assetType":"cloudresourcemanager.googleapis.com/Project","iamPolicy":{"version":1,"bindings":[{"role":"roles/owner","members":["user:user@example.com"]}],"etag":"WwAA1Aaa/BA="},"ancestors":["projects/1234","organizations/56789"]}`
+		wantStr := `{"name":"//cloudresourcemanager.googleapis.com/projects/23456","assetType":"cloudresourcemanager.googleapis.com/Project","iamPolicy":{"version":1,"bindings":[{"role":"roles/owner","members":["user:user@example.com"]}]},"ancestors":["projects/1234","organizations/56789"]}`
 		var wantJSON map[string]interface{}
 		if err := json.Unmarshal([]byte(wantStr), &wantJSON); err != nil {
 			t.Fatalf("failed to parse JSON string %v: %v", wantStr, err)

@@ -28,3 +28,11 @@ data "terraform_remote_state" "org" {
     prefix = "state/org"
   }
 }
+
+data "terraform_remote_state" "cleaner" {
+  backend = "gcs"
+  config = {
+    bucket = "cft-infra-test-tfstate"
+    prefix = "state/test-cleanup"
+  }
+}

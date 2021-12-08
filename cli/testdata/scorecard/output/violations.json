@@ -1,68 +1,27 @@
 [
   {
-    "Category": "Security",
-    "Resource": "//storage.googleapis.com/test-bucket-public",
-    "Message": "//storage.googleapis.com/test-bucket-public is publicly accessable",
+    "Category": "Other",
+    "Resource": "//cloudresourcemanager.googleapis.com/organizations/56789",
+    "Message": "Required services compute.googleapis.com missing from service perimeter: accessPolicies/12345/servicePerimeters/perimeter_gcs.",
     "metadata": {
-      "Kind": {
-        "StructValue": {
-          "fields": {
-            "constraint": {
-              "Kind": {
-                "StructValue": {
-                  "fields": {
-                    "annotations": {
-                      "Kind": {
-                        "StructValue": {
-                          "fields": {
-                            "bundles.validator.forsetisecurity.org/scorecard-v1": {
-                              "Kind": {
-                                "StringValue": "security"
-                              }
-                            },
-                            "description": {
-                              "Kind": {
-                                "StringValue": "Prevent public users from having access to resources via IAM"
-                              }
-                            },
-                            "validation.gcp.forsetisecurity.org/yamlpath": {
-                              "Kind": {
-                                "StringValue": "../testdata/scorecard/policy-library/policies/constraints/storage_blacklist_public.yaml"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "labels": {
-                      "Kind": {
-                        "StructValue": {}
-                      }
-                    },
-                    "parameters": {
-                      "Kind": {
-                        "StructValue": {}
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "details": {
-              "Kind": {
-                "StructValue": {
-                  "fields": {
-                    "resource": {
-                      "Kind": {
-                        "StringValue": "//storage.googleapis.com/test-bucket-public"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+      "ancestry_path": "organizations/56789",
+      "constraint": {
+        "annotations": {
+          "validation.gcp.forsetisecurity.org/yamlpath": "../testdata/scorecard/policy-library/policies/constraints/vpc_sc_ensure_services.yaml"
+        },
+        "labels": {},
+        "parameters": {
+          "required_services": [
+            "compute.googleapis.com"
+          ]
         }
+      },
+      "details": {
+        "missing_services": [
+          "compute.googleapis.com"
+        ],
+        "resource": "//cloudresourcemanager.googleapis.com/organizations/56789",
+        "service_perimeter_name": "accessPolicies/12345/servicePerimeters/perimeter_gcs"
       }
     }
   },
@@ -71,151 +30,37 @@
     "Resource": "//cloudresourcemanager.googleapis.com/organizations/567890",
     "Message": "Required enforcement of skipDefaultNetworkCreation at org level",
     "metadata": {
-      "Kind": {
-        "StructValue": {
-          "fields": {
-            "constraint": {
-              "Kind": {
-                "StructValue": {
-                  "fields": {
-                    "annotations": {
-                      "Kind": {
-                        "StructValue": {
-                          "fields": {
-                            "validation.gcp.forsetisecurity.org/yamlpath": {
-                              "Kind": {
-                                "StringValue": "../testdata/scorecard/policy-library/policies/constraints/org_policy_skip_default_network.yaml"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "labels": {
-                      "Kind": {
-                        "StructValue": {}
-                      }
-                    },
-                    "parameters": {
-                      "Kind": {
-                        "StructValue": {}
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "details": {
-              "Kind": {
-                "StructValue": {
-                  "fields": {
-                    "constraint_name": {
-                      "Kind": {
-                        "StringValue": "constraints/compute.skipDefaultNetworkCreation"
-                      }
-                    },
-                    "resource": {
-                      "Kind": {
-                        "StringValue": "//cloudresourcemanager.googleapis.com/organizations/567890"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+      "ancestry_path": "organizations/567890",
+      "constraint": {
+        "annotations": {
+          "validation.gcp.forsetisecurity.org/yamlpath": "../testdata/scorecard/policy-library/policies/constraints/org_policy_skip_default_network.yaml"
+        },
+        "labels": {},
+        "parameters": {}
+      },
+      "details": {
+        "constraint_name": "constraints/compute.skipDefaultNetworkCreation",
+        "resource": "//cloudresourcemanager.googleapis.com/organizations/567890"
       }
     }
   },
   {
-    "Category": "Other",
-    "Resource": "//cloudresourcemanager.googleapis.com/organizations/56789",
-    "Message": "Required services compute.googleapis.com missing from service perimeter: accessPolicies/12345/servicePerimeters/perimeter_gcs.",
+    "Category": "Security",
+    "Resource": "//storage.googleapis.com/test-bucket-public",
+    "Message": "//storage.googleapis.com/test-bucket-public is publicly accessable",
     "metadata": {
-      "Kind": {
-        "StructValue": {
-          "fields": {
-            "constraint": {
-              "Kind": {
-                "StructValue": {
-                  "fields": {
-                    "annotations": {
-                      "Kind": {
-                        "StructValue": {
-                          "fields": {
-                            "validation.gcp.forsetisecurity.org/yamlpath": {
-                              "Kind": {
-                                "StringValue": "../testdata/scorecard/policy-library/policies/constraints/vpc_sc_ensure_services.yaml"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "labels": {
-                      "Kind": {
-                        "StructValue": {}
-                      }
-                    },
-                    "parameters": {
-                      "Kind": {
-                        "StructValue": {
-                          "fields": {
-                            "required_services": {
-                              "Kind": {
-                                "ListValue": {
-                                  "values": [
-                                    {
-                                      "Kind": {
-                                        "StringValue": "compute.googleapis.com"
-                                      }
-                                    }
-                                  ]
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "details": {
-              "Kind": {
-                "StructValue": {
-                  "fields": {
-                    "missing_services": {
-                      "Kind": {
-                        "ListValue": {
-                          "values": [
-                            {
-                              "Kind": {
-                                "StringValue": "compute.googleapis.com"
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "resource": {
-                      "Kind": {
-                        "StringValue": "//cloudresourcemanager.googleapis.com/organizations/56789"
-                      }
-                    },
-                    "service_perimeter_name": {
-                      "Kind": {
-                        "StringValue": "accessPolicies/12345/servicePerimeters/perimeter_gcs"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+      "ancestry_path": "organizations/56789/folders/2345/projects/1234",
+      "constraint": {
+        "annotations": {
+          "bundles.validator.forsetisecurity.org/scorecard-v1": "security",
+          "description": "Prevent public users from having access to resources via IAM",
+          "validation.gcp.forsetisecurity.org/yamlpath": "../testdata/scorecard/policy-library/policies/constraints/storage_blacklist_public.yaml"
+        },
+        "labels": {},
+        "parameters": {}
+      },
+      "details": {
+        "resource": "//storage.googleapis.com/test-bucket-public"
       }
     }
   }

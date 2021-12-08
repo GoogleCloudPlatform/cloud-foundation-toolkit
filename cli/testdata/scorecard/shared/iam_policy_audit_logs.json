@@ -3,7 +3,6 @@
 	"asset_type": "cloudresourcemanager.googleapis.com/Project",
 	"iam_policy": {
 	  "version": 1,
-	  "etag": "WwAA1Aaa/BB=",
 	  "bindings": [
 		{
 		  "role": "roles/owner",

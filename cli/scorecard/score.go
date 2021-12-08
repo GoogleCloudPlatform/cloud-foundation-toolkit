@@ -26,8 +26,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/forseti-security/config-validator/pkg/api/validator"
-	"github.com/forseti-security/config-validator/pkg/gcv"
+	"github.com/GoogleCloudPlatform/config-validator/pkg/api/validator"
+	"github.com/GoogleCloudPlatform/config-validator/pkg/gcv"
 	_struct "github.com/golang/protobuf/ptypes/struct"
 	"github.com/pkg/errors"
 )
