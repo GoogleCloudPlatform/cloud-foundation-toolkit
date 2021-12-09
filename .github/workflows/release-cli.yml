@@ -5,6 +5,7 @@ on:
       - "master"
     paths:
       - "cli/Makefile"
+      - ".github/workflows/release-cli.yml"
 env:
   CLI_BUCKET: gs://cft-cli
   RELEASE_URL: https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest
@@ -14,13 +15,27 @@ jobs:
     name: Build and push new CFT dev tools image
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
       - uses: actions/checkout@v2
 
-      - uses: google-github-actions/setup-gcloud@master
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.4.2'
         with:
-          version: "286.0.0"
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
+          service_account: '${{ secrets.GCP_WIF_SA_EMAIL }}'
+
+      - uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          version: "366.0.0"
+
+      # used by make release which runs gcloud alpha storage
+      - name: Install gcloud alpha commands 
+        run: gcloud components install alpha
 
       - name: Retrieve last released version
         run: |-
