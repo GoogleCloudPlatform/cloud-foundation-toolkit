@@ -5,6 +5,7 @@ on:
       - "master"
     paths:
       - "cli/Makefile"
+      - ".github/workflows/release-cli.yml"
 env:
   CLI_BUCKET: gs://cft-cli
   RELEASE_URL: https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest
