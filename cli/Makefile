@@ -18,8 +18,8 @@ build:
 
 .PHONY: publish
 publish:
-	gsutil cp "${BUILD_DIR}/*" "${BUCKET}/${VERSION}"
-	gsutil cp "${BUILD_DIR}/*" "${BUCKET}/latest"
+	gcloud alpha storage cp "${BUILD_DIR}/*" "${BUCKET}/${VERSION}"
+	gcloud alpha storage cp "${BUILD_DIR}/*" "${BUCKET}/latest"
 
 .PHONY: release
 release: $(PLATFORMS)
