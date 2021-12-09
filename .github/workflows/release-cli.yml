@@ -28,6 +28,10 @@ jobs:
         with:
           version: "366.0.0"
 
+      # used by make release which runs gcloud alpha storage
+      - name: Install gcloud alpha commands 
+        run: gcloud components install alpha
+
       - name: Retrieve last released version
         run: |-
           LAST_VERSION=$(curl --silent "${{env.RELEASE_URL}}" | \
