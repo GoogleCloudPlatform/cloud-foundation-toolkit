@@ -50,13 +50,13 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   }
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["*.md", ".gitignore"]
+  ignored_files = ["**/*.md", ".gitignore"]
 }
 
 resource "google_cloudbuild_trigger" "tf_validator" {
   provider    = google-beta
   project     = local.project_id
-  description = "Pull request build for tf-validator"
+  description = "Pull request build for tf-validator with terrafom 12"
   github {
     owner = "GoogleCloudPlatform"
     name  = "terraform-validator"
@@ -65,10 +65,11 @@ resource "google_cloudbuild_trigger" "tf_validator" {
     }
   }
   substitutions = {
-    _TEST_PROJECT = local.tf_validator_project_id
+    _TERRAFORM_VERSION = "0.12.31"
+    _TEST_PROJECT      = local.tf_validator_project_id
   }
 
-  filename = "build/int.cloudbuild.yaml"
+  filename = ".ci/cloudbuild-tests-integration.yaml"
 }
 
 resource "google_cloudbuild_trigger" "forseti_lint" {
@@ -161,5 +162,5 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
   }
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["*.md", ".gitignore"]
+  ignored_files = ["**/*.md", ".gitignore"]
 }
