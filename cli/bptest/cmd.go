@@ -1,6 +1,7 @@
 package bptest
 
 import (
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -41,11 +42,12 @@ var listCmd = &cobra.Command{
 			Log.Warn("no tests discovered")
 			return nil
 		}
-		tbl := newTable("Name", "Config", "Location")
+		tbl := newTable()
+		tbl.AppendHeader(table.Row{"Name", "Config", "Location"})
 		for _, t := range tests {
-			tbl.AddRow(t.name, t.config, t.location)
+			tbl.AppendRow(table.Row{t.name, t.config, t.location})
 		}
-		tbl.Print()
+		tbl.Render()
 		return nil
 	},
 }
