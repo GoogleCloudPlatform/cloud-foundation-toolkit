@@ -3,11 +3,10 @@ package bptest
 import (
 	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path"
+	"path/filepath"
 	"sort"
-	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	testing "github.com/mitchellh/go-testing-interface"
@@ -67,38 +66,30 @@ func getDiscoveredTests(intTestDir string) ([]bpTest, error) {
 	return tests, nil
 }
 
-func getExplicitTests(path string) ([]bpTest, error) {
-	// find dirs within test/integration
-	dirs, err := findDirContentsFilter(path, func(f fs.FileInfo) bool { return f.IsDir() })
+func getExplicitTests(intTestDir string) ([]bpTest, error) {
+	// find explicit test files within test/integration dirs
+	testFiles, err := filepath.Glob(path.Join(intTestDir, "**/*_test.go"))
 	if err != nil {
 		return nil, err
 	}
-	// find test files within each dir
+
 	eTests := []bpTest{}
-	filterTestFiles := func(f fs.FileInfo) bool {
-		return !f.IsDir() && strings.HasSuffix(f.Name(), "_test.go")
-	}
-	// each dir within test/integration could contain explict tests
-	for _, dir := range dirs {
-		testCfg, err := discovery.GetConfigDirFromTestDir(dir)
+	for _, testFile := range testFiles {
+		// testDir name maps to a matching example/fixture
+		testDir := path.Dir(testFile)
+		testCfg, err := discovery.GetConfigDirFromTestDir(testDir)
 		if err != nil {
-			Log.Warn(fmt.Sprintf("unable to discover configs for %s: %v", dir, err))
+			Log.Warn(fmt.Sprintf("unable to discover configs for %s: %v", testDir, err))
 		}
-		// find all test files in an explicit test dir that ends with _test.go
-		files, err := findDirContentsFilter(dir, filterTestFiles)
+
+		testFns, err := getTestFuncsFromFile(testFile)
 		if err != nil {
 			return nil, err
 		}
-		for _, f := range files {
-			testFns, err := getTestFuncsFromFile(f)
-			if err != nil {
-				return nil, err
-			}
-			for _, fnName := range testFns {
-				eTests = append(eTests, bpTest{name: fnName, location: f, config: testCfg})
-			}
-
+		for _, fnName := range testFns {
+			eTests = append(eTests, bpTest{name: fnName, location: testFile, config: testCfg})
 		}
+
 	}
 	sort.SliceStable(eTests, func(i, j int) bool { return eTests[i].name < eTests[j].name })
 	return eTests, nil
