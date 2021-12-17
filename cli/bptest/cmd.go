@@ -14,7 +14,7 @@ func init() {
 	viper.AutomaticEnv()
 	Cmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVar(&flags.testDir, "test-dir", "test/integration", "Path to directory containing integration tests")
+	listCmd.Flags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
 }
 
 var Cmd = &cobra.Command{

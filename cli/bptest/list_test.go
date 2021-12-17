@@ -1,6 +1,8 @@
 package bptest
 
 import (
+	"io/ioutil"
+	"os"
 	"path"
 	"testing"
 
@@ -175,4 +177,71 @@ func OtherHelper(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_discoverIntTestDir(t *testing.T) {
+	tests := []struct {
+		name   string
+		files  []string
+		want   string
+		errMsg string
+	}{
+		{
+			name:  "with single discover_test.go",
+			files: []string{discoverTestFilename},
+			want:  ".",
+		},
+		{
+			name:  "with single discover_test.go in a dir",
+			files: []string{path.Join("test/integration", discoverTestFilename)},
+			want:  "test/integration",
+		},
+		{
+			name:  "with single discover_test.go in a dir and other files",
+			files: []string{path.Join("foo/bar/baz", discoverTestFilename), "foo.go", "test.tf", "other/test/bar_test.go"},
+			want:  "foo/bar/baz",
+		},
+		{
+			name:   "with multiple discover_test.go",
+			files:  []string{path.Join("mod1/test/integration", discoverTestFilename), path.Join("mod2/test/integration", discoverTestFilename)},
+			errMsg: "found multiple discover_test.go files:",
+		},
+		{
+			name:  "no discover_test.go files",
+			files: []string{},
+			want:  ".",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert := assert.New(t)
+			dir, cleanup := createFilesInTmpDir(t, tt.files)
+			defer cleanup()
+			got, err := discoverIntTestDir(dir)
+			if tt.errMsg != "" {
+				assert.NotNil(err)
+				assert.Contains(err.Error(), tt.errMsg)
+			} else {
+				assert.NoError(err)
+				assert.Equal(tt.want, got)
+			}
+		})
+	}
+}
+
+func createFilesInTmpDir(t *testing.T, files []string) (string, func()) {
+	assert := assert.New(t)
+	tempDir, err := ioutil.TempDir("", "bpt-")
+	assert.NoError(err)
+	cleanup := func() { os.RemoveAll(tempDir) }
+
+	//create files in tmpdir
+	for _, f := range files {
+		p := path.Join(tempDir, path.Dir(f))
+		err = os.MkdirAll(p, 0755)
+		assert.NoError(err)
+		_, err = os.Create(path.Join(p, path.Base(f)))
+		assert.NoError(err)
+	}
+	return tempDir, cleanup
 }
