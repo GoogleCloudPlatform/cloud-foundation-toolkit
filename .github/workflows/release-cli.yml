@@ -12,7 +12,7 @@ env:
 
 jobs:
   release-new-cli:
-    name: Build and push new CFT dev tools image
+    name: Release new CLI versions
     runs-on: ubuntu-latest
 
     permissions:
