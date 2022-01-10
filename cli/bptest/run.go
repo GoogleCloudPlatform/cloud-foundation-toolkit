@@ -43,14 +43,6 @@ func isValidTestName(intTestDir string, name string) error {
 	return fmt.Errorf("unable to find %s- one of %+q expected", name, append(testNames, allTests))
 }
 
-// testArgsFromName constructs args for passing to go test
-func testArgsFromName(name string) []string {
-	if name == allTests {
-		return append([]string{"./..."}, allTestArgs...)
-	}
-	return append([]string{"./...", "-run", name}, allTestArgs...)
-}
-
 // streamExec runs a given cmd while streaming logs
 func streamExec(cmd *exec.Cmd) error {
 	op, err := cmd.StdoutPipe()
@@ -84,17 +76,9 @@ func streamExec(cmd *exec.Cmd) error {
 
 // getTestCmd returns a prepared cmd for running the specified tests(s)
 func getTestCmd(intTestDir string, testStage string, testName string) (*exec.Cmd, error) {
-	// discover dir to run test command if not specified
-	if intTestDir == "" {
-		cwd, err := os.Getwd()
-		if err != nil {
-			return nil, err
-		}
-		discoveredIntTestDir, err := discoverIntTestDir(cwd)
-		if err != nil {
-			return nil, err
-		}
-		intTestDir = discoveredIntTestDir
+	intTestDir, err := getIntTestDir(intTestDir)
+	if err != nil {
+		return nil, err
 	}
 
 	// pass all current env vars to test command
@@ -105,8 +89,11 @@ func getTestCmd(intTestDir string, testStage string, testName string) (*exec.Cmd
 	}
 
 	// determine binary and args used for test execution
+	testArgs := append([]string{"./..."}, allTestArgs...)
+	if testName != allTests {
+		testArgs = append([]string{"./...", "-run", testName}, allTestArgs...)
+	}
 	cmdBin := goBin
-	testArgs := testArgsFromName(testName)
 	if utils.BinaryInPath(gotestBin) != nil {
 		testArgs = append([]string{"test"}, testArgs...)
 	} else {

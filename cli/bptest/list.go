@@ -26,17 +26,9 @@ type bpTest struct {
 
 // getTests returns slice of all blueprint tests
 func getTests(intTestDir string) ([]bpTest, error) {
-	// discover intTestDir if not provided
-	if intTestDir == "" {
-		cwd, err := os.Getwd()
-		if err != nil {
-			return nil, err
-		}
-		discoveredIntTestDir, err := discoverIntTestDir(cwd)
-		if err != nil {
-			return nil, err
-		}
-		intTestDir = discoveredIntTestDir
+	intTestDir, err := getIntTestDir(intTestDir)
+	if err != nil {
+		return nil, err
 	}
 	Log.Info(fmt.Sprintf("using test-dir: %s", intTestDir))
 
@@ -150,6 +142,20 @@ func discoverIntTestDir(cwd string) (string, error) {
 	}
 	// no discover_test.go file discovered
 	return ".", nil
+}
+
+// getIntTestDir discovers the integration test directory
+// from current working directory if an empty intTestDir is provided
+func getIntTestDir(intTestDir string) (string, error) {
+	if intTestDir != "" {
+		return intTestDir, nil
+	}
+	// discover from current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return discoverIntTestDir(cwd)
 }
 
 // findFiles returns a slice of file paths matching matchFn
