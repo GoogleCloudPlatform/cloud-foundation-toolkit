@@ -7,14 +7,17 @@ import (
 )
 
 var flags struct {
-	testDir string
+	testDir   string
+	testStage string
 }
 
 func init() {
 	viper.AutomaticEnv()
 	Cmd.AddCommand(listCmd)
+	Cmd.AddCommand(runCmd)
 
-	listCmd.Flags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
+	Cmd.PersistentFlags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
+	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, apply, verify, teardown)")
 }
 
 var Cmd = &cobra.Command{
@@ -49,5 +52,33 @@ var listCmd = &cobra.Command{
 		}
 		tbl.Render()
 		return nil
+	},
+}
+
+var runCmd = &cobra.Command{
+	Use:   "run",
+	Short: "run tests",
+	Long:  "Runs auto discovered and explicit integration tests",
+
+	Args: func(cmd *cobra.Command, args []string) error {
+		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+			return err
+		}
+		if err := isValidTestName(flags.testDir, args[0]); err != nil {
+			return err
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		intTestDir := flags.testDir
+		testStage, err := validateAndGetStage(flags.testStage)
+		if err != nil {
+			return err
+		}
+		testCmd, err := getTestCmd(intTestDir, testStage, args[0])
+		if err != nil {
+			return err
+		}
+		return streamExec(testCmd)
 	},
 }
