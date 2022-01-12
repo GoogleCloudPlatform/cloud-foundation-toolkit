@@ -8,6 +8,7 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
 	log "github.com/inconshreveable/log15"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -68,6 +69,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	}
 
 	rootCmd.PersistentFlags().BoolVar(&flags.verbose, "verbose", false, "Log output to stdout")
+	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 
 	rootCmd.AddCommand(scorecard.Cmd)
 	rootCmd.AddCommand(report.Cmd)
