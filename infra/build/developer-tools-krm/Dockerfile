@@ -15,7 +15,7 @@
 ARG BASE_IMAGE_VERSION
 FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
-RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current nodejs-npm
+RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm
 
 # Additional go tooling
 RUN GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
