@@ -27,14 +27,17 @@ def create_update_comment(token, org, repo_name, pr_number, comment_body):
         pr_comment for pr_comment in pr_comments
         if pr_comment.user.id == current_bot_user
         ]
-    if not existing_comments:
-        # add a comment
-        comment = pr.create_issue_comment(comment_body)
-        logging.info(f'Added new comment: {comment}')
-    else:
-        # edit existing comment
-        existing_comments[0].edit(comment_body)
-        logging.info(f'Edited existing comment: {existing_comments[0]}')
+    # delete comments created previously by bot
+    for existing_comment in existing_comments:
+        existing_comment.delete()
+        logging.info(f'Deleted existing comment: {existing_comment}')
+
+    # prefix comment body with PR author handle
+    comment_body = f"@{pr.user.login}\n{comment_body}"
+
+    # create new comment
+    comment = pr.create_issue_comment(comment_body)
+    logging.info(f'Added new comment: {comment}')
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Add/edit comments to PRs')
