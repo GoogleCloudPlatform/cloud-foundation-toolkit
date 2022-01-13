@@ -50,7 +50,7 @@ apk add --no-cache openssh
 apk add --no-cache perl
 
 # python 2 is needed for compatibility and linting
-apk add --no-cache python
+apk add --no-cache python2
 
 # python 3 is needed for python linting
 apk add --no-cache python3

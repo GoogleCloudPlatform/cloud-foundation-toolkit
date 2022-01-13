@@ -29,7 +29,7 @@ RUN go build -v -o /usr/local/bin/module-swapper
 
 FROM golang:$GOLANG_VERSION-alpine AS go
 
-FROM ruby:$RUBY_VERSION-alpine
+FROM ruby:$RUBY_VERSION-alpine3.15
 
 # Required to download and install terraform-docs
 ARG TERRAFORM_DOCS_VERSION
