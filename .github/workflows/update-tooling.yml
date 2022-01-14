@@ -44,7 +44,11 @@ jobs:
               PR_UPDATE_BODY="$PR_UPDATE_BODY Updating ${tool} from ${CURRENT_TOOL_VERSION} to ${LATEST_TOOL_VERSION} ${newline}"
             fi
           done
-          echo "PR_UPDATE_BODY=${PR_UPDATE_BODY}" >> $GITHUB_ENV
+
+          # Create multiline PR body text
+          echo "PR_UPDATE_BODY<<EOF" >> $GITHUB_ENV
+          echo "$PR_UPDATE_BODY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Bump image patch version
         if: env.BUMP_IMG == 'true'
         run: |
