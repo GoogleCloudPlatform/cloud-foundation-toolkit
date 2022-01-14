@@ -75,6 +75,10 @@ ENV KUSTOMIZE_VERSION ${KUSTOMIZE_VERSION}
 ARG KPT_VERSION
 ENV KPT_VERSION ${KPT_VERSION}
 
+# Required to download and install CFT CLI
+ARG CFT_CLI_VERSION
+ENV CFT_CLI_VERSION ${CFT_CLI_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -140,6 +144,9 @@ RUN ./build/install_kpt.sh ${KPT_VERSION}
 ADD ./build/install_addlicense.sh /build/
 RUN /build/install_addlicense.sh
 
+ADD ./build/install_cft_cli.sh /build/
+RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
+
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
@@ -191,7 +198,8 @@ RUN terraform --version && \
     kubectl version --client=true && \
     terragrunt -version && \
     kustomize version && \
-    addlicense -help
+    addlicense -help && \
+    cft version
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build
