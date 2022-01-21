@@ -1,6 +1,8 @@
 package bptest
 
 import (
+	"os"
+
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -79,6 +81,12 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return streamExec(testCmd)
+		// if err during exec, exit instead of returning an error
+		// this prevents printing usage as the args were validated above
+		if err := streamExec(testCmd); err != nil {
+			Log.Error(err.Error())
+			os.Exit(1)
+		}
+		return nil
 	},
 }
