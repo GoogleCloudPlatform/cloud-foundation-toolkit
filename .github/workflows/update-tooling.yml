@@ -2,6 +2,13 @@ name: Update Tooling
 on:
   schedule:
     - cron: "0 2 * * *"
+
+env:
+  TERRAFORM_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
+  CLOUD_SDK_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
+  KPT_URL: "https://api.github.com/repos/GoogleContainerTools/kpt/releases/latest"
+  CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest"
+
 jobs:
   update-tools:
     runs-on: ubuntu-latest
@@ -9,11 +16,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update Tools
         run: |
-          TERRAFORM_URL="https://api.github.com/repos/hashicorp/terraform/releases/latest"
-          CLOUD_SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
-          KPT_URL="https://api.github.com/repos/GoogleContainerTools/kpt/releases/latest"
-          CFT_CLI_URL="https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest"
-          
           PR_UPDATE_BODY=""
           newline=$'\n'
           tools=("TERRAFORM" "CLOUD_SDK" "KPT" "CFT_CLI")
