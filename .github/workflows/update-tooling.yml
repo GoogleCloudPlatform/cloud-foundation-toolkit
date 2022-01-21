@@ -20,7 +20,7 @@ jobs:
 
           for tool in ${tools[@]}
           do
-            # get currrent tool version from makefile
+            # get current tool version from Makefile
             CURRENT_TOOL_VERSION=$(cat infra/build/Makefile  | grep "${tool}_VERSION :=" | awk -F" " '{print $3}')
             TOOL_URL=$tool\_URL
 
