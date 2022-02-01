@@ -6,7 +6,7 @@ on:
 env:
   TERRAFORM_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
   CLOUD_SDK_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
-  KPT_URL: "https://api.github.com/repos/GoogleContainerTools/kpt/releases/latest"
+  KPT_URL: "https://api.github.com/repos/GoogleContainerTools/kpt/releases"
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest"
 
 jobs:
@@ -29,6 +29,9 @@ jobs:
             # get latest tool version from URL
             if [ "$tool" == "CLOUD_SDK" ]; then
               LATEST_TOOL_VERSION=$(curl -s  ${!TOOL_URL} | tar --to-stdout -xzf - google-cloud-sdk/VERSION)
+            elif [ "$tool" == "KPT" ]; then
+              # get latest release including pre-releases for kpt
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output .[0].tag_name | tr -d "v")
             else
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output .tag_name | tr -d "v")
             fi
