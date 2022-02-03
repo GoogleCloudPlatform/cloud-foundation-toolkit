@@ -18,6 +18,7 @@
 package gcloud
 
 import (
+	"os"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
@@ -104,4 +105,29 @@ func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 		t.Fatalf("Error parsing output, invalid json: %s", op)
 	}
 	return gjson.Parse(op)
+}
+
+// ActivateCredsAndEnvVars activates credentials and export auth related envvars.
+func ActivateCredsAndEnvVars(t testing.TB, creds string) {
+	credsPath, err := utils.WriteTmpFile(creds)
+	if err != nil {
+		t.Fatal(err)
+	}
+	RunCmd(t, "auth activate-service-account", WithCommonArgs([]string{"--key-file", credsPath}))
+	// set auth related env vars
+	// TF provider auth
+	err = os.Setenv("GOOGLE_CREDENTIALS", creds)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// gcloud SDK override
+	err = os.Setenv("CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE", credsPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// ADC
+	err = os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", credsPath)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
