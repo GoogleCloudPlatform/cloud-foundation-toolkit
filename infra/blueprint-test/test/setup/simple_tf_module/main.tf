@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
+locals {
+  int_required_roles = [
+    "roles/compute.networkAdmin",
+    "roles/compute.securityAdmin",
+    "roles/iam.serviceAccountUser",
+    "roles/vpcaccess.admin",
+    "roles/serviceusage.serviceUsageAdmin"
+  ]
+}
+
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
   version = "~> 11.0"
@@ -30,4 +40,22 @@ module "project" {
     "serviceusage.googleapis.com",
     "vpcaccess.googleapis.com"
   ]
+}
+
+resource "google_service_account" "sa" {
+  project      = module.project.project_id
+  account_id   = "ci-account"
+  display_name = "ci-account"
+}
+
+resource "google_project_iam_member" "roles" {
+  for_each = toset(local.int_required_roles)
+
+  project = module.project.project_id
+  role    = each.value
+  member  = "serviceAccount:${google_service_account.sa.email}"
+}
+
+resource "google_service_account_key" "key" {
+  service_account_id = google_service_account.sa.id
 }
