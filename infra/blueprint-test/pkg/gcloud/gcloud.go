@@ -107,7 +107,7 @@ func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 	return gjson.Parse(op)
 }
 
-// ActivateCredsAndEnvVars activates credentials and export auth related envvars.
+// ActivateCredsAndEnvVars activates credentials and exports auth related envvars.
 func ActivateCredsAndEnvVars(t testing.TB, creds string) {
 	credsPath, err := utils.WriteTmpFile(creds)
 	if err != nil {
