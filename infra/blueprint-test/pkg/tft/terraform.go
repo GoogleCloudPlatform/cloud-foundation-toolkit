@@ -18,20 +18,23 @@
 package tft
 
 import (
+	b64 "encoding/base64"
 	"fmt"
 	"os"
 	"path"
 	"strings"
-
 	gotest "testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
 )
+
+const setupKeyOutputName = "sa_key"
 
 // TFBlueprintTest implements bpt.Blueprint and stores information associated with a Terraform blueprint test.
 type TFBlueprintTest struct {
@@ -154,6 +157,17 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
 		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger})))
+		// setup credentials if explicit sa_key output from setup
+		credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]
+		if !exists {
+			tft.logger.Logf(tft.t, "Unable to find %s output from setup, skipping credential activation", setupKeyOutputName)
+		} else {
+			credDec, err := b64.StdEncoding.DecodeString(credsEnc)
+			if err != nil {
+				t.Fatalf("Unable to decode %s output from setup: %v", setupKeyOutputName, err)
+			}
+			gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
+		}
 	}
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
