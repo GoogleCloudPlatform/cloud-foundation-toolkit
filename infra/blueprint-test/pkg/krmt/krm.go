@@ -342,6 +342,7 @@ func (b *KRMBlueprintTest) Teardown(assert *assert.Assertions) {
 func (b *KRMBlueprintTest) Test() {
 	if b.ShouldSkip() {
 		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
+		b.t.SkipNow()
 		return
 	}
 	a := assert.New(b.t)
