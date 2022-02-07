@@ -10,10 +10,10 @@ func WriteTmpFile(data string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer f.Close()
 	_, err = f.Write([]byte(data))
 	if err != nil {
 		return "", err
 	}
-	f.Close()
 	return f.Name(), nil
 }

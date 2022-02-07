@@ -18,7 +18,6 @@
 package gcloud
 
 import (
-	"os"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
@@ -116,18 +115,9 @@ func ActivateCredsAndEnvVars(t testing.TB, creds string) {
 	RunCmd(t, "auth activate-service-account", WithCommonArgs([]string{"--key-file", credsPath}))
 	// set auth related env vars
 	// TF provider auth
-	err = os.Setenv("GOOGLE_CREDENTIALS", creds)
-	if err != nil {
-		t.Fatal(err)
-	}
+	utils.SetEnv(t, "GOOGLE_CREDENTIALS", creds)
 	// gcloud SDK override
-	err = os.Setenv("CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE", credsPath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	utils.SetEnv(t, "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE", credsPath)
 	// ADC
-	err = os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", credsPath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	utils.SetEnv(t, "GOOGLE_APPLICATION_CREDENTIALS", credsPath)
 }

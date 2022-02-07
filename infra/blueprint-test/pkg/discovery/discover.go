@@ -105,7 +105,7 @@ func GetKnownDirInParents(dir string, max int) (string, error) {
 	if !os.IsNotExist(err) {
 		return dirInParent, err
 	}
-	return GetKnownDirInParents(path.Join("..", dir), max-1)
+	return GetKnownDirInParents(dirInParent, max-1)
 }
 
 // findDirs returns a map of directories in path
