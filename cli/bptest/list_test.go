@@ -6,6 +6,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,8 +26,9 @@ func TestGetDiscoveredTests(t *testing.T) {
 			name:    "simple",
 			testDir: path.Join(testDirWithDiscovery, intTestDir),
 			want: []bpTest{
-				getBPTest("TestAll/examples/baz", path.Join(testDirWithDiscovery, "examples/baz"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename)),
-				getBPTest("TestAll/fixtures/qux", path.Join(testDirWithDiscovery, "test/fixtures/qux"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename)),
+				getBPTest("TestAll/examples/baz", path.Join(testDirWithDiscovery, "examples/baz"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename), false),
+				getBPTest("TestAll/fixtures/qux", path.Join(testDirWithDiscovery, "test/fixtures/qux"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename), false),
+				getBPTest("TestAll/examples/quux", path.Join(testDirWithDiscovery, "examples/quux"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename), true),
 			},
 		},
 		{
@@ -61,8 +63,9 @@ func TestGetExplicitTests(t *testing.T) {
 			name:    "simple",
 			testDir: path.Join(testDirWithDiscovery, intTestDir),
 			want: []bpTest{
-				getBPTest("TestBar", path.Join(testDirWithDiscovery, "examples/bar"), path.Join(testDirWithDiscovery, intTestDir, "bar/bar_test.go")),
-				getBPTest("TestFoo", path.Join(testDirWithDiscovery, "test/fixtures/foo"), path.Join(testDirWithDiscovery, intTestDir, "foo/foo_test.go")),
+				getBPTest("TestBar", path.Join(testDirWithDiscovery, "examples/bar"), path.Join(testDirWithDiscovery, intTestDir, "bar/bar_test.go"), false),
+				getBPTest("TestFoo", path.Join(testDirWithDiscovery, "test/fixtures/foo"), path.Join(testDirWithDiscovery, intTestDir, "foo/foo_test.go"), false),
+				getBPTest("TestQuuz", path.Join(testDirWithDiscovery, "test/fixtures/quuz"), path.Join(testDirWithDiscovery, intTestDir, "quuz/quuz_test.go"), true),
 			},
 		},
 	}
@@ -92,10 +95,12 @@ func TestGetTests(t *testing.T) {
 			name:    "simple",
 			testDir: path.Join(testDirWithDiscovery, intTestDir),
 			want: []bpTest{
-				getBPTest("TestAll/examples/baz", path.Join(testDirWithDiscovery, "examples/baz"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename)),
-				getBPTest("TestAll/fixtures/qux", path.Join(testDirWithDiscovery, "test/fixtures/qux"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename)),
-				getBPTest("TestBar", path.Join(testDirWithDiscovery, "examples/bar"), path.Join(testDirWithDiscovery, intTestDir, "bar/bar_test.go")),
-				getBPTest("TestFoo", path.Join(testDirWithDiscovery, "test/fixtures/foo"), path.Join(testDirWithDiscovery, intTestDir, "foo/foo_test.go")),
+				getBPTest("TestAll/examples/baz", path.Join(testDirWithDiscovery, "examples/baz"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename), false),
+				getBPTest("TestAll/fixtures/qux", path.Join(testDirWithDiscovery, "test/fixtures/qux"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename), false),
+				getBPTest("TestAll/examples/quux", path.Join(testDirWithDiscovery, "examples/quux"), path.Join(testDirWithDiscovery, intTestDir, discoverTestFilename), true),
+				getBPTest("TestBar", path.Join(testDirWithDiscovery, "examples/bar"), path.Join(testDirWithDiscovery, intTestDir, "bar/bar_test.go"), false),
+				getBPTest("TestFoo", path.Join(testDirWithDiscovery, "test/fixtures/foo"), path.Join(testDirWithDiscovery, intTestDir, "foo/foo_test.go"), false),
+				getBPTest("TestQuuz", path.Join(testDirWithDiscovery, "test/fixtures/quuz"), path.Join(testDirWithDiscovery, intTestDir, "quuz/quuz_test.go"), true),
 			},
 		},
 	}
@@ -114,8 +119,16 @@ func TestGetTests(t *testing.T) {
 	}
 }
 
-func getBPTest(n string, c string, l string) bpTest {
-	return bpTest{name: n, config: c, location: l}
+func getBPTest(n string, c string, l string, s bool) bpTest {
+	b := discovery.BlueprintTestConfig{}
+	b.Spec.Skip = s
+	if s {
+		b.APIVersion = "blueprints.cloud.google.com/v1alpha1"
+		b.Kind = "BlueprintTest"
+		b.Name = path.Base(c)
+		b.Path = path.Join(c, discovery.DefaultTestConfigFilename)
+	}
+	return bpTest{name: n, config: c, location: l, bptestCfg: b}
 }
 
 func TestGetDiscoverTestName(t *testing.T) {
