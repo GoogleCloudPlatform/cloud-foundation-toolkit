@@ -34,6 +34,10 @@ func isValidTestName(intTestDir string, name string) error {
 	}
 	testNames := []string{}
 	for _, test := range tests {
+		if test.bptestCfg.Spec.Skip {
+			Log.Info(fmt.Sprintf("skipping %s due to BlueprintTest config %s", test.name, test.bptestCfg.Name))
+			continue
+		}
 		matched, _ := regexp.Match(name, []byte(test.name))
 		if test.name == name || matched {
 			return nil
