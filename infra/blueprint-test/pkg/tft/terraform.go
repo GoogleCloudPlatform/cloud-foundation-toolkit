@@ -40,7 +40,7 @@ const setupKeyOutputName = "sa_key"
 type TFBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
 	name                          string                   // descriptive name for the test
-	saKey                         string                   // optional setup encoded sa key
+	saKey                         string                   // optional setup sa key
 	tfDir                         string                   // directory containing Terraform configs
 	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
@@ -61,9 +61,9 @@ func WithName(name string) tftOption {
 	}
 }
 
-func WithSetupSaKey(saEnc string) tftOption {
+func WithSetupSaKey(saKey string) tftOption {
 	return func(f *TFBlueprintTest) {
-		f.saKey = saEnc
+		f.saKey = saKey
 	}
 }
 
@@ -160,18 +160,18 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.setupDir = setupDir
 		}
 	}
-	//load TFEnvVars from setup outputs
+	// load setup sa Key
+	if tft.saKey != "" {
+		tft.loadSetupSAKey(tft.saKey, false)
+	}
+	// load TFEnvVars from setup outputs
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
 		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger})))
-		if tft.saKey != "" {
-			tft.loadSetupSAKey(tft.saKey)
+		if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; tft.saKey == "" && exists {
+			tft.loadSetupSAKey(credsEnc, true)
 		} else {
-			if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; exists {
-				tft.loadSetupSAKey(credsEnc)
-			} else {
-				tft.logger.Logf(tft.t, "Unable to find %s output from setup, skipping credential activation", setupKeyOutputName)
-			}
+			tft.logger.Logf(tft.t, "Skipping credential activation %s output from setup", setupKeyOutputName)
 		}
 	}
 
@@ -211,12 +211,16 @@ func (b *TFBlueprintTest) getTFOutputsAsInputs(o map[string]interface{}) map[str
 }
 
 // loadSetupSAKey activate a gcp encoded sa key
-func (b *TFBlueprintTest) loadSetupSAKey(saEnc string) {
-	credDec, err := b64.StdEncoding.DecodeString(saEnc)
-	if err != nil {
-		b.t.Fatalf("Unable to decode setup sa key: %v", err)
+func (b *TFBlueprintTest) loadSetupSAKey(saKey string, isEncoded bool) {
+	if isEncoded {
+		credDec, err := b64.StdEncoding.DecodeString(saKey)
+		if err != nil {
+			b.t.Fatalf("Unable to decode setup sa key: %v", err)
+		}
+		gcloud.ActivateCredsAndEnvVars(b.t, string(credDec))
+	} else {
+		gcloud.ActivateCredsAndEnvVars(b.t, saKey)
 	}
-	gcloud.ActivateCredsAndEnvVars(b.t, string(credDec))
 }
 
 // getKVFromOutputString parses string kv pairs of form k=v
