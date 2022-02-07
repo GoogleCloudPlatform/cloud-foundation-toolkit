@@ -40,6 +40,7 @@ const setupKeyOutputName = "sa_key"
 type TFBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
 	name                          string                   // descriptive name for the test
+	saKey                         string                   // optional setup encoded sa key
 	tfDir                         string                   // directory containing Terraform configs
 	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
@@ -57,6 +58,12 @@ type tftOption func(*TFBlueprintTest)
 func WithName(name string) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.name = name
+	}
+}
+
+func WithSetupSaKey(saEnc string) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.saKey = saEnc
 	}
 }
 
@@ -157,16 +164,14 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
 		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger})))
-		// setup credentials if explicit sa_key output from setup
-		credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]
-		if !exists {
-			tft.logger.Logf(tft.t, "Unable to find %s output from setup, skipping credential activation", setupKeyOutputName)
+		if tft.saKey != "" {
+			tft.loadSetupSAKey(tft.saKey)
 		} else {
-			credDec, err := b64.StdEncoding.DecodeString(credsEnc)
-			if err != nil {
-				t.Fatalf("Unable to decode %s output from setup: %v", setupKeyOutputName, err)
+			if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; exists {
+				tft.loadSetupSAKey(credsEnc)
+			} else {
+				tft.logger.Logf(tft.t, "Unable to find %s output from setup, skipping credential activation", setupKeyOutputName)
 			}
-			gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
 		}
 	}
 
@@ -203,6 +208,15 @@ func (b *TFBlueprintTest) getTFOutputsAsInputs(o map[string]interface{}) map[str
 		n[parsedKey] = parsedVal
 	}
 	return n
+}
+
+// loadSetupSAKey activate a gcp encoded sa key
+func (b *TFBlueprintTest) loadSetupSAKey(saEnc string) {
+	credDec, err := b64.StdEncoding.DecodeString(saEnc)
+	if err != nil {
+		b.t.Fatalf("Unable to decode setup sa key: %v", err)
+	}
+	gcloud.ActivateCredsAndEnvVars(b.t, string(credDec))
 }
 
 // getKVFromOutputString parses string kv pairs of form k=v
