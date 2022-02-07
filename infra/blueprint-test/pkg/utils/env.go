@@ -31,3 +31,11 @@ func ValFromEnv(t testing.TB, k string) string {
 	}
 	return v
 }
+
+// SetEnv set a environment variable.
+func SetEnv(t testing.TB, key string, value string) {
+	err := os.Setenv(key, value)
+	if err != nil {
+		t.Fatal("Unable to put environment variable %s: %v", key, err)
+	}
+}

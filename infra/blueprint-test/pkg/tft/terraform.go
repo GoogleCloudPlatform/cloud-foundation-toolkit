@@ -40,6 +40,7 @@ const setupKeyOutputName = "sa_key"
 type TFBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
 	name                          string                   // descriptive name for the test
+	saKey                         string                   // optional setup sa key
 	tfDir                         string                   // directory containing Terraform configs
 	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
@@ -57,6 +58,12 @@ type tftOption func(*TFBlueprintTest)
 func WithName(name string) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.name = name
+	}
+}
+
+func WithSetupSaKey(saKey string) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.saKey = saKey
 	}
 }
 
@@ -153,20 +160,22 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.setupDir = setupDir
 		}
 	}
-	//load TFEnvVars from setup outputs
+	// load setup sa Key
+	if tft.saKey != "" {
+		gcloud.ActivateCredsAndEnvVars(tft.t, tft.saKey)
+	}
+	// load TFEnvVars from setup outputs
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
 		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger})))
-		// setup credentials if explicit sa_key output from setup
-		credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]
-		if !exists {
-			tft.logger.Logf(tft.t, "Unable to find %s output from setup, skipping credential activation", setupKeyOutputName)
-		} else {
-			credDec, err := b64.StdEncoding.DecodeString(credsEnc)
-			if err != nil {
-				t.Fatalf("Unable to decode %s output from setup: %v", setupKeyOutputName, err)
+		if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; tft.saKey == "" && exists {
+			if credDec, err := b64.StdEncoding.DecodeString(credsEnc); err == nil {
+				gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
+			} else {
+				tft.t.Fatalf("Unable to decode setup sa key: %v", err)
 			}
-			gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
+		} else {
+			tft.logger.Logf(tft.t, "Skipping credential activation %s output from setup", setupKeyOutputName)
 		}
 	}
 
