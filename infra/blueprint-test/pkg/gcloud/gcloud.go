@@ -106,6 +106,24 @@ func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 	return gjson.Parse(op)
 }
 
+// RunWithCmdOptsf executes a gcloud command and returns value as gjson.Result.
+//
+// RunWithCmdOptsf(t, ops.., "projects list --filter=%s", "projectId")
+//
+// It fails the test if there are any errors executing the gcloud command or parsing the output value.
+func RunWithCmdOptsf(t testing.TB, opts []cmdOption, cmd string, args ...interface{}) gjson.Result {
+	return Run(t, utils.StringFromTextAndArgs(append([]interface{}{cmd}, args...)...), opts...)
+}
+
+// Runf executes a gcloud command and returns value as gjson.Result.
+//
+// Runf(t, "projects list --filter=%s", "projectId")
+//
+// It fails the test if there are any errors executing the gcloud command or parsing the output value.
+func Runf(t testing.TB, cmd string, args ...interface{}) gjson.Result {
+	return Run(t, utils.StringFromTextAndArgs(append([]interface{}{cmd}, args...)...))
+}
+
 // ActivateCredsAndEnvVars activates credentials and exports auth related envvars.
 func ActivateCredsAndEnvVars(t testing.TB, creds string) {
 	credsPath, err := utils.WriteTmpFile(creds)
