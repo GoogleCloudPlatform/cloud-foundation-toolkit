@@ -18,6 +18,7 @@
 package gcloud
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
@@ -104,6 +105,42 @@ func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 		t.Fatalf("Error parsing output, invalid json: %s", op)
 	}
 	return gjson.Parse(op)
+}
+
+// RunWithCmdOptsf executes a gcloud command and returns value as gjson.Result.
+//
+// RunWithCmdOptsf(t, ops.., "projects list --filter=%s", "projectId")
+//
+// It fails the test if there are any errors executing the gcloud command or parsing the output value.
+func RunWithCmdOptsf(t testing.TB, opts []cmdOption, cmd string, args ...interface{}) gjson.Result {
+	return Run(t, stringFromTextAndArgs(append([]interface{}{cmd}, args...)...), opts...)
+}
+
+// Runf executes a gcloud command and returns value as gjson.Result.
+//
+// Runf(t, "projects list --filter=%s", "projectId")
+//
+// It fails the test if there are any errors executing the gcloud command or parsing the output value.
+func Runf(t testing.TB, cmd string, args ...interface{}) gjson.Result {
+	return Run(t, stringFromTextAndArgs(append([]interface{}{cmd}, args...)...))
+}
+
+// stringFromTextAndArgs convert msg and args to formatted text
+func stringFromTextAndArgs(msgAndArgs ...interface{}) string {
+	if len(msgAndArgs) == 0 || msgAndArgs == nil {
+		return ""
+	}
+	if len(msgAndArgs) == 1 {
+		msg := msgAndArgs[0]
+		if msgAsStr, ok := msg.(string); ok {
+			return msgAsStr
+		}
+		return fmt.Sprintf("%+v", msg)
+	}
+	if len(msgAndArgs) > 1 {
+		return fmt.Sprintf(msgAndArgs[0].(string), msgAndArgs[1:]...)
+	}
+	return ""
 }
 
 // ActivateCredsAndEnvVars activates credentials and exports auth related envvars.

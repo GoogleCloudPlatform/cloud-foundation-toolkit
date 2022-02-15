@@ -56,3 +56,29 @@ func TestActivateCredsAndEnvVars(t *testing.T) {
 		})
 	}
 }
+
+func TestRunf(t *testing.T) {
+	tests := []struct {
+		name            string
+		cmd             string
+		projectIdEnvVar string
+	}{
+		{
+			name:            "Runf",
+			cmd:             "projects list --filter=%s",
+			projectIdEnvVar: "TEST_PROJECT_ID",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if projectName, present := os.LookupEnv(tt.projectIdEnvVar); present {
+				op := Runf(t, tt.cmd, projectName)
+				assert := assert.New(t)
+				assert.Equal(projectName, op.Array()[0].Get("projectId").String())
+			} else {
+				t.Logf("Skipping test, %s envvar not set", tt.projectIdEnvVar)
+				t.Skip()
+			}
+		})
+	}
+}
