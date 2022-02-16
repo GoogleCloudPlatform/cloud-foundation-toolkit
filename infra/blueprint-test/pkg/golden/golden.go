@@ -126,8 +126,8 @@ func (g *GoldenFile) ApplySanitizers(s string) string {
 	return s
 }
 
-// ApplySanitizersJSON returns sanitizes and returns JSON result
-func (g *GoldenFile) ApplySanitizersJSON(s gjson.Result) gjson.Result {
+// GetSanitizedJSON returns sanitizes and returns JSON result
+func (g *GoldenFile) GetSanitizedJSON(s gjson.Result) gjson.Result {
 	resultStr := s.String()
 	resultStr = g.ApplySanitizers(resultStr)
 	return utils.ParseJSONResult(g.t, resultStr)
