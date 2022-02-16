@@ -124,6 +124,13 @@ func (g *GoldenFile) ApplySanitizers(s string) string {
 	return s
 }
 
+// ApplySanitizersJSON returns sanitizes and returns JSON result
+func (g *GoldenFile) ApplySanitizersJSON(s gjson.Result) gjson.Result {
+	resultStr := s.String()
+	resultStr = g.ApplySanitizers(resultStr)
+	return utils.ParseJSONResult(g.t, resultStr)
+}
+
 // GetJSON returns goldenfile as parsed json
 func (g *GoldenFile) GetJSON() gjson.Result {
 	return utils.LoadJSON(g.t, g.GetName())
@@ -133,5 +140,6 @@ func (g *GoldenFile) GetJSON() gjson.Result {
 func (g *GoldenFile) JSONEq(a *assert.Assertions, got gjson.Result, jsonPath string) {
 	gf := g.GetJSON()
 	gotData := g.ApplySanitizers(got.Get(jsonPath).String())
-	a.Equal(gf.Get(jsonPath).String(), gotData, fmt.Sprintf("expected %s to match fixture", jsonPath))
+	gfData := gf.Get(jsonPath).String()
+	a.Equal(gfData, gotData, fmt.Sprintf("expected %s to match fixture %s", jsonPath, gfData))
 }
