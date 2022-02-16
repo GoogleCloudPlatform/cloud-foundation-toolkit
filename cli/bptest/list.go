@@ -19,9 +19,10 @@ const (
 )
 
 type bpTest struct {
-	name     string
-	config   string
-	location string
+	name      string
+	config    string
+	location  string
+	bptestCfg discovery.BlueprintTestConfig
 }
 
 // getTests returns slice of all blueprint tests
@@ -69,8 +70,12 @@ func getDiscoveredTests(intTestDir string) ([]bpTest, error) {
 			return nil, err
 		}
 		discoveredSubTests := discovery.FindTestConfigs(&testing.RuntimeT{}, intTestDir)
-		for testName, fileName := range discoveredSubTests {
-			tests = append(tests, bpTest{name: fmt.Sprintf("%s/%s", discoverTestName, testName), config: fileName, location: discoverTestFile})
+		for testName, testCfg := range discoveredSubTests {
+			bptestCfg, err := discovery.GetTestConfig(path.Join(testCfg, discovery.DefaultTestConfigFilename))
+			if err != nil {
+				Log.Warn(fmt.Sprintf("error discovering BlueprintTest config: %v", err))
+			}
+			tests = append(tests, bpTest{name: fmt.Sprintf("%s/%s", discoverTestName, testName), config: testCfg, location: discoverTestFile, bptestCfg: bptestCfg})
 		}
 	}
 	sort.SliceStable(tests, func(i, j int) bool { return tests[i].name < tests[j].name })
@@ -94,12 +99,18 @@ func getExplicitTests(intTestDir string) ([]bpTest, error) {
 			Log.Warn(fmt.Sprintf("unable to discover configs for %s: %v", testDir, err))
 		}
 
+		// discover BlueprintTest config if any
+		bptestCfg, err := discovery.GetTestConfig(path.Join(testCfg, discovery.DefaultTestConfigFilename))
+		if err != nil {
+			Log.Warn(fmt.Sprintf("error discovering BlueprintTest config: %v", err))
+		}
+
 		testFns, err := getTestFuncsFromFile(testFile)
 		if err != nil {
 			return nil, err
 		}
 		for _, fnName := range testFns {
-			eTests = append(eTests, bpTest{name: fnName, location: testFile, config: testCfg})
+			eTests = append(eTests, bpTest{name: fnName, location: testFile, config: testCfg, bptestCfg: bptestCfg})
 		}
 
 	}

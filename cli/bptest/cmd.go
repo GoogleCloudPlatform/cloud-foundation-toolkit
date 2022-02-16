@@ -1,6 +1,7 @@
 package bptest
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -50,6 +51,10 @@ var listCmd = &cobra.Command{
 		tbl := newTable()
 		tbl.AppendHeader(table.Row{"Name", "Config", "Location"})
 		for _, t := range tests {
+			if t.bptestCfg.Spec.Skip {
+				Log.Info(fmt.Sprintf("skipping %s due to BlueprintTest config %s", t.name, t.bptestCfg.Name))
+				continue
+			}
 			tbl.AppendRow(table.Row{t.name, t.config, t.location})
 		}
 		tbl.Render()
