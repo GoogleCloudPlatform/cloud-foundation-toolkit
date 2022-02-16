@@ -49,15 +49,20 @@ type Sanitizer func(string) string
 // StringSanitizer replaces all occurrences of old string with new string
 func StringSanitizer(old, new string) Sanitizer {
 	return func(s string) string {
-		old := strings.ReplaceAll(s, old, new)
-		return old
+		return strings.ReplaceAll(s, old, new)
 	}
 }
 
 // ProjectIDSanitizer replaces all occurrences of current gcloud project ID with PROJECT_ID string
 func ProjectIDSanitizer(t testing.TB) Sanitizer {
-	projectID := gcloud.Run(t, "config get-value project")
-	return StringSanitizer(projectID.String(), "PROJECT_ID")
+	return func(s string) string {
+		projectID := gcloud.Run(t, "config get-value project")
+		if projectID.String() == "[]" {
+			t.Logf("no project ID currently set, skipping ProjectIDSanitizer: %s", projectID.String())
+			return s
+		}
+		return strings.ReplaceAll(s, projectID.String(), "PROJECT_ID")
+	}
 }
 
 type goldenFileOption func(*GoldenFile)
@@ -82,9 +87,10 @@ func WithSanitizer(s Sanitizer) goldenFileOption {
 
 func NewOrUpdate(t testing.TB, data string, opts ...goldenFileOption) *GoldenFile {
 	g := &GoldenFile{
-		dir:      gfDir,
-		fileName: fmt.Sprintf("%s.json", strings.ReplaceAll(t.Name(), "/", "-")),
-		t:        t,
+		dir:        gfDir,
+		fileName:   fmt.Sprintf("%s.json", strings.ReplaceAll(t.Name(), "/", "-")),
+		sanitizers: []Sanitizer{ProjectIDSanitizer(t)},
+		t:          t,
 	}
 	for _, opt := range opts {
 		opt(g)
