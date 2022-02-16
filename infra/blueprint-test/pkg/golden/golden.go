@@ -24,6 +24,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
@@ -37,9 +38,26 @@ const (
 )
 
 type GoldenFile struct {
-	dir      string
-	fileName string
-	t        testing.TB
+	dir        string
+	fileName   string
+	sanitizers []Sanitizer
+	t          testing.TB
+}
+
+type Sanitizer func(string) string
+
+// StringSanitizer replaces all occurrences of old with new
+func StringSanitizer(old, new string) Sanitizer {
+	return func(s string) string {
+		old := strings.ReplaceAll(s, old, new)
+		return old
+	}
+}
+
+// ProjectIDSanitizer replaces all occurrences of current gcloud project ID with PROJECT_ID string
+func ProjectIDSanitizer(t testing.TB) Sanitizer {
+	projectID := gcloud.Run(t, "config get-value project")
+	return StringSanitizer(projectID.String(), "PROJECT_ID")
 }
 
 type goldenFileOption func(*GoldenFile)
@@ -53,6 +71,12 @@ func WithDir(dir string) goldenFileOption {
 func WithFileName(fn string) goldenFileOption {
 	return func(g *GoldenFile) {
 		g.fileName = fn
+	}
+}
+
+func WithSanitizer(s Sanitizer) goldenFileOption {
+	return func(g *GoldenFile) {
+		g.sanitizers = append(g.sanitizers, s)
 	}
 }
 
@@ -80,6 +104,7 @@ func (g *GoldenFile) update(data string) {
 	if err != nil {
 		g.t.Fatalf("error updating result: %v", err)
 	}
+	data = g.ApplySanitizers(data)
 	err = ioutil.WriteFile(fp, []byte(data), gfPerms)
 	if err != nil {
 		g.t.Fatalf("error updating result: %v", err)
@@ -91,6 +116,14 @@ func (g *GoldenFile) GetName() string {
 	return path.Join(g.dir, g.fileName)
 }
 
+// ApplySanitizers returns sanitized string
+func (g *GoldenFile) ApplySanitizers(s string) string {
+	for _, sanitizer := range g.sanitizers {
+		s = sanitizer(s)
+	}
+	return s
+}
+
 // GetJSON returns goldenfile as parsed json
 func (g *GoldenFile) GetJSON() gjson.Result {
 	return utils.LoadJSON(g.t, g.GetName())
@@ -99,5 +132,6 @@ func (g *GoldenFile) GetJSON() gjson.Result {
 // JSONEq asserts that json content in jsonPath for got and goldenfile is the same
 func (g *GoldenFile) JSONEq(a *assert.Assertions, got gjson.Result, jsonPath string) {
 	gf := g.GetJSON()
-	a.Equal(gf.Get(jsonPath).String(), got.Get(jsonPath).String(), fmt.Sprintf("expected %s to match fixture", jsonPath))
+	gotData := g.ApplySanitizers(got.Get(jsonPath).String())
+	a.Equal(gf.Get(jsonPath).String(), gotData, fmt.Sprintf("expected %s to match fixture", jsonPath))
 }
