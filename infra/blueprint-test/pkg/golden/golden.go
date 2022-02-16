@@ -46,7 +46,7 @@ type GoldenFile struct {
 
 type Sanitizer func(string) string
 
-// StringSanitizer replaces all occurrences of old with new
+// StringSanitizer replaces all occurrences of old string with new string
 func StringSanitizer(old, new string) Sanitizer {
 	return func(s string) string {
 		old := strings.ReplaceAll(s, old, new)
@@ -104,7 +104,9 @@ func (g *GoldenFile) update(data string) {
 	if err != nil {
 		g.t.Fatalf("error updating result: %v", err)
 	}
+	// apply sanitizers on data
 	data = g.ApplySanitizers(data)
+
 	err = ioutil.WriteFile(fp, []byte(data), gfPerms)
 	if err != nil {
 		g.t.Fatalf("error updating result: %v", err)
