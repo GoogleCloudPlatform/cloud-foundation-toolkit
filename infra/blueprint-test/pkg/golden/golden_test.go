@@ -17,13 +17,18 @@
 package golden
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
+
+const testProjectIDEnvVar = "TEST_GCLOUD_PROJECT"
 
 func TestUpdate(t *testing.T) {
 	tests := []struct {
@@ -67,10 +72,12 @@ func TestUpdate(t *testing.T) {
 
 func TestJSONEq(t *testing.T) {
 	tests := []struct {
-		name   string
-		data   string
-		eqPath string
-		want   string
+		name         string
+		data         string
+		eqPath       string
+		opts         []goldenFileOption
+		want         string
+		setProjectID bool
 	}{
 		{
 			name:   "nested",
@@ -78,16 +85,52 @@ func TestJSONEq(t *testing.T) {
 			eqPath: "baz",
 			want:   "{\"qux\":\"quz\"}",
 		},
+		{
+			name:   "sanitize quz",
+			data:   "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"}}",
+			opts:   []goldenFileOption{WithSanitizer(StringSanitizer("quz", "REPLACED"))},
+			eqPath: "baz",
+			want:   "{\"qux\":\"REPLACED\"}",
+		},
+		{
+			name:         "sanitize projectID",
+			data:         fmt.Sprintf("{\"foo\":\"bar\",\"baz\":{\"qux\":\"%s\"}}", os.Getenv(testProjectIDEnvVar)),
+			opts:         []goldenFileOption{WithSanitizer(ProjectIDSanitizer(t))},
+			setProjectID: true,
+			eqPath:       "baz",
+			want:         "{\"qux\":\"PROJECT_ID\"}",
+		},
+		{
+			name:   "no gcloud projectID set",
+			data:   fmt.Sprintf("{\"foo\":\"bar\",\"baz\":{\"qux\":\"%s\"}}", os.Getenv(testProjectIDEnvVar)),
+			opts:   []goldenFileOption{WithSanitizer(ProjectIDSanitizer(t))},
+			eqPath: "baz",
+			want:   fmt.Sprintf("{\"qux\":\"%s\"}", os.Getenv(testProjectIDEnvVar)),
+		},
+		{
+			name: "multiple sanitizers quz",
+			data: "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\",\"quux\":\"quuz\"}}",
+			opts: []goldenFileOption{
+				WithSanitizer(StringSanitizer("quz", "REPLACED")),
+				WithSanitizer(func(s string) string { return strings.ReplaceAll(s, "quuz", "NEW") }),
+			},
+			eqPath: "baz",
+			want:   "{\"qux\":\"REPLACED\",\"quux\":\"NEW\"}",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
+			if tt.setProjectID {
+				gcloud.Runf(t, "config set project %s", os.Getenv(testProjectIDEnvVar))
+				defer gcloud.Run(t, "config unset project")
+			}
 			os.Setenv(gfUpdateEnvVar, "true")
 			defer os.Unsetenv(gfUpdateEnvVar)
-
-			got := NewOrUpdate(t, tt.data)
+			got := NewOrUpdate(t, tt.data, tt.opts...)
 			defer os.Remove(got.GetName())
 			got.JSONEq(assert, utils.ParseJSONResult(t, tt.data), tt.eqPath)
+			assert.JSONEq(tt.want, got.GetJSON().Get(tt.eqPath).String())
 		})
 	}
 }
