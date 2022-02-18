@@ -87,8 +87,17 @@ children:
 - !module
   children:
   - !module
+    name: airflow_connection
+    path: modules/airflow_connection
+  - !module
+    name: airflow_pool
+    path: modules/airflow_pool
+  - !module
     name: create_environment
     path: modules/create_environment
+  - !module
+    name: master_authorized_networks
+    path: modules/master_authorized_networks
   description: Terraform Module for managing Cloud Composer
   name: composer
   source: https://github.com/terraform-google-modules/terraform-google-composer
@@ -152,7 +161,8 @@ children:
   name: datalab
   source: https://github.com/terraform-google-modules/terraform-google-datalab
 - !module
-  description: ''
+  description: This module creates a DNS record on the .cloud.goog domain using Cloud
+    Endpoints.
   name: endpoints-dns
   source: https://github.com/terraform-google-modules/terraform-google-endpoints-dns
 - !module
@@ -234,6 +244,9 @@ children:
 - !module
   children:
   - !module
+    name: gh-oidc
+    path: modules/gh-oidc
+  - !module
     name: gh-runner-gke
     path: modules/gh-runner-gke
   - !module
@@ -270,6 +283,9 @@ children:
   - !module
     name: audit_config
     path: modules/audit_config
+  - !module
+    name: bigquery_datasets_iam
+    path: modules/bigquery_datasets_iam
   - !module
     name: billing_accounts_iam
     path: modules/billing_accounts_iam
