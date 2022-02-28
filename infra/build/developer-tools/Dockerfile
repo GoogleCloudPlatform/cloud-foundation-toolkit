@@ -79,6 +79,9 @@ ENV KPT_VERSION ${KPT_VERSION}
 ARG CFT_CLI_VERSION
 ENV CFT_CLI_VERSION ${CFT_CLI_VERSION}
 
+ARG KUBECTL_VERSION
+ENV KUBECTL_VERSION ${KUBECTL_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
