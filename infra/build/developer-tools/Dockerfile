@@ -130,7 +130,7 @@ ADD ./build/install_bats.sh /build/
 RUN /build/install_bats.sh ${BATS_VERSION} ${BATS_SUPPORT_VERSION} ${BATS_ASSERT_VERSION} ${BATS_MOCK_VERSION}
 
 ADD ./build/install_kubectl.sh /build/
-RUN /build/install_kubectl.sh
+RUN /build/install_kubectl.sh ${KUBECTL_VERSION}
 
 ADD ./build/install_terragrunt.sh /build/
 RUN ./build/install_terragrunt.sh ${TERRAGRUNT_VERSION}

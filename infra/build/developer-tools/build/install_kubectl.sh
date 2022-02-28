@@ -18,5 +18,7 @@ set -u
 
 cd /build
 
-wget https://storage.googleapis.com/kubernetes-release/release/v1.15.12/bin/linux/amd64/kubectl
+KUBECTL_VERSION=$1
+
+wget https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 install -o 0 -g 0 -m 0755 kubectl /usr/local/bin/kubectl
