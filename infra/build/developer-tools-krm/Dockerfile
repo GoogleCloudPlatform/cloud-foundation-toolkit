@@ -26,6 +26,7 @@ ENV ASMCLI_VERSION ${ASMCLI_VERSION}
 
 ADD ./build/install_asmcli.sh /build/
 RUN /build/install_asmcli.sh ${ASMCLI_VERSION}
+RUN rm -rf /build
 
 # Add dind helper for prow
 ADD ./build/scripts/runner.sh /usr/local/bin/
