@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright 2019 Google LLC
+# Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ set -u
 
 cd /build
 
-KUBECTL_VERSION=$1
+ASMCLI_VERSION=$1
 
-wget https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
-install -o 0 -g 0 -m 0755 kubectl /usr/local/bin/kubectl
+curl https://storage.googleapis.com/csm-artifacts/asm/asmcli_${ASMCLI_VERSION} > asmcli
+install -o 0 -g 0 -m 0755 asmcli /usr/local/bin/asmcli

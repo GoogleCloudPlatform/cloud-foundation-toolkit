@@ -20,6 +20,14 @@ RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-curr
 # Additional go tooling
 RUN GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
 
+# Required to download and install asmcli
+ARG ASMCLI_VERSION
+ENV ASMCLI_VERSION ${ASMCLI_VERSION}
+
+ADD ./build/install_asmcli.sh /build/
+RUN /build/install_asmcli.sh ${ASMCLI_VERSION}
+RUN rm -rf /build
+
 # Add dind helper for prow
 ADD ./build/scripts/runner.sh /usr/local/bin/
 ADD ./build/scripts/prow_entrypoint.sh /usr/local/bin/

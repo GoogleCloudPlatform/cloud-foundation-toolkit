@@ -79,6 +79,9 @@ ENV KPT_VERSION ${KPT_VERSION}
 ARG CFT_CLI_VERSION
 ENV CFT_CLI_VERSION ${CFT_CLI_VERSION}
 
+ARG KUBECTL_VERSION
+ENV KUBECTL_VERSION ${KUBECTL_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -130,7 +133,7 @@ ADD ./build/install_bats.sh /build/
 RUN /build/install_bats.sh ${BATS_VERSION} ${BATS_SUPPORT_VERSION} ${BATS_ASSERT_VERSION} ${BATS_MOCK_VERSION}
 
 ADD ./build/install_kubectl.sh /build/
-RUN /build/install_kubectl.sh
+RUN /build/install_kubectl.sh ${KUBECTL_VERSION}
 
 ADD ./build/install_terragrunt.sh /build/
 RUN ./build/install_terragrunt.sh ${TERRAGRUNT_VERSION}
