@@ -61,7 +61,7 @@ properties:
           type: string
           pattern: ^[a-zA-Z0-9_-]{1,63}
           description: |
-            The name for the CrytoKey. Must be unique within a KeyRing.
+            The name for the CryptoKey. Must be unique within a KeyRing.
         cryptoKeyPurpose:
           type: string
           default: ENCRYPT_DECRYPT
