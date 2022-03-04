@@ -412,7 +412,7 @@ properties:
   view:
     type: object
     additionalProperties: false
-    description: The view definintion.
+    description: The view definition.
     properties:
       query:
         type: string
