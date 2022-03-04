@@ -316,7 +316,7 @@ properties:
         type: integer
         description: |
           The time period during which the instance is drained (not accepting 
-          new connections but still procedding the ones accepted earlier).
+          new connections but still proceeding the ones accepted earlier).
   customRequestHeaders:
     type: array
     uniqueItems: true
