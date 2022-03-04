@@ -54,10 +54,10 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
 
-1. _Optionaly_, you can set the name of the KMS keyring (defaults to `allowed-ring`), set the location of the ring (defaults to `us-central1`) and the role to grant (defaults to `roles/pubsub.editor`, full list of roles [here](https://cloud.google.com/iam/docs/understanding-roles#cloud-kms-roles)) by explictly setting them when installing the solution:
+1. _Optionally_, you can set the name of the KMS keyring (defaults to `allowed-ring`), set the location of the ring (defaults to `us-central1`) and the role to grant (defaults to `roles/pubsub.editor`, full list of roles [here](https://cloud.google.com/iam/docs/understanding-roles#cloud-kms-roles)) by explicitly setting them when installing the solution:
 
     ```bash
-    # install your chart with a difirent name of the KMS keyring and location
+    # install your chart with a different name of the KMS keyring and location
     helm install . --set KMSKeyRing.name=your-ring-name,KMSKeyRing.location=us-west1,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
     Or,
