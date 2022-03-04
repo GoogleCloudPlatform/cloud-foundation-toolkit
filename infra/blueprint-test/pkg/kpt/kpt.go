@@ -1,10 +1,16 @@
 package kpt
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
+	kptfilev1 "github.com/GoogleContainerTools/kpt-functions-sdk/go/pkg/api/kptfile/v1"
+	kptutil "github.com/GoogleContainerTools/kpt-functions-sdk/go/pkg/api/util"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/mitchellh/go-testing-interface"
+	"sigs.k8s.io/kustomize/kyaml/kio/kioutil"
+	"sigs.k8s.io/kustomize/kyaml/yaml"
 )
 
 type CmdCfg struct {
@@ -66,4 +72,19 @@ func (k *CmdCfg) RunCmd(args ...string) string {
 		k.t.Fatal(err)
 	}
 	return op
+}
+
+// findKptfile discovers Kptfile of the root package from slice of nodes
+func findKptfile(nodes []*yaml.RNode) (*kptfilev1.KptFile, error) {
+	for _, node := range nodes {
+		if node.GetAnnotations()[kioutil.PathAnnotation] == kptfilev1.KptFileName {
+			s, err := node.String()
+			if err != nil {
+				return nil, fmt.Errorf("unable to read Kptfile: %v", err)
+			}
+			kf, err := kptutil.DecodeKptfile(s)
+			return kf, fmt.Errorf("unable to read Kptfile: %v", err)
+		}
+	}
+	return nil, fmt.Errorf("unable to find Kptfile, please include --include-meta-resources flag if a Kptfile is present")
 }
