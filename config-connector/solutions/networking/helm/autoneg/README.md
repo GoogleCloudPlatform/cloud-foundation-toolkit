@@ -70,7 +70,7 @@ All steps are run from this directory.
 1. Wait for clusters to be created
 
     ```bash
-    # The command uses cluster names based on the values passed in the ealier step
+    # The command uses cluster names based on the values passed in the earlier step
     kubectl wait --for=condition=Ready containercluster/cluster-na containercluster/cluster-eu
     ```
 
