@@ -168,7 +168,7 @@ properties:
             type: integer
             description: |
               The time period during which the instance is drained (is not
-              accepting new connections but still procedding the ones accepted
+              accepting new connections but still proceeding the ones accepted
               earlier).
 
 outputs:
