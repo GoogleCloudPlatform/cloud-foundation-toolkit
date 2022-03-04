@@ -83,7 +83,7 @@ properties:
           properties:
             type:
               type: string
-              decription: The parent type (organization or folder).
+              description: The parent type (organization or folder).
               enum:
                 - organization
                 - folder
