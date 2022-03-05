@@ -59,15 +59,15 @@ func FindTestConfigs(t testing.TB, intTestDir string) map[string]string {
 	fixturesBase := path.Join(testBase, "../", FixtureDir)
 	explicitTests, err := findDirs(testBase)
 	if err != nil {
-		t.Logf("Error discovering explicit tests: %v", err)
+		t.Logf("Skipping explicit tests discovery: %v", err)
 	}
 	fixtures, err := findDirs(fixturesBase)
 	if err != nil {
-		t.Logf("Error discovering fixtures: %v", err)
+		t.Logf("Skipping fixtures discovery: %v", err)
 	}
 	examples, err := findDirs(examplesBase)
 	if err != nil {
-		t.Logf("Error discovering examples: %v", err)
+		t.Logf("Skipping examples discovery: %v", err)
 	}
 	testCases := make(map[string]string)
 
