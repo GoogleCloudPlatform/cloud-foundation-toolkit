@@ -517,7 +517,7 @@ properties:
         dependsOn:
           - resource-name-1
           - resource-name-2
-      or if it't necessary to wait for another instance of cloud_sql template
+      or if it's necessary to wait for another instance of cloud_sql template
       to finish when, e.g. building a read replica:
         dependsOn: $(ref.master-instance-of-cloud-sql.resources)
     items:
