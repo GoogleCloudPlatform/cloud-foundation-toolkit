@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
-	kptfilev1 "github.com/GoogleContainerTools/kpt-functions-sdk/go/pkg/api/kptfile/v1"
-	kptutil "github.com/GoogleContainerTools/kpt-functions-sdk/go/pkg/api/util"
+	kptfilev1 "github.com/GoogleContainerTools/kpt-functions-sdk/go/api/kptfile/v1"
+	kptutil "github.com/GoogleContainerTools/kpt-functions-sdk/go/api/util"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/mitchellh/go-testing-interface"
