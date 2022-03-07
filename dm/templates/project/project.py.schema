@@ -332,7 +332,7 @@ outputs:
     description: The number uniquely identifying the project.
   containerSA:
     type: string
-    description: The built-in ServiceAccount name for container services. (With 'ServiceAccount:' prefix.) ( Only exists if container.googleapis.com is enabled.)
+    description: The built-in ServiceAccount name for container services. (With 'serviceAccount:' prefix.) ( Only exists if container.googleapis.com is enabled.)
   containerSADisplayName:
     type: string
     description: The built-in ServiceAccount name for container services. ( Only exists if container.googleapis.com is enabled.)
