@@ -3,7 +3,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-t
 go 1.16
 
 require (
-	github.com/GoogleContainerTools/kpt-functions-sdk/go v0.0.0-20210810181223-632b30549de6
+	github.com/GoogleContainerTools/kpt-functions-sdk/go v0.0.0-20220301220754-6964a09d6cd2
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/gruntwork-io/terratest v0.35.6
 	github.com/kr/text v0.2.0 // indirect
