@@ -90,7 +90,7 @@ properties:
       Determines the kind of the IAM identity returned as writerIdentity for the
       new sink. If "true", the sink is owned by a non-project resource such
       as an organization. In this case, the writerIdentity value is a unique
-      serivce account used only for exports from the new sink.
+      service account used only for exports from the new sink.
     default: true
   filter:
     type: string

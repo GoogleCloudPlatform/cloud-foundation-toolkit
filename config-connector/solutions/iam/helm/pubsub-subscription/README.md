@@ -54,10 +54,10 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
 
-1. _Optionaly_, you can set the name of the pubsub subscription (defaults to `allowed-subscription`), set the name of the PubSub topic (defaults to `allowed-topic`) and the role to grant (defaults to `roles/pubsub.viewer`, full list of roles [here](https://cloud.google.com/iam/docs/understanding-roles#pub-sub-roles)) by explictly setting them when installing the solution:
+1. _Optionally_, you can set the name of the pubsub subscription (defaults to `allowed-subscription`), set the name of the PubSub topic (defaults to `allowed-topic`) and the role to grant (defaults to `roles/pubsub.viewer`, full list of roles [here](https://cloud.google.com/iam/docs/understanding-roles#pub-sub-roles)) by explicitly setting them when installing the solution:
 
     ```bash
-    # install your chart with a difirent pubsub subscription and pubsub topic
+    # install your chart with a different pubsub subscription and pubsub topic
     helm install . --set PubSubTopic.name=your-topic-name,PubSubSubscription.name=your-subscription-name,iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
     Or,

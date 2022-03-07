@@ -65,7 +65,7 @@ properties:
         prefixLength:
           type: number
           description: |
-            The prefix length if the resource reprensents an IP range.
+            The prefix length if the resource represents an IP range.
         networkTier:
           type: string
           description: |

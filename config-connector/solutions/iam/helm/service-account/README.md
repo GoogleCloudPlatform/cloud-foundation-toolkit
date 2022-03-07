@@ -51,7 +51,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.iamMember=user:name@example.com --generate-name
     ```
 
-1. _Optionaly_, you can customize optional values by explictly setting them when installing the solution:
+1. _Optionally_, you can customize optional values by explicitly setting them when installing the solution:
     ```bash
     # install your chart with a new service account name
     helm install . --set serviceAccount.name=new-service-account,iamPolicyMember.iamMember=user:name@example.com --generate-name

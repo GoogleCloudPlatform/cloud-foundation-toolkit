@@ -64,12 +64,12 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
   (you can find all the predefined GCP IAM roles [here](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles)):
 
     ```bash
-    # install your chart with a diffirent service account name
+    # install your chart with a different service account name
     helm install . --set projectID=PROJECT_ID,iamPolicyMember.iamMember=service-account-name --namespace member-iam-solution --generate-name
     ```
     Or,
     ```bash
-    # install your chart with a diffirent role
+    # install your chart with a different role
     helm install . --set projectID=PROJECT_ID,iamPolicyMember.role=roles/compute.networkUser --namespace member-iam-solution --generate-name
     ```
     Or set both in one command.

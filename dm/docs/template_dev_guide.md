@@ -112,7 +112,7 @@ using service account json https://cloud.google.com/sdk/gcloud/reference/auth/ac
 
 Create test config file by following [Using the Cloud Foundation Config File](#using-the-cloud-foundation-config-file)
 
-Build test dcocker image:
+Build test docker image:
 
     cd cloud-foundation-toolkit/dm
     make cft-build-base-image

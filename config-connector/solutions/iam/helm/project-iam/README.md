@@ -54,10 +54,10 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.iamMember=user:name@example.com,projectID=PROJECT_ID --generate-name
     ```
 
-1. _Optionaly_, you can also change the role (defaults to `roles/logging.viewer`):
+1. _Optionally_, you can also change the role (defaults to `roles/logging.viewer`):
 
     ```bash
-    # install your chart with a diffirent role
+    # install your chart with a different role
     helm install . --set iamPolicyMember.iamMember=user:name@example.com,iamPolicyMember.role=roles/logging.admin,projectID=PROJECT_ID --generate-name
     ```
 

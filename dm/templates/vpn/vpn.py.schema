@@ -17,7 +17,7 @@ info:
   author: Sourced Group
   version: 1.1.0
   description: |
-    Creates a VPN tunnel, gateway, and fowarding rules.
+    Creates a VPN tunnel, gateway, and forwarding rules.
 
     For more information on this resource:
     https://cloud.google.com/vpn/docs/concepts/overview

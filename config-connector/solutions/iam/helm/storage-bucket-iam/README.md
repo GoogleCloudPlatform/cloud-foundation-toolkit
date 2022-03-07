@@ -55,7 +55,7 @@ All steps are run from the current directory ([config-connector/solutions/iam/he
     helm install . --set iamPolicyMember.iamMember=user:name@example.com,StorageBucket.name=your-bucket --generate-name
     ```
 
-1. _Optionaly_, you can customize optional value role of iam policy member (defaults to `roles/storage.objectViewer`, full list of roles [here](https://cloud.google.com/iam/docs/understanding-roles#storage-roles)):
+1. _Optionally_, you can customize optional value role of iam policy member (defaults to `roles/storage.objectViewer`, full list of roles [here](https://cloud.google.com/iam/docs/understanding-roles#storage-roles)):
     ```bash
     # install your chart with a new role
     helm install . --set iamPolicyMember.iamMember=user:name@example.com,StorageBucket.name=your-bucket,iamPolicyMember.role=roles/storage.admin --generate-name

@@ -14,7 +14,7 @@ This template creates a Google Cloud KMS KeyRing and Keys.
 ### Resources
 
 - [gcp-types/cloudkms-v1](https://cloud.google.com/kms/docs/reference/rest/)
-- [KMS Object heirarchy](https://cloud.google.com/kms/docs/object-hierarchy)
+- [KMS Object hierarchy](https://cloud.google.com/kms/docs/object-hierarchy)
 - [KMS Key Version States](https://cloud.google.com/kms/docs/key-states)
 - [KMS Object Lifetime](https://cloud.google.com/kms/docs/object-hierarchy#lifetime)
 

@@ -55,7 +55,7 @@ All steps are running from the current directory ([config-connector/solutions/ia
     helm install . --set iamPolicyMember.iamMember=user:name@example.com,folderID=VALUE --generate-name
     ```
 
-1. _Optionaly_, you can also change the role granted to the member. (you can find all of the folder related IAM roles
+1. _Optionally_, you can also change the role granted to the member. (you can find all of the folder related IAM roles
   [here](https://cloud.google.com/iam/docs/understanding-roles#resource-manager-roles)):
     ```bash
     # install your chart with a new IAM role.
