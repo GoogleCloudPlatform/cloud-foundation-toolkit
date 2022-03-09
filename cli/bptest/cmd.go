@@ -71,18 +71,22 @@ var runCmd = &cobra.Command{
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
 			return err
 		}
-		if err := isValidTestName(flags.testDir, args[0]); err != nil {
-			return err
-		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		intTestDir := flags.testDir
+		intTestDir, err := getIntTestDir(flags.testDir)
+		if err != nil {
+			return fmt.Errorf("error discovering test dir: %v", err)
+		}
 		testStage, err := validateAndGetStage(flags.testStage)
 		if err != nil {
 			return err
 		}
-		testCmd, err := getTestCmd(intTestDir, testStage, args[0])
+		relTestPkg, err := validateAndGetRelativeTestPkg(intTestDir, args[0])
+		if err != nil {
+			return err
+		}
+		testCmd, err := getTestCmd(intTestDir, testStage, args[0], relTestPkg)
 		if err != nil {
 			return err
 		}
