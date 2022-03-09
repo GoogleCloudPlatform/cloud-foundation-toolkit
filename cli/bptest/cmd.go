@@ -76,7 +76,7 @@ var runCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		intTestDir, err := getIntTestDir(flags.testDir)
 		if err != nil {
-			return err
+			return fmt.Errorf("error discovering test dir: %v", err)
 		}
 		testStage, err := validateAndGetStage(flags.testStage)
 		if err != nil {
