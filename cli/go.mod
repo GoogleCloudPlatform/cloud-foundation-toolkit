@@ -11,6 +11,7 @@ require (
 	github.com/gammazero/workerpool v1.1.2
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.6
+	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/inconshreveable/log15 v0.0.0-20201112154412-8562bdadbbac
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64

@@ -18,6 +18,7 @@ func init() {
 	viper.AutomaticEnv()
 	Cmd.AddCommand(listCmd)
 	Cmd.AddCommand(runCmd)
+	Cmd.AddCommand(convertCmd)
 
 	Cmd.PersistentFlags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
 	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, apply, verify, teardown)")
@@ -97,5 +98,16 @@ var runCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		return nil
+	},
+}
+
+var convertCmd = &cobra.Command{
+	Use:   "convert",
+	Short: "convert kitchen tests (experimental)",
+	Long:  "Convert all kitchen tests to blueprint tests (experimental)",
+
+	Args: cobra.NoArgs,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return convert()
 	},
 }
