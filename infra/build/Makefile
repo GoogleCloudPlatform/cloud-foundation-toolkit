@@ -45,8 +45,9 @@ REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
 .PHONY: build-image-developer-tools
 build-image-developer-tools:
+	# TODO(bharathkkb): unpin gcloud version after https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1095 is resolved
 	docker build \
-		--build-arg CLOUD_SDK_VERSION=${CLOUD_SDK_VERSION} \
+		--build-arg CLOUD_SDK_VERSION=375.0.0 \
 		--build-arg GSUITE_PROVIDER_VERSION=${GSUITE_PROVIDER_VERSION} \
 		--build-arg TERRAFORM_VERSION=${TERRAFORM_VERSION} \
 		--build-arg TERRAFORM_VALIDATOR_VERSION=${TERRAFORM_VALIDATOR_VERSION} \
