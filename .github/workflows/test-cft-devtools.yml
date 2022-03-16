@@ -1,0 +1,24 @@
+name: Test devtools image build
+on:
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "infra/build/**"
+      - ".github/workflows/test-cft-devtools.yml"
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build-dev-tools:
+    name: Build CFT dev tools image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: |-
+          cd infra/build && make build-image-developer-tools
