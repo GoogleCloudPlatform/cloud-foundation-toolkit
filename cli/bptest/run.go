@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
+	"path/filepath"
 	"regexp"
 	"sync"
 
@@ -21,16 +23,16 @@ const (
 
 var allTestArgs = []string{"-p", "1", "-count", "1", "-timeout", "0"}
 
-// isValidTestName validates a given test or test regex is part of the blueprint test set
-func isValidTestName(intTestDir string, name string) error {
+// validateAndGetRelativeTestPkg validates a given test or test regex is part of the blueprint test set and returns location of test relative to intTestDir
+func validateAndGetRelativeTestPkg(intTestDir string, name string) (string, error) {
 	// user wants to run all tests
 	if name == allTests {
-		return nil
+		return "./...", nil
 	}
 
 	tests, err := getTests(intTestDir)
 	if err != nil {
-		return err
+		return "", err
 	}
 	testNames := []string{}
 	for _, test := range tests {
@@ -39,12 +41,20 @@ func isValidTestName(intTestDir string, name string) error {
 			continue
 		}
 		matched, _ := regexp.Match(name, []byte(test.name))
-		if test.name == name || matched {
-			return nil
+		if test.name == name {
+			//exact match, return test relative test pkg
+			relPkg, err := filepath.Rel(intTestDir, path.Dir(test.location))
+			if err != nil {
+				return "", err
+			}
+			return fmt.Sprintf("./%s", relPkg), nil
+		} else if matched {
+			// loose match, more than one test could be specified
+			return "./...", nil
 		}
 		testNames = append(testNames, test.name)
 	}
-	return fmt.Errorf("unable to find %s- one of %+q expected", name, append(testNames, allTests))
+	return "", fmt.Errorf("unable to find %s- one of %+q expected", name, append(testNames, allTests))
 }
 
 // streamExec runs a given cmd while streaming logs
@@ -79,11 +89,7 @@ func streamExec(cmd *exec.Cmd) error {
 }
 
 // getTestCmd returns a prepared cmd for running the specified tests(s)
-func getTestCmd(intTestDir string, testStage string, testName string) (*exec.Cmd, error) {
-	intTestDir, err := getIntTestDir(intTestDir)
-	if err != nil {
-		return nil, err
-	}
+func getTestCmd(intTestDir string, testStage string, testName string, relTestPkg string) (*exec.Cmd, error) {
 
 	// pass all current env vars to test command
 	env := os.Environ()
@@ -93,9 +99,9 @@ func getTestCmd(intTestDir string, testStage string, testName string) (*exec.Cmd
 	}
 
 	// determine binary and args used for test execution
-	testArgs := append([]string{"./..."}, allTestArgs...)
+	testArgs := append([]string{relTestPkg}, allTestArgs...)
 	if testName != allTests {
-		testArgs = append([]string{"./...", "-run", testName}, allTestArgs...)
+		testArgs = append([]string{relTestPkg, "-run", testName}, allTestArgs...)
 	}
 	cmdBin := goBin
 	if utils.BinaryInPath(gotestBin) != nil {
