@@ -108,6 +108,6 @@ var convertCmd = &cobra.Command{
 
 	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return convert()
+		return convertKitchenTests()
 	},
 }
