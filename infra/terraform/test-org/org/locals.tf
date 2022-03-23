@@ -96,6 +96,6 @@ locals {
     "cloud-run",
     "network-forensics",
     "blueprints", # Not module
-    "policy-blueprints",
+    "ci-policy-blueprints",
   ]
 }
