@@ -211,7 +211,7 @@ require (
 `, path.Base(dir))
 }
 
-// writeFile writes content to  file p
+// writeFile writes content to file path
 func writeFile(p string, content string) error {
 	return ioutil.WriteFile(p, []byte(content), os.ModePerm)
 }
