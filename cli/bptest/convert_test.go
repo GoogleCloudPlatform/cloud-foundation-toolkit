@@ -132,7 +132,8 @@ func TestSimpleExample(t *testing.T) {
 	})
 
 	bpt.Test()
-}`},
+}
+`},
 		},
 	}
 	for _, tt := range tests {

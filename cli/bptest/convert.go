@@ -2,6 +2,7 @@ package bptest
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -19,25 +20,21 @@ const (
 	intTestPath          = "test/integration"
 	intTestBuildFilePath = "build/int.cloudbuild.yaml"
 	inspecInputsFile     = "inspec.yml"
-	discoverTest         = `package test
-
-import (
-	"testing"
-
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+	tmplSuffix           = ".tmpl"
+	goModFilename        = "go.mod"
+	bptTestFilename      = "blueprint_test.go"
 )
 
-func TestAll(t *testing.T) {
-	tft.AutoDiscoverAndTest(t)
-}`
+var (
+	//go:embed templates
+	templateFiles          embed.FS
+	kitchenCFTStageMapping = map[string]string{
+		"create":   stages[0],
+		"converge": stages[1],
+		"verify":   stages[2],
+		"destroy":  stages[3],
+	}
 )
-
-var kitchenCFTStageMapping = map[string]string{
-	"create":   stages[0],
-	"converge": stages[1],
-	"verify":   stages[2],
-	"destroy":  stages[3],
-}
 
 type inspecInputs struct {
 	Name       string `yaml:"name"`
@@ -52,14 +49,21 @@ func convertKitchenTests() error {
 	if err != nil {
 		return err
 	}
-	currentMod := path.Base(cwd)
 	// write go mod
-	err = writeFile(path.Join(intTestPath, "go.mod"), getGoMod(currentMod))
+	goMod, err := getTmplFileContents(goModFilename)
+	if err != nil {
+		return err
+	}
+	err = writeFile(path.Join(intTestPath, goModFilename), fmt.Sprintf(goMod, path.Base(cwd)))
 	if err != nil {
 		return fmt.Errorf("error writing go mod file: %v", err)
 	}
 	// write discover test
-	err = writeFile(path.Join(intTestPath, "discover_test.go"), discoverTest)
+	discoverTest, err := getTmplFileContents(discoverTestFilename)
+	if err != nil {
+		return err
+	}
+	err = writeFile(path.Join(intTestPath, discoverTestFilename), string(discoverTest))
 	if err != nil {
 		return fmt.Errorf("error writing discover_test.go: %v", err)
 	}
@@ -143,6 +147,16 @@ func convertTest(dir string) error {
 	return writeFile(path.Join(dir, fmt.Sprintf("%s_test.go", strcase.ToSnake(testName))), bpTest)
 }
 
+// getTmplFileContents returns contents of embedded file f
+func getTmplFileContents(f string) (string, error) {
+	tmplF := path.Join("templates", fmt.Sprintf("%s%s", f, tmplSuffix))
+	contents, err := templateFiles.ReadFile(tmplF)
+	if err != nil {
+		return "", fmt.Errorf("error reading %s : %v", tmplF, err)
+	}
+	return string(contents), nil
+}
+
 // getTestFnName returns the go test function name
 func getTestFnName(name string) string {
 	return fmt.Sprintf("Test%s", strcase.ToCamel(name))
@@ -152,31 +166,10 @@ func getTestFnName(name string) string {
 func getBPTestFromTmpl(testName string, inputs []string) (string, error) {
 	pkgName := strcase.ToSnake(testName)
 	fnName := getTestFnName(testName)
-	tmpl := `package {{.PkgName}}
-
-import (
-	"fmt"
-	"testing"
-
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
-	"github.com/stretchr/testify/assert"
-)
-
-func {{.FnName}}(t *testing.T) {
-	bpt := tft.NewTFBlueprintTest(t)
-
-	bpt.DefineVerify(func(assert *assert.Assertions) {
-		bpt.DefaultVerify(assert)
-		{{range .Inputs}}
-		{{toLowerCamel .}} := bpt.GetStringOutput("{{.}}"){{end}}
-
-		op := gcloud.Run(t,"")
-		assert.Contains(op.Get("result").String(), "foo", "contains foo")
-	})
-
-	bpt.Test()
-}`
+	tmpl, err := getTmplFileContents(bptTestFilename)
+	if err != nil {
+		return "", err
+	}
 	t, err := template.New("test").Funcs(template.FuncMap{"toLowerCamel": strcase.ToLowerCamel}).Parse(tmpl)
 	if err != nil {
 		return "", err
@@ -198,19 +191,6 @@ func {{.FnName}}(t *testing.T) {
 	return tpl.String(), nil
 }
 
-// getGoMod returns a go mod file contents
-func getGoMod(dir string) string {
-	return fmt.Sprintf(`module github.com/terraform-google-modules/%s/test/integration
-
-go 1.16
-
-require (
-	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.0.0-20220317050137-1c8897fbd42c
-	github.com/stretchr/testify v1.7.0
-)
-`, path.Base(dir))
-}
-
 // writeFile writes content to file path
 func writeFile(p string, content string) error {
 	return ioutil.WriteFile(p, []byte(content), os.ModePerm)
@@ -225,11 +205,11 @@ func transformBuild(b *cb.Build, f string) (string, error) {
 		}
 		cmd := step.Args[len(step.Args)-1]
 		// skip if not a kitchen command
-		hasKitchenCmd := strings.Index(cmd, "kitchen_do")
-		if hasKitchenCmd == -1 {
+		kitchenCmdIndex := strings.Index(cmd, "kitchen_do")
+		if kitchenCmdIndex == -1 {
 			continue
 		}
-		kitchenCmd := cmd[hasKitchenCmd:]
+		kitchenCmd := cmd[kitchenCmdIndex:]
 		newCmd, err := getCFTCmd(kitchenCmd)
 		if err != nil {
 			return "", err
