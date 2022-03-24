@@ -64,7 +64,7 @@ func WithBuildDir(buildDir string) krmtOption {
 	}
 }
 
-func (f *KRMBlueprintTest) GetBuildDir() string {
+func (b *KRMBlueprintTest) GetBuildDir() string {
 	if f.buildDir == "" {
 		f.t.Fatalf("unable to get a valid build directory")
 	}
