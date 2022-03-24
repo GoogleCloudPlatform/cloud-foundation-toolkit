@@ -64,14 +64,6 @@ func WithBuildDir(buildDir string) krmtOption {
 	}
 }
 
-func (b *KRMBlueprintTest) GetBuildDir() string {
-	if f.buildDir == "" {
-		f.t.Fatalf("unable to get a valid build directory")
-	}
-
-	return f.buildDir
-}
-
 func WithUpdatePkgs(update bool) krmtOption {
 	return func(f *KRMBlueprintTest) {
 		f.updatePkgs = update
@@ -359,4 +351,12 @@ func (b *KRMBlueprintTest) Test() {
 	defer utils.RunStage("teardown", func() { b.Teardown(a) })
 	utils.RunStage("apply", func() { b.Apply(a) })
 	utils.RunStage("verify", func() { b.Verify(a) })
+}
+
+func (b *KRMBlueprintTest) GetBuildDir() string {
+	if b.buildDir == "" {
+		b.t.Fatalf("unable to get a valid build directory")
+	}
+
+	return b.buildDir
 }
