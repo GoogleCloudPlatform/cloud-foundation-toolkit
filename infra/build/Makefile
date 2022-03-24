@@ -15,7 +15,7 @@
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 TERRAFORM_VERSION := 1.1.7
 TERRAFORM_VALIDATOR_VERSION := 0.9.1
-CLOUD_SDK_VERSION := 376.0.0
+CLOUD_SDK_VERSION := 377.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.10.1
 RUBY_VERSION := 2.6.9
@@ -28,11 +28,11 @@ PACKER_VERSION := 1.4.4
 TERRAGRUNT_VERSION := 0.25.3
 KUSTOMIZE_VERSION := 3.6.0
 KPT_VERSION := 1.0.0-beta.14
-CFT_CLI_VERSION := 0.4.2
+CFT_CLI_VERSION := 0.4.3
 ASMCLI_VERSION := 1.12
 KUBECTL_VERSION := 1.23.4
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.4.3
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.4.4
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
@@ -45,8 +45,9 @@ REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
 .PHONY: build-image-developer-tools
 build-image-developer-tools:
+	# TODO(bharathkkb): unpin gcloud version after https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1095 is resolved
 	docker build \
-		--build-arg CLOUD_SDK_VERSION=${CLOUD_SDK_VERSION} \
+		--build-arg CLOUD_SDK_VERSION=375.0.0 \
 		--build-arg GSUITE_PROVIDER_VERSION=${GSUITE_PROVIDER_VERSION} \
 		--build-arg TERRAFORM_VERSION=${TERRAFORM_VERSION} \
 		--build-arg TERRAFORM_VALIDATOR_VERSION=${TERRAFORM_VALIDATOR_VERSION} \

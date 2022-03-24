@@ -41,3 +41,16 @@ jobs:
       - name: Push
         run: |-
           cd infra/build && make release-image-developer-tools
+
+      - name: Open issue if failed
+        if: ${{ failure() }}
+        uses: actions/github-script@9ac08808f993958e9de277fe43a64532a609130e
+        with:
+          script: |-
+              github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: 'build-push-dev-tools job failed',
+                  body: 'Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}',
+                  assignee: 'bharathkkb'
+                })
