@@ -352,3 +352,12 @@ func (b *KRMBlueprintTest) Test() {
 	utils.RunStage("apply", func() { b.Apply(a) })
 	utils.RunStage("verify", func() { b.Verify(a) })
 }
+
+// GetBuildDir returns the temporary build dir created for hydrating config. Defaults to .build/test-name.
+func (b *KRMBlueprintTest) GetBuildDir() string {
+	if b.buildDir == "" {
+		b.t.Fatalf("unable to get a valid build directory")
+	}
+
+	return b.buildDir
+}
