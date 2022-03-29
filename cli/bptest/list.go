@@ -176,6 +176,10 @@ func findFiles(dir string, matchFn func(d fs.DirEntry) bool) []string {
 		if err != nil {
 			return err
 		}
+		// ignore hidden dirs
+		if d.IsDir() && strings.HasPrefix(d.Name(), ".") {
+			return filepath.SkipDir
+		}
 		if !d.IsDir() && matchFn(d) {
 			files = append(files, fpath)
 			return nil

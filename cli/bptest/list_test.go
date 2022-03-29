@@ -215,6 +215,11 @@ func Test_discoverIntTestDir(t *testing.T) {
 			want:  "foo/bar/baz",
 		},
 		{
+			name:  "with single discover_test.go and multiple hidden discover_test.go",
+			files: []string{path.Join("foo/bar/baz", discoverTestFilename), path.Join("foo/bar/baz/.terraform", discoverTestFilename), "foo.go", "test.tf", "other/test/bar_test.go"},
+			want:  "foo/bar/baz",
+		},
+		{
 			name:   "with multiple discover_test.go",
 			files:  []string{path.Join("mod1/test/integration", discoverTestFilename), path.Join("mod2/test/integration", discoverTestFilename)},
 			errMsg: "found multiple discover_test.go files:",
