@@ -1,0 +1,25 @@
+package {{.PkgName}}
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+	"github.com/stretchr/testify/assert"
+)
+
+func {{.FnName}}(t *testing.T) {
+	bpt := tft.NewTFBlueprintTest(t)
+
+	bpt.DefineVerify(func(assert *assert.Assertions) {
+		bpt.DefaultVerify(assert)
+		{{range .Inputs}}
+		{{toLowerCamel .}} := bpt.GetStringOutput("{{.}}"){{end}}
+
+		op := gcloud.Run(t,"")
+		assert.Contains(op.Get("result").String(), "foo", "contains foo")
+	})
+
+	bpt.Test()
+}
