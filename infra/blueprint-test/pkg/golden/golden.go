@@ -85,6 +85,12 @@ func WithSanitizer(s Sanitizer) goldenFileOption {
 	}
 }
 
+func WithStringSanitizer(old, new string) goldenFileOption {
+	return func(g *GoldenFile) {
+		g.sanitizers = append(g.sanitizers, StringSanitizer(old, new))
+	}
+}
+
 func NewOrUpdate(t testing.TB, data string, opts ...goldenFileOption) *GoldenFile {
 	g := &GoldenFile{
 		dir:        gfDir,
