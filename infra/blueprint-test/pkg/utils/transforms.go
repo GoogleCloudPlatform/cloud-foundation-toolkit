@@ -19,6 +19,7 @@ package utils
 import (
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 )
 
 // GetFirstMatchResult returns the first matching result with a given k/v
@@ -39,4 +40,13 @@ func GetResultStrSlice(rs []gjson.Result) []string {
 		s = append(s, r.String())
 	}
 	return s
+}
+
+// DeleteFromResult deletes given path from result and returns the modified result
+func DeleteFromResult(t testing.TB, pth string, r gjson.Result) gjson.Result {
+	n, err := sjson.Delete(r.String(), pth)
+	if err != nil {
+		t.Fatalf("unable to delete path %s in %s", pth, r.String())
+	}
+	return ParseJSONResult(t, n)
 }
