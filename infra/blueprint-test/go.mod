@@ -12,7 +12,8 @@ require (
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/otiai10/copy v1.6.0
 	github.com/stretchr/testify v1.7.0
-	github.com/tidwall/gjson v1.10.2
+	github.com/tidwall/gjson v1.12.1
+	github.com/tidwall/sjson v1.2.4 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420 // indirect
 	golang.org/x/sys v0.0.0-20210603125802-9665404d3644 // indirect
