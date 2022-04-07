@@ -31,8 +31,8 @@ jobs:
             if [ "$tool" == "CLOUD_SDK" ]; then
               LATEST_TOOL_VERSION=$(curl -s  ${!TOOL_URL} | tar --to-stdout -xzf - google-cloud-sdk/VERSION)
             elif [ "$tool" == "KPT" ]; then
-              # get latest release including pre-releases for kpt
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output .[0].tag_name | tr -d "v")
+              # get latest release including pre-releases for kpt, excluding releases of porch
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .tag_name | contains("porch/") | not )][0].tag_name' | tr -d "v")
             else
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output .tag_name | tr -d "v")
             fi
