@@ -1,11 +1,11 @@
 # Main team administering overall repo
-*           @morgante @bharathkkb @ocsig
+*           @morgante @bharathkkb @ocsig @kaariger
 
 # Deployment Manager Reviewers
 /dm/        @morgante @ocsig @sjvanrossum
 
 # CLI owners
-/cli/       @morgante @bharathkkb
+/cli/       @morgante @bharathkkb @kaariger
 
 # Config Connector team
 /config-connector/ @morgante @ocsig @AlexBulankou @maqiuyujoyce
