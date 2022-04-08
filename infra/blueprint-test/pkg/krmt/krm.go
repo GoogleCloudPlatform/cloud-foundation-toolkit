@@ -30,6 +30,7 @@ type KRMBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
 	name                          string                   // descriptive name for the test
 	exampleDir                    string                   // directory containing KRM blueprint example
+	resourcesDir                  string                   // directory containting additional resources to be applied
 	buildDir                      string                   // directory to hydrated blueprint configs pre apply
 	kpt                           *kpt.CmdCfg              // kpt cmd config
 	timeout                       string                   // timeout for KRM resource status
@@ -55,6 +56,12 @@ func WithName(name string) krmtOption {
 func WithDir(dir string) krmtOption {
 	return func(f *KRMBlueprintTest) {
 		f.exampleDir = dir
+	}
+}
+
+func WithResourcesDir(rscsDir string) krmtOption {
+	return func(f *KRMBlueprintTest) {
+		f.resourcesDir = rscsDir
 	}
 }
 
@@ -133,6 +140,14 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 		}
 		krmt.exampleDir = exampleDir
 	}
+	// if explicit resourcesDir is provided, validate it.
+	if krmt.resourcesDir != "" {
+		_, err := os.Stat(krmt.resourcesDir)
+		if os.IsNotExist(err) {
+			t.Fatalf("Dir path for additional resources %s does not exist", krmt.resourcesDir)
+		}
+	}
+
 	// discover test config
 	var err error
 	krmt.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(krmt.exampleDir, discovery.DefaultTestConfigFilename))
@@ -200,6 +215,13 @@ func (b *KRMBlueprintTest) setupBuildDir() {
 	err = copy.Copy(b.exampleDir, b.buildDir)
 	if err != nil {
 		b.t.Fatalf("unable to copy %s to %s :%v", b.exampleDir, b.buildDir, err)
+	}
+	// copy over additional resources into build dir, if present
+	if b.resourcesDir != "" {
+		err = copy.Copy(b.resourcesDir, b.buildDir)
+		if err != nil {
+			b.t.Fatalf("unable to copy %s to %s :%v", b.resourcesDir, b.buildDir, err)
+		}
 	}
 	// subsequent kpt pkg update requires a clean git repo without uncommitted changes
 	// init a new git repo in build dir and commit changes
