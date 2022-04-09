@@ -30,7 +30,7 @@ type KRMBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
 	name                          string                   // descriptive name for the test
 	exampleDir                    string                   // directory containing KRM blueprint example
-	resources                     []string                 // paths to directories or files containting additional resources to be applied
+	additionalResources           []string                 // paths to directories or files containing additional resources to be applied
 	buildDir                      string                   // directory to hydrated blueprint configs pre apply
 	kpt                           *kpt.CmdCfg              // kpt cmd config
 	timeout                       string                   // timeout for KRM resource status
@@ -59,10 +59,10 @@ func WithDir(dir string) krmtOption {
 	}
 }
 
-func WithAdditionalResources(rscsDir ...string) krmtOption {
+func WithAdditionalResources(rscs ...string) krmtOption {
 	return func(f *KRMBlueprintTest) {
-		for _, dir := range rscsDir {
-			f.resources = append(f.resources, dir)
+		for _, dir := range rscs {
+			f.additionalResources = append(f.additionalResources, dir)
 		}
 	}
 }
@@ -143,8 +143,8 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 		krmt.exampleDir = exampleDir
 	}
 	// if explicit resourcesDir is provided, validate it.
-	if len(krmt.resources) != 0 {
-		for _, path := range krmt.resources {
+	if len(krmt.additionalResources) != 0 {
+		for _, path := range krmt.additionalResources {
 			_, err := os.Stat(path)
 			if os.IsNotExist(err) {
 				t.Fatalf("Path for additional resources %s does not exist", path)
@@ -221,8 +221,8 @@ func (b *KRMBlueprintTest) setupBuildDir() {
 		b.t.Fatalf("unable to copy %s to %s :%v", b.exampleDir, b.buildDir, err)
 	}
 	// copy over additional resources into build dir, if present
-	if len(b.resources) != 0 {
-		for _, path := range b.resources {
+	if len(b.additionalResources) != 0 {
+		for _, path := range b.additionalResources {
 			err = copy.Copy(path, b.buildDir)
 			if err != nil {
 				b.t.Fatalf("unable to copy %s to %s :%v", path, b.buildDir, err)
