@@ -30,6 +30,7 @@ type KRMBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
 	name                          string                   // descriptive name for the test
 	exampleDir                    string                   // directory containing KRM blueprint example
+	additionalResources           []string                 // paths to directories or files containing additional resources to be applied
 	buildDir                      string                   // directory to hydrated blueprint configs pre apply
 	kpt                           *kpt.CmdCfg              // kpt cmd config
 	timeout                       string                   // timeout for KRM resource status
@@ -55,6 +56,14 @@ func WithName(name string) krmtOption {
 func WithDir(dir string) krmtOption {
 	return func(f *KRMBlueprintTest) {
 		f.exampleDir = dir
+	}
+}
+
+func WithAdditionalResources(rscs ...string) krmtOption {
+	return func(f *KRMBlueprintTest) {
+		for _, dir := range rscs {
+			f.additionalResources = append(f.additionalResources, dir)
+		}
 	}
 }
 
@@ -133,6 +142,16 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 		}
 		krmt.exampleDir = exampleDir
 	}
+	// if explicit resourcesDir is provided, validate it.
+	if len(krmt.additionalResources) != 0 {
+		for _, path := range krmt.additionalResources {
+			_, err := os.Stat(path)
+			if os.IsNotExist(err) {
+				t.Fatalf("Path for additional resources %s does not exist", path)
+			}
+		}
+	}
+
 	// discover test config
 	var err error
 	krmt.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(krmt.exampleDir, discovery.DefaultTestConfigFilename))
@@ -200,6 +219,15 @@ func (b *KRMBlueprintTest) setupBuildDir() {
 	err = copy.Copy(b.exampleDir, b.buildDir)
 	if err != nil {
 		b.t.Fatalf("unable to copy %s to %s :%v", b.exampleDir, b.buildDir, err)
+	}
+	// copy over additional resources into build dir, if present
+	if len(b.additionalResources) != 0 {
+		for _, path := range b.additionalResources {
+			err = copy.Copy(path, b.buildDir)
+			if err != nil {
+				b.t.Fatalf("unable to copy %s to %s :%v", path, b.buildDir, err)
+			}
+		}
 	}
 	// subsequent kpt pkg update requires a clean git repo without uncommitted changes
 	// init a new git repo in build dir and commit changes
