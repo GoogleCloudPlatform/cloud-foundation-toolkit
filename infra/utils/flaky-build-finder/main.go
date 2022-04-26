@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/GoogleCloudPlatformcloud-foundation-toolkit/infra/utils/fbf/cmd"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/utils/fbf/cmd"
 )
 
 func main() {

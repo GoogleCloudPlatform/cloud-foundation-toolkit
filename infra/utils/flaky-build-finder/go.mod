@@ -1,4 +1,4 @@
-module github.com/GoogleCloudPlatformcloud-foundation-toolkit/infra/utils/fbf
+module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/utils/fbf
 
 go 1.16
 
