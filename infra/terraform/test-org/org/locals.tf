@@ -97,5 +97,6 @@ locals {
     "network-forensics",
     "blueprints", # Not module
     "policy-blueprints",
+    "secret-manager",
   ]
 }
