@@ -53,10 +53,12 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   ignored_files = ["**/*.md", ".gitignore"]
 }
 
-resource "google_cloudbuild_trigger" "tf_validator" {
+resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests_tf_12" {
+  name = "tf-validator-pull-integration-tests-tf-12"
+  description = "Pull request integration tests for terraform-validator with terraform 12. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
   provider    = google-beta
   project     = local.project_id
-  description = "Pull request build for tf-validator with terrafom 12"
   github {
     owner = "GoogleCloudPlatform"
     name  = "terraform-validator"
@@ -67,9 +69,164 @@ resource "google_cloudbuild_trigger" "tf_validator" {
   substitutions = {
     _TERRAFORM_VERSION = "0.12.31"
     _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
   }
 
   filename = ".ci/cloudbuild-tests-integration.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests_tf_12" {
+  name = "tf-validator-main-integration-tests-tf-12"
+  description = "Main branch integration tests for terraform-validator with terraform 12. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider    = google-beta
+  project     = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-validator"
+    push {
+      branch = "^main$"
+    }
+  }
+  substitutions = {
+    _TERRAFORM_VERSION = "0.12.31"
+    _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-integration.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests_tf_13" {
+  name = "tf-validator-pull-integration-tests-tf-13"
+  description = "Pull request integration tests for terraform-validator with terraform 13. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider    = google-beta
+  project     = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-validator"
+    pull_request {
+      branch = ".*"
+    }
+  }
+  substitutions = {
+    _TERRAFORM_VERSION = "0.13.7"
+    _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-integration.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests_tf_13" {
+  name = "tf-validator-main-integration-tests-tf-13"
+  description = "Main branch integration tests for terraform-validator with terraform 13. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider    = google-beta
+  project     = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-validator"
+    push {
+      branch = "^main$"
+    }
+  }
+  substitutions = {
+    _TERRAFORM_VERSION = "0.13.7"
+    _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-integration.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tf_validator_pull_unit_tests" {
+  name = "tf-validator-pull-unit-tests"
+  description = "Pull request unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider    = google-beta
+  project     = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-validator"
+    pull_request {
+      branch = ".*"
+    }
+  }
+  substitutions = {
+    _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-unit.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tf_validator_main_unit_tests" {
+  name = "tf-validator-main-unit-tests"
+  description = "Main branch unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider    = google-beta
+  project     = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-validator"
+    push {
+      branch = "^main$"
+    }
+  }
+  substitutions = {
+    _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-unit.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tf_validator_pull_license_check" {
+  name = "tf-validator-pull-license-check"
+  description = "Pull request license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider    = google-beta
+  project     = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-validator"
+    pull_request {
+      branch = ".*"
+    }
+  }
+
+  filename = ".ci/cloudbuild-tests-go-licenses.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tf_validator_main_license_check" {
+  name = "tf-validator-main-license-check"
+  description = "Main branch license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider    = google-beta
+  project     = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-validator"
+    push {
+      branch = "^main$"
+    }
+  }
+
+  filename = ".ci/cloudbuild-tests-go-licenses.yaml"
 }
 
 resource "google_cloudbuild_trigger" "forseti_lint" {
