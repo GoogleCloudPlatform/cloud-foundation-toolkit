@@ -40,7 +40,7 @@ locals {
   billing_account          = data.terraform_remote_state.org.outputs.billing_account
   tf_validator_project_id  = data.terraform_remote_state.tf-validator.outputs.project_id
   tf_validator_folder_id   = data.terraform_remote_state.org.outputs.folders["ci-terraform-validator"]
-  tf_validator_ancestry    = "organizations/${local.org_id}/folders/${data.terraform_remote_state.org.outputs.folders["ci-projects"]}/folders/${local.tf_validator_folder_id}/projects/${local.tf_validator_project_id}"
+  tf_validator_ancestry    = "organizations/${local.org_id}/folders/${data.terraform_remote_state.org.outputs.folders["ci-projects"]}/folders/${local.tf_validator_folder_id}"
   project_id               = "cloud-foundation-cicd"
   forseti_ci_folder_id     = "542927601143"
   billing_iam_test_account = "0151A3-65855E-5913CF"
