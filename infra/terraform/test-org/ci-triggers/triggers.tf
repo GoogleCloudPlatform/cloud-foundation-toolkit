@@ -53,33 +53,13 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   ignored_files = ["**/*.md", ".gitignore"]
 }
 
-resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests_tf_12" {
-  name = "tf-validator-pull-integration-tests-tf-12"
-  description = "Pull request integration tests for terraform-validator with terraform 12. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
-
-  provider    = google-beta
-  project     = local.project_id
-  github {
-    owner = "GoogleCloudPlatform"
-    name  = "terraform-validator"
-    pull_request {
-      branch = ".*"
-    }
+resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests" {
+  for_each = {
+    tf12 = "0.12.31"
+    tf13 = "0.13.7"
   }
-  substitutions = {
-    _TERRAFORM_VERSION = "0.12.31"
-    _TEST_PROJECT      = local.tf_validator_project_id
-    _TEST_FOLDER       = local.tf_validator_folder_id
-    _TEST_ANCESTRY     = local.tf_validator_ancestry
-    _TEST_ORG          = local.org_id
-  }
-
-  filename = ".ci/cloudbuild-tests-integration.yaml"
-}
-
-resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests_tf_12" {
-  name = "tf-validator-main-integration-tests-tf-12"
-  description = "Main branch integration tests for terraform-validator with terraform 12. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  name = "tf-validator-main-integration-tests-${each.key}"
+  description = "Main branch integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
 
   provider    = google-beta
   project     = local.project_id
@@ -91,7 +71,7 @@ resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests_tf_12"
     }
   }
   substitutions = {
-    _TERRAFORM_VERSION = "0.12.31"
+    _TERRAFORM_VERSION = each.value
     _TEST_PROJECT      = local.tf_validator_project_id
     _TEST_FOLDER       = local.tf_validator_folder_id
     _TEST_ANCESTRY     = local.tf_validator_ancestry
@@ -101,9 +81,13 @@ resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests_tf_12"
   filename = ".ci/cloudbuild-tests-integration.yaml"
 }
 
-resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests_tf_13" {
-  name = "tf-validator-pull-integration-tests-tf-13"
-  description = "Pull request integration tests for terraform-validator with terraform 13. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests" {
+  for_each = {
+    tf12 = "0.12.31"
+    tf13 = "0.13.7"
+  }
+  name = "tf-validator-pull-integration-tests-${each.key}"
+  description = "Pull request integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
 
   provider    = google-beta
   project     = local.project_id
@@ -115,31 +99,7 @@ resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests_tf_13"
     }
   }
   substitutions = {
-    _TERRAFORM_VERSION = "0.13.7"
-    _TEST_PROJECT      = local.tf_validator_project_id
-    _TEST_FOLDER       = local.tf_validator_folder_id
-    _TEST_ANCESTRY     = local.tf_validator_ancestry
-    _TEST_ORG          = local.org_id
-  }
-
-  filename = ".ci/cloudbuild-tests-integration.yaml"
-}
-
-resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests_tf_13" {
-  name = "tf-validator-main-integration-tests-tf-13"
-  description = "Main branch integration tests for terraform-validator with terraform 13. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
-
-  provider    = google-beta
-  project     = local.project_id
-  github {
-    owner = "GoogleCloudPlatform"
-    name  = "terraform-validator"
-    push {
-      branch = "^main$"
-    }
-  }
-  substitutions = {
-    _TERRAFORM_VERSION = "0.13.7"
+    _TERRAFORM_VERSION = each.value
     _TEST_PROJECT      = local.tf_validator_project_id
     _TEST_FOLDER       = local.tf_validator_folder_id
     _TEST_ANCESTRY     = local.tf_validator_ancestry
