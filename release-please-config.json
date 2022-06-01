@@ -1,0 +1,14 @@
+{
+  "packages": {
+    "infra/blueprint-test": {
+      "releaseType": "go",
+      "packageName": "blueprint-test",
+      "draft": false,
+      "prerelease": false,
+      "bumpMinorPreMajor": false,
+      "bumpPatchForMinorPreMajor": false,
+      "changelogPath": "CHANGELOG.md",
+      "versioning": "default"
+    }
+  }
+}
