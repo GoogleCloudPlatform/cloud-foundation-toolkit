@@ -16,14 +16,14 @@
 
 module "app-engine" {
   source      = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version     = "~> 9.0"
+  version     = "~> 13.0"
   location_id = local.app_location
   project_id  = module.project.project_id
 }
 
 module "projects_cleanup" {
-  source = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 1.5.1"
+  source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
+  version = "~> 2.4"
 
   job_schedule             = "17 * * * *"
   max_project_age_in_hours = "24"

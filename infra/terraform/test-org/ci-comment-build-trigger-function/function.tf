@@ -20,7 +20,7 @@ locals {
 
 module "gcf_service_account" {
   source     = "terraform-google-modules/service-accounts/google"
-  version    = "~> 3.0"
+  version    = "~> 4.1"
   project_id = local.project_id
   names      = ["pr-comment-cf-sa"]
   project_roles = [
@@ -34,7 +34,7 @@ resource "random_id" "suffix" {
 
 module "pr_comment_build_function" {
   source                = "terraform-google-modules/event-function/google"
-  version               = "~> 1.0"
+  version               = "~> 2.3"
   name                  = "pr-comment-downstream-builder-${random_id.suffix.hex}"
   project_id            = local.project_id
   region                = "us-central1"
