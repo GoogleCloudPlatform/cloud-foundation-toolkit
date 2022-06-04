@@ -1,5 +1,7 @@
 {
   "separate-pull-requests": true,
+  "tag-separator": "/",
+  "include-component-in-tag": true,
   "packages": {
     "infra/blueprint-test": {
       "release-type": "go",
