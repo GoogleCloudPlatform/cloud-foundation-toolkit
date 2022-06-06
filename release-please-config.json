@@ -6,6 +6,7 @@
     "infra/blueprint-test": {
       "release-type": "go",
       "package-name": "blueprint-test",
+      "component": "infra/blueprint-test",
       "bump-minor-pre-major": true,
       "release-as": "0.0.1"
     }
