@@ -50,7 +50,7 @@ resource "google_folder" "ci_gsuite_sa_folder" {
 
 module "ci_gsuite_sa_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 4.0"
+  version = "~> 13.0"
 
   name            = "ci-gsuite-sa-project"
   project_id      = "ci-gsuite-sa-project"
@@ -114,6 +114,7 @@ resource "google_storage_bucket" "ci_gsuite_sa" {
   name          = local.ci_gsuite_sa_bucket
   storage_class = "MULTI_REGIONAL"
   project       = module.ci_gsuite_sa_project.project_id
+  location      = "US"
 
   versioning {
     enabled = true

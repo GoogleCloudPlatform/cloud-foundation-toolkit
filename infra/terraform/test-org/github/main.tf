@@ -84,44 +84,43 @@ locals {
       description : "Blocked by some other work"
     },
     {
-      name: "P1",
-      color: "b01111",
-      description: "highest priority issues"
+      name : "P1",
+      color : "b01111",
+      description : "highest priority issues"
     },
     {
-      name: "P2",
-      color: "b4451f",
-      description: "high priority issues"
+      name : "P2",
+      color : "b4451f",
+      description : "high priority issues"
     },
     {
-      name: "P3",
-      color: "e7d87d",
-      description: "medium priority issues"
+      name : "P3",
+      color : "e7d87d",
+      description : "medium priority issues"
     },
     {
-      name: "P4",
-      color: "62a1db",
-      description: "low priority issues"
+      name : "P4",
+      color : "62a1db",
+      description : "low priority issues"
     },
     {
-      name: "release-please:force-run",
-      color: "e7d87d",
-      description: "Force release-please to check for changes."
+      name : "release-please:force-run",
+      color : "e7d87d",
+      description : "Force release-please to check for changes."
     },
     {
-      name: "waiting-response",
-      color: "5319e7",
-      description: "Waiting for issue author to respond."
+      name : "waiting-response",
+      color : "5319e7",
+      description : "Waiting for issue author to respond."
     },
     {
-      name: "v0.13",
-      color: "edb761",
-      description: "Terraform v0.13 issue."
+      name : "v0.13",
+      color : "edb761",
+      description : "Terraform v0.13 issue."
     },
   ]
 }
 
 provider "github" {
-  version      = "~> 2.2"
-  organization = local.gh_org
+  owner = local.gh_org
 }

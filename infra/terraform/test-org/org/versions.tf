@@ -15,26 +15,22 @@
  */
 
 terraform {
-  required_version = ">= 0.12"
+  required_version = "~> 1.2.0"
+  required_providers {
+    external = {
+      version = "~> 1.2, < 3.0"
+    }
+    google = {
+      version = ">= 3.19, < 5.0"
+    }
+    google-beta = {
+      version = ">= 3.19, < 5.0"
+    }
+    null = {
+      version = "~> 2.1, < 4.0"
+    }
+    random = {
+      version = ">= 2.3.1, < 4.0"
+    }
+  }
 }
-
-provider "external" {
-  version = "~> 1.2"
-}
-
-provider "google" {
-  version = "~> 3.19"
-}
-
-provider "google-beta" {
-  version = "~> 3.19"
-}
-
-provider "null" {
-  version = "~> 2.1"
-}
-
-provider "random" {
-  version = "~> 2.2"
-}
-
