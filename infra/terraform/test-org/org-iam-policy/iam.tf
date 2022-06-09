@@ -21,7 +21,6 @@ locals {
   gcp_admins_group_test = "gcp-admins@test.infra.cft.tips"
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
   policy = {
-    "roles/accesscontextmanager.policyAdmin" : ["serviceAccount:project-factory-manager@gcp-foundation-shared-devops.iam.gserviceaccount.com"],
     "roles/billing.admin" : ["group:${local.gcp_admins_group_test}"],
     "roles/compute.xpnAdmin" : ["group:${local.cft_ci_group}"],
     "roles/containeranalysis.admin" : ["group:${local.cft_ci_group}"],
