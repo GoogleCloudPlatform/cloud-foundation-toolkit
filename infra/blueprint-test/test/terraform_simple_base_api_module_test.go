@@ -48,5 +48,6 @@ func TestSimpleTFModule(t *testing.T) {
 		op := gcloud.Run(t, fmt.Sprintf("compute networks subnets describe subnet-01 --project %s --region us-west1", nt.GetStringOutput("project_id")))
 		assert.Equal("10.10.10.0/24", op.Get("ipCidrRange").String(), "should have the right CIDR")
 		assert.Equal("false", op.Get("logConfig.enable").String(), "logConfig should not be enabled")
+		assert.FileExists("../examples/simple_tf_module/local_backend.tfstate")
 	})
 }
