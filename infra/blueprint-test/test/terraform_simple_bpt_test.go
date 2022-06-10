@@ -28,6 +28,10 @@ import (
 func TestCFTSimpleModule(t *testing.T) {
 	networkBlueprint := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("../examples/simple_tf_module"),
+		tft.WithMigrateState(),
+		tft.WithBackendConfig(map[string]interface{}{
+			"path": "../examples/simple_tf_module/local_backend.tfstate",
+		}),
 		tft.WithSetupPath("setup/simple_tf_module"),
 	)
 	networkBlueprint.DefineVerify(
