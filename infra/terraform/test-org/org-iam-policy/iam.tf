@@ -33,7 +33,11 @@ locals {
     "roles/resourcemanager.projectDeleter" : ["serviceAccount:${local.project_cleaner}"],
     "roles/owner" : ["group:${local.gcp_admins_group_test}", "serviceAccount:${local.project_cleaner}"],
     "roles/browser" : ["group:${local.cft_dev_group}"],
-    "roles/viewer" : ["group:${local.cft_dev_group}"]
+    "roles/viewer" : ["group:${local.cft_dev_group}", "serviceAccount:${local.project_cleaner}"],
+    "roles/compute.orgSecurityPolicyAdmin" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/compute.orgSecurityResourceAdmin" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/resourcemanager.folderEditor" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/serviceusage.serviceUsageAdmin" : ["serviceAccount:${local.project_cleaner}"],
   }
 }
 
