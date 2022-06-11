@@ -19,6 +19,7 @@ package test
 import (
 	"fmt"
 	"testing"
+	"os"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
@@ -27,8 +28,13 @@ import (
 )
 
 func TestSimpleTFModule(t *testing.T) {
+	path, _ := os.Getwd()
+	statePath:= fmt.Sprintf("%s/../examples/simple_tf_module/local_backend.tfstate", path)
 	nt := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("../examples/simple_tf_module"),
+		tft.WithBackendConfig(map[string]interface{}{
+			"path": statePath,
+		}),
 		tft.WithSetupPath("setup/simple_tf_module"),
 		tft.WithEnvVars(map[string]string{"network_name": fmt.Sprintf("foo-%s", utils.RandStr(5))}),
 	)
@@ -44,5 +50,6 @@ func TestSimpleTFModule(t *testing.T) {
 		op := gcloud.Run(t, fmt.Sprintf("compute networks subnets describe subnet-01 --project %s --region us-west1", nt.GetStringOutput("project_id")))
 		assert.Equal("10.10.10.0/24", op.Get("ipCidrRange").String(), "should have the right CIDR")
 		assert.Equal("false", op.Get("logConfig.enable").String(), "logConfig should not be enabled")
+		assert.FileExists(statePath)
 	})
 }

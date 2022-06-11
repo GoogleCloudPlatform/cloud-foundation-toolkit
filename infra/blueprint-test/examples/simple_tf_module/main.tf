@@ -22,6 +22,10 @@ provider "null" {
   version = "~> 2.1"
 }
 
+terraform {
+  backend "local" {}
+}
+
 module "test-vpc-module" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 3.2.0"
