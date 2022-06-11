@@ -31,7 +31,6 @@ func TestCFTSimpleModule(t *testing.T) {
 	statePath:= fmt.Sprintf("%s/../examples/simple_tf_module/local_backend.tfstate", path)
 	networkBlueprint := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("../examples/simple_tf_module"),
-		tft.WithMigrateState(),
 		tft.WithBackendConfig(map[string]interface{}{
 			"path": statePath,
 		}),

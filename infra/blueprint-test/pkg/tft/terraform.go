@@ -95,11 +95,6 @@ func WithEnvVars(envVars map[string]string) tftOption {
 func WithBackendConfig(backendConfig map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.backendConfig = backendConfig
-	}
-}
-
-func WithMigrateState() tftOption {
-	return func(f *TFBlueprintTest) {
 		f.migrateState = true
 	}
 }
