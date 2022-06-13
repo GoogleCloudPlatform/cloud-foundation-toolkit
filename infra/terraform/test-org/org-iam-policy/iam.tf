@@ -21,7 +21,6 @@ locals {
   gcp_admins_group_test = "gcp-admins@test.infra.cft.tips"
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
   policy = {
-    "roles/accesscontextmanager.policyAdmin" : ["serviceAccount:project-factory-manager@gcp-foundation-shared-devops.iam.gserviceaccount.com"],
     "roles/billing.admin" : ["group:${local.gcp_admins_group_test}"],
     "roles/compute.xpnAdmin" : ["group:${local.cft_ci_group}"],
     "roles/containeranalysis.admin" : ["group:${local.cft_ci_group}"],
@@ -34,7 +33,11 @@ locals {
     "roles/resourcemanager.projectDeleter" : ["serviceAccount:${local.project_cleaner}"],
     "roles/owner" : ["group:${local.gcp_admins_group_test}", "serviceAccount:${local.project_cleaner}"],
     "roles/browser" : ["group:${local.cft_dev_group}"],
-    "roles/viewer" : ["group:${local.cft_dev_group}"]
+    "roles/viewer" : ["group:${local.cft_dev_group}", "serviceAccount:${local.project_cleaner}"],
+    "roles/compute.orgSecurityPolicyAdmin" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/compute.orgSecurityResourceAdmin" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/resourcemanager.folderEditor" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/serviceusage.serviceUsageAdmin" : ["serviceAccount:${local.project_cleaner}"],
   }
 }
 

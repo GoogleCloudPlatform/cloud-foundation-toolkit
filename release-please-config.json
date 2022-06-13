@@ -7,8 +7,7 @@
       "release-type": "go",
       "package-name": "blueprint-test",
       "component": "infra/blueprint-test",
-      "bump-minor-pre-major": true,
-      "release-as": "0.0.1"
+      "bump-minor-pre-major": true
     }
   },
   "bootstrap-sha": "f78304cebc31f2ca29d4303753a8c32ba238ab53"
