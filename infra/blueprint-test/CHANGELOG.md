@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.0.1...infra/blueprint-test/v0.1.0) (2022-06-13)
+
+
+### Features
+
+* add support for backend configuration tf blueprint test ([#1165](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1165)) ([442b49e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/442b49ebe347d2415840967200d280bdf590cbe1))
+
 ## [0.0.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test-v0.0.1...infra/blueprint-test/v0.0.1) (2022-06-07)
 
 
