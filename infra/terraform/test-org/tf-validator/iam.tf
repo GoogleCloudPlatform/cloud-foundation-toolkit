@@ -38,11 +38,11 @@ resource "google_project_iam_member" "kokoro_test_1" {
 resource "google_folder_iam_member" "magic_modules_cloudbuild_sa_folder_viewer" {
   folder = local.projects_folder_id
   role   = "roles/resourcemanager.folderViewer"
-  member  = local.magic_modules_cloudbuild_sa
+  member = local.magic_modules_cloudbuild_sa
 }
 
 resource "google_folder_iam_member" "magic_modules_cloudbuild_sa_security_reviewer" {
-  project = module.terraform_validator_test_project.project_id
-  role    = "roles/iam.securityReviewer"
-  member  = local.magic_modules_cloudbuild_sa
+  folder = local.projects_folder_id
+  role   = "roles/iam.securityReviewer"
+  member = local.magic_modules_cloudbuild_sa
 }
