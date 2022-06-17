@@ -131,7 +131,7 @@ GEM
       train-habitat (~> 0.1)
       tty-prompt (~> 0.17)
       tty-table (~> 0.10)
-    jmespath (1.4.0)
+    jmespath (1.6.1)
     json (2.1.0)
     jsonpath (1.1.0)
       multi_json

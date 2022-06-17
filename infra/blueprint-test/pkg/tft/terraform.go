@@ -43,6 +43,8 @@ type TFBlueprintTest struct {
 	saKey                         string                   // optional setup sa key
 	tfDir                         string                   // directory containing Terraform configs
 	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
+	backendConfig                 map[string]interface{}   // backend configuration for terraform init
+	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
@@ -87,6 +89,13 @@ func WithEnvVars(envVars map[string]string) tftOption {
 		tfEnvVars := make(map[string]string)
 		loadTFEnvVar(tfEnvVars, envVars)
 		f.tfEnvVars = tfEnvVars
+	}
+}
+
+func WithBackendConfig(backendConfig map[string]interface{}) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.backendConfig = backendConfig
+		f.migrateState = true
 	}
 }
 
@@ -186,10 +195,12 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 // GetTFOptions generates terraform.Options used by Terratest.
 func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 	return terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
-		TerraformDir: b.tfDir,
-		EnvVars:      b.tfEnvVars,
-		Vars:         b.vars,
-		Logger:       b.logger,
+		TerraformDir:  b.tfDir,
+		EnvVars:       b.tfEnvVars,
+		Vars:          b.vars,
+		Logger:        b.logger,
+		BackendConfig: b.backendConfig,
+		MigrateState:  b.migrateState,
 	})
 }
 
