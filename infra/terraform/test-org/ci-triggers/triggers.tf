@@ -59,7 +59,7 @@ resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests" {
     tf13 = "0.13.7"
   }
   name        = "tf-validator-main-integration-tests-${each.key}"
-  description = "Main branch integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -67,7 +67,7 @@ resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests" {
     owner = "GoogleCloudPlatform"
     name  = "terraform-validator"
     push {
-      branch = "^main$"
+      branch = "^(main|release-.+)$"
     }
   }
   substitutions = {
@@ -134,7 +134,7 @@ resource "google_cloudbuild_trigger" "tf_validator_pull_unit_tests" {
 
 resource "google_cloudbuild_trigger" "tf_validator_main_unit_tests" {
   name        = "tf-validator-main-unit-tests"
-  description = "Main branch unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -142,7 +142,7 @@ resource "google_cloudbuild_trigger" "tf_validator_main_unit_tests" {
     owner = "GoogleCloudPlatform"
     name  = "terraform-validator"
     push {
-      branch = "^main$"
+      branch = "^(main|release-.+)$"
     }
   }
   substitutions = {
@@ -174,7 +174,7 @@ resource "google_cloudbuild_trigger" "tf_validator_pull_license_check" {
 
 resource "google_cloudbuild_trigger" "tf_validator_main_license_check" {
   name        = "tf-validator-main-license-check"
-  description = "Main branch license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -182,7 +182,7 @@ resource "google_cloudbuild_trigger" "tf_validator_main_license_check" {
     owner = "GoogleCloudPlatform"
     name  = "terraform-validator"
     push {
-      branch = "^main$"
+      branch = "^(main|release-.+)$"
     }
   }
 
