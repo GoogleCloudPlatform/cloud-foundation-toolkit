@@ -18,7 +18,7 @@ terraform {
   required_version = "~> 1.2.0"
   required_providers {
     external = {
-      version = "~> 1.2, < 3.0"
+      version = ">= 1.2, < 3.0"
     }
     google = {
       version = ">= 3.19, < 5.0"
@@ -27,7 +27,7 @@ terraform {
       version = ">= 3.19, < 5.0"
     }
     null = {
-      version = "~> 2.1, < 4.0"
+      version = ">= 2.1, < 4.0"
     }
     random = {
       version = ">= 2.3.1, < 4.0"

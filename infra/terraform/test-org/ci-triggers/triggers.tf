@@ -17,6 +17,7 @@
 resource "google_cloudbuild_trigger" "lint_trigger" {
   provider    = google-beta
   project     = local.project_id
+  name        = "${each.key}-lint-trigger"
   description = "Lint tests on pull request for ${each.key}"
   for_each    = merge(local.repo_folder, local.example_foundation)
   github {
@@ -33,6 +34,7 @@ resource "google_cloudbuild_trigger" "lint_trigger" {
 resource "google_cloudbuild_trigger" "int_trigger" {
   provider    = google-beta
   project     = local.project_id
+  name        = "${each.key}-int-trigger"
   description = "Integration tests on pull request for ${each.key}"
   for_each    = local.repo_folder
   github {
@@ -262,6 +264,7 @@ resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
 resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
   provider    = google-beta
   project     = local.project_id
+  name        = "${each.key}-int-trigger-${each.value}"
   description = "Integration tests on pull request for example_foundations in ${each.value} mode"
   for_each    = toset(local.example_foundation_int_test_modes)
   github {
