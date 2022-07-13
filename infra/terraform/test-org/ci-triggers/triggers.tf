@@ -226,40 +226,6 @@ resource "google_cloudbuild_trigger" "forseti_int" {
   filename = "build/int.cloudbuild.yaml"
 }
 
-resource "google_cloudbuild_trigger" "tf_py_test_helper_lint" {
-  provider    = google-beta
-  project     = local.project_id
-  description = "Lint tests on pull request for terraform-python-testing-helper"
-  github {
-    owner = "GoogleCloudPlatform"
-    name  = "terraform-python-testing-helper"
-    pull_request {
-      branch = ".*"
-    }
-  }
-
-  filename = ".ci/cloudbuild.lint.yaml"
-}
-
-resource "google_cloudbuild_trigger" "tf_py_test_helper_test" {
-  provider    = google-beta
-  project     = local.project_id
-  description = "Test on pull request for terraform-python-testing-helper"
-  github {
-    owner = "GoogleCloudPlatform"
-    name  = "terraform-python-testing-helper"
-    pull_request {
-      branch = ".*"
-    }
-  }
-
-  filename = ".ci/cloudbuild.test.yaml"
-  included_files = [
-    "**/*.tf",
-    "**/*.py"
-  ]
-}
-
 # example-foundation-int tests
 resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
   provider    = google-beta
