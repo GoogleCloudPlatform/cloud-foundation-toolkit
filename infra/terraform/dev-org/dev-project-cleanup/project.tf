@@ -21,16 +21,14 @@ resource "google_folder" "cft-dev-management" {
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 9.0"
+  version = "~> 13.0"
 
-  name                 = "cft-project-manager"
-  random_project_id    = true
-  org_id               = local.org_id
-  folder_id            = google_folder.cft-dev-management.id
-  billing_account      = local.billing_account
-  labels               = local.exclude_labels
-  skip_gcloud_download = true
-
+  name              = "cft-project-manager"
+  random_project_id = true
+  org_id            = local.org_id
+  folder_id         = google_folder.cft-dev-management.id
+  billing_account   = local.billing_account
+  labels            = local.exclude_labels
 
   activate_apis = [
     "cloudresourcemanager.googleapis.com",

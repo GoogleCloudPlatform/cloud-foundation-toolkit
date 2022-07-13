@@ -16,8 +16,8 @@
  */
 
 module "admin_bindings" {
-  source  = "terraform-google-modules/iam/google"
-  version = "~> 2.0"
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 7.4"
 
   folders = [local.folders["ci-projects"]]
 
@@ -37,8 +37,8 @@ module "admin_bindings" {
 }
 
 module "ci_bindings" {
-  source  = "terraform-google-modules/iam/google"
-  version = "~> 2.0"
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 7.4"
 
   folders = [local.folders["ci-projects"]]
 
@@ -58,8 +58,8 @@ module "ci_bindings" {
 }
 
 module "ci_folders_folder_bindings" {
-  source  = "terraform-google-modules/iam/google"
-  version = "~> 2.0"
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 7.4"
 
   folders = [local.ci_folders["ci-folders"]]
 

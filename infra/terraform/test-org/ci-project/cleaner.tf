@@ -49,8 +49,9 @@ resource "google_project_iam_custom_role" "create_build_role" {
 }
 
 resource "google_project_iam_member" "project" {
-  role   = google_project_iam_custom_role.create_build_role.id
-  member = "serviceAccount:${google_service_account.service_account.email}"
+  role    = google_project_iam_custom_role.create_build_role.id
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+  project = local.project_id
 }
 
 resource "google_cloud_scheduler_job" "job" {

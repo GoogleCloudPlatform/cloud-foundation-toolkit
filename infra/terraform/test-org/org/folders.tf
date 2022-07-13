@@ -16,7 +16,7 @@
 
 module "folders-root" {
   source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
+  version = "~> 3.1"
 
   parent = "organizations/${local.org_id}"
 
@@ -30,7 +30,7 @@ module "folders-root" {
 
 module "folders-ci" {
   source  = "terraform-google-modules/folders/google"
-  version = "~> 2.0"
+  version = "~> 3.1"
 
   parent = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
 

@@ -35,8 +35,14 @@ resource "google_project_iam_member" "kokoro_test_1" {
   member  = "serviceAccount:kokoro-trampoline@cloud-devrel-kokoro-resources.iam.gserviceaccount.com"
 }
 
-resource "google_project_iam_member" "magic_modules_cloudbuild_sa" {
-  project = module.terraform_validator_test_project.project_id
-  role    = "roles/editor"
-  member  = "serviceAccount:673497134629@cloudbuild.gserviceaccount.com"
+resource "google_folder_iam_member" "magic_modules_cloudbuild_sa_folder_viewer" {
+  folder = local.projects_folder_id
+  role   = "roles/resourcemanager.folderViewer"
+  member = local.magic_modules_cloudbuild_sa
+}
+
+resource "google_folder_iam_member" "magic_modules_cloudbuild_sa_security_reviewer" {
+  folder = local.projects_folder_id
+  role   = "roles/iam.securityReviewer"
+  member = local.magic_modules_cloudbuild_sa
 }

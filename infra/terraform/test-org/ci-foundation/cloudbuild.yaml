@@ -20,7 +20,7 @@ steps:
     args: ['reconcile.sh']
 substitutions:
   _DOCKER_IMAGE_DEVELOPER_TOOLS: 'cft/developer-tools'
-  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '1.1'
+  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '1.5'
 options:
   env:
   - 'FOUNDATION_CICD_PROJECT_ID=$_FOUNDATION_CICD_PROJECT_ID'

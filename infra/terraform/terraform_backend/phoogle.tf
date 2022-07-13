@@ -1,7 +1,7 @@
 # Legacy Terraform state for deleted Phoogle projects
 module "phoogle-backend" {
   source  = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version = "~> 1.3"
+  version = "~> 3.2"
 
   name       = "cloud-foundation-cicd-tfstate"
   project_id = module.variables.project_id
@@ -10,7 +10,7 @@ module "phoogle-backend" {
 
 module "phoogle-seed" {
   source  = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version = "~> 1.3"
+  version = "~> 3.2"
 
   name       = "cloud-foundation-cicd-seed-projects-tfstate"
   project_id = module.variables.project_id

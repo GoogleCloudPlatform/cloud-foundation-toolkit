@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,16 @@
 terraform {
   required_version = "~> 1.2.0"
   required_providers {
-    archive = {
-      version = ">= 1.3, < 3.0"
+    github = {
+      source  = "integrations/github"
+      version = "~> 4.0"
     }
     google = {
-      version = ">= 3.35, < 5.0"
+      version = ">= 3.39, < 5.0"
     }
     google-beta = {
-      version = ">= 3.35, < 5.0"
-    }
-    null = {
-      version = ">= 2.1, < 4.0"
-    }
-    random = {
-      version = ">= 2.2, < 4.0"
+      version = ">= 3.39, < 5.0"
     }
   }
 }
+
