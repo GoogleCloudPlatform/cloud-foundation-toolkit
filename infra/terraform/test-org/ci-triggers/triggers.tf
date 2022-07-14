@@ -29,7 +29,6 @@ resource "google_cloudbuild_trigger" "lint_trigger" {
   }
 
   filename = "build/lint.cloudbuild.yaml"
-  ignored_files = [".gitignore", "/.github/"]
 }
 
 resource "google_cloudbuild_trigger" "int_trigger" {
