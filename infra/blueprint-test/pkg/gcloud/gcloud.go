@@ -79,6 +79,28 @@ func newCmdConfig(opts ...cmdOption) (*CmdCfg, error) {
 
 // RunCmd executes a gcloud command and fails test if there are any errors.
 func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
+	op, err := RunCmdE(t, cmd, opts...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return op
+}
+
+// check if the text comply to the output of a valid terraform vet execution
+func resourcesValidated(errText string) bool {
+	return strings.Contains(errText, "Validating resources") && strings.Contains(errText, "done")
+}
+
+func RunTFValidator(t testing.TB, cmd string, opts ...cmdOption) string {
+	op, err := RunCmdE(t, cmd, opts...)
+	if err != nil && !resourcesValidated(err.Error()){
+		t.Fatal(err)
+	}
+	return op
+}
+
+// RunCmd executes a gcloud command and fails test if there are any errors.
+func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error)  {
 	gOpts, err := newCmdConfig(opts...)
 	if err != nil {
 		t.Fatal(err)
@@ -90,11 +112,7 @@ func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
 		Args:    append(args, gOpts.commonArgs...),
 		Logger:  gOpts.logger,
 	}
-	op, err := shell.RunCommandAndGetStdOutE(t, gcloudCmd)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return op
+	return shell.RunCommandAndGetStdOutE(t, gcloudCmd)
 }
 
 // Run executes a gcloud command and returns value as gjson.Result.
@@ -105,6 +123,18 @@ func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 		t.Fatalf("Error parsing output, invalid json: %s", op)
 	}
 	return gjson.Parse(op)
+}
+
+func Validate(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
+	op := RunTFValidator(t, cmd, opts...)
+	if !gjson.Valid(op) {
+		t.Fatalf("Error parsing output, invalid json: %s", op)
+	}
+	return gjson.Parse(op)
+}
+
+func Validatef(t testing.TB, cmd string, args ...interface{}) gjson.Result {
+	return Validate(t, stringFromTextAndArgs(append([]interface{}{cmd}, args...)...))
 }
 
 // RunWithCmdOptsf executes a gcloud command and returns value as gjson.Result.
