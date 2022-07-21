@@ -91,15 +91,7 @@ func resourcesValidated(errText string) bool {
 	return strings.Contains(errText, "Validating resources") && strings.Contains(errText, "done")
 }
 
-func RunTFValidator(t testing.TB, cmd string, opts ...cmdOption) string {
-	op, err := RunCmdE(t, cmd, opts...)
-	if err != nil && !resourcesValidated(err.Error()){
-		t.Fatal(err)
-	}
-	return op
-}
-
-// RunCmd executes a gcloud command and fails test if there are any errors.
+// RunCmdE executes a gcloud command and return output.
 func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error)  {
 	gOpts, err := newCmdConfig(opts...)
 	if err != nil {
@@ -125,16 +117,16 @@ func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 	return gjson.Parse(op)
 }
 
-func Validate(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
-	op := RunTFValidator(t, cmd, opts...)
+// TerraformVet executes gcloud beta terraform vet
+func TerraformVet(t testing.TB, planFilePath string, policyLibraryPath string) gjson.Result {
+	op, err := RunCmdE(t, stringFromTextAndArgs(append([]interface{}{"beta terraform vet %s --policy-library=%s"}, planFilePath, policyLibraryPath)...))
+	if err != nil && !resourcesValidated(err.Error()){
+		t.Fatal(err)
+	}
 	if !gjson.Valid(op) {
 		t.Fatalf("Error parsing output, invalid json: %s", op)
 	}
 	return gjson.Parse(op)
-}
-
-func Validatef(t testing.TB, cmd string, args ...interface{}) gjson.Result {
-	return Validate(t, stringFromTextAndArgs(append([]interface{}{cmd}, args...)...))
 }
 
 // RunWithCmdOptsf executes a gcloud command and returns value as gjson.Result.

@@ -48,13 +48,12 @@ type TFBlueprintTest struct {
 	backendConfig                 map[string]interface{}   // backend configuration for terraform init
 	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
-	policyLibraryPath             string                   // TODO
-	planFilePath                  string                   // TODO
+	policyLibraryPath             string                   // optional directory containing policy library constraints
+	planFilePath                  string                   // path to the plan file used in Teraform plan and show
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
 	t                             testing.TB               // TestingT or TestingB
 	init                          func(*assert.Assertions) // init function
-	vet                           func(*assert.Assertions) // vet function
 	apply                         func(*assert.Assertions) // apply function
 	verify                        func(*assert.Assertions) // verify function
 	teardown                      func(*assert.Assertions) // teardown function
@@ -137,7 +136,6 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 	// default TF blueprint methods
 	tft.init = tft.DefaultInit
-	tft.vet = tft.DefaultVet
 	tft.apply = tft.DefaultApply
 	tft.verify = tft.DefaultVerify
 	tft.teardown = tft.DefaultTeardown
@@ -168,7 +166,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 
 	//set planFilePath
-	if tft.ShouldRunVet() {
+	if tft.ShouldRunTerraformVet() {
 		tft.planFilePath = filepath.Join(tft.tfDir, "plan.tfplan")
 	}
 	// discover test config
@@ -280,8 +278,8 @@ func (b *TFBlueprintTest) ShouldSkip() bool {
 	return b.Spec.Skip
 }
 
-// ShouldRunVet checks if terraform vet should run
-func (b *TFBlueprintTest) ShouldRunVet() bool {
+// ShouldRunTerraformVet checks if terraform vet should be executed
+func (b *TFBlueprintTest) ShouldRunTerraformVet() bool {
 	return b.policyLibraryPath != ""
 }
 
@@ -299,11 +297,6 @@ func AutoDiscoverAndTest(t *gotest.T) {
 // DefineInit defines a custom init function for the blueprint.
 func (b *TFBlueprintTest) DefineInit(init func(*assert.Assertions)) {
 	b.init = init
-}
-
-// DefineVet defines a custom vet function for the blueprint.
-func (b *TFBlueprintTest) DefineVet(vet func(*assert.Assertions)) {
-	b.vet = vet
 }
 
 // DefineApply defines a custom apply function for the blueprint.
@@ -346,30 +339,27 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	}))
 }
 
-// DefaultVet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
-func (b *TFBlueprintTest) DefaultVet(assert *assert.Assertions) {
+// DefaultTerraformVetVet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
+func (b *TFBlueprintTest) TerraformVet(assert *assert.Assertions) {
 	terraform.Plan(b.t, b.GetTFOptions())
 	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
 	require.NoError(b.t, err)
-	//results := gcloud.Validatef(b.t, "beta terraform vet %s --policy-library=%s", filepath, b.policyLibraryPath).Array()
-	results := gcloud.Runf(b.t, "beta terraform vet %s --policy-library=%s", filepath, b.policyLibraryPath).Array()
-	require.Empty(b.t, results, "Should have no violations")
+	results := gcloud.TerraformVet(b.t, filepath, b.policyLibraryPath).Array()
+	require.Empty(b.t, results, "Should have no Terraform Vet violations")
 }
 
 // DefaultApply runs TF apply on a blueprint.
 func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
+	if b.ShouldRunTerraformVet() {
+		b.TerraformVet(assert)
+	}
 	terraform.Apply(b.t, b.GetTFOptions())
 }
 
 // Init runs the default or custom init function for the blueprint.
 func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
 	b.init(assert)
-}
-
-// Vet runs the default or custom vet function for the blueprint.
-func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
-	b.vet(assert)
 }
 
 // Apply runs the default or custom apply function for the blueprint.
@@ -398,9 +388,6 @@ func (b *TFBlueprintTest) Test() {
 	// run stages
 	utils.RunStage("init", func() { b.Init(a) })
 	defer utils.RunStage("teardown", func() { b.Teardown(a) })
-	if b.ShouldRunVet() {
-		utils.RunStage("vet", func() { b.Vet(a) })
-	}
 	utils.RunStage("apply", func() { b.Apply(a) })
 	utils.RunStage("verify", func() { b.Verify(a) })
 }
