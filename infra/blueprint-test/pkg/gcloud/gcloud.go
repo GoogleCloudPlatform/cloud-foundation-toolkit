@@ -86,11 +86,6 @@ func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
 	return op
 }
 
-// check if the text comply to the output of a valid terraform vet execution
-func resourcesValidated(errText string) bool {
-	return strings.Contains(errText, "Validating resources") && strings.Contains(errText, "done")
-}
-
 // RunCmdE executes a gcloud command and return output.
 func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error)  {
 	gOpts, err := newCmdConfig(opts...)
@@ -117,10 +112,11 @@ func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 	return gjson.Parse(op)
 }
 
-// TerraformVet executes gcloud beta terraform vet
-func TerraformVet(t testing.TB, planFilePath string, policyLibraryPath string) gjson.Result {
-	op, err := RunCmdE(t, stringFromTextAndArgs(append([]interface{}{"beta terraform vet %s --policy-library=%s"}, planFilePath, policyLibraryPath)...))
-	if err != nil && !resourcesValidated(err.Error()){
+// TFVet executes gcloud beta terraform vet
+func TFVet(t testing.TB, planFilePath string, policyLibraryPath string) gjson.Result {
+	//op, err := RunCmdE(t, stringFromTextAndArgs(append([]interface{}{"beta terraform vet %s --policy-library=%s"}, planFilePath, policyLibraryPath)...))
+	op, err := RunCmdE(t, fmt.Sprintf("beta terraform vet %s --policy-library=%s", planFilePath, policyLibraryPath))
+	if err != nil && !(strings.Contains(err.Error(), "Validating resources") && strings.Contains(err.Error(), "done")){
 		t.Fatal(err)
 	}
 	if !gjson.Valid(op) {

@@ -166,8 +166,8 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 
 	//set planFilePath
-	if tft.ShouldRunTerraformVet() {
-		tft.planFilePath = filepath.Join(tft.tfDir, "plan.tfplan")
+	if tft.shouldRunTerraformVet() {
+		tft.planFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
 	}
 	// discover test config
 	var err error
@@ -278,8 +278,8 @@ func (b *TFBlueprintTest) ShouldSkip() bool {
 	return b.Spec.Skip
 }
 
-// ShouldRunTerraformVet checks if terraform vet should be executed
-func (b *TFBlueprintTest) ShouldRunTerraformVet() bool {
+// shouldRunTerraformVet checks if terraform vet should be executed
+func (b *TFBlueprintTest) shouldRunTerraformVet() bool {
 	return b.policyLibraryPath != ""
 }
 
@@ -339,20 +339,21 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	}))
 }
 
-// DefaultTerraformVetVet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
-func (b *TFBlueprintTest) TerraformVet(assert *assert.Assertions) {
+// Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
+func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
 	terraform.Plan(b.t, b.GetTFOptions())
 	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
+	defer os.Remove(filepath)
 	require.NoError(b.t, err)
-	results := gcloud.TerraformVet(b.t, filepath, b.policyLibraryPath).Array()
-	require.Empty(b.t, results, "Should have no Terraform Vet violations")
+	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath).Array()
+	assert.Empty(results, "Should have no Terraform Vet violations")
 }
 
 // DefaultApply runs TF apply on a blueprint.
 func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
-	if b.ShouldRunTerraformVet() {
-		b.TerraformVet(assert)
+	if b.shouldRunTerraformVet() {
+		b.Vet(assert)
 	}
 	terraform.Apply(b.t, b.GetTFOptions())
 }
