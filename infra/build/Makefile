@@ -27,7 +27,8 @@ BATS_MOCK_VERSION := 1.0.1
 PACKER_VERSION := 1.4.4
 TERRAGRUNT_VERSION := 0.25.3
 KUSTOMIZE_VERSION := 3.6.0
-KPT_VERSION := 1.0.0-beta.18
+# Hold KPT at 1.0.0-beta.15 till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
+KPT_VERSION := 1.0.0-beta.15
 CFT_CLI_VERSION := 0.4.4
 ASMCLI_VERSION := 1.12
 KUBECTL_VERSION := 1.23.4
