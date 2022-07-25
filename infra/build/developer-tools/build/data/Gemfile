@@ -18,3 +18,4 @@ source 'https://rubygems.org/' do
   gem "rest-client", "~> 2.0"
   gem 'nokogiri', '~> 1.13'
 end
+ruby '~> 2.7.6'
