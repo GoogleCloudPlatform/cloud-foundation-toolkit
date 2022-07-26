@@ -82,6 +82,7 @@ locals {
     "cloud-foundation-training", # Not module
     "cloud-router",
     "group",
+    "data-fusion",
   ]
   gcp_org_modules = [
     "example-foundation-app", # Not module
