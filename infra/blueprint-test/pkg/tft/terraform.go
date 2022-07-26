@@ -48,7 +48,7 @@ type TFBlueprintTest struct {
 	backendConfig                 map[string]interface{}   // backend configuration for terraform init
 	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
-	policyLibraryPath             string                   // optional directory containing policy library constraints
+	policyLibraryPath             string                   // optional absolute path to directory containing policy library constraints
 	planFilePath                  string                   // path to the plan file used in Teraform plan and show
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
