@@ -19,7 +19,8 @@ jobs:
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          tools=("TERRAFORM" "CLOUD_SDK" "KPT" "CFT_CLI")
+          # Skip "KPT" till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI")
 
           for tool in ${tools[@]}
           do
