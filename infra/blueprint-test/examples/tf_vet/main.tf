@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
- variable "project_id" {
-   type = string
- }
+resource "google_project_service" "project" {
+  project                    = var.project_id
+  service                    = var.service
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}

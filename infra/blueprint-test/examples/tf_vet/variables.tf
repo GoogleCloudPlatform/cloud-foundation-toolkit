@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
- variable "project_id" {
-   type = string
- }
+variable "project_id" {
+  description = "Project to enable the service."
+  type        = string
+}
+
+variable "service" {
+  description = "Service to be enabled."
+  type        = string
+}
