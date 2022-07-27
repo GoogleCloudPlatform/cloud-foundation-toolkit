@@ -44,6 +44,7 @@ type TFBlueprintTest struct {
 	tfDir                         string                   // directory containing Terraform configs
 	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
 	backendConfig                 map[string]interface{}   // backend configuration for terraform init
+	retryableTerraformErrors      map[string]string        // If Terraform apply fails with one of these (transient) errors, retry. The keys are a regexp to match against the error and the message is what to display to a user if that error is matched.
 	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
@@ -96,6 +97,12 @@ func WithBackendConfig(backendConfig map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.backendConfig = backendConfig
 		f.migrateState = true
+	}
+}
+
+func WithRetryableTerraformErrors(retryableTerraformErrors map[string]string) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.retryableTerraformErrors = retryableTerraformErrors
 	}
 }
 
@@ -195,12 +202,13 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 // GetTFOptions generates terraform.Options used by Terratest.
 func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 	return terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
-		TerraformDir:  b.tfDir,
-		EnvVars:       b.tfEnvVars,
-		Vars:          b.vars,
-		Logger:        b.logger,
-		BackendConfig: b.backendConfig,
-		MigrateState:  b.migrateState,
+		TerraformDir:             b.tfDir,
+		EnvVars:                  b.tfEnvVars,
+		Vars:                     b.vars,
+		Logger:                   b.logger,
+		BackendConfig:            b.backendConfig,
+		MigrateState:             b.migrateState,
+		RetryableTerraformErrors: b.retryableTerraformErrors,
 	})
 }
 
