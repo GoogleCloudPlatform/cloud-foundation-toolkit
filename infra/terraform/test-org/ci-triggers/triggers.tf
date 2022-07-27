@@ -52,7 +52,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   }
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["**/*.md", ".gitignore", "/.github/", "/docs/"]
+  ignored_files = ["**/*.md", ".gitignore", ".github/**"]
 }
 
 resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests" {
@@ -248,5 +248,5 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
   }
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["**/*.md", ".gitignore", "/.github/", "/docs/"]
+  ignored_files = ["**/*.md", ".gitignore", ".github/**"]
 }

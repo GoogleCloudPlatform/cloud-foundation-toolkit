@@ -34,5 +34,8 @@ gcloud config set survey/disable_prompts true
 gcloud components install beta --quiet
 gcloud components install alpha --quiet
 
+# https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
+gcloud components install gke-gcloud-auth-plugin --quiet
+
 gcloud --version
 gsutil version -l
