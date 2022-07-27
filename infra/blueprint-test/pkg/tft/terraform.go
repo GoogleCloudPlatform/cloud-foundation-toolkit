@@ -36,6 +36,13 @@ import (
 
 const setupKeyOutputName = "sa_key"
 
+var (
+	commonRetryableErrors = map[string]string{
+		".*FOLDER_TO_DELETE_NON_EMPTY_VIOLATION.*": "Failed to delete non empty folder.",
+		".*SERVICE_DISABLED.*":                     "Required API not enable.",
+	}
+)
+
 // TFBlueprintTest implements bpt.Blueprint and stores information associated with a Terraform blueprint test.
 type TFBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
@@ -175,6 +182,13 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		} else {
 			tft.setupDir = setupDir
 		}
+	}
+	// Common retryable errors
+	if tft.retryableTerraformErrors == nil {
+		tft.retryableTerraformErrors = map[string]string{}
+	}
+	for k, v := range commonRetryableErrors {
+		tft.retryableTerraformErrors[k] = v
 	}
 	// load setup sa Key
 	if tft.saKey != "" {
