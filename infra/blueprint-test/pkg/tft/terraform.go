@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	gotest "testing"
 
@@ -46,6 +47,8 @@ type TFBlueprintTest struct {
 	backendConfig                 map[string]interface{}   // backend configuration for terraform init
 	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
+	policyLibraryPath             string                   // optional absolute path to directory containing policy library constraints
+	planFilePath                  string                   // path to the plan file used in Teraform plan and show
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
 	t                             testing.TB               // TestingT or TestingB
@@ -105,6 +108,12 @@ func WithSetupPath(setupPath string) tftOption {
 	}
 }
 
+func WithPolicyLibraryPath(policyLibraryPath string) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.policyLibraryPath = policyLibraryPath
+	}
+}
+
 func WithVars(vars map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.vars = vars
@@ -154,6 +163,11 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		}
 		tft.tfDir = tfdir
 	}
+
+	//set planFilePath
+	if tft.shouldRunTerraformVet() {
+		tft.planFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
+	}
 	// discover test config
 	var err error
 	tft.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
@@ -200,6 +214,7 @@ func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 		Vars:          b.vars,
 		Logger:        b.logger,
 		BackendConfig: b.backendConfig,
+		PlanFilePath:  b.planFilePath,
 		MigrateState:  b.migrateState,
 	})
 }
@@ -262,6 +277,11 @@ func (b *TFBlueprintTest) ShouldSkip() bool {
 	return b.Spec.Skip
 }
 
+// shouldRunTerraformVet checks if terraform vet should be executed
+func (b *TFBlueprintTest) shouldRunTerraformVet() bool {
+	return b.policyLibraryPath != ""
+}
+
 // AutoDiscoverAndTest discovers TF config from examples/fixtures and runs tests.
 func AutoDiscoverAndTest(t *gotest.T) {
 	configs := discovery.FindTestConfigs(t, "./")
@@ -318,8 +338,22 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	}))
 }
 
+// Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
+func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
+	terraform.Plan(b.t, b.GetTFOptions())
+	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
+	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
+	defer os.Remove(filepath)
+	assert.NoError(err)
+	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath).Array()
+	assert.Empty(results, "Should have no Terraform Vet violations")
+}
+
 // DefaultApply runs TF apply on a blueprint.
 func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
+	if b.shouldRunTerraformVet() {
+		b.Vet(assert)
+	}
 	terraform.Apply(b.t, b.GetTFOptions())
 }
 
