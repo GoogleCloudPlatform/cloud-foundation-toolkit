@@ -33,7 +33,6 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 const setupKeyOutputName = "sa_key"
@@ -345,7 +344,7 @@ func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
 	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
 	defer os.Remove(filepath)
-	require.NoError(b.t, err)
+	assert.NoError(err)
 	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath).Array()
 	assert.Empty(results, "Should have no Terraform Vet violations")
 }
