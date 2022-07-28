@@ -24,6 +24,7 @@ import (
 	"path"
 	"strings"
 	gotest "testing"
+	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
@@ -37,9 +38,12 @@ import (
 const setupKeyOutputName = "sa_key"
 
 var (
-	commonRetryableErrors = map[string]string{
+	CommonRetryableErrors = map[string]string{
+		// Project deletion is eventually consistent. Even if google_project resources inside the folder are deleted there maybe a deletion error.
 		".*FOLDER_TO_DELETE_NON_EMPTY_VIOLATION.*": "Failed to delete non empty folder.",
-		".*SERVICE_DISABLED.*":                     "Required API not enable.",
+
+		// API activation is eventually consistent. Even if the google_project_service resource is reconciled there maybe an activation error.
+		".*SERVICE_DISABLED.*": "Required API not enabled.",
 	}
 )
 
@@ -52,6 +56,8 @@ type TFBlueprintTest struct {
 	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
 	backendConfig                 map[string]interface{}   // backend configuration for terraform init
 	retryableTerraformErrors      map[string]string        // If Terraform apply fails with one of these (transient) errors, retry. The keys are a regexp to match against the error and the message is what to display to a user if that error is matched.
+	maxRetries                    int                      // Maximum number of times to retry errors matching RetryableTerraformErrors
+	timeBetweenRetries            time.Duration            // The amount of time to wait between retries
 	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
@@ -107,9 +113,11 @@ func WithBackendConfig(backendConfig map[string]interface{}) tftOption {
 	}
 }
 
-func WithRetryableTerraformErrors(retryableTerraformErrors map[string]string) tftOption {
+func WithRetryableTerraformErrors(retryableTerraformErrors map[string]string, maxRetries int, timeBetweenRetries time.Duration) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.retryableTerraformErrors = retryableTerraformErrors
+		f.maxRetries = maxRetries
+		f.timeBetweenRetries = timeBetweenRetries
 	}
 }
 
@@ -183,13 +191,6 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.setupDir = setupDir
 		}
 	}
-	// Common retryable errors
-	if tft.retryableTerraformErrors == nil {
-		tft.retryableTerraformErrors = map[string]string{}
-	}
-	for k, v := range commonRetryableErrors {
-		tft.retryableTerraformErrors[k] = v
-	}
 	// load setup sa Key
 	if tft.saKey != "" {
 		gcloud.ActivateCredsAndEnvVars(tft.t, tft.saKey)
@@ -215,7 +216,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 
 // GetTFOptions generates terraform.Options used by Terratest.
 func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
-	return terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
+	newOptions := terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
 		TerraformDir:             b.tfDir,
 		EnvVars:                  b.tfEnvVars,
 		Vars:                     b.vars,
@@ -224,6 +225,13 @@ func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 		MigrateState:             b.migrateState,
 		RetryableTerraformErrors: b.retryableTerraformErrors,
 	})
+	if b.maxRetries > 0 {
+		newOptions.MaxRetries = b.maxRetries
+	}
+	if b.timeBetweenRetries > 0 {
+		newOptions.TimeBetweenRetries = b.timeBetweenRetries
+	}
+	return newOptions
 }
 
 // getTFOutputsAsInputs computes a map of TF inputs from outputs map.
