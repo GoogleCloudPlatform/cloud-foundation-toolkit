@@ -79,6 +79,15 @@ func newCmdConfig(opts ...cmdOption) (*CmdCfg, error) {
 
 // RunCmd executes a gcloud command and fails test if there are any errors.
 func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
+	op, err := RunCmdE(t, cmd, opts...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return op
+}
+
+// RunCmdE executes a gcloud command and return output.
+func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error)  {
 	gOpts, err := newCmdConfig(opts...)
 	if err != nil {
 		t.Fatal(err)
@@ -90,17 +99,25 @@ func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
 		Args:    append(args, gOpts.commonArgs...),
 		Logger:  gOpts.logger,
 	}
-	op, err := shell.RunCommandAndGetStdOutE(t, gcloudCmd)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return op
+	return shell.RunCommandAndGetStdOutE(t, gcloudCmd)
 }
 
 // Run executes a gcloud command and returns value as gjson.Result.
 // It fails the test if there are any errors executing the gcloud command or parsing the output value.
 func Run(t testing.TB, cmd string, opts ...cmdOption) gjson.Result {
 	op := RunCmd(t, cmd, opts...)
+	if !gjson.Valid(op) {
+		t.Fatalf("Error parsing output, invalid json: %s", op)
+	}
+	return gjson.Parse(op)
+}
+
+// TFVet executes gcloud beta terraform vet
+func TFVet(t testing.TB, planFilePath string, policyLibraryPath string) gjson.Result {
+	op, err := RunCmdE(t, fmt.Sprintf("beta terraform vet %s --policy-library=%s", planFilePath, policyLibraryPath))
+	if err != nil && !(strings.Contains(err.Error(), "Validating resources") && strings.Contains(err.Error(), "done")){
+		t.Fatal(err)
+	}
 	if !gjson.Valid(op) {
 		t.Fatalf("Error parsing output, invalid json: %s", op)
 	}
