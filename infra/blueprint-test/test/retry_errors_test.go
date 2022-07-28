@@ -33,6 +33,11 @@ func TestRetryErrors(t *testing.T) {
 	)
 	bpt.DefineVerify(func(assert *assert.Assertions) {})
 	bpt.DefineTeardown(func(assert *assert.Assertions) {})
+
+	// The default apply is `terraform.Apply(b.t, b.GetTFOptions())` which has a `require.NoError(t, err)`
+	// calling `terraform.ApplyE(t, bpt.GetTFOptions())` we are able to process the error end check if it has the
+	// "unsuccessful after X retries" message. this works for the this test because the code to sent the retry options
+	// to terraform is in the `bpt.GetTFOptions()` function.
 	bpt.DefineApply(
 		func(assert *assert.Assertions) {
 			out, err := terraform.ApplyE(t, bpt.GetTFOptions())
