@@ -15,9 +15,13 @@
  */
 
 locals {
+  remove_repo_labels = [
+    "anthos-samples"
+  ]
+  sub_repos_labels = setsubtract(toset(local.repos), local.remove_repo_labels)
   repo_labels = {
     for o in flatten([
-      for repo in local.repos :
+      for repo in local.sub_repos_labels :
       [
         for label in local.labels :
         {

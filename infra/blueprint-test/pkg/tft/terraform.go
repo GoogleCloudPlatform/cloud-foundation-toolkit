@@ -22,8 +22,10 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	gotest "testing"
+	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
@@ -36,6 +38,16 @@ import (
 
 const setupKeyOutputName = "sa_key"
 
+var (
+	CommonRetryableErrors = map[string]string{
+		// Project deletion is eventually consistent. Even if google_project resources inside the folder are deleted there maybe a deletion error.
+		".*FOLDER_TO_DELETE_NON_EMPTY_VIOLATION.*": "Failed to delete non empty folder.",
+
+		// API activation is eventually consistent. Even if the google_project_service resource is reconciled there maybe an activation error.
+		".*SERVICE_DISABLED.*": "Required API not enabled.",
+	}
+)
+
 // TFBlueprintTest implements bpt.Blueprint and stores information associated with a Terraform blueprint test.
 type TFBlueprintTest struct {
 	discovery.BlueprintTestConfig                          // additional blueprint test configs
@@ -43,7 +55,14 @@ type TFBlueprintTest struct {
 	saKey                         string                   // optional setup sa key
 	tfDir                         string                   // directory containing Terraform configs
 	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
+	backendConfig                 map[string]interface{}   // backend configuration for terraform init
+	retryableTerraformErrors      map[string]string        // If Terraform apply fails with one of these (transient) errors, retry. The keys are a regexp to match against the error and the message is what to display to a user if that error is matched.
+	maxRetries                    int                      // Maximum number of times to retry errors matching RetryableTerraformErrors
+	timeBetweenRetries            time.Duration            // The amount of time to wait between retries
+	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
+	policyLibraryPath             string                   // optional absolute path to directory containing policy library constraints
+	planFilePath                  string                   // path to the plan file used in Teraform plan and show
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
 	t                             testing.TB               // TestingT or TestingB
@@ -90,9 +109,30 @@ func WithEnvVars(envVars map[string]string) tftOption {
 	}
 }
 
+func WithBackendConfig(backendConfig map[string]interface{}) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.backendConfig = backendConfig
+		f.migrateState = true
+	}
+}
+
+func WithRetryableTerraformErrors(retryableTerraformErrors map[string]string, maxRetries int, timeBetweenRetries time.Duration) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.retryableTerraformErrors = retryableTerraformErrors
+		f.maxRetries = maxRetries
+		f.timeBetweenRetries = timeBetweenRetries
+	}
+}
+
 func WithSetupPath(setupPath string) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.setupDir = setupPath
+	}
+}
+
+func WithPolicyLibraryPath(policyLibraryPath string) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.policyLibraryPath = policyLibraryPath
 	}
 }
 
@@ -145,6 +185,11 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		}
 		tft.tfDir = tfdir
 	}
+
+	//set planFilePath
+	if tft.shouldRunTerraformVet() {
+		tft.planFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
+	}
 	// discover test config
 	var err error
 	tft.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
@@ -185,12 +230,23 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 
 // GetTFOptions generates terraform.Options used by Terratest.
 func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
-	return terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
-		TerraformDir: b.tfDir,
-		EnvVars:      b.tfEnvVars,
-		Vars:         b.vars,
-		Logger:       b.logger,
+	newOptions := terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
+		TerraformDir:             b.tfDir,
+		EnvVars:                  b.tfEnvVars,
+		Vars:                     b.vars,
+		Logger:                   b.logger,
+		BackendConfig:            b.backendConfig,
+		MigrateState:             b.migrateState,
+		PlanFilePath:             b.planFilePath,
+		RetryableTerraformErrors: b.retryableTerraformErrors,
 	})
+	if b.maxRetries > 0 {
+		newOptions.MaxRetries = b.maxRetries
+	}
+	if b.timeBetweenRetries > 0 {
+		newOptions.TimeBetweenRetries = b.timeBetweenRetries
+	}
+	return newOptions
 }
 
 // getTFOutputsAsInputs computes a map of TF inputs from outputs map.
@@ -251,6 +307,11 @@ func (b *TFBlueprintTest) ShouldSkip() bool {
 	return b.Spec.Skip
 }
 
+// shouldRunTerraformVet checks if terraform vet should be executed
+func (b *TFBlueprintTest) shouldRunTerraformVet() bool {
+	return b.policyLibraryPath != ""
+}
+
 // AutoDiscoverAndTest discovers TF config from examples/fixtures and runs tests.
 func AutoDiscoverAndTest(t *gotest.T) {
 	configs := discovery.FindTestConfigs(t, "./")
@@ -307,8 +368,22 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	}))
 }
 
+// Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
+func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
+	terraform.Plan(b.t, b.GetTFOptions())
+	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
+	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
+	defer os.Remove(filepath)
+	assert.NoError(err)
+	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath).Array()
+	assert.Empty(results, "Should have no Terraform Vet violations")
+}
+
 // DefaultApply runs TF apply on a blueprint.
 func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
+	if b.shouldRunTerraformVet() {
+		b.Vet(assert)
+	}
 	terraform.Apply(b.t, b.GetTFOptions())
 }
 

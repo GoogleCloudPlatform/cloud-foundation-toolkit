@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-
-provider "google" {
-  version = "~> 3.38.0"
+terraform {
+  required_version = "~> 1.2.0"
+  required_providers {
+    google = {
+      version = ">= 3.38, < 5.0"
+    }
+  }
 }

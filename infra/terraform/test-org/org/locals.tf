@@ -45,15 +45,12 @@ locals {
     "pubsub",
     "migrate",
     "bootstrap",
-    "redis",
     "datalab",
-    "mariadb",
     "jenkins",
     "container-vm",
     "lb",
     "vm",
     "memorystore",
-    "airflow",
     "service-accounts",
     "cloud-storage",
     "sql-db",
@@ -68,10 +65,8 @@ locals {
     "bastion-host",
     "org-policy",
     "log-export",
-    "on-prem",
     "cloud-dns",
     "gsuite-export",
-    "secret",
     "terraform-validator",
     "lb-http",
     "gcloud",
@@ -87,6 +82,7 @@ locals {
     "cloud-foundation-training", # Not module
     "cloud-router",
     "group",
+    "data-fusion",
   ]
   gcp_org_modules = [
     "example-foundation-app", # Not module

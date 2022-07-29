@@ -23,8 +23,6 @@
 #   -l [label to apply to failed checks | Default: dependabot-checks-failed]
 #
 
-set -e
-
 # Default Variables
 ORG="terraform-google-modules"
 FILTER=".[].name"
@@ -72,20 +70,20 @@ for REPO in $REPOS; do
 
   # Retrieve Pull Requests
   PRS=`gh pr list -R $REPO -s open --json number -q '.[].number' --app dependabot`
-  if [ -n $PRS ]; then
+  if [[ -z $PRS ]]; then
     echo "  No open Dependabot Pull Requests found for $REPO"
     continue
-  else
-    echo "  Processing ${PRS[@]} Pull Requests"
   fi
 
   # Process Pull Rquests
   for PR in $PRS; do
-    echo "    Processing $PR"
+    echo "  Processing Dependabot Pull Request $PR"
     # Check status of Pull Request Checks
-    gh pr checks $PR -R $REPO > /dev/null 2>&1
+    gh pr checks $PR -R $REPO
     if [ $? -eq 0 ]; then
       PPRS+=($PR)
+      # Remove the label, if exists
+      gh pr edit $PR -R $REPO --remove-label $LABEL
       # Approve the Pull Request
       gh pr review $PR -R $REPO --approve -b "LGTM"
       # Squash Merge the Pull Request and Delete the Branch
@@ -101,12 +99,12 @@ for REPO in $REPOS; do
 done
 
 # List number of approved/merged PRs
-if [ ! -n $PPRS ]; then
+if [[ ! -z $PPRS ]]; then
   echo -e "\u2714 approved and merged ${PPRS[@]} Pull Requests"
 fi
 
 # List Failed Checks PRs
-if [ ! -n $FPRS ]; then
+if [[ ! -z $FPRS ]]; then
   echo "These Pull Requests have failed checks and have been labled with $LABEL:"
   for PR in ${FPRS[@]}; do
     echo -e "\u274c $PR: https://github.com/$REPO/pull/$PR"

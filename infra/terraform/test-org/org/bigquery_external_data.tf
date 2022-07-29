@@ -21,7 +21,7 @@ resource "google_folder" "ci_bq_external_data_folder" {
 
 module "ci_bq_external_data_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 4.0"
+  version = "~> 13.0"
 
   name            = "ci-bq-external-data-project"
   project_id      = "ci-bq-external-data-project"
@@ -39,8 +39,9 @@ module "ci_bq_external_data_project" {
 }
 
 resource "google_storage_bucket" "ci_bq_external_data_storage_bucket" {
-  name    = "ci-bq-external-data"
-  project = module.ci_bq_external_data_project.project_id
+  name     = "ci-bq-external-data"
+  project  = module.ci_bq_external_data_project.project_id
+  location = "US"
 }
 
 resource "google_storage_bucket_iam_member" "ci_bq_external_data_storage_bucket_member" {
