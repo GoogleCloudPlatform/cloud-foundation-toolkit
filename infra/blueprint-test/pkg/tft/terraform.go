@@ -295,6 +295,15 @@ func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger}, key)
 }
 
+// GetTFSetupStringOutput returns TF setup output for a given key as string.
+// It fails test if given key does not output a primitive or if setupDir is not configured.
+func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
+	if b.setupDir == "" {
+		b.t.Fatal("Setup path not set")
+	}
+	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger}, key)
+}
+
 // loadTFEnvVar adds new env variables prefixed with TF_VAR_ to an existing map of variables.
 func loadTFEnvVar(m map[string]string, new map[string]string) {
 	for k, v := range new {

@@ -43,6 +43,9 @@ func TestCFTSimpleModule(t *testing.T) {
 			assert.Equal("10.10.10.0/24", op.Get("ipCidrRange").String(), "should have the right CIDR")
 			assert.Equal("false", op.Get("logConfig.enable").String(), "logConfig should not be enabled")
 			assert.FileExists(statePath)
+
+			//test for GetTFSetupStringOutput
+			assert.Contains(networkBlueprint.GetTFSetupStringOutput("project_id"),"ci-bptest")
 		})
 	networkBlueprint.Test()
 }
