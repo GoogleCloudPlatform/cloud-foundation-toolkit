@@ -90,6 +90,5 @@ jobs:
             Updated tools to ${{env.NEW_IMG_VERSION}}
             ${{env.PR_UPDATE_BODY}}
           labels: automated pr
-          assignees: bharathkkb,morgante
-          reviewers: morgante
+          reviewers: bharathkkb
           branch: create-pull-request/patch-tools-version
