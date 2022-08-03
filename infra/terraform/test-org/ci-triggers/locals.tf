@@ -45,4 +45,15 @@ locals {
   project_id               = "cloud-foundation-cicd"
   forseti_ci_folder_id     = "542927601143"
   billing_iam_test_account = "0151A3-65855E-5913CF"
+  # blueprints which can be layered on top of SFB
+  bp_on_sfb = [
+    "terraform-google-cloud-run"
+  ]
+  # SFB deployment info
+  sfb_substs = {
+    _SFB_ORG_ID : "413973101099",
+    _SFB_SEED_PROJECT_ID : data.terraform_remote_state.sfb-bootstrap.outputs.seed_project_id,
+    _SFB_CLOUDBUILD_PROJECT_ID : data.terraform_remote_state.sfb-bootstrap.outputs.cloudbuild_project_id,
+    _SFB_TF_SA_NAME : data.terraform_remote_state.sfb-bootstrap.outputs.terraform_sa_name,
+  }
 }

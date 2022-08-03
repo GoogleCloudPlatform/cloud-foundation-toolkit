@@ -37,3 +37,11 @@ data "terraform_remote_state" "tf-validator" {
   }
 }
 
+data "terraform_remote_state" "sfb-bootstrap" {
+  backend = "gcs"
+  config = {
+    bucket = "bkt-b-tfstate-1d93"
+    prefix = "terraform/bootstrap/state"
+  }
+}
+
