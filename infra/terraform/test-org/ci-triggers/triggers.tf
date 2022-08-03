@@ -44,12 +44,16 @@ resource "google_cloudbuild_trigger" "int_trigger" {
       branch = ".*"
     }
   }
-  substitutions = {
-    _BILLING_ACCOUNT          = local.billing_account
-    _FOLDER_ID                = each.value.folder_id
-    _ORG_ID                   = local.org_id
-    _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
-  }
+  substitutions = merge(
+    {
+      _BILLING_ACCOUNT          = local.billing_account
+      _FOLDER_ID                = each.value.folder_id
+      _ORG_ID                   = local.org_id
+      _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
+    },
+    # add sfb substitutions
+    contains(local.bp_on_sfb, each.key) ? local.sfb_substs : {}
+  )
 
   filename      = "build/int.cloudbuild.yaml"
   ignored_files = ["**/*.md", ".gitignore", ".github/**"]
