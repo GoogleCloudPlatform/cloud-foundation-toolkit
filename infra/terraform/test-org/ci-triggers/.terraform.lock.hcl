@@ -5,6 +5,7 @@ provider "registry.terraform.io/hashicorp/google-beta" {
   version     = "4.28.0"
   constraints = ">= 2.18.0, < 5.0.0"
   hashes = [
+    "h1:OCnAHwByjG7Ck54UXweixWOKuQfheAgIbLvs3Rhttws=",
     "h1:kf7kz+xRgenx1f3ROvKxV9SSqkUhXBjIvJ0rmlmOSaY=",
     "zh:02049634b3dd7928628145c1993e9a6772b8229e94c0466943dd8a192c7dcf43",
     "zh:113664260f56d0559c9f4c5b912dd80ee966d09ff3723fe6ae1a71fa4915fdc9",
