@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.1.0...infra/blueprint-test/v0.2.0) (2022-08-03)
+
+
+### Features
+
+* add support for retryable tf errors ([#1198](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1198)) ([bcf67d6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bcf67d6d5aa193077c961c529f14df56e80b9e7a))
+* Add support for terraform vet in blueprint test ([#1191](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1191)) ([e3179df](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e3179dfc63abf2fd7cf291b24531abbe3cba02ff))
+* expose setup outputs via tft ([#1203](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1203)) ([4ea786f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/4ea786f947dfa58799f5e4736e511ca59668958b))
+
 ## [0.1.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.0.1...infra/blueprint-test/v0.1.0) (2022-06-13)
 
 
