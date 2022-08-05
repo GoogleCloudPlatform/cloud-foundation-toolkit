@@ -90,5 +90,5 @@ jobs:
             Updated tools to ${{env.NEW_IMG_VERSION}}
             ${{env.PR_UPDATE_BODY}}
           labels: automated pr
-          reviewers: bharathkkb
+          reviewers: bharathkkb, apeabody
           branch: create-pull-request/patch-tools-version
