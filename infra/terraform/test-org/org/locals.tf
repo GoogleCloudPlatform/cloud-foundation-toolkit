@@ -94,5 +94,6 @@ locals {
     "blueprints", # Not module
     "policy-blueprints",
     "secret-manager",
+    "module-template",
   ]
 }
