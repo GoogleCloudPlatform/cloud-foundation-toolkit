@@ -69,12 +69,5 @@ apk add --no-cache diffutils
 # rsync is needed for check_documentation in task_helper_functions.sh
 apk add --no-cache rsync
 
-# flake8 is used for lint checks
-pip install flake8
-
-# jinja2 is used for lint checks and autogen
-# Newer that distro version is needed to resolve: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1208
-pip install -U Jinja2
-
-# cookiecutter is used for terraform-google-module-template tests
-pip install cookiecutter
+# flake8 and "Jinja2 are used for lint checks, cookiecutter is used for terraform-google-module-template tests
+pip install flake8 "Jinja2~=3.1" cookiecutter
