@@ -37,5 +37,8 @@ gcloud components install alpha --quiet
 # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
 gcloud components install gke-gcloud-auth-plugin --quiet
 
+# https://cloud.google.com/docs/terraform/policy-validation/quickstart
+gcloud components install terraform-tools --quiet
+
 gcloud --version
 gsutil version -l
