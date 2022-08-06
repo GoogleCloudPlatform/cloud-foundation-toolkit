@@ -69,5 +69,5 @@ apk add --no-cache diffutils
 # rsync is needed for check_documentation in task_helper_functions.sh
 apk add --no-cache rsync
 
-# flake8 and "Jinja2 are used for lint checks, cookiecutter is used for terraform-google-module-template tests
+# flake8 and jinja2 are used for lint checks, cookiecutter is used for terraform-google-module-template tests
 pip install flake8 "Jinja2~=3.1" cookiecutter
