@@ -20,6 +20,11 @@ locals {
   cft_dev_group         = "cft-developers@dev.infra.cft.tips"
   gcp_admins_group_test = "gcp-admins@test.infra.cft.tips"
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
+
+  ci_gsuite_sa           = "ci-gsuite-sa@ci-gsuite-sa-project.iam.gserviceaccount.com"
+  cft_admin              = "cft-admin@test.infra.cft.tips"
+  foundation_leads_group = "cloud-foundation-leads@google.com"
+
   policy = {
     "roles/billing.admin" : ["group:${local.gcp_admins_group_test}"],
     "roles/compute.xpnAdmin" : ["group:${local.cft_ci_group}"],
@@ -39,6 +44,18 @@ locals {
     "roles/resourcemanager.folderEditor" : ["serviceAccount:${local.project_cleaner}"],
     "roles/serviceusage.serviceUsageAdmin" : ["serviceAccount:${local.project_cleaner}"],
   }
+
+  billing_policy = {
+    "roles/billing.admin" : [
+      "group:${local.cft_ci_group}",
+      "group:${local.gcp_admins_group_test}",
+      "user:${local.cft_admin}",
+      "group:${local.foundation_leads_group}",
+    ],
+    "roles/billing.user" : [
+      "serviceAccount:${local.ci_gsuite_sa}",
+    ]
+  }
 }
 
 resource "google_organization_iam_policy" "organization" {
@@ -49,6 +66,21 @@ resource "google_organization_iam_policy" "organization" {
 data "google_iam_policy" "admin" {
   dynamic "binding" {
     for_each = local.policy
+    content {
+      role    = binding.key
+      members = binding.value
+    }
+  }
+}
+
+resource "google_billing_account_iam_policy" "billing" {
+  billing_account_id = data.terraform_remote_state.org.outputs.billing_account
+  policy_data        = data.google_iam_policy.billing.policy_data
+}
+
+data "google_iam_policy" "billing" {
+  dynamic "binding" {
+    for_each = local.billing_policy
     content {
       role    = binding.key
       members = binding.value
