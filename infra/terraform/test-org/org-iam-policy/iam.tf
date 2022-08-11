@@ -22,7 +22,7 @@ locals {
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
 
   ci_gsuite_sa           = "ci-gsuite-sa@ci-gsuite-sa-project.iam.gserviceaccount.com"
-  cft_admin_group        = "cft-admin@test.infra.cft.tips"
+  cft_admin              = "cft-admin@test.infra.cft.tips"
   foundation_leads_group = "cloud-foundation-leads@google.com"
 
   policy = {
@@ -49,7 +49,7 @@ locals {
     "roles/billing.admin" : [
       "group:${local.cft_ci_group}",
       "group:${local.gcp_admins_group_test}",
-      "group:${local.cft_admin_group}",
+      "user:${local.cft_admin}",
       "group:${local.foundation_leads_group}",
     ],
     "roles/billing.user" : [
