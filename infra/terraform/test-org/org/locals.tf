@@ -95,5 +95,7 @@ locals {
     "policy-blueprints",
     "secret-manager",
     "module-template",
+    "load-balanced-vms",
+    "three-tier-app",
   ]
 }
