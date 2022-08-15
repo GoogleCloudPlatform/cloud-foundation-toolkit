@@ -70,4 +70,5 @@ apk add --no-cache diffutils
 apk add --no-cache rsync
 
 # flake8 and jinja2 are used for lint checks, cookiecutter is used for terraform-google-module-template tests
-pip install flake8 "Jinja2~=3.1" cookiecutter
+# requests~=2.28 for https://github.com/psf/requests/pull/6179
+pip install flake8 "Jinja2~=3.1" cookiecutter "requests~=2.28"
