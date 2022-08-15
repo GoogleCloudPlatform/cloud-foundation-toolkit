@@ -83,6 +83,7 @@ locals {
     "cloud-router",
     "group",
     "data-fusion",
+    "module-template",
   ]
   gcp_org_modules = [
     "example-foundation-app", # Not module
@@ -94,6 +95,7 @@ locals {
     "blueprints", # Not module
     "policy-blueprints",
     "secret-manager",
-    "module-template",
+    "load-balanced-vms",
+    "three-tier-app",
   ]
 }
