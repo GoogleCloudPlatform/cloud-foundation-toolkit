@@ -84,6 +84,7 @@ locals {
     "group",
     "data-fusion",
     "module-template",
+    "vault",
   ]
   gcp_org_modules = [
     "example-foundation-app", # Not module
