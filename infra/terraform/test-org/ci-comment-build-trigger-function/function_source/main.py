@@ -24,8 +24,9 @@ from google.cloud.devtools.cloudbuild_v1.types import BuildStep, Build, BuildOpt
 from google.protobuf import duration_pb2 as duration
 
 CFT_TOOLS_DEFAULT_IMAGE = 'gcr.io/cloud-foundation-cicd/cft/developer-tools'
-CFT_TOOLS_DEFAULT_IMAGE_VERSION = '0.12'
-DISABLED_MODULES = ["terraform-example-foundation", "cloud-foundation-training"]
+CFT_TOOLS_DEFAULT_IMAGE_VERSION = '1'
+# Disable terraform-google-module-template as it uses a cookiecutter template
+DISABLED_MODULES = ["terraform-example-foundation", "cloud-foundation-training", "terraform-google-module-template"]
 
 
 def main(event, context):
