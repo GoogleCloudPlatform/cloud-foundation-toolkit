@@ -23,8 +23,9 @@ locals {
     "terraform-google-secured-data-warehouse",
     "terraform-google-secure-cicd",
     "terraform-google-cloud-run",
-    "terraform-google-on-prem",
     "terraform-google-secret-manager",
+    "terraform-google-load-balanced-vms",
+    "terraform-google-three-tier-app",
     # Special CI case
     "terraform-example-foundation"
   ]
