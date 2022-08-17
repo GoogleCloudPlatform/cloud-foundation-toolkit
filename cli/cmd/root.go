@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpbuild"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bptest"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/report"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/scorecard"
@@ -28,6 +29,7 @@ var rootCmd = &cobra.Command{
 			// discard logs
 			scorecard.Log.SetHandler(log.DiscardHandler())
 			bptest.Log.SetHandler(log.DiscardHandler())
+			bpbuild.Log.SetHandler(log.DiscardHandler())
 		}
 		// We want to dump to stdout by default
 		cmd.SetOut(cmd.OutOrStdout())
@@ -74,6 +76,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	rootCmd.AddCommand(scorecard.Cmd)
 	rootCmd.AddCommand(report.Cmd)
 	rootCmd.AddCommand(bptest.Cmd)
+	rootCmd.AddCommand(bpbuild.Cmd)
 }
 
 func Execute() {
