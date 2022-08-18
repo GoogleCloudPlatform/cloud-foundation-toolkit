@@ -73,6 +73,7 @@ func streamExec(cmd *exec.Cmd) error {
 	go func() {
 		defer wg.Done()
 		scanner := bufio.NewScanner(op)
+		scanner.Buffer(make([]byte, 4096), 10*1024*1024)
 		for scanner.Scan() {
 			fmt.Println(scanner.Text())
 		}
