@@ -127,7 +127,7 @@ func getBuildStepIDs(b *cloudbuild.Build) []string {
 }
 
 // findBuildStageDurations computes duration for a given build stage across a slice of builds
-// iff stage is successful.
+// if and only if stage is successful.
 func findBuildStageDurations(stepId string, builds []*cloudbuild.Build) ([]time.Duration, error) {
 	durations := []time.Duration{}
 	for _, b := range builds {
