@@ -116,7 +116,7 @@ func setAvgTimeFlagDefaults() error {
 		avgTimeFlags.buildStepID = promptSelect("Select build step to compute average", steps)
 	}
 
-	// if no explicit start time, default to starting computation one month ago from now.
+	// if no explicit start time, default to starting computation from one month ago.
 	if avgTimeFlags.lookUpStart == "" {
 		avgTimeFlags.lookUpStart = time.Now().AddDate(0, -1, 0).Format("01-02-2006")
 		Log.Info("No start time specified.", "default", avgTimeFlags.lookUpStart)
@@ -128,7 +128,7 @@ func setAvgTimeFlagDefaults() error {
 	}
 	avgTimeFlags.lookUpStartTime = startTime
 
-	// if no explicit end time, default to ending computation from now.
+	// if no explicit end time, default to ending computation to now.
 	if avgTimeFlags.lookUpEnd == "" {
 		avgTimeFlags.lookUpEnd = time.Now().Format("01-02-2006")
 		Log.Info("No end time specified.", "default", avgTimeFlags.lookUpEnd)
