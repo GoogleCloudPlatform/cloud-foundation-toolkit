@@ -26,11 +26,11 @@ func getRepoName(dir string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error parsing remote URL: %w", err)
 	}
-	repoOwnerName := strings.TrimSuffix(remoteURL.Path, "/")
-	splitRepoOwnerName := strings.Split(repoOwnerName, "/")
+	trimmedRemotePath := strings.TrimSuffix(remoteURL.Path, "/")
+	splitRemotePath := strings.Split(trimmedRemotePath, "/")
 	// expect path to be /owner/repo
-	if len(splitRepoOwnerName) != 3 {
-		return "", fmt.Errorf("expected owner/repo, got %s", repoOwnerName)
+	if len(splitRemotePath) != 3 {
+		return "", fmt.Errorf("expected owner/repo, got %s", trimmedRemotePath)
 	}
-	return splitRepoOwnerName[len(splitRepoOwnerName)-1], nil
+	return splitRemotePath[len(splitRemotePath)-1], nil
 }
