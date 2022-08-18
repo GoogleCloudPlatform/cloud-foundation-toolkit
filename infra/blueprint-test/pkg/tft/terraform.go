@@ -62,6 +62,7 @@ type TFBlueprintTest struct {
 	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
 	policyLibraryPath             string                   // optional absolute path to directory containing policy library constraints
+	terraformVetProject           string                   // optional a valid existing project that will be used when a plan has resources in a project that still does not exist.
 	planFilePath                  string                   // path to the plan file used in Teraform plan and show
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
@@ -130,9 +131,10 @@ func WithSetupPath(setupPath string) tftOption {
 	}
 }
 
-func WithPolicyLibraryPath(policyLibraryPath string) tftOption {
+func WithPolicyLibraryPath(policyLibraryPath, terraformVetProject string) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.policyLibraryPath = policyLibraryPath
+		f.terraformVetProject = terraformVetProject
 	}
 }
 
@@ -384,7 +386,7 @@ func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
 	defer os.Remove(filepath)
 	assert.NoError(err)
-	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath).Array()
+	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath, b.terraformVetProject).Array()
 	assert.Empty(results, "Should have no Terraform Vet violations")
 }
 
