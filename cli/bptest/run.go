@@ -21,7 +21,7 @@ const (
 	goBin              = "go"
 
 	// maxScanTokenSize is the maximum size used to buffer a token
-	maxScanTokenSize = 64 * 1024
+	maxScanTokenSize = 10 * 1024 * 1024
 	// startBufSize is the initial of the buffer token
 	startBufSize = 4096
 )
