@@ -19,6 +19,15 @@ const (
 	testStageEnvVarKey = "RUN_STAGE"
 	gotestBin          = "gotest"
 	goBin              = "go"
+
+	// The tfplan.json files that are being used as input for the terraform validation tests
+	// through the gcloud beta terraform vet are higher than the buffer default value (64*1024),
+	// after some tests we had evidences that the value were arround from 3MB to 5MB, so
+	// we choosed a value that is at least 2x higher than the original one to avoid errors.
+	// maxScanTokenSize is the maximum size used to buffer a token
+	// startBufSize is the initial of the buffer token
+	maxScanTokenSize = 10 * 1024 * 1024
+	startBufSize     = 4096
 )
 
 var allTestArgs = []string{"-p", "1", "-count", "1", "-timeout", "0"}
@@ -73,6 +82,7 @@ func streamExec(cmd *exec.Cmd) error {
 	go func() {
 		defer wg.Done()
 		scanner := bufio.NewScanner(op)
+		scanner.Buffer(make([]byte, startBufSize), maxScanTokenSize)
 		for scanner.Scan() {
 			fmt.Println(scanner.Text())
 		}
