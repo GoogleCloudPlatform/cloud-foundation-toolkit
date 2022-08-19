@@ -19,6 +19,11 @@ const (
 	testStageEnvVarKey = "RUN_STAGE"
 	gotestBin          = "gotest"
 	goBin              = "go"
+
+	// maxScanTokenSize is the maximum size used to buffer a token
+	maxScanTokenSize = 64 * 1024
+	// startBufSize is the initial of the buffer token
+	startBufSize = 4096
 )
 
 var allTestArgs = []string{"-p", "1", "-count", "1", "-timeout", "0"}
@@ -73,7 +78,7 @@ func streamExec(cmd *exec.Cmd) error {
 	go func() {
 		defer wg.Done()
 		scanner := bufio.NewScanner(op)
-		scanner.Buffer(make([]byte, 4096), 10*1024*1024)
+		scanner.Buffer(make([]byte, startBufSize), maxScanTokenSize)
 		for scanner.Scan() {
 			fmt.Println(scanner.Text())
 		}
