@@ -30,6 +30,7 @@ locals {
     "cloud-foundation-training" = "cloud-foundation-training",
     "example-foundation-app"    = "terraform-example-foundation-app",
     "anthos-samples"            = "anthos-samples"
+    "docs-samples"              = "terraform-docs-samples"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
