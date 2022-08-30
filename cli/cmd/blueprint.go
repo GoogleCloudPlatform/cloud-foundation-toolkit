@@ -18,7 +18,7 @@ func init() {
 var blueprintCmd = &cobra.Command{
 	Use:   "blueprint",
 	Short: "Blueprint CLI",
-	Long:  `The CFT blueprint CLI is used to execute commands specific to blueprints such as test, avgtime & metadata`,
+	Long:  `The CFT blueprint CLI is used to execute commands specific to blueprints such as test, builds & metadata`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		if args == nil || len(args) == 0 {
