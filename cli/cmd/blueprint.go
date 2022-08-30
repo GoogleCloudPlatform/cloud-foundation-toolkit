@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	blueprintCmd.AddCommand(bpmetadata.MdCmd)
+	blueprintCmd.AddCommand(bpmetadata.Cmd)
 	blueprintCmd.AddCommand(bpbuild.Cmd)
 	blueprintCmd.AddCommand(bptest.Cmd)
 

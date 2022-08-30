@@ -8,17 +8,16 @@ import (
 var mdFlags struct {
 	path   string
 	nested bool
-	verfiy bool
 }
 
 func init() {
 	viper.AutomaticEnv()
 
-	MdCmd.Flags().StringVar(&mdFlags.path, "path", ".", "Path to the blueprint for generating metadata.")
-	MdCmd.Flags().BoolVar(&mdFlags.nested, "nested", false, "Flag for generating metadata for nested blueprint, if any.")
+	Cmd.Flags().StringVar(&mdFlags.path, "path", ".", "Path to the blueprint for generating metadata.")
+	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
 }
 
-var MdCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:   "metadata",
 	Short: "Generates blueprint metatda",
 	Long:  `Generates metadata.yaml for specified blueprint`,
