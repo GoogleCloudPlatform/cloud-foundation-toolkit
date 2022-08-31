@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.2.0...infra/blueprint-test/v0.3.0) (2022-08-30)
+
+
+### Features
+
+* add project ID param to tft vet ([#1226](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1226)) ([e95dc64](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e95dc64d9b4596135cfc8bac481402c739e1c6a4))
+* blueprint-test file logger ([a284f16](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/a284f164fccc58db86dfb8999b8013642e5d2bd7))
+
 ## [0.2.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.1.0...infra/blueprint-test/v0.2.0) (2022-08-03)
 
 
