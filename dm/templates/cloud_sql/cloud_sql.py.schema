@@ -196,7 +196,7 @@ properties:
       to Second Generation instances.
   rootPassword:
     type: string
-    description: MSSQL or POSTGRS root password
+    description: MSSQL or POSTGRES root password
   settings:
     type: object
     additionalProperties: false
