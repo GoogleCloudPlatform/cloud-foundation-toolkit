@@ -42,7 +42,7 @@ properties:
       The database engine type and version.
       The databaseVersion field can not be changed after instance creation.
       MySQL Second Generation instances: MYSQL_8_0, MYSQL_5_7 (default) or MYSQL_5_6.
-      PostgreSQL instances: POSTGRES_9_6 (default), or POSTGRES_10, or POSTGRES_11 Beta, or POSTGRES_12.
+      PostgreSQL instances: POSTGRES_9_6 (default), or POSTGRES_10, or POSTGRES_11 Beta, POSTGRES_12, POSTGRES_13 or POSTGRES_14.
       SQL Server instances: SQLSERVER_2017_STANDARD (default), SQLSERVER_2017_ENTERPRISE, SQLSERVER_2017_EXPRESS, or SQLSERVER_2017_WEB.
     enum:
       - MYSQL_5_6
