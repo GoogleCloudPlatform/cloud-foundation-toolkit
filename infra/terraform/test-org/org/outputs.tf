@@ -90,3 +90,7 @@ output "ci_bq_external_hive_file_bar" {
 output "prow_int_sa" {
   value = module.prow-int-sa-wi.gcp_service_account_email
 }
+
+output "ci_media_cdn_vod_project_id" {
+  value = module.ci_media_cdn_vod_project.project_id
+}
