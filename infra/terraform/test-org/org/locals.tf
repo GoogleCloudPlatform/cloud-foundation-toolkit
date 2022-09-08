@@ -100,6 +100,7 @@ locals {
     "secret-manager",
     "load-balanced-vms",
     "three-tier-app",
+    "log-analysis",
     "media-cdn-vod",
   ]
 }
