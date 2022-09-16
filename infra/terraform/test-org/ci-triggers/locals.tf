@@ -57,4 +57,6 @@ locals {
     _SFB_CLOUDBUILD_PROJECT_ID : data.terraform_remote_state.sfb-bootstrap.outputs.cloudbuild_project_id,
     _SFB_TF_SA_NAME : data.terraform_remote_state.sfb-bootstrap.outputs.terraform_sa_name,
   }
+  # vod test project id
+  vod_test_project_id = data.terraform_remote_state.org.outputs.ci_media_cdn_vod_project_id
 }
