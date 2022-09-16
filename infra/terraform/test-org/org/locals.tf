@@ -86,6 +86,7 @@ locals {
     "module-template",
     "vault",
     "docs-samples",
+    "media-cdn-vod",
   ]
   # These should also be added to test-org/github/branch.tf#L19 till the todo is resolved.
   gcp_org_modules = [
