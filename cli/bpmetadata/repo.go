@@ -8,12 +8,12 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 )
 
-type RepoDetail struct {
+type repoDetail struct {
 	Name   string
-	Source *RepoSource
+	Source *repoSource
 }
 
-type RepoSource struct {
+type repoSource struct {
 	Path       string
 	SourceType string
 }
@@ -23,9 +23,9 @@ const (
 	nestedBpPath = "modules/"
 )
 
-// getRepoDetailsByPath takes a local path for a blueprints and tries
+// getRepoDetailsByPath takes a local path for a blueprint and tries
 // to get repo details that include its name, path and type
-func getRepoDetailsByPath(bpPath string) (*RepoDetail, error) {
+func getRepoDetailsByPath(bpPath string) (*repoDetail, error) {
 	bpPath = strings.TrimSuffix(bpPath, "/")
 	repoPath, err := getBpPathForRepoName(bpPath)
 	if err != nil {
@@ -42,9 +42,9 @@ func getRepoDetailsByPath(bpPath string) (*RepoDetail, error) {
 		return nil, fmt.Errorf("error getting the repo URL from the provided local repo path: %w", err)
 	}
 
-	return &RepoDetail{
+	return &repoDetail{
 		Name: repoName,
-		Source: &RepoSource{
+		Source: &repoSource{
 			Path:       repoUrl,
 			SourceType: "git",
 		},

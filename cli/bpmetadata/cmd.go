@@ -3,9 +3,11 @@ package bpmetadata
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"sigs.k8s.io/kustomize/kyaml/yaml"
 )
 
 var mdFlags struct {
@@ -25,34 +27,50 @@ var Cmd = &cobra.Command{
 	Short: "Generates blueprint metatda",
 	Long:  `Generates metadata.yaml for specified blueprint`,
 	Args:  cobra.NoArgs,
-	RunE:  generateBlueprintMetadata,
+	RunE:  generate,
 }
 
 // The top-level command function that generates metadata based on the provided flags
-func generateBlueprintMetadata(cmd *cobra.Command, args []string) error {
-	var bpMetadataDetailObj = &BpMetadataDetail{}
-
-	path, err := os.Getwd()
+func generate(cmd *cobra.Command, args []string) error {
+	wdPath, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("error getting working dir: %w", err)
 	}
 
-	if mdFlags.path != "." {
-		path = path + "/" + mdFlags.path
+	// create metadata details
+	bpPath := path.Join(wdPath, mdFlags.path)
+	err = CreateBlueprintMetadata(bpPath)
+	if err != nil {
+		return fmt.Errorf("error creating metadata for blueprint: %w", err)
 	}
-
-	// verfiy that the blueprint path is valid & get repo details
-	if repoDetails, err := getRepoDetailsByPath(path); err != nil {
-		return err
-	} else {
-		bpMetadataDetailObj.Name = repoDetails.Name
-		bpMetadataDetailObj.Source.Path = repoDetails.Source.Path
-		bpMetadataDetailObj.Source.SourceType = repoDetails.Source.SourceType
-	}
-
-	// TODO: generate metadata details
 
 	// TODO: write metadata to metadata.yaml
+
+	return nil
+}
+
+func CreateBlueprintMetadata(bpPath string) error {
+	// verfiy that the blueprint path is valid & get repo details
+	repoDetails, err := getRepoDetailsByPath(bpPath)
+	if err != nil {
+		return err
+	}
+
+	// start creating blueprint metadata
+	var bpMetadataObj = &BlueprintMetadata{}
+	bpMetadataObj.Meta = yaml.ResourceMeta{
+		TypeMeta: yaml.TypeMeta{
+			APIVersion: "blueprints.cloud.google.com/v1alpha1",
+			Kind:       "BlueprintMetadata",
+		},
+		ObjectMeta: yaml.ObjectMeta{
+			NameMeta: yaml.NameMeta{
+				Name:      repoDetails.Name,
+				Namespace: "",
+			},
+			Annotations: map[string]string{"config.kubernetes.io/local-config": "true"},
+		},
+	}
 
 	return nil
 }

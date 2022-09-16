@@ -1,58 +1,87 @@
 package bpmetadata
 
-type BpMetadataDetail struct {
-	Name           string
-	Source         *BpRepoDetail
-	Version        string
-	ActuationTool  *BpActuationTool
-	Title          string
-	Description    *BpDescription
-	SubBlueprints  []BpContent
-	Examples       []BpContent
-	Labels         []string
-	Icon           string
-	Diagrams       []BpDiagram
-	Documentation  []BpDocumentation
-	Variables      []BpVariable
-	VariableGroups []BpVariableGroup
-	Outputs        []BpOutputs
-	Roles          []BpRoles
-	Services       []string
+import "sigs.k8s.io/kustomize/kyaml/yaml"
+
+// BlueprintMetadata defines the overall structure for blueprint metadata details
+type BlueprintMetadata struct {
+	Meta yaml.ResourceMeta
+	Spec *BlueprintMetadataSpec `yaml:"spec"`
 }
 
-type BpRepoDetail struct {
-	Path       string
-	SourceType string `yaml:"type"`
+// BlueprintMetadataSpec defines the spec portion of the blueprint metadata
+type BlueprintMetadataSpec struct {
+	Info       BlueprintInfo
+	Content    BlueprintContent
+	Interfaces BlueprintInterface
+	Security   BlueprintSecurity
 }
 
-type BpActuationTool struct {
+// BlueprintInfo defines informational detail for the blueprint
+type BlueprintInfo struct {
+	Title         string               `yaml:"title"`
+	Source        *BlueprintRepoDetail `yaml:"source"`
+	Version       string
+	ActuationTool *BlueprintActuationTool
+	Description   *BlueprintDescription
+	Icon          string
+}
+
+// BlueprintContent defines the detail for blueprint related content such as
+// related documentation, diagrams, examples etc.
+type BlueprintContent struct {
+	Diagrams      []BlueprintDiagram
+	Documentation []BlueprintDocumentation
+	SubBlueprints []BlueprintMiscContent
+	Examples      []BlueprintMiscContent
+}
+
+// BlueprintInterface the input and output variables for the blueprint
+type BlueprintInterface struct {
+	Variables      []BlueprintVariable
+	VariableGroups []BlueprintVariableGroup
+	Outputs        []BlueprintOutputs
+}
+
+// BlueprintSecurity defines the roles required and the assocaited services
+// that need to be enabled to provision blueprint resources
+type BlueprintSecurity struct {
+	Roles    []BlueprintRoles
+	Services []string
+}
+
+type BlueprintRepoDetail struct {
+	Path       string `yaml:"path"`
+	SourceType string `yaml:"type" default:"git"`
+}
+
+type BlueprintActuationTool struct {
 	Flavor  string `yaml:"type"`
 	Version string
 }
 
-type BpDescription struct {
+type BlueprintDescription struct {
 	Tagline   string
 	Detailed  string
 	PreDeploy string
 }
 
-type BpContent struct {
+type BlueprintMiscContent struct {
 	Name     string
 	Location string
 }
 
-type BpDiagram struct {
+type BlueprintDiagram struct {
 	Name        string
 	AltText     string
 	Description string
 }
 
-type BpDocumentation struct {
+type BlueprintDocumentation struct {
 	Title string
 	Url   string
 }
 
-type BpVariable struct {
+type BlueprintVariable struct {
 	Name        string
 	Description string
 	VarType     string `yaml:"type"`
@@ -60,18 +89,18 @@ type BpVariable struct {
 	Required    bool
 }
 
-type BpVariableGroup struct {
+type BlueprintVariableGroup struct {
 	Name        string
 	Description string
 	Variables   []string
 }
 
-type BpOutputs struct {
+type BlueprintOutputs struct {
 	Name        string
 	Description string
 }
 
-type BpRoles struct {
+type BlueprintRoles struct {
 	Granularity string
 	Roles       []string
 }
