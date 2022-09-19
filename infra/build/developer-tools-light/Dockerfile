@@ -19,7 +19,7 @@ ARG TERRAFORM_VERSION
 ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
 
-FROM alpine:3.15.4
+FROM alpine:3.15.6
 RUN apk update && apk add --no-cache \
         bash \
         git \
