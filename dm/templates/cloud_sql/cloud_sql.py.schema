@@ -42,7 +42,7 @@ properties:
       The database engine type and version.
       The databaseVersion field can not be changed after instance creation.
       MySQL Second Generation instances: MYSQL_8_0, MYSQL_5_7 (default) or MYSQL_5_6.
-      PostgreSQL instances: POSTGRES_9_6 (default), or POSTGRES_10, or POSTGRES_11 Beta, or POSTGRES_12.
+      PostgreSQL instances: POSTGRES_9_6 (default), or POSTGRES_10, or POSTGRES_11 Beta, POSTGRES_12, POSTGRES_13 or POSTGRES_14.
       SQL Server instances: SQLSERVER_2017_STANDARD (default), SQLSERVER_2017_ENTERPRISE, SQLSERVER_2017_EXPRESS, or SQLSERVER_2017_WEB.
     enum:
       - MYSQL_5_6
@@ -52,6 +52,8 @@ properties:
       - POSTGRES_10
       - POSTGRES_11
       - POSTGRES_12
+      - POSTGRES_13
+      - POSTGRES_14
       - SQLSERVER_2017_STANDARD
       - SQLSERVER_2017_ENTERPRISE
       - SQLSERVER_2017_EXPRESS
@@ -194,7 +196,7 @@ properties:
       to Second Generation instances.
   rootPassword:
     type: string
-    description: MSSQL root password
+    description: MSSQL or POSTGRES root password
   settings:
     type: object
     additionalProperties: false
@@ -448,27 +450,41 @@ properties:
       cannot be changed after instance creation.
       See https://cloud.google.com/sql/docs/mysql/locations
     enum:
-      - northamerica-northeast1
-      - us-central
-      - us-central1
-      - us-east1
-      - us-east4
-      - us-west1
-      - us-west2
-      - southamerica-east1
+      - asia-east1
+      - asia-east2
+      - asia-northeast1
+      - asia-northeast2
+      - asia-northeast3
+      - asia-south1
+      - asia-south2
+      - asia-southeast1
+      - asia-southeast2
+      - australia-southeast1
+      - australia-southeast2
+      - europe-central2
       - europe-north1
+      - europe-southwest1
       - europe-west1
       - europe-west2
       - europe-west3
       - europe-west4
       - europe-west6
-      - asia-east1
-      - asia-east2
-      - asia-northeast1
-      - asia-northeast2
-      - asia-south1
-      - asia-southeast1
-      - australia-southeast1
+      - europe-west8
+      - europe-west9
+      - me-west1
+      - northamerica-northeast1
+      - northamerica-northeast2
+      - southamerica-east1
+      - southamerica-west1
+      - us-central1
+      - us-east1
+      - us-east4
+      - us-east5
+      - us-south1
+      - us-west1
+      - us-west2
+      - us-west3
+      - us-west4
   databases:
     type: array
     description: SQL Databases to create in the new instance.
