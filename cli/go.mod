@@ -12,7 +12,10 @@ require (
 	github.com/gammazero/workerpool v1.1.2
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/golang/protobuf v1.5.2
+	github.com/gomarkdown/markdown v0.0.0-20220905174103-7b278df48cfb
 	github.com/google/go-cmp v0.5.6
+	github.com/hashicorp/hcl/v2 v2.14.0
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20211115214459-90acf1ca460f
 	github.com/iancoleman/strcase v0.2.0
 	github.com/inconshreveable/log15 v0.0.0-20201112154412-8562bdadbbac
 	github.com/jedib0t/go-pretty/v6 v6.2.4
@@ -27,6 +30,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	google.golang.org/api v0.58.0
 	google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12
+	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	sigs.k8s.io/kustomize/kyaml v0.13.9
 	sigs.k8s.io/yaml v1.2.0
