@@ -38,6 +38,7 @@ def generate_config(context):
         'labels',
         'fileShares',
         'networks',
+        'ipAddress',
     ]
 
     for prop in optional_props:
@@ -62,6 +63,10 @@ def generate_config(context):
                 {
                     'name': 'networks',
                     'value': '$(ref.{}.networks)'.format(context.env['name'])
+                },
+                {
+                    'name': 'ipAddress',
+                    'value': '$(ref.{}.networks[0].ipAddresses[0])'.format(context.env['name'])
                 }
             ]
     }

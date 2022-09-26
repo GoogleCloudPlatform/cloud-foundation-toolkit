@@ -50,9 +50,18 @@ properties:
     type: string
     default: TIER_UNSPECIFIED
     description: |
-      The region name where the bucket is deployed.
+      The storage tier to use. Each tier has it's own capacity limitations. 
+      STANDARD is deprecated, BASIC_HDD is preferred. 1024 minimum capacityGb.
+      PREMIUM is deprecated, BASIC_SSD is preferred. 2560 minimum capacityGb.
+      ENTERPRISE 1024 minimum capacityGb.
+      HIGH_SCALE_SSD 10240 minimum capacityGb.
+      For more information, see https://cloud.google.com/filestore/docs/reference/rest/v1/Tier
     enum:
       - TIER_UNSPECIFIED
+      - BASIC_HDD
+      - BASIC_SSD
+      - ENTERPRISE
+      - HIGH_SCALE_SSD 
       - STANDARD
       - PREMIUM
   labels:
@@ -79,7 +88,7 @@ properties:
             The name of the file share (must be 16 characters or less).
         capacityGb:
           type: integer
-          minimum: 2560
+          minimum: 1024
           description: |
             File share capacity in gigabytes (GB). Cloud Filestore defines 1 GB as 1024^3 bytes.
   networks:
@@ -113,7 +122,7 @@ properties:
             enum:
               - MODE_IPV4
         reservedIpRange:
-          type: integer
+          type: string
           description: |
             A /29 CIDR block in one of the internal IP address ranges that identifies the range of IP addresses
             reserved for this instance. For example, 10.0.0.0/29 or 192.168.0.0/29. The range you specify can't
