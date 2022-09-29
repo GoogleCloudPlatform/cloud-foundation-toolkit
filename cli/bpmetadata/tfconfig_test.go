@@ -1,21 +1,21 @@
 package bpmetadata
 
 import (
-	"github.com/hashicorp/hcl/v2/hclparse"
-	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"path"
 	"testing"
+
+	"github.com/hashicorp/hcl/v2/hclparse"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
 	tfTestdataPath = "../testdata/bpmetadata/tf"
-	interfaces     = "interfaces"
+	interfaces     = "sample-module"
 )
 
-func TestTFVariables(t *testing.T) {
+func TestTFInterfaces(t *testing.T) {
 	varTests := []struct {
 		name            string
-		configDirPath   string
 		varName         string
 		wantDescription string
 		wantVarType     string
@@ -24,14 +24,12 @@ func TestTFVariables(t *testing.T) {
 	}{
 		{
 			name:            "just name and description",
-			configDirPath:   path.Join(tfTestdataPath, interfaces),
 			varName:         "project_id",
 			wantDescription: "The project ID to host the cluster in",
 			wantRequired:    true,
 		},
 		{
 			name:            "with type and string default",
-			configDirPath:   path.Join(tfTestdataPath, interfaces),
 			varName:         "description",
 			wantDescription: "The description of the cluster",
 			wantVarType:     "string",
@@ -40,7 +38,6 @@ func TestTFVariables(t *testing.T) {
 		},
 		{
 			name:            "with required as fasle",
-			configDirPath:   path.Join(tfTestdataPath, interfaces),
 			varName:         "regional",
 			wantDescription: "Whether is a regional cluster",
 			wantVarType:     "bool",
@@ -49,58 +46,65 @@ func TestTFVariables(t *testing.T) {
 		},
 	}
 
-	for _, tt := range varTests {
-		t.Run(tt.name, func(t *testing.T) {
-			mod, _ := tfconfig.LoadModule(tt.configDirPath)
-			got := getBlueprintVariable(mod.Variables[tt.varName])
-
-			if got.Description != tt.wantDescription {
-				t.Errorf("getBlueprintVariable() Description  = %v, want %v", got.Description, tt.wantDescription)
-			}
-
-			if got.VarType != tt.wantVarType {
-				t.Errorf("getBlueprintVariable() VarType = %v, want %v", got.VarType, tt.wantVarType)
-			}
-
-			if got.Default != tt.wantDefault {
-				t.Errorf("getBlueprintVariable() Default = %v, want %v", got.Default, tt.wantDefault)
-			}
-
-			if got.Required != tt.wantRequired {
-				t.Errorf("getBlueprintVariable() Required = %v, want %v", got.Required, tt.wantRequired)
-			}
-		})
-	}
-}
-
-func TestTFOutputs(t *testing.T) {
 	outTests := []struct {
 		name            string
-		configDirPath   string
 		outName         string
 		wantDescription string
 	}{
 		{
 			name:            "just name and description",
-			configDirPath:   path.Join(tfTestdataPath, interfaces),
 			outName:         "cluster_id",
 			wantDescription: "Cluster ID",
 		},
 		{
 			name:            "more than just name and description",
-			configDirPath:   path.Join(tfTestdataPath, interfaces),
 			outName:         "endpoint",
 			wantDescription: "Cluster endpoint",
 		},
 	}
 
+	got, _ := getBlueprintInterfaces(path.Join(tfTestdataPath, interfaces))
+
+	for _, tt := range varTests {
+		t.Run(tt.name, func(t *testing.T) {
+			for _, gotV := range got.Variables {
+				if gotV.Name != tt.varName {
+					continue
+				}
+
+				if gotV.Description != tt.wantDescription {
+					t.Errorf("getBlueprintVariable() Description  = %v, want %v", gotV.Description, tt.wantDescription)
+				}
+
+				if gotV.VarType != tt.wantVarType {
+					t.Errorf("getBlueprintVariable() VarType = %v, want %v", gotV.VarType, tt.wantVarType)
+				}
+
+				if gotV.Default != tt.wantDefault {
+					t.Errorf("getBlueprintVariable() Default = %v, want %v", gotV.Default, tt.wantDefault)
+				}
+
+				if gotV.Required != tt.wantRequired {
+					t.Errorf("getBlueprintVariable() Required = %v, want %v", gotV.Required, tt.wantRequired)
+				}
+
+				break
+			}
+		})
+	}
+
 	for _, tt := range outTests {
 		t.Run(tt.name, func(t *testing.T) {
-			mod, _ := tfconfig.LoadModule(tt.configDirPath)
-			got := getBlueprintOutput(mod.Outputs[tt.outName])
+			for _, gotO := range got.Outputs {
+				if gotO.Name != tt.name {
+					continue
+				}
 
-			if got.Description != tt.wantDescription {
-				t.Errorf("getBlueprintOutput() Description  = %v, want %v", got.Description, tt.wantDescription)
+				if gotO.Description != tt.wantDescription {
+					t.Errorf("getBlueprintOutput() Description  = %v, want %v", gotO.Description, tt.wantDescription)
+				}
+
+				break
 			}
 		})
 	}
@@ -109,41 +113,47 @@ func TestTFOutputs(t *testing.T) {
 func TestTFVersions(t *testing.T) {
 	tests := []struct {
 		name                string
-		configPath          string
+		configName          string
 		wantRequiredVersion string
 		wantModuleVersion   string
 	}{
 		{
 			name:                "core version only",
-			configPath:          path.Join(tfTestdataPath, "versions-core.tf"),
+			configName:          "versions-core.tf",
 			wantRequiredVersion: ">= 0.13.0",
 		},
 		{
 			name:              "module version only",
-			configPath:        path.Join(tfTestdataPath, "versions-module.tf"),
+			configName:        "versions-module.tf",
 			wantModuleVersion: "23.1.0",
 		},
 		{
 			name:                "bad module version good core version",
-			configPath:          path.Join(tfTestdataPath, "versions-bad-module.tf"),
+			configName:          "versions-bad-module.tf",
 			wantRequiredVersion: ">= 0.13.0",
 			wantModuleVersion:   "",
 		},
 		{
 			name:                "bad core version good module version",
-			configPath:          path.Join(tfTestdataPath, "versions-bad-core.tf"),
+			configName:          "versions-bad-core.tf",
 			wantRequiredVersion: "",
 			wantModuleVersion:   "23.1.0",
 		},
 		{
 			name:                "all bad",
-			configPath:          path.Join(tfTestdataPath, "versions-bad-all.tf"),
+			configName:          "versions-bad-all.tf",
 			wantRequiredVersion: "",
 			wantModuleVersion:   "",
 		},
 		{
 			name:                "both versions",
-			configPath:          path.Join(tfTestdataPath, "versions.tf"),
+			configName:          "versions.tf",
+			wantRequiredVersion: ">= 0.13.0",
+			wantModuleVersion:   "23.1.0",
+		},
+		{
+			name:                "both versions with beta",
+			configName:          "versions-beta.tf",
 			wantRequiredVersion: ">= 0.13.0",
 			wantModuleVersion:   "23.1.0",
 		},
@@ -151,11 +161,11 @@ func TestTFVersions(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := getBlueprintVersion(tt.configPath)
+			got := getBlueprintVersion(path.Join(tfTestdataPath, tt.configName))
 
 			if got != nil {
-				if got.requiredVersion != tt.wantRequiredVersion {
-					t.Errorf("getBlueprintVersion() = %v, want %v", got.requiredVersion, tt.wantRequiredVersion)
+				if got.requiredTfVersion != tt.wantRequiredVersion {
+					t.Errorf("getBlueprintVersion() = %v, want %v", got.requiredTfVersion, tt.wantRequiredVersion)
 					return
 				}
 
@@ -175,12 +185,12 @@ func TestTFVersions(t *testing.T) {
 func TestTFServices(t *testing.T) {
 	tests := []struct {
 		name         string
-		configPath   string
+		configName   string
 		wantServices []string
 	}{
 		{
 			name:       "simple list of apis",
-			configPath: path.Join(tfTestdataPath, "main.tf"),
+			configName: "main.tf",
 			wantServices: []string{
 				"cloudkms.googleapis.com",
 				"cloudresourcemanager.googleapis.com",
@@ -210,18 +220,10 @@ func TestTFServices(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := hclparse.NewParser()
-			content, _ := p.ParseHCLFile(tt.configPath)
+			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
 			got := parseBlueprintServices(content)
 
-			if len(got) != len(tt.wantServices) {
-				t.Errorf("parseBlueprintServices() | no of services = %v, want %v", len(got), len(tt.wantServices))
-			}
-
-			for i := 0; i < len(got); i++ {
-				if got[i] != tt.wantServices[i] {
-					t.Errorf("parseBlueprintServices() | service = %s, want %s", got[i], tt.wantServices[i])
-				}
-			}
+			assert.Equal(t, got, tt.wantServices)
 		})
 	}
 }

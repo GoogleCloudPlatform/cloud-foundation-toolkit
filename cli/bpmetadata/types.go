@@ -30,7 +30,7 @@ type BlueprintInfo struct {
 // related documentation, diagrams, examples etc.
 type BlueprintContent struct {
 	Diagrams      []BlueprintDiagram
-	Documentation []BlueprintMdListContent
+	Documentation []BlueprintListContent
 	SubBlueprints []BlueprintMiscContent
 	Examples      []BlueprintMiscContent
 }
@@ -76,7 +76,7 @@ type BlueprintDiagram struct {
 	Description string
 }
 
-type BlueprintMdListContent struct {
+type BlueprintListContent struct {
 	Title string
 	Url   string
 }

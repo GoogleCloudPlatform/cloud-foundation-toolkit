@@ -35,4 +35,3 @@ output "endpoint" {
     google_container_node_pool.pools,
   ]
 }
-

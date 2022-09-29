@@ -18,7 +18,7 @@
 
 variable "project_id" {
   description = "The project ID to host the cluster in"
-  required = false
+  required    = false
 }
 
 variable "description" {
@@ -30,5 +30,5 @@ variable "description" {
 variable "regional" {
   type        = bool
   description = "Whether is a regional cluster"
-  default     = true  
+  default     = true
 }

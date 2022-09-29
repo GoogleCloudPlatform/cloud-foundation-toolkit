@@ -15,6 +15,7 @@ type repoDetail struct {
 
 type repoSource struct {
 	Path       string
+	RootPath   string
 	SourceType string
 }
 
@@ -47,6 +48,7 @@ func getRepoDetailsByPath(bpPath string) (*repoDetail, error) {
 		Source: &repoSource{
 			Path:       repoUrl,
 			SourceType: "git",
+			RootPath:   repoPath,
 		},
 	}, nil
 }

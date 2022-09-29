@@ -16,10 +16,10 @@ var mdFlags struct {
 }
 
 const (
-	readmeFileName     string = "README.md"
-	tfVersionsFileName string = "versions.tf"
-	tfRolesFileName    string = "../../test/setup/iam.tf"
-	tfServicesFileName string = "../../test/setup/main.tf"
+	readmeFileName     = "README.md"
+	tfVersionsFileName = "versions.tf"
+	tfRolesFileName    = "test/setup/iam.tf"
+	tfServicesFileName = "test/setup/main.tf"
 )
 
 func init() {
@@ -80,55 +80,67 @@ func CreateBlueprintMetadata(bpPath string) error {
 	}
 
 	// start creating the Spec node
-	bpMetadataObj.Spec = &BlueprintMetadataSpec{
-		Info:         BlueprintInfo{},
-		Content:      BlueprintContent{},
-		Interfaces:   BlueprintInterface{},
-		Requirements: BlueprintRequirements{},
-	}
-
-	//create blueprint title
 	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
 	if err != nil {
 		return fmt.Errorf("error reading blueprint readme markdown: %w", err)
 	}
+
+	info := createInfo(bpPath, readmeContent)
+	content := createContent(bpPath, readmeContent)
+	interfaces, err := createInterfaces(bpPath)
+	if err != nil {
+		return err
+	}
+
+	requirements := createRequirements(repoDetails.Source.RootPath)
+
+	bpMetadataObj.Spec = &BlueprintMetadataSpec{
+		Info:         info,
+		Content:      content,
+		Interfaces:   *interfaces,
+		Requirements: requirements,
+	}
+
+	return nil
+}
+
+func createInfo(bpPath string, readmeContent []byte) BlueprintInfo {
+	repoDetails, _ := getRepoDetailsByPath(bpPath)
 	title := getMdContent(readmeContent, 1, 1, "", false)
-	bpMetadataObj.Spec.Info.Title = title.literal
-
-	// create blueprint source
-	bpMetadataObj.Spec.Info.Source = &BlueprintRepoDetail{
-		Repo:       repoDetails.Source.Path,
-		SourceType: "git",
-	}
-
-	// create version
 	versionInfo := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
-	bpMetadataObj.Spec.Info.Version = versionInfo.moduleVersion
-
-	// create blueprint actuation tool & core version
-	bpMetadataObj.Spec.Info.ActuationTool = &BlueprintActuationTool{
-		Flavor:  "Terraform",
-		Version: versionInfo.requiredVersion,
-	}
 
 	// create descriptions
 	tagline := getMdContent(readmeContent, -1, -1, "Tagline", true)
 	detailed := getMdContent(readmeContent, -1, -1, "Detailed", true)
 	preDeploy := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
-	bpMetadataObj.Spec.Info.Description = &BlueprintDescription{
-		Tagline:   tagline.literal,
-		Detailed:  detailed.literal,
-		PreDeploy: preDeploy.literal,
-	}
 
 	// TODO:(b/246603410) create icon
 
-	// create documentation
+	return BlueprintInfo{
+		Title: title.literal,
+		Source: &BlueprintRepoDetail{
+			Repo:       repoDetails.Source.Path,
+			SourceType: "git",
+		},
+		Version: versionInfo.moduleVersion,
+		ActuationTool: &BlueprintActuationTool{
+			Flavor:  "Terraform",
+			Version: versionInfo.requiredTfVersion,
+		},
+		Description: &BlueprintDescription{
+			Tagline:   tagline.literal,
+			Detailed:  detailed.literal,
+			PreDeploy: preDeploy.literal,
+		},
+	}
+}
+
+func createContent(bpPath string, readmeContent []byte) BlueprintContent {
 	documentation := getMdContent(readmeContent, -1, -1, "Documentation", true)
-	var docListToSet []BlueprintMdListContent
+	var docListToSet []BlueprintListContent
 
 	for _, li := range documentation.listItems {
-		doc := BlueprintMdListContent{
+		doc := BlueprintListContent{
 			Title: li.text,
 			Url:   li.url,
 		}
@@ -136,20 +148,27 @@ func CreateBlueprintMetadata(bpPath string) error {
 		docListToSet = append(docListToSet, doc)
 	}
 
-	bpMetadataObj.Spec.Content.Documentation = docListToSet
-
 	// TODO:(b/246603410) create sub-blueprints
 
 	// TODO:(b/246603410) create examples
 
-	// create variables & outputs
-	interfaces := getBlueprintInterfaces(bpPath)
-	bpMetadataObj.Spec.Interfaces.Variables = interfaces.Variables
-	bpMetadataObj.Spec.Interfaces.Outputs = interfaces.Outputs
+	return BlueprintContent{
+		Documentation: docListToSet,
+	}
+}
 
-	// create roles & services
-	requirements := getBlueprintRequirements(path.Join(bpPath, tfRolesFileName), path.Join(bpPath, tfServicesFileName))
-	bpMetadataObj.Spec.Requirements = requirements
+func createInterfaces(bpPath string) (*BlueprintInterface, error) {
+	interfaces, err := getBlueprintInterfaces(bpPath)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	return &BlueprintInterface{
+		Variables: interfaces.Variables,
+		Outputs:   interfaces.Outputs,
+	}, nil
+}
+
+func createRequirements(bpRootPath string) BlueprintRequirements {
+	return getBlueprintRequirements(path.Join(bpRootPath, tfRolesFileName), path.Join(bpRootPath, tfServicesFileName))
 }

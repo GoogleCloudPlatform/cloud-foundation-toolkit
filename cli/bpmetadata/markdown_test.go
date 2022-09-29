@@ -4,6 +4,8 @@ import (
 	"os"
 	"path"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -13,7 +15,7 @@ const (
 func TestProcessMarkdownContent(t *testing.T) {
 	tests := []struct {
 		name       string
-		filePath   string
+		fileName   string
 		level      int
 		order      int
 		title      string
@@ -22,7 +24,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 	}{
 		{
 			name:       "level 1 heading",
-			filePath:   path.Join(mdTestdataPath, "simple-content.md"),
+			fileName:   "simple-content.md",
 			level:      1,
 			order:      1,
 			getContent: false,
@@ -32,7 +34,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "level 1 heading order 2",
-			filePath:   path.Join(mdTestdataPath, "simple-content.md"),
+			fileName:   "simple-content.md",
 			level:      1,
 			order:      2,
 			getContent: false,
@@ -40,7 +42,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "level 2 heading order 2",
-			filePath:   path.Join(mdTestdataPath, "simple-content.md"),
+			fileName:   "simple-content.md",
 			level:      2,
 			order:      2,
 			getContent: false,
@@ -50,7 +52,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "level 1 content",
-			filePath:   path.Join(mdTestdataPath, "simple-content.md"),
+			fileName:   "simple-content.md",
 			level:      1,
 			order:      1,
 			getContent: true,
@@ -60,7 +62,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "level 3 content order 2",
-			filePath:   path.Join(mdTestdataPath, "simple-content.md"),
+			fileName:   "simple-content.md",
 			level:      3,
 			order:      2,
 			getContent: true,
@@ -70,7 +72,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "content by head title",
-			filePath:   path.Join(mdTestdataPath, "simple-content.md"),
+			fileName:   "simple-content.md",
 			level:      -1,
 			order:      -1,
 			title:      "h3 sub sub heading",
@@ -81,7 +83,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "content by head title does not exist",
-			filePath:   path.Join(mdTestdataPath, "simple-content.md"),
+			fileName:   "simple-content.md",
 			level:      -1,
 			order:      -1,
 			title:      "Horizontal Rules",
@@ -90,7 +92,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "content by head title link list items",
-			filePath:   path.Join(mdTestdataPath, "list-content.md"),
+			fileName:   "list-content.md",
 			level:      -1,
 			order:      -1,
 			title:      "Documentation",
@@ -118,7 +120,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		},
 		{
 			name:       "content by head title list items",
-			filePath:   path.Join(mdTestdataPath, "list-content.md"),
+			fileName:   "list-content.md",
 			level:      -1,
 			order:      -1,
 			title:      "Diagrams",
@@ -137,31 +139,11 @@ func TestProcessMarkdownContent(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			content, _ := os.ReadFile(tt.filePath)
-			got := getMdContent(content, tt.level, tt.order, tt.title, tt.getContent)
+			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			if assert.NoError(t, err) {
+				got := getMdContent(content, tt.level, tt.order, tt.title, tt.getContent)
 
-			if got != nil {
-				if got.literal != tt.want.literal {
-					t.Errorf("getMdContent() = %v, want %v", got.literal, tt.want.literal)
-					return
-				}
-
-				if len(got.listItems) != len(tt.want.listItems) {
-					t.Errorf("getMdContent() = %v list items, want %v list items", len(got.listItems), len(tt.want.listItems))
-					return
-				}
-
-				for i := 0; i < len(got.listItems); i++ {
-					if (got.listItems[i].text != tt.want.listItems[i].text) ||
-						(got.listItems[i].url != tt.want.listItems[i].url) {
-						t.Errorf("getMdContent() = %v list item, want %v list item", got.listItems[i], tt.want.listItems[i])
-					}
-				}
-			} else {
-				if tt.want != nil {
-					t.Errorf("getMdContent() = returned nil when we want %v", tt.want)
-
-				}
+				assert.Equal(t, tt.want, got)
 			}
 		})
 	}
