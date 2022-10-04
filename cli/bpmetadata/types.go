@@ -10,10 +10,10 @@ type BlueprintMetadata struct {
 
 // BlueprintMetadataSpec defines the spec portion of the blueprint metadata
 type BlueprintMetadataSpec struct {
-	Info       BlueprintInfo
-	Content    BlueprintContent
-	Interfaces BlueprintInterface
-	Security   BlueprintSecurity
+	Info         BlueprintInfo
+	Content      BlueprintContent
+	Interfaces   BlueprintInterface
+	Requirements BlueprintRequirements
 }
 
 // BlueprintInfo defines informational detail for the blueprint
@@ -30,7 +30,7 @@ type BlueprintInfo struct {
 // related documentation, diagrams, examples etc.
 type BlueprintContent struct {
 	Diagrams      []BlueprintDiagram
-	Documentation []BlueprintDocumentation
+	Documentation []BlueprintListContent
 	SubBlueprints []BlueprintMiscContent
 	Examples      []BlueprintMiscContent
 }
@@ -39,19 +39,19 @@ type BlueprintContent struct {
 type BlueprintInterface struct {
 	Variables      []BlueprintVariable
 	VariableGroups []BlueprintVariableGroup
-	Outputs        []BlueprintOutputs
+	Outputs        []BlueprintOutput
 }
 
-// BlueprintSecurity defines the roles required and the assocaited services
+// BlueprintRequirements defines the roles required and the assocaited services
 // that need to be enabled to provision blueprint resources
-type BlueprintSecurity struct {
+type BlueprintRequirements struct {
 	Roles    []BlueprintRoles
 	Services []string
 }
 
 type BlueprintRepoDetail struct {
-	Path       string `yaml:"path"`
-	SourceType string `yaml:"type" default:"git"`
+	Repo       string `yaml:"repo"`
+	SourceType string `yaml:"sourceType"`
 }
 
 type BlueprintActuationTool struct {
@@ -76,7 +76,7 @@ type BlueprintDiagram struct {
 	Description string
 }
 
-type BlueprintDocumentation struct {
+type BlueprintListContent struct {
 	Title string
 	Url   string
 }
@@ -85,7 +85,7 @@ type BlueprintVariable struct {
 	Name        string
 	Description string
 	VarType     string `yaml:"type"`
-	Default     string
+	Default     interface{}
 	Required    bool
 }
 
@@ -95,7 +95,7 @@ type BlueprintVariableGroup struct {
 	Variables   []string
 }
 
-type BlueprintOutputs struct {
+type BlueprintOutput struct {
 	Name        string
 	Description string
 }

@@ -15,6 +15,13 @@ var mdFlags struct {
 	nested bool
 }
 
+const (
+	readmeFileName     = "README.md"
+	tfVersionsFileName = "versions.tf"
+	tfRolesFileName    = "test/setup/iam.tf"
+	tfServicesFileName = "test/setup/main.tf"
+)
+
 func init() {
 	viper.AutomaticEnv()
 
@@ -44,7 +51,7 @@ func generate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error creating metadata for blueprint: %w", err)
 	}
 
-	// TODO: write metadata to metadata.yaml
+	// TODO:(b/248642744) write metadata to metadata.yaml
 
 	return nil
 }
@@ -72,5 +79,108 @@ func CreateBlueprintMetadata(bpPath string) error {
 		},
 	}
 
+	// start creating the Spec node
+	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
+	if err != nil {
+		return fmt.Errorf("error reading blueprint readme markdown: %w", err)
+	}
+
+	info, err := createInfo(bpPath, readmeContent)
+	if err != nil {
+		return fmt.Errorf("error creating blueprint info: %w", err)
+	}
+
+	interfaces, err := getBlueprintInterfaces(bpPath)
+	if err != nil {
+		return fmt.Errorf("error creating blueprint interfaces: %w", err)
+	}
+
+	rolesCfgPath := path.Join(repoDetails.Source.RootPath, tfRolesFileName)
+	svcsCfgPath := path.Join(repoDetails.Source.RootPath, tfServicesFileName)
+	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath)
+	if err != nil {
+		return fmt.Errorf("error creating blueprint requirements: %w", err)
+	}
+
+	content := createContent(bpPath, readmeContent)
+
+	bpMetadataObj.Spec = &BlueprintMetadataSpec{
+		Info:         *info,
+		Content:      content,
+		Interfaces:   *interfaces,
+		Requirements: *requirements,
+	}
+
 	return nil
+}
+
+func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
+	i := &BlueprintInfo{}
+	title, err := getMdContent(readmeContent, 1, 1, "", false)
+	if err != nil {
+		return nil, err
+	}
+
+	i.Title = title.literal
+
+	repoDetails, err := getRepoDetailsByPath(bpPath)
+	if err != nil {
+		return nil, err
+	}
+
+	i.Source = &BlueprintRepoDetail{
+		Repo:       repoDetails.Source.Path,
+		SourceType: "git",
+	}
+
+	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
+	if err != nil {
+		return nil, err
+	}
+
+	i.Version = versionInfo.moduleVersion
+
+	// create descriptions
+	i.Description = &BlueprintDescription{}
+	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
+	if err == nil {
+		i.Description.Tagline = tagline.literal
+	}
+
+	detailed, err := getMdContent(readmeContent, -1, -1, "Detailed", true)
+	if err == nil {
+		i.Description.Detailed = detailed.literal
+	}
+
+	preDeploy, err := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
+	if err == nil {
+		i.Description.PreDeploy = preDeploy.literal
+	}
+
+	// TODO:(b/246603410) create icon
+
+	return i, nil
+}
+
+func createContent(bpPath string, readmeContent []byte) BlueprintContent {
+	var docListToSet []BlueprintListContent
+	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
+	if err == nil {
+		for _, li := range documentation.listItems {
+			doc := BlueprintListContent{
+				Title: li.text,
+				Url:   li.url,
+			}
+
+			docListToSet = append(docListToSet, doc)
+		}
+	}
+
+	// TODO:(b/246603410) create sub-blueprints
+
+	// TODO:(b/246603410) create examples
+
+	return BlueprintContent{
+		Documentation: docListToSet,
+	}
 }
