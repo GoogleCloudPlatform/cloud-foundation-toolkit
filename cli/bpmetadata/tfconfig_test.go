@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -63,49 +64,26 @@ func TestTFInterfaces(t *testing.T) {
 		},
 	}
 
-	got, _ := getBlueprintInterfaces(path.Join(tfTestdataPath, interfaces))
-
+	got, err := getBlueprintInterfaces(path.Join(tfTestdataPath, interfaces))
+	require.NoError(t, err)
 	for _, tt := range varTests {
 		t.Run(tt.name, func(t *testing.T) {
-			for _, gotV := range got.Variables {
-				if gotV.Name != tt.varName {
-					continue
-				}
-
-				if gotV.Description != tt.wantDescription {
-					t.Errorf("getBlueprintVariable() Description  = %v, want %v", gotV.Description, tt.wantDescription)
-				}
-
-				if gotV.VarType != tt.wantVarType {
-					t.Errorf("getBlueprintVariable() VarType = %v, want %v", gotV.VarType, tt.wantVarType)
-				}
-
-				if gotV.Default != tt.wantDefault {
-					t.Errorf("getBlueprintVariable() Default = %v, want %v", gotV.Default, tt.wantDefault)
-				}
-
-				if gotV.Required != tt.wantRequired {
-					t.Errorf("getBlueprintVariable() Required = %v, want %v", gotV.Required, tt.wantRequired)
-				}
-
-				break
-			}
+			assert.Contains(t, got.Variables, BlueprintVariable{
+				Name:        tt.varName,
+				Description: tt.wantDescription,
+				Default:     tt.wantDefault,
+				Required:    tt.wantRequired,
+				VarType:     tt.wantVarType,
+			})
 		})
 	}
 
 	for _, tt := range outTests {
 		t.Run(tt.name, func(t *testing.T) {
-			for _, gotO := range got.Outputs {
-				if gotO.Name != tt.name {
-					continue
-				}
-
-				if gotO.Description != tt.wantDescription {
-					t.Errorf("getBlueprintOutput() Description  = %v, want %v", gotO.Description, tt.wantDescription)
-				}
-
-				break
-			}
+			assert.Contains(t, got.Outputs, BlueprintOutput{
+				Name:        tt.outName,
+				Description: tt.wantDescription,
+			})
 		})
 	}
 }
@@ -161,7 +139,7 @@ func TestTFVersions(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := getBlueprintVersion(path.Join(tfTestdataPath, tt.configName))
+			got, _ := getBlueprintVersion(path.Join(tfTestdataPath, tt.configName))
 
 			if got != nil {
 				if got.requiredTfVersion != tt.wantRequiredVersion {
@@ -173,6 +151,7 @@ func TestTFVersions(t *testing.T) {
 					t.Errorf("getBlueprintVersion() = %v, want %v", got.moduleVersion, tt.wantModuleVersion)
 					return
 				}
+
 			} else {
 				if tt.wantModuleVersion != "" && tt.wantRequiredVersion != "" {
 					t.Errorf("getBlueprintVersion() = returned nil when we want core: %v and bpVersion: %v", tt.wantRequiredVersion, tt.wantModuleVersion)
@@ -221,8 +200,8 @@ func TestTFServices(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p := hclparse.NewParser()
 			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
-			got := parseBlueprintServices(content)
-
+			got, err := parseBlueprintServices(content)
+			require.NoError(t, err)
 			assert.Equal(t, got, tt.wantServices)
 		})
 	}

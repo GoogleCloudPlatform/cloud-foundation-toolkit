@@ -1,6 +1,8 @@
 package bpmetadata
 
 import (
+	"fmt"
+
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 )
@@ -21,13 +23,8 @@ type mdListItem struct {
 // 2: get paragraph content immediately following a heading by (level and/or order) OR by title
 // 3: get list item content immediately following a heading by (level and/or order) OR by title
 // A -1 value to headLevel/headOrder enforces the content to be matchd by headTitle
-func getMdContent(content []byte, headLevel int, headOrder int, headTitle string, getContent bool) *mdContent {
+func getMdContent(content []byte, headLevel int, headOrder int, headTitle string, getContent bool) (*mdContent, error) {
 	mdDocument := markdown.Parse(content, nil)
-
-	if mdDocument == nil {
-		return nil
-	}
-
 	orderCtr := 0
 	mdSections := mdDocument.GetChildren()
 	var foundHead bool
@@ -46,14 +43,14 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 			if !getContent && (headOrder == orderCtr || foundHead) {
 				return &mdContent{
 					literal: string(currLeaf.Literal),
-				}
+				}, nil
 			}
 
 		case *ast.Paragraph:
 			if getContent && (headOrder == orderCtr || foundHead) {
 				return &mdContent{
 					literal: string(currLeaf.Literal),
-				}
+				}, nil
 			}
 
 		case *ast.List:
@@ -86,10 +83,10 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 
 				return &mdContent{
 					listItems: mdListItems,
-				}
+				}, nil
 			}
 		}
 	}
 
-	return nil
+	return nil, fmt.Errorf("unable to find md content")
 }

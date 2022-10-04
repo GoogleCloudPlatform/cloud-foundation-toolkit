@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -140,11 +141,9 @@ func TestProcessMarkdownContent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
-			if assert.NoError(t, err) {
-				got := getMdContent(content, tt.level, tt.order, tt.title, tt.getContent)
-
-				assert.Equal(t, tt.want, got)
-			}
+			require.NoError(t, err)
+			got, _ := getMdContent(content, tt.level, tt.order, tt.title, tt.getContent)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

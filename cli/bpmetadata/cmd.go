@@ -85,67 +85,95 @@ func CreateBlueprintMetadata(bpPath string) error {
 		return fmt.Errorf("error reading blueprint readme markdown: %w", err)
 	}
 
-	info := createInfo(bpPath, readmeContent)
-	content := createContent(bpPath, readmeContent)
-	interfaces, err := createInterfaces(bpPath)
+	info, err := createInfo(bpPath, readmeContent)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
-	requirements := createRequirements(repoDetails.Source.RootPath)
+	interfaces, err := getBlueprintInterfaces(bpPath)
+	if err != nil {
+		return fmt.Errorf("error creating blueprint interfaces: %w", err)
+	}
+
+	rolesCfgPath := path.Join(repoDetails.Source.RootPath, tfRolesFileName)
+	svcsCfgPath := path.Join(repoDetails.Source.RootPath, tfServicesFileName)
+	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath)
+	if err != nil {
+		return fmt.Errorf("error creating blueprint requirements: %w", err)
+	}
+
+	content := createContent(bpPath, readmeContent)
 
 	bpMetadataObj.Spec = &BlueprintMetadataSpec{
-		Info:         info,
+		Info:         *info,
 		Content:      content,
 		Interfaces:   *interfaces,
-		Requirements: requirements,
+		Requirements: *requirements,
 	}
 
 	return nil
 }
 
-func createInfo(bpPath string, readmeContent []byte) BlueprintInfo {
-	repoDetails, _ := getRepoDetailsByPath(bpPath)
-	title := getMdContent(readmeContent, 1, 1, "", false)
-	versionInfo := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
+func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
+	i := &BlueprintInfo{}
+	title, err := getMdContent(readmeContent, 1, 1, "", false)
+	if err != nil {
+		return nil, err
+	}
+
+	i.Title = title.literal
+
+	repoDetails, err := getRepoDetailsByPath(bpPath)
+	if err != nil {
+		return nil, err
+	}
+
+	i.Source = &BlueprintRepoDetail{
+		Repo:       repoDetails.Source.Path,
+		SourceType: "git",
+	}
+
+	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
+	if err != nil {
+		return nil, err
+	}
+
+	i.Version = versionInfo.moduleVersion
 
 	// create descriptions
-	tagline := getMdContent(readmeContent, -1, -1, "Tagline", true)
-	detailed := getMdContent(readmeContent, -1, -1, "Detailed", true)
-	preDeploy := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
+	i.Description = &BlueprintDescription{}
+	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
+	if err == nil {
+		i.Description.Tagline = tagline.literal
+	}
+
+	detailed, err := getMdContent(readmeContent, -1, -1, "Detailed", true)
+	if err == nil {
+		i.Description.Detailed = detailed.literal
+	}
+
+	preDeploy, err := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
+	if err == nil {
+		i.Description.PreDeploy = preDeploy.literal
+	}
 
 	// TODO:(b/246603410) create icon
 
-	return BlueprintInfo{
-		Title: title.literal,
-		Source: &BlueprintRepoDetail{
-			Repo:       repoDetails.Source.Path,
-			SourceType: "git",
-		},
-		Version: versionInfo.moduleVersion,
-		ActuationTool: &BlueprintActuationTool{
-			Flavor:  "Terraform",
-			Version: versionInfo.requiredTfVersion,
-		},
-		Description: &BlueprintDescription{
-			Tagline:   tagline.literal,
-			Detailed:  detailed.literal,
-			PreDeploy: preDeploy.literal,
-		},
-	}
+	return i, nil
 }
 
 func createContent(bpPath string, readmeContent []byte) BlueprintContent {
-	documentation := getMdContent(readmeContent, -1, -1, "Documentation", true)
 	var docListToSet []BlueprintListContent
+	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
+	if err == nil {
+		for _, li := range documentation.listItems {
+			doc := BlueprintListContent{
+				Title: li.text,
+				Url:   li.url,
+			}
 
-	for _, li := range documentation.listItems {
-		doc := BlueprintListContent{
-			Title: li.text,
-			Url:   li.url,
+			docListToSet = append(docListToSet, doc)
 		}
-
-		docListToSet = append(docListToSet, doc)
 	}
 
 	// TODO:(b/246603410) create sub-blueprints
@@ -155,20 +183,4 @@ func createContent(bpPath string, readmeContent []byte) BlueprintContent {
 	return BlueprintContent{
 		Documentation: docListToSet,
 	}
-}
-
-func createInterfaces(bpPath string) (*BlueprintInterface, error) {
-	interfaces, err := getBlueprintInterfaces(bpPath)
-	if err != nil {
-		return nil, err
-	}
-
-	return &BlueprintInterface{
-		Variables: interfaces.Variables,
-		Outputs:   interfaces.Outputs,
-	}, nil
-}
-
-func createRequirements(bpRootPath string) BlueprintRequirements {
-	return getBlueprintRequirements(path.Join(bpRootPath, tfRolesFileName), path.Join(bpRootPath, tfServicesFileName))
 }

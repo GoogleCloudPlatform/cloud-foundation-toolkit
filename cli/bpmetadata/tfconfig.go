@@ -57,10 +57,10 @@ var metaBlockSchema = &hcl.BodySchema{
 
 // getBlueprintVersion gets both the required core version and the
 // version of the blueprint
-func getBlueprintVersion(configPath string) *blueprintVersion {
+func getBlueprintVersion(configPath string) (*blueprintVersion, error) {
 	bytes, err := os.ReadFile(configPath)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	//create hcl file object from the provided tf config
@@ -69,20 +69,25 @@ func getBlueprintVersion(configPath string) *blueprintVersion {
 	p := hclparse.NewParser()
 	versionsFile, fileDiags := p.ParseHCL(bytes, fileName)
 	diags = append(diags, fileDiags...)
-	if hasHclErrors(diags) {
-		return nil
+	err = hasHclErrors(diags)
+	if err != nil {
+		return nil, err
 	}
 
 	//parse out the blueprint version from the config
-	modName, diags := parseBlueprintVersion(versionsFile, diags)
+	modName, err := parseBlueprintVersion(versionsFile, diags)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing blueprint version: %v", err)
+	}
 
 	//parse out the required version from the config
 	var hclModule tfconfig.Module
 	hclModule.RequiredProviders = make(map[string]*tfconfig.ProviderRequirement)
 	hclModuleDiag := tfconfig.LoadModuleFromFile(versionsFile, &hclModule)
 	diags = append(diags, hclModuleDiag...)
-	if hasHclErrors(diags) {
-		return nil
+	err = hasHclErrors(diags)
+	if err != nil {
+		return nil, err
 	}
 
 	requiredCore := ""
@@ -95,19 +100,20 @@ func getBlueprintVersion(configPath string) *blueprintVersion {
 	return &blueprintVersion{
 		moduleVersion:     modName,
 		requiredTfVersion: requiredCore,
-	}
+	}, nil
 }
 
 // parseBlueprintVersion gets the blueprint version from the provided config
 // from the provider_meta block
-func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (string, hcl.Diagnostics) {
+func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (string, error) {
 	re := regexp.MustCompile(versionRegEx)
 	// PartialContent() returns TF content containing blocks and attributes
 	// based on the provided schema
 	rootContent, _, rootContentDiags := versionsFile.Body.PartialContent(rootSchema)
 	diags = append(diags, rootContentDiags...)
-	if hasHclErrors(diags) {
-		return "", diags
+	err := hasHclErrors(diags)
+	if err != nil {
+		return "", err
 	}
 
 	// based on the content returned, iterate through blocks and look for
@@ -121,6 +127,11 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 		// within the terraform block
 		tfContent, _, tfContentDiags := rootBlock.Body.PartialContent(metaSchema)
 		diags = append(diags, tfContentDiags...)
+		err := hasHclErrors(diags)
+		if err != nil {
+			return "", err
+		}
+
 		for _, tfContentBlock := range tfContent.Blocks {
 			if tfContentBlock.Type != "provider_meta" {
 				continue
@@ -130,9 +141,14 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 			// that contains the version info
 			metaContent, _, metaContentDiags := tfContentBlock.Body.PartialContent(metaBlockSchema)
 			diags = append(diags, metaContentDiags...)
+			err := hasHclErrors(diags)
+			if err != nil {
+				return "", err
+			}
+
 			versionAttr, defined := metaContent.Attributes["module_name"]
 			if !defined {
-				return "", diags
+				return "", fmt.Errorf("module_name not defined for provider_meta")
 			}
 
 			// get the module name from the version attribute and extract the
@@ -141,16 +157,16 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 			gohcl.DecodeExpression(versionAttr.Expr, nil, &modName)
 			m := re.FindStringSubmatch(modName)
 			if len(m) > 0 {
-				return m[len(m)-1], diags
+				return m[len(m)-1], nil
 			}
 
-			return "", diags
+			return "", nil
 		}
 
 		break
 	}
 
-	return "", diags
+	return "", nil
 }
 
 // getBlueprintInterfaces gets the variables and outputs associated
@@ -158,10 +174,9 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 	//load the configs from the dir path
 	mod, diags := tfconfig.LoadModule(configPath)
-	for _, diag := range diags {
-		if diag.Severity == tfconfig.DiagError {
-			return nil, fmt.Errorf("unable to load module: %v", diag)
-		}
+	err := hasTfconfigErrors(diags)
+	if err != nil {
+		return nil, err
 	}
 
 	var variables []BlueprintVariable
@@ -204,28 +219,45 @@ func getBlueprintOutput(modOut *tfconfig.Output) BlueprintOutput {
 
 // getBlueprintRequirements gets the services and roles associated
 // with the blueprint
-func getBlueprintRequirements(rolesConfigPath, servicesConfigPath string) BlueprintRequirements {
+func getBlueprintRequirements(rolesConfigPath, servicesConfigPath string) (*BlueprintRequirements, error) {
 	//parse blueprint roles
 	p := hclparse.NewParser()
-	rolesFile, _ := p.ParseHCLFile(rolesConfigPath)
-	r := parseBlueprintRoles(rolesFile)
+	rolesFile, diags := p.ParseHCLFile(rolesConfigPath)
+	err := hasHclErrors(diags)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := parseBlueprintRoles(rolesFile)
+	if err != nil {
+		return nil, err
+	}
 
 	//parse blueprint services
-	servicesFile, _ := p.ParseHCLFile(servicesConfigPath)
-	s := parseBlueprintServices(servicesFile)
+	servicesFile, diags := p.ParseHCLFile(servicesConfigPath)
+	err = hasHclErrors(diags)
+	if err != nil {
+		return nil, err
+	}
 
-	return BlueprintRequirements{
+	s, err := parseBlueprintServices(servicesFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &BlueprintRequirements{
 		Roles:    r,
 		Services: s,
-	}
+	}, nil
 }
 
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
-func parseBlueprintRoles(rolesFile *hcl.File) []BlueprintRoles {
+func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
 	var r []BlueprintRoles
 	iamContent, _, diags := rolesFile.Body.PartialContent(rootSchema)
-	if hasHclErrors(diags) {
-		return r
+	err := hasHclErrors(diags)
+	if err != nil {
+		return nil, err
 	}
 
 	for _, block := range iamContent.Blocks {
@@ -233,7 +265,12 @@ func parseBlueprintRoles(rolesFile *hcl.File) []BlueprintRoles {
 			continue
 		}
 
-		iamAttrs, _ := block.Body.JustAttributes()
+		iamAttrs, diags := block.Body.JustAttributes()
+		err := hasHclErrors(diags)
+		if err != nil {
+			return nil, err
+		}
+
 		for k, _ := range iamAttrs {
 			var iamRoles []string
 			attrValue, _ := iamAttrs[k].Expr.Value(nil)
@@ -256,24 +293,32 @@ func parseBlueprintRoles(rolesFile *hcl.File) []BlueprintRoles {
 		break
 	}
 
-	return r
+	return r, nil
 }
 
 // parseBlueprintServices gets the gcp api services required for the blueprint
 // to be provisioned
-func parseBlueprintServices(servicesFile *hcl.File) []string {
+func parseBlueprintServices(servicesFile *hcl.File) ([]string, error) {
 	var s []string
 	servicesContent, _, diags := servicesFile.Body.PartialContent(rootSchema)
-	if hasHclErrors(diags) {
-		return s
+	err := hasHclErrors(diags)
+	if err != nil {
+		return nil, err
 	}
 
+	// TODO: (b/250778215) instead of parsing the locals block, this should look at
+	// activate_apis attribute on the project module
 	for _, block := range servicesContent.Blocks {
 		if block.Type != "locals" {
 			continue
 		}
 
-		serivceAttrs, _ := block.Body.JustAttributes()
+		serivceAttrs, diags := block.Body.JustAttributes()
+		err := hasHclErrors(diags)
+		if err != nil {
+			return nil, err
+		}
+
 		for k, _ := range serivceAttrs {
 			attrValue, _ := serivceAttrs[k].Expr.Value(nil)
 			ie := attrValue.ElementIterator()
@@ -287,15 +332,27 @@ func parseBlueprintServices(servicesFile *hcl.File) []string {
 		break
 	}
 
-	return s
+	return s, nil
 }
 
-func hasHclErrors(diags hcl.Diagnostics) bool {
+func hasHclErrors(diags hcl.Diagnostics) error {
 	for _, diag := range diags {
 		if diag.Severity == hcl.DiagError {
-			return true
+			return fmt.Errorf("hcl error: %s | detail: %s", diag.Summary, diag.Detail)
 		}
 	}
 
-	return false
+	return nil
+}
+
+// this is almost a dup of hasHclErrors because the TF api has two
+// different structs for diagnostics...
+func hasTfconfigErrors(diags tfconfig.Diagnostics) error {
+	for _, diag := range diags {
+		if diag.Severity == tfconfig.DiagError {
+			return fmt.Errorf("hcl error: %s | detail: %s", diag.Summary, diag.Detail)
+		}
+	}
+
+	return nil
 }
