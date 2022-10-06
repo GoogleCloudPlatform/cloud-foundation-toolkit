@@ -20,6 +20,9 @@ const (
 	tfVersionsFileName = "versions.tf"
 	tfRolesFileName    = "test/setup/iam.tf"
 	tfServicesFileName = "test/setup/main.tf"
+	iconFilePath       = "assets/icon.png"
+	modulesPath        = "modules"
+	examplesPath       = "examples"
 )
 
 func init() {
@@ -102,7 +105,7 @@ func CreateBlueprintMetadata(bpPath string) error {
 		return fmt.Errorf("error creating blueprint requirements: %w", err)
 	}
 
-	content := createContent(bpPath, readmeContent)
+	content := createContent(bpPath, repoDetails.Source.RootPath, readmeContent)
 
 	bpMetadataObj.Spec = &BlueprintMetadataSpec{
 		Info:         *info,
@@ -157,12 +160,18 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 		i.Description.PreDeploy = preDeploy.literal
 	}
 
-	// TODO:(b/246603410) create icon
+	// create icon
+	iPath := path.Join(repoDetails.Source.RootPath, iconFilePath)
+	exists, _ := isPathValid(iPath)
+	if exists {
+		i.Icon = iconFilePath
+	}
 
 	return i, nil
 }
 
-func createContent(bpPath string, readmeContent []byte) BlueprintContent {
+func createContent(bpPath string, rootPath string, readmeContent []byte) BlueprintContent {
+	var content BlueprintContent
 	var docListToSet []BlueprintListContent
 	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
 	if err == nil {
@@ -174,13 +183,23 @@ func createContent(bpPath string, readmeContent []byte) BlueprintContent {
 
 			docListToSet = append(docListToSet, doc)
 		}
+
+		content.Documentation = docListToSet
 	}
 
 	// TODO:(b/246603410) create sub-blueprints
+	modPath := path.Join(bpPath, modulesPath)
+	modContent, err := getModules(modPath)
+	if err == nil {
+		content.SubBlueprints = modContent
+	}
 
 	// TODO:(b/246603410) create examples
-
-	return BlueprintContent{
-		Documentation: docListToSet,
+	exPath := path.Join(rootPath, examplesPath)
+	exContent, err := getExamples(exPath)
+	if err == nil {
+		content.Examples = exContent
 	}
+
+	return content
 }
