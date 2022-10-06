@@ -83,6 +83,15 @@ func TestProcessMarkdownContent(t *testing.T) {
 			},
 		},
 		{
+			name:       "Tagline does not exist",
+			fileName:   "simple-content.md",
+			level:      -1,
+			order:      -1,
+			title:      "Tagline",
+			getContent: true,
+			want:       nil,
+		},
+		{
 			name:       "content by head title does not exist",
 			fileName:   "simple-content.md",
 			level:      -1,

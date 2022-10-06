@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -13,6 +14,7 @@ import (
 var mdFlags struct {
 	path   string
 	nested bool
+	quiet  bool
 }
 
 const (
@@ -23,6 +25,7 @@ const (
 	iconFilePath       = "assets/icon.png"
 	modulesPath        = "modules"
 	examplesPath       = "examples"
+	metadataFileName   = "metadata.yaml"
 )
 
 func init() {
@@ -30,6 +33,7 @@ func init() {
 
 	Cmd.Flags().StringVar(&mdFlags.path, "path", ".", "Path to the blueprint for generating metadata.")
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
+	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Generate metadata quietly without prompting for input.")
 }
 
 var Cmd = &cobra.Command{
@@ -47,27 +51,53 @@ func generate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error getting working dir: %w", err)
 	}
 
+	//read existing metadata.yaml, if present
+	bpObj := &BlueprintMetadata{}
+	f, _ := os.ReadFile(metadataFileName)
+	// if file is present, try to unmarshal it in BlueprintMetadata
+	if f != nil {
+		bpObj, _ = unmarshalMetadata(f)
+	}
+
+	// if file was present, check if unmarshaling was successful
+	if bpObj == nil && !mdFlags.quiet {
+		fmt.Printf(`There was an error loading the existing %s file and local changes may be 
+		overriden if you proceed.\nWould you like to continue? (y/n) `, metadataFileName)
+		if !continueWithInput() {
+			return nil
+		}
+	}
+
 	// create metadata details
 	bpPath := path.Join(wdPath, mdFlags.path)
-	err = CreateBlueprintMetadata(bpPath)
+	bpMetaObj, err := CreateBlueprintMetadata(bpPath, bpObj)
 	if err != nil {
 		return fmt.Errorf("error creating metadata for blueprint: %w", err)
 	}
 
-	// TODO:(b/248642744) write metadata to metadata.yaml
+	// write metadata to disk
+	err = writeMetadata(bpMetaObj)
+	if err != nil {
+		return fmt.Errorf("error writing metadata to disk: %w", err)
+	}
 
 	return nil
 }
 
-func CreateBlueprintMetadata(bpPath string) error {
+func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*BlueprintMetadata, error) {
 	// verfiy that the blueprint path is valid & get repo details
 	repoDetails, err := getRepoDetailsByPath(bpPath)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	// initialize BlueprintMetadata if nil since it will lead to nil
+	// reference errors when accessing manual inputs
+	if bpMetadataObj == nil {
+		bpMetadataObj = &BlueprintMetadata{}
 	}
 
 	// start creating blueprint metadata
-	var bpMetadataObj = &BlueprintMetadata{}
 	bpMetadataObj.Meta = yaml.ResourceMeta{
 		TypeMeta: yaml.TypeMeta{
 			APIVersion: "blueprints.cloud.google.com/v1alpha1",
@@ -78,6 +108,7 @@ func CreateBlueprintMetadata(bpPath string) error {
 				Name:      repoDetails.Name,
 				Namespace: "",
 			},
+			Labels:      bpMetadataObj.Meta.ObjectMeta.Labels,
 			Annotations: map[string]string{"config.kubernetes.io/local-config": "true"},
 		},
 	}
@@ -85,36 +116,36 @@ func CreateBlueprintMetadata(bpPath string) error {
 	// start creating the Spec node
 	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
 	if err != nil {
-		return fmt.Errorf("error reading blueprint readme markdown: %w", err)
+		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
 	}
 
 	info, err := createInfo(bpPath, readmeContent)
 	if err != nil {
-		return fmt.Errorf("error creating blueprint info: %w", err)
+		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
-	interfaces, err := getBlueprintInterfaces(bpPath)
+	interfaces, err := createInterfaces(bpPath, &bpMetadataObj.Spec.Interfaces)
 	if err != nil {
-		return fmt.Errorf("error creating blueprint interfaces: %w", err)
+		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
 
 	rolesCfgPath := path.Join(repoDetails.Source.RootPath, tfRolesFileName)
 	svcsCfgPath := path.Join(repoDetails.Source.RootPath, tfServicesFileName)
 	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath)
 	if err != nil {
-		return fmt.Errorf("error creating blueprint requirements: %w", err)
+		return nil, fmt.Errorf("error creating blueprint requirements: %w", err)
 	}
 
-	content := createContent(bpPath, repoDetails.Source.RootPath, readmeContent)
+	content := createContent(bpPath, repoDetails.Source.RootPath, readmeContent, &bpMetadataObj.Spec.Content)
 
 	bpMetadataObj.Spec = &BlueprintMetadataSpec{
 		Info:         *info,
-		Content:      content,
+		Content:      *content,
 		Interfaces:   *interfaces,
 		Requirements: *requirements,
 	}
 
-	return nil
+	return bpMetadataObj, nil
 }
 
 func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
@@ -143,6 +174,12 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 
 	i.Version = versionInfo.moduleVersion
 
+	// actuation tool
+	i.ActuationTool = BlueprintActuationTool{
+		Version: versionInfo.requiredTfVersion,
+		Flavor:  "Terraform",
+	}
+
 	// create descriptions
 	i.Description = &BlueprintDescription{}
 	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
@@ -170,8 +207,21 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 	return i, nil
 }
 
-func createContent(bpPath string, rootPath string, readmeContent []byte) BlueprintContent {
-	var content BlueprintContent
+func createInterfaces(bpPath string, interfaces *BlueprintInterface) (*BlueprintInterface, error) {
+	i, err := getBlueprintInterfaces(bpPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if interfaces.VariableGroups != nil {
+		i.VariableGroups = interfaces.VariableGroups
+	}
+
+	return i, nil
+}
+
+func createContent(bpPath string, rootPath string, readmeContent []byte, content *BlueprintContent) *BlueprintContent {
+	//var content BlueprintContent
 	var docListToSet []BlueprintListContent
 	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
 	if err == nil {
@@ -187,14 +237,14 @@ func createContent(bpPath string, rootPath string, readmeContent []byte) Bluepri
 		content.Documentation = docListToSet
 	}
 
-	// TODO:(b/246603410) create sub-blueprints
+	// create sub-blueprints
 	modPath := path.Join(bpPath, modulesPath)
 	modContent, err := getModules(modPath)
 	if err == nil {
 		content.SubBlueprints = modContent
 	}
 
-	// TODO:(b/246603410) create examples
+	// create examples
 	exPath := path.Join(rootPath, examplesPath)
 	exContent, err := getExamples(exPath)
 	if err == nil {
@@ -202,4 +252,55 @@ func createContent(bpPath string, rootPath string, readmeContent []byte) Bluepri
 	}
 
 	return content
+}
+
+func writeMetadata(obj *BlueprintMetadata) error {
+	// marshal and write the file
+	yFile, err := yaml.Marshal(obj)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(metadataFileName, yFile, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func unmarshalMetadata(f []byte) (*BlueprintMetadata, error) {
+	var bpObj BlueprintMetadata
+	err := yaml.Unmarshal(f, &bpObj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &bpObj, nil
+}
+
+func continueWithInput() bool {
+	proceed := false
+	for {
+		input := ""
+		fmt.Scanln(&input)
+		input = strings.ToLower(input)
+
+		if input != "n" && input != "y" {
+			fmt.Printf("\"%s\" is not a valid reponse. Please choose \"y\" (to continue) or \"n\" (to exit) ", input)
+			continue
+		}
+
+		if input == "n" {
+			proceed = false
+			break
+		}
+
+		if input == "y" {
+			proceed = true
+			break
+		}
+	}
+
+	return proceed
 }
