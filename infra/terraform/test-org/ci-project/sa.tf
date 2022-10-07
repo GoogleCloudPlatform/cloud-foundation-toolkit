@@ -38,5 +38,9 @@ module "oidc" {
       sa_name   = module.service_accounts.service_account.name
       attribute = "attribute.repository/GoogleCloudPlatform/cloud-foundation-toolkit"
     }
+    cft-github-actions-tgc = {
+      sa_name   = module.service_accounts.service_account.name
+      attribute = "attribute.repository/GoogleCloudPlatform/terraform-google-conversion"
+    }
   }
 }
