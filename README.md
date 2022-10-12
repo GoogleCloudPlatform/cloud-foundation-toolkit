@@ -20,6 +20,8 @@ In addition, the CFT repository includes a sample pipeline that enables running
 CFT deployment operations from Jenkins - see the
 [pipeline directory](dm/pipeline/README.md).
 
+You can see a comparison between CFT and Fabric [here](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/FABRIC-AND-CFT.md).
+
 ## License
 
 Apache 2.0 - See [LICENSE](LICENSE) for more information.
