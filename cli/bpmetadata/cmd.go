@@ -162,7 +162,7 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 
 	// create icon
 	iPath := path.Join(repoDetails.Source.RootPath, iconFilePath)
-	exists, _ := isPathValid(iPath)
+	exists, _ := fileExists(iPath)
 	if exists {
 		i.Icon = iconFilePath
 	}

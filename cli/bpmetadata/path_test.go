@@ -1,17 +1,18 @@
 package bpmetadata
 
 import (
-	"github.com/stretchr/testify/assert"
 	"path"
 	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const (
 	bptestdataPath = "../testdata/bpmetadata"
 )
 
-func TestIcon(t *testing.T) {
+func TestIsPathValid(t *testing.T) {
 	tests := []struct {
 		name    string
 		path    string
@@ -37,14 +38,14 @@ func TestIcon(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := isPathValid(path.Join(bptestdataPath, tt.path))
+			got, err := fileExists(path.Join(bptestdataPath, tt.path))
 			if (err != nil) != tt.wantErr {
-				t.Errorf("isPathValid() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("fileExists() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
 			if got != tt.want {
-				t.Errorf("isPathValid() = %v, want %v", got, tt.want)
+				t.Errorf("fileExists() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -61,7 +62,7 @@ func TestDirContent(t *testing.T) {
 		{
 			name:  "valid examples",
 			path:  "content/examples",
-			regex: regexEx,
+			regex: regexExamples,
 			want: []BlueprintMiscContent{
 				BlueprintMiscContent{
 					Name:     "terraform",
@@ -85,7 +86,7 @@ func TestDirContent(t *testing.T) {
 		{
 			name:  "valid modules",
 			path:  "content/modules",
-			regex: regexMod,
+			regex: regexModules,
 			want: []BlueprintMiscContent{
 				BlueprintMiscContent{
 					Name:     "beta-public-cluster",
@@ -105,13 +106,13 @@ func TestDirContent(t *testing.T) {
 		{
 			name:    "invalid dir",
 			path:    "content/modules2",
-			regex:   regexMod,
+			regex:   regexModules,
 			wantErr: true,
 		},
 		{
 			name:  "some example folders without any tf",
 			path:  "content/examples-some-without-tf/examples",
-			regex: regexEx,
+			regex: regexExamples,
 			want: []BlueprintMiscContent{
 				BlueprintMiscContent{
 					Name:     "terraform",
@@ -127,7 +128,7 @@ func TestDirContent(t *testing.T) {
 		{
 			name:    "all module folders without any tf",
 			path:    "content/modules-no-tf/modules",
-			regex:   regexMod,
+			regex:   regexModules,
 			want:    []BlueprintMiscContent{},
 			wantErr: false,
 		},
