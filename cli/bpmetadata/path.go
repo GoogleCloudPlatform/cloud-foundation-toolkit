@@ -83,7 +83,6 @@ func getDirPaths(configPath string, re *regexp.Regexp) ([]BlueprintMiscContent, 
 		rPaths, _ := getDirPaths(currDirPath, re)
 		if len(rPaths) > 0 {
 			paths = append(paths, rPaths...)
-			}
 		}
 	}
 
