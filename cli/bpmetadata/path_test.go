@@ -3,6 +3,7 @@ package bpmetadata
 import (
 	"path"
 	"regexp"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -144,15 +145,14 @@ func TestDirContent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			re := regexp.MustCompile(tt.regex)
+			sort.SliceStable(tt.want, func(i, j int) bool { return tt.want[i].Name < tt.want[j].Name })
 			got, err := getDirPaths(path.Join(bptestdataPath, tt.path), re)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getDirPaths() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			for _, wantC := range tt.want {
-				assert.Contains(t, got, wantC)
-			}
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }

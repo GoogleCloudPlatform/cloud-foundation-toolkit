@@ -2,8 +2,9 @@ package bpmetadata
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
-	"path"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
@@ -13,6 +14,9 @@ const (
 	regexExamples = ".*/(examples/.*)"
 	regexModules  = ".*/(modules/.*)"
 )
+
+var reExamples = regexp.MustCompile(regexExamples)
+var reModules = regexp.MustCompile(regexModules)
 
 func fileExists(path string) (bool, error) {
 	info, err := os.Stat(path)
@@ -28,62 +32,47 @@ func fileExists(path string) (bool, error) {
 }
 
 func getExamples(configPath string) ([]BlueprintMiscContent, error) {
-	re := regexp.MustCompile(regexExamples)
-	return getDirPaths(configPath, re)
+	return getDirPaths(configPath, reExamples)
 }
 
 func getModules(configPath string) ([]BlueprintMiscContent, error) {
-	re := regexp.MustCompile(regexModules)
-	return getDirPaths(configPath, re)
+	return getDirPaths(configPath, reModules)
 }
 
 // getDirPaths traverses a given path and looks for directories
 // with TF configs while ignoring the .terraform* directories created and
 // used internally by the Terraform CLI
 func getDirPaths(configPath string, re *regexp.Regexp) ([]BlueprintMiscContent, error) {
-	dirContent, err := os.ReadDir(configPath)
-	if err != nil {
-		return nil, fmt.Errorf("unable to read dir contents: %v", err)
-	}
-
-	var paths []BlueprintMiscContent
-	for _, c := range dirContent {
-		if !c.IsDir() {
-			continue
-		}
-
-		currDirPath := path.Join(configPath, c.Name())
-		// ignore .terraform directories
-		if strings.HasPrefix(c.Name(), ".terraform") {
-			continue
-		}
-
-		targetDirContent, err := os.ReadDir(currDirPath)
+	paths := []BlueprintMiscContent{}
+	err := filepath.Walk(configPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
-			return nil, fmt.Errorf("unable to read dir contents: %v", err)
+			return fmt.Errorf("error accessing examples in the path %q: %v\n", configPath, err)
 		}
 
-		for _, t := range targetDirContent {
-			// only evaluate dirs with tf configs
-			if !strings.HasSuffix(t.Name(), ".tf") {
-				continue
-			}
+		// skip if this is a .terraform dir
+		if info.IsDir() && strings.HasPrefix(info.Name(), ".terraform") {
+			return filepath.SkipDir
+		}
 
-			if l := trimPath(currDirPath, re); l != "" {
+		// only interested if it has a TF config
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".tf") {
+			d := filepath.Dir(path)
+			if l := trimPath(d, re); l != "" {
 				dirPath := BlueprintMiscContent{
-					Name:     c.Name(),
+					Name:     filepath.Base(d),
 					Location: l,
 				}
 
 				paths = append(paths, dirPath)
-				break
 			}
+			return filepath.SkipDir
 		}
 
-		rPaths, _ := getDirPaths(currDirPath, re)
-		if len(rPaths) > 0 {
-			paths = append(paths, rPaths...)
-		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("error accessing examples in the path %q: %v\n", configPath, err)
 	}
 
 	// Sort by configPath name before returning
