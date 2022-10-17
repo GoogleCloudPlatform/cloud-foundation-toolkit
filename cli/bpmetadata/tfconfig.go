@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 
 	hcl "github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
@@ -185,12 +186,18 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		variables = append(variables, v)
 	}
 
+	// Sort variables
+	sort.SliceStable(variables, func(i, j int) bool { return variables[i].Name < variables[j].Name })
+
 	var outputs []BlueprintOutput
 	for _, val := range mod.Outputs {
 		o := getBlueprintOutput(val)
 
 		outputs = append(outputs, o)
 	}
+
+	// Sort outputs
+	sort.SliceStable(outputs, func(i, j int) bool { return outputs[i].Name < outputs[j].Name })
 
 	return &BlueprintInterface{
 		Variables: variables,
