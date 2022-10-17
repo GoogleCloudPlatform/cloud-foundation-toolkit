@@ -15,8 +15,10 @@ const (
 	regexModules  = ".*/(modules/.*)"
 )
 
-var reExamples = regexp.MustCompile(regexExamples)
-var reModules = regexp.MustCompile(regexModules)
+var (
+	reExamples = regexp.MustCompile(regexExamples)
+	reModules  = regexp.MustCompile(regexModules)
+)
 
 func fileExists(path string) (bool, error) {
 	info, err := os.Stat(path)
@@ -46,7 +48,7 @@ func getDirPaths(configPath string, re *regexp.Regexp) ([]BlueprintMiscContent, 
 	paths := []BlueprintMiscContent{}
 	err := filepath.Walk(configPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
-			return fmt.Errorf("error accessing examples in the path %q: %v\n", configPath, err)
+			return fmt.Errorf("error accessing examples in the path %q: %v", configPath, err)
 		}
 
 		// skip if this is a .terraform dir
@@ -72,7 +74,7 @@ func getDirPaths(configPath string, re *regexp.Regexp) ([]BlueprintMiscContent, 
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("error accessing examples in the path %q: %v\n", configPath, err)
+		return nil, fmt.Errorf("error accessing examples in the path %q: %v", configPath, err)
 	}
 
 	// Sort by configPath name before returning
