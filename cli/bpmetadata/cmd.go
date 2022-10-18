@@ -280,7 +280,6 @@ func unmarshalMetadata(f []byte) (*BlueprintMetadata, error) {
 }
 
 func continueWithInput() bool {
-	proceed := false
 	for {
 		input := ""
 		fmt.Scanln(&input)
@@ -292,15 +291,11 @@ func continueWithInput() bool {
 		}
 
 		if input == "n" {
-			proceed = false
-			break
+			return false
 		}
 
 		if input == "y" {
-			proceed = true
-			break
+			return true
 		}
 	}
-
-	return proceed
 }
