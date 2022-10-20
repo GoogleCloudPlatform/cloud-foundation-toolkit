@@ -1,10 +1,10 @@
 package bpmetadata
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,7 +14,7 @@ import (
 var mdFlags struct {
 	path   string
 	nested bool
-	quiet  bool
+	force  bool
 }
 
 const (
@@ -26,14 +26,16 @@ const (
 	modulesPath        = "modules"
 	examplesPath       = "examples"
 	metadataFileName   = "metadata.yaml"
+	metadataApiVersion = "blueprints.cloud.google.com/v1alpha1"
+	metadataKind       = "BlueprintMetadata"
 )
 
 func init() {
 	viper.AutomaticEnv()
 
-	Cmd.Flags().StringVar(&mdFlags.path, "path", ".", "Path to the blueprint for generating metadata.")
+	Cmd.Flags().StringVarP(&mdFlags.path, "path", "p", ".", "Path to the blueprint for generating metadata.")
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
-	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Generate metadata quietly without prompting for input.")
+	Cmd.Flags().BoolVarP(&mdFlags.force, "force", "f", false, "Force the generation of metadata")
 }
 
 var Cmd = &cobra.Command{
@@ -51,25 +53,15 @@ func generate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error getting working dir: %w", err)
 	}
 
-	//read existing metadata.yaml, if present
-	bpObj := &BlueprintMetadata{}
-	f, _ := os.ReadFile(metadataFileName)
-	// if file is present, try to unmarshal it in BlueprintMetadata
-	if f != nil {
-		bpObj, _ = unmarshalMetadata(f)
-	}
+	bpPath := path.Join(wdPath, mdFlags.path)
 
-	// if file was present, check if unmarshaling was successful
-	if bpObj == nil && !mdFlags.quiet {
-		fmt.Printf(`There was an error loading the existing %s file and local changes may be 
-		overriden if you proceed.\nWould you like to continue? (y/n) `, metadataFileName)
-		if !continueWithInput() {
-			return nil
-		}
+	//try to read existing metadata.yaml
+	bpObj, err := unmarshalMetadata(bpPath)
+	if err != nil && !mdFlags.force {
+		return err
 	}
 
 	// create metadata details
-	bpPath := path.Join(wdPath, mdFlags.path)
 	bpMetaObj, err := CreateBlueprintMetadata(bpPath, bpObj)
 	if err != nil {
 		return fmt.Errorf("error creating metadata for blueprint: %w", err)
@@ -91,17 +83,11 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, err
 	}
 
-	// initialize BlueprintMetadata if nil since it will lead to nil
-	// reference errors when accessing manual inputs
-	if bpMetadataObj == nil {
-		bpMetadataObj = &BlueprintMetadata{}
-	}
-
 	// start creating blueprint metadata
 	bpMetadataObj.Meta = yaml.ResourceMeta{
 		TypeMeta: yaml.TypeMeta{
-			APIVersion: "blueprints.cloud.google.com/v1alpha1",
-			Kind:       "BlueprintMetadata",
+			APIVersion: metadataApiVersion,
+			Kind:       metadataKind,
 		},
 		ObjectMeta: yaml.ObjectMeta{
 			NameMeta: yaml.NameMeta{
@@ -138,7 +124,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 
 	content := createContent(bpPath, repoDetails.Source.RootPath, readmeContent, &bpMetadataObj.Spec.Content)
 
-	bpMetadataObj.Spec = &BlueprintMetadataSpec{
+	bpMetadataObj.Spec = BlueprintMetadataSpec{
 		Info:         *info,
 		Content:      *content,
 		Interfaces:   *interfaces,
@@ -261,41 +247,39 @@ func writeMetadata(obj *BlueprintMetadata) error {
 		return err
 	}
 
-	err = os.WriteFile(metadataFileName, yFile, 0644)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return os.WriteFile(metadataFileName, yFile, 0644)
 }
 
-func unmarshalMetadata(f []byte) (*BlueprintMetadata, error) {
-	var bpObj BlueprintMetadata
-	err := yaml.Unmarshal(f, &bpObj)
+func unmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {
+	bpObj := BlueprintMetadata{}
+	metaFilePath := path.Join(bpPath, metadataFileName)
+
+	// return empty metadata if file does not exist or if the file is not read
+	if _, err := os.Stat(metaFilePath); errors.Is(err, os.ErrNotExist) {
+		return &bpObj, nil
+	}
+
+	f, err := os.ReadFile(metaFilePath)
 	if err != nil {
-		return nil, err
+		return &bpObj, fmt.Errorf("unable to read metadata from the existing file: %w", err)
+	}
+
+	err = yaml.Unmarshal(f, &bpObj)
+	if err != nil {
+		return &bpObj, err
+	}
+
+	currVersion := bpObj.Meta.TypeMeta.APIVersion
+	currKind := bpObj.Meta.TypeMeta.Kind
+
+	//validate GVK for current metadata
+	if currVersion != metadataApiVersion {
+		return &bpObj, fmt.Errorf("found incorrect version for the metadata: %s", currVersion)
+	}
+
+	if currKind != metadataKind {
+		return &bpObj, fmt.Errorf("found incorrect kind for the metadata: %s", currKind)
 	}
 
 	return &bpObj, nil
-}
-
-func continueWithInput() bool {
-	for {
-		input := ""
-		fmt.Scanln(&input)
-		input = strings.ToLower(input)
-
-		if input != "n" && input != "y" {
-			fmt.Printf("\"%s\" is not a valid reponse. Please choose \"y\" (to continue) or \"n\" (to exit) ", input)
-			continue
-		}
-
-		if input == "n" {
-			return false
-		}
-
-		if input == "y" {
-			return true
-		}
-	}
 }

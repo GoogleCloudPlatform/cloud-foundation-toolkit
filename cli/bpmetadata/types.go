@@ -5,15 +5,15 @@ import "sigs.k8s.io/kustomize/kyaml/yaml"
 // BlueprintMetadata defines the overall structure for blueprint metadata details
 type BlueprintMetadata struct {
 	Meta yaml.ResourceMeta `json:",inline" yaml:",inline"`
-	Spec *BlueprintMetadataSpec
+	Spec BlueprintMetadataSpec
 }
 
 // BlueprintMetadataSpec defines the spec portion of the blueprint metadata
 type BlueprintMetadataSpec struct {
-	Info         BlueprintInfo
-	Content      BlueprintContent
-	Interfaces   BlueprintInterface
-	Requirements BlueprintRequirements
+	Info         BlueprintInfo         `json:",inline" yaml:",inline"`
+	Content      BlueprintContent      `json:",inline" yaml:",inline"`
+	Interfaces   BlueprintInterface    `json:",inline" yaml:",inline"`
+	Requirements BlueprintRequirements `json:",inline" yaml:",inline"`
 }
 
 // BlueprintInfo defines informational detail for the blueprint
@@ -29,15 +29,17 @@ type BlueprintInfo struct {
 // BlueprintContent defines the detail for blueprint related content such as
 // related documentation, diagrams, examples etc.
 type BlueprintContent struct {
-	Diagrams      []BlueprintDiagram
+	// Diagrams are manually entered
+	Diagrams      []BlueprintDiagram     `json:",omitempty" yaml:",omitempty"`
 	Documentation []BlueprintListContent `json:",omitempty" yaml:",omitempty"`
 	SubBlueprints []BlueprintMiscContent `json:"subBlueprints,omitempty" yaml:"subBlueprints,omitempty"`
-	Examples      []BlueprintMiscContent
+	Examples      []BlueprintMiscContent `json:",omitempty" yaml:",omitempty"`
 }
 
 // BlueprintInterface the input and output variables for the blueprint
 type BlueprintInterface struct {
-	Variables      []BlueprintVariable
+	Variables []BlueprintVariable
+	// VariableGroups are manually entered
 	VariableGroups []BlueprintVariableGroup `json:"variableGroups" yaml:"variableGroups"`
 	Outputs        []BlueprintOutput
 }
@@ -70,6 +72,7 @@ type BlueprintMiscContent struct {
 	Location string
 }
 
+// BlueprintDiagram is manually entered
 type BlueprintDiagram struct {
 	Name        string
 	AltText     string `json:"altText,omitempty" yaml:"altText,omitempty"`
@@ -83,21 +86,22 @@ type BlueprintListContent struct {
 
 type BlueprintVariable struct {
 	Name        string
-	Description string
-	VarType     string `yaml:"type"`
-	Default     interface{}
-	Required    bool
+	Description string      `json:",omitempty" yaml:",omitempty"`
+	VarType     string      `yaml:"type"`
+	Default     interface{} `json:",omitempty" yaml:",omitempty"`
+	Required    bool        `json:",omitempty" yaml:",omitempty"`
 }
 
+// BlueprintVariableGroup is manually entered
 type BlueprintVariableGroup struct {
 	Name        string
-	Description string
+	Description string `json:",omitempty" yaml:",omitempty"`
 	Variables   []string
 }
 
 type BlueprintOutput struct {
 	Name        string
-	Description string
+	Description string `json:",omitempty" yaml:",omitempty"`
 }
 
 type BlueprintRoles struct {
