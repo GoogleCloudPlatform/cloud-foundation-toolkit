@@ -14,6 +14,7 @@
 # Download and verify the integrity of the download first
 ARG RUBY_VERSION
 ARG GOLANG_VERSION
+ARG ALPINE_VERSION
 
 FROM sethvargo/hashicorp-installer:0.2.0 AS installer
 # Required to download and install Terraform
@@ -29,7 +30,7 @@ RUN go build -v -o /usr/local/bin/module-swapper
 
 FROM golang:$GOLANG_VERSION-alpine AS go
 
-FROM ruby:$RUBY_VERSION-alpine3.15
+FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
 
 # Required to download and install terraform-docs
 ARG TERRAFORM_DOCS_VERSION
@@ -153,8 +154,7 @@ RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-ADD ./build/data/requirements.txt .
-RUN bundle install && pip3 install -r requirements.txt
+RUN gem install bundler:2.1.4 && bundle install
 
 COPY ./build/install_verify_boilerplate.sh /build/
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
