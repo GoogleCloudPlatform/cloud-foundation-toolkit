@@ -12,11 +12,14 @@ require (
 	github.com/gammazero/workerpool v1.1.2
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/golang/protobuf v1.5.2
-	github.com/google/go-cmp v0.5.6
+	github.com/google/go-cmp v0.5.9
+	github.com/google/go-github/v47 v47.1.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/inconshreveable/log15 v0.0.0-20201112154412-8562bdadbbac
+	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/manifoldco/promptui v0.9.0
+	github.com/migueleliasweb/go-github-mock v0.0.12 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64
 	github.com/open-policy-agent/gatekeeper v3.0.4-beta.2+incompatible // indirect
 	github.com/open-policy-agent/opa v0.34.2
@@ -25,6 +28,7 @@ require (
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
 	google.golang.org/api v0.58.0
 	google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12
 	gopkg.in/yaml.v2 v2.4.0
