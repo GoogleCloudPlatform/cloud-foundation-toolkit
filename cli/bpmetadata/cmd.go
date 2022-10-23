@@ -56,7 +56,7 @@ func generate(cmd *cobra.Command, args []string) error {
 	bpPath := path.Join(wdPath, mdFlags.path)
 
 	//try to read existing metadata.yaml
-	bpObj, err := unmarshalMetadata(bpPath)
+	bpObj, err := UnmarshalMetadata(bpPath)
 	if err != nil && !mdFlags.force {
 		return err
 	}
@@ -68,7 +68,7 @@ func generate(cmd *cobra.Command, args []string) error {
 	}
 
 	// write metadata to disk
-	err = writeMetadata(bpMetaObj)
+	err = WriteMetadata(bpMetaObj)
 	if err != nil {
 		return fmt.Errorf("error writing metadata to disk: %w", err)
 	}
@@ -240,7 +240,7 @@ func createContent(bpPath string, rootPath string, readmeContent []byte, content
 	return content
 }
 
-func writeMetadata(obj *BlueprintMetadata) error {
+func WriteMetadata(obj *BlueprintMetadata) error {
 	// marshal and write the file
 	yFile, err := yaml.Marshal(obj)
 	if err != nil {
@@ -250,7 +250,7 @@ func writeMetadata(obj *BlueprintMetadata) error {
 	return os.WriteFile(metadataFileName, yFile, 0644)
 }
 
-func unmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {
+func UnmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {
 	bpObj := BlueprintMetadata{}
 	metaFilePath := path.Join(bpPath, metadataFileName)
 
@@ -274,11 +274,11 @@ func unmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {
 
 	//validate GVK for current metadata
 	if currVersion != metadataApiVersion {
-		return &bpObj, fmt.Errorf("found incorrect version for the metadata: %s", currVersion)
+		return &bpObj, fmt.Errorf("found incorrect version for the metadata: %s. Supported version is: %s", currVersion, metadataApiVersion)
 	}
 
 	if currKind != metadataKind {
-		return &bpObj, fmt.Errorf("found incorrect kind for the metadata: %s", currKind)
+		return &bpObj, fmt.Errorf("found incorrect kind for the metadata: %s. Supported kind is %s", currKind, metadataKind)
 	}
 
 	return &bpObj, nil

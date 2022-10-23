@@ -40,7 +40,7 @@ type BlueprintContent struct {
 type BlueprintInterface struct {
 	Variables []BlueprintVariable
 	// VariableGroups are manually entered
-	VariableGroups []BlueprintVariableGroup `json:"variableGroups" yaml:"variableGroups"`
+	VariableGroups []BlueprintVariableGroup `json:"variableGroups,omitempty" yaml:"variableGroups,omitempty"`
 	Outputs        []BlueprintOutput
 }
 
@@ -89,7 +89,7 @@ type BlueprintVariable struct {
 	Description string      `json:",omitempty" yaml:",omitempty"`
 	VarType     string      `yaml:"type"`
 	Default     interface{} `json:",omitempty" yaml:",omitempty"`
-	Required    bool        `json:",omitempty" yaml:",omitempty"`
+	Required    bool
 }
 
 // BlueprintVariableGroup is manually entered
