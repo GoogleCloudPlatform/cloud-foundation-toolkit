@@ -289,8 +289,8 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
 
 			containerRoles := BlueprintRoles{
 				// TODO: (b/248123274) no good way to associate granularity yet
-				Granularity: "",
-				Roles:       iamRoles,
+				Level: "",
+				Roles: iamRoles,
 			}
 
 			r = append(r, containerRoles)

@@ -29,6 +29,12 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 	mdSections := mdDocument.GetChildren()
 	var foundHead bool
 	for _, section := range mdSections {
+		// if the first child is nil, it's a comment and we don't
+		// need to evaluate it
+		if ast.GetFirstChild(section) == nil {
+			continue
+		}
+
 		currLeaf := ast.GetFirstChild(section).AsLeaf()
 		switch sectionType := section.(type) {
 		case *ast.Heading:
