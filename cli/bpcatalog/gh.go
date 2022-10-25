@@ -62,7 +62,8 @@ func newGHService(opts ...ghServiceOption) *ghService {
 
 type repos []*github.Repository
 
-func (r repos) Filter(filter func(*github.Repository) bool) repos {
+// filter filters repos using a given filter func.
+func (r repos) filter(filter func(*github.Repository) bool) repos {
 	var filtered []*github.Repository
 	for _, repo := range r {
 		if filter(repo) {
@@ -72,7 +73,8 @@ func (r repos) Filter(filter func(*github.Repository) bool) repos {
 	return filtered
 }
 
-func (r repos) Sort(s sortOption) (repos, error) {
+// sort sorts repos using a given sort option.
+func (r repos) sort(s sortOption) (repos, error) {
 	switch s {
 	case sortCreated:
 		sort.SliceStable(r, func(i, j int) bool { return r[i].GetCreatedAt().Before(r[j].GetCreatedAt().Time) })
@@ -86,6 +88,7 @@ func (r repos) Sort(s sortOption) (repos, error) {
 	return r, nil
 }
 
+// fetchRepos fetches all repos across multiple orgs.
 func (g *ghService) fetchRepos() (repos, error) {
 	opts := &github.RepositoryListByOrgOptions{ListOptions: github.ListOptions{PerPage: 100}, Type: "public"}
 	var allRepos []*github.Repository
