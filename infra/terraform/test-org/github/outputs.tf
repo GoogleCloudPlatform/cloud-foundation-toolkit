@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-output "branch_repos" {
-  value = local.branch_repos
-}
-
 output "label_repos" {
   value = local.sub_repos_labels
 }
 
 output "labels" {
   value = local.labels
+}
+
+output "protected_repos" {
+  value = local.filtered_repos
 }
