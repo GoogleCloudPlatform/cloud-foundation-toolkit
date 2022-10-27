@@ -15,8 +15,7 @@
  */
 
 locals {
-  gh_org = "terraform-google-modules"
-  repos  = keys(data.terraform_remote_state.triggers.outputs.repo_folder)
+  repos = keys(data.terraform_remote_state.triggers.outputs.repo_folder)
   labels = [
     {
       name : "enhancement",
@@ -122,5 +121,5 @@ locals {
 }
 
 provider "github" {
-  owner = local.gh_org
+  owner = "terraform-google-modules"
 }
