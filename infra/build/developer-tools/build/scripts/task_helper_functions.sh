@@ -308,41 +308,41 @@ function generate_docs() {
 }
 
 function check_tflint() {
-if [[ "${DISABLE_TFLINT:-}" ]]; then
-  echo "DISABLE_TFLINT set. Skipping tflint check."
-  return 0
-fi
- setup_trap_handler
- rval=0
- echo "Checking for tflint"
- local path
-  while read -r path; do
-    local tflintCfg
-    # skip any tf configs under test/
-    if [[ $path == "./test"* ]];then
-      echo "Skipping ${path}"
-      continue
-    fi
-    # load default ruleset
-    tflintCfg="/root/tflint/.tflint.example.hcl"
-    # if module, load tighter ruleset
-    if [[ $path == "." || $path == "./modules"* ]];then
-      tflintCfg="/root/tflint/.tflint.module.hcl"
-    fi
+  if [[ "${DISABLE_TFLINT:-}" ]]; then
+    echo "DISABLE_TFLINT set. Skipping tflint check."
+    return 0
+  fi
+  setup_trap_handler
+  rval=0
+  echo "Checking for tflint"
+  local path
+    while read -r path; do
+      local tflintCfg
+      # skip any tf configs under test/
+      if [[ $path == "./test"* ]];then
+        echo "Skipping ${path}"
+        continue
+      fi
+      # load default ruleset
+      tflintCfg="/root/tflint/.tflint.example.hcl"
+      # if module, load tighter ruleset
+      if [[ $path == "." || $path == "./modules"* ]];then
+        tflintCfg="/root/tflint/.tflint.module.hcl"
+      fi
 
-    cd "${path}" && echo "Working in ${path} ..."
-    tflint --config=${tflintCfg} --no-color
-    rc=$?
-    if [[ "${rc}" -ne 0 ]]; then
-      echo "tflint failed ${path} "
-      ((rval++))
-    else
-      echo "tflint passed ${path} "
-    fi
-    cd - >/dev/null
-  done < <(find_files . -name '*.tf' -print0 \
-    | compat_xargs -0 -n1 dirname \
-    | sort -u)
+      cd "${path}" && echo "Working in ${path} ..."
+      tflint --config=${tflintCfg} --no-color
+      rc=$?
+      if [[ "${rc}" -ne 0 ]]; then
+        echo "tflint failed ${path} "
+        ((rval++))
+      else
+        echo "tflint passed ${path} "
+      fi
+      cd - >/dev/null
+    done < <(find_files . -name '*.tf' -print0 \
+      | compat_xargs -0 -n1 dirname \
+      | sort -u)
   return $((rval))
 }
 

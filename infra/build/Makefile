@@ -65,7 +65,7 @@ build-image-developer-tools:
 		--build-arg KPT_VERSION=${KPT_VERSION} \
 		--build-arg CFT_CLI_VERSION=${CFT_CLI_VERSION} \
 		--build-arg KUBECTL_VERSION=${KUBECTL_VERSION} \
-    --build-arg TFLINT_VERSION=${TFLINT_VERSION} \
+		--build-arg TFLINT_VERSION=${TFLINT_VERSION} \
 		--build-arg ALPINE_VERSION=${ALPINE_VERSION} \
 		-t ${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools"
 	docker build \
