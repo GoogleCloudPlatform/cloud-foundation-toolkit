@@ -1,4 +1,5 @@
-# Copyright 2018 Google LLC
+#! /bin/bash
+# Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 5.8"
-  gem "kubeclient", "~> 4.9"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.13'
-end
-ruby '~> 2.7.6'
+set -e
+set -u
+
+cd /build
+
+TERRAFORM_VERSION=$1
+
+wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+unzip ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+install -o 0 -g 0 -m 0755 terraform /usr/local/bin/terraform

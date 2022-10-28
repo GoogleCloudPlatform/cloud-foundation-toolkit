@@ -15,57 +15,50 @@
  */
 
 locals {
-  remove_branch_repos = [
-    # TODO: add support for non terraform-google-modules org repos
+  remove_special_repos = [
+    # Exclude from CI/branch protection
     "anthos-samples",
-    "terraform-example-foundation-app",
-    "terraform-google-network-forensics",
-    "terraform-google-secured-data-warehouse",
-    "terraform-google-secure-cicd",
-    "terraform-google-cloud-run",
-    "terraform-google-secret-manager",
-    "terraform-google-load-balanced-vms",
-    "terraform-google-three-tier-app",
-    # Special CI case
+    "terraform-docs-samples",
+    # Special CI/branch protection case
     "terraform-example-foundation"
   ]
-  branch_repos = setsubtract(toset(local.repos), local.remove_branch_repos)
+  filtered_repos = setsubtract(toset(local.repos), local.remove_special_repos)
 }
 
-data "github_repository" "repo" {
-  for_each = local.branch_repos
-  name = each.value
+module "branch_protection_tgm" {
+  source    = "../../modules/branch_protection"
+  org       = "terraform-google-modules"
+  repo_list = local.filtered_repos
+  admin     = "cft-admins"
 }
+
+module "branch_protection_gcp" {
+  source    = "../../modules/branch_protection"
+  org       = "GoogleCloudPlatform"
+  repo_list = local.filtered_repos
+  admin     = "blueprint-solutions"
+}
+
+module "renovate_json_tgm" {
+  source    = "../../modules/repo_file"
+  org       = "terraform-google-modules"
+  repo_list = local.filtered_repos
+  filename  = ".github/renovate.json"
+  content   = file("${path.module}/renovate.json")
+}
+
+module "renovate_json_gcp" {
+  source    = "../../modules/repo_file"
+  org       = "GoogleCloudPlatform"
+  repo_list = local.filtered_repos
+  filename  = ".github/renovate.json"
+  content   = file("${path.module}/renovate.json")
+}
+
+# Special CI/branch protection case
 
 data "github_team" "cft-admins" {
   slug = "cft-admins"
-}
-
-resource "github_branch_protection" "master" {
-  for_each      = data.github_repository.repo
-  repository_id = each.value.node_id
-  pattern       = "master"
-
-  required_pull_request_reviews {
-    required_approving_review_count = 1
-    require_code_owner_reviews      = true
-  }
-
-  required_status_checks {
-    strict   = true
-    contexts = [
-      "cla/google",
-      "${each.value.name}-int-trigger (cloud-foundation-cicd)",
-      "${each.value.name}-lint-trigger (cloud-foundation-cicd)"
-    ]
-  }
-
-  enforce_admins = false
-
-  push_restrictions = [
-    data.github_team.cft-admins.node_id
-  ]
-
 }
 
 data "github_repository" "terraform-example-foundation" {
@@ -74,7 +67,7 @@ data "github_repository" "terraform-example-foundation" {
 
 resource "github_branch_protection" "terraform-example-foundation" {
   repository_id = data.github_repository.terraform-example-foundation.node_id
-  pattern       = "master"
+  pattern       = data.github_repository.terraform-example-foundation.default_branch
 
   required_pull_request_reviews {
     required_approving_review_count = 1
@@ -82,7 +75,7 @@ resource "github_branch_protection" "terraform-example-foundation" {
   }
 
   required_status_checks {
-    strict   = true
+    strict = true
     contexts = [
       "cla/google",
       "terraform-example-foundation-int-trigger-default (cloud-foundation-cicd)",
