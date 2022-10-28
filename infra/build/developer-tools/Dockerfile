@@ -82,6 +82,10 @@ ENV CFT_CLI_VERSION ${CFT_CLI_VERSION}
 ARG KUBECTL_VERSION
 ENV KUBECTL_VERSION ${KUBECTL_VERSION}
 
+# Required to download and install TFlint
+ARG TFLINT_VERSION
+ENV TFLINT_VERSION ${TFLINT_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -150,6 +154,9 @@ RUN /build/install_addlicense.sh
 ADD ./build/install_cft_cli.sh /build/
 RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
 
+ADD ./build/install_tflint.sh /build/
+RUN /build/install_tflint.sh ${TFLINT_VERSION}
+
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
@@ -182,6 +189,10 @@ ADD ./build/scripts/gh_lint_comment.py /usr/local/bin/
 # Intended to help developers iterate quickly
 ADD ./build/home/bash_history /root/.bash_history
 ADD ./build/home/bashrc /root/.bashrc
+
+# TFLint configs
+ADD ./build/home/.tflint.example.hcl /root/tflint/.tflint.example.hcl
+ADD ./build/home/.tflint.module.hcl /root/tflint/.tflint.module.hcl
 
 # Set TF cache dir
 ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
