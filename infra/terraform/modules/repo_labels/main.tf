@@ -19,23 +19,28 @@ provider "github" {
 }
 
 locals {
-  commit_author = "CFT Bot"
-  commit_email  = "cloud-foundation-bot@google.com"
+  repo_labels = {
+    for o in flatten([
+      for repo in var.repo_list :
+      [
+        for label in var.labels :
+        {
+          "repo" : repo,
+          "label" : label.name,
+          "color" : label.color,
+          "description" : label.description
+        }
+      ]
+    ]) :
+    "${o.repo}/${o.label}" => o
+  }
 }
 
-data "github_repository" "repo" {
-  for_each = toset(var.repo_list)
-  name     = each.value
-}
-
-resource "github_repository_file" "renovate_json" {
-  for_each            = data.github_repository.repo
-  repository          = each.value.name
-  branch              = each.value.default_branch
-  file                = var.filename
-  commit_message      = "chore: update ${var.filename}"
-  commit_author       = local.commit_author
-  commit_email        = local.commit_email
-  overwrite_on_create = true
-  content             = var.content
+# Create labels on all repos
+resource "github_issue_label" "test_repo" {
+  for_each    = local.repo_labels
+  repository  = each.value.repo
+  name        = each.value.label
+  color       = each.value.color
+  description = each.value.description
 }

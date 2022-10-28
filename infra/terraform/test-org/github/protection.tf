@@ -23,26 +23,36 @@ locals {
     "terraform-example-foundation"
   ]
   filtered_repos = setsubtract(toset(local.repos), local.remove_special_repos)
+  gcp_repos      = setintersection(local.filtered_repos, toset(data.github_repositories.repos_gcp.names))
+  tgm_repos      = setintersection(local.filtered_repos, toset(data.github_repositories.repos_tgm.names))
+}
+
+data "github_repositories" "repos_gcp" {
+  query = "org:GoogleCloudPlatform archived:no"
+}
+
+data "github_repositories" "repos_tgm" {
+  query = "org:terraform-google-modules archived:no"
 }
 
 module "branch_protection_tgm" {
   source    = "../../modules/branch_protection"
   org       = "terraform-google-modules"
-  repo_list = local.filtered_repos
+  repo_list = local.tgm_repos
   admin     = "cft-admins"
 }
 
 module "branch_protection_gcp" {
   source    = "../../modules/branch_protection"
   org       = "GoogleCloudPlatform"
-  repo_list = local.filtered_repos
+  repo_list = local.gcp_repos
   admin     = "blueprint-solutions"
 }
 
 module "renovate_json_tgm" {
   source    = "../../modules/repo_file"
   org       = "terraform-google-modules"
-  repo_list = local.filtered_repos
+  repo_list = local.tgm_repos
   filename  = ".github/renovate.json"
   content   = file("${path.module}/renovate.json")
 }
@@ -50,9 +60,25 @@ module "renovate_json_tgm" {
 module "renovate_json_gcp" {
   source    = "../../modules/repo_file"
   org       = "GoogleCloudPlatform"
-  repo_list = local.filtered_repos
+  repo_list = local.gcp_repos
   filename  = ".github/renovate.json"
   content   = file("${path.module}/renovate.json")
+}
+
+module "stale_yml_tgm" {
+  source    = "../../modules/repo_file"
+  org       = "terraform-google-modules"
+  repo_list = local.tgm_repos
+  filename  = ".github/workflows/stale.yml"
+  content   = file("${path.module}/stale.yml")
+}
+
+module "stale_yml_gcp" {
+  source    = "../../modules/repo_file"
+  org       = "GoogleCloudPlatform"
+  repo_list = local.gcp_repos
+  filename  = ".github/workflows/stale.yml"
+  content   = file("${path.module}/stale.yml")
 }
 
 # Special CI/branch protection case
