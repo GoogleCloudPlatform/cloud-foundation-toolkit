@@ -19,7 +19,7 @@ func TestFetchSortedTFRepos(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "simple created",
+			name: "simple sort created",
 			repos: []github.Repository{
 				{
 					Name:      github.String("terraform-google-bar"),
@@ -41,7 +41,7 @@ func TestFetchSortedTFRepos(t *testing.T) {
 			sortBy: sortCreated,
 		},
 		{
-			name: "simple created",
+			name: "simple sort name",
 			repos: []github.Repository{
 				{
 					Name:      github.String("terraform-google-bar"),
@@ -63,7 +63,7 @@ func TestFetchSortedTFRepos(t *testing.T) {
 			sortBy: sortName,
 		},
 		{
-			name: "simple created",
+			name: "simple sort stars",
 			repos: []github.Repository{
 				{
 					Name:            github.String("terraform-google-bar"),

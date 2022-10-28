@@ -14,8 +14,8 @@ var catalogListFlags struct {
 }
 
 const (
-	tgmOrg = "terraform-google-modules"
-	gcpOrg = "GoogleCloudPlatform"
+	tfModulesOrg = "terraform-google-modules"
+	gcpOrg       = "GoogleCloudPlatform"
 )
 
 var (
@@ -62,7 +62,7 @@ func listCatalog(cmd *cobra.Command, args []string) error {
 	if catalogListFlags.sort.Empty() {
 		catalogListFlags.sort = sortCreated
 	}
-	gh := newGHService(withTokenClient(), withOrgs([]string{tgmOrg, gcpOrg}))
+	gh := newGHService(withTokenClient(), withOrgs([]string{tfModulesOrg, gcpOrg}))
 	repos, err := fetchSortedTFRepos(gh, catalogListFlags.sort)
 	if err != nil {
 		return err
