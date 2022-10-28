@@ -14,12 +14,7 @@
 # Download and verify the integrity of the download first
 ARG RUBY_VERSION
 ARG GOLANG_VERSION
-
-FROM sethvargo/hashicorp-installer:0.2.0 AS installer
-# Required to download and install Terraform
-ARG TERRAFORM_VERSION
-ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
-RUN /install-hashicorp-tool "terraform" "$TERRAFORM_VERSION"
+ARG ALPINE_VERSION
 
 # Builds module-swapper
 FROM golang:$GOLANG_VERSION-alpine AS module-swapper-builder
@@ -29,7 +24,7 @@ RUN go build -v -o /usr/local/bin/module-swapper
 
 FROM golang:$GOLANG_VERSION-alpine AS go
 
-FROM ruby:$RUBY_VERSION-alpine3.15
+FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
 
 # Required to download and install terraform-docs
 ARG TERRAFORM_DOCS_VERSION
@@ -63,6 +58,10 @@ ENV BATS_ASSERT_VERSION ${BATS_ASSERT_VERSION}
 # Required to download and install Bats-mock
 ARG BATS_MOCK_VERSION
 ENV BATS_MOCK_VERSION ${BATS_MOCK_VERSION}
+
+# Required to download and install Terraform
+ARG TERRAFORM_VERSION
+ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
 
 ARG TERRAGRUNT_VERSION
 ENV TERRAGRUNT_VERSION ${TERRAGRUNT_VERSION}
@@ -112,9 +111,8 @@ ENV TERRAFORM_VALIDATOR_VERSION ${TERRAFORM_VALIDATOR_VERSION}
 ADD ./build/install_terraform_validator.sh /build/
 RUN /build/install_terraform_validator.sh ${TERRAFORM_VALIDATOR_VERSION}
 
-#ADD ./build/install_terraform.sh /build/
-#RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
-COPY --from=installer /software/terraform /usr/local/bin/terraform
+ADD ./build/install_terraform.sh /build/
+RUN ./build/install_terraform.sh ${TERRAFORM_VERSION}
 
 # Install Golang
 COPY --from=go /usr/local/go/ /usr/local/go/
@@ -160,8 +158,7 @@ RUN /build/install_tflint.sh ${TFLINT_VERSION}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-ADD ./build/data/requirements.txt .
-RUN bundle install && pip3 install -r requirements.txt
+RUN gem install bundler:2.1.4 && bundle install
 
 COPY ./build/install_verify_boilerplate.sh /build/
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
