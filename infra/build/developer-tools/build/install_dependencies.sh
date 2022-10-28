@@ -49,9 +49,6 @@ apk add --no-cache openssh
 # unclear why perl is needed, but is good to have
 apk add --no-cache perl
 
-# python 2 is needed for compatibility and linting
-apk add --no-cache python2
-
 # python 3 is needed for python linting
 apk add --no-cache python3
 
@@ -71,4 +68,5 @@ apk add --no-cache rsync
 
 # flake8 and jinja2 are used for lint checks, cookiecutter is used for terraform-google-module-template tests
 # requests~=2.28 for https://github.com/psf/requests/pull/6179
-pip install flake8 "Jinja2~=3.1" cookiecutter "requests~=2.28"
+# Remaining items moved here from requirements.txt
+pip install flake8 "Jinja2~=3.1" cookiecutter "requests~=2.28" PyGithub==1.51 google-auth~=1.6 google-api-python-client~=1.7
