@@ -11,6 +11,8 @@ env:
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   KUBECTL_MINOR: "1.23"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
+  GATOR_MINOR: "3.9"
+  GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
 
 jobs:
   update-tools:
@@ -22,7 +24,7 @@ jobs:
           PR_UPDATE_BODY=""
           newline=$'\n'
           # Skip "KPT" till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
-          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR")
 
           for tool in ${tools[@]}
           do
@@ -42,6 +44,9 @@ jobs:
             elif [ "$tool" == "KUBECTL" ]; then
               # get latest KUBECTL_MINOR release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name' | tr -d "v")
+            elif [ "$tool" == "GATOR" ]; then
+              # get latest GATOR_MINOR release
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${GATOR_MINOR}'"))][0].tag_name' | tr -d "v")
             else
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output .tag_name | tr -d "v")
             fi
