@@ -20,5 +20,5 @@ cd /build
 
 OPA_VERSION=$1
 
-curl https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_amd64_static > opa
+wget -q https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_amd64_static -O opa
 install -o 0 -g 0 -m 0755 opa /usr/local/bin/opa
