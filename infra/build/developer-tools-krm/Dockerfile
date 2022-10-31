@@ -17,9 +17,12 @@ FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
 RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat
 
-# Additional go tooling
+# Required to download and install golangci-lint
 ARG GOLANGCI_VERSION
-RUN GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v$GOLANGCI_VERSION
+ENV GOLANGCI_VERSION ${GOLANGCI_VERSION}
+
+ADD ./build/install_golangci.sh /build/
+RUN /build/install_golangci.sh ${GOLANGCI_VERSION}
 
 # Required to download and install asmcli
 ARG ASMCLI_VERSION
