@@ -15,10 +15,11 @@
 ARG BASE_IMAGE_VERSION
 FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
-RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc
+RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat
 
 # Additional go tooling
-RUN GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
+ARG GOLANGCI_VERSION
+RUN GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v$GOLANGCI_VERSION
 
 # Required to download and install asmcli
 ARG ASMCLI_VERSION
@@ -26,6 +27,21 @@ ENV ASMCLI_VERSION ${ASMCLI_VERSION}
 
 ADD ./build/install_asmcli.sh /build/
 RUN /build/install_asmcli.sh ${ASMCLI_VERSION}
+
+# Required to download and install gator
+ARG GATOR_VERSION
+ENV GATOR_VERSION ${GATOR_VERSION}
+
+ADD ./build/install_gator.sh /build/
+RUN /build/install_gator.sh ${GATOR_VERSION}
+
+# Required to download and install OPA
+ARG OPA_VERSION
+ENV OPA_VERSION ${OPA_VERSION}
+
+ADD ./build/install_opa.sh /build/
+RUN /build/install_opa.sh ${OPA_VERSION}
+
 RUN rm -rf /build
 
 # Add dind helper for prow
