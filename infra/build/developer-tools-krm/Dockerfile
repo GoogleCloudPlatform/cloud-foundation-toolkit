@@ -21,7 +21,7 @@ RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-curr
 ARG GOLANGCI_VERSION
 ENV GOLANGCI_VERSION ${GOLANGCI_VERSION}
 
-ADD ./build/install_golangci.sh /build/
+ADD ./build/install_golangci_lint.sh /build/
 RUN /build/install_golangci.sh ${GOLANGCI_VERSION}
 
 # Required to download and install asmcli
