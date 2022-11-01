@@ -22,7 +22,7 @@ ARG GOLANGCI_VERSION
 ENV GOLANGCI_VERSION ${GOLANGCI_VERSION}
 
 ADD ./build/install_golangci_lint.sh /build/
-RUN /build/install_golangci.sh ${GOLANGCI_VERSION}
+RUN /build/install_golangci_lint.sh ${GOLANGCI_VERSION}
 
 # Required to download and install asmcli
 ARG ASMCLI_VERSION
