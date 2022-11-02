@@ -45,6 +45,13 @@ ENV OPA_VERSION ${OPA_VERSION}
 ADD ./build/install_opa.sh /build/
 RUN /build/install_opa.sh ${OPA_VERSION}
 
+# Required to download and install kind
+ARG KIND_VERSION
+ENV KIND_VERSION ${KIND_VERSION}
+
+ADD ./build/install_kind.sh /build/
+RUN /build/install_kind.sh ${KIND_VERSION}
+
 RUN rm -rf /build
 
 # Add dind helper for prow
