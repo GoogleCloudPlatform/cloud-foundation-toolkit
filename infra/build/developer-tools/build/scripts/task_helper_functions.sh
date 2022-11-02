@@ -512,7 +512,7 @@ setup_environment() {
 source_test_env() {
   if [ -d test/setup ]; then
     # shellcheck disable=SC1091
-    source <(python /usr/local/bin/export_tf_outputs.py --path=test/setup)
+    source <(python3 /usr/local/bin/export_tf_outputs.py --path=test/setup)
   else
     if [ -f test/source.sh ]; then
       echo "Warning: test/setup not found. Will only use test/source.sh to configure environment."
