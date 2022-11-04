@@ -102,5 +102,6 @@ locals {
     "three-tier-app",
     "log-analysis",
     "media-cdn-vod",
+    "anthos-vm",
   ]
 }
