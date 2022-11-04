@@ -20,8 +20,8 @@ type BlueprintMetadataSpec struct {
 type BlueprintInfo struct {
 	Title         string
 	Source        *BlueprintRepoDetail
-	Version       string
-	ActuationTool BlueprintActuationTool `json:"actuationTool" yaml:"actuationTool"`
+	Version       string                 `json:",omitempty" yaml:",omitempty"`
+	ActuationTool BlueprintActuationTool `json:"actuationTool,omitempty" yaml:"actuationTool,omitempty"`
 	Description   *BlueprintDescription  `json:",omitempty" yaml:",omitempty"`
 	Icon          string                 `json:",omitempty" yaml:",omitempty"`
 }
@@ -38,10 +38,10 @@ type BlueprintContent struct {
 
 // BlueprintInterface the input and output variables for the blueprint
 type BlueprintInterface struct {
-	Variables []BlueprintVariable
+	Variables []BlueprintVariable `json:",omitempty" yaml:",omitempty"`
 	// VariableGroups are manually entered
 	VariableGroups []BlueprintVariableGroup `json:"variableGroups,omitempty" yaml:"variableGroups,omitempty"`
-	Outputs        []BlueprintOutput
+	Outputs        []BlueprintOutput        `json:",omitempty" yaml:",omitempty"`
 }
 
 // BlueprintRequirements defines the roles required and the assocaited services
@@ -57,8 +57,8 @@ type BlueprintRepoDetail struct {
 }
 
 type BlueprintActuationTool struct {
-	Flavor  string `json:"type" yaml:"type"`
-	Version string
+	Flavor  string `json:"type,omitempty" yaml:"type,omitempty"`
+	Version string `json:",omitempty" yaml:",omitempty"`
 }
 
 type BlueprintDescription struct {
