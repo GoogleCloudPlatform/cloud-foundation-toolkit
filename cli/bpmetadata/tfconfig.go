@@ -293,7 +293,6 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
 		for k, _ := range iamAttrs {
 			var iamRoles []string
 			attrValue, _ := iamAttrs[k].Expr.Value(nil)
-
 			if !attrValue.Type().IsTupleType() {
 				continue
 			}
