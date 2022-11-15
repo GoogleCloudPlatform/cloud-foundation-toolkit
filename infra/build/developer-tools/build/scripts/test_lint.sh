@@ -36,6 +36,7 @@ messages='{
   "check_shell": "Failed shell check. More info on running shellcheck locally [here](https://www.shellcheck.net).",
   "check_headers": "All files need a license header. Please make sure all your files include the appropriate header. A helper tool available [here](https://github.com/google/addlicense).",
   "check_python": "Failed flake8 Python lint check.",
+  "check_tflint": "Failed TFlint check. More details below.",
   "check_terraform": "Failed Terraform check. More details below."
 }'
 rval=0
@@ -47,6 +48,7 @@ tests=(
   check_shell
   check_headers
   check_python
+  check_tflint
   check_terraform
 )
 
