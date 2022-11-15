@@ -18,7 +18,7 @@ set -u
 
 cd /build
 
-OPA_VERSION=$1
+GOLANGCI_VERSION=$1
 
-wget -q https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_amd64_static -O opa
-install -o 0 -g 0 -m 0755 opa /usr/local/bin/opa
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v$GOLANGCI_VERSION
+ln -s $(go env GOPATH)/bin/golangci-lint /usr/local/bin/

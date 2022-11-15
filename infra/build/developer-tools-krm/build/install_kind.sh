@@ -18,7 +18,7 @@ set -u
 
 cd /build
 
-OPA_VERSION=$1
+KIND_VERSION=$1
 
-wget -q https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_amd64_static -O opa
-install -o 0 -g 0 -m 0755 opa /usr/local/bin/opa
+wget -q https://kind.sigs.k8s.io/dl/v${KIND_VERSION}/kind-linux-amd64
+install -o 0 -g 0 -m 0755 kind-linux-amd64 /usr/local/bin/kind

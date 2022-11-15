@@ -18,20 +18,12 @@ provider "github" {
   owner = var.org
 }
 
-locals {
-  repos = setintersection(var.repo_list, toset(data.github_repositories.repos.names))
-}
-
 data "github_team" "admin" {
   slug = var.admin
 }
 
-data "github_repositories" "repos" {
-  query = "org:${var.org} archived:no"
-}
-
 data "github_repository" "repo" {
-  for_each = local.repos
+  for_each = toset(var.repo_list)
   name     = each.value
 }
 
