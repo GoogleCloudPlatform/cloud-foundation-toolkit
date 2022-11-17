@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.3.4
+TERRAFORM_VERSION := null
 TERRAFORM_VALIDATOR_VERSION := 0.13.0
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 410.0.0
@@ -33,9 +33,9 @@ KUSTOMIZE_VERSION := 3.6.1
 # Hold KPT at 1.0.0-beta.15 till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
 KPT_VERSION := 1.0.0-beta.15
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 0.4.5
+CFT_CLI_VERSION := 
 # Updated by Update Tooling Workflow
-KUBECTL_VERSION := 1.23.14
+KUBECTL_VERSION := 
 TFLINT_VERSION := 0.41.0
 ALPINE_VERSION := 3.16
 
@@ -44,10 +44,10 @@ GOLANGCI_VERSION := 1.47.3
 ASMCLI_VERSION := 1.12
 KIND_VERSION := 0.17.0
 # Updated by Update Tooling Workflow
-GATOR_VERSION := 3.9.2
+GATOR_VERSION := 
 OPA_VERSION := 0.42.2
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.9.1
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.9.2
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
