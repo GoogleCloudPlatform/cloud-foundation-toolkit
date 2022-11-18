@@ -432,3 +432,23 @@ func (b *TFBlueprintTest) Test() {
 	utils.RunStage("apply", func() { b.Apply(a) })
 	utils.RunStage("verify", func() { b.Verify(a) })
 }
+
+// RedeployTest deploys the test n times in separate workspaces before teardown.
+func (b *TFBlueprintTest) RedeployTest(n int) {
+	if b.ShouldSkip() {
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
+		b.t.SkipNow()
+		return
+	}
+	a := assert.New(b.t)
+	for i := 1; i <= n; i++ {
+		ws := terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), fmt.Sprintf("test-%d", i))
+		utils.RunStage("init", func() { b.Init(a) })
+		defer func() {
+			terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), ws)
+			utils.RunStage("teardown", func() { b.Teardown(a) })
+		}()
+		utils.RunStage("apply", func() { b.Apply(a) })
+		utils.RunStage("verify", func() { b.Verify(a) })
+	}
+}
