@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - "master"
+      - "apeabody-patch-3"
     paths:
       - "infra/build/**"
       - ".github/workflows/build-push-cft-devtools.yml"
