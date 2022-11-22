@@ -104,4 +104,20 @@ locals {
     "media-cdn-vod",
     "anthos-vm",
   ]
+
+  blueprint_owners = {
+    # Enter on a single line per repo using GH CODEOWNERS syntax: "@user1 @user2"
+    cloud-foundation-training               = "@marine675 @zefdelgadillo"
+    terraform-google-healthcare             = "@yeweidaniel"
+    terraform-google-cloud-run              = "@prabhu34 @anamer @mitchelljamie"
+    terraform-google-secured-data-warehouse = "@erlanderlo"
+    terraform-google-anthos-vm              = "@zhuchenwang"
+    terraform-google-kubernetes-engine      = "@Jberlinsky"
+    terraform-example-foundation            = "@rjerrems"
+    terraform-google-log-analysis           = "@ryotat7"
+    terraform-google-three-tier-app         = "@tpryan"
+    terraform-google-load-balanced-vms      = "@tpryan"
+    terraform-google-secure-cicd            = "@gtsorbo"
+    terraform-google-media-cdn-vod          = "@roddzurcher"
+  }
 }
