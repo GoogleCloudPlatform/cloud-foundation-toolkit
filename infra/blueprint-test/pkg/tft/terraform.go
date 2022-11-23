@@ -434,20 +434,35 @@ func (b *TFBlueprintTest) Test() {
 }
 
 // RedeployTest deploys the test n times in separate workspaces before teardown.
-func (b *TFBlueprintTest) RedeployTest(n int) {
+func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface{}) {
+	if n < 2 {
+		b.t.Fatalf("n should be 2 or greater but got: %d", n)
+	}
 	if b.ShouldSkip() {
 		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
 		b.t.SkipNow()
 		return
 	}
 	a := assert.New(b.t)
+	// capture currently set vars as default if no override
+	defaultVars := b.vars
+	overrideVars := func(i int) {
+		custom, exists := nVars[i]
+		if exists {
+			b.vars = custom
+		} else {
+			b.vars = defaultVars
+		}
+	}
 	for i := 1; i <= n; i++ {
 		ws := terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), fmt.Sprintf("test-%d", i))
+		overrideVars(i)
 		utils.RunStage("init", func() { b.Init(a) })
-		defer func() {
+		defer func(i int) {
+			overrideVars(i)
 			terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), ws)
 			utils.RunStage("teardown", func() { b.Teardown(a) })
-		}()
+		}(i)
 		utils.RunStage("apply", func() { b.Apply(a) })
 		utils.RunStage("verify", func() { b.Verify(a) })
 	}
