@@ -81,6 +81,30 @@ module "stale_yml_gcp" {
   content   = file("${path.module}/stale.yml")
 }
 
+
+module "codeowners_tgm" {
+  source = "../../modules/codeowners_file"
+  org    = "terraform-google-modules"
+  providers = {
+    github = github
+  }
+  # Add in terraform-example-foundation for CODEOWNERS
+  repo_list  = setunion(local.tgm_repos, ["terraform-example-foundation"])
+  owner      = "cft-admins"
+  add_owners = local.add_owners
+}
+
+module "codeowners_gcp" {
+  source = "../../modules/codeowners_file"
+  org    = "GoogleCloudPlatform"
+  providers = {
+    github = github.gcp
+  }
+  repo_list  = local.gcp_repos
+  owner      = "blueprint-solutions"
+  add_owners = local.add_owners
+}
+
 # Special CI/branch protection case
 
 data "github_team" "cft-admins" {

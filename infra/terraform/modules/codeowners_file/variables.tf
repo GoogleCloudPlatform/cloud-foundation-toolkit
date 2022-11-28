@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-locals {
-  repos      = keys(data.terraform_remote_state.triggers.outputs.repo_folder)
-  add_owners = data.terraform_remote_state.org.outputs.blueprint_owners
+/******************************************
+  Required variables
+*******************************************/
+
+variable "org" {
+  description = "GitHub Org"
+  type        = string
 }
 
-provider "github" {
-  owner = "terraform-google-modules"
+variable "repo_list" {
+  description = "List of Repos"
+  type        = list(any)
 }
 
-provider "github" {
-  alias = "gcp"
-  owner = "GoogleCloudPlatform"
+variable "owner" {
+  description = "Primary owner"
+  type        = string
+  nullable    = false
+}
+
+variable "add_owners" {
+  description = "Map of addtional owners as repo:owners"
+  type        = map(string)
 }
