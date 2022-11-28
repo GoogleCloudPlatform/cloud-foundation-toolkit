@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 	"github.com/spf13/cobra"
@@ -58,14 +59,19 @@ func generate(cmd *cobra.Command, args []string) error {
 	currBpPath := path.Join(wdPath, mdFlags.path)
 	allBpPaths = append(allBpPaths, currBpPath)
 
+	var errors []string
 	// if nested, check if modules/ exists and create paths
 	// for submodules
 	if mdFlags.nested {
 		modulesPathforBp := path.Join(currBpPath, modulesPath)
 		_, err = os.Stat(modulesPathforBp)
-		if err == nil {
-			moduleDirs, _ := util.WalkTerraformDirs(modulesPathforBp)
-			if moduleDirs != nil {
+		if os.IsNotExist(err) {
+			Log.Info("sub-modules do not exist for this blueprint")
+		} else {
+			moduleDirs, err := util.WalkTerraformDirs(modulesPathforBp)
+			if err != nil {
+				errors = append(errors, err.Error())
+			} else {
 				allBpPaths = append(allBpPaths, moduleDirs...)
 			}
 		}
@@ -74,9 +80,12 @@ func generate(cmd *cobra.Command, args []string) error {
 	for _, path := range allBpPaths {
 		err = generateMetadataForBpPath(path)
 		if err != nil {
-			// don't panic and move on to the next blueprint
-			fmt.Printf(err.Error())
+			errors = append(errors, err.Error())
 		}
+	}
+
+	if len(errors) > 0 {
+		return fmt.Errorf(strings.Join(errors, "\n"))
 	}
 
 	return nil
