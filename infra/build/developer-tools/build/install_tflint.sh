@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright 2019 Google LLC
+# Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 set -e
 set -u
 
+TF_LINT_VERSION=$1
+
 cd /build
 
-go install github.com/google/addlicense@v1.1.0
-ln -s $(go env GOPATH)/bin/addlicense /usr/local/bin/
+wget "https://github.com/terraform-linters/tflint/releases/download/v${TF_LINT_VERSION}/tflint_linux_amd64.zip"
+unzip tflint_linux_amd64.zip
+install -o 0 -g 0 -m 0755 tflint /usr/local/bin/tflint

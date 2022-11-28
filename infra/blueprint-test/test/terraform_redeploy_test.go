@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-locals {
-  repos      = keys(data.terraform_remote_state.triggers.outputs.repo_folder)
-  add_owners = data.terraform_remote_state.org.outputs.blueprint_owners
-}
+package test
 
-provider "github" {
-  owner = "terraform-google-modules"
-}
+import (
+	"testing"
 
-provider "github" {
-  alias = "gcp"
-  owner = "GoogleCloudPlatform"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+	"github.com/gruntwork-io/terratest/modules/terraform"
+)
+
+func TestRedeploy(t *testing.T) {
+	nt := tft.NewTFBlueprintTest(t,
+		tft.WithTFDir("../examples/simple_pet_module"),
+		tft.WithSetupPath(""),
+	)
+	nt.RedeployTest(3)
+	expectedWorkspaces := []string{"test-1", "test-2", "test-3"}
+	for _, ws := range expectedWorkspaces {
+		terraform.RunTerraformCommand(t, nt.GetTFOptions(), "workspace", "select", ws)
+	}
 }

@@ -56,6 +56,8 @@ jobs:
             # update tool version in Makefile if not latest
             if [ "$CURRENT_TOOL_VERSION" == "$LATEST_TOOL_VERSION" ]; then
               echo "${tool} is latest"
+            elif [[ -z "$CURRENT_TOOL_VERSION" || "$CURRENT_TOOL_VERSION" == "" || "$CURRENT_TOOL_VERSION" == "null" ]]; then
+              echo "${tool} version is missing"
             else
               echo "${tool} needs to be updated to ${LATEST_TOOL_VERSION}"
               sed -i "s/${tool}_VERSION := ${CURRENT_TOOL_VERSION}/${tool}_VERSION := ${LATEST_TOOL_VERSION}/g" infra/build/Makefile
