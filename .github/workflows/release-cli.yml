@@ -34,7 +34,7 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@v1
         with:
-          version: "366.0.0"
+          version: "410.0.0"
 
       # used by make release which runs gcloud alpha storage
       - name: Install gcloud alpha commands 
