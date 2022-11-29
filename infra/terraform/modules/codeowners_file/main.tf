@@ -33,5 +33,5 @@ resource "github_repository_file" "CODEOWNERS" {
   commit_author       = local.commit_author
   commit_email        = local.commit_email
   overwrite_on_create = true
-  content             = trimspace("* @${var.org}/${var.owner} ${try(var.add_owners[each.value.name], "")}")
+  content             = "${trimspace("* @${var.org}/${var.owner} ${try(var.add_owners[each.value.name], "")}")}\n"
 }
