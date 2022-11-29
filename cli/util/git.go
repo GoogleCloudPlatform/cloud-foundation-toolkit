@@ -17,32 +17,33 @@ func GetRepoName(dir string) (string, error) {
 		return "", fmt.Errorf("error getting remote URL: %w", err)
 	}
 
-	trimmedRemotePath := strings.TrimSuffix(remoteUrl, "/")
+	trimmedRemotePath := strings.TrimSuffix(remoteUrl.Path, "/")
 	splitRemotePath := strings.Split(trimmedRemotePath, "/")
 	// expect path to be /owner/repo
 	if len(splitRemotePath) != 3 {
 		return "", fmt.Errorf("expected owner/repo, got %s", trimmedRemotePath)
 	}
 
-	return splitRemotePath[len(splitRemotePath)-1], nil
+	repoName := strings.TrimSuffix(splitRemotePath[len(splitRemotePath)-1], ".git")
+	return repoName, nil
 }
 
 // getRepoName finds upstream repo name from a given repo directory
-func GetRepoUrl(dir string) (string, error) {
+func GetRepoUrl(dir string) (*url.URL, error) {
 	r, err := git.PlainOpen(dir)
 	if err != nil {
-		return "", fmt.Errorf("error opening git dir %s: %w", dir, err)
+		return nil, fmt.Errorf("error opening git dir %s: %w", dir, err)
 	}
 	rm, err := r.Remote(defaultRemote)
 	if err != nil {
-		return "", fmt.Errorf("error finding remote %s in git dir %s: %w", defaultRemote, dir, err)
+		return nil, fmt.Errorf("error finding remote %s in git dir %s: %w", defaultRemote, dir, err)
 	}
 
 	// validate remote URL
 	remoteURL, err := url.Parse(rm.Config().URLs[0])
 	if err != nil {
-		return "", fmt.Errorf("error parsing remote URL: %w", err)
+		return nil, fmt.Errorf("error parsing remote URL: %w", err)
 	}
 
-	return remoteURL.Path, nil
+	return remoteURL, nil
 }
