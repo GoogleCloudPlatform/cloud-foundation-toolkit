@@ -36,6 +36,10 @@ var rootSchema = &hcl.BodySchema{
 			Type:       "resource",
 			LabelNames: []string{"type", "name"},
 		},
+		{
+			Type:       "module",
+			LabelNames: []string{"name"},
+		},
 	},
 }
 
@@ -52,6 +56,14 @@ var metaBlockSchema = &hcl.BodySchema{
 	Attributes: []hcl.AttributeSchema{
 		{
 			Name: "module_name",
+		},
+	},
+}
+
+var moduleSchema = &hcl.BodySchema{
+	Attributes: []hcl.AttributeSchema{
+		{
+			Name: "activate_apis",
 		},
 	},
 }
@@ -281,6 +293,10 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
 		for k, _ := range iamAttrs {
 			var iamRoles []string
 			attrValue, _ := iamAttrs[k].Expr.Value(nil)
+			if !attrValue.Type().IsTupleType() {
+				continue
+			}
+
 			ie := attrValue.ElementIterator()
 			for ie.Next() {
 				_, v := ie.Element()
@@ -289,7 +305,7 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
 
 			containerRoles := BlueprintRoles{
 				// TODO: (b/248123274) no good way to associate granularity yet
-				Level: "",
+				Level: "Project",
 				Roles: iamRoles,
 			}
 
@@ -313,29 +329,26 @@ func parseBlueprintServices(servicesFile *hcl.File) ([]string, error) {
 		return nil, err
 	}
 
-	// TODO: (b/250778215) instead of parsing the locals block, this should look at
-	// activate_apis attribute on the project module
 	for _, block := range servicesContent.Blocks {
-		if block.Type != "locals" {
+		if block.Type != "module" {
 			continue
 		}
 
-		serivceAttrs, diags := block.Body.JustAttributes()
+		moduleContent, _, moduleContentDiags := block.Body.PartialContent(moduleSchema)
+		diags = append(diags, moduleContentDiags...)
 		err := hasHclErrors(diags)
 		if err != nil {
 			return nil, err
 		}
 
-		for k, _ := range serivceAttrs {
-			attrValue, _ := serivceAttrs[k].Expr.Value(nil)
-			ie := attrValue.ElementIterator()
-			for ie.Next() {
-				_, v := ie.Element()
-				s = append(s, v.AsString())
-			}
+		apisAttr, defined := moduleContent.Attributes["activate_apis"]
+		if !defined {
+			return nil, fmt.Errorf("activate_apis not defined for project module")
 		}
 
-		// because we're only interested in the top-level locals block
+		gohcl.DecodeExpression(apisAttr.Expr, nil, &s)
+
+		// because we're only interested in the top-level modules block
 		break
 	}
 

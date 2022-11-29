@@ -46,7 +46,7 @@ func getRepoDetailsByPath(bpPath string) (*repoDetail, error) {
 	return &repoDetail{
 		Name: repoName,
 		Source: &repoSource{
-			Path:       repoUrl,
+			Path:       repoUrl.String(),
 			SourceType: "git",
 			RootPath:   repoPath,
 		},
