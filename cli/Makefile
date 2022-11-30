@@ -7,7 +7,7 @@ GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
 BUILD_DIR=./bin
 NAME=cft
-BUCKET=gs://gscrp-cft
+BUCKET=gs://cft-cli
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"

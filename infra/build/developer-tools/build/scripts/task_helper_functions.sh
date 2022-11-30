@@ -305,6 +305,17 @@ function generate_docs() {
   done < <(find_files . -name '*.tf' -print0 \
     | compat_xargs -0 -n1 dirname \
     | sort -u)
+  
+  echo "Generating blueprint metadata"
+  cft blueprint metadata
+  if [ $? -eq 0 ]; then
+    echo "Success!"
+  else
+    echo "Warning! Unable to generate metadata."
+  fi
+  # add headers since comments are not preserved with metadata generation
+  # TODO: b/260869608
+  fix_headers
 }
 
 function check_tflint() {
