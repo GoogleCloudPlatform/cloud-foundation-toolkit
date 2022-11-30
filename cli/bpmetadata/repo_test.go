@@ -29,26 +29,12 @@ func TestGetBpRepoPath(t *testing.T) {
 			want:    "testdata/bpmetadata/terraform-google-bp01",
 			wantErr: false,
 		},
-		{
-			name:    "invalid top level",
-			path:    "testdata/bpmetadata/erraform-google-bp01",
-			wantErr: true,
-		},
-		{
-			name:    "invalid nested",
-			path:    "testdata/bpmetadata/terraform-google-bp01/test/bp01-01",
-			wantErr: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getBpPathForRepoName(tt.path)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("getBpPathForRepoName() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := getBpRootPath(tt.path)
 			if got != tt.want {
-				t.Errorf("getBpPathForRepoName() = %v, want %v", got, tt.want)
+				t.Errorf("getBpRootPath() = %v, want %v", got, tt.want)
 			}
 		})
 	}

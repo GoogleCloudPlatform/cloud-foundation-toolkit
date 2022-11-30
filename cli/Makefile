@@ -1,13 +1,13 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v0.5.0
+VERSION=v0.5.1
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
 BUILD_DIR=./bin
 NAME=cft
-BUCKET=gs://cft-cli
+BUCKET=gs://gscrp-cft
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
