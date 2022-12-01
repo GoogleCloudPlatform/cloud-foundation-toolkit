@@ -15,7 +15,7 @@
 ARG BASE_IMAGE_VERSION
 FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
-RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat
+RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat ansible-lint
 
 # Required to download and install golangci-lint
 ARG GOLANGCI_VERSION
