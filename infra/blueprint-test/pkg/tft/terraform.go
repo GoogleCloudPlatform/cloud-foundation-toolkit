@@ -214,7 +214,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	// load TFEnvVars from setup outputs
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
-		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger})))
+		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger, NoColor: true})))
 		if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; tft.saKey == "" && exists {
 			if credDec, err := b64.StdEncoding.DecodeString(credsEnc); err == nil {
 				gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
@@ -241,6 +241,7 @@ func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 		MigrateState:             b.migrateState,
 		PlanFilePath:             b.planFilePath,
 		RetryableTerraformErrors: b.retryableTerraformErrors,
+		NoColor:                  true,
 	})
 	if b.maxRetries > 0 {
 		newOptions.MaxRetries = b.maxRetries
@@ -294,7 +295,7 @@ func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
-	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger}, key)
+	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
 // GetTFSetupStringOutput returns TF setup output for a given key as string.
@@ -303,7 +304,7 @@ func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
-	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger}, key)
+	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
 // loadTFEnvVar adds new env variables prefixed with TF_VAR_ to an existing map of variables.
@@ -376,6 +377,7 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	terraform.Validate(b.t, terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
 		TerraformDir: b.tfDir,
 		Logger:       b.logger,
+		NoColor:      true,
 	}))
 }
 

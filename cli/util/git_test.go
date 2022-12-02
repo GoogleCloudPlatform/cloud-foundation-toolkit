@@ -1,6 +1,7 @@
 package util
 
 import (
+	"path"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
@@ -11,6 +12,7 @@ func TestGetRepoName(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    string
+		subDir  string
 		remote  string
 		want    string
 		wantErr bool
@@ -45,10 +47,17 @@ func TestGetRepoName(t *testing.T) {
 			remote:  "foo",
 			wantErr: true,
 		},
+		{
+			name:   "simple w/ module sub directory",
+			repo:   "https://github.com/foo/bar",
+			subDir: "modules/bp1",
+			remote: defaultRemote,
+			want:   "bar",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote)
+			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote, tt.subDir)
 			got, err := GetRepoName(dir)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getRepoName() error = %v, wantErr %v", err, tt.wantErr)
@@ -61,9 +70,12 @@ func TestGetRepoName(t *testing.T) {
 	}
 }
 
-func tempGitRepoWithRemote(t *testing.T, repoURL, remote string) string {
+func tempGitRepoWithRemote(t *testing.T, repoURL, remote string, subDir string) string {
 	t.Helper()
 	dir := t.TempDir()
+	if subDir != "" {
+		dir = path.Join(dir, subDir)
+	}
 	r, err := git.PlainInit(dir, true)
 	if err != nil {
 		t.Fatalf("Error creating git repo in tempdir: %v", err)

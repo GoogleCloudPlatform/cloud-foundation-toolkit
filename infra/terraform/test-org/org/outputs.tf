@@ -94,3 +94,7 @@ output "prow_int_sa" {
 output "ci_media_cdn_vod_project_id" {
   value = module.ci_media_cdn_vod_project.project_id
 }
+
+output "blueprint_owners" {
+  value = local.blueprint_owners
+}
