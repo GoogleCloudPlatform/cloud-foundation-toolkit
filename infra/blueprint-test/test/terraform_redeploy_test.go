@@ -21,6 +21,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRedeploy(t *testing.T) {
@@ -28,7 +29,14 @@ func TestRedeploy(t *testing.T) {
 		tft.WithTFDir("../examples/simple_pet_module"),
 		tft.WithSetupPath(""),
 	)
-	nt.RedeployTest(3)
+	nt.DefineVerify(func(a *assert.Assertions) {
+		if nt.GetStringOutput("current_ws") == "test-2" {
+			a.Equal("custom", nt.GetStringOutput("test"), "should have custom var override")
+		} else {
+			a.Equal("", nt.GetStringOutput("test"), "should have not have custom var override")
+		}
+	})
+	nt.RedeployTest(3, map[int]map[string]interface{}{2: {"test": "custom"}})
 	expectedWorkspaces := []string{"test-1", "test-2", "test-3"}
 	for _, ws := range expectedWorkspaces {
 		terraform.RunTerraformCommand(t, nt.GetTFOptions(), "workspace", "select", ws)
