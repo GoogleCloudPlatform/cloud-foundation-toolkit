@@ -305,7 +305,15 @@ function generate_docs() {
   done < <(find_files . -name '*.tf' -print0 \
     | compat_xargs -0 -n1 dirname \
     | sort -u)
-  
+
+  generate_metadata
+}
+
+function generate_metadata() {
+  if [[ "${DISABLE_BPMETADATA:-}" ]]; then
+    echo "DISABLE_BPMETADATA set. Skipping metadata generation."
+    return 0
+  fi
   echo "Generating blueprint metadata"
   cft blueprint metadata
   if [ $? -eq 0 ]; then
@@ -368,18 +376,18 @@ function check_documentation() {
   rsync -axh \
     --exclude '*/.terraform' \
     --exclude '*/.kitchen' \
-    --exclude '*/.git' \
     --exclude 'autogen' \
     --exclude '*/.tfvars' \
     /workspace "${tempdir}" >/dev/null 2>/dev/null
-  cd "${tempdir}"
+  cd "${tempdir}/workspace"
   generate_docs >/dev/null 2>/dev/null
+  # TODO: (b/261241276) preserve verion no. for release PR
   diff -r \
     --exclude=".terraform" \
     --exclude=".kitchen" \
-    --exclude=".git" \
     --exclude="autogen" \
     --exclude="*.tfvars" \
+    --exclude="*metadata.yaml" \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then

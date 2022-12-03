@@ -19,7 +19,6 @@ type repoSource struct {
 }
 
 const (
-	bpUrlRegEx   = "(.*terraform-google-[^/]+)/?(modules/.*)?"
 	nestedBpPath = "/modules"
 )
 
