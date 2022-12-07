@@ -387,6 +387,7 @@ func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
 	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
 	defer os.Remove(filepath)
+	defer os.Remove(b.planFilePath)
 	assert.NoError(err)
 	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath, b.terraformVetProject).Array()
 	assert.Empty(results, "Should have no Terraform Vet violations")
@@ -396,6 +397,9 @@ func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
 func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
 	if b.shouldRunTerraformVet() {
 		b.Vet(assert)
+		// need to unset the planFilePath to prevent stale plan errors
+		// when retrying apply commands
+		b.planFilePath = ""
 	}
 	terraform.Apply(b.t, b.GetTFOptions())
 }
