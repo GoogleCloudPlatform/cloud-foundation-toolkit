@@ -53,7 +53,7 @@ jobs:
           chmod +x bin/*
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: bin
           path: cli/bin
