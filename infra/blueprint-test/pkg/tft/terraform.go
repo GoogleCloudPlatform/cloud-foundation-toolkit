@@ -63,7 +63,6 @@ type TFBlueprintTest struct {
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
 	policyLibraryPath             string                   // optional absolute path to directory containing policy library constraints
 	terraformVetProject           string                   // optional a valid existing project that will be used when a plan has resources in a project that still does not exist.
-	planFilePath                  string                   // path to the plan file used in Teraform plan and show
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
 	t                             testing.TB               // TestingT or TestingB
@@ -188,10 +187,6 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		tft.tfDir = tfdir
 	}
 
-	//set planFilePath
-	if tft.shouldRunTerraformVet() {
-		tft.planFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
-	}
 	// discover test config
 	var err error
 	tft.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
@@ -239,7 +234,6 @@ func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 		Logger:                   b.logger,
 		BackendConfig:            b.backendConfig,
 		MigrateState:             b.migrateState,
-		PlanFilePath:             b.planFilePath,
 		RetryableTerraformErrors: b.retryableTerraformErrors,
 		NoColor:                  true,
 	})
@@ -383,11 +377,13 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 
 // Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
 func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
-	terraform.Plan(b.t, b.GetTFOptions())
-	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
+	localOptions := b.GetTFOptions()
+	localOptions.PlanFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
+	terraform.Plan(b.t, localOptions)
+	jsonPlan := terraform.Show(b.t, localOptions)
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
 	defer os.Remove(filepath)
-	defer os.Remove(b.planFilePath)
+	defer os.Remove(localOptions.PlanFilePath)
 	assert.NoError(err)
 	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath, b.terraformVetProject).Array()
 	assert.Empty(results, "Should have no Terraform Vet violations")
@@ -397,9 +393,6 @@ func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
 func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
 	if b.shouldRunTerraformVet() {
 		b.Vet(assert)
-		// need to unset the planFilePath to prevent stale plan errors
-		// when retrying apply commands
-		b.planFilePath = ""
 	}
 	terraform.Apply(b.t, b.GetTFOptions())
 }
