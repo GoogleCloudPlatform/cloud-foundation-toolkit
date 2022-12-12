@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestGetBpRepoPath(t *testing.T) {
+func TestGetBpRootPath(t *testing.T) {
 	tests := []struct {
 		name    string
 		path    string
@@ -30,25 +30,23 @@ func TestGetBpRepoPath(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "invalid top level",
-			path:    "testdata/bpmetadata/erraform-google-bp01",
-			wantErr: true,
+			name:    "docker workspace root",
+			path:    "workspace",
+			want:    "workspace",
+			wantErr: false,
 		},
 		{
-			name:    "invalid nested",
-			path:    "testdata/bpmetadata/terraform-google-bp01/test/bp01-01",
-			wantErr: true,
+			name:    "docker workspace submodule",
+			path:    "workspace/modules/bp-01",
+			want:    "workspace",
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getBpPathForRepoName(tt.path)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("getBpPathForRepoName() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := getBpRootPath(tt.path)
 			if got != tt.want {
-				t.Errorf("getBpPathForRepoName() = %v, want %v", got, tt.want)
+				t.Errorf("getBpRootPath() = %v, want %v", got, tt.want)
 			}
 		})
 	}
