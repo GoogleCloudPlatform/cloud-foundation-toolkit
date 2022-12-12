@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.3.0...infra/blueprint-test/v0.4.0) (2022-12-02)
+
+
+### Features
+
+* allow var overrides for workspace mode ([#1292](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1292)) ([f6ffa1f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f6ffa1f60039f03a6fb77e122894641caa739fef))
+* enable no color ([#1293](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1293)) ([06fae23](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/06fae232e1f97b1d78df6809eff65898fddb5268))
+* new test strategy for redeploy validation ([#1286](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1286)) ([de5d509](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/de5d5090980f5f12e0321365a935e119493518ec))
+
 ## [0.3.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.2.0...infra/blueprint-test/v0.3.0) (2022-08-30)
 
 

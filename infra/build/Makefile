@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.3.5
+TERRAFORM_VERSION := 1.3.6
 TERRAFORM_VALIDATOR_VERSION := 0.13.0
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 410.0.0
@@ -46,8 +46,10 @@ KIND_VERSION := 0.17.0
 # Updated by Update Tooling Workflow
 GATOR_VERSION := 3.9.2
 OPA_VERSION := 0.42.2
+# Updated by Update Tooling Workflow
+GCRANE_VERSION := 0.12.1
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.10.1
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.10.3
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
@@ -94,6 +96,7 @@ build-image-developer-tools:
 		--build-arg GATOR_VERSION=${GATOR_VERSION} \
 		--build-arg OPA_VERSION=${OPA_VERSION} \
 		--build-arg KIND_VERSION=${KIND_VERSION} \
+		--build-arg GCRANE_VERSION=${GCRANE_VERSION} \
 		--build-arg BASE_IMAGE_VERSION=${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
 		-t ${DOCKER_IMAGE_DEVELOPER_KRM}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools-krm"
 

@@ -13,18 +13,19 @@ env:
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
   GATOR_MINOR: "3.9"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
+  GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases"
 
 jobs:
   update-tools:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Update Tools
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
           # Skip "KPT" till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
-          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE")
 
           for tool in ${tools[@]}
           do
