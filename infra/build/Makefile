@@ -46,6 +46,8 @@ KIND_VERSION := 0.17.0
 # Updated by Update Tooling Workflow
 GATOR_VERSION := 3.9.2
 OPA_VERSION := 0.42.2
+# Updated by Update Tooling Workflow
+GCRANE_VERSION := 0.12.1
 
 DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.10.3
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
@@ -94,6 +96,7 @@ build-image-developer-tools:
 		--build-arg GATOR_VERSION=${GATOR_VERSION} \
 		--build-arg OPA_VERSION=${OPA_VERSION} \
 		--build-arg KIND_VERSION=${KIND_VERSION} \
+		--build-arg GCRANE_VERSION=${GCRANE_VERSION} \
 		--build-arg BASE_IMAGE_VERSION=${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
 		-t ${DOCKER_IMAGE_DEVELOPER_KRM}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools-krm"
 
