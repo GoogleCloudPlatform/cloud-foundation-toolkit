@@ -1,6 +1,7 @@
 package util
 
 import (
+	"os"
 	"path"
 	"testing"
 
@@ -74,9 +75,13 @@ func tempGitRepoWithRemote(t *testing.T, repoURL, remote string, subDir string) 
 	t.Helper()
 	dir := t.TempDir()
 	if subDir != "" {
-		dir = path.Join(dir, subDir)
+		err := os.MkdirAll(path.Join(dir, subDir), 0755)
+		if err != nil {
+			t.Fatalf("Error sub dir for temp git repo: %v", err)
+		}
 	}
-	r, err := git.PlainInit(dir, true)
+
+	r, err := git.PlainInit(dir, false)
 	if err != nil {
 		t.Fatalf("Error creating git repo in tempdir: %v", err)
 	}
@@ -87,5 +92,6 @@ func tempGitRepoWithRemote(t *testing.T, repoURL, remote string, subDir string) 
 	if err != nil {
 		t.Fatalf("Error creating remote in tempdir repo: %v", err)
 	}
-	return dir
+
+	return path.Join(dir, subDir)
 }

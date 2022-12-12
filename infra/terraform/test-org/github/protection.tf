@@ -81,6 +81,21 @@ module "stale_yml_gcp" {
   content   = file("${path.module}/stale.yml")
 }
 
+module "conventional-commit-lint_yaml_tgm" {
+  source    = "../../modules/repo_file"
+  org       = "terraform-google-modules"
+  repo_list = setunion(local.tgm_repos, ["terraform-example-foundation"])
+  filename  = ".github/conventional-commit-lint.yaml"
+  content   = file("${path.module}/resources/conventional-commit-lint.yaml")
+}
+
+module "conventional-commit-lint_yaml_gcp" {
+  source    = "../../modules/repo_file"
+  org       = "GoogleCloudPlatform"
+  repo_list = local.gcp_repos
+  filename  = ".github/conventional-commit-lint.yaml"
+  content   = file("${path.module}/resources/conventional-commit-lint.yaml")
+}
 
 module "codeowners_tgm" {
   source = "../../modules/codeowners_file"
@@ -130,7 +145,8 @@ resource "github_branch_protection" "terraform-example-foundation" {
       "cla/google",
       "terraform-example-foundation-int-trigger-default (cloud-foundation-cicd)",
       "terraform-example-foundation-int-trigger-HubAndSpoke (cloud-foundation-cicd)",
-      "terraform-example-foundation-lint-trigger (cloud-foundation-cicd)"
+      "terraform-example-foundation-lint-trigger (cloud-foundation-cicd)",
+      "conventionalcommits.org"
     ]
   }
 
