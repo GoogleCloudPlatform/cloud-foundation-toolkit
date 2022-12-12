@@ -52,6 +52,13 @@ ENV KIND_VERSION ${KIND_VERSION}
 ADD ./build/install_kind.sh /build/
 RUN /build/install_kind.sh ${KIND_VERSION}
 
+# Required to download and install crane
+ARG GCRANE_VERSION
+ENV GCRANE_VERSION ${GCRANE_VERSION}
+
+ADD ./build/install_gcrane.sh /build/
+RUN /build/install_gcrane.sh ${GCRANE_VERSION}
+
 RUN rm -rf /build
 
 # Add dind helper for prow
