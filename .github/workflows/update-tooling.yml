@@ -85,7 +85,7 @@ jobs:
           git config user.name 'Cloud Foundation Bot'
           git config user.email 'cloud-foundation-bot@google.com'
           git add infra/build/Makefile
-          git diff-index --quiet HEAD || git commit -m "Update tools to ${{env.NEW_IMG_VERSION}}"
+          git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
         uses: peter-evans/create-pull-request@dcd5fd746d53dd8de555c0f10bca6c35628be47a
@@ -93,7 +93,7 @@ jobs:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
           committer: "Update Tooling Action <cloud-foundation-bot@google.com>"
-          title: "Update Tools to ${{env.NEW_IMG_VERSION}}"
+          title: "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
           body: |
             Updated tools to ${{env.NEW_IMG_VERSION}}
             ${{env.PR_UPDATE_BODY}}
