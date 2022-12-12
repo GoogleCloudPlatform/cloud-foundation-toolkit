@@ -30,7 +30,8 @@ func GetRepoName(dir string) (string, error) {
 
 // getRepoName finds upstream repo name from a given repo directory
 func GetRepoUrl(dir string) (*url.URL, error) {
-	r, err := git.PlainOpen(dir)
+	opt := &git.PlainOpenOptions{DetectDotGit: true}
+	r, err := git.PlainOpenWithOptions(dir, opt)
 	if err != nil {
 		return nil, fmt.Errorf("error opening git dir %s: %w", dir, err)
 	}
