@@ -13,7 +13,7 @@ env:
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
   GATOR_MINOR: "3.9"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
-  GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases"
+  GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases/latest"
 
 jobs:
   update-tools:
