@@ -419,6 +419,12 @@ locals {
       short_name = "terraform-validator"
       org        = "terraform-google-modules"
       module     = false
-    }
+    },
+    {
+      name         = "terraform-google-waap"
+      org          = "GoogleCloudPlatform"
+      description  = "Deploys the WAAP solution on Google Cloud."
+      owners       = "@gtsorbo"
+    },
   ]
 }
