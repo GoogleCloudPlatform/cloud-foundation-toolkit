@@ -34,7 +34,7 @@ module "folders-ci" {
 
   parent = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
 
-  names = [for module in concat(local.tgm_org_modules, local.gcp_org_modules) : "ci-${module}"]
+  names = [for module in [for repo in local.repos : try(repo.short_name, trimprefix(repo.name, "terraform-google-"))] : "ci-${module}"]
 
   set_roles = false
 }

@@ -15,8 +15,7 @@
  */
 
 locals {
-  repos      = keys(data.terraform_remote_state.triggers.outputs.repo_folder)
-  add_owners = data.terraform_remote_state.org.outputs.blueprint_owners
+  modules = data.terraform_remote_state.org.outputs.modules
 }
 
 provider "github" {

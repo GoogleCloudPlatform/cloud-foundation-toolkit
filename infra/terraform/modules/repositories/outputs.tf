@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-/******************************************
-  Required variables
-*******************************************/
-
-variable "org" {
-  description = "GitHub Org"
-  type        = string
-}
-
-variable "owner" {
-  description = "Primary owner"
-  type        = string
-  nullable    = false
-}
-
-variable "repos_map" {
-  description = "Map of Repos"
-  type        = map(map(string))
+output "repos" {
+  value = [for value in github_repository.repo : value.name]
 }

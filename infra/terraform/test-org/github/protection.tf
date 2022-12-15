@@ -15,76 +15,78 @@
  */
 
 locals {
-  remove_special_repos = [
-    # Exclude from CI/branch protection
-    "anthos-samples",
-    "terraform-docs-samples",
-    # Special CI/branch protection case
-    "terraform-example-foundation"
-  ]
-  filtered_repos = setsubtract(toset(local.repos), local.remove_special_repos)
-  gcp_repos      = setintersection(local.filtered_repos, toset(data.github_repositories.repos_gcp.names))
-  tgm_repos      = setintersection(local.filtered_repos, toset(data.github_repositories.repos_tgm.names))
+  tgm_modules_map  = { for value in local.modules : value.name => value if value.org == "terraform-google-modules" }
+  gcp_modules_map  = { for value in local.modules : value.name => value if value.org == "GoogleCloudPlatform" }
 }
 
-data "github_repositories" "repos_gcp" {
-  query = "org:GoogleCloudPlatform archived:no"
+module "repos_tgm" {
+  source    = "../../modules/repositories"
+  repos_map = local.tgm_modules_map
+  providers = {
+    github = github
+  }
 }
 
-data "github_repositories" "repos_tgm" {
-  query = "org:terraform-google-modules archived:no"
+module "repos_gcp" {
+  source    = "../../modules/repositories"
+  repos_map = local.gcp_modules_map
+  providers = {
+    github = github.gcp
+  }
 }
 
+// terraform-example-foundation CI is a special case - below
 module "branch_protection_tgm" {
   source    = "../../modules/branch_protection"
   org       = "terraform-google-modules"
-  repo_list = local.tgm_repos
+  repo_list = setsubtract(module.repos_tgm.repos, ["terraform-example-foundation"])
   admin     = "cft-admins"
 }
 
 module "branch_protection_gcp" {
   source    = "../../modules/branch_protection"
   org       = "GoogleCloudPlatform"
-  repo_list = local.gcp_repos
+  repo_list = module.repos_gcp.repos
   admin     = "blueprint-solutions"
 }
 
+// terraform-example-foundation renovate is a special case - manual
 module "renovate_json_tgm" {
   source    = "../../modules/repo_file"
   org       = "terraform-google-modules"
-  repo_list = local.tgm_repos
+  repo_list = setsubtract(module.repos_tgm.repos, ["terraform-example-foundation"])
   filename  = ".github/renovate.json"
-  content   = file("${path.module}/renovate.json")
+  content   = file("${path.module}/resources/renovate.json")
 }
 
 module "renovate_json_gcp" {
   source    = "../../modules/repo_file"
   org       = "GoogleCloudPlatform"
-  repo_list = local.gcp_repos
+  repo_list = module.repos_gcp.repos
   filename  = ".github/renovate.json"
-  content   = file("${path.module}/renovate.json")
+  content   = file("${path.module}/resources/renovate.json")
 }
 
 module "stale_yml_tgm" {
   source    = "../../modules/repo_file"
   org       = "terraform-google-modules"
-  repo_list = local.tgm_repos
+  repo_list = module.repos_tgm.repos
   filename  = ".github/workflows/stale.yml"
-  content   = file("${path.module}/stale.yml")
+  content   = file("${path.module}/resources/stale.yml")
 }
 
 module "stale_yml_gcp" {
   source    = "../../modules/repo_file"
   org       = "GoogleCloudPlatform"
-  repo_list = local.gcp_repos
+  repo_list = module.repos_gcp.repos
   filename  = ".github/workflows/stale.yml"
-  content   = file("${path.module}/stale.yml")
+  content   = file("${path.module}/resources/stale.yml")
 }
 
 module "conventional-commit-lint_yaml_tgm" {
   source    = "../../modules/repo_file"
   org       = "terraform-google-modules"
-  repo_list = setunion(local.tgm_repos, ["terraform-example-foundation"])
+  repo_list = module.repos_tgm.repos
   filename  = ".github/conventional-commit-lint.yaml"
   content   = file("${path.module}/resources/conventional-commit-lint.yaml")
 }
@@ -92,7 +94,7 @@ module "conventional-commit-lint_yaml_tgm" {
 module "conventional-commit-lint_yaml_gcp" {
   source    = "../../modules/repo_file"
   org       = "GoogleCloudPlatform"
-  repo_list = local.gcp_repos
+  repo_list = module.repos_gcp.repos
   filename  = ".github/conventional-commit-lint.yaml"
   content   = file("${path.module}/resources/conventional-commit-lint.yaml")
 }
@@ -103,10 +105,8 @@ module "codeowners_tgm" {
   providers = {
     github = github
   }
-  # Add in terraform-example-foundation for CODEOWNERS
-  repo_list  = setunion(local.tgm_repos, ["terraform-example-foundation"])
   owner      = "cft-admins"
-  add_owners = local.add_owners
+  repos_map = local.tgm_modules_map
 }
 
 module "codeowners_gcp" {
@@ -115,9 +115,8 @@ module "codeowners_gcp" {
   providers = {
     github = github.gcp
   }
-  repo_list  = local.gcp_repos
   owner      = "blueprint-solutions"
-  add_owners = local.add_owners
+  repos_map = local.gcp_modules_map
 }
 
 # Special CI/branch protection case
