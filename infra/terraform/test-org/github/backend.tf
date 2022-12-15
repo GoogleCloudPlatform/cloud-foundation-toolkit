@@ -21,14 +21,6 @@ terraform {
   }
 }
 
-data "terraform_remote_state" "triggers" {
-  backend = "gcs"
-  config = {
-    bucket = "cft-infra-test-tfstate"
-    prefix = "state/ci-triggers"
-  }
-}
-
 data "terraform_remote_state" "org" {
   backend = "gcs"
   config = {
