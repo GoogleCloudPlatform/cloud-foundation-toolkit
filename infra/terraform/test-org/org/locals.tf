@@ -103,6 +103,7 @@ locals {
     "log-analysis",
     "media-cdn-vod",
     "anthos-vm",
+    "waap",
   ]
 
   blueprint_owners = {
@@ -119,5 +120,6 @@ locals {
     terraform-google-load-balanced-vms      = "@tpryan"
     terraform-google-secure-cicd            = "@gtsorbo"
     terraform-google-media-cdn-vod          = "@roddzurcher"
+    terraform-google-waap                   = "@gtsorbo"
   }
 }
