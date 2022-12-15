@@ -15,12 +15,6 @@
  */
 
 locals {
-  remove_repo_labels = [
-    "anthos-samples"
-  ]
-  sub_repos_labels     = setsubtract(toset(local.repos), local.remove_repo_labels)
-  sub_repos_labels_gcp = setintersection(local.sub_repos_labels, toset(data.github_repositories.repos_gcp.names))
-  sub_repos_labels_tgm = setintersection(local.sub_repos_labels, toset(data.github_repositories.repos_tgm.names))
   labels = [
     {
       name : "enhancement",
@@ -128,13 +122,13 @@ locals {
 module "repo_labels_gcp" {
   source    = "../../modules/repo_labels"
   org       = "GoogleCloudPlatform"
-  repo_list = local.sub_repos_labels_gcp
+  repo_list = module.repos_gcp.repos
   labels    = local.labels
 }
 
 module "repo_labels_tgm" {
   source    = "../../modules/repo_labels"
   org       = "terraform-google-modules"
-  repo_list = local.sub_repos_labels_tgm
+  repo_list = setunion(module.repos_tgm.repos, ["terraform-docs-samples"])
   labels    = local.labels
 }
