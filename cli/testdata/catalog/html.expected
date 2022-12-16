@@ -1,0 +1,33 @@
+<table>
+<thead>
+    <tr>
+      <th>Category</th>
+      <th>Blueprint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+<tbody class="list">
+
+<tr>
+      <td>End to end, Data analytics</td>
+      <td><a
+href="https://github.com/GoogleCloudPlatform/notebooks-blueprint-security" class="external">ai-notebook</a></td>
+      <td>Protect confidential data in Vertex AI Workbench notebooks</td>
+</tr>
+
+<tr>
+      <td>End to end</td>
+      <td><a
+href="https://github.com/terraform-google-modules/cloud-foundation-fabric" class="external">fabric</a></td>
+      <td>Advanced examples designed for prototyping</td>
+</tr>
+
+<tr>
+      <td>Containers, End-to-end</td>
+      <td><a
+href="" class="external">foo</a></td>
+      <td></td>
+</tr>
+
+</tbody>
+</table>
