@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-output "label_repos" {
-  value = local.sub_repos_labels
-}
-
 output "labels" {
   value = local.labels
 }
 
 output "protected_repos" {
-  value = local.filtered_repos
+  value = setunion(module.repos_gcp.repos, module.repos_tgm.repos)
 }

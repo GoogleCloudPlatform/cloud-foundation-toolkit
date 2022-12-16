@@ -69,4 +69,4 @@ apk add --no-cache rsync
 # flake8 and jinja2 are used for lint checks, cookiecutter is used for terraform-google-module-template tests
 # requests~=2.28 for https://github.com/psf/requests/pull/6179
 # Remaining items moved here from requirements.txt
-pip install flake8 "Jinja2~=3.1" cookiecutter "requests~=2.28" PyGithub==1.51 google-auth~=1.6 google-api-python-client~=1.7
+pip install flake8 "Jinja2~=3.1" cookiecutter "requests~=2.28" PyGithub==1.51 google-auth~=1.6 google-api-python-client~=1.7 crcmod

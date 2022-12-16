@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"sigs.k8s.io/kustomize/kyaml/yaml"
@@ -53,8 +55,43 @@ func generate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error getting working dir: %w", err)
 	}
 
-	bpPath := path.Join(wdPath, mdFlags.path)
+	var allBpPaths []string
+	currBpPath := path.Join(wdPath, mdFlags.path)
+	allBpPaths = append(allBpPaths, currBpPath)
 
+	var errors []string
+	// if nested, check if modules/ exists and create paths
+	// for submodules
+	if mdFlags.nested {
+		modulesPathforBp := path.Join(currBpPath, modulesPath)
+		_, err = os.Stat(modulesPathforBp)
+		if os.IsNotExist(err) {
+			Log.Info("sub-modules do not exist for this blueprint")
+		} else {
+			moduleDirs, err := util.WalkTerraformDirs(modulesPathforBp)
+			if err != nil {
+				errors = append(errors, err.Error())
+			} else {
+				allBpPaths = append(allBpPaths, moduleDirs...)
+			}
+		}
+	}
+
+	for _, path := range allBpPaths {
+		err = generateMetadataForBpPath(path)
+		if err != nil {
+			errors = append(errors, err.Error())
+		}
+	}
+
+	if len(errors) > 0 {
+		return fmt.Errorf(strings.Join(errors, "\n"))
+	}
+
+	return nil
+}
+
+func generateMetadataForBpPath(bpPath string) error {
 	//try to read existing metadata.yaml
 	bpObj, err := UnmarshalMetadata(bpPath)
 	if err != nil && !mdFlags.force {
@@ -64,13 +101,13 @@ func generate(cmd *cobra.Command, args []string) error {
 	// create metadata details
 	bpMetaObj, err := CreateBlueprintMetadata(bpPath, bpObj)
 	if err != nil {
-		return fmt.Errorf("error creating metadata for blueprint: %w", err)
+		return fmt.Errorf("error creating metadata for blueprint at path: %s. Details: %w", bpPath, err)
 	}
 
 	// write metadata to disk
-	err = WriteMetadata(bpMetaObj)
+	err = WriteMetadata(bpMetaObj, bpPath)
 	if err != nil {
-		return fmt.Errorf("error writing metadata to disk: %w", err)
+		return fmt.Errorf("error writing metadata to disk for blueprint at path: %s. Details: %w", bpPath, err)
 	}
 
 	return nil
@@ -154,20 +191,15 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 	}
 
 	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
-	if err != nil {
-		return nil, err
-	}
-
-	i.Version = versionInfo.moduleVersion
-
-	// actuation tool
-	i.ActuationTool = BlueprintActuationTool{
-		Version: versionInfo.requiredTfVersion,
-		Flavor:  "Terraform",
+	if err == nil {
+		i.Version = versionInfo.moduleVersion
+		i.ActuationTool = BlueprintActuationTool{
+			Version: versionInfo.requiredTfVersion,
+			Flavor:  "Terraform",
+		}
 	}
 
 	// create descriptions
-	i.Description = &BlueprintDescription{}
 	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
 	if err == nil {
 		i.Description.Tagline = tagline.literal
@@ -240,14 +272,14 @@ func createContent(bpPath string, rootPath string, readmeContent []byte, content
 	return content
 }
 
-func WriteMetadata(obj *BlueprintMetadata) error {
+func WriteMetadata(obj *BlueprintMetadata, bpPath string) error {
 	// marshal and write the file
 	yFile, err := yaml.Marshal(obj)
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(metadataFileName, yFile, 0644)
+	return os.WriteFile(path.Join(bpPath, metadataFileName), yFile, 0644)
 }
 
 func UnmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {

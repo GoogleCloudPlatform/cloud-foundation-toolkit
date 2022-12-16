@@ -14,15 +14,15 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.3.4
+TERRAFORM_VERSION := 1.3.6
 TERRAFORM_VALIDATOR_VERSION := 0.13.0
 # Updated by Update Tooling Workflow
-CLOUD_SDK_VERSION := 410.0.0
+CLOUD_SDK_VERSION := 412.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.10.1
 RUBY_VERSION := 2.7.6
 BATS_VERSION := 0.4.0
-GOLANG_VERSION := 1.17
+GOLANG_VERSION := 1.18
 BATS_SUPPORT_VERSION := 0.3.0
 BATS_ASSERT_VERSION := 2.0.0
 BATS_MOCK_VERSION := 1.0.1
@@ -33,9 +33,9 @@ KUSTOMIZE_VERSION := 3.6.1
 # Hold KPT at 1.0.0-beta.15 till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
 KPT_VERSION := 1.0.0-beta.15
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 0.4.5
+CFT_CLI_VERSION := 0.5.1
 # Updated by Update Tooling Workflow
-KUBECTL_VERSION := 1.23.14
+KUBECTL_VERSION := 1.23.15
 TFLINT_VERSION := 0.41.0
 ALPINE_VERSION := 3.16
 
@@ -46,8 +46,10 @@ KIND_VERSION := 0.17.0
 # Updated by Update Tooling Workflow
 GATOR_VERSION := 3.9.2
 OPA_VERSION := 0.42.2
+# Updated by Update Tooling Workflow
+GCRANE_VERSION := 0.12.1
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.9.1
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.10.4
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
@@ -94,6 +96,7 @@ build-image-developer-tools:
 		--build-arg GATOR_VERSION=${GATOR_VERSION} \
 		--build-arg OPA_VERSION=${OPA_VERSION} \
 		--build-arg KIND_VERSION=${KIND_VERSION} \
+		--build-arg GCRANE_VERSION=${GCRANE_VERSION} \
 		--build-arg BASE_IMAGE_VERSION=${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
 		-t ${DOCKER_IMAGE_DEVELOPER_KRM}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools-krm"
 

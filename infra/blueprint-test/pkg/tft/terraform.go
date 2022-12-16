@@ -63,7 +63,6 @@ type TFBlueprintTest struct {
 	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
 	policyLibraryPath             string                   // optional absolute path to directory containing policy library constraints
 	terraformVetProject           string                   // optional a valid existing project that will be used when a plan has resources in a project that still does not exist.
-	planFilePath                  string                   // path to the plan file used in Teraform plan and show
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
 	t                             testing.TB               // TestingT or TestingB
@@ -188,10 +187,6 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		tft.tfDir = tfdir
 	}
 
-	//set planFilePath
-	if tft.shouldRunTerraformVet() {
-		tft.planFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
-	}
 	// discover test config
 	var err error
 	tft.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
@@ -214,7 +209,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	// load TFEnvVars from setup outputs
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
-		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger})))
+		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger, NoColor: true})))
 		if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; tft.saKey == "" && exists {
 			if credDec, err := b64.StdEncoding.DecodeString(credsEnc); err == nil {
 				gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
@@ -239,8 +234,8 @@ func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 		Logger:                   b.logger,
 		BackendConfig:            b.backendConfig,
 		MigrateState:             b.migrateState,
-		PlanFilePath:             b.planFilePath,
 		RetryableTerraformErrors: b.retryableTerraformErrors,
+		NoColor:                  true,
 	})
 	if b.maxRetries > 0 {
 		newOptions.MaxRetries = b.maxRetries
@@ -294,7 +289,7 @@ func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
-	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger}, key)
+	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
 // GetTFSetupStringOutput returns TF setup output for a given key as string.
@@ -303,7 +298,7 @@ func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
-	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger}, key)
+	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
 // loadTFEnvVar adds new env variables prefixed with TF_VAR_ to an existing map of variables.
@@ -376,15 +371,19 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 	terraform.Validate(b.t, terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
 		TerraformDir: b.tfDir,
 		Logger:       b.logger,
+		NoColor:      true,
 	}))
 }
 
 // Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
 func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
-	terraform.Plan(b.t, b.GetTFOptions())
-	jsonPlan := terraform.Show(b.t, b.GetTFOptions())
+	localOptions := b.GetTFOptions()
+	localOptions.PlanFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
+	terraform.Plan(b.t, localOptions)
+	jsonPlan := terraform.Show(b.t, localOptions)
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
 	defer os.Remove(filepath)
+	defer os.Remove(localOptions.PlanFilePath)
 	assert.NoError(err)
 	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath, b.terraformVetProject).Array()
 	assert.Empty(results, "Should have no Terraform Vet violations")
@@ -431,4 +430,39 @@ func (b *TFBlueprintTest) Test() {
 	defer utils.RunStage("teardown", func() { b.Teardown(a) })
 	utils.RunStage("apply", func() { b.Apply(a) })
 	utils.RunStage("verify", func() { b.Verify(a) })
+}
+
+// RedeployTest deploys the test n times in separate workspaces before teardown.
+func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface{}) {
+	if n < 2 {
+		b.t.Fatalf("n should be 2 or greater but got: %d", n)
+	}
+	if b.ShouldSkip() {
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
+		b.t.SkipNow()
+		return
+	}
+	a := assert.New(b.t)
+	// capture currently set vars as default if no override
+	defaultVars := b.vars
+	overrideVars := func(i int) {
+		custom, exists := nVars[i]
+		if exists {
+			b.vars = custom
+		} else {
+			b.vars = defaultVars
+		}
+	}
+	for i := 1; i <= n; i++ {
+		ws := terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), fmt.Sprintf("test-%d", i))
+		overrideVars(i)
+		utils.RunStage("init", func() { b.Init(a) })
+		defer func(i int) {
+			overrideVars(i)
+			terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), ws)
+			utils.RunStage("teardown", func() { b.Teardown(a) })
+		}(i)
+		utils.RunStage("apply", func() { b.Apply(a) })
+		utils.RunStage("verify", func() { b.Verify(a) })
+	}
 }

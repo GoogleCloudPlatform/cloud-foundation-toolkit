@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright 2019 Google LLC
+# Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,5 +18,7 @@ set -u
 
 cd /build
 
-go install github.com/google/addlicense@v1.1.0
-ln -s $(go env GOPATH)/bin/addlicense /usr/local/bin/
+GCRANE_VERSION=$1
+
+go install github.com/google/go-containerregistry/cmd/gcrane@v$GCRANE_VERSION
+ln -s $(go env GOPATH)/bin/gcrane /usr/local/bin/

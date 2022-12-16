@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-provider "google" {
-  user_project_override = true
-  billing_project       = local.ci_project_id
-  alias                 = "override"
-}
-
-resource "google_access_context_manager_access_policy" "access_policy" {
-  provider = google.override
-  parent   = "organizations/${local.org_id}"
-  title    = "default policy"
+output "repos" {
+  value = [for value in github_repository.repo : value.name]
 }

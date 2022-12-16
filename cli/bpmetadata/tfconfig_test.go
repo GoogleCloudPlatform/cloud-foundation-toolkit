@@ -206,3 +206,41 @@ func TestTFServices(t *testing.T) {
 		})
 	}
 }
+
+func TestTFRoles(t *testing.T) {
+	tests := []struct {
+		name       string
+		configName string
+		wantRoles  []BlueprintRoles
+	}{
+		{
+			name:       "simple list of roles",
+			configName: "iam.tf",
+			wantRoles: []BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+						"roles/compute.networkAdmin",
+						"roles/iam.serviceAccountAdmin",
+						"roles/resourcemanager.projectIamAdmin",
+						"roles/storage.admin",
+						"roles/workflows.admin",
+						"roles/cloudscheduler.admin",
+						"roles/iam.serviceAccountUser",
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := hclparse.NewParser()
+			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
+			got, err := parseBlueprintRoles(content)
+			require.NoError(t, err)
+			assert.Equal(t, got, tt.wantRoles)
+		})
+	}
+}

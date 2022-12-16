@@ -1,6 +1,8 @@
 package util
 
 import (
+	"os"
+	"path"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
@@ -11,6 +13,7 @@ func TestGetRepoName(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    string
+		subDir  string
 		remote  string
 		want    string
 		wantErr bool
@@ -45,10 +48,17 @@ func TestGetRepoName(t *testing.T) {
 			remote:  "foo",
 			wantErr: true,
 		},
+		{
+			name:   "simple w/ module sub directory",
+			repo:   "https://github.com/foo/bar",
+			subDir: "modules/bp1",
+			remote: defaultRemote,
+			want:   "bar",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote)
+			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote, tt.subDir)
 			got, err := GetRepoName(dir)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getRepoName() error = %v, wantErr %v", err, tt.wantErr)
@@ -61,10 +71,17 @@ func TestGetRepoName(t *testing.T) {
 	}
 }
 
-func tempGitRepoWithRemote(t *testing.T, repoURL, remote string) string {
+func tempGitRepoWithRemote(t *testing.T, repoURL, remote string, subDir string) string {
 	t.Helper()
 	dir := t.TempDir()
-	r, err := git.PlainInit(dir, true)
+	if subDir != "" {
+		err := os.MkdirAll(path.Join(dir, subDir), 0755)
+		if err != nil {
+			t.Fatalf("Error sub dir for temp git repo: %v", err)
+		}
+	}
+
+	r, err := git.PlainInit(dir, false)
 	if err != nil {
 		t.Fatalf("Error creating git repo in tempdir: %v", err)
 	}
@@ -75,5 +92,6 @@ func tempGitRepoWithRemote(t *testing.T, repoURL, remote string) string {
 	if err != nil {
 		t.Fatalf("Error creating remote in tempdir repo: %v", err)
 	}
-	return dir
+
+	return path.Join(dir, subDir)
 }

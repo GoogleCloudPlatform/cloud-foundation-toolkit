@@ -15,7 +15,7 @@
 ARG BASE_IMAGE_VERSION
 FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
-RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat
+RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat ansible-lint py3-jsonschema
 
 # Required to download and install golangci-lint
 ARG GOLANGCI_VERSION
@@ -51,6 +51,13 @@ ENV KIND_VERSION ${KIND_VERSION}
 
 ADD ./build/install_kind.sh /build/
 RUN /build/install_kind.sh ${KIND_VERSION}
+
+# Required to download and install crane
+ARG GCRANE_VERSION
+ENV GCRANE_VERSION ${GCRANE_VERSION}
+
+ADD ./build/install_gcrane.sh /build/
+RUN /build/install_gcrane.sh ${GCRANE_VERSION}
 
 RUN rm -rf /build
 

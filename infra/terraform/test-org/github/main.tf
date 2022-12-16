@@ -15,9 +15,14 @@
  */
 
 locals {
-  repos = keys(data.terraform_remote_state.triggers.outputs.repo_folder)
+  modules = data.terraform_remote_state.org.outputs.modules
 }
 
 provider "github" {
   owner = "terraform-google-modules"
+}
+
+provider "github" {
+  alias = "gcp"
+  owner = "GoogleCloudPlatform"
 }

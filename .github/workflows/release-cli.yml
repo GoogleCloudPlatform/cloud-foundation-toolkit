@@ -20,21 +20,21 @@ jobs:
       id-token: 'write'
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: '~1.16'
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v0.4.2'
+        uses: 'google-github-actions/auth@v1'
         with:
           workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
           service_account: '${{ secrets.GCP_WIF_SA_EMAIL }}'
 
-      - uses: google-github-actions/setup-gcloud@v0.3.0
+      - uses: google-github-actions/setup-gcloud@v1
         with:
-          version: "366.0.0"
+          version: "410.0.0"
 
       # used by make release which runs gcloud alpha storage
       - name: Install gcloud alpha commands 
@@ -53,7 +53,7 @@ jobs:
           chmod +x bin/*
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: bin
           path: cli/bin

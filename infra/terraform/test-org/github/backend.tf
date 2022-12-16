@@ -21,10 +21,10 @@ terraform {
   }
 }
 
-data "terraform_remote_state" "triggers" {
+data "terraform_remote_state" "org" {
   backend = "gcs"
   config = {
     bucket = "cft-infra-test-tfstate"
-    prefix = "state/ci-triggers"
+    prefix = "state/org"
   }
 }
