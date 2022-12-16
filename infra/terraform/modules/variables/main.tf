@@ -1,10 +1,10 @@
 variable "name_prefix" {
-  default = "cicd"
+  default     = "cicd"
   description = "Common prefix for naming resources such as networks and k8s clusters."
 }
 
 variable "project_id" {
-  default = "cloud-foundation-cicd"
+  default     = "cloud-foundation-cicd"
   description = "ID of project where all CICD resources will be launched."
 }
 

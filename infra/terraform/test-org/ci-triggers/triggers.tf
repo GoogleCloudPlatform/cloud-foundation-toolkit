@@ -51,7 +51,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
       _ORG_ID                   = local.org_id
       _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
       _VOD_TEST_PROJECT_ID      = each.key == "terraform-google-media-cdn-vod" ? local.vod_test_project_id : null
-      _FILE_LOGS_BUCKET           = lookup(local.enable_file_log, each.key, false) ? module.filelogs_bucket.url : null
+      _FILE_LOGS_BUCKET         = lookup(local.enable_file_log, each.key, false) ? module.filelogs_bucket.url : null
     },
     # add sfb substitutions
     contains(local.bp_on_sfb, each.key) ? local.sfb_substs : {}
