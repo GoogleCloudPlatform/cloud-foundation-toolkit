@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
+provider "google" {
+  user_project_override = true
+  billing_project       = local.ci_project_id
+  alias                 = "override"
+}
+
 resource "google_access_context_manager_access_policy" "access_policy" {
-  parent = "organizations/${local.org_id}"
-  title  = "default policy"
+  provider = google.override
+  parent   = "organizations/${local.org_id}"
+  title    = "default policy"
 }
