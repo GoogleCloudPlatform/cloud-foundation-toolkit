@@ -26,7 +26,7 @@ locals {
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 11.0"
+  version = "~> 14.0"
 
   name              = "ci-bptest"
   random_project_id = "true"

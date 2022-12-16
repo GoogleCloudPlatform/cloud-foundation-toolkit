@@ -16,7 +16,7 @@
 
 module "gke-project-1" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 13.0"
+  version = "~> 14.0"
 
   activate_apis = [
     "cloudkms.googleapis.com",

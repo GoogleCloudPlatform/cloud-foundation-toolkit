@@ -28,7 +28,7 @@ terraform {
 
 module "test-vpc-module" {
   source       = "terraform-google-modules/network/google"
-  version      = "~> 3.2.0"
+  version      = "~> 6.0.0"
   project_id   = var.project_id # Replace this with your project ID in quotes
   network_name = var.network_name
   mtu          = 1460

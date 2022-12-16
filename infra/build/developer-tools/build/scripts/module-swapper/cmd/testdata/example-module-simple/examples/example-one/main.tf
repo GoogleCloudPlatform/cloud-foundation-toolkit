@@ -42,7 +42,7 @@ module "cloud_router" {
 # Unrelated module
 module "vpc" {
     source  = "terraform-google-modules/network/google"
-    version = "~> 2.0.0"
+    version = "~> 6.0.0"
     network_name = "example-vpc"
 
     routes = [
