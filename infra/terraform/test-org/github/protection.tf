@@ -15,8 +15,8 @@
  */
 
 locals {
-  tgm_modules_map  = { for value in local.modules : value.name => value if value.org == "terraform-google-modules" }
-  gcp_modules_map  = { for value in local.modules : value.name => value if value.org == "GoogleCloudPlatform" }
+  tgm_modules_map = { for value in local.modules : value.name => value if value.org == "terraform-google-modules" }
+  gcp_modules_map = { for value in local.modules : value.name => value if value.org == "GoogleCloudPlatform" }
 }
 
 module "repos_tgm" {
@@ -105,7 +105,7 @@ module "codeowners_tgm" {
   providers = {
     github = github
   }
-  owner      = "cft-admins"
+  owner     = "cft-admins"
   repos_map = local.tgm_modules_map
 }
 
@@ -115,7 +115,7 @@ module "codeowners_gcp" {
   providers = {
     github = github.gcp
   }
-  owner      = "blueprint-solutions"
+  owner     = "blueprint-solutions"
   repos_map = local.gcp_modules_map
 }
 
