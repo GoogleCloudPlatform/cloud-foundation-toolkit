@@ -3,7 +3,8 @@
   "extends": [
     "config:base",
     ":semanticCommits",
-    ":preserveSemverRanges"
+    ":preserveSemverRanges",
+    ":rebaseStalePrs"
   ],
   "stabilityDays":7,
   "ignorePaths": [],
@@ -14,17 +15,15 @@
      ],
      "stabilityDays":0
   },
+  "separateMajorMinor":false,
   "packageRules": [
     {
-      "matchDepTypes": ["module"],
-      "groupName": "TF modules",
-      "separateMajorMinor":false
+      "matchPaths": [".github/**"],
+      "extends": [":semanticCommitTypeAll(chore)"]
     },
     {
       "matchDepTypes": ["require"],
-      "groupName": "GO modules",
-      "postUpdateOptions": ["gomodTidy"],
-      "separateMajorMinor":false
+      "postUpdateOptions": ["gomodTidy"]
     },
     {
       "matchPackageNames": ["go"],
