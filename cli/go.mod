@@ -42,3 +42,5 @@ require (
 )
 
 replace github.com/open-policy-agent/gatekeeper v3.0.4-beta.2+incompatible => github.com/open-policy-agent/gatekeeper v0.0.0-20210409021048-9b5e4cfe5d7e
+replace github.com/golang/protobuf/jsonpb v1.5.2 => google.golang.org/protobuf/encoding/protojson v1.20.0
+replace github.com/golang/protobuf/proto v1.5.2 => google.golang.org/protobuf/proto v1.20.0
