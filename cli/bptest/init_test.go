@@ -52,7 +52,13 @@ func TestFoo(t *testing.T) {
 	bpt.Test()
 }
 `,
-				"test/integration/go.mod": "", // empty fixture
+				"test/integration/go.mod": "", // we create an empty go.mod in preprocess so no generation is expected
+			},
+			preProcessTestDir: func(t *testing.T, dir string) {
+				_, err := os.Create(path.Join(dir, intTestPath, "go.mod"))
+				if err != nil {
+					t.Fatalf("error creating go.mod: %v", err)
+				}
 			},
 		},
 		{
@@ -93,13 +99,7 @@ require (
 	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.4.0
 	github.com/stretchr/testify v1.8.1
 )
-`, // we delete the mod in preProcessTestDir, so init should regenerate it
-			},
-			preProcessTestDir: func(t *testing.T, dir string) {
-				err := os.Remove(path.Join(dir, intTestPath, "go.mod"))
-				if err != nil {
-					t.Fatalf("error removing go.mod: %v", err)
-				}
+`,
 			},
 		},
 		{
