@@ -15,7 +15,7 @@ database:
   password: change-me
 
 wordpress:
-  image: wordpress:5.2.2-apache
+  image: wordpress:5.9.3-apache
   storage: 10Gi
   resources:
     limits:
