@@ -80,6 +80,11 @@ func TestFetchSortedTFRepos(t *testing.T) {
 					CreatedAt:       &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
 					StargazersCount: github.Int(12),
 				},
+				{
+					Name:      github.String("archived"),
+					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
+					Archived:  github.Bool(true),
+				},
 			},
 			want: []string{
 				"terraform-google-bar",
