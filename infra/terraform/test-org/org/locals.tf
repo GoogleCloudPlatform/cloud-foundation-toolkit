@@ -485,5 +485,12 @@ locals {
       owners      = "@gtsorbo"
       topics      = local.common_topics.ops
     },
+    {
+      name        = "terraform-google-cloud-workflows"
+      org         = "GoogleCloudPlatform"
+      description = "Manage Cloud Workflows with optional Scheduler or Event Arc triggers."
+      owners      = "@anaik91"
+      topics      = join(",", [local.common_topics.serverless, local.common_topics.devtools])
+    }
   ]
 }
