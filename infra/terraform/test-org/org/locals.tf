@@ -103,7 +103,7 @@ locals {
       name        = "terraform-google-kubernetes-engine"
       org         = "terraform-google-modules"
       description = "Configures opinionated GKE clusters"
-      owners      = "@Jberlinsky"
+      owners      = "@Jberlinsky @ericyz"
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
@@ -232,7 +232,7 @@ locals {
       name        = "terraform-google-composer"
       org         = "terraform-google-modules"
       description = "Manages Cloud Composer v1 and v2 along with option to manage networking"
-      topics      = local.common_topics.da
+      topics      = join(",", [local.common_topics.da, local.common_topics.ops,local.common_topics.e2e])
     },
     {
       name        = "terraform-google-container-vm"
@@ -423,7 +423,7 @@ locals {
       name        = "terraform-google-vault"
       org         = "terraform-google-modules"
       description = "Deploys Vault on Compute Engine"
-      topics      = "hashicorp-vault,${local.common_topics.ops},${local.common_topics.devtools}"
+      topics      = "hashicorp-vault,${local.common_topics.ops},${local.common_topics.devtools},${local.common_topics.security}"
     },
     {
       name        = "terraform-google-vm"
