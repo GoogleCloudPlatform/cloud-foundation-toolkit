@@ -498,6 +498,6 @@ locals {
       description = "Deploy Cloud Armor Security policiy"
       owners      = "@imrannayer @belgana"
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
-    },      
+    }
   ]
 }
