@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -113,7 +114,7 @@ func setAvgTimeFlagDefaults() error {
 			return fmt.Errorf("error finding build file: %w", err)
 		}
 		steps := getBuildStepIDs(buildFile)
-		avgTimeFlags.buildStepID = promptSelect("Select build step to compute average", steps)
+		avgTimeFlags.buildStepID = util.PromptSelect("Select build step to compute average", steps)
 	}
 
 	// if no explicit start time, default to starting computation from one month ago.
