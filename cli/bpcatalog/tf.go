@@ -58,6 +58,9 @@ func fetchSortedTFRepos(gh *ghService, sortOpt sortOption) (repos, error) {
 		return nil, fmt.Errorf("error fetching repos: %v", err)
 	}
 	repos = repos.filter(func(r *github.Repository) bool {
+		if r.GetArchived() {
+			return false
+		}
 		return repoAllowList[r.GetName()] || (strings.HasPrefix(r.GetName(), "terraform-google") && !repoIgnoreList[r.GetName()])
 	})
 	return repos.sort(sortOpt)

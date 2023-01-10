@@ -310,8 +310,9 @@ function generate_docs() {
 }
 
 function generate_metadata() {
-  if [[ "${DISABLE_BPMETADATA:-}" ]]; then
-    echo "DISABLE_BPMETADATA set. Skipping metadata generation."
+  # disable opt in after https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1353
+  if [[ "${ENABLE_BPMETADATA:-}" -ne 1 ]]; then
+    echo "ENABLE_BPMETADATA not set to 1. Skipping metadata generation."
     return 0
   fi
   echo "Generating blueprint metadata"
