@@ -286,21 +286,21 @@ func (b *KRMBlueprintTest) DefaultApply(assert *assert.Assertions) {
 	b.kpt.RunCmd("live", "status", "--output", "json", "--poll-until", "current", "--timeout", b.timeout)
 }
 
-// DefaultVerify asserts no resource changes exist after apply.
+// DefaultVerify asserts all resources are status successful
 func (b *KRMBlueprintTest) DefaultVerify(assert *assert.Assertions) {
 	jsonOp := b.kpt.RunCmd("live", "apply", "--output", "json")
 
-	// assert each resource is unchanged from initial apply
+	// assert each resource status is successful
 	resourceStatus, err := kpt.GetPkgApplyResourcesStatus(jsonOp)
 	assert.NoError(err, "Resource statuses should be parsable")
 	for _, r := range resourceStatus {
-		assert.Equal(kpt.ResourceOperationUnchanged, r.Operation, "Resource should be unchanged")
+		assert.Equal(kpt.ResourceOperationSuccessful, r.Status, "Status should be successful")
 	}
 
-	// assert count of resources applied equals count of resources unchanged
+	// assert count of resources applied equals count of resources successful
 	groupStatus, err := kpt.GetPkgApplyGroupStatus(jsonOp)
 	assert.NoError(err, "Group status should be parsable")
-	assert.Equal(groupStatus.Count, groupStatus.UnchangedCount, "All resources should be unchanged")
+	assert.Equal(groupStatus.Count, groupStatus.Successful, "All resources should be successful")
 
 }
 
