@@ -3,7 +3,9 @@ package bptest
 import (
 	"fmt"
 	"os"
+	"path"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -19,6 +21,7 @@ func init() {
 	Cmd.AddCommand(listCmd)
 	Cmd.AddCommand(runCmd)
 	Cmd.AddCommand(convertCmd)
+	Cmd.AddCommand(initCmd)
 
 	Cmd.PersistentFlags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
 	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, apply, verify, teardown)")
@@ -109,5 +112,34 @@ var convertCmd = &cobra.Command{
 	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return convertKitchenTests()
+	},
+}
+
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "initialize blueprint test",
+	Long:  "Initialize a new blueprint test",
+	Args:  cobra.MaximumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		var initTestName string
+		// if no args, prompt user to select from examples
+		if len(args) < 1 {
+			cwd, err := os.Getwd()
+			if err != nil {
+				return err
+			}
+			examplePaths, err := util.WalkTerraformDirs(path.Join(cwd, "examples"))
+			if err != nil {
+				return err
+			}
+			exampleNames := make([]string, 0, len(examplePaths))
+			for _, examplePath := range examplePaths {
+				exampleNames = append(exampleNames, path.Base(examplePath))
+			}
+			initTestName = util.PromptSelect("Select example for test", exampleNames)
+		} else {
+			initTestName = args[0]
+		}
+		return initTest(initTestName)
 	},
 }

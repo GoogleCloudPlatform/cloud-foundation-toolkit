@@ -1,4 +1,4 @@
-package bpbuild
+package util
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-// promptSelect prompts a user to select a value from given items.
-func promptSelect(label string, items []string) string {
+// PromptSelect prompts a user to select a value from given items.
+func PromptSelect(label string, items []string) string {
 	prompt := promptui.Select{
 		Label: label,
 		Items: items,
@@ -23,6 +23,6 @@ func promptSelect(label string, items []string) string {
 		fmt.Printf("Prompt failed %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("Selected build step: %s\n", result)
+	fmt.Printf("Selected: %s\n", result)
 	return result
 }

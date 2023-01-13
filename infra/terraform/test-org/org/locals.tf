@@ -498,6 +498,12 @@ locals {
       description = "Deploy Cloud Armor Security policiy"
       owners      = "@imrannayer @belgana"
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
-    }
+    },
+      name        = "terraform-google-cloud-deploy"
+      org         = "GoogleCloudPlatform"
+      description = "Create Cloud Deploy pipelines and targets"
+      owners      = "@gtsorbo @niranjankl"
+      topics      = join(",", [local.common_topics.devtools])
+    },
   ]
 }
