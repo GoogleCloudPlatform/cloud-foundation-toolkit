@@ -499,6 +499,7 @@ locals {
       owners      = "@imrannayer @belgana"
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
     },
+    {
       name        = "terraform-google-cloud-deploy"
       org         = "GoogleCloudPlatform"
       description = "Create Cloud Deploy pipelines and targets"
