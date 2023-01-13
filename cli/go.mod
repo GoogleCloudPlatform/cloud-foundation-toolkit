@@ -18,7 +18,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.14.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20211115214459-90acf1ca460f
 	github.com/iancoleman/strcase v0.2.0
-	github.com/inconshreveable/log15 v0.0.0-20201112154412-8562bdadbbac
+	github.com/inconshreveable/log15 v0.0.0-20221122034931-555555054819
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/manifoldco/promptui v0.9.0
