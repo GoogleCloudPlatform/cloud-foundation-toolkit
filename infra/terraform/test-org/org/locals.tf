@@ -495,7 +495,7 @@ locals {
     {
       name        = "terraform-google-cloud-armor"
       org         = "GoogleCloudPlatform"
-      description = "Deploy Cloud Armor Security policiy"
+      description = "Deploy Cloud Armor Security policy"
       owners      = "@imrannayer @belgana"
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
     },
