@@ -16,7 +16,13 @@
 
 package utils
 
-import "os/exec"
+import (
+	"fmt"
+	"os/exec"
+	"strings"
+
+	"golang.org/x/mod/semver"
+)
 
 // BinaryInPath checks if a given binary is in path.
 func BinaryInPath(bin string) error {
@@ -24,4 +30,18 @@ func BinaryInPath(bin string) error {
 		return err
 	}
 	return nil
+}
+
+// Return validated canonical KPT version string
+func KptVersion(bin string) (string, error) {
+	cmd, err := exec.Command(bin, "version").Output()
+	kptVersion := "v" + strings.TrimSpace(string(cmd))
+	if err != nil {
+		return "", err
+	}
+	if semver.IsValid(kptVersion) != true {
+		return "", fmt.Errorf("Unable to parse kpt version")
+	}
+
+	return semver.Canonical(kptVersion), nil
 }
