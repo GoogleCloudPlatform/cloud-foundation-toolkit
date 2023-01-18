@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,22 @@
 package utils
 
 import (
-	"os/exec"
+	"fmt"
+
+	"github.com/mitchellh/go-testing-interface"
+	"golang.org/x/mod/semver"
 )
 
-// BinaryInPath checks if a given binary is in path.
-func BinaryInPath(bin string) error {
-	if _, err := exec.LookPath(bin); err != nil {
-		return err
+// MinSemver validates gotSemver is not less than minSemver
+func MinSemver(t testing.TB, gotSemver string, minSemver string) error {
+	if semver.IsValid(gotSemver) != true {
+		return fmt.Errorf("unable to parse got version %q", gotSemver)
+	} else 	if semver.IsValid(minSemver) != true {
+		return fmt.Errorf("unable to parse minimum version %q", minSemver)
 	}
+	if semver.Compare(gotSemver, minSemver) == -1 {
+		return fmt.Errorf("got version %q is less than minimum version %q", gotSemver, minSemver)
+	}
+
 	return nil
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/mitchellh/go-testing-interface"
-	"golang.org/x/mod/semver"
 	"sigs.k8s.io/kustomize/kyaml/kio/kioutil"
 	"sigs.k8s.io/kustomize/kyaml/yaml"
 )
@@ -62,14 +61,8 @@ func NewCmdConfig(t testing.TB, opts ...cmdOption) *CmdCfg {
 		kOpts.kptBinary = "kpt"
 	}
 	// Validate required KPT version
-	kptVersion, err := utils.KptVersion(kOpts.kptBinary)
-	if err != nil {
-		t.Fatalf("unable to retrieve kpt version: %v", err)
-	}
-	if semver.Compare(kptVersion, MIN_KPT_VERSION) == -1 {
-		t.Fatalf("found kpt version %q is less than required kpt version: %v", kptVersion, MIN_KPT_VERSION)
-	} else {
-		t.Logf("found kpt version: %v", kptVersion)
+	if err := utils.MinSemver(t, "v" + kOpts.RunCmd("version"), MIN_KPT_VERSION); err != nil {
+		t.Fatalf("unable to validate minimum required kpt version: %v", err)
 	}
 
 	return kOpts
