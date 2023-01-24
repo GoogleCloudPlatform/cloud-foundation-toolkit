@@ -85,6 +85,10 @@ ENV KUBECTL_VERSION ${KUBECTL_VERSION}
 ARG TFLINT_VERSION
 ENV TFLINT_VERSION ${TFLINT_VERSION}
 
+# Required to download and install tinkey
+ARG TINKEY_VERSION
+ENV TINKEY_VERSION ${TINKEY_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -154,6 +158,9 @@ RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
 
 ADD ./build/install_tflint.sh /build/
 RUN /build/install_tflint.sh ${TFLINT_VERSION}
+
+ADD ./build/install_tinkey.sh /build/
+RUN /build/install_tinkey.sh ${TINKEY_VERSION}
 
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
