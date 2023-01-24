@@ -24,10 +24,10 @@ import (
 )
 
 // MinSemver validates gotSemver is not less than minSemver
-func MinSemver(t testing.TB, gotSemver string, minSemver string) error {
-	if semver.IsValid(gotSemver) != true {
+func MinSemver(gotSemver string, minSemver string) error {
+	if !semver.IsValid(gotSemver) {
 		return fmt.Errorf("unable to parse got version %q", gotSemver)
-	} else 	if semver.IsValid(minSemver) != true {
+	} else 	if !semver.IsValid(gotSemver) {
 		return fmt.Errorf("unable to parse minimum version %q", minSemver)
 	}
 	if semver.Compare(gotSemver, minSemver) == -1 {

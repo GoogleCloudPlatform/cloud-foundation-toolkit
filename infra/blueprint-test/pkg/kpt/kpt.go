@@ -61,7 +61,7 @@ func NewCmdConfig(t testing.TB, opts ...cmdOption) *CmdCfg {
 		kOpts.kptBinary = "kpt"
 	}
 	// Validate required KPT version
-	if err := utils.MinSemver(t, "v" + kOpts.RunCmd("version"), MIN_KPT_VERSION); err != nil {
+	if err := utils.MinSemver("v" + kOpts.RunCmd("version"), MIN_KPT_VERSION); err != nil {
 		t.Fatalf("unable to validate minimum required kpt version: %v", err)
 	}
 
