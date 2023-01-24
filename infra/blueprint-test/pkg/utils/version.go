@@ -19,7 +19,6 @@ package utils
 import (
 	"fmt"
 
-	"github.com/mitchellh/go-testing-interface"
 	"golang.org/x/mod/semver"
 )
 
@@ -27,7 +26,7 @@ import (
 func MinSemver(gotSemver string, minSemver string) error {
 	if !semver.IsValid(gotSemver) {
 		return fmt.Errorf("unable to parse got version %q", gotSemver)
-	} else 	if !semver.IsValid(gotSemver) {
+	} else 	if !semver.IsValid(minSemver) {
 		return fmt.Errorf("unable to parse minimum version %q", minSemver)
 	}
 	if semver.Compare(gotSemver, minSemver) == -1 {

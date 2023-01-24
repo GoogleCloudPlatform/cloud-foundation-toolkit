@@ -16,9 +16,7 @@
 
 package utils
 
-import (
-	"os/exec"
-)
+import "os/exec"
 
 // BinaryInPath checks if a given binary is in path.
 func BinaryInPath(bin string) error {
