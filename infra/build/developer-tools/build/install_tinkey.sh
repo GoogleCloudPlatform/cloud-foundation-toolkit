@@ -20,13 +20,12 @@ cd /build
 
 TINKEY_VERSION=$1
 
-gsutil cp "gs://tinkey/tinkey-${TINKEY_VERSION}.tar.gz" .
-tar -xzvf "tinkey-${TINKEY_VERSION}.tar.gz"
+mkdir ./tinkey
 
-install -o 0 -g 0 -m 0755 tinkey_deploy.jar /usr/bin/
-install -o 0 -g 0 -m 0755 tinkey /usr/bin/
+gsutil cp "gs://tinkey/tinkey-${TINKEY_VERSION}.tar.gz" ./tinkey
+tar -xzvf "./tinkey/tinkey-${TINKEY_VERSION}.tar.gz" -C ./tinkey
 
-rm "tinkey-${TINKEY_VERSION}.tar.gz"
-rm tinkey
-rm tinkey.bat
-rm -f tinkey_deploy.jar
+install -o 0 -g 0 -m 0755 ./tinkey/tinkey_deploy.jar /usr/bin/
+install -o 0 -g 0 -m 0755 ./tinkey/tinkey /usr/bin/
+
+rm -rf ./tinkey
