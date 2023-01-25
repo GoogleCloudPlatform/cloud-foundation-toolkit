@@ -30,8 +30,7 @@ PACKER_VERSION := 1.4.4
 TERRAGRUNT_VERSION := 0.25.3
 KUSTOMIZE_VERSION := 3.6.1
 # Updated by Update Tooling Workflow
-# Hold KPT at 1.0.0-beta.15 till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
-KPT_VERSION := 1.0.0-beta.15
+KPT_VERSION := 1.0.0-beta.24
 # Updated by Update Tooling Workflow
 CFT_CLI_VERSION := 0.5.1
 # Updated by Update Tooling Workflow
