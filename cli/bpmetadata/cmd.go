@@ -200,6 +200,7 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 	}
 
 	// create descriptions
+	i.Description = &BlueprintDescription{}
 	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
 	if err == nil {
 		i.Description.Tagline = tagline.literal
@@ -213,6 +214,11 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 	preDeploy, err := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
 	if err == nil {
 		i.Description.PreDeploy = preDeploy.literal
+	}
+
+	architecture, err := getMdContent(readmeContent, -1, -1, "Architecture", true)
+	if err == nil {
+		i.Description.Architecture = architecture.literal
 	}
 
 	// create icon
