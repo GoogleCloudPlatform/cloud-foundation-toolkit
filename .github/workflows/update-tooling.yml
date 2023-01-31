@@ -11,7 +11,7 @@ env:
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   KUBECTL_MINOR: "1.23"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
-  GATOR_MINOR: "3.9"
+  GATOR_MINOR: "3.11"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
   GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases/latest"
 
