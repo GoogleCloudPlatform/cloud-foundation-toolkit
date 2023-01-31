@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-provider "google" {
-  version = "~> 3.45.0"
-}
-
-provider "null" {
-  version = "~> 2.1"
-}
-
 terraform {
   backend "local" {}
 }
 
 module "test-vpc-module" {
   source       = "terraform-google-modules/network/google"
-  version      = "~> 3.2.0"
+  version      = "~> 6.0"
   project_id   = var.project_id # Replace this with your project ID in quotes
   network_name = var.network_name
   mtu          = 1460
@@ -54,6 +46,7 @@ module "test-vpc-module" {
       subnet_flow_logs_interval = "INTERVAL_10_MIN"
       subnet_flow_logs_sampling = 0.7
       subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+      subnet_flow_logs_filter   = "false"
     }
   ]
 }
