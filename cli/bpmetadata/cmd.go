@@ -200,6 +200,7 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 	}
 
 	// create descriptions
+	i.Description = &BlueprintDescription{}
 	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
 	if err == nil {
 		i.Description.Tagline = tagline.literal
@@ -213,6 +214,16 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 	preDeploy, err := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
 	if err == nil {
 		i.Description.PreDeploy = preDeploy.literal
+	}
+
+	var archListToSet []string
+	architecture, err := getMdContent(readmeContent, -1, -1, "Architecture", true)
+	if err == nil {
+		for _, li := range architecture.listItems {
+			archListToSet = append(archListToSet, li.text)
+		}
+
+		i.Description.Architecture = archListToSet
 	}
 
 	// create icon
@@ -239,7 +250,6 @@ func createInterfaces(bpPath string, interfaces *BlueprintInterface) (*Blueprint
 }
 
 func createContent(bpPath string, rootPath string, readmeContent []byte, content *BlueprintContent) *BlueprintContent {
-	//var content BlueprintContent
 	var docListToSet []BlueprintListContent
 	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
 	if err == nil {
