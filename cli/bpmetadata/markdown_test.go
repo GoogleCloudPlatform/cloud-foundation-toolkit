@@ -99,8 +99,14 @@ func TestProcessMarkdownContent(t *testing.T) {
 			title:      "Architecture",
 			getContent: true,
 			want: &mdContent{
-				literal: `1- User requests are sent to the front end, which is deployed on two Cloud Run services as containers to support high scalability applications.
-2- The request then lands on the middle tier, which is the API layer that provides access to the backend. This is also deployed on Cloud Run for scalability and ease of deployment in multiple languages. This middleware is a Golang based API.`,
+				listItems: []mdListItem{
+					mdListItem{
+						text: "User requests are sent to the front end, which is deployed on two Cloud Run services as containers to support high scalability applications.",
+					},
+					mdListItem{
+						text: "The request then lands on the middle tier, which is the API layer that provides access to the backend. This is also deployed on Cloud Run for scalability and ease of deployment in multiple languages. This middleware is a Golang based API.",
+					},
+				},
 			},
 		},
 		{

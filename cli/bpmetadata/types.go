@@ -62,10 +62,10 @@ type BlueprintActuationTool struct {
 }
 
 type BlueprintDescription struct {
-	Tagline      string `json:",omitempty" yaml:",omitempty"`
-	Detailed     string `json:",omitempty" yaml:",omitempty"`
-	PreDeploy    string `json:"preDeploy,omitempty" yaml:"preDeploy,omitempty"`
-	Architecture string `json:"architecture,omitempty" yaml:"architecture,omitempty"`
+	Tagline      string   `json:",omitempty" yaml:",omitempty"`
+	Detailed     string   `json:",omitempty" yaml:",omitempty"`
+	PreDeploy    string   `json:"preDeploy,omitempty" yaml:"preDeploy,omitempty"`
+	Architecture []string `json:"architecture,omitempty" yaml:"architecture,omitempty"`
 }
 
 type BlueprintMiscContent struct {

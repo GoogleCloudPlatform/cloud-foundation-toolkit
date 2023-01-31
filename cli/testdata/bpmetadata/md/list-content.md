@@ -31,5 +31,5 @@ It creates projects and configures aspects like Shared VPC connectivity, IAM acc
 To deploy this blueprint you must have an active billing account and billing permissions.
 
 ### Architecture
-1- User requests are sent to the front end, which is deployed on two Cloud Run services as containers to support high scalability applications.
-2- The request then lands on the middle tier, which is the API layer that provides access to the backend. This is also deployed on Cloud Run for scalability and ease of deployment in multiple languages. This middleware is a Golang based API.
+1. User requests are sent to the front end, which is deployed on two Cloud Run services as containers to support high scalability applications.
+2. The request then lands on the middle tier, which is the API layer that provides access to the backend. This is also deployed on Cloud Run for scalability and ease of deployment in multiple languages. This middleware is a Golang based API.
