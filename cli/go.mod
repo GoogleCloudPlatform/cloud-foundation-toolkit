@@ -25,16 +25,16 @@ require (
 	github.com/migueleliasweb/go-github-mock v0.0.12
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64
 	github.com/open-policy-agent/gatekeeper v3.0.4-beta.2+incompatible // indirect
-	github.com/open-policy-agent/opa v0.34.2
+	github.com/open-policy-agent/opa v0.37.2
 	github.com/otiai10/copy v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.9.0
+	github.com/spf13/viper v1.10.0
 	github.com/stretchr/testify v1.8.0
 	github.com/zclconf/go-cty v1.10.0 // indirect
-	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
-	google.golang.org/api v0.58.0
-	google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
+	google.golang.org/api v0.62.0
+	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	sigs.k8s.io/kustomize/kyaml v0.13.9
