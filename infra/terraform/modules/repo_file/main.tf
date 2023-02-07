@@ -28,7 +28,7 @@ data "github_repository" "repo" {
   name     = each.value
 }
 
-resource "github_repository_file" "renovate_json" {
+resource "github_repository_file" "file" {
   for_each            = data.github_repository.repo
   repository          = each.value.name
   branch              = each.value.default_branch
