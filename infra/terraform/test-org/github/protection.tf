@@ -99,6 +99,22 @@ module "conventional-commit-lint_yaml_gcp" {
   content   = file("${path.module}/resources/conventional-commit-lint.yaml")
 }
 
+module "trusted-contribution_yml_tgm" {
+  source    = "../../modules/repo_file"
+  org       = "terraform-google-modules"
+  repo_list = module.repos_tgm.repos
+  filename  = ".github/trusted-contribution.yml"
+  content   = file("${path.module}/resources/trusted-contribution.yml")
+}
+
+module "trusted-contribution_yml_gcp" {
+  source    = "../../modules/repo_file"
+  org       = "GoogleCloudPlatform"
+  repo_list = module.repos_gcp.repos
+  filename  = ".github/trusted-contribution.yml"
+  content   = file("${path.module}/resources/trusted-contribution.yml")
+}
+
 module "codeowners_tgm" {
   source = "../../modules/codeowners_file"
   org    = "terraform-google-modules"
