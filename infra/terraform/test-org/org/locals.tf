@@ -506,5 +506,12 @@ locals {
       owners      = "@gtsorbo @niranjankl"
       topics      = join(",", [local.common_topics.devtools])
     },
+    {
+      name        = "terraform-google-cloud-functions"
+      org         = "GoogleCloudPlatform"
+      description = "Deploys Cloud Functions (Gen 2)"
+      owners      = "@prabhu34"
+      topics      = "cloudfunctions,functions,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
+    },
   ]
 }
