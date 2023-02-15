@@ -16,7 +16,7 @@
      "stabilityDays":0
   },
   "separateMajorMinor":false,
-  "ignorePaths": ["infra/concourse/**"],
+  "ignorePaths": ["infra/concourse/**", "config-connector/**"],
   "packageRules": [
     {
       "matchPaths": [".github/**"],
