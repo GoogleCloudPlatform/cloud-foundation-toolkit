@@ -20,3 +20,4 @@ trustedContributors:
   - renovate[bot]
   - forking-renovate[bot]
   - dependabot[bot]
+  - cloud-foundation-bot
