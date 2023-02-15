@@ -26,8 +26,7 @@
     {
       "matchDepTypes": ["require"],
       "postUpdateOptions": ["gomodTidy"],
-      "groupName": "GO modules",
-      "separateMajorMinor":false
+      "groupName": "GO modules"
     },
     {
       "matchPackageNames": ["go"],
