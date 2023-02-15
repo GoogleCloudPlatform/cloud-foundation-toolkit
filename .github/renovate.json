@@ -17,6 +17,7 @@
   },
   "separateMajorMinor":false,
   "ignorePaths": ["infra/concourse/**", "config-connector/**", "docs/**"],
+  "additionalBranchPrefix": "{{parentDir}}-",
   "packageRules": [
     {
       "matchPaths": [".github/**"],
@@ -24,7 +25,9 @@
     },
     {
       "matchDepTypes": ["require"],
-      "postUpdateOptions": ["gomodTidy"]
+      "groupName": "GO modules",
+      "postUpdateOptions": ["gomodTidy"],
+      "separateMajorMinor":false
     },
     {
       "matchPackageNames": ["go"],
