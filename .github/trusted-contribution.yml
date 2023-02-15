@@ -19,4 +19,6 @@ trustedContributors:
   - release-please[bot]
   - renovate[bot]
   - forking-renovate[bot]
+  - renovate-bot
   - dependabot[bot]
+  - cloud-foundation-bot
