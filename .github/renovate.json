@@ -7,7 +7,6 @@
     ":rebaseStalePrs"
   ],
   "stabilityDays":7,
-  "ignorePaths": [],
   "labels": ["dependencies"],
     "vulnerabilityAlerts":{
      "labels":[
