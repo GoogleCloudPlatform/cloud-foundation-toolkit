@@ -202,6 +202,145 @@ resource "google_cloudbuild_trigger" "tf_validator_main_license_check" {
   filename = ".ci/cloudbuild-tests-go-licenses.yaml"
 }
 
+resource "google_cloudbuild_trigger" "tgc_main_integration_tests" {
+  for_each = {
+    tf12 = "0.12.31"
+    tf13 = "0.13.7"
+  }
+  name        = "tgc-main-integration-tests-${each.key}"
+  description = "Main/release branch integration tests for terraform-google-conversion with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider = google-beta
+  project  = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-google-conversion"
+    push {
+      branch = "^(main|release-.+)$"
+    }
+  }
+  substitutions = {
+    _TERRAFORM_VERSION = each.value
+    _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-integration.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tgc_pull_integration_tests" {
+  for_each = {
+    tf12 = "0.12.31"
+    tf13 = "0.13.7"
+  }
+  name        = "tgc-pull-integration-tests-${each.key}"
+  description = "Pull request integration tests for terraform-google-conversion with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider = google-beta
+  project  = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-google-conversion"
+    pull_request {
+      branch          = ".*"
+      comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
+    }
+  }
+  substitutions = {
+    _TERRAFORM_VERSION = each.value
+    _TEST_PROJECT      = local.tf_validator_project_id
+    _TEST_FOLDER       = local.tf_validator_folder_id
+    _TEST_ANCESTRY     = local.tf_validator_ancestry
+    _TEST_ORG          = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-integration.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tgc_pull_unit_tests" {
+  name        = "tgc-pull-unit-tests"
+  description = "Pull request unit tests for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider = google-beta
+  project  = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-google-conversion"
+    pull_request {
+      branch          = ".*"
+      comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
+    }
+  }
+  substitutions = {
+    _TEST_PROJECT  = local.tf_validator_project_id
+    _TEST_FOLDER   = local.tf_validator_folder_id
+    _TEST_ANCESTRY = local.tf_validator_ancestry
+    _TEST_ORG      = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-unit.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tgc_main_unit_tests" {
+  name        = "tgc-main-unit-tests"
+  description = "Main/release branch unit tests for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider = google-beta
+  project  = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-google-conversion"
+    push {
+      branch = "^(main|release-.+)$"
+    }
+  }
+  substitutions = {
+    _TEST_PROJECT  = local.tf_validator_project_id
+    _TEST_FOLDER   = local.tf_validator_folder_id
+    _TEST_ANCESTRY = local.tf_validator_ancestry
+    _TEST_ORG      = local.org_id
+  }
+
+  filename = ".ci/cloudbuild-tests-unit.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tgc_pull_license_check" {
+  name        = "tgc-pull-license-check"
+  description = "Pull request license check for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider = google-beta
+  project  = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-google-conversion"
+    pull_request {
+      branch          = ".*"
+      comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
+    }
+  }
+
+  filename = ".ci/cloudbuild-tests-go-licenses.yaml"
+}
+
+resource "google_cloudbuild_trigger" "tgc_main_license_check" {
+  name        = "tgc-main-license-check"
+  description = "Main/release branch license check for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+
+  provider = google-beta
+  project  = local.project_id
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "terraform-google-conversion"
+    push {
+      branch = "^(main|release-.+)$"
+    }
+  }
+
+  filename = ".ci/cloudbuild-tests-go-licenses.yaml"
+}
+
 resource "google_cloudbuild_trigger" "forseti_lint" {
   provider    = google-beta
   project     = local.project_id
