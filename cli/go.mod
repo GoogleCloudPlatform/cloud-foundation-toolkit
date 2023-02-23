@@ -16,7 +16,7 @@ require (
 	github.com/google/go-cmp v0.5.9
 	github.com/google/go-github/v47 v47.1.0
 	github.com/hashicorp/hcl/v2 v2.14.0
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20211115214459-90acf1ca460f
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20230201191712-8cad743c8c26
 	github.com/iancoleman/strcase v0.2.0
 	github.com/inconshreveable/log15 v0.0.0-20201112154412-8562bdadbbac
 	github.com/jedib0t/go-pretty v4.3.0+incompatible

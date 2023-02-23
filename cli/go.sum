@@ -749,8 +749,8 @@ github.com/hashicorp/memberlist v0.1.3/go.mod h1:ajVTdAv/9Im8oMAAj5G31PhhMCZJV2p
 github.com/hashicorp/memberlist v0.2.2/go.mod h1:MS2lj3INKhZjWNqd3N0m3J+Jxf3DAOnAH9VT3Sh9MUE=
 github.com/hashicorp/serf v0.8.2/go.mod h1:6hOLApaqBFA1NXqRQAsxw9QxuDEvNxSQRwA/JwenrHc=
 github.com/hashicorp/serf v0.9.5/go.mod h1:UWDWwZeL5cuWDJdl0C6wrvrUwEqtQ4ZKBKKENpqIUyk=
-github.com/hashicorp/terraform-config-inspect v0.0.0-20211115214459-90acf1ca460f h1:R8UIC07Ha9jZYkdcJ51l4ownCB8xYwfJtrgZSMvqjWI=
-github.com/hashicorp/terraform-config-inspect v0.0.0-20211115214459-90acf1ca460f/go.mod h1:Z0Nnk4+3Cy89smEbrq+sl1bxc9198gIP4I7wcQF6Kqs=
+github.com/hashicorp/terraform-config-inspect v0.0.0-20230201191712-8cad743c8c26 h1:J0v4VHo7rgHhsyfTUyeVxfjb3NYH76jucjBl1HG5DP0=
+github.com/hashicorp/terraform-config-inspect v0.0.0-20230201191712-8cad743c8c26/go.mod h1:EAaqp5h9PsUNr6NtgLj31w+ElcCEL+1Svw1Jw+MTVKU=
 github.com/hashicorp/terraform-json v0.9.0/go.mod h1:3defM4kkMfttwiE7VakJDwCd4R+umhSQnvJwORXbprE=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/huandu/xstrings v1.0.0/go.mod h1:4qWG/gcEcfX4z/mBDHJ++3ReCw9ibxbsNJbcucJdbSo=
