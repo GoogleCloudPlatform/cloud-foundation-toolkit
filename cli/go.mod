@@ -23,7 +23,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/manifoldco/promptui v0.9.0
 	github.com/migueleliasweb/go-github-mock v0.0.12
-	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64
+	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
 	github.com/open-policy-agent/gatekeeper v3.0.4-beta.2+incompatible // indirect
 	github.com/open-policy-agent/opa v0.34.2
 	github.com/otiai10/copy v1.6.0
