@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/asset v1.0.1
 	cloud.google.com/go/storage v1.18.2
 	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.0.0-20220307174651-21d0dee0c8ea
-	github.com/GoogleCloudPlatform/config-validator v0.0.0-20211122204404-f3fd77c5c355
+	github.com/GoogleCloudPlatform/config-validator 1d72524ea1b8
 	github.com/briandowns/spinner v1.16.0
 	github.com/fatih/color v1.13.0
 	github.com/gammazero/workerpool v1.1.2
