@@ -3,7 +3,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-t
 go 1.18
 
 require (
-	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20221109010843-1f7d0c07a381
+	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230213175341-4cb31eb17c8c
 	github.com/gruntwork-io/terratest v0.41.9
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64
 	github.com/otiai10/copy v1.9.0

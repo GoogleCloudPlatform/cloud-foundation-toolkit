@@ -19,8 +19,8 @@ cloud.google.com/go/storage v1.29.0 h1:6weCgzRvMg7lzuUurI4697AqIRPU1SvzHhynwpW31
 cloud.google.com/go/storage v1.29.0/go.mod h1:4puEjyTKnku6gfKoTfNOU/W+a9JyuVNxjpS5GBrB8h4=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20221109010843-1f7d0c07a381 h1:UdVx6rgwZeZr1hDMRLt2CDFw7sLRlg5Uxq60seIIWJU=
-github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20221109010843-1f7d0c07a381/go.mod h1:prNhhUAODrB2VqHVead9tB8nLU9ffY4e4jjBwLMNO1M=
+github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230213175341-4cb31eb17c8c h1:ZpWwov5xSHtOp/8hqJvlHrZyOX5piEbXTohbt2p2NEI=
+github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230213175341-4cb31eb17c8c/go.mod h1:prNhhUAODrB2VqHVead9tB8nLU9ffY4e4jjBwLMNO1M=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
