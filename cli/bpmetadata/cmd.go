@@ -115,7 +115,7 @@ func generateMetadataForBpPath(bpPath string) error {
 
 func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*BlueprintMetadata, error) {
 	// verfiy that the blueprint path is valid & get repo details
-	repoDetails, err := getRepoDetailsByPath(bpPath)
+	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Info.Source)
 	if err != nil {
 		return nil, err
 	}
@@ -142,12 +142,12 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
 	}
 
-	info, err := createInfo(bpPath, readmeContent)
+	err = bpMetadataObj.Spec.Info.create(bpPath, readmeContent)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
-	interfaces, err := createInterfaces(bpPath, &bpMetadataObj.Spec.Interfaces)
+	err = bpMetadataObj.Spec.Interfaces.create(bpPath)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
@@ -159,30 +159,28 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint requirements: %w", err)
 	}
 
-	content := createContent(bpPath, repoDetails.Source.RootPath, readmeContent, &bpMetadataObj.Spec.Content)
+	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.RootPath, readmeContent)
 
 	bpMetadataObj.Spec = BlueprintMetadataSpec{
-		Info:         *info,
-		Content:      *content,
-		Interfaces:   *interfaces,
+		Info:         bpMetadataObj.Spec.Info,
+		Content:      bpMetadataObj.Spec.Content,
+		Interfaces:   bpMetadataObj.Spec.Interfaces,
 		Requirements: *requirements,
 	}
 
 	return bpMetadataObj, nil
 }
 
-func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
-	i := &BlueprintInfo{}
+func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 	title, err := getMdContent(readmeContent, 1, 1, "", false)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	i.Title = title.literal
-
-	repoDetails, err := getRepoDetailsByPath(bpPath)
+	repoDetails, err := getRepoDetailsByPath(bpPath, i.Source)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	i.Source = &BlueprintRepoDetail{
@@ -233,23 +231,23 @@ func createInfo(bpPath string, readmeContent []byte) (*BlueprintInfo, error) {
 		i.Icon = iconFilePath
 	}
 
-	return i, nil
+	return nil
 }
 
-func createInterfaces(bpPath string, interfaces *BlueprintInterface) (*BlueprintInterface, error) {
+func (i *BlueprintInterface) create(bpPath string) error {
 	i, err := getBlueprintInterfaces(bpPath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if interfaces.VariableGroups != nil {
-		i.VariableGroups = interfaces.VariableGroups
+	if i.VariableGroups != nil {
+		i.VariableGroups = i.VariableGroups
 	}
 
-	return i, nil
+	return nil
 }
 
-func createContent(bpPath string, rootPath string, readmeContent []byte, content *BlueprintContent) *BlueprintContent {
+func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent []byte) {
 	var docListToSet []BlueprintListContent
 	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
 	if err == nil {
@@ -262,24 +260,22 @@ func createContent(bpPath string, rootPath string, readmeContent []byte, content
 			docListToSet = append(docListToSet, doc)
 		}
 
-		content.Documentation = docListToSet
+		c.Documentation = docListToSet
 	}
 
 	// create sub-blueprints
 	modPath := path.Join(bpPath, modulesPath)
 	modContent, err := getModules(modPath)
 	if err == nil {
-		content.SubBlueprints = modContent
+		c.SubBlueprints = modContent
 	}
 
 	// create examples
 	exPath := path.Join(rootPath, examplesPath)
 	exContent, err := getExamples(exPath)
 	if err == nil {
-		content.Examples = exContent
+		c.Examples = exContent
 	}
-
-	return content
 }
 
 func WriteMetadata(obj *BlueprintMetadata, bpPath string) error {

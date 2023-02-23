@@ -9,7 +9,7 @@ import (
 	"github.com/go-git/go-git/v5/config"
 )
 
-func TestGetRepoName(t *testing.T) {
+func TestGetRepoUrl(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    string
@@ -22,25 +22,16 @@ func TestGetRepoName(t *testing.T) {
 			name:   "simple",
 			repo:   "https://github.com/foo/bar",
 			remote: defaultRemote,
-			want:   "bar",
 		},
 		{
 			name:   "simple trailing",
 			repo:   "https://gitlab.com/foo/bar/",
 			remote: defaultRemote,
-			want:   "bar",
 		},
 		{
 			name:   "no scheme",
 			repo:   "github.com/foo/bar",
 			remote: defaultRemote,
-			want:   "bar",
-		},
-		{
-			name:    "invalid path",
-			repo:    "github.com/foo/bar/baz",
-			remote:  defaultRemote,
-			wantErr: true,
 		},
 		{
 			name:    "invalid remote",
@@ -53,13 +44,46 @@ func TestGetRepoName(t *testing.T) {
 			repo:   "https://github.com/foo/bar",
 			subDir: "modules/bp1",
 			remote: defaultRemote,
-			want:   "bar",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote, tt.subDir)
-			got, err := GetRepoName(dir)
+			_, err := GetRepoUrl(dir)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getRepoName() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestGetRepoNameFromUrl(t *testing.T) {
+	tests := []struct {
+		name    string
+		repoUrl string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "simple",
+			repoUrl: "https://github.com/foo/bar",
+			want:    "bar",
+		},
+		{
+			name:    "no scheme",
+			repoUrl: "github.com/foo/bar",
+			want:    "bar",
+		},
+		{
+			name:    "invalid path",
+			repoUrl: "github.com/foo/bar/baz",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetRepoName(tt.repoUrl)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getRepoName() error = %v, wantErr %v", err, tt.wantErr)
 				return

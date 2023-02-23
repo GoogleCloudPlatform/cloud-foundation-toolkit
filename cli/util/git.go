@@ -11,13 +11,13 @@ import (
 const defaultRemote = "origin"
 
 // getRepoName finds upstream repo name from a given repo directory
-func GetRepoName(dir string) (string, error) {
-	remoteUrl, err := GetRepoUrl(dir)
+func GetRepoName(repoUrl string) (string, error) {
+	u, err := url.Parse(repoUrl)
 	if err != nil {
-		return "", fmt.Errorf("error getting remote URL: %w", err)
+		return "", fmt.Errorf("malformed repo URL: %w", err)
 	}
 
-	trimmedRemotePath := strings.TrimSuffix(remoteUrl.Path, "/")
+	trimmedRemotePath := strings.TrimSuffix(u.Path, "/")
 	splitRemotePath := strings.Split(trimmedRemotePath, "/")
 	// expect path to be /owner/repo
 	if len(splitRemotePath) != 3 {
