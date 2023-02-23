@@ -3,8 +3,8 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 go 1.16
 
 require (
-	cloud.google.com/go/asset v1.0.1
-	cloud.google.com/go/storage v1.18.2
+	cloud.google.com/go/asset v1.10.0
+	cloud.google.com/go/storage v1.27.0
 	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.0.0-20220307174651-21d0dee0c8ea
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20211122204404-f3fd77c5c355
 	github.com/briandowns/spinner v1.16.0
@@ -30,12 +30,11 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.9.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/zclconf/go-cty v1.10.0 // indirect
-	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
-	google.golang.org/api v0.58.0
-	google.golang.org/genproto v0.0.0-20211129164237-f09f9a12af12
-	google.golang.org/protobuf v1.28.1 // indirect
+	golang.org/x/oauth2 v0.5.0
+	google.golang.org/api v0.110.0
+	google.golang.org/genproto v0.0.0-20230222225845-10f96fb3dbec
 	gopkg.in/yaml.v2 v2.4.0
 	sigs.k8s.io/kustomize/kyaml v0.13.9
 	sigs.k8s.io/yaml v1.2.0
