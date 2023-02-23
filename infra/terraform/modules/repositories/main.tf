@@ -33,3 +33,10 @@ resource "github_repository" "repo" {
   squash_merge_commit_message = "BLANK"
   squash_merge_commit_title   = "PR_TITLE"
 }
+
+resource "github_repository_collaborator" "dpebot" {
+  for_each   = github_repository.repo
+  repository = each.value.name
+  username   = "dpebot"
+  permission = "pull"
+}
