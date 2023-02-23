@@ -12,7 +12,7 @@ require (
 	github.com/gammazero/workerpool v1.1.2
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/golang/protobuf v1.5.2
-	github.com/gomarkdown/markdown v0.0.0-20220905174103-7b278df48cfb
+	github.com/gomarkdown/markdown v0.0.0-20221013030248-663e2500819c
 	github.com/google/go-cmp v0.5.9
 	github.com/google/go-github/v47 v47.1.0
 	github.com/hashicorp/hcl/v2 v2.14.0
