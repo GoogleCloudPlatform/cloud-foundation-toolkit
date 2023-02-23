@@ -9,7 +9,7 @@ require (
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20211122204404-f3fd77c5c355
 	github.com/briandowns/spinner v1.16.0
 	github.com/fatih/color v1.13.0
-	github.com/gammazero/workerpool v1.1.2
+	github.com/gammazero/workerpool v1.1.3
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/golang/protobuf v1.5.2
 	github.com/gomarkdown/markdown v0.0.0-20220905174103-7b278df48cfb
