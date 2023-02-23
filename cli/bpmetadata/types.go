@@ -1,6 +1,8 @@
 package bpmetadata
 
-import "sigs.k8s.io/kustomize/kyaml/yaml"
+import (
+	"sigs.k8s.io/kustomize/kyaml/yaml"
+)
 
 // BlueprintMetadata defines the overall structure for blueprint metadata details
 type BlueprintMetadata struct {
@@ -18,18 +20,23 @@ type BlueprintMetadataSpec struct {
 
 // BlueprintInfo defines informational detail for the blueprint
 type BlueprintInfo struct {
-	Title         string
-	Source        *BlueprintRepoDetail
-	Version       string                 `json:",omitempty" yaml:",omitempty"`
-	ActuationTool BlueprintActuationTool `json:"actuationTool,omitempty" yaml:"actuationTool,omitempty"`
-	Description   *BlueprintDescription  `json:",omitempty" yaml:",omitempty"`
-	Icon          string                 `json:",omitempty" yaml:",omitempty"`
+	Title          string
+	Source         *BlueprintRepoDetail
+	Version        string                  `json:",omitempty" yaml:",omitempty"`
+	ActuationTool  BlueprintActuationTool  `json:"actuationTool,omitempty" yaml:"actuationTool,omitempty"`
+	Description    *BlueprintDescription   `json:",omitempty" yaml:",omitempty"`
+	Icon           string                  `json:",omitempty" yaml:",omitempty"`
+	DeploymentTime BlueprintDeploymentTime `json:"deploymentTime,omitempty" yaml:"deploymentTime,omitempty"`
+	CostEstimate   BlueprintCostEstimate   `json:",omitempty" yaml:",omitempty"`
+	CloudProducts  []BlueprintCloudProduct `json:",omitempty" yaml:",omitempty"`
+	QuotaDetails   []BlueprintQuotaDetail  `json:",omitempty" yaml:",omitempty"`
 }
 
 // BlueprintContent defines the detail for blueprint related content such as
 // related documentation, diagrams, examples etc.
 type BlueprintContent struct {
 	// Diagrams are manually entered
+	Architecture  BlueprintArchitecture  `json:"architecture,omitempty" yaml:"architecture,omitempty"`
 	Diagrams      []BlueprintDiagram     `json:",omitempty" yaml:",omitempty"`
 	Documentation []BlueprintListContent `json:",omitempty" yaml:",omitempty"`
 	SubBlueprints []BlueprintMiscContent `json:"subBlueprints,omitempty" yaml:"subBlueprints,omitempty"`
@@ -68,9 +75,52 @@ type BlueprintDescription struct {
 	Architecture []string `json:"architecture,omitempty" yaml:"architecture,omitempty"`
 }
 
+type BlueprintDeploymentTime struct {
+	Configuration int `json:"configuration,omitempty" yaml:"configuration,omitempty"`
+	Deployment    int `json:"deployment,omitempty" yaml:"deployment,omitempty"`
+}
+
+type BlueprintCostEstimate struct {
+	Description string `json:",omitempty" yaml:",omitempty"`
+	Url         string `json:",omitempty" yaml:",omitempty"`
+}
+
+type BlueprintCloudProduct struct {
+	ProductId   string
+	PageUrl     string
+	Label       string
+	LocationKey bool
+}
+
+type BlueprintQuotaDetail struct {
+	QuotaType            string              `yaml:"quotaType"`
+	DynamicPropertyNames []string            `yaml:"dynamicPropertyNames,omitempty"`
+	GceInstance          GceInstanceResource `yaml:"gceInstance,omitempty"`
+	GceDisk              GceDiskResource     `yaml:"gceDisk,omitempty"`
+	DynamicResources     []struct {
+		GceInstance GceInstanceResource `yaml:"gceInstance,omitempty"`
+		GceDisk     GceDiskResource     `yaml:"gceDisk,omitempty"`
+	} `yaml:"dynamicResources,omitempty"`
+}
+
+type GceInstanceResource struct {
+	MachineType string `yaml:"machineType"`
+	Cpus        int    `yaml:"cpus"`
+}
+
+type GceDiskResource struct {
+	DiskType string `yaml:"diskType"`
+	SizeGb   int    `yaml:"sizeGb"`
+}
+
 type BlueprintMiscContent struct {
 	Name     string
 	Location string
+}
+
+type BlueprintArchitecture struct {
+	Diagram     string `json:"diagram,omitempty" yaml:"diagram,omitempty"`
+	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
 // BlueprintDiagram is manually entered
