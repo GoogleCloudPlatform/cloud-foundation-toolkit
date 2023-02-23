@@ -13,7 +13,7 @@
 # limitations under the License.
 # Download and verify the integrity of the download first
 
-FROM alpine:3.16.2
+FROM alpine:3.17.2
 RUN apk update && apk add --no-cache \
         bash \
         git \
