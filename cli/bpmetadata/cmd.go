@@ -142,16 +142,19 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
 	}
 
+	// create blueprint info
 	err = bpMetadataObj.Spec.Info.create(bpPath, readmeContent)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
+	// create blueprint interfaces i.e. variables & outputs
 	err = bpMetadataObj.Spec.Interfaces.create(bpPath)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
 
+	// get blueprint requirements
 	rolesCfgPath := path.Join(repoDetails.Source.RootPath, tfRolesFileName)
 	svcsCfgPath := path.Join(repoDetails.Source.RootPath, tfServicesFileName)
 	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath)
@@ -159,14 +162,10 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint requirements: %w", err)
 	}
 
-	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.RootPath, readmeContent)
+	bpMetadataObj.Spec.Requirements = *requirements
 
-	bpMetadataObj.Spec = BlueprintMetadataSpec{
-		Info:         bpMetadataObj.Spec.Info,
-		Content:      bpMetadataObj.Spec.Content,
-		Interfaces:   bpMetadataObj.Spec.Interfaces,
-		Requirements: *requirements,
-	}
+	// create blueprint content i.e. documentation, icons, etc.
+	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.RootPath, readmeContent)
 
 	return bpMetadataObj, nil
 }
@@ -235,14 +234,13 @@ func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 }
 
 func (i *BlueprintInterface) create(bpPath string) error {
-	i, err := getBlueprintInterfaces(bpPath)
+	interfaces, err := getBlueprintInterfaces(bpPath)
 	if err != nil {
 		return err
 	}
 
-	if i.VariableGroups != nil {
-		i.VariableGroups = i.VariableGroups
-	}
+	i.Variables = interfaces.Variables
+	i.Outputs = interfaces.Outputs
 
 	return nil
 }

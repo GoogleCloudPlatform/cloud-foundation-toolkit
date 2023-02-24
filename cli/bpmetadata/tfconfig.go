@@ -217,7 +217,7 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 	}, nil
 }
 
-//build variable
+// build variable
 func getBlueprintVariable(modVar *tfconfig.Variable) BlueprintVariable {
 	return BlueprintVariable{
 		Name:        modVar.Name,
@@ -228,7 +228,7 @@ func getBlueprintVariable(modVar *tfconfig.Variable) BlueprintVariable {
 	}
 }
 
-//build output
+// build output
 func getBlueprintOutput(modOut *tfconfig.Output) BlueprintOutput {
 	return BlueprintOutput{
 		Name:        modOut.Name,

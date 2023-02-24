@@ -49,10 +49,14 @@ func TestGetRepoUrl(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote, tt.subDir)
-			_, err := GetRepoUrl(dir)
+			got, err := GetRepoUrl(dir)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("getRepoName() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("GetRepoUrl() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+
+			if got.String() != tt.repo {
+				t.Errorf("GetRepoUrl() = %v, want %v", got, tt.repo)
 			}
 		})
 	}
