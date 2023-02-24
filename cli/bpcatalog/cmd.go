@@ -67,5 +67,5 @@ func listCatalog(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	return render(repos, os.Stdout, catalogListFlags.format)
+	return render(repos, os.Stdout, catalogListFlags.format, viper.GetBool("verbose"))
 }

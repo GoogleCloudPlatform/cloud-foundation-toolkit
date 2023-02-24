@@ -1,0 +1,19 @@
+<table>
+<thead>
+    <tr>
+      <th>Category</th>
+      <th>Blueprint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+<tbody class="list">
+
+<tr>
+      <td>Containers</td>
+      <td><a
+href="" class="external">bar</a></td>
+      <td>lorem ipsom</td>
+</tr>
+
+</tbody>
+</table>

@@ -3,10 +3,10 @@
   "extends": [
     "config:base",
     ":semanticCommits",
-    ":preserveSemverRanges"
+    ":preserveSemverRanges",
+    ":rebaseStalePrs"
   ],
   "stabilityDays":7,
-  "ignorePaths": [],
   "labels": ["dependencies"],
     "vulnerabilityAlerts":{
      "labels":[
@@ -14,17 +14,18 @@
      ],
      "stabilityDays":0
   },
+  "separateMajorMinor":false,
+  "ignorePaths": ["infra/concourse/**", "config-connector/**", "docs/**"],
+  "additionalBranchPrefix": "{{parentDir}}-",
   "packageRules": [
     {
-      "matchDepTypes": ["module"],
-      "groupName": "TF modules",
-      "separateMajorMinor":false
+      "matchPaths": [".github/**"],
+      "extends": [":semanticCommitTypeAll(chore)"]
     },
     {
       "matchDepTypes": ["require"],
-      "groupName": "GO modules",
       "postUpdateOptions": ["gomodTidy"],
-      "separateMajorMinor":false
+      "groupName": "GO modules"
     },
     {
       "matchPackageNames": ["go"],

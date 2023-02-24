@@ -23,18 +23,13 @@ variable "org" {
   type        = string
 }
 
-variable "repo_list" {
-  description = "List of Repos"
-  type        = list(any)
-}
-
 variable "owner" {
   description = "Primary owner"
   type        = string
   nullable    = false
 }
 
-variable "add_owners" {
-  description = "Map of addtional owners as repo:owners"
-  type        = map(string)
+variable "repos_map" {
+  description = "Map of Repos"
+  type        = map(map(string))
 }

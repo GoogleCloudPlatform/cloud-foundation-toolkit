@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.4.0...infra/blueprint-test/v0.4.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* **deps:** update for go-sdk refactor ([#1217](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1217)) ([5c50728](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5c50728b825fda6187ca9b73151741c733e623ec))
+* remove terraform plan file needed for the terraform vet execution after validation ([#1321](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1321)) ([1edc5df](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1edc5df7267c78a917eec0f2b5ad3f4024ca5e98))
+
 ## [0.4.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.3.0...infra/blueprint-test/v0.4.0) (2022-12-02)
 
 

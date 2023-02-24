@@ -13,6 +13,9 @@ import (
 	"sigs.k8s.io/kustomize/kyaml/yaml"
 )
 
+// MIN_KPT_VERSION format: vMAJOR[.MINOR[.PATCH[-PRERELEASE]]]
+const MIN_KPT_VERSION = "v1.0.0-beta.16"
+
 type CmdCfg struct {
 	kptBinary string         // kpt binary
 	dir       string         // dir to execute commands in
@@ -57,6 +60,11 @@ func NewCmdConfig(t testing.TB, opts ...cmdOption) *CmdCfg {
 		}
 		kOpts.kptBinary = "kpt"
 	}
+	// Validate required KPT version
+	if err := utils.MinSemver("v" + kOpts.RunCmd("version"), MIN_KPT_VERSION); err != nil {
+		t.Fatalf("unable to validate minimum required kpt version: %v", err)
+	}
+
 	return kOpts
 }
 

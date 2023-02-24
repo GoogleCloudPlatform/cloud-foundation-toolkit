@@ -11,9 +11,9 @@ env:
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   KUBECTL_MINOR: "1.23"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
-  GATOR_MINOR: "3.9"
+  GATOR_MINOR: "3.11"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
-  GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases"
+  GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases/latest"
 
 jobs:
   update-tools:
@@ -24,8 +24,7 @@ jobs:
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          # Skip "KPT" till resolved: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1190
-          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT")
 
           for tool in ${tools[@]}
           do
@@ -85,15 +84,15 @@ jobs:
           git config user.name 'Cloud Foundation Bot'
           git config user.email 'cloud-foundation-bot@google.com'
           git add infra/build/Makefile
-          git diff-index --quiet HEAD || git commit -m "Update tools to ${{env.NEW_IMG_VERSION}}"
+          git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
-        uses: peter-evans/create-pull-request@dcd5fd746d53dd8de555c0f10bca6c35628be47a
+        uses: peter-evans/create-pull-request@24b0f8edad74dd5b08956ea2655c6818355ef8a6
         with:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
           committer: "Update Tooling Action <cloud-foundation-bot@google.com>"
-          title: "Update Tools to ${{env.NEW_IMG_VERSION}}"
+          title: "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
           body: |
             Updated tools to ${{env.NEW_IMG_VERSION}}
             ${{env.PR_UPDATE_BODY}}
