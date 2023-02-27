@@ -26,7 +26,7 @@ type BlueprintInfo struct {
 	ActuationTool  BlueprintActuationTool  `json:"actuationTool,omitempty" yaml:"actuationTool,omitempty"`
 	Description    *BlueprintDescription   `json:",omitempty" yaml:",omitempty"`
 	Icon           string                  `json:",omitempty" yaml:",omitempty"`
-	DeploymentTime BlueprintDeploymentTime `json:"deploymentTime,omitempty" yaml:"deploymentTime,omitempty"`
+	DeploymentTime BlueprintTimeEstimate   `json:"deploymentTime,omitempty" yaml:"deploymentTime,omitempty"`
 	CostEstimate   BlueprintCostEstimate   `json:",omitempty" yaml:",omitempty"`
 	CloudProducts  []BlueprintCloudProduct `json:",omitempty" yaml:",omitempty"`
 	QuotaDetails   []BlueprintQuotaDetail  `json:",omitempty" yaml:",omitempty"`
@@ -75,9 +75,9 @@ type BlueprintDescription struct {
 	Architecture []string `json:"architecture,omitempty" yaml:"architecture,omitempty"`
 }
 
-type BlueprintDeploymentTime struct {
-	Configuration int `json:"configuration,omitempty" yaml:"configuration,omitempty"`
-	Deployment    int `json:"deployment,omitempty" yaml:"deployment,omitempty"`
+type BlueprintTimeEstimate struct {
+	ConfigurationSecs int `json:"configuration,omitempty" yaml:"configuration,omitempty"`
+	DeploymentSecs    int `json:"deployment,omitempty" yaml:"deployment,omitempty"`
 }
 
 type BlueprintCostEstimate struct {
@@ -86,17 +86,33 @@ type BlueprintCostEstimate struct {
 }
 
 type BlueprintCloudProduct struct {
-	ProductId   string
-	PageUrl     string
-	Label       string
-	LocationKey bool
+	ProductId   string `json:",omitempty" yaml:",omitempty"`
+	PageUrl     string `json:",omitempty" yaml:",omitempty"`
+	Label       string `json:",omitempty" yaml:",omitempty"`
+	LocationKey bool   `json:",omitempty" yaml:",omitempty"`
 }
 
+type QuotaTypeEnum string
+
+const (
+	Fixed   QuotaTypeEnum = "FIXED"
+	Dynamic QuotaTypeEnum = "DYNAMIC"
+)
+
 type BlueprintQuotaDetail struct {
-	QuotaType            string              `yaml:"quotaType"`
-	DynamicPropertyNames []string            `yaml:"dynamicPropertyNames,omitempty"`
-	GceInstance          GceInstanceResource `yaml:"gceInstance,omitempty"`
-	GceDisk              GceDiskResource     `yaml:"gceDisk,omitempty"`
+	// QuotaType specifies if this Quota specification is Fixed or Dynamic.
+	// Fixed quota means that these resources will be required regardless
+	// of how the solution is configured while Dynamic means that the required
+	// resource counts/shapes can be changed.
+	QuotaType QuotaTypeEnum `yaml:"quotaType"`
+	// GceInstance specifies the configuration of a GCE instance shape.
+	GceInstance GceInstanceResource `yaml:"gceInstance,omitempty"`
+	// GceDisk specifies the configuration of a GCE disk in terms of type and size.
+	GceDisk GceDiskResource `yaml:"gceDisk,omitempty"`
+	// DynamicPropertyNames is a list of input variables that if provided will
+	// cause or require dynamic allocation of resources against the project quota. E.g.
+	// the no. of nodes or disk size etc.
+	DynamicPropertyNames []string `yaml:"dynamicPropertyNames,omitempty"`
 	DynamicResources     []struct {
 		GceInstance GceInstanceResource `yaml:"gceInstance,omitempty"`
 		GceDisk     GceDiskResource     `yaml:"gceDisk,omitempty"`
@@ -119,7 +135,7 @@ type BlueprintMiscContent struct {
 }
 
 type BlueprintArchitecture struct {
-	Diagram     string `json:"diagram,omitempty" yaml:"diagram,omitempty"`
+	DiagramUrl  string `json:"diagram,omitempty" yaml:"diagram,omitempty"`
 	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 }
 
