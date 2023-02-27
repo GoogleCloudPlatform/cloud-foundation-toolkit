@@ -22,16 +22,19 @@ func TestGetRepoUrl(t *testing.T) {
 			name:   "simple",
 			repo:   "https://github.com/foo/bar",
 			remote: defaultRemote,
+			want:   "https://github.com/foo/bar",
 		},
 		{
 			name:   "simple trailing",
 			repo:   "https://gitlab.com/foo/bar/",
 			remote: defaultRemote,
+			want:   "https://gitlab.com/foo/bar/",
 		},
 		{
 			name:   "no scheme",
 			repo:   "github.com/foo/bar",
 			remote: defaultRemote,
+			want:   "github.com/foo/bar",
 		},
 		{
 			name:    "invalid remote",
@@ -44,15 +47,20 @@ func TestGetRepoUrl(t *testing.T) {
 			repo:   "https://github.com/foo/bar",
 			subDir: "modules/bp1",
 			remote: defaultRemote,
+			want:   "https://github.com/foo/bar",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote, tt.subDir)
-			_, err := GetRepoUrl(dir)
+			got, err := GetRepoUrl(dir)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("getRepoName() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("GetRepoUrl() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+
+			if got != tt.want {
+				t.Errorf("GetRepoUrl() = %v, want %v", got, tt.want)
 			}
 		})
 	}

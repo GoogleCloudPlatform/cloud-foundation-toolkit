@@ -34,7 +34,7 @@ func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail) (*repoD
 		}
 
 		sourceUrl = &BlueprintRepoDetail{
-			Repo: repoUrl.String(),
+			Repo: repoUrl,
 		}
 	}
 

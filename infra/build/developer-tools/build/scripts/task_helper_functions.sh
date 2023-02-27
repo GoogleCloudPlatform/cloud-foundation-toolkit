@@ -406,6 +406,11 @@ function generate_modules() {
   if [[ -e /workspace/autogen_modules.json ]]; then
     autogen_modules=$(jq '.' /workspace/autogen_modules.json)
     python3 /usr/local/bin/generate_modules.py "$autogen_modules"
+
+    # formatting the generated modules since formatting does not apply
+    # to jinja templates
+    echo "Running terraform fmt"
+    terraform fmt -recursive    
   fi
 }
 
