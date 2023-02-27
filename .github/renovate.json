@@ -7,7 +7,6 @@
     ":rebaseStalePrs"
   ],
   "stabilityDays":7,
-  "ignorePaths": [],
   "labels": ["dependencies"],
     "vulnerabilityAlerts":{
      "labels":[
@@ -16,7 +15,8 @@
      "stabilityDays":0
   },
   "separateMajorMinor":false,
-  "ignorePaths": ["infra/concourse/**", "config-connector/**"],
+  "ignorePaths": ["infra/concourse/**", "config-connector/**", "docs/**"],
+  "additionalBranchPrefix": "{{parentDir}}-",
   "packageRules": [
     {
       "matchPaths": [".github/**"],
@@ -24,7 +24,8 @@
     },
     {
       "matchDepTypes": ["require"],
-      "postUpdateOptions": ["gomodTidy"]
+      "postUpdateOptions": ["gomodTidy"],
+      "groupName": "GO modules"
     },
     {
       "matchPackageNames": ["go"],

@@ -43,7 +43,7 @@ jobs:
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "v")
             elif [ "$tool" == "KUBECTL" ]; then
               # get latest KUBECTL_MINOR release
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name' | tr -d "v")
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name | sub(".*v(?<semver>[0-9]\\.[0-9]\\.[0-9])"; .semver)')
             elif [ "$tool" == "GATOR" ]; then
               # get latest GATOR_MINOR release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${GATOR_MINOR}'"))][0].tag_name' | tr -d "v")
@@ -87,7 +87,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
-        uses: peter-evans/create-pull-request@951d1b87f0fa1a50266797110286ac276d822c5e
+        uses: peter-evans/create-pull-request@24b0f8edad74dd5b08956ea2655c6818355ef8a6
         with:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
