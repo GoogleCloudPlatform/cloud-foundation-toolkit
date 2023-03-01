@@ -92,31 +92,35 @@ type BlueprintCloudProduct struct {
 	LocationKey bool   `json:",omitempty" yaml:",omitempty"`
 }
 
-type QuotaTypeEnum string
+type QuotaResourceType string
 
 const (
-	Fixed   QuotaTypeEnum = "FIXED"
-	Dynamic QuotaTypeEnum = "DYNAMIC"
+	GceInstance QuotaResourceType = "GCE_INSTANCE"
+	GceDisk     QuotaResourceType = "GCE_DISK"
+)
+
+type QuotaType string
+
+const (
+	MachineType QuotaType = "MACHINE_TYPE"
+	Cpus        QuotaType = "CPUs"
+	DiskType    QuotaType = "DISK_TYPE"
+	DiskSizeGb  QuotaType = "SIZE_GB"
 )
 
 type BlueprintQuotaDetail struct {
-	// QuotaType specifies if this Quota specification is Fixed or Dynamic.
-	// Fixed quota means that these resources will be required regardless
-	// of how the solution is configured while Dynamic means that the required
-	// resource counts/shapes can be changed.
-	QuotaType QuotaTypeEnum `yaml:"quotaType"`
-	// GceInstance specifies the configuration of a GCE instance shape.
-	GceInstance GceInstanceResource `yaml:"gceInstance,omitempty"`
-	// GceDisk specifies the configuration of a GCE disk in terms of type and size.
-	GceDisk GceDiskResource `yaml:"gceDisk,omitempty"`
-	// DynamicPropertyNames is a list of input variables that if provided will
-	// cause or require dynamic allocation of resources against the project quota. E.g.
-	// the no. of nodes or disk size etc.
-	DynamicPropertyNames []string `yaml:"dynamicPropertyNames,omitempty"`
-	DynamicResources     []struct {
-		GceInstance GceInstanceResource `yaml:"gceInstance,omitempty"`
-		GceDisk     GceDiskResource     `yaml:"gceDisk,omitempty"`
-	} `yaml:"dynamicResources,omitempty"`
+	// DynamicVariable, if provided, associates the provided input variable
+	// with the corresponding resource and quota type. In its absence, the quota
+	// detail is assumed to be fixed.
+	DynamicVariable string `json:"variable,omitempty" yaml:"variable,omitempty"`
+
+	// ResourceType is the type of resource the quota will be applied to i.e.
+	// GCE Instance or Disk etc.
+	ResourceType QuotaResourceType `json:"type" yaml:"type"`
+
+	// QuotaType is a key/value pair of the actual quotas an their corresponding
+	// values.
+	QuotaType map[QuotaType]string `json:"quotaType" yaml:"quotaType"`
 }
 
 type GceInstanceResource struct {
