@@ -51,6 +51,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
       _BILLING_ACCOUNT          = local.billing_account
       _FOLDER_ID                = each.value.folder_id
       _ORG_ID                   = local.org_id
+      _POLICY_ID                = each.key == "terraform-google-project-factory" ? local.policy_id : null
       _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
       _VOD_TEST_PROJECT_ID      = each.key == "terraform-google-media-cdn-vod" ? local.vod_test_project_id : null
       _FILE_LOGS_BUCKET         = lookup(local.enable_file_log, each.key, false) ? module.filelogs_bucket.url : null

@@ -17,6 +17,7 @@
 locals {
   org_id           = "943740911108"
   billing_account  = "01D904-DAF6EC-F34EF7"
+  policy_id        = "203772241124"
   cft_ci_group     = "cft-ci-robots@test.infra.cft.tips"
   gcp_admins_group = "gcp-admins@test.infra.cft.tips"
   ci_project_id    = "cloud-foundation-cicd"

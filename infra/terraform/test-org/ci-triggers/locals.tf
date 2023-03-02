@@ -39,6 +39,7 @@ locals {
   repo_folder             = { for key, value in data.terraform_remote_state.org.outputs.ci_repos_folders : contains(keys(local.custom_repo_mapping), key) ? local.custom_repo_mapping[key] : "terraform-google-${key}" => value if !contains(local.exclude_folders, value.folder_name) }
   org_id                  = data.terraform_remote_state.org.outputs.org_id
   billing_account         = data.terraform_remote_state.org.outputs.billing_account
+  policy_id               = data.terraform_remote_state.org.outputs.policy_id
   tf_validator_project_id = data.terraform_remote_state.tf-validator.outputs.project_id
   tf_validator_folder_id  = trimprefix(data.terraform_remote_state.org.outputs.folders["ci-terraform-validator"], "folders/")
   # tf validator "ancestry path" expects non-plural type names for historical reasons
