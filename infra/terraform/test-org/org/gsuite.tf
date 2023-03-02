@@ -39,8 +39,8 @@ locals {
     "roles/storage.admin",
   ]
 
-  ci_gsuite_sa_bucket      = "ci-gsuite-sa-secrets"
-  ci_gsuite_sa_bucket_path = "gsuite-sa.json"
+  ci_gsuite_sa_bucket = "ci-gsuite-sa-secrets"
+  // ci_gsuite_sa_bucket_path = "gsuite-sa.json"
 }
 
 resource "google_folder" "ci_gsuite_sa_folder" {
