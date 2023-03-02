@@ -43,6 +43,7 @@ locals {
     "roles/compute.orgSecurityResourceAdmin" : ["serviceAccount:${local.project_cleaner}"],
     "roles/resourcemanager.folderEditor" : ["serviceAccount:${local.project_cleaner}"],
     "roles/serviceusage.serviceUsageAdmin" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/accesscontextmanager.policyReader" : ["group:${local.cft_ci_group}"],
   }
 
   billing_policy = {
