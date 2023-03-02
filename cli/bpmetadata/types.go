@@ -123,16 +123,6 @@ type BlueprintQuotaDetail struct {
 	QuotaType map[QuotaType]string `json:"quotaType" yaml:"quotaType"`
 }
 
-type GceInstanceResource struct {
-	MachineType string `yaml:"machineType"`
-	Cpus        int    `yaml:"cpus"`
-}
-
-type GceDiskResource struct {
-	DiskType string `yaml:"diskType"`
-	SizeGb   int    `yaml:"sizeGb"`
-}
-
 type BlueprintMiscContent struct {
 	Name     string
 	Location string
