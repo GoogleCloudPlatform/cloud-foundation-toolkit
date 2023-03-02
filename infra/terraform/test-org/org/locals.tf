@@ -481,22 +481,22 @@ locals {
     {
       name        = "terraform-google-waap"
       org         = "GoogleCloudPlatform"
-      description = "Deploys the WAAP solution on Google Cloud."
+      description = "Deploys the WAAP solution on Google Cloud"
       owners      = "@gtsorbo"
       topics      = local.common_topics.ops
     },
     {
       name        = "terraform-google-cloud-workflows"
       org         = "GoogleCloudPlatform"
-      description = "Manage Cloud Workflows with optional Scheduler or Event Arc triggers."
+      description = "Manage Workflows with optional Scheduler or Event Arc triggers"
       owners      = "@anaik91"
       topics      = join(",", [local.common_topics.serverless, local.common_topics.devtools])
     },
     {
       name        = "terraform-google-cloud-armor"
       org         = "GoogleCloudPlatform"
-      description = "Deploy Cloud Armor Security policy"
-      owners      = "@imrannayer @belgana"
+      description = "Deploy Cloud Armor security policy"
+      owners      = "@imrannayer"
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
     },
     {
@@ -512,6 +512,14 @@ locals {
       description = "Deploys Cloud Functions (Gen 2)"
       owners      = "@prabhu34"
       topics      = "cloudfunctions,functions,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
+    },
+    {
+      name         = "terraform-dynamic-python-webapp"
+      short_name   = "dynamic-python-webapp"
+      org          = "GoogleCloudPlatform"
+      description  = "Deploy a dynamic python webapp"
+      owners       = "@glasnt @donmccasland"
+      homepage_url = "avocano.dev"
     },
   ]
 }
