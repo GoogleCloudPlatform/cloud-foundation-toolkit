@@ -32,6 +32,7 @@ locals {
     "anthos-samples"            = "anthos-samples"
     "docs-samples"              = "terraform-docs-samples"
     "dynamic-python-webapp"     = "terraform-dynamic-python-webapp"
+    "deploy-java-multizone"     = "terraform-example-deploy-java-multizone"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
