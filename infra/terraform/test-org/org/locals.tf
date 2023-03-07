@@ -521,5 +521,12 @@ locals {
       owners       = "@glasnt @donmccasland"
       homepage_url = "avocano.dev"
     },
+    {
+      name        = "terraform-example-deploy-java-multizone"
+      short_name  = "deploy-java-multizone"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy a multizone Java application"
+      owners      = "@donmccasland"
+    },
   ]
 }
