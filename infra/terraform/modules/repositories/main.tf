@@ -18,7 +18,7 @@ resource "github_repository" "repo" {
   for_each     = var.repos_map
   name         = each.value.name
   description  = try(each.value.description, null)
-  homepage_url = try(each.value.url, "https://registry.terraform.io/modules/${each.value.org}/${trimprefix(each.value.name, "terraform-google-")}/google")
+  homepage_url = try(each.value.homepage_url, "https://registry.terraform.io/modules/${each.value.org}/${trimprefix(each.value.name, "terraform-google-")}/google")
   topics       = setunion(["cft-terraform"], try(split(",", trimspace(each.value.topics)), []))
 
   allow_merge_commit          = false
