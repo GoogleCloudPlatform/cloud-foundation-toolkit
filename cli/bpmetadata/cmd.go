@@ -252,7 +252,7 @@ func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent 
 		for _, li := range documentation.listItems {
 			doc := BlueprintListContent{
 				Title: li.text,
-				Url:   li.url,
+				URL:   li.url,
 			}
 
 			docListToSet = append(docListToSet, doc)

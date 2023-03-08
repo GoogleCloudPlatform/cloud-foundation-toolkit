@@ -10,27 +10,27 @@ const (
 	MultiLineString ExtensionType = "MULTI_LINE_STRING"
 
 	// GCE related.
-	GceDiskImage       ExtensionType = "GCE_DISK_IMAGE"
-	GceDiskType        ExtensionType = "GCE_DISK_TYPE"
-	GceDiskSize        ExtensionType = "GCE_DISK_SIZE"
-	GceMachineType     ExtensionType = "GCE_MACHINE_TYPE"
-	GceNetwork         ExtensionType = "GCE_NETWORK"
-	GceZone            ExtensionType = "GCE_ZONE"
-	GceSubnetwork      ExtensionType = "GCE_SUBNETWORK"
-	GceRegion          ExtensionType = "GCE_REGION"
-	GceGpuType         ExtensionType = "GCE_GPU_TYPE"
-	GceGpuCount        ExtensionType = "GCE_GPU_COUNT"
-	GceExternalIp      ExtensionType = "GCE_EXTERNAL_IP"
-	GceIpForwarding    ExtensionType = "GCE_IP_FORWARDING"
-	GceFirewall        ExtensionType = "GCE_FIREWALL"
-	GceFirewallRange   ExtensionType = "GCE_FIREWALL_RANGE"
-	GceGenericResource ExtensionType = "GCE_GENERIC_RESOURCE"
+	GCEDiskImage       ExtensionType = "GCE_DISK_IMAGE"
+	GCEDiskType        ExtensionType = "GCE_DISK_TYPE"
+	GCEDiskSize        ExtensionType = "GCE_DISK_SIZE"
+	GCEMachineType     ExtensionType = "GCE_MACHINE_TYPE"
+	GCENetwork         ExtensionType = "GCE_NETWORK"
+	GCEZone            ExtensionType = "GCE_ZONE"
+	GCESubnetwork      ExtensionType = "GCE_SUBNETWORK"
+	GCERegion          ExtensionType = "GCE_REGION"
+	GCEGPUType         ExtensionType = "GCE_GPU_TYPE"
+	GCEGPUCount        ExtensionType = "GCE_GPU_COUNT"
+	GCEExternalIP      ExtensionType = "GCE_EXTERNAL_IP"
+	GCEIPForwarding    ExtensionType = "GCE_IP_FORWARDING"
+	GCEFirewall        ExtensionType = "GCE_FIREWALL"
+	GCEFirewallRange   ExtensionType = "GCE_FIREWALL_RANGE"
+	GCEGenericResource ExtensionType = "GCE_GENERIC_RESOURCE"
 
 	// GCS related.
-	GcsBucket ExtensionType = "GCS_BUCKET"
+	GCSBucket ExtensionType = "GCS_BUCKET"
 
 	// IAM related.
-	IamServiceAccount ExtensionType = "IAM_SERVICE_ACCOUNT"
+	IAMServiceAccount ExtensionType = "IAM_SERVICE_ACCOUNT"
 )
 
 // An extension for variables defined as part of DisplayVariable. The
@@ -44,34 +44,34 @@ type GooglePropertyExtension struct {
 	// property from the schema, which must have type GCE_ZONE.
 	ZoneProperty string `yaml:"zoneProperty,omitempty"`
 
-	// Property-specific extensions
-	GceMachineType    GceMachineTypeExtension     `yaml:"gceMachineType,omitempty"`
-	GceDiskSize       GceDiskSizeExtension        `yaml:"gceDiskSize,omitempty"`
-	GceSubnetwork     GceSubnetworkExtension      `yaml:"gceMachineType,omitempty"`
-	GceResource       GceGenericResourceExtension `yaml:"gceSubnetwork,omitempty"`
-	GceGpuType        GceGpuTypeExtension         `yaml:"gceGpuType,omitempty"`
-	GceGpuCount       GceGpuCountExtension        `yaml:"gceGpuCount,omitempty"`
-	GceNetwork        GceNetworkExtension         `yaml:"gceNetwork,omitempty"`
-	GceExternalIp     GceExternalIpExtension      `yaml:"gceExternalIp,omitempty"`
-	GceIpForwarding   GceIpForwardingExtension    `yaml:"gceIpForwarding,omitempty"`
-	GceFirewall       GceFirewallExtension        `yaml:"gceFirewall,omitempty"`
-	GceFirewallRange  GceFirewallRangeExtension   `yaml:"gceFirewallRange,omitempty"`
-	GceZone           GceLocationExtension        `yaml:"gceZone,omitempty"`
-	GceRegion         GceLocationExtension        `yaml:"gceRegion,omitempty"`
-	IamServiceAccount IamServiceAccountExtension  `yaml:"iamServiceAccount,omitempty"`
+	// Property-specific extensions.
+	GCEMachineType    GCEMachineTypeExtension     `yaml:"gceMachineType,omitempty"`
+	GCEDiskSize       GCEDiskSizeExtension        `yaml:"gceDiskSize,omitempty"`
+	GCESubnetwork     GCESubnetworkExtension      `yaml:"gceMachineType,omitempty"`
+	GCEResource       GCEGenericResourceExtension `yaml:"gceSubnetwork,omitempty"`
+	GCEGPUType        GCEGPUTypeExtension         `yaml:"gceGpuType,omitempty"`
+	GCEGPUCount       GCEGPUCountExtension        `yaml:"gceGpuCount,omitempty"`
+	GCENetwork        GCENetworkExtension         `yaml:"gceNetwork,omitempty"`
+	GCEExternalIP     GCEExternalIPExtension      `yaml:"gceExternalIp,omitempty"`
+	GCEIPForwarding   GCEIPForwardingExtension    `yaml:"gceIpForwarding,omitempty"`
+	GCEFirewall       GCEFirewallExtension        `yaml:"gceFirewall,omitempty"`
+	GCEFirewallRange  GCEFirewallRangeExtension   `yaml:"gceFirewallRange,omitempty"`
+	GCEZone           GCELocationExtension        `yaml:"gceZone,omitempty"`
+	GCERegion         GCELocationExtension        `yaml:"gceRegion,omitempty"`
+	IAMServiceAccount IAMServiceAccountExtension  `yaml:"iamServiceAccount,omitempty"`
 }
 
-type GceLocationExtension struct {
-	WhitelistedZones   []string `yaml:"whitelistedZones,omitempty"`
-	WhitelistedRegions []string `yaml:"whitelistedRegions,omitempty"`
+type GCELocationExtension struct {
+	AllowlistedZones   []string `yaml:"allowlistedZones,omitempty"`
+	AllowlistedRegions []string `yaml:"allowlistedRegions,omitempty"`
 }
 
-type GceMachineTypeExtension struct {
+type GCEMachineTypeExtension struct {
 	// Minimum cpu. Used to filter the list of selectable machine types.
-	MinCpu int `yaml:"minCpu,omitempty"`
+	MinCPU int `yaml:"minCpu,omitempty"`
 
 	// Minimum ram. Used to filter the list of selectable machine types.
-	MinRamGb int `yaml:"minRamGb,omitempty"`
+	MinRAMGB int `yaml:"minRamGb,omitempty"`
 
 	// If true, custom machine types will not be selectable.
 	// More info:
@@ -79,83 +79,83 @@ type GceMachineTypeExtension struct {
 	DisallowCustomMachineTypes bool `yaml:"disallowCustomMachineTypes,omitempty"`
 }
 
-type GceGpuTypeExtension struct {
+type GCEGPUTypeExtension struct {
 	MachineType string `yaml:"machineType"`
-	GpuType     string `yaml:"gpuType"`
+	GPUType     string `yaml:"gpuType"`
 }
 
-type GceGpuCountExtension struct {
+type GCEGPUCountExtension struct {
 	// This field references another variable from the schema,
-	// which must have type GceMachineType
+	// which must have type GCEMachineType.
 	MachineTypeVariable string `yaml:"machineTypeVariable"`
 }
 
-type GceDiskSizeExtension struct {
+type GCEDiskSizeExtension struct {
 	// The allowable range of disk sizes depends on the disk type. This field
-	// references another variable from the schema, which must have type GceDiskType
+	// references another variable from the schema, which must have type GCEDiskType.
 	DiskTypeVariable string `yaml:"diskTypeVariable"`
 }
 
-type GceNetworkExtension struct {
+type GCENetworkExtension struct {
 	// AllowSharedVpcs indicates this solution can receive
 	// shared VPC selflinks (fully qualified compute links).
-	AllowSharedVpcs bool `yaml:"allowSharedVpcs"`
+	AllowSharedVPCs bool `yaml:"allowSharedVpcs"`
 	// Used to indicate to which machine type this network interface will be
 	// attached to.
 	MachineTypeVariable string `yaml:"machineTypeVariable"`
 }
 
-type ExternalIpType string
+type ExternalIPType string
 
 const (
-	IpEphemeral ExternalIpType = "EPHEMERAL"
-	IpStaic     ExternalIpType = "STATIC"
+	IPEphemeral ExternalIPType = "EPHEMERAL"
+	IPStaic     ExternalIPType = "STATIC"
 )
 
-type GceExternalIpExtension struct {
+type GCEExternalIPExtension struct {
 	// NetworkVariable is used to indicate the network variable in the schema
 	// this external IP belongs to.
 	NetworkVariable string `yaml:"networkVariable"`
 
 	// Type specifies if the external IP is ephemeral or static.
 	// Defaults to ephemeral if not specified.
-	Type ExternalIpType `yaml:"externalIpType,omitempty"`
+	Type ExternalIPType `yaml:"externalIpType,omitempty"`
 }
 
-type GceIpForwardingExtension struct {
+type GCEIPForwardingExtension struct {
 	// NetworkVariable is used to indicate the network variable in the schema
 	// this external IP belongs to.
 	NetworkVariable string `yaml:"networkVariable"`
 	NotConfigurable bool   `yaml:"notConfigurable"`
 }
 
-type GceFirewallExtension struct {
+type GCEFirewallExtension struct {
 	// NetworkVariable is used to indicate the network variable in the schema
 	// this external IP belongs to.
 	NetworkVariable string `yaml:"networkVariable"`
 }
 
-type GceFirewallRangeExtension struct {
+type GCEFirewallRangeExtension struct {
 	// FirewallVariable is used to indicate the firewall variable with the type
-	// GceFirewall in the schema to which this firewall range belongs to.
+	// GCEFirewall in the schema to which this firewall range belongs to.
 	FirewallVariable string `yaml:"firewallVariable"`
 }
 
-type GceSubnetworkExtension struct {
+type GCESubnetworkExtension struct {
 	// Subnetwork variable requires a network context in order to determine the
 	// set of available subnetworks. This field references another
-	// variable from the schema, which must have type GceNetwork.
+	// variable from the schema, which must have type GCENetwork.
 	NetworkVariable string `yaml:"networkVariable"`
 }
 
-type GceGenericResourceExtension struct {
+type GCEGenericResourceExtension struct {
 	// GCE resource type to be fetched. This field references another
-	// property from the schema, which must have type GceGenericResource.
+	// property from the schema, which must have type GCEGenericResource.
 	ResourceVariable string `yaml:"resourceVariable"`
 }
 
-type IamServiceAccountExtension struct {
+type IAMServiceAccountExtension struct {
 	// List of IAM roles that to  grant to a new SA, or the roles to filter
-	// existing SAs with
+	// existing SAs with.
 	Roles []string `yaml:"roles"`
 }

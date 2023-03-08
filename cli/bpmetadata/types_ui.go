@@ -1,27 +1,27 @@
 package bpmetadata
 
-// BlueprintUI is the top-level structure for holding UI specific metadata
+// BlueprintUI is the top-level structure for holding UI specific metadata.
 type BlueprintUI struct {
-	// The top-level input section that defines the list of properties and
-	// their sections on the deployment page
+	// The top-level input section that defines the list of variables and
+	// their sections on the deployment page.
 	Input BlueprintUIInput `yaml:"input"`
 
-	// The top-level section for listing runtime (or solution output) information
-	// i.e. the console URL for the VM or a button to ssh into the VM etc based on
+	// The top-level section for listing runtime (or blueprint output) information
+	// i.e. the console URL for the VM or a button to ssh into the VM etc based on.
 	Runtime BlueprintUIOutput `yaml:"runtime"`
 
-	// The solution version corresponding to the version in the
+	// The blueprint version corresponding to the version in the
 	// standard metadata file for keeping data in sync.
 	Version string `yaml:"version"`
 }
 
-// BlueprintUIInput is the structure for holding Input and Input Section (i.e. groups) specific metadata
+// BlueprintUIInput is the structure for holding Input and Input Section (i.e. groups) specific metadata.
 type BlueprintUIInput struct {
 
-	// Properties is a map defining all inputs on the UI
+	// variables is a map defining all inputs on the UI.
 	DisplayVariables map[string]DisplayVariable `yaml:"variables"`
 
-	// Sections is a generic structure for grouping inputs together
+	// Sections is a generic structure for grouping inputs together.
 	DisplaySections []DisplaySection `yaml:"sections"`
 }
 
@@ -34,52 +34,49 @@ type DisplayVariable struct {
 	// Visible title for the variable on the UI.
 	Title bool `yaml:"title,omitempty"`
 
-	// A flag to hide or show the property on the UI.
+	// A flag to hide or show the variable on the UI.
 	Visible bool `yaml:"visible,omitempty"`
 
-	// Property tooltip.
+	// Variable tooltip.
 	Tooltip string `yaml:"tooltip,omitempty"`
 
 	// Placeholder text (when there is no default).
 	Placeholder string `yaml:"placeholder,omitempty"`
 
-	// Text describing the validation rules for the property. Typically shown
+	// Text describing the validation rules for the variable. Typically shown
 	// after an invalid input.
 	Validation string `yaml:"validation,omitempty"`
 
-	// The pattern for the value for the input variable
-	Pattern string `yaml:"pattern,omitempty"`
-
-	// Minimum no. of values for the input variable
+	// Minimum no. of values for the input variable.
 	Minimum int `yaml:"min,omitempty"`
 
-	// Max no. of values for the input variable
+	// Max no. of values for the input variable.
 	Maximum int `yaml:"max,omitempty"`
 
-	// The name of a section to which this property belongs.
-	// Properties belong to the root section if this field is
+	// The name of a section to which this variable belongs.
+	// variables belong to the root section if this field is
 	// not set.
 	Section string `yaml:"section,omitempty"`
 
-	// Designates that this property has no impact on the costs, quotas, or
+	// Designates that this variable has no impact on the costs, quotas, or
 	// permissions associated with the resources in the expanded deployment.
-	// Typically true for application-specific properties that do not affect the
+	// Typically true for application-specific variables that do not affect the
 	// size or number of instances in the deployment.
-	NoResourceImpact bool `yaml:"noResourceImpact,omitempty"`
+	ResourceImpact bool `yaml:"resourceImpact,omitempty"`
 
-	// UI property extension associated with the input variable
-	UIPropertyExtension GooglePropertyExtension `yaml:"x-googleProperty,omitempty"`
+	// UI extension associated with the input variable.
+	UIDisplayVariableExtension GooglePropertyExtension `yaml:"x-googleProperty,omitempty"`
 }
 
-// A logical group of properties. [Section][]s may also be grouped into
-// sub-sections. Child of [Input][]
+// A logical group of variables. [Section][]s may also be grouped into
+// sub-sections.
 type DisplaySection struct {
 	// The name of the section, referenced by DisplayVariable.Section
 	// Section names must be unique.
 	Name string `yaml:"name"`
 
 	// Section title.
-	// If not provided, name will be used instead
+	// If not provided, name will be used instead.
 	Title string `yaml:"title,omitempty"`
 
 	// Section tooltip.
@@ -93,7 +90,7 @@ type DisplaySection struct {
 }
 
 type BlueprintUIOutput struct {
-	// Short message to be displayed while the solution is deploying.
+	// Short message to be displayed while the blueprint is deploying.
 	// At most 128 characters.
 	OutputMessage string `yaml:"outputMessage,omitempty"`
 
