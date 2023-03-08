@@ -528,5 +528,12 @@ locals {
       description = "Deploy a multizone Java application"
       owners      = "@donmccasland"
     },
+    {
+      name        = "terraform-google-itar-architectures"
+      org         = "GoogleCloudPlatform"
+      description = "Includes use cases for deploying ITAR-aligned architectures on Google Cloud"
+      owners      = "@gtsorbo"
+      topics      = join([local.common_topics.compute], "compliance")
+    },
   ]
 }
