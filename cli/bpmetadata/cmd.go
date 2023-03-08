@@ -57,6 +57,13 @@ func generate(cmd *cobra.Command, args []string) error {
 
 	var allBpPaths []string
 	currBpPath := path.Join(wdPath, mdFlags.path)
+	_, err = os.Stat(path.Join(currBpPath, readmeFileName))
+
+	// throw an error and exit if root level readme.md doesn't exist
+	if err != nil {
+		return fmt.Errorf("Top-level module does not have a readme. Details: %w\n", err)
+	}
+
 	allBpPaths = append(allBpPaths, currBpPath)
 	var errors []string
 
@@ -81,14 +88,9 @@ func generate(cmd *cobra.Command, args []string) error {
 		// check if module path has readme.md
 		_, err := os.Stat(path.Join(modPath, readmeFileName))
 
-		// throw an error and exit if root module doesn't have a readme.md
-		if !strings.Contains(modPath, modulesPath+"/") && err != nil {
-			return fmt.Errorf("Top-level module does not have a readme. Details: %w\n", err)
-		}
-
 		// log info if a sub-module doesn't have a readme.md and continue
 		if err != nil {
-			Log.Info("Skiping metadata for sub-module", "Path:", modPath)
+			Log.Info("Skipping metadata for sub-module identified as an internal module", "Path:", modPath)
 			continue
 		}
 
