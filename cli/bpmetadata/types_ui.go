@@ -43,9 +43,10 @@ type DisplayVariable struct {
 	// Placeholder text (when there is no default).
 	Placeholder string `yaml:"placeholder,omitempty"`
 
-	// Text describing the validation rules for the variable. Typically shown
-	// after an invalid input.
-	Validation string `yaml:"validation,omitempty"`
+	// Text describing the validation rules for the variable based
+	// on a regular expression.
+	// Typically shown after an invalid input.
+	RegExValidation string `yaml:"regexValidation,omitempty"`
 
 	// Minimum no. of values for the input variable.
 	Minimum int `yaml:"min,omitempty"`
@@ -116,6 +117,7 @@ type UIActionItem struct {
 	Snippet string `yaml:"snippet"`
 
 	// If present, this expression determines whether the item is shown.
-	// Boolean expression.
+	// Should be in the form of a Boolean expression e.g. outputs().hasExternalIP
+	// where `externalIP` is the output.
 	ShowIf string `yaml:"showIf,omitempty"`
 }

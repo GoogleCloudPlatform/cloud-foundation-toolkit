@@ -18,6 +18,7 @@ type BlueprintMetadataSpec struct {
 	Content      BlueprintContent      `json:",inline" yaml:",inline"`
 	Interfaces   BlueprintInterface    `json:",inline" yaml:",inline"`
 	Requirements BlueprintRequirements `json:",inline" yaml:",inline"`
+	UI           BlueprintUI           `json:",inline" yaml:",inline"`
 }
 
 type BlueprintInfo struct {
