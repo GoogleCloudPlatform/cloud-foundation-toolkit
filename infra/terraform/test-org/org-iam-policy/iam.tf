@@ -17,7 +17,7 @@
 
 locals {
   cft_ci_group          = "cft-ci-robots@test.infra.cft.tips"
-  cft_dev_group         = "cft-developers@dev.infra.cft.tips"
+  cft_dev_group         = "cft-developers@develop.blueprints.joonix.net"
   gcp_admins_group_test = "gcp-admins@test.infra.cft.tips"
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
 
