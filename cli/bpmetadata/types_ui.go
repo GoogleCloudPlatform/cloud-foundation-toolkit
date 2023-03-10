@@ -9,10 +9,6 @@ type BlueprintUI struct {
 	// The top-level section for listing runtime (or blueprint output) information
 	// i.e. the console URL for the VM or a button to ssh into the VM etc based on.
 	Runtime BlueprintUIOutput `yaml:"runtime"`
-
-	// The blueprint version corresponding to the version in the
-	// standard metadata file for keeping data in sync.
-	Version string `yaml:"version"`
 }
 
 // BlueprintUIInput is the structure for holding Input and Input Section (i.e. groups) specific metadata.
@@ -66,6 +62,14 @@ type DisplayVariable struct {
 	ResourceImpact bool `yaml:"resourceImpact,omitempty"`
 
 	// UI extension associated with the input variable.
+	// E.g. for rendering a GCE machine type selector:
+	//
+	// x-googleProperty:
+	//   type: GCE_MACHINE_TYPE
+	//   zoneProperty: myZone
+	//   gceMachineType:
+	//     minCpu: 2
+	//     minRamGb: 6
 	UIDisplayVariableExtension GooglePropertyExtension `yaml:"x-googleProperty,omitempty"`
 }
 
