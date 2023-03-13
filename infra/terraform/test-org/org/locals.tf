@@ -533,7 +533,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Includes use cases for deploying ITAR-aligned architectures on Google Cloud"
       owners      = "@gtsorbo"
-      topics      = join([local.common_topics.compute], "compliance")
+      topics      = join(",", [local.common_topics.compute], ["compliance"])
     },
   ]
 }
