@@ -33,7 +33,12 @@ locals {
     "roles/resourcemanager.folderAdmin" : ["group:${local.gcp_admins_group_test}"],
     "roles/resourcemanager.folderViewer" : ["serviceAccount:${local.project_cleaner}"],
     "roles/resourcemanager.lienModifier" : ["serviceAccount:${local.project_cleaner}"],
-    "roles/resourcemanager.organizationAdmin" : ["group:${local.cft_ci_group}", "group:${local.gcp_admins_group_test}", ],
+    "roles/resourcemanager.organizationAdmin" : [
+      "group:${local.cft_ci_group}",
+      "group:${local.gcp_admins_group_test}",
+      "serviceAccount:${data.google_secret_manager_secret_version.org-admin-sa.secret_data}",
+    ],
+    "roles/iam.organizationRoleAdmin" : ["serviceAccount:${data.google_secret_manager_secret_version.org-role-admin-sa.secret_data}", ],
     "roles/resourcemanager.organizationViewer" : ["group:${local.cft_ci_group}"],
     "roles/resourcemanager.projectDeleter" : ["serviceAccount:${local.project_cleaner}"],
     "roles/owner" : ["group:${local.gcp_admins_group_test}", "serviceAccount:${local.project_cleaner}"],
@@ -57,6 +62,16 @@ locals {
       "serviceAccount:${local.ci_gsuite_sa}",
     ]
   }
+}
+
+data "google_secret_manager_secret_version" "org-admin-sa" {
+  project = "cloud-foundation-cicd"
+  secret  = "org-admin-sa"
+}
+
+data "google_secret_manager_secret_version" "org-role-admin-sa" {
+  project = "cloud-foundation-cicd"
+  secret  = "org-role-admin-sa"
 }
 
 resource "google_organization_iam_policy" "organization" {
