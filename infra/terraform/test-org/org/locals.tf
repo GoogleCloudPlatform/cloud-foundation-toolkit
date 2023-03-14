@@ -17,8 +17,8 @@
 locals {
   org_id           = "943740911108"
   billing_account  = "01D904-DAF6EC-F34EF7"
-  cft_ci_group     = "cft-ci-robots@test.infra.cft.tips"
-  gcp_admins_group = "gcp-admins@test.infra.cft.tips"
+  cft_ci_group     = "cft-ci-robots@test.blueprints.joonix.net"
+  gcp_admins_group = "gcp-admins@test.blueprints.joonix.net"
   ci_project_id    = "cloud-foundation-cicd"
 
   folders = {
