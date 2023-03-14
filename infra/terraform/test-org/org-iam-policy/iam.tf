@@ -16,13 +16,13 @@
 
 
 locals {
-  cft_ci_group          = "cft-ci-robots@test.infra.cft.tips"
+  cft_ci_group          = "cft-ci-robots@test.blueprints.joonix.net"
   cft_dev_group         = "cft-developers@develop.blueprints.joonix.net"
-  gcp_admins_group_test = "gcp-admins@test.infra.cft.tips"
+  gcp_admins_group_test = "gcp-admins@test.blueprints.joonix.net"
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
 
   ci_gsuite_sa           = "ci-gsuite-sa@ci-gsuite-sa-project.iam.gserviceaccount.com"
-  cft_admin              = "cft-admin@test.infra.cft.tips"
+  cft_admin              = "cft-admin@test.blueprints.joonix.net"
   foundation_leads_group = "cloud-foundation-leads@google.com"
 
   policy = {
