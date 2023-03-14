@@ -15,11 +15,12 @@
  */
 
 locals {
-  org_id           = "943740911108"
-  billing_account  = "01D904-DAF6EC-F34EF7"
-  cft_ci_group     = "cft-ci-robots@test.blueprints.joonix.net"
-  gcp_admins_group = "gcp-admins@test.blueprints.joonix.net"
-  ci_project_id    = "cloud-foundation-cicd"
+  org_id              = "943740911108"
+  old_billing_account = "01D904-DAF6EC-F34EF7"
+  billing_account     = "0138EF-C93849-98B0B5"
+  cft_ci_group        = "cft-ci-robots@test.blueprints.joonix.net"
+  gcp_admins_group    = "gcp-admins@test.blueprints.joonix.net"
+  ci_project_id       = "cloud-foundation-cicd"
 
   folders = {
     "ci-projects" = module.folders-root.ids["ci-projects"]

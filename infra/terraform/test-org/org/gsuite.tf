@@ -56,7 +56,7 @@ module "ci_gsuite_sa_project" {
   project_id      = "ci-gsuite-sa-project"
   org_id          = local.org_id
   folder_id       = google_folder.ci_gsuite_sa_folder.id
-  billing_account = local.billing_account
+  billing_account = local.old_billing_account
 
   labels = {
     cft-ci = "permanent"
@@ -98,11 +98,6 @@ resource "google_folder_iam_member" "ci_gsuite_sa_folder" {
   member = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
 }
 
-resource "google_billing_account_iam_member" "ci_gsuite_sa_billing" {
-  billing_account_id = local.billing_account
-  role               = "roles/billing.user"
-  member             = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
-}
 
 // Generate a json key and put it into the secrets bucket.
 //TODO(bbaiju): Re enable if needed for any CI
