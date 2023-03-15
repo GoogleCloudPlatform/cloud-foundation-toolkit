@@ -16,13 +16,13 @@
 
 
 locals {
-  cft_ci_group          = "cft-ci-robots@test.infra.cft.tips"
-  cft_dev_group         = "cft-developers@dev.infra.cft.tips"
-  gcp_admins_group_test = "gcp-admins@test.infra.cft.tips"
+  cft_ci_group          = "cft-ci-robots@test.blueprints.joonix.net"
+  cft_dev_group         = "cft-developers@develop.blueprints.joonix.net"
+  gcp_admins_group_test = "gcp-admins@test.blueprints.joonix.net"
   project_cleaner       = "project-cleaner-function@${data.terraform_remote_state.project_cleaner.outputs.project_id}.iam.gserviceaccount.com"
 
   ci_gsuite_sa           = "ci-gsuite-sa@ci-gsuite-sa-project.iam.gserviceaccount.com"
-  cft_admin              = "cft-admin@test.infra.cft.tips"
+  cft_admin              = "cft-admin@test.blueprints.joonix.net"
   foundation_leads_group = "cloud-foundation-leads@google.com"
 
   policy = {
@@ -33,7 +33,12 @@ locals {
     "roles/resourcemanager.folderAdmin" : ["group:${local.gcp_admins_group_test}"],
     "roles/resourcemanager.folderViewer" : ["serviceAccount:${local.project_cleaner}"],
     "roles/resourcemanager.lienModifier" : ["serviceAccount:${local.project_cleaner}"],
-    "roles/resourcemanager.organizationAdmin" : ["group:${local.cft_ci_group}", "group:${local.gcp_admins_group_test}", ],
+    "roles/resourcemanager.organizationAdmin" : [
+      "group:${local.cft_ci_group}",
+      "group:${local.gcp_admins_group_test}",
+      "serviceAccount:${data.google_secret_manager_secret_version.org-admin-sa.secret_data}",
+    ],
+    "roles/iam.organizationRoleAdmin" : ["serviceAccount:${data.google_secret_manager_secret_version.org-role-admin-sa.secret_data}", ],
     "roles/resourcemanager.organizationViewer" : ["group:${local.cft_ci_group}"],
     "roles/resourcemanager.projectDeleter" : ["serviceAccount:${local.project_cleaner}"],
     "roles/owner" : ["group:${local.gcp_admins_group_test}", "serviceAccount:${local.project_cleaner}"],
@@ -43,6 +48,7 @@ locals {
     "roles/compute.orgSecurityResourceAdmin" : ["serviceAccount:${local.project_cleaner}"],
     "roles/resourcemanager.folderEditor" : ["serviceAccount:${local.project_cleaner}"],
     "roles/serviceusage.serviceUsageAdmin" : ["serviceAccount:${local.project_cleaner}"],
+    "roles/accesscontextmanager.policyReader" : ["group:${local.cft_ci_group}"],
   }
 
   billing_policy = {
@@ -56,6 +62,16 @@ locals {
       "serviceAccount:${local.ci_gsuite_sa}",
     ]
   }
+}
+
+data "google_secret_manager_secret_version" "org-admin-sa" {
+  project = "cloud-foundation-cicd"
+  secret  = "org-admin-sa"
+}
+
+data "google_secret_manager_secret_version" "org-role-admin-sa" {
+  project = "cloud-foundation-cicd"
+  secret  = "org-role-admin-sa"
 }
 
 resource "google_organization_iam_policy" "organization" {

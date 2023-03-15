@@ -27,7 +27,7 @@ module "ci_bq_external_data_project" {
   project_id      = "ci-bq-external-data-project"
   org_id          = local.org_id
   folder_id       = google_folder.ci_bq_external_data_folder.id
-  billing_account = local.billing_account
+  billing_account = local.old_billing_account
 
   labels = {
     cft-ci = "permanent"

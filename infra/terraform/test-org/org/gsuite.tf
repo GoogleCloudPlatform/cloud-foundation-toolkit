@@ -39,8 +39,8 @@ locals {
     "roles/storage.admin",
   ]
 
-  ci_gsuite_sa_bucket      = "ci-gsuite-sa-secrets"
-  ci_gsuite_sa_bucket_path = "gsuite-sa.json"
+  ci_gsuite_sa_bucket = "ci-gsuite-sa-secrets"
+  // ci_gsuite_sa_bucket_path = "gsuite-sa.json"
 }
 
 resource "google_folder" "ci_gsuite_sa_folder" {
@@ -56,7 +56,7 @@ module "ci_gsuite_sa_project" {
   project_id      = "ci-gsuite-sa-project"
   org_id          = local.org_id
   folder_id       = google_folder.ci_gsuite_sa_folder.id
-  billing_account = local.billing_account
+  billing_account = local.old_billing_account
 
   labels = {
     cft-ci = "permanent"
@@ -98,17 +98,12 @@ resource "google_folder_iam_member" "ci_gsuite_sa_folder" {
   member = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
 }
 
-resource "google_billing_account_iam_member" "ci_gsuite_sa_billing" {
-  billing_account_id = local.billing_account
-  role               = "roles/billing.user"
-  member             = "serviceAccount:${google_service_account.ci_gsuite_sa.email}"
-}
 
 // Generate a json key and put it into the secrets bucket.
-
-resource "google_service_account_key" "ci_gsuite_sa" {
-  service_account_id = google_service_account.ci_gsuite_sa.id
-}
+//TODO(bbaiju): Re enable if needed for any CI
+# resource "google_service_account_key" "ci_gsuite_sa" {
+#   service_account_id = google_service_account.ci_gsuite_sa.id
+# }
 
 resource "google_storage_bucket" "ci_gsuite_sa" {
   name          = local.ci_gsuite_sa_bucket
@@ -123,11 +118,12 @@ resource "google_storage_bucket" "ci_gsuite_sa" {
   force_destroy = true
 }
 
-resource "google_storage_bucket_object" "ci_gsuite_sa_json" {
-  name    = local.ci_gsuite_sa_bucket_path
-  content = base64decode(google_service_account_key.ci_gsuite_sa.private_key)
-  bucket  = google_storage_bucket.ci_gsuite_sa.name
-}
+//TODO(bbaiju): Re enable if needed for any CI
+# resource "google_storage_bucket_object" "ci_gsuite_sa_json" {
+#   name    = local.ci_gsuite_sa_bucket_path
+#   content = base64decode(google_service_account_key.ci_gsuite_sa.private_key)
+#   bucket  = google_storage_bucket.ci_gsuite_sa.name
+# }
 
 # Grant G-Suite project rights to cft_ci_group.
 # Required to be able to create new gsuite sa keys and to fetch

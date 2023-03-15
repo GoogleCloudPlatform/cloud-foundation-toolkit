@@ -57,9 +57,16 @@ func generate(cmd *cobra.Command, args []string) error {
 
 	var allBpPaths []string
 	currBpPath := path.Join(wdPath, mdFlags.path)
-	allBpPaths = append(allBpPaths, currBpPath)
+	_, err = os.Stat(path.Join(currBpPath, readmeFileName))
 
+	// throw an error and exit if root level readme.md doesn't exist
+	if err != nil {
+		return fmt.Errorf("Top-level module does not have a readme. Details: %w\n", err)
+	}
+
+	allBpPaths = append(allBpPaths, currBpPath)
 	var errors []string
+
 	// if nested, check if modules/ exists and create paths
 	// for submodules
 	if mdFlags.nested {
@@ -77,8 +84,17 @@ func generate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	for _, path := range allBpPaths {
-		err = generateMetadataForBpPath(path)
+	for _, modPath := range allBpPaths {
+		// check if module path has readme.md
+		_, err := os.Stat(path.Join(modPath, readmeFileName))
+
+		// log info if a sub-module doesn't have a readme.md and continue
+		if err != nil {
+			Log.Info("Skipping metadata for sub-module identified as an internal module", "Path:", modPath)
+			continue
+		}
+
+		err = generateMetadataForBpPath(modPath)
 		if err != nil {
 			errors = append(errors, err.Error())
 		}
@@ -252,7 +268,7 @@ func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent 
 		for _, li := range documentation.listItems {
 			doc := BlueprintListContent{
 				Title: li.text,
-				Url:   li.url,
+				URL:   li.url,
 			}
 
 			docListToSet = append(docListToSet, doc)
