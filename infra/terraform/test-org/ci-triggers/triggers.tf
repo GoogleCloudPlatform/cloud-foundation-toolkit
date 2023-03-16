@@ -51,7 +51,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
       _BILLING_ACCOUNT          = local.billing_account
       _FOLDER_ID                = each.value.folder_id
       _ORG_ID                   = local.org_id
-      _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
+      _BILLING_IAM_TEST_ACCOUNT = contains(local.billing_iam_tests, each.key) ? local.billing_iam_test_account : null
       _VOD_TEST_PROJECT_ID      = each.key == "terraform-google-media-cdn-vod" ? local.vod_test_project_id : null
       _FILE_LOGS_BUCKET         = lookup(local.enable_file_log, each.key, false) ? module.filelogs_bucket.url : null
     },
@@ -259,6 +259,7 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
     _FOLDER_ID                     = values(local.example_foundation)[0]["folder_id"]
     _ORG_ID                        = local.org_id
     _EXAMPLE_FOUNDATIONS_TEST_MODE = each.value
+    _BILLING_IAM_TEST_ACCOUNT      = local.billing_iam_test_account
   }
 
   filename      = "build/int.cloudbuild.yaml"

@@ -63,4 +63,11 @@ locals {
   vod_test_project_id = data.terraform_remote_state.org.outputs.ci_media_cdn_vod_project_id
   # file logger opt-in
   enable_file_log = { "terraform-docs-samples" : true }
+  # repos that need a billing account for testing IAM
+  # example foundation uses a separate trigger, so it is not in this list
+  billing_iam_tests = toset([
+    "terraform-google-iam",
+    "terraform-google-bootstrap",
+    "terraform-google-project-factory",
+  ])
 }
