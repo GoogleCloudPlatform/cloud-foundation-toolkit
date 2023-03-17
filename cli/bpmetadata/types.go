@@ -53,7 +53,7 @@ type BlueprintInfo struct {
 
 	// The time estimate for configuring and deploying the blueprint.
 	// Autogen details in BlueprintTimeEstimate.
-	DeploymentTime BlueprintTimeEstimate `json:"deploymentTime,omitempty" yaml:"deploymentTime,omitempty"`
+	DeploymentDuration BlueprintTimeEstimate `json:"deploymentDuration,omitempty" yaml:"deploymentDuration,omitempty"`
 
 	// The cost estimate for the blueprint based on preconfigured variables.
 	// Autogen details in BlueprintCostEstimate.
