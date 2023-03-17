@@ -19,6 +19,7 @@ require (
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20211115214459-90acf1ca460f
 	github.com/iancoleman/strcase v0.2.0
 	github.com/inconshreveable/log15 v0.0.0-20201112154412-8562bdadbbac
+	github.com/invopop/jsonschema v0.7.0
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/manifoldco/promptui v0.9.0
@@ -31,6 +32,7 @@ require (
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.8.0
+	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/zclconf/go-cty v1.10.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
 	google.golang.org/api v0.58.0

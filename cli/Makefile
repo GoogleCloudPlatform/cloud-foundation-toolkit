@@ -1,19 +1,23 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v0.6.2
+VERSION=v0.7.0
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
 BUILD_DIR=./bin
+SCHEMA_DIR=./bpmetadata/schema
 NAME=cft
 BUCKET=gs://cft-cli
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
+# need an extra build command to embed an most up to date schema in the binary
 .PHONY: build
 build:
+	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
+	${BUILD_DIR}/cft blueprint metadata schema -o ${SCHEMA_DIR}
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
 .PHONY: publish
@@ -28,6 +32,9 @@ release: $(PLATFORMS)
 $(PLATFORMS):
 	GO111MODULE=on GOOS=$@ GOARCH=amd64 CGO_ENABLED=0 go build ${LDFLAGS} -o "${BUILD_DIR}/${NAME}-$@-amd64"
 
-.PHONY: test
-test:
+.PHONY: go_test
+go_test:
 	go test ./...
+
+.PHONY: test
+test: build go_test
