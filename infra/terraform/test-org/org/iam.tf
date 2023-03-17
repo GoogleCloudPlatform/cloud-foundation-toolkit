@@ -69,9 +69,3 @@ module "ci_folders_folder_bindings" {
     ]
   }
 }
-
-resource "google_billing_account_iam_member" "ci-billing-user" {
-  billing_account_id = local.billing_account
-  role               = "roles/billing.admin"
-  member             = "group:${local.cft_ci_group}"
-}

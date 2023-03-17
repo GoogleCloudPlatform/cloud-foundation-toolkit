@@ -27,12 +27,13 @@ locals {
   ]
   # custom mapping of the form name => repo_name used for overriding `terraform-google` prefix
   custom_repo_mapping = {
-    "cloud-foundation-training" = "cloud-foundation-training",
-    "example-foundation-app"    = "terraform-example-foundation-app",
-    "anthos-samples"            = "anthos-samples"
-    "docs-samples"              = "terraform-docs-samples"
-    "dynamic-python-webapp"     = "terraform-dynamic-python-webapp"
-    "deploy-java-multizone"     = "terraform-example-deploy-java-multizone"
+    "cloud-foundation-training"   = "cloud-foundation-training",
+    "example-foundation-app"      = "terraform-example-foundation-app",
+    "anthos-samples"              = "anthos-samples"
+    "docs-samples"                = "terraform-docs-samples"
+    "dynamic-python-webapp"       = "terraform-dynamic-python-webapp"
+    "deploy-java-multizone"       = "terraform-example-deploy-java-multizone"
+    "Migrate-Legacy-Java-App-GKE" = "Migrate-Legacy-Java-App-GKE"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
