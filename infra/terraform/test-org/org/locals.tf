@@ -542,5 +542,11 @@ locals {
       description = "TODO"
       owners      = "@donmccasland"
     },
+    {
+      name        = "terraform-google-analytics-lakehouse"
+      org         = "GoogleCloudPlatform"
+      description = "Lakehouse Architecture Solution"
+      owners      = "@stevewalker-de"
+    },      
   ]
 }
