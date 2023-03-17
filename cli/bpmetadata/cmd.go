@@ -55,8 +55,12 @@ func generate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error getting working dir: %w", err)
 	}
 
+	currBpPath := mdFlags.path
+	if !path.IsAbs(mdFlags.path) {
+		currBpPath = path.Join(wdPath, mdFlags.path)
+	}
+
 	var allBpPaths []string
-	currBpPath := path.Join(wdPath, mdFlags.path)
 	_, err = os.Stat(path.Join(currBpPath, readmeFileName))
 
 	// throw an error and exit if root level readme.md doesn't exist
