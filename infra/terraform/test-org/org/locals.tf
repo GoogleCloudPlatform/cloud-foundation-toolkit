@@ -161,6 +161,7 @@ locals {
       name        = "terraform-google-network-forensics"
       org         = "GoogleCloudPlatform"
       description = "Deploys Zeek on Google Cloud"
+      owners      = "@gtsorbo"
       topics      = local.common_topics.net
     },
     {
