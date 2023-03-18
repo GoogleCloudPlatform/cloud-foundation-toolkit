@@ -548,6 +548,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys a Lakehouse Architecture Solution"
       owners      = "@stevewalker-de"
-    },      
+      topics      = local.common_topics.da
+    },
   ]
 }
