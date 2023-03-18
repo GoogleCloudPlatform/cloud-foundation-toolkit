@@ -546,7 +546,7 @@ locals {
     {
       name        = "terraform-google-analytics-lakehouse"
       org         = "GoogleCloudPlatform"
-      description = "Lakehouse Architecture Solution"
+      description = "Deploys a Lakehouse Architecture Solution"
       owners      = "@stevewalker-de"
     },      
   ]
