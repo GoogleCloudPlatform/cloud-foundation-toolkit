@@ -8,7 +8,7 @@ import (
 
 const (
 	// Resource event of type apply has apply type
-	ResourceApplyType  = "apply"
+	ResourceApplyType = "apply"
 	// Status of successful resource event
 	ResourceOperationSuccessful = "Successful"
 	// Group event of type apply has summary type
@@ -26,14 +26,14 @@ type ResourceApplyStatus struct {
 }
 
 type GroupApplyStatus struct {
-	Action          string `json:"action"`
-	Count           int    `json:"count"`
-	Failed          int    `json:"failed"`
-	Skipped         int    `json:"skipped"`
-	Status          string `json:"status"`
-	Successful       int   `json:"successful"`
-	Timestamp string `json:"timestamp"`
-	Type      string `json:"type"`
+	Action     string `json:"action"`
+	Count      int    `json:"count"`
+	Failed     int    `json:"failed"`
+	Skipped    int    `json:"skipped"`
+	Status     string `json:"status"`
+	Successful int    `json:"successful"`
+	Timestamp  string `json:"timestamp"`
+	Type       string `json:"type"`
 }
 
 // GetPkgApplyResourcesStatus finds individual kpt apply statuses from newline separated string of apply statuses
