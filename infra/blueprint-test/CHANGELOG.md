@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.5.0...infra/blueprint-test/v0.5.1) (2023-03-20)
+
+
+### Bug Fixes
+
+* kpt tests without existing working dir ([#1447](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1447)) ([c9cc7af](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/c9cc7af901d8ff6c100358c540eb9eea5f8015a4))
+
 ## [0.5.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.4.1...infra/blueprint-test/v0.5.0) (2023-02-28)
 
 
