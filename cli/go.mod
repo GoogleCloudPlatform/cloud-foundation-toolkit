@@ -25,7 +25,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/migueleliasweb/go-github-mock v0.0.12
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64
-	github.com/open-policy-agent/gatekeeper v0.0.0-20210409021048-9b5e4cfe5d7e // indirect
+	github.com/open-policy-agent/gatekeeper v3.0.4-beta.2+incompatible // indirect
 	github.com/open-policy-agent/opa v0.34.2
 	github.com/otiai10/copy v1.6.0
 	github.com/pkg/errors v0.9.1
@@ -42,3 +42,5 @@ require (
 	sigs.k8s.io/kustomize/kyaml v0.13.9
 	sigs.k8s.io/yaml v1.2.0
 )
+
+replace github.com/open-policy-agent/gatekeeper v3.0.4-beta.2+incompatible => github.com/open-policy-agent/gatekeeper v0.0.0-20210409021048-9b5e4cfe5d7e

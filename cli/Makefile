@@ -17,9 +17,9 @@ LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 .PHONY: build
 build:
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
-	${BUILD_DIR}/cft blueprint metadata schema -o ${SCHEMA_DIR}
-	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
-
+	cd bpmetadata/schema && go build ./...
+	./bpmetadata/schema/schema -output=bpmetadata/schema
+	
 .PHONY: publish
 publish:
 	gcloud alpha storage cp "${BUILD_DIR}/*" "${BUCKET}/${VERSION}"

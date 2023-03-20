@@ -14,10 +14,11 @@ import (
 )
 
 var mdFlags struct {
-	path    string
-	nested  bool
-	force   bool
-	display bool
+	path     string
+	nested   bool
+	force    bool
+	display  bool
+	validate bool
 }
 
 const (
@@ -40,15 +41,15 @@ func init() {
 	Cmd.Flags().BoolVarP(&mdFlags.force, "force", "f", false, "Force the generation of fresh metadata.")
 	Cmd.Flags().StringVarP(&mdFlags.path, "path", "p", ".", "Path to the blueprint for generating metadata.")
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
+	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
 }
 
 var Cmd = &cobra.Command{
-	Use:       "metadata",
-	Short:     "Generates blueprint metatda",
-	Long:      `Generates metadata.yaml for specified blueprint`,
-	Args:      cobra.OnlyValidArgs,
-	ValidArgs: []string{"validate"},
-	RunE:      generate,
+	Use:   "metadata",
+	Short: "Generates blueprint metatda",
+	Long:  `Generates metadata.yaml for specified blueprint`,
+	Args:  cobra.NoArgs,
+	RunE:  generate,
 }
 
 // The top-level command function that generates metadata based on the provided flags
@@ -58,18 +59,18 @@ func generate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error getting working dir: %w", err)
 	}
 
-	currBpPath := mdFlags.path
-	if !path.IsAbs(mdFlags.path) {
-		currBpPath = path.Join(wdPath, mdFlags.path)
-	}
-
 	// validate metadata if there is an argument passed into the command
-	if len(args) == 1 {
+	if mdFlags.validate {
 		if err := validateMetadata(mdFlags.path, wdPath); err != nil {
 			return err
 		}
 
 		return nil
+	}
+
+	currBpPath := mdFlags.path
+	if !path.IsAbs(mdFlags.path) {
+		currBpPath = path.Join(wdPath, mdFlags.path)
 	}
 
 	var allBpPaths []string

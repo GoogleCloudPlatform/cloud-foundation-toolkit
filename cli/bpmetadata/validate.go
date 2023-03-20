@@ -2,7 +2,6 @@ package bpmetadata
 
 import (
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -28,35 +27,33 @@ func validateMetadata(bpPath, wdPath string) error {
 		bpPath = path.Join(wdPath, bpPath)
 	}
 
-	var vErrs []error
-	err := validateMetadataYaml(bpPath, schemaLoader)
-	if err != nil {
-		vErrs = append(vErrs, err)
-		Log.Error("metadata validation failed", "err", err)
+	moduleDirs := []string{bpPath}
+	modulesPath := path.Join(bpPath, modulesPath)
+	_, err := os.Stat(modulesPath)
+	if err == nil {
+		subModuleDirs, err := util.WalkTerraformDirs(modulesPath)
+		if err != nil {
+			Log.Warn("unable to read the submodules i.e. modules/ folder", "err", err)
+		}
+
+		moduleDirs = append(moduleDirs, subModuleDirs...)
 	}
 
-	modulesPath := path.Join(bpPath, modulesPath)
-	_, err = os.Stat(modulesPath)
+	var vErrs []error
+	for _, d := range moduleDirs {
+		m := path.Join(d, metadataFileName)
+		_, err := os.Stat(m)
 
-	if err != nil {
-		moduleDirs, _ := util.WalkTerraformDirs(modulesPath)
+		// log info msg and continue if the file does not exist
+		if err != nil {
+			Log.Info("metadata for module does not exist", "path", d)
+			continue
+		}
 
-		for _, d := range moduleDirs {
-
-			m := path.Join(d, metadataFileName)
-			_, err := os.Stat(m)
-
-			// log info msg and continue if the file does not exist
-			if err != nil {
-				Log.Info("metadata for module does not exist", "path", d)
-				continue
-			}
-
-			err = validateMetadataYaml(m, schemaLoader)
-			if err != nil {
-				vErrs = append(vErrs, err)
-				Log.Error("metadata validation failed", "err", err)
-			}
+		err = validateMetadataYaml(m, schemaLoader)
+		if err != nil {
+			vErrs = append(vErrs, err)
+			Log.Error("metadata validation failed", "err", err)
 		}
 	}
 
@@ -67,23 +64,12 @@ func validateMetadata(bpPath, wdPath string) error {
 	return nil
 }
 
-// validateMetadata validates an individual yaml file present at path "p"
+// validateMetadata validates an individual yaml file present at path "m"
 func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
-
-	// prepare metadata for validation
-	mBytes, _ := ioutil.ReadFile(m)
-	err := prepareMetadataBytes(&mBytes)
+	// prepare metadata for validation by converting it from YAML to JSON
+	mBytes, err := convertYamlToJson(m)
 	if err != nil {
-		Log.Error("unable to read metadata", "path", m, "error", err)
-		return err
-	}
-
-	// we can use a generic interface here since the validation
-	// will be done against the schema built from BlueprintMetadata
-	var obj interface{}
-	if err = json.Unmarshal(mBytes, &obj); err != nil {
-		Log.Error("unable to unmarshal metadata", "error", err)
-		return err
+		return fmt.Errorf("yaml to json conversion failed for metadata at path %s. error: %s", m, err)
 	}
 
 	// load metadata from the path
@@ -92,17 +78,15 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 	// validate metadata against the schema
 	result, err := gojsonschema.Validate(schema, yamlLoader)
 	if err != nil {
-		return err
+		return fmt.Errorf("metadata validation failed for %s. error: %s", m, err)
 	}
 
 	if !result.Valid() {
-		//var vErrors string
 		for _, e := range result.Errors() {
 			Log.Error("validation error", "err", e)
-			//vErrors += fmt.Sprintf("- %s\n", e)
 		}
 
-		return fmt.Errorf("metdata validation failed for file: %s", m)
+		return fmt.Errorf("metdata validation failed for: %s", m)
 	}
 
 	Log.Info("metadata is valid", "path", m)
@@ -111,18 +95,21 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 
 // prepares metadata bytes for validation since direct
 // validation of YAML is not possible
-func prepareMetadataBytes(b *[]byte) error {
-	if len(*b) == 0 {
-		return fmt.Errorf("metadata contents can not be empty")
-	}
-
-	json, err := yaml.YAMLToJSON(*b)
+func convertYamlToJson(m string) ([]byte, error) {
+	// read metadata for validation
+	b, err := ioutil.ReadFile(m)
 	if err != nil {
-		return fmt.Errorf("metadata contents are invalid: %s", err.Error())
+		return nil, fmt.Errorf("unable to read metadata at path %s. error: %s", m, err)
 	}
 
-	// successful conversion
-	*b = json
+	if len(b) == 0 {
+		return nil, fmt.Errorf("metadata contents can not be empty")
+	}
 
-	return nil
+	json, err := yaml.YAMLToJSON(b)
+	if err != nil {
+		return nil, fmt.Errorf("metadata contents are invalid: %s", err.Error())
+	}
+
+	return json, nil
 }

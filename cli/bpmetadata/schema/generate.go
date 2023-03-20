@@ -1,7 +1,6 @@
-package schema
+package main
 
 import (
-	_ "embed"
 	"encoding/json"
 	"os"
 	"path"
@@ -31,7 +30,11 @@ func generateSchema(o, wdPath string) error {
 		o = path.Join(wdPath, o)
 	}
 
-	Log.Info("generated JSON schema for BlueprintMetadata")
-	os.WriteFile(path.Join(o, schemaFileName), sData, 0644)
+	err = os.WriteFile(path.Join(o, schemaFileName), sData, 0644)
+	if err != nil {
+		return err
+	}
+
+	Log.Info("generated JSON schema for BlueprintMetadata", "path", path.Join(o, schemaFileName))
 	return nil
 }
