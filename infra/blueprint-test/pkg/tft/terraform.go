@@ -176,11 +176,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			t.Fatalf("TFDir path %s does not exist", tft.tfDir)
 		}
 	} else {
-		cwd, err := os.Getwd()
-		if err != nil {
-			t.Fatalf("unable to get wd :%v", err)
-		}
-		tfdir, err := discovery.GetConfigDirFromTestDir(cwd)
+		tfdir, err := discovery.GetConfigDirFromTestDir(utils.GetWD(t))
 		if err != nil {
 			t.Fatalf("unable to detect TFDir :%v", err)
 		}

@@ -20,7 +20,7 @@ func WriteTmpFile(data string) (string, error) {
 
 // WriteTmpFileWithExtension writes data to a temp file with given extension and returns the path.
 func WriteTmpFileWithExtension(data string, extension string) (string, error) {
-	f, err := ioutil.TempFile("", "*." + extension)
+	f, err := ioutil.TempFile("", "*."+extension)
 	if err != nil {
 		return "", err
 	}
