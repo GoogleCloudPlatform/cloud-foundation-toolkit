@@ -18,6 +18,7 @@ LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 build:
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 	go run ./${SCHEMA_DIR} -output=${SCHEMA_DIR}
+	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 	
 .PHONY: publish
 publish:
