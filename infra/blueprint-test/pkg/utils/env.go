@@ -39,3 +39,12 @@ func SetEnv(t testing.TB, key string, value string) {
 		t.Fatal("Unable to put environment variable %s: %v", key, err)
 	}
 }
+
+// Get the environment Working Directory.
+func GetWD(t testing.TB) string {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("unable to get wd :%v", err)
+	}
+	return cwd
+}

@@ -132,11 +132,7 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 			t.Fatalf("Dir path %s does not exist", krmt.exampleDir)
 		}
 	} else {
-		cwd, err := os.Getwd()
-		if err != nil {
-			t.Fatalf("unable to get wd :%v", err)
-		}
-		exampleDir, err := discovery.GetConfigDirFromTestDir(cwd)
+		exampleDir, err := discovery.GetConfigDirFromTestDir(utils.GetWD(t))
 		if err != nil {
 			t.Fatalf("unable to detect KRM dir :%v", err)
 		}
@@ -173,12 +169,8 @@ func NewKRMBlueprintTest(t testing.TB, opts ...krmtOption) *KRMBlueprintTest {
 
 // getDefaultBuildDir returns a temporary build directory for hydrated configs.
 func (b *KRMBlueprintTest) getDefaultBuildDir() string {
-	cwd, err := os.Getwd()
-	if err != nil {
-		b.t.Fatalf("unable to get wd :%v", err)
-	}
-	buildDir := path.Join(cwd, tmpBuildDir)
-	err = os.MkdirAll(buildDir, 0755)
+	buildDir := path.Join(utils.GetWD(b.t), tmpBuildDir)
+	err := os.MkdirAll(buildDir, 0755)
 	if err != nil {
 		b.t.Fatalf("unable to create %s :%v", buildDir, err)
 	}

@@ -41,7 +41,7 @@ func UpsertSetters(nodes []*yaml.RNode, setters map[string]string) error {
 	return nil
 }
 
-//findSetterNode finds setter node from a slice of nodes.
+// findSetterNode finds setter node from a slice of nodes.
 func findSetterNode(nodes []*yaml.RNode, path string) (*yaml.RNode, error) {
 	for _, node := range nodes {
 		np := node.GetAnnotations()[kioutil.PathAnnotation]
