@@ -17,10 +17,8 @@ const schemaFileName = "bpmetadataschema.json"
 // all metadata files for consistency and will be uploaded
 // to https://www.schemastore.org/ to provide IntelliSense
 // VSCode for authors manually authoring the metadata.
-func generateSchema(o, wdPath string) error {
-	r := &jsonschema.Reflector{}
-	s := r.Reflect(&bpmetadata.BlueprintMetadata{})
-	sData, err := json.MarshalIndent(s, "", "  ")
+func generateSchemaFile(o, wdPath string) error {
+	sData, err := GenerateSchema()
 	if err != nil {
 		return err
 	}
@@ -37,4 +35,15 @@ func generateSchema(o, wdPath string) error {
 
 	Log.Info("generated JSON schema for BlueprintMetadata", "path", path.Join(o, schemaFileName))
 	return nil
+}
+
+func GenerateSchema() ([]byte, error) {
+	r := &jsonschema.Reflector{}
+	s := r.Reflect(&bpmetadata.BlueprintMetadata{})
+	sData, err := json.MarshalIndent(s, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+
+	return sData, nil
 }

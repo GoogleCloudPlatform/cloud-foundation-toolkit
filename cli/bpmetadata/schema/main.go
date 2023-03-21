@@ -35,7 +35,7 @@ func process(output string) int {
 		return 1
 	}
 
-	if err := generateSchema(output, wdPath); err != nil {
+	if err := generateSchemaFile(output, wdPath); err != nil {
 		Log.Error("error generating schema", "err", err)
 		return 1
 	}
