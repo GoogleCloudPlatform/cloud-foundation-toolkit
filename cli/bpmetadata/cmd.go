@@ -14,9 +14,11 @@ import (
 )
 
 var mdFlags struct {
-	path   string
-	nested bool
-	force  bool
+	path     string
+	nested   bool
+	force    bool
+	display  bool
+	validate bool
 }
 
 const (
@@ -35,9 +37,11 @@ const (
 func init() {
 	viper.AutomaticEnv()
 
+	Cmd.Flags().BoolVarP(&mdFlags.display, "display", "d", false, "Generate the display metadata used for UI rendering.")
+	Cmd.Flags().BoolVarP(&mdFlags.force, "force", "f", false, "Force the generation of fresh metadata.")
 	Cmd.Flags().StringVarP(&mdFlags.path, "path", "p", ".", "Path to the blueprint for generating metadata.")
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
-	Cmd.Flags().BoolVarP(&mdFlags.force, "force", "f", false, "Force the generation of metadata")
+	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
 }
 
 var Cmd = &cobra.Command{
@@ -53,6 +57,15 @@ func generate(cmd *cobra.Command, args []string) error {
 	wdPath, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("error getting working dir: %w", err)
+	}
+
+	// validate metadata if there is an argument passed into the command
+	if mdFlags.validate {
+		if err := validateMetadata(mdFlags.path, wdPath); err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	currBpPath := mdFlags.path
@@ -135,13 +148,13 @@ func generateMetadataForBpPath(bpPath string) error {
 
 func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*BlueprintMetadata, error) {
 	// verfiy that the blueprint path is valid & get repo details
-	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Info.Source)
+	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Source)
 	if err != nil {
 		return nil, err
 	}
 
 	// start creating blueprint metadata
-	bpMetadataObj.Meta = yaml.ResourceMeta{
+	bpMetadataObj.ResourceMeta = yaml.ResourceMeta{
 		TypeMeta: yaml.TypeMeta{
 			APIVersion: metadataApiVersion,
 			Kind:       metadataKind,
@@ -151,7 +164,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 				Name:      repoDetails.Name,
 				Namespace: "",
 			},
-			Labels:      bpMetadataObj.Meta.ObjectMeta.Labels,
+			Labels:      bpMetadataObj.ResourceMeta.ObjectMeta.Labels,
 			Annotations: map[string]string{"config.kubernetes.io/local-config": "true"},
 		},
 	}
@@ -163,13 +176,13 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	}
 
 	// create blueprint info
-	err = bpMetadataObj.Spec.Info.create(bpPath, readmeContent)
+	err = bpMetadataObj.Spec.BlueprintInfo.create(bpPath, readmeContent)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
 	// create blueprint interfaces i.e. variables & outputs
-	err = bpMetadataObj.Spec.Interfaces.create(bpPath)
+	err = bpMetadataObj.Spec.BlueprintInterface.create(bpPath)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
@@ -182,10 +195,10 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint requirements: %w", err)
 	}
 
-	bpMetadataObj.Spec.Requirements = *requirements
+	bpMetadataObj.Spec.BlueprintRequirements = *requirements
 
 	// create blueprint content i.e. documentation, icons, etc.
-	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.RootPath, readmeContent)
+	bpMetadataObj.Spec.BlueprintContent.create(bpPath, repoDetails.Source.RootPath, readmeContent)
 
 	return bpMetadataObj, nil
 }
@@ -325,8 +338,8 @@ func UnmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {
 		return &bpObj, err
 	}
 
-	currVersion := bpObj.Meta.TypeMeta.APIVersion
-	currKind := bpObj.Meta.TypeMeta.Kind
+	currVersion := bpObj.ResourceMeta.TypeMeta.APIVersion
+	currKind := bpObj.ResourceMeta.TypeMeta.Kind
 
 	//validate GVK for current metadata
 	if currVersion != metadataApiVersion {
