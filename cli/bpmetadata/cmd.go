@@ -263,6 +263,11 @@ func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 		i.Icon = iconFilePath
 	}
 
+	d, err := getDeploymentDuration(readmeContent, "Deployment Duration")
+	if err == nil {
+		i.DeploymentDuration = *d
+	}
+
 	return nil
 }
 

@@ -14,3 +14,10 @@ some content sub heading for h3
 some more content sub heading for h3
 
 ## Horizontal Rules
+
+### Deployment Duration
+Configuration: 2 mins
+Deployment: 10 mins
+
+### Deployment Duration Invalid
+Configuration or deployment info does not exist as defined

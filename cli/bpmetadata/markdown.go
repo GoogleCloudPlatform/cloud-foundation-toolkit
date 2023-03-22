@@ -2,6 +2,8 @@ package bpmetadata
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
@@ -16,6 +18,8 @@ type mdListItem struct {
 	text string
 	url  string
 }
+
+const timeEstimateRegexp = `(Configuration|Deployment):\s([0-9]+)\smins`
 
 // getMdContent accepts 3 types of content requests and return and mdContent object
 // with the relevant content info. The 3 scenarios are:
@@ -38,6 +42,7 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 		currLeaf := ast.GetFirstChild(section).AsLeaf()
 		switch sectionType := section.(type) {
 		case *ast.Heading:
+			foundHead = false
 			if headTitle == string(currLeaf.Literal) {
 				foundHead = true
 			}
@@ -95,4 +100,40 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 	}
 
 	return nil, fmt.Errorf("unable to find md content")
+}
+
+// getDeploymentDuration creates the deployment and configuration time
+// estimates for the blueprint from README.md
+func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEstimate, error) {
+	durationDetails, err := getMdContent(content, -1, -1, headTitle, true)
+	if err != nil {
+		return nil, err
+	}
+
+	re := regexp.MustCompile(timeEstimateRegexp)
+	matches := re.FindAllStringSubmatch(durationDetails.literal, -1)
+	if len(matches) == 0 {
+		return nil, fmt.Errorf("unable to find deployment duration")
+	}
+
+	var timeEstimate BlueprintTimeEstimate
+	for _, m := range matches {
+		// each m[2] will have the time in mins
+		i, err := strconv.Atoi(m[2])
+		if err != nil {
+			continue
+		}
+
+		if m[1] == "Configuration" {
+			timeEstimate.ConfigurationSecs = i * 60
+			continue
+		}
+
+		if m[1] == "Deployment" {
+			timeEstimate.DeploymentSecs = i * 60
+			continue
+		}
+	}
+
+	return &timeEstimate, nil
 }

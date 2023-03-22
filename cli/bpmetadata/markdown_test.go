@@ -174,3 +174,47 @@ func TestProcessMarkdownContent(t *testing.T) {
 		})
 	}
 }
+
+func TestProcessDeploymentDurationContent(t *testing.T) {
+	tests := []struct {
+		name     string
+		fileName string
+		title    string
+		want     *BlueprintTimeEstimate
+		wantErr  bool
+	}{
+		{
+			name:     "Deployment duration details exists as BlueprintTimeEstimate",
+			fileName: "simple-content.md",
+			title:    "Deployment Duration",
+			want: &BlueprintTimeEstimate{
+				ConfigurationSecs: 120,
+				DeploymentSecs:    600,
+			},
+		},
+		{
+			name:     "Architecture details don't exist as BlueprintArchitecture",
+			fileName: "simple-content.md",
+			title:    "Deployment Duration Invalid",
+			wantErr:  true,
+		},
+		{
+			name:     "md content file path for BlueprintArchitecture is invalid",
+			fileName: "simple-content-bad-file-name.md",
+			title:    "Does not matter",
+			wantErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			got, err := getDeploymentDuration(content, tt.title)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getDeploymentDuration() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
