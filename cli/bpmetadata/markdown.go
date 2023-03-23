@@ -2,6 +2,7 @@ package bpmetadata
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
@@ -130,11 +131,12 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 			continue
 		}
 
+		d := strings.TrimLeft(string(t.AsLeaf().Literal), "\n")
 		i := ast.GetPrevNode(t)
 		iNode, isImage := i.(*ast.Image)
 		if isImage {
 			return &BlueprintArchitecture{
-				Description: string(t.AsLeaf().Literal),
+				Description: d,
 				DiagramURL:  string(iNode.Destination),
 			}, nil
 		}
@@ -142,7 +144,7 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 		lNode, isLink := i.(*ast.Link)
 		if isLink {
 			return &BlueprintArchitecture{
-				Description: string(t.AsLeaf().Literal),
+				Description: d,
 				DiagramURL:  string(lNode.Destination),
 			}, nil
 		}

@@ -188,8 +188,7 @@ func TestProcessArchitectureContent(t *testing.T) {
 			fileName: "list-content.md",
 			title:    "Architecture",
 			want: &BlueprintArchitecture{
-				Description: `
-1. Step 1
+				Description: `1. Step 1
 2. Step 2
 3. Step 3`,
 				DiagramURL: "https://i.redd.it/w3kr4m2fi3111.png",

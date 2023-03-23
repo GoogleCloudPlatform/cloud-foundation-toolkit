@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v0.7.2
+VERSION=v0.8.0
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
