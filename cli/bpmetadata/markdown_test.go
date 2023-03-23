@@ -193,13 +193,13 @@ func TestProcessDeploymentDurationContent(t *testing.T) {
 			},
 		},
 		{
-			name:     "Architecture details don't exist as BlueprintArchitecture",
+			name:     "Deployment duration details don't exist as BlueprintTimeEstimate",
 			fileName: "simple-content.md",
 			title:    "Deployment Duration Invalid",
 			wantErr:  true,
 		},
 		{
-			name:     "md content file path for BlueprintArchitecture is invalid",
+			name:     "md content file path for BlueprintTimeEstimate is invalid",
 			fileName: "simple-content-bad-file-name.md",
 			title:    "Does not matter",
 			wantErr:  true,
