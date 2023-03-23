@@ -11,6 +11,7 @@ import (
 
 type mdContent struct {
 	literal   string
+	url       string
 	listItems []mdListItem
 }
 
@@ -59,6 +60,16 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 
 		case *ast.Paragraph:
 			if getContent && (headOrder == orderCtr || foundHead) {
+				// check if the content is a link
+				l := ast.GetLastChild(currLeaf.Parent)
+				lNode, isLink := l.(*ast.Link)
+				if isLink {
+					return &mdContent{
+						literal: string(ast.GetFirstChild(lNode).AsLeaf().Literal),
+						url:     string(lNode.Destination),
+					}, nil
+				}
+
 				return &mdContent{
 					literal: string(currLeaf.Literal),
 				}, nil
@@ -136,4 +147,18 @@ func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEsti
 	}
 
 	return &timeEstimate, nil
+}
+
+// getCostEstimate creates the cost estimates from the cost calculator
+// links provided in README.md
+func getCostEstimate(content []byte, headTitle string) (*BlueprintCostEstimate, error) {
+	costDetails, err := getMdContent(content, -1, -1, headTitle, true)
+	if err != nil {
+		return nil, err
+	}
+
+	return &BlueprintCostEstimate{
+		Description: costDetails.literal,
+		URL:         costDetails.url,
+	}, nil
 }

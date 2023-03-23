@@ -218,3 +218,47 @@ func TestProcessDeploymentDurationContent(t *testing.T) {
 		})
 	}
 }
+
+func TestProcessCostEstimateContent(t *testing.T) {
+	tests := []struct {
+		name     string
+		fileName string
+		title    string
+		want     *BlueprintCostEstimate
+		wantErr  bool
+	}{
+		{
+			name:     "Cost estimate details exists as BlueprintCostEstimate",
+			fileName: "simple-content.md",
+			title:    "Cost",
+			want: &BlueprintCostEstimate{
+				Description: "Solution cost details",
+				URL:         "https://cloud.google.com/products/calculator?id=02fb0c45-cc29-4567-8cc6-f72ac9024add",
+			},
+		},
+		{
+			name:     "Cost estimate details don't exist as BlueprintCostEstimate",
+			fileName: "simple-content.md",
+			title:    "Cost Invalid",
+			wantErr:  true,
+		},
+		{
+			name:     "md content file path for BlueprintCostEstimate is invalid",
+			fileName: "simple-content-bad-file-name.md",
+			title:    "Does not matter",
+			wantErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			got, err := getCostEstimate(content, tt.title)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getCostEstimate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}

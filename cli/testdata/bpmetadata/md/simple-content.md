@@ -21,3 +21,6 @@ Deployment: 10 mins
 
 ### Deployment Duration Invalid
 Configuration or deployment info does not exist as defined
+
+### Cost
+[Solution cost details](https://cloud.google.com/products/calculator?id=02fb0c45-cc29-4567-8cc6-f72ac9024add)

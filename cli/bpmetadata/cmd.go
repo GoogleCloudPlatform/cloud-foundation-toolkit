@@ -268,6 +268,11 @@ func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 		i.DeploymentDuration = *d
 	}
 
+	c, err := getCostEstimate(readmeContent, "Cost")
+	if err == nil {
+		i.CostEstimate = *c
+	}
+
 	return nil
 }
 
