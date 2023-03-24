@@ -22,7 +22,7 @@
       "extends": [
         ":semanticCommitTypeAll(chore)"],
         ":rebaseStalePrs"
-      ],
+      ]
     },
     {
       "matchDepTypes": ["require"],
