@@ -20,7 +20,7 @@
     {
       "matchPaths": [".github/**"],
       "extends": [
-        ":semanticCommitTypeAll(chore)"],
+        ":semanticCommitTypeAll(chore)",
         ":rebaseStalePrs"
       ]
     },
