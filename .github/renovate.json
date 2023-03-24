@@ -19,8 +19,10 @@
   "packageRules": [
     {
       "matchPaths": [".github/**"],
-      "extends": [":semanticCommitTypeAll(chore)"],
-      ":rebaseStalePrs"
+      "extends": [
+        ":semanticCommitTypeAll(chore)"],
+        ":rebaseStalePrs"
+      ],
     },
     {
       "matchDepTypes": ["require"],
