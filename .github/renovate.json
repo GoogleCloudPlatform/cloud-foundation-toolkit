@@ -3,8 +3,7 @@
   "extends": [
     "config:base",
     ":semanticCommits",
-    ":preserveSemverRanges",
-    ":rebaseStalePrs"
+    ":preserveSemverRanges"
   ],
   "stabilityDays":7,
   "labels": ["dependencies"],
@@ -20,7 +19,8 @@
   "packageRules": [
     {
       "matchPaths": [".github/**"],
-      "extends": [":semanticCommitTypeAll(chore)"]
+      "extends": [":semanticCommitTypeAll(chore)"],
+      ":rebaseStalePrs"
     },
     {
       "matchDepTypes": ["require"],
