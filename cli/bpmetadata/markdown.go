@@ -2,6 +2,7 @@ package bpmetadata
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
@@ -95,4 +96,60 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 	}
 
 	return nil, fmt.Errorf("unable to find md content")
+}
+
+// getArchitctureInfo parses and builds Architecture details from README.md
+func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitecture, error) {
+	mdDocument := markdown.Parse(content, nil)
+	if mdDocument == nil {
+		return nil, fmt.Errorf("unable to parse md content")
+	}
+
+	children := mdDocument.GetChildren()
+	for _, node := range children {
+		h, isHeading := node.(*ast.Heading)
+		if !isHeading {
+			continue
+		}
+
+		// check if this is the architecture heading
+		hLiteral := string(ast.GetFirstChild(h).AsLeaf().Literal)
+		if hLiteral != headTitle {
+			continue
+		}
+
+		//get architecture details
+		infoNode := ast.GetNextNode(h)
+		paraNode, isPara := infoNode.(*ast.Paragraph)
+		if !isPara {
+			continue
+		}
+
+		t := ast.GetLastChild(paraNode)
+		_, isText := t.(*ast.Text)
+		if !isText {
+			continue
+		}
+
+		d := strings.TrimLeft(string(t.AsLeaf().Literal), "\n")
+		dList := strings.Split(d, "\n")
+		i := ast.GetPrevNode(t)
+		iNode, isImage := i.(*ast.Image)
+		if isImage {
+			return &BlueprintArchitecture{
+				Description: dList,
+				DiagramURL:  string(iNode.Destination),
+			}, nil
+		}
+
+		lNode, isLink := i.(*ast.Link)
+		if isLink {
+			return &BlueprintArchitecture{
+				Description: dList,
+				DiagramURL:  string(lNode.Destination),
+			}, nil
+		}
+	}
+
+	return nil, fmt.Errorf("unable to find architecture content")
 }
