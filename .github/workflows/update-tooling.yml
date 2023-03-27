@@ -87,7 +87,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
-        uses: peter-evans/create-pull-request@24b0f8edad74dd5b08956ea2655c6818355ef8a6
+        uses: peter-evans/create-pull-request@495ffbb489edc95cad062fefe82c9e05ff9bd91d
         with:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
