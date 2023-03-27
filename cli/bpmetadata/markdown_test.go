@@ -92,7 +92,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 			want:       nil,
 		},
 		{
-			name:       "Architecture description exists",
+			name:       "Architecture description exists as diagram content",
 			fileName:   "list-content.md",
 			level:      -1,
 			order:      -1,
@@ -170,6 +170,54 @@ func TestProcessMarkdownContent(t *testing.T) {
 			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
 			require.NoError(t, err)
 			got, _ := getMdContent(content, tt.level, tt.order, tt.title, tt.getContent)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestProcessArchitectureContent(t *testing.T) {
+	tests := []struct {
+		name     string
+		fileName string
+		title    string
+		want     *BlueprintArchitecture
+		wantErr  bool
+	}{
+		{
+			name:     "Architecture details exists as BlueprintArchitecture",
+			fileName: "list-content.md",
+			title:    "Architecture",
+			want: &BlueprintArchitecture{
+				Description: []string{
+					`1. Step 1`,
+					`2. Step 2`,
+					`3. Step 3`,
+				},
+				DiagramURL: "https://i.redd.it/w3kr4m2fi3111.png",
+			},
+		},
+		{
+			name:     "Architecture details don't exist as BlueprintArchitecture",
+			fileName: "list-content.md",
+			title:    "ArchitectureNotValid",
+			wantErr:  true,
+		},
+		{
+			name:     "md content file path for BlueprintArchitecture is invalid",
+			fileName: "list-content-bad-file-name.md",
+			title:    "Architecture",
+			wantErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			got, err := getArchitctureInfo(content, tt.title)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getArchitctureInfo() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 			assert.Equal(t, tt.want, got)
 		})
 	}
