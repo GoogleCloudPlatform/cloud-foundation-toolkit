@@ -132,11 +132,12 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 		}
 
 		d := strings.TrimLeft(string(t.AsLeaf().Literal), "\n")
+		dList := strings.Split(d, "\n")
 		i := ast.GetPrevNode(t)
 		iNode, isImage := i.(*ast.Image)
 		if isImage {
 			return &BlueprintArchitecture{
-				Description: d,
+				Description: dList,
 				DiagramURL:  string(iNode.Destination),
 			}, nil
 		}
@@ -144,7 +145,7 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 		lNode, isLink := i.(*ast.Link)
 		if isLink {
 			return &BlueprintArchitecture{
-				Description: d,
+				Description: dList,
 				DiagramURL:  string(lNode.Destination),
 			}, nil
 		}
