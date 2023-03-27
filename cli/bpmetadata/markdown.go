@@ -2,6 +2,8 @@ package bpmetadata
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/gomarkdown/markdown"
@@ -10,6 +12,7 @@ import (
 
 type mdContent struct {
 	literal   string
+	url       string
 	listItems []mdListItem
 }
 
@@ -17,6 +20,8 @@ type mdListItem struct {
 	text string
 	url  string
 }
+
+var reTimeEstimate = regexp.MustCompile(`(Configuration|Deployment):\s([0-9]+)\smins`)
 
 // getMdContent accepts 3 types of content requests and return and mdContent object
 // with the relevant content info. The 3 scenarios are:
@@ -39,6 +44,7 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 		currLeaf := ast.GetFirstChild(section).AsLeaf()
 		switch sectionType := section.(type) {
 		case *ast.Heading:
+			foundHead = false
 			if headTitle == string(currLeaf.Literal) {
 				foundHead = true
 			}
@@ -55,6 +61,16 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 
 		case *ast.Paragraph:
 			if getContent && (headOrder == orderCtr || foundHead) {
+				// check if the content is a link
+				l := ast.GetLastChild(currLeaf.Parent)
+				lNode, isLink := l.(*ast.Link)
+				if isLink {
+					return &mdContent{
+						literal: string(ast.GetFirstChild(lNode).AsLeaf().Literal),
+						url:     string(lNode.Destination),
+					}, nil
+				}
+
 				return &mdContent{
 					literal: string(currLeaf.Literal),
 				}, nil
@@ -96,6 +112,55 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 	}
 
 	return nil, fmt.Errorf("unable to find md content")
+}
+
+// getDeploymentDuration creates the deployment and configuration time
+// estimates for the blueprint from README.md
+func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEstimate, error) {
+	durationDetails, err := getMdContent(content, -1, -1, headTitle, true)
+	if err != nil {
+		return nil, err
+	}
+
+	matches := reTimeEstimate.FindAllStringSubmatch(durationDetails.literal, -1)
+	if len(matches) == 0 {
+		return nil, fmt.Errorf("unable to find deployment duration")
+	}
+
+	var timeEstimate BlueprintTimeEstimate
+	for _, m := range matches {
+		// each m[2] will have the time in mins
+		i, err := strconv.Atoi(m[2])
+		if err != nil {
+			continue
+		}
+
+		if m[1] == "Configuration" {
+			timeEstimate.ConfigurationSecs = i * 60
+			continue
+		}
+
+		if m[1] == "Deployment" {
+			timeEstimate.DeploymentSecs = i * 60
+			continue
+		}
+	}
+
+	return &timeEstimate, nil
+}
+
+// getCostEstimate creates the cost estimates from the cost calculator
+// links provided in README.md
+func getCostEstimate(content []byte, headTitle string) (*BlueprintCostEstimate, error) {
+	costDetails, err := getMdContent(content, -1, -1, headTitle, true)
+	if err != nil {
+		return nil, err
+	}
+
+	return &BlueprintCostEstimate{
+		Description: costDetails.literal,
+		URL:         costDetails.url,
+	}, nil
 }
 
 // getArchitctureInfo parses and builds Architecture details from README.md

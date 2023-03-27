@@ -222,3 +222,99 @@ func TestProcessArchitectureContent(t *testing.T) {
 		})
 	}
 }
+
+func TestProcessDeploymentDurationContent(t *testing.T) {
+	tests := []struct {
+		name     string
+		fileName string
+		title    string
+		want     *BlueprintTimeEstimate
+		wantErr  bool
+	}{
+		{
+			name:     "Deployment duration details exists as BlueprintTimeEstimate",
+			fileName: "simple-content.md",
+			title:    "Deployment Duration",
+			want: &BlueprintTimeEstimate{
+				ConfigurationSecs: 120,
+				DeploymentSecs:    600,
+			},
+		},
+		{
+			name:     "Deployment duration details don't exist as BlueprintTimeEstimate",
+			fileName: "simple-content.md",
+			title:    "Deployment Duration Invalid",
+			wantErr:  true,
+		},
+		{
+			name:     "Deployment duration exists but only for configuration",
+			fileName: "simple-content.md",
+			title:    "Deployment Duration Only Config",
+			want: &BlueprintTimeEstimate{
+				ConfigurationSecs: 120,
+			},
+		},
+		{
+			name:     "md content file path for BlueprintTimeEstimate is invalid",
+			fileName: "simple-content-bad-file-name.md",
+			title:    "Does not matter",
+			wantErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			got, err := getDeploymentDuration(content, tt.title)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getDeploymentDuration() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestProcessCostEstimateContent(t *testing.T) {
+	tests := []struct {
+		name     string
+		fileName string
+		title    string
+		want     *BlueprintCostEstimate
+		wantErr  bool
+	}{
+		{
+			name:     "Cost estimate details exists as BlueprintCostEstimate",
+			fileName: "simple-content.md",
+			title:    "Cost",
+			want: &BlueprintCostEstimate{
+				Description: "Solution cost details",
+				URL:         "https://cloud.google.com/products/calculator?id=02fb0c45-cc29-4567-8cc6-f72ac9024add",
+			},
+		},
+		{
+			name:     "Cost estimate details don't exist as BlueprintCostEstimate",
+			fileName: "simple-content.md",
+			title:    "Cost Invalid",
+			wantErr:  true,
+		},
+		{
+			name:     "md content file path for BlueprintCostEstimate is invalid",
+			fileName: "simple-content-bad-file-name.md",
+			title:    "Does not matter",
+			wantErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			got, err := getCostEstimate(content, tt.title)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getCostEstimate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
