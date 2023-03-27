@@ -294,6 +294,12 @@ func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent 
 		c.Documentation = docListToSet
 	}
 
+	// create architecture
+	a, err := getArchitctureInfo(readmeContent, "Architecture")
+	if err == nil {
+		c.Architecture = *a
+	}
+
 	// create sub-blueprints
 	modPath := path.Join(bpPath, modulesPath)
 	modContent, err := getModules(modPath)

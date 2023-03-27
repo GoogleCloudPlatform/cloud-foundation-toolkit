@@ -283,8 +283,8 @@ type BlueprintMiscContent struct {
 }
 
 type BlueprintArchitecture struct {
-	DiagramURL  string `json:"diagram" yaml:"diagram"`
-	Description string `json:"description" yaml:"description"`
+	DiagramURL  string   `json:"diagram" yaml:"diagram"`
+	Description []string `json:"description" yaml:"description"`
 }
 
 // BlueprintDiagram is manually entered.
