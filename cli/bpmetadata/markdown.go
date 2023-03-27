@@ -21,7 +21,7 @@ type mdListItem struct {
 	url  string
 }
 
-const timeEstimateRegexp = `(Configuration|Deployment):\s([0-9]+)\smins`
+var reTimeEstimate = regexp.MustCompile(`(Configuration|Deployment):\s([0-9]+)\smins`)
 
 // getMdContent accepts 3 types of content requests and return and mdContent object
 // with the relevant content info. The 3 scenarios are:
@@ -122,8 +122,7 @@ func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEsti
 		return nil, err
 	}
 
-	re := regexp.MustCompile(timeEstimateRegexp)
-	matches := re.FindAllStringSubmatch(durationDetails.literal, -1)
+	matches := reTimeEstimate.FindAllStringSubmatch(durationDetails.literal, -1)
 	if len(matches) == 0 {
 		return nil, fmt.Errorf("unable to find deployment duration")
 	}
@@ -215,6 +214,7 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 				DiagramURL:  string(lNode.Destination),
 			}, nil
 		}
+	}
 
 	return nil, fmt.Errorf("unable to find architecture content")
 }

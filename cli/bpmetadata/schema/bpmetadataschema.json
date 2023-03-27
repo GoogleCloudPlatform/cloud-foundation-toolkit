@@ -21,7 +21,10 @@
           "type": "string"
         },
         "description": {
-          "type": "string"
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,

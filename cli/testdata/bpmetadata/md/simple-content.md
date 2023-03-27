@@ -19,6 +19,9 @@ some more content sub heading for h3
 Configuration: 2 mins
 Deployment: 10 mins
 
+### Deployment Duration Only Config
+Configuration: 2 mins
+
 ### Deployment Duration Invalid
 Configuration or deployment info does not exist as defined
 

@@ -247,6 +247,14 @@ func TestProcessDeploymentDurationContent(t *testing.T) {
 			wantErr:  true,
 		},
 		{
+			name:     "Deployment duration exists but only for configuration",
+			fileName: "simple-content.md",
+			title:    "Deployment Duration Only Config",
+			want: &BlueprintTimeEstimate{
+				ConfigurationSecs: 120,
+			},
+		},
+		{
 			name:     "md content file path for BlueprintTimeEstimate is invalid",
 			fileName: "simple-content-bad-file-name.md",
 			title:    "Does not matter",
