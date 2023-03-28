@@ -108,6 +108,13 @@ locals {
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
+      name         = "terraform-ecommerce-microservices-on-gke"
+      short_name   = "ecommerce-microservices"
+      org          = "GoogleCloudPlatform"
+      description  = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
+      owners       = "@NimJay"
+    },
+    {
       name         = "terraform-example-foundation"
       short_name   = "example-foundation"
       org          = "terraform-google-modules"
