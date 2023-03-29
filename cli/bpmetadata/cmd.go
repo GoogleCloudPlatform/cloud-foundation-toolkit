@@ -22,16 +22,17 @@ var mdFlags struct {
 }
 
 const (
-	readmeFileName     = "README.md"
-	tfVersionsFileName = "versions.tf"
-	tfRolesFileName    = "test/setup/iam.tf"
-	tfServicesFileName = "test/setup/main.tf"
-	iconFilePath       = "assets/icon.png"
-	modulesPath        = "modules"
-	examplesPath       = "examples"
-	metadataFileName   = "metadata.yaml"
-	metadataApiVersion = "blueprints.cloud.google.com/v1alpha1"
-	metadataKind       = "BlueprintMetadata"
+	readmeFileName          = "README.md"
+	tfVersionsFileName      = "versions.tf"
+	tfRolesFileName         = "test/setup/iam.tf"
+	tfServicesFileName      = "test/setup/main.tf"
+	iconFilePath            = "assets/icon.png"
+	modulesPath             = "modules"
+	examplesPath            = "examples"
+	metadataFileName        = "metadata.yaml"
+	metadataDisplayFileName = "metadata.display.yaml"
+	metadataApiVersion      = "blueprints.cloud.google.com/v1alpha1"
+	metadataKind            = "BlueprintMetadata"
 )
 
 func init() {
@@ -126,21 +127,44 @@ func generate(cmd *cobra.Command, args []string) error {
 
 func generateMetadataForBpPath(bpPath string) error {
 	//try to read existing metadata.yaml
-	bpObj, err := UnmarshalMetadata(bpPath)
+	bpObj, err := UnmarshalMetadata(bpPath, metadataFileName)
 	if err != nil && !mdFlags.force {
 		return err
 	}
 
-	// create metadata details
+	// create core metadata
 	bpMetaObj, err := CreateBlueprintMetadata(bpPath, bpObj)
 	if err != nil {
 		return fmt.Errorf("error creating metadata for blueprint at path: %s. Details: %w", bpPath, err)
 	}
 
-	// write metadata to disk
-	err = WriteMetadata(bpMetaObj, bpPath)
+	// write core metadata to disk
+	err = WriteMetadata(bpMetaObj, bpPath, metadataFileName)
 	if err != nil {
 		return fmt.Errorf("error writing metadata to disk for blueprint at path: %s. Details: %w", bpPath, err)
+	}
+
+	// continue with creating display metadata if the flag is set,
+	// else let the command exit
+	if !mdFlags.display {
+		return nil
+	}
+
+	bpDpObj, err := UnmarshalMetadata(bpPath, metadataDisplayFileName)
+	if err != nil && !mdFlags.force {
+		return err
+	}
+
+	// create display metadata
+	bpMetaDpObj, err := CreateBlueprintDisplayMetadata(bpPath, bpDpObj, bpMetaObj)
+	if err != nil {
+		return fmt.Errorf("error creating display metadata for blueprint at path: %s. Details: %w", bpPath, err)
+	}
+
+	// write display metadata to disk
+	err = WriteMetadata(bpMetaDpObj, bpPath, metadataDisplayFileName)
+	if err != nil {
+		return fmt.Errorf("error writing display metadata to disk for blueprint at path: %s. Details: %w", bpPath, err)
 	}
 
 	return nil
@@ -201,6 +225,35 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	bpMetadataObj.Spec.BlueprintContent.create(bpPath, repoDetails.Source.RootPath, readmeContent)
 
 	return bpMetadataObj, nil
+}
+
+func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMetadata) (*BlueprintMetadata, error) {
+	// start creating blueprint metadata
+
+	bpDisp.ResourceMeta = yaml.ResourceMeta{
+		TypeMeta: yaml.TypeMeta{
+			APIVersion: bpCore.ResourceMeta.APIVersion,
+			Kind:       bpCore.ResourceMeta.Kind,
+		},
+		ObjectMeta: yaml.ObjectMeta{
+			NameMeta: yaml.NameMeta{
+				Name: bpCore.ResourceMeta.ObjectMeta.Name + "-display",
+			},
+			Labels: bpDisp.ResourceMeta.ObjectMeta.Labels,
+		},
+	}
+
+	if bpDisp.Spec.BlueprintInfo.Title == "" {
+		bpDisp.Spec.BlueprintInfo.Title = bpCore.Spec.BlueprintInfo.Title
+	}
+
+	if bpDisp.Spec.BlueprintInfo.Source == nil {
+		bpDisp.Spec.BlueprintInfo.Source = bpCore.Spec.BlueprintInfo.Source
+	}
+
+	buildUIInputFromVariables(bpCore.Spec.BlueprintInterface.Variables, &bpDisp.Spec.BlueprintUI.Input)
+
+	return bpDisp, nil
 }
 
 func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
@@ -325,19 +378,19 @@ func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent 
 	}
 }
 
-func WriteMetadata(obj *BlueprintMetadata, bpPath string) error {
+func WriteMetadata(obj *BlueprintMetadata, bpPath, fileName string) error {
 	// marshal and write the file
 	yFile, err := yaml.Marshal(obj)
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(path.Join(bpPath, metadataFileName), yFile, 0644)
+	return os.WriteFile(path.Join(bpPath, fileName), yFile, 0644)
 }
 
-func UnmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {
+func UnmarshalMetadata(bpPath, fileName string) (*BlueprintMetadata, error) {
 	bpObj := BlueprintMetadata{}
-	metaFilePath := path.Join(bpPath, metadataFileName)
+	metaFilePath := path.Join(bpPath, fileName)
 
 	// return empty metadata if file does not exist or if the file is not read
 	if _, err := os.Stat(metaFilePath); errors.Is(err, os.ErrNotExist) {
@@ -367,4 +420,21 @@ func UnmarshalMetadata(bpPath string) (*BlueprintMetadata, error) {
 	}
 
 	return &bpObj, nil
+}
+
+func buildUIInputFromVariables(vars []BlueprintVariable, input *BlueprintUIInput) {
+	if input.DisplayVariables == nil {
+		input.DisplayVariables = make(map[string]*DisplayVariable)
+	}
+
+	for _, v := range vars {
+		dispVar := input.DisplayVariables[v.Name]
+		if dispVar != nil {
+			continue
+		}
+
+		input.DisplayVariables[v.Name] = &DisplayVariable{
+			Name: v.Name,
+		}
+	}
 }

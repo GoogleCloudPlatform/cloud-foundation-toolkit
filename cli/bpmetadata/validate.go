@@ -41,19 +41,36 @@ func validateMetadata(bpPath, wdPath string) error {
 
 	var vErrs []error
 	for _, d := range moduleDirs {
-		m := path.Join(d, metadataFileName)
-		_, err := os.Stat(m)
+		// validate core metadata
+		core := path.Join(d, metadataFileName)
+		_, err := os.Stat(core)
 
 		// log info msg and continue if the file does not exist
 		if err != nil {
-			Log.Info("metadata for module does not exist", "path", d)
+			Log.Info("core metadata for module does not exist", "path", core)
 			continue
 		}
 
-		err = validateMetadataYaml(m, schemaLoader)
+		err = validateMetadataYaml(core, schemaLoader)
 		if err != nil {
 			vErrs = append(vErrs, err)
-			Log.Error("metadata validation failed", "err", err)
+			Log.Error("core metadata validation failed", "err", err)
+		}
+
+		// validate display metadata
+		disp := path.Join(d, metadataDisplayFileName)
+		_, err = os.Stat(disp)
+
+		// log info msg and continue if the file does not exist
+		if err != nil {
+			Log.Info("display metadata for module does not exist", "path", disp)
+			continue
+		}
+
+		err = validateMetadataYaml(disp, schemaLoader)
+		if err != nil {
+			vErrs = append(vErrs, err)
+			Log.Error("display metadata validation failed", "err", err)
 		}
 	}
 
