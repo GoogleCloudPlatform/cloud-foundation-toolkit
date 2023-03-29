@@ -229,7 +229,6 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 
 func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMetadata) (*BlueprintMetadata, error) {
 	// start creating blueprint metadata
-
 	bpDisp.ResourceMeta = yaml.ResourceMeta{
 		TypeMeta: yaml.TypeMeta{
 			APIVersion: bpCore.ResourceMeta.APIVersion,
