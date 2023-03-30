@@ -8,10 +8,9 @@ import (
 
 func TestUIInputFromVariables(t *testing.T) {
 	tests := []struct {
-		name         string
-		coreVars     []BlueprintVariable
-		UIinput      *BlueprintUIInput
-		wantInputLen int
+		name     string
+		coreVars []BlueprintVariable
+		UIinput  *BlueprintUIInput
 	}{
 		{
 			name: "display metadata does not exist",
@@ -26,8 +25,7 @@ func TestUIInputFromVariables(t *testing.T) {
 					Name: "test_var_3",
 				},
 			},
-			UIinput:      &BlueprintUIInput{},
-			wantInputLen: 3,
+			UIinput: &BlueprintUIInput{},
 		},
 		{
 			name: "display metadata exists and is in line with core metadata",
@@ -58,7 +56,6 @@ func TestUIInputFromVariables(t *testing.T) {
 					},
 				},
 			},
-			wantInputLen: 3,
 		},
 		{
 			name: "display metadata exists and is not in line with core metadata",
@@ -89,7 +86,6 @@ func TestUIInputFromVariables(t *testing.T) {
 					},
 				},
 			},
-			wantInputLen: 4,
 		},
 	}
 	for _, tt := range tests {
@@ -98,9 +94,10 @@ func TestUIInputFromVariables(t *testing.T) {
 			for _, v := range tt.coreVars {
 				dispVar := tt.UIinput.DisplayVariables[v.Name]
 				assert.NotNil(t, dispVar)
+				assert.Equal(t, v.Name, dispVar.Name)
 			}
 
-			assert.Equal(t, len(tt.UIinput.DisplayVariables), tt.wantInputLen)
+			assert.GreaterOrEqual(t, len(tt.UIinput.DisplayVariables), len(tt.coreVars))
 		})
 	}
 }

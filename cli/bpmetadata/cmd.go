@@ -420,20 +420,3 @@ func UnmarshalMetadata(bpPath, fileName string) (*BlueprintMetadata, error) {
 
 	return &bpObj, nil
 }
-
-func buildUIInputFromVariables(vars []BlueprintVariable, input *BlueprintUIInput) {
-	if input.DisplayVariables == nil {
-		input.DisplayVariables = make(map[string]*DisplayVariable)
-	}
-
-	for _, v := range vars {
-		dispVar := input.DisplayVariables[v.Name]
-		if dispVar != nil {
-			continue
-		}
-
-		input.DisplayVariables[v.Name] = &DisplayVariable{
-			Name: v.Name,
-		}
-	}
-}
