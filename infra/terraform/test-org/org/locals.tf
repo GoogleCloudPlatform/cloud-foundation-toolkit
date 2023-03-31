@@ -108,11 +108,11 @@ locals {
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
-      name         = "terraform-ecommerce-microservices-on-gke"
-      short_name   = "ecommerce-microservices"
-      org          = "GoogleCloudPlatform"
-      description  = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
-      owners       = "@NimJay"
+      name        = "terraform-ecommerce-microservices-on-gke"
+      short_name  = "ecommerce-microservices"
+      org         = "GoogleCloudPlatform"
+      description = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
+      owners      = "@NimJay"
     },
     {
       name         = "terraform-example-foundation"
@@ -194,6 +194,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
+      owners      = "@davenportjw"
     },
     {
       name        = "terraform-google-bootstrap"
@@ -332,18 +333,21 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a regional TCP proxy load balancer for Compute Engine by using target pools and forwarding rules"
       topics      = local.common_topics.net
+      owners      = "@imrannayer"
     },
     {
       name        = "terraform-google-lb-http"
       org         = "terraform-google-modules"
       description = "Creates a global HTTP load balancer for Compute Engine by using forwarding rules"
       topics      = local.common_topics.net
+      owners      = "@imrannayer"
     },
     {
       name        = "terraform-google-lb-internal"
       org         = "terraform-google-modules"
       description = "Creates an internal load balancer for Compute Engine by using forwarding rules"
       topics      = local.common_topics.net
+      owners      = "@imrannayer"
     },
     {
       name        = "terraform-google-log-export"
@@ -556,6 +560,13 @@ locals {
       description = "Deploys a Lakehouse Architecture Solution"
       owners      = "@stevewalker-de"
       topics      = local.common_topics.da
+    },
+    {
+      name        = "terraform-google-alloy-db"
+      org         = "GoogleCloudPlatform"
+      description = "Creates an Alloy DB instance"
+      owners      = "@anaik91"
+      topics      = local.common_topics.db
     },
   ]
 }
