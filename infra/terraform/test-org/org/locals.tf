@@ -568,5 +568,12 @@ locals {
       owners      = "@anaik91"
       topics      = local.common_topics.db
     },
+    {
+      name        = "terraform-google-cloud-ids"
+      org         = "GoogleCloudPlatform"
+      description = "Deploys a Cloud IDS instance and associated resources."
+      owners      = "@gtsorbo @mgaur10"
+      topics      = join(",", [local.common_topics.security, local.common_topics.net])
+    },
   ]
 }
