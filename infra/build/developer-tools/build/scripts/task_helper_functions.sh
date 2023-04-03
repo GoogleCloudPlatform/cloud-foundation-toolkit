@@ -316,7 +316,14 @@ function generate_docs() {
 
 function generate_metadata() {
   echo "Generating blueprint metadata"
-  cft blueprint metadata
+  arg=$1
+  # check if metadata.display.yaml was requested
+  if [ arg -eq "display" ]; then
+    cft blueprint metadata -d
+  else
+    cft blueprint metadata
+  fi
+  
   if [ $? -eq 0 ]; then
     echo "Success!"
   else
