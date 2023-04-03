@@ -18,13 +18,9 @@ func GetRepoName(repoUrl string) (string, error) {
 	}
 
 	trimmedRemotePath := strings.TrimSuffix(u.Path, "/")
-	splitRemotePath := strings.Split(trimmedRemotePath, "/")
-	// expect path to be /owner/repo
-	if len(splitRemotePath) != 3 {
-		return "", fmt.Errorf("expected owner/repo, got %s", trimmedRemotePath)
-	}
+	i := strings.LastIndex(trimmedRemotePath, "/")
+	repoName := strings.TrimSuffix(trimmedRemotePath[i+1:], ".git")
 
-	repoName := strings.TrimSuffix(splitRemotePath[len(splitRemotePath)-1], ".git")
 	return repoName, nil
 }
 
