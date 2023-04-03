@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpbuild"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpcatalog"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpconsume"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bptest"
 	"github.com/spf13/cobra"
@@ -13,6 +14,7 @@ func init() {
 	blueprintCmd.AddCommand(bpbuild.Cmd)
 	blueprintCmd.AddCommand(bptest.Cmd)
 	blueprintCmd.AddCommand(bpcatalog.Cmd)
+	blueprintCmd.AddCommand(bpconsume.Cmd)
 
 	rootCmd.AddCommand(blueprintCmd)
 }
