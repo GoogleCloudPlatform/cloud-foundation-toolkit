@@ -40,10 +40,10 @@ jobs:
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .tag_name | contains("porch/") | not )][0].tag_name' | tr -d "v")
             elif [ "$tool" == "CFT_CLI" ]; then
               # get latest CFT_CLI release
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "v")
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "cli/v")
             elif [ "$tool" == "KUBECTL" ]; then
               # get latest KUBECTL_MINOR release
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name | sub(".*v(?<semver>[0-9]\\.[0-9]\\.[0-9])"; .semver)')
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name' | tr -d "v")              
             elif [ "$tool" == "GATOR" ]; then
               # get latest GATOR_MINOR release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${GATOR_MINOR}'"))][0].tag_name' | tr -d "v")
