@@ -32,7 +32,7 @@ KUSTOMIZE_VERSION := 3.6.1
 # Updated by Update Tooling Workflow
 KPT_VERSION := 1.0.0-beta.27
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 0.9.0
+CFT_CLI_VERSION := 0.5.2
 # Updated by Update Tooling Workflow
 KUBECTL_VERSION := 1.23.16
 TFLINT_VERSION := 0.41.0
