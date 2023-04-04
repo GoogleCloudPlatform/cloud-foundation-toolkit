@@ -20,5 +20,5 @@ CFT_CLI_VERSION=$1
 
 cd /build
 
-wget "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/releases/download/v${CFT_CLI_VERSION}/cft-linux-amd64"
+wget "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/releases/download/cli%2Fv${CFT_CLI_VERSION}/cft-linux-amd64"
 install -o 0 -g 0 -m 0755 cft-linux-amd64 /usr/local/bin/cft
