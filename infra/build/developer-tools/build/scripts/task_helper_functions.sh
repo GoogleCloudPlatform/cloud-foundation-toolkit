@@ -306,17 +306,24 @@ function generate_docs() {
     | compat_xargs -0 -n1 dirname \
     | sort -u)
 
-  generate_metadata
-}
-
-function generate_metadata() {
   # disable opt in after https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1353
   if [[ "${ENABLE_BPMETADATA:-}" -ne 1 ]]; then
     echo "ENABLE_BPMETADATA not set to 1. Skipping metadata generation."
     return 0
   fi
+  generate_metadata
+}
+
+function generate_metadata() {
   echo "Generating blueprint metadata"
-  cft blueprint metadata
+  arg=$1
+  # check if metadata.display.yaml was requested
+  if [ arg -eq "display" ]; then
+    cft blueprint metadata -d
+  else
+    cft blueprint metadata
+  fi
+  
   if [ $? -eq 0 ]; then
     echo "Success!"
   else
