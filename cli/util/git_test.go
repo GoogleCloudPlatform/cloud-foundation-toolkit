@@ -84,9 +84,9 @@ func TestGetRepoNameFromUrl(t *testing.T) {
 			want:    "bar",
 		},
 		{
-			name:    "invalid path",
-			repoUrl: "github.com/foo/bar/baz",
-			wantErr: true,
+			name:    "gerrit repo",
+			repoUrl: "sso://team/foo/bar",
+			want:    "bar",
 		},
 	}
 	for _, tt := range tests {
