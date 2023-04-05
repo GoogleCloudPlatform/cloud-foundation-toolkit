@@ -20,17 +20,23 @@ import logging
 import requests
 
 from google.cloud.devtools.cloudbuild_v1 import CloudBuildClient as cloudbuild
-from google.cloud.devtools.cloudbuild_v1.types import BuildStep, Build, BuildOptions
+from google.cloud.devtools.cloudbuild_v1.types import (
+    BuildStep,
+    Build,
+    BuildOptions)
 from google.protobuf import duration_pb2 as duration
 
 CFT_TOOLS_DEFAULT_IMAGE = 'gcr.io/cloud-foundation-cicd/cft/developer-tools'
 CFT_TOOLS_DEFAULT_IMAGE_VERSION = '1'
 # Disable terraform-google-module-template as it uses a cookiecutter template
-DISABLED_MODULES = ["terraform-example-foundation", "cloud-foundation-training", "terraform-google-module-template"]
+DISABLED_MODULES = ["terraform-example-foundation",
+                    "cloud-foundation-training",
+                    "terraform-google-module-template"]
 
 
 def main(event, context):
-    """ Triggers a new downstream build based on a PubSub message originating from a parent cloudbuild """
+    """ Triggers a new downstream build based on a PubSub message 
+    originating from a parent cloudbuild """
     # if cloud build project is not set, exit
     if not os.getenv('CLOUDBUILD_PROJECT'):
         logging.warn('Cloud Build project not set')
@@ -66,7 +72,8 @@ def main(event, context):
         CFT_TOOLS_DEFAULT_IMAGE_VERSION = data['substitutions'][
             '_DOCKER_TAG_VERSION_DEVELOPER_TOOLS'
         ]
-    # Cloud Build seems to have a bug where if a build is re run through Github UI, it will not set _PR_NUMBER or _HEAD_REPO_URL
+    # Cloud Build seems to have a bug where if a build is re run through
+    # Github UI, it will not set _PR_NUMBER or _HEAD_REPO_URL
     # workaround using the GH API to infer PR number and _HEAD_REPO_URL
     PR_NUMBER = data['substitutions'].get('_PR_NUMBER', False)
     _HEAD_REPO_URL = data['substitutions'].get('_HEAD_REPO_URL', False)
@@ -76,7 +83,8 @@ def main(event, context):
         'git clone $$REPO_URL . && git checkout $$COMMIT_SHA && git status',
     ]
     if not (PR_NUMBER or _HEAD_REPO_URL):
-        logging.warn('Unable to infer PR number via Cloud Build. Trying via GH API')
+        logging.warn(
+            'Unable to infer PR number via Cloud Build. Trying via GH API')
         # get list of github PRs that have this SHA
         response = requests.get(
             f'https://api.github.com/search/issues?q={data["substitutions"]["COMMIT_SHA"]}'
@@ -88,7 +96,8 @@ def main(event, context):
             logging.info(f'Multiple associated PRs found. Exiting...')
             return
         # if only one PR, its safe to assume that is associated with parent build's PR
-        logging.info(f'One associated PR found: {response_obj["items"][0]["number"]}')
+        logging.info(
+            f'One associated PR found: {response_obj["items"][0]["number"]}')
         PR_NUMBER = response_obj['items'][0]['number']
         # get target repo URL
         pr_url = response_obj['items'][0]['html_url']
