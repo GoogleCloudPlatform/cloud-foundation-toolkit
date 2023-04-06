@@ -16,17 +16,17 @@
 set -e
 
 echo "Reconciling gcp-org in production"
-BUILD_ID=$(gcloud beta builds triggers run gcp-org---terraform-apply --branch=production --project ${FOUNDATION_CICD_PROJECT_ID} --format="value(metadata.build.id)")
-gcloud beta builds log $BUILD_ID --project ${FOUNDATION_CICD_PROJECT_ID} --stream
+BUILD_ID=$(gcloud beta builds triggers run gcp-org---terraform-apply --branch=production --project "${FOUNDATION_CICD_PROJECT_ID}" --format="value(metadata.build.id)")
+gcloud beta builds log "$BUILD_ID" --project "${FOUNDATION_CICD_PROJECT_ID}" --stream
 
 repos=("gcp-environments" "gcp-networks" "gcp-projects")
 envs=("development" "non-production" "production")
 
-for repo in ${repos[@]}; do
+for repo in "${repos[@]}"; do
     TRIGGER_NAME="${repo}---terraform-apply"
-    for env in ${envs[@]}; do
+    for env in "${envs[@]}"; do
         echo "Reconciling ${repo} in ${env}"
-        BUILD_ID=$(gcloud beta builds triggers run ${TRIGGER_NAME} --branch=${env} --project ${FOUNDATION_CICD_PROJECT_ID} --format="value(metadata.build.id)")
-        gcloud beta builds log $BUILD_ID --project ${FOUNDATION_CICD_PROJECT_ID} --stream
+        BUILD_ID=$(gcloud beta builds triggers run "${TRIGGER_NAME}" --branch="${env}" --project "${FOUNDATION_CICD_PROJECT_ID}" --format="value(metadata.build.id)")
+        gcloud beta builds log "$BUILD_ID" --project "${FOUNDATION_CICD_PROJECT_ID}" --stream
     done
 done
