@@ -565,7 +565,7 @@ locals {
       name        = "terraform-google-alloy-db"
       org         = "GoogleCloudPlatform"
       description = "Creates an Alloy DB instance"
-      owners      = "@anaik91"
+      owners      = "@anaik91 @imrannayer"
       topics      = local.common_topics.db
     },
     {
