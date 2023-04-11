@@ -339,6 +339,7 @@ function check_tflint() {
     echo "DISABLE_TFLINT set. Skipping tflint check."
     return 0
   fi
+  local rval
   setup_trap_handler
   rval=0
   echo "Checking for tflint"
