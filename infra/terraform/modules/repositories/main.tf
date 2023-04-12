@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
+locals {
+  owners = flatten([
+    for repo, val in var.repos_map : [
+      for owner in val.owners : {
+        "repo" : repo
+        "owner" : owner
+      }
+    ]
+  ])
+}
+
 resource "github_repository" "repo" {
   for_each     = var.repos_map
   name         = each.value.name
-  description  = try(each.value.description, null)
-  homepage_url = try(each.value.homepage_url, "https://registry.terraform.io/modules/${each.value.org}/${trimprefix(each.value.name, "terraform-google-")}/google")
+  description  = each.value.description
+  homepage_url = coalesce(each.value.homepage_url, "https://registry.terraform.io/modules/${each.value.org}/${trimprefix(each.value.name, "terraform-google-")}/google")
   topics       = setunion(["cft-terraform"], try(split(",", trimspace(each.value.topics)), []))
 
   allow_merge_commit          = false
@@ -39,4 +50,13 @@ resource "github_repository_collaborator" "dpebot" {
   repository = each.value.name
   username   = "dpebot"
   permission = "pull"
+}
+
+resource "github_repository_collaborator" "owners" {
+  for_each = {
+    for v in local.owners : "${v.repo}/${v.owner}" => v
+  }
+  repository = each.value.repo
+  username   = each.value.owner
+  permission = "maintain"
 }

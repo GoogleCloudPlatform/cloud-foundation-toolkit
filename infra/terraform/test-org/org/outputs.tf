@@ -30,6 +30,10 @@ output "billing_account" {
   value = local.billing_account
 }
 
+output "lr_billing_account" {
+  value = local.lr_billing_account
+}
+
 output "cft_ci_group" {
   value = local.cft_ci_group
 }
