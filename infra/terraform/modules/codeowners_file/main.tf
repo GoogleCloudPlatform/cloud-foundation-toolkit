@@ -17,7 +17,7 @@
 locals {
   commit_author = "CFT Bot"
   commit_email  = "cloud-foundation-bot@google.com"
-  owners        = { for value in var.repos_map : value.name => value.owners if can(value.owners) }
+  owners        = { for value in var.repos_map : value.name => join(" ", formatlist("@%s", value.owners)) if length(value.owners) > 0 }
 }
 
 data "github_repository" "repo" {
