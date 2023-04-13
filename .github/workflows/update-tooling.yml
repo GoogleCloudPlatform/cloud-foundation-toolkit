@@ -9,7 +9,7 @@ env:
   CLOUD_SDK_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
   KPT_URL: "https://api.github.com/repos/GoogleContainerTools/kpt/releases"
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
-  KUBECTL_MINOR: "1.23"
+  KUBECTL_MINOR: "1.25"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
   GATOR_MINOR: "3.11"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
@@ -40,10 +40,10 @@ jobs:
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .tag_name | contains("porch/") | not )][0].tag_name' | tr -d "v")
             elif [ "$tool" == "CFT_CLI" ]; then
               # get latest CFT_CLI release
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "v")
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "cli/v")
             elif [ "$tool" == "KUBECTL" ]; then
               # get latest KUBECTL_MINOR release
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name | sub(".*v(?<semver>[0-9]\\.[0-9]\\.[0-9])"; .semver)')
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name' | tr -d "v")              
             elif [ "$tool" == "GATOR" ]; then
               # get latest GATOR_MINOR release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${GATOR_MINOR}'"))][0].tag_name' | tr -d "v")

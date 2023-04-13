@@ -15,7 +15,7 @@ type BlueprintUI struct {
 type BlueprintUIInput struct {
 
 	// variables is a map defining all inputs on the UI.
-	DisplayVariables map[string]DisplayVariable `json:"variables,omitempty" yaml:"variables,omitempty"`
+	DisplayVariables map[string]*DisplayVariable `json:"variables,omitempty" yaml:"variables,omitempty"`
 
 	// Sections is a generic structure for grouping inputs together.
 	DisplaySections []DisplaySection `json:"sections,omitempty" yaml:"sections,omitempty"`
