@@ -34,6 +34,7 @@ locals {
     "dynamic-python-webapp"       = "terraform-dynamic-python-webapp"
     "deploy-java-multizone"       = "terraform-example-deploy-java-multizone"
     "ecommerce-microservices"     = "terraform-ecommerce-microservices-on-gke"
+    "deploy-java-gke"             = "terraform-example-deploy-java-gke"
     "Migrate-Legacy-Java-App-GKE" = "Migrate-Legacy-Java-App-GKE"
   }
   # example foundation has custom test modes
