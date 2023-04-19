@@ -576,5 +576,12 @@ locals {
       owners      = ["gtsorbo", "mgaur10"]
       topics      = join(",", [local.common_topics.security, local.common_topics.net])
     },
+    {
+      name        = "terraform-example-deploy-java-gke"
+      short_name  = "deploy-java-gke"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy a Legacy Java App GKE"
+      owners      = ["donmccasland"]
+    },
   ]
 }
