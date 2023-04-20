@@ -49,6 +49,8 @@ locals {
     "roles/resourcemanager.folderEditor" : ["serviceAccount:${local.project_cleaner}"],
     "roles/serviceusage.serviceUsageAdmin" : ["serviceAccount:${local.project_cleaner}"],
     "roles/accesscontextmanager.policyReader" : ["group:${local.cft_ci_group}"],
+    "roles/assuredworkloads.admin" : ["group:${local.cft_ci_group}"],
+    "roles/iam.denyAdmin" : ["group:${local.cft_ci_group}"],
   }
 
   billing_policy = {
