@@ -583,5 +583,12 @@ locals {
       description = "Deploy a Legacy Java App GKE"
       owners      = ["donmccasland"]
     },
+    {
+      name        = "terraform-google-crmint"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy the Marketing Analytics application CRMint"
+      owners      = ["dulacp"]
+      topics      = join(",", [local.common_topics.da, local.common_topics.e2e], ["marketing"])
+    },
   ]
 }
