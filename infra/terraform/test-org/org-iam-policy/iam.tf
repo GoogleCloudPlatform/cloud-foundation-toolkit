@@ -77,7 +77,7 @@ data "google_secret_manager_secret_version" "org-role-admin-sa" {
   project = "cloud-foundation-cicd"
   secret  = "org-role-admin-sa"
 }
-   
+
 data "google_secret_manager_secret_version" "ba-admin-1" {
   project = "cloud-foundation-cicd"
   secret  = "ba-admin-1"
