@@ -59,6 +59,8 @@ locals {
       "group:${local.gcp_admins_group_test}",
       "user:${local.cft_admin}",
       "group:${local.foundation_leads_group}",
+      "group:${data.google_secret_manager_secret_version.ba-admin-1.secret_data}",
+      "group:${data.google_secret_manager_secret_version.ba-admin-2.secret_data}",
     ],
     "roles/billing.user" : [
       "serviceAccount:${local.ci_gsuite_sa}",
@@ -74,6 +76,16 @@ data "google_secret_manager_secret_version" "org-admin-sa" {
 data "google_secret_manager_secret_version" "org-role-admin-sa" {
   project = "cloud-foundation-cicd"
   secret  = "org-role-admin-sa"
+}
+
+data "google_secret_manager_secret_version" "ba-admin-1" {
+  project = "cloud-foundation-cicd"
+  secret  = "ba-admin-1"
+}
+
+data "google_secret_manager_secret_version" "ba-admin-2" {
+  project = "cloud-foundation-cicd"
+  secret  = "ba-admin-2"
 }
 
 resource "google_organization_iam_policy" "organization" {
