@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package google.cloud.config.bpmetadata;
 
-option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
-
 import "bpmetadata_ui_ext.proto";
+
+option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
 
 message BlueprintUIInput {
 

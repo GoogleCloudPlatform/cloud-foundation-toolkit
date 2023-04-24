@@ -6,8 +6,8 @@ option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
 // ExtensionType specifies the type of extension.
 enum ExtensionType {
-  // UNDEFINED_TYPE indicates that the extension type is undefined.
-  UNDEFINED_TYPE = 0;
+  // EXTENSIONTYPE_UNDEFINED indicates that the extension type is undefined.
+  EXTENSIONTYPE_UNDEFINED = 0;
 
   // General formats.
   EMAIL_ADDRESS     = 1;
