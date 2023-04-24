@@ -29,7 +29,7 @@ type DisplayVariable struct {
 
 	// Visible title for the variable on the UI. If not present,
 	// Name will be used for the Title.
-	Title bool `json:"title,omitempty" yaml:"title,omitempty"`
+	Title string `json:"title,omitempty" yaml:"title,omitempty"`
 
 	// A flag to hide or show the variable on the UI.
 	Visible bool `json:"visible,omitempty" yaml:"visible,omitempty"`

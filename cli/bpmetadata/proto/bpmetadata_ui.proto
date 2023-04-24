@@ -21,7 +21,7 @@ message DisplayVariable {
 
   // Visible title for the variable on the UI. If not present,
   // Name will be used for the Title.
-  bool title = 2;
+  string title = 2;
 
   // A flag to hide or show the variable on the UI.
   bool visible = 3;
