@@ -1,0 +1,180 @@
+syntax = "proto3";
+
+package google.cloud.config.bpmetadata;
+
+option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
+
+// ExtensionType specifies the type of extension.
+enum ExtensionType {
+  // UNDEFINED_TYPE indicates that the extension type is undefined.
+  UNDEFINED_TYPE = 0;
+
+  // General formats.
+  EMAIL_ADDRESS     = 1;
+  MULTI_LINE_STRING = 2;
+
+  // GCE related.
+  GCE_DISK_IMAGE       = 3;
+  GCE_DISK_TYPE        = 4;
+  GCE_DISK_SIZE        = 5;
+  GCE_MACHINE_TYPE     = 6;
+  GCE_NETWORK          = 7;
+  GCE_ZONE             = 8;
+  GCE_SUBNETWORK       = 9;
+  GCE_REGION           = 10;
+  GCE_GPU_TYPE         = 11;
+  GCE_GPU_COUNT        = 12;
+  GCE_EXTERNAL_IP      = 13;
+  GCE_IP_FORWARDING    = 14;
+  GCE_FIREWALL         = 15;
+  GCE_FIREWALL_RANGE   = 16;
+  GCE_GENERIC_RESOURCE = 17;
+
+  // GCS related.
+  GCS_BUCKET = 18;
+
+  // IAM related.
+  IAM_SERVICE_ACCOUNT = 19;
+}
+
+// An extension for variables defined as part of DisplayVariable. The
+// extension defines Google-specifc metadata necessary for choosing an
+// appropriate input widget or adding restrictions to GCP-specific resources.
+message GooglePropertyExtension {
+  // Type specifies the type of extension.
+  ExtensionType type = 1;
+
+  // Some properties (e.g. GCE_MACHINE_TYPE) require a zone context in order to
+  // determine the set of allowable values. This field references another
+  // property from the schema, which must have type GCE_ZONE.
+  string zone_property = 2;
+
+  // Property-specific extensions.
+  GCEMachineTypeExtension    gce_machine_type = 3;
+  GCEDiskSizeExtension       gce_disk_size = 4;
+  GCESubnetworkExtension     gce_subnetwork = 5;
+  GCEGenericResourceExtension gce_resource = 6;
+  GCEGPUTypeExtension        gce_gpu_type = 7;
+  GCEGPUCountExtension       gce_gpu_count = 8;
+  GCENetworkExtension        gce_network = 9;
+  GCEExternalIPExtension     gce_external_ip = 10;
+  GCEIPForwardingExtension    gce_ip_forwarding = 11;
+  GCEFirewallExtension       gce_firewall = 12;
+  GCEFirewallRangeExtension  gce_firewall_range = 13;
+  GCELocationExtension       gce_zone = 14;
+  GCELocationExtension       gce_region = 15;
+  IAMServiceAccountExtension iam_service_account = 16;
+}
+
+// GCELocationExtension specifies a location extension for a Google Compute Engine (GCE) resource.
+message GCELocationExtension {
+  // AllowlistedZones is a list of zones that are allowed for the resource.
+  repeated string allowlisted_zones = 1;
+
+  // AllowlistedRegions is a list of regions that are allowed for the resource.
+  repeated string allowlisted_regions = 2;
+}
+
+// GCEMachineTypeExtension specifies a machine type extension for a GCE resource.
+message GCEMachineTypeExtension {
+  // Minimum cpu. Used to filter the list of selectable machine types.
+  int32 min_cpu = 1;
+
+  // Minimum ram. Used to filter the list of selectable machine types.
+  int32 min_ram_gb = 2;
+
+  // If true, custom machine types will not be selectable.
+	// More info:
+	// https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type
+  bool disallow_custom_machine_types = 3;
+}
+
+// GCEGPUTypeExtension specifies a GPU type extension for a GCE resource.
+message GCEGPUTypeExtension {
+  // MachineType is the name of the machine type that the GPU is attached to.
+  string machine_type = 1;
+
+  // GPUType is the type of GPU that is attached to the machine.
+  string gpu_type = 2;
+}
+
+// GCEGPUCountExtension specifies the number of GPUs that should be attached to a machine.
+message GCEGPUCountExtension {
+  // This field references another variable from the schema,
+	// which must have type GCEMachineType.
+  string machine_type_variable = 1;
+}
+
+// GCEDiskSizeExtension specifies the size of a disk for a GCE resource.
+message GCEDiskSizeExtension {
+  // The allowable range of disk sizes depends on the disk type. This field
+	// references another variable from the schema, which must have type GCEDiskType.
+  string disk_type_variable = 1;
+}
+
+// GCENetworkExtension specifies a network extension for a GCE resource.
+message GCENetworkExtension {
+  // AllowSharedVpcs indicates this solution can receive
+	// shared VPC selflinks (fully qualified compute links).
+  bool allow_shared_vpcs = 1;
+
+  // Used to indicate to which machine type this network interface will be
+	// attached to.
+  string machine_type_variable = 2;
+}
+
+// ExternalIPType specifies the type of external IP address.
+enum ExternalIPType {
+  // EPHEMERAL indicates that the external IP address is ephemeral.
+  EPHEMERAL = 0;
+  // STATIC indicates that the external IP address is static.
+  STATIC = 1;
+}
+
+message GCEExternalIPExtension {
+  // NetworkVariable is the name of the network variable that the external IP address belongs to.
+  string network_variable = 1;
+
+  // Type specifies the type of external IP address. Defaults to EPHEMERAL if not specified.
+  ExternalIPType type = 2;
+}
+
+// GCEIPForwardingExtension specifies an IP forwarding extension for a GCE resource.
+message GCEIPForwardingExtension {
+  // NetworkVariable is the name of the network variable that the IP forwarding belongs to.
+  string network_variable = 1;
+
+  // NotConfigurable specifies whether the IP forwarding is configurable. Defaults to false if not specified.
+  bool not_configurable = 2;
+}
+
+message GCEFirewallExtension {
+  // NetworkVariable is used to indicate the network variable in the schema
+	// this external IP belongs to.
+  string network_variable = 1;
+}
+
+message GCEFirewallRangeExtension {
+  // FirewallVariable is used to indicate the firewall variable with the type
+	// GCEFirewall in the schema to which this firewall range belongs to.
+  string firewall_variable = 1;
+}
+
+message GCESubnetworkExtension {
+  // Subnetwork variable requires a network context in order to determine the
+	// set of available subnetworks. This field references another
+	// variable from the schema, which must have type GCENetwork.
+  string network_variable = 1;
+}
+
+message GCEGenericResourceExtension {
+  // GCE resource type to be fetched. This field references another
+	// property from the schema, which must have type GCEGenericResource.
+  string resource_variable = 1;
+}
+
+message IAMServiceAccountExtension {
+  // List of IAM roles that to  grant to a new SA, or the roles to filter
+	// existing SAs with.
+  repeated string roles = 1;
+}

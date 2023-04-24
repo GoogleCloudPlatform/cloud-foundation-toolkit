@@ -7,3 +7,4 @@ config-connector/tests/testcases/environments.yaml
 .vscode
 *.pyc
 schema
+cli/bpmetadata/proto/out*
