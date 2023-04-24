@@ -37,22 +37,28 @@ message DisplayVariable {
   // Typically shown after an invalid input.
   string regexValidation = 6;
 
-  // Minimum no. of values for the input variable.
-  int32 min = 7;
+  // Minimum no. of inputs for the input variable.
+	int32 minItems = 7;
 
-  // Max no. of values for the input variable.
-  int32 max = 8;
+	// Max no. of inputs for the input variable.
+	int32 maxItems = 8;
+
+	// Minimum length for string values.
+	int32 minLength = 9;
+
+	// Max length for string values.
+	int32 maxLength = 10;
+
+	// Minimum value for numeric types.
+	int32 min = 11;
+
+	// Max value for numeric types.
+	int32 max = 12;
 
   // The name of a section to which this variable belongs.
   // variables belong to the root section if this field is
   // not set.
-  string section = 9;
-
-  // Designates that this variable has no impact on the costs, quotas, or
-  // permissions associated with the resources in the expanded deployment.
-  // Typically true for application-specific variables that do not affect the
-  // size or number of instances in the deployment.
-  bool resourceImpact = 10;
+  string section = 13;
 
   // UI extension associated with the input variable.
   // E.g. for rendering a GCE machine type selector:
@@ -63,7 +69,7 @@ message DisplayVariable {
   //   gceMachineType:
   //     minCpu: 2
   //     minRamGb: 6
-  GooglePropertyExtension xGoogleProperty = 11;
+  GooglePropertyExtension xGoogleProperty = 14;
 }
 
 message DisplaySection {

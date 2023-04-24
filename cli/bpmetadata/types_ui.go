@@ -45,22 +45,28 @@ type DisplayVariable struct {
 	// Typically shown after an invalid input.
 	RegExValidation string `json:"regexValidation,omitempty" yaml:"regexValidation,omitempty"`
 
-	// Minimum no. of values for the input variable.
+	// Minimum no. of inputs for the input variable.
+	MinimumItems int `json:"minItems,omitempty" yaml:"min,omitempty"`
+
+	// Max no. of inputs for the input variable.
+	MaximumItems int `json:"maxItems,omitempty" yaml:"max,omitempty"`
+
+	// Minimum length for string values.
+	MinimumLength int `json:"minLength,omitempty" yaml:"min,omitempty"`
+
+	// Max length for string values.
+	MaximumLength int `json:"maxLength,omitempty" yaml:"max,omitempty"`
+
+	// Minimum value for numeric types.
 	Minimum int `json:"min,omitempty" yaml:"min,omitempty"`
 
-	// Max no. of values for the input variable.
+	// Max value for numeric types.
 	Maximum int `json:"max,omitempty" yaml:"max,omitempty"`
 
 	// The name of a section to which this variable belongs.
 	// variables belong to the root section if this field is
 	// not set.
 	Section string `json:"section,omitempty" yaml:"section,omitempty"`
-
-	// Designates that this variable has no impact on the costs, quotas, or
-	// permissions associated with the resources in the expanded deployment.
-	// Typically true for application-specific variables that do not affect the
-	// size or number of instances in the deployment.
-	ResourceImpact bool `json:"resourceImpact,omitempty" yaml:"resourceImpact,omitempty"`
 
 	// UI extension associated with the input variable.
 	// E.g. for rendering a GCE machine type selector:
