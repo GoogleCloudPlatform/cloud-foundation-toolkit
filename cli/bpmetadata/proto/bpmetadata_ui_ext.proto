@@ -84,8 +84,8 @@ message GCEMachineTypeExtension {
   int32 min_ram_gb = 2;
 
   // If true, custom machine types will not be selectable.
-	// More info:
-	// https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type
+  // More info:
+  // https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type
   bool disallow_custom_machine_types = 3;
 }
 
@@ -101,25 +101,25 @@ message GCEGPUTypeExtension {
 // GCEGPUCountExtension specifies the number of GPUs that should be attached to a machine.
 message GCEGPUCountExtension {
   // This field references another variable from the schema,
-	// which must have type GCEMachineType.
+  // which must have type GCEMachineType.
   string machine_type_variable = 1;
 }
 
 // GCEDiskSizeExtension specifies the size of a disk for a GCE resource.
 message GCEDiskSizeExtension {
   // The allowable range of disk sizes depends on the disk type. This field
-	// references another variable from the schema, which must have type GCEDiskType.
+  // references another variable from the schema, which must have type GCEDiskType.
   string disk_type_variable = 1;
 }
 
 // GCENetworkExtension specifies a network extension for a GCE resource.
 message GCENetworkExtension {
   // AllowSharedVpcs indicates this solution can receive
-	// shared VPC selflinks (fully qualified compute links).
+  // shared VPC selflinks (fully qualified compute links).
   bool allow_shared_vpcs = 1;
 
   // Used to indicate to which machine type this network interface will be
-	// attached to.
+  // attached to.
   string machine_type_variable = 2;
 }
 
@@ -150,31 +150,31 @@ message GCEIPForwardingExtension {
 
 message GCEFirewallExtension {
   // NetworkVariable is used to indicate the network variable in the schema
-	// this external IP belongs to.
+  // this external IP belongs to.
   string network_variable = 1;
 }
 
 message GCEFirewallRangeExtension {
   // FirewallVariable is used to indicate the firewall variable with the type
-	// GCEFirewall in the schema to which this firewall range belongs to.
+  // GCEFirewall in the schema to which this firewall range belongs to.
   string firewall_variable = 1;
 }
 
 message GCESubnetworkExtension {
   // Subnetwork variable requires a network context in order to determine the
-	// set of available subnetworks. This field references another
-	// variable from the schema, which must have type GCENetwork.
+  // set of available subnetworks. This field references another
+  // variable from the schema, which must have type GCENetwork.
   string network_variable = 1;
 }
 
 message GCEGenericResourceExtension {
   // GCE resource type to be fetched. This field references another
-	// property from the schema, which must have type GCEGenericResource.
+  // property from the schema, which must have type GCEGenericResource.
   string resource_variable = 1;
 }
 
 message IAMServiceAccountExtension {
   // List of IAM roles that to  grant to a new SA, or the roles to filter
-	// existing SAs with.
+  // existing SAs with.
   repeated string roles = 1;
 }
