@@ -29,7 +29,7 @@ type DisplayVariable struct {
 
 	// Visible title for the variable on the UI. If not present,
 	// Name will be used for the Title.
-	Title bool `json:"title,omitempty" yaml:"title,omitempty"`
+	Title string `json:"title,omitempty" yaml:"title,omitempty"`
 
 	// A flag to hide or show the variable on the UI.
 	Visible bool `json:"visible,omitempty" yaml:"visible,omitempty"`
@@ -45,22 +45,28 @@ type DisplayVariable struct {
 	// Typically shown after an invalid input.
 	RegExValidation string `json:"regexValidation,omitempty" yaml:"regexValidation,omitempty"`
 
-	// Minimum no. of values for the input variable.
+	// Minimum no. of inputs for the input variable.
+	MinimumItems int `json:"minItems,omitempty" yaml:"minItems,omitempty"`
+
+	// Max no. of inputs for the input variable.
+	MaximumItems int `json:"maxItems,omitempty" yaml:"maxItems,omitempty"`
+
+	// Minimum length for string values.
+	MinimumLength int `json:"minLength,omitempty" yaml:"minLength,omitempty"`
+
+	// Max length for string values.
+	MaximumLength int `json:"maxLength,omitempty" yaml:"maxLength,omitempty"`
+
+	// Minimum value for numeric types.
 	Minimum int `json:"min,omitempty" yaml:"min,omitempty"`
 
-	// Max no. of values for the input variable.
+	// Max value for numeric types.
 	Maximum int `json:"max,omitempty" yaml:"max,omitempty"`
 
 	// The name of a section to which this variable belongs.
 	// variables belong to the root section if this field is
 	// not set.
 	Section string `json:"section,omitempty" yaml:"section,omitempty"`
-
-	// Designates that this variable has no impact on the costs, quotas, or
-	// permissions associated with the resources in the expanded deployment.
-	// Typically true for application-specific variables that do not affect the
-	// size or number of instances in the deployment.
-	ResourceImpact bool `json:"resourceImpact,omitempty" yaml:"resourceImpact,omitempty"`
 
 	// UI extension associated with the input variable.
 	// E.g. for rendering a GCE machine type selector:

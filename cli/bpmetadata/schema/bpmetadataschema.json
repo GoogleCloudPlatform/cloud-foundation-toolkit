@@ -70,6 +70,39 @@
         "pageUrl"
       ]
     },
+    "BlueprintContent": {
+      "properties": {
+        "architecture": {
+          "$ref": "#/$defs/BlueprintArchitecture"
+        },
+        "diagrams": {
+          "items": {
+            "$ref": "#/$defs/BlueprintDiagram"
+          },
+          "type": "array"
+        },
+        "documentation": {
+          "items": {
+            "$ref": "#/$defs/BlueprintListContent"
+          },
+          "type": "array"
+        },
+        "subBlueprints": {
+          "items": {
+            "$ref": "#/$defs/BlueprintMiscContent"
+          },
+          "type": "array"
+        },
+        "examples": {
+          "items": {
+            "$ref": "#/$defs/BlueprintMiscContent"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "BlueprintCostEstimate": {
       "properties": {
         "description": {
@@ -134,43 +167,7 @@
         "name"
       ]
     },
-    "BlueprintListContent": {
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "title"
-      ]
-    },
-    "BlueprintMetadata": {
-      "properties": {
-        "apiVersion": {
-          "type": "string"
-        },
-        "kind": {
-          "type": "string"
-        },
-        "metadata": {
-          "$ref": "#/$defs/ObjectMeta"
-        },
-        "spec": {
-          "$ref": "#/$defs/BlueprintMetadataSpec"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "spec"
-      ]
-    },
-    "BlueprintMetadataSpec": {
+    "BlueprintInfo": {
       "properties": {
         "title": {
           "type": "string"
@@ -219,34 +216,17 @@
         },
         "supportInfo": {
           "$ref": "#/$defs/BlueprintSupport"
-        },
-        "architecture": {
-          "$ref": "#/$defs/BlueprintArchitecture"
-        },
-        "diagrams": {
-          "items": {
-            "$ref": "#/$defs/BlueprintDiagram"
-          },
-          "type": "array"
-        },
-        "documentation": {
-          "items": {
-            "$ref": "#/$defs/BlueprintListContent"
-          },
-          "type": "array"
-        },
-        "subBlueprints": {
-          "items": {
-            "$ref": "#/$defs/BlueprintMiscContent"
-          },
-          "type": "array"
-        },
-        "examples": {
-          "items": {
-            "$ref": "#/$defs/BlueprintMiscContent"
-          },
-          "type": "array"
-        },
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title",
+        "source"
+      ]
+    },
+    "BlueprintInterface": {
+      "properties": {
         "variables": {
           "items": {
             "$ref": "#/$defs/BlueprintVariable"
@@ -264,32 +244,67 @@
             "$ref": "#/$defs/BlueprintOutput"
           },
           "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "BlueprintListContent": {
+      "properties": {
+        "title": {
+          "type": "string"
         },
-        "roles": {
-          "items": {
-            "$ref": "#/$defs/BlueprintRoles"
-          },
-          "type": "array"
-        },
-        "services": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "input": {
-          "$ref": "#/$defs/BlueprintUIInput"
-        },
-        "runtime": {
-          "$ref": "#/$defs/BlueprintUIOutput"
+        "url": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "title",
-        "source"
+        "title"
       ]
+    },
+    "BlueprintMetadata": {
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/ObjectMeta"
+        },
+        "spec": {
+          "$ref": "#/$defs/BlueprintMetadataSpec"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "spec"
+      ]
+    },
+    "BlueprintMetadataSpec": {
+      "properties": {
+        "info": {
+          "$ref": "#/$defs/BlueprintInfo"
+        },
+        "content": {
+          "$ref": "#/$defs/BlueprintContent"
+        },
+        "interfaces": {
+          "$ref": "#/$defs/BlueprintInterface"
+        },
+        "requirements": {
+          "$ref": "#/$defs/BlueprintRequirements"
+        },
+        "ui": {
+          "$ref": "#/$defs/BlueprintUI"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "BlueprintMiscContent": {
       "properties": {
@@ -364,6 +379,24 @@
         "repo",
         "sourceType"
       ]
+    },
+    "BlueprintRequirements": {
+      "properties": {
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/BlueprintRoles"
+          },
+          "type": "array"
+        },
+        "services": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "BlueprintRoles": {
       "properties": {
@@ -452,6 +485,18 @@
         },
         "deployment": {
           "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "BlueprintUI": {
+      "properties": {
+        "input": {
+          "$ref": "#/$defs/BlueprintUIInput"
+        },
+        "runtime": {
+          "$ref": "#/$defs/BlueprintUIOutput"
         }
       },
       "additionalProperties": false,
@@ -562,7 +607,7 @@
           "type": "string"
         },
         "title": {
-          "type": "boolean"
+          "type": "string"
         },
         "visible": {
           "type": "boolean"
@@ -576,6 +621,18 @@
         "regexValidation": {
           "type": "string"
         },
+        "minItems": {
+          "type": "integer"
+        },
+        "maxItems": {
+          "type": "integer"
+        },
+        "minLength": {
+          "type": "integer"
+        },
+        "maxLength": {
+          "type": "integer"
+        },
         "min": {
           "type": "integer"
         },
@@ -584,9 +641,6 @@
         },
         "section": {
           "type": "string"
-        },
-        "resourceImpact": {
-          "type": "boolean"
         },
         "x-googleProperty": {
           "$ref": "#/$defs/GooglePropertyExtension"
