@@ -172,7 +172,7 @@ func generateMetadataForBpPath(bpPath string) error {
 
 func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*BlueprintMetadata, error) {
 	// verfiy that the blueprint path is valid & get repo details
-	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Source)
+	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Info.Source)
 	if err != nil {
 		return nil, err
 	}
@@ -200,13 +200,13 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	}
 
 	// create blueprint info
-	err = bpMetadataObj.Spec.BlueprintInfo.create(bpPath, readmeContent)
+	err = bpMetadataObj.Spec.Info.create(bpPath, readmeContent)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
 	// create blueprint interfaces i.e. variables & outputs
-	err = bpMetadataObj.Spec.BlueprintInterface.create(bpPath)
+	err = bpMetadataObj.Spec.Interfaces.create(bpPath)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
@@ -219,10 +219,10 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint requirements: %w", err)
 	}
 
-	bpMetadataObj.Spec.BlueprintRequirements = *requirements
+	bpMetadataObj.Spec.Requirements = *requirements
 
 	// create blueprint content i.e. documentation, icons, etc.
-	bpMetadataObj.Spec.BlueprintContent.create(bpPath, repoDetails.Source.RootPath, readmeContent)
+	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.RootPath, readmeContent)
 
 	return bpMetadataObj, nil
 }
@@ -242,15 +242,15 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 		},
 	}
 
-	if bpDisp.Spec.BlueprintInfo.Title == "" {
-		bpDisp.Spec.BlueprintInfo.Title = bpCore.Spec.BlueprintInfo.Title
+	if bpDisp.Spec.Info.Title == "" {
+		bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
 	}
 
-	if bpDisp.Spec.BlueprintInfo.Source == nil {
-		bpDisp.Spec.BlueprintInfo.Source = bpCore.Spec.BlueprintInfo.Source
+	if bpDisp.Spec.Info.Source == nil {
+		bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
 	}
 
-	buildUIInputFromVariables(bpCore.Spec.BlueprintInterface.Variables, &bpDisp.Spec.BlueprintUI.Input)
+	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, &bpDisp.Spec.UI.Input)
 
 	return bpDisp, nil
 }

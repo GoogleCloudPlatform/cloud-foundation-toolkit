@@ -3,5 +3,5 @@ kind: BlueprintMetadata
 metadata:
   name: terraform-google-module  
 spec:
-  title: Terraform Google Module
-
+  info:
+    title: Terraform Google Module

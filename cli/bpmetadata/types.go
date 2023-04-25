@@ -14,11 +14,11 @@ type BlueprintMetadata struct {
 // All immediate types within BlueprintMetadataSpec are inline and will
 // not appear as nodes in metadata.
 type BlueprintMetadataSpec struct {
-	BlueprintInfo         `json:",inline,omitempty" yaml:",inline,omitempty"`
-	BlueprintContent      `json:",inline,omitempty" yaml:",inline,omitempty"`
-	BlueprintInterface    `json:",inline,omitempty" yaml:",inline,omitempty"`
-	BlueprintRequirements `json:",inline,omitempty" yaml:",inline,omitempty"`
-	BlueprintUI           `json:",inline,omitempty" yaml:",inline,omitempty"`
+	Info         BlueprintInfo         `json:"info,omitempty" yaml:"info,omitempty"`
+	Content      BlueprintContent      `json:"content,omitempty" yaml:"content,omitempty"`
+	Interfaces   BlueprintInterface    `json:"interfaces,omitempty" yaml:"interfaces,omitempty"`
+	Requirements BlueprintRequirements `json:"requirements,omitempty" yaml:"requirements,omitempty"`
+	UI           BlueprintUI           `json:"ui,omitempty" yaml:"ui,omitempty"`
 }
 
 type BlueprintInfo struct {
