@@ -609,7 +609,7 @@
         "title": {
           "type": "string"
         },
-        "visible": {
+        "invisible": {
           "type": "boolean"
         },
         "tooltip": {

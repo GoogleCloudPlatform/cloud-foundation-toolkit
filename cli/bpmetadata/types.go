@@ -87,6 +87,9 @@ type BlueprintRepoDetail struct {
 
 	// Set as "git" for now until more types are supported.
 	SourceType string `json:"sourceType" yaml:"sourceType"`
+
+	// optional directory location for a submodule under modules/
+	dir string `json:"dir,omitempty" yaml:"dir,omitempty"`
 }
 
 type BlueprintActuationTool struct {

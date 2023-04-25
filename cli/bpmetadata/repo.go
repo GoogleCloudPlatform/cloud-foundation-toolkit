@@ -63,3 +63,14 @@ func getBpRootPath(bpPath string) string {
 
 	return bpPath
 }
+
+// getBpSubmoduleName gets the submodule name from the blueprint path
+// if it lives under the /modules directory
+func getBpSubmoduleName(bpPath string) string {
+	if strings.Contains(bpPath, nestedBpPath) {
+		i := strings.Index(bpPath, nestedBpPath)
+		return bpPath[i+9:]
+	}
+
+	return ""
+}

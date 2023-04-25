@@ -24,7 +24,7 @@ message DisplayVariable {
   string title = 2;
 
   // A flag to hide or show the variable on the UI.
-  bool visible = 3;
+  bool invisible = 3;
 
   // Variable tooltip.
   string tooltip = 4;
