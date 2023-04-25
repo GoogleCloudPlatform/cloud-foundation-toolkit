@@ -38,22 +38,22 @@ message DisplayVariable {
   string regex_validation = 6;
 
   // Minimum no. of inputs for the input variable.
-	int32 min_items = 7;
+  int32 min_items = 7;
 
-	// Max no. of inputs for the input variable.
-	int32 max_items = 8;
+  // Max no. of inputs for the input variable.
+  int32 max_items = 8;
 
-	// Minimum length for string values.
-	int32 min_length = 9;
+  // Minimum length for string values.
+  int32 min_length = 9;
 
-	// Max length for string values.
-	int32 max_length = 10;
+  // Max length for string values.
+  int32 max_length = 10;
 
-	// Minimum value for numeric types.
-	int32 min = 11;
+  // Minimum value for numeric types.
+  int32 min = 11;
 
-	// Max value for numeric types.
-	int32 max = 12;
+  // Max value for numeric types.
+  int32 max = 12;
 
   // The name of a section to which this variable belongs.
   // variables belong to the root section if this field is
