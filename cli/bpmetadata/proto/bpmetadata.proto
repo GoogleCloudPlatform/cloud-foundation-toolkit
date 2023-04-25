@@ -13,17 +13,17 @@ message BlueprintMetadataSpec {
 
   // BlueprintContent defines the detail for blueprint related content such as
   // related documentation, diagrams, examples etc.
-	BlueprintContent content = 2;
+  BlueprintContent content = 2;
 
   // BlueprintInterface defines the input and output variables for the blueprint.
-	BlueprintInterface interfaces = 3;
+  BlueprintInterface interfaces = 3;
 
   // BlueprintRequirements defines the roles required and the associated services
   // that need to be enabled to provision blueprint resources.
-	BlueprintRequirements requirements = 4;
+  BlueprintRequirements requirements = 4;
 
   // BlueprintUI defines the user interface for the blueprint.
-	BlueprintUI ui = 5;
+  BlueprintUI ui = 5;
 }
 
 // BlueprintInfo defines the basic information of the blueprint.
