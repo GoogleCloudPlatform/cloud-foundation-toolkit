@@ -195,7 +195,7 @@ type BlueprintQuotaDetail struct {
 
 type BlueprintAuthor struct {
 	// Name of template author or organization.
-	Title string `json:"author" yaml:"author"`
+	Title string `json:"title" yaml:"title"`
 
 	// Description of the author.
 	Description string `json:"description,omitempty"  yaml:"description,omitempty"`
