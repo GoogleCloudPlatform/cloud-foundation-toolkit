@@ -272,6 +272,10 @@ func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 		SourceType: "git",
 	}
 
+	if dir := getBpSubmoduleName(bpPath); dir != "" {
+		i.Source.dir = dir
+	}
+
 	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
 	if err == nil {
 		i.Version = versionInfo.moduleVersion

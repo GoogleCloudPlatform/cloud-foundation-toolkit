@@ -32,7 +32,7 @@ type DisplayVariable struct {
 	Title string `json:"title,omitempty" yaml:"title,omitempty"`
 
 	// A flag to hide or show the variable on the UI.
-	Visible bool `json:"visible,omitempty" yaml:"visible,omitempty"`
+	Invisible bool `json:"invisible,omitempty" yaml:"invisible,omitempty"`
 
 	// Variable tooltip.
 	Tooltip string `json:"tooltip,omitempty" yaml:"tooltip,omitempty"`

@@ -43,16 +43,13 @@ func TestUIInputFromVariables(t *testing.T) {
 			UIinput: &BlueprintUIInput{
 				DisplayVariables: map[string]*DisplayVariable{
 					"test_var_1": {
-						Name:    "test_var_1",
-						Visible: true,
+						Name: "test_var_1",
 					},
 					"test_var_2": {
-						Name:    "test_var_2",
-						Visible: true,
+						Name: "test_var_2",
 					},
 					"test_var_3": {
-						Name:    "test_var_3",
-						Visible: true,
+						Name: "test_var_3",
 					},
 				},
 			},
@@ -73,16 +70,13 @@ func TestUIInputFromVariables(t *testing.T) {
 			UIinput: &BlueprintUIInput{
 				DisplayVariables: map[string]*DisplayVariable{
 					"test_var_1": {
-						Name:    "test_var_1",
-						Visible: true,
+						Name: "test_var_1",
 					},
 					"test_var_2": {
-						Name:    "test_var_2",
-						Visible: true,
+						Name: "test_var_2",
 					},
 					"test_var_3": {
-						Name:    "test_var_3",
-						Visible: true,
+						Name: "test_var_3",
 					},
 				},
 			},
