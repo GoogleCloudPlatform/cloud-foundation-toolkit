@@ -46,16 +46,16 @@ type DisplayVariable struct {
 	RegExValidation string `json:"regexValidation,omitempty" yaml:"regexValidation,omitempty"`
 
 	// Minimum no. of inputs for the input variable.
-	MinimumItems int `json:"minItems,omitempty" yaml:"min,omitempty"`
+	MinimumItems int `json:"minItems,omitempty" yaml:"minItems,omitempty"`
 
 	// Max no. of inputs for the input variable.
-	MaximumItems int `json:"maxItems,omitempty" yaml:"max,omitempty"`
+	MaximumItems int `json:"maxItems,omitempty" yaml:"maxItems,omitempty"`
 
 	// Minimum length for string values.
-	MinimumLength int `json:"minLength,omitempty" yaml:"min,omitempty"`
+	MinimumLength int `json:"minLength,omitempty" yaml:"minLength,omitempty"`
 
 	// Max length for string values.
-	MaximumLength int `json:"maxLength,omitempty" yaml:"max,omitempty"`
+	MaximumLength int `json:"maxLength,omitempty" yaml:"maxLength,omitempty"`
 
 	// Minimum value for numeric types.
 	Minimum int `json:"min,omitempty" yaml:"min,omitempty"`

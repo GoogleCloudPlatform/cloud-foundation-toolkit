@@ -35,19 +35,19 @@ message DisplayVariable {
   // Text describing the validation rules for the variable based
   // on a regular expression.
   // Typically shown after an invalid input.
-  string regexValidation = 6;
+  string regex_validation = 6;
 
   // Minimum no. of inputs for the input variable.
-	int32 minItems = 7;
+	int32 min_items = 7;
 
 	// Max no. of inputs for the input variable.
-	int32 maxItems = 8;
+	int32 max_items = 8;
 
 	// Minimum length for string values.
-	int32 minLength = 9;
+	int32 min_length = 9;
 
 	// Max length for string values.
-	int32 maxLength = 10;
+	int32 max_length = 10;
 
 	// Minimum value for numeric types.
 	int32 min = 11;
@@ -69,7 +69,7 @@ message DisplayVariable {
   //   gceMachineType:
   //     minCpu: 2
   //     minRamGb: 6
-  GooglePropertyExtension xGoogleProperty = 14;
+  GooglePropertyExtension x_google_property = 14;
 }
 
 message DisplaySection {
@@ -94,10 +94,10 @@ message DisplaySection {
 message BlueprintUIOutput {
   // Short message to be displayed while the blueprint is deploying.
   // At most 128 characters.
-  string outputMessage = 1;
+  string output_message = 1;
 
   // List of suggested actions to take.
-  repeated UIActionItem suggestedActions = 2;
+  repeated UIActionItem suggested_actions = 2;
 }
 
 // An item appearing in a list of required or suggested steps.
@@ -120,5 +120,5 @@ message UIActionItem {
   // If present, this expression determines whether the item is shown.
   // Should be in the form of a Boolean expression e.g. outputs().hasExternalIP
   // where `externalIP` is the output.
-  string showIf = 4;
+  string show_if = 4;
 }
