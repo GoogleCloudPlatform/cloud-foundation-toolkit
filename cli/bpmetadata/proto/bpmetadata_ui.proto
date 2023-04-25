@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package google.cloud.config.bpmetadata;
+
+import "bpmetadata_ui_ext.proto";
+
+option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
+
+message BlueprintUIInput {
+
+  // variables is a map defining all inputs on the UI.
+  map<string, DisplayVariable> display_variables = 1;
+
+  // Sections is a generic structure for grouping inputs together.
+  repeated DisplaySection display_sections = 2;
+}
+
+message DisplayVariable {
+  // The variable name from the corresponding standard metadata file.
+  string name = 1;
+
+  // Visible title for the variable on the UI. If not present,
+  // Name will be used for the Title.
+  string title = 2;
+
+  // A flag to hide or show the variable on the UI.
+  bool visible = 3;
+
+  // Variable tooltip.
+  string tooltip = 4;
+
+  // Placeholder text (when there is no default).
+  string placeholder = 5;
+
+  // Text describing the validation rules for the variable based
+  // on a regular expression.
+  // Typically shown after an invalid input.
+  string regex_validation = 6;
+
+  // Minimum no. of inputs for the input variable.
+  int32 min_items = 7;
+
+  // Max no. of inputs for the input variable.
+  int32 max_items = 8;
+
+  // Minimum length for string values.
+  int32 min_length = 9;
+
+  // Max length for string values.
+  int32 max_length = 10;
+
+  // Minimum value for numeric types.
+  int32 min = 11;
+
+  // Max value for numeric types.
+  int32 max = 12;
+
+  // The name of a section to which this variable belongs.
+  // variables belong to the root section if this field is
+  // not set.
+  string section = 13;
+
+  // UI extension associated with the input variable.
+  // E.g. for rendering a GCE machine type selector:
+  //
+  // x-googleProperty:
+  //   type: GCE_MACHINE_TYPE
+  //   zoneProperty: myZone
+  //   gceMachineType:
+  //     minCpu: 2
+  //     minRamGb: 6
+  GooglePropertyExtension x_google_property = 14;
+}
+
+message DisplaySection {
+  // The name of the section, referenced by DisplayVariable.Section
+  // Section names must be unique.
+  string name = 1;
+
+  // Section title.
+  // If not provided, name will be used instead.
+  string title = 2;
+
+  // Section tooltip.
+  string tooltip = 3;
+
+  // Section subtext.
+  string subtext = 4;
+
+  // The name of the parent section (if parent is not the root section).
+  string parent = 5;
+}
+
+message BlueprintUIOutput {
+  // Short message to be displayed while the blueprint is deploying.
+  // At most 128 characters.
+  string output_message = 1;
+
+  // List of suggested actions to take.
+  repeated UIActionItem suggested_actions = 2;
+}
+
+// An item appearing in a list of required or suggested steps.
+message UIActionItem {
+  // Summary heading for the item.
+  // Required. Accepts string expressions. At most 64 characters.
+  string heading = 1;
+
+  // Longer description of the item.
+  // At least one description or snippet is required.
+  // Accepts string expressions. HTML <code>&lt;a href&gt;</code>
+  // tags only. At most 512 characters.
+  string description = 2;
+
+  // Fixed-width formatted code snippet.
+  // At least one description or snippet is required.
+  // Accepts string expressions. UTF-8 text. At most 512 characters.
+  string snippet = 3;
+
+  // If present, this expression determines whether the item is shown.
+  // Should be in the form of a Boolean expression e.g. outputs().hasExternalIP
+  // where `externalIP` is the output.
+  string show_if = 4;
+}

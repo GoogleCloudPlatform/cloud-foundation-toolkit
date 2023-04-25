@@ -3,11 +3,12 @@ kind: BlueprintMetadata
 metadata:
   name: terraform-google-module  
 spec:
-  title: Terraform Google Module
-  source:
-    repo: https://github.com/GoogleCloudPlatform/terraform-google-module.git
-    sourceType: git
-  quotaDetails:
-  - type: BAD_ENUM
-    quotaType:
-      MACHINE_TYPE: "n1-standard-8"
+  info:
+    title: Terraform Google Module
+    source:
+      repo: https://github.com/GoogleCloudPlatform/terraform-google-module.git
+      sourceType: git
+    quotaDetails:
+    - type: BAD_ENUM
+      quotaType:
+        MACHINE_TYPE: "n1-standard-8"

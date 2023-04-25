@@ -3,7 +3,7 @@ package bpmetadata
 type ExtensionType string
 
 const (
-	Undefined ExtensionType = "UNDEFINED_TYPE"
+	ExtTypeUndefined ExtensionType = "EXTENSIONTYPE_UNDEFINED"
 
 	// General formats.
 	EmailAddress    ExtensionType = "EMAIL_ADDRESS"
