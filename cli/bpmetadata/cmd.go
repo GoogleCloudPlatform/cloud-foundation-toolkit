@@ -273,7 +273,7 @@ func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 	}
 
 	if dir := getBpSubmoduleName(bpPath); dir != "" {
-		i.Source.dir = dir
+		i.Source.Dir = dir
 	}
 
 	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
