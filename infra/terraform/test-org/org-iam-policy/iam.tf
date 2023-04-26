@@ -62,9 +62,9 @@ locals {
       "group:${data.google_secret_manager_secret_version.ba-admin-1.secret_data}",
       "group:${data.google_secret_manager_secret_version.ba-admin-2.secret_data}",
     ],
-    "roles/billing.user" : [
+    "roles/billing.user" : concat([
       "serviceAccount:${local.ci_gsuite_sa}",
-    ]
+    ], jsondecode(data.google_storage_bucket_object_content.ba-users.content))
   }
 }
 
@@ -86,6 +86,11 @@ data "google_secret_manager_secret_version" "ba-admin-1" {
 data "google_secret_manager_secret_version" "ba-admin-2" {
   project = "cloud-foundation-cicd"
   secret  = "ba-admin-2"
+}
+
+data "google_storage_bucket_object_content" "ba-users" {
+  name   = "ba-users.json"
+  bucket = "tf-data-199f44ed6f9a7f22"
 }
 
 resource "google_organization_iam_policy" "organization" {
