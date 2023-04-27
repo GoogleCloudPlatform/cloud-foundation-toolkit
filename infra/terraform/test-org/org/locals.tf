@@ -113,7 +113,7 @@ locals {
       short_name  = "ecommerce-microservices"
       org         = "GoogleCloudPlatform"
       description = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
-      owners      = ["NimJay"]
+      owners      = ["@GoogleCloudPlatform/dee-platform-ops"]
     },
     {
       name         = "terraform-example-foundation"
