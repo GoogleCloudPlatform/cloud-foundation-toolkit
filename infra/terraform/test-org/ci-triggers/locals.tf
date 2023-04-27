@@ -36,6 +36,7 @@ locals {
     "ecommerce-microservices"     = "terraform-ecommerce-microservices-on-gke"
     "deploy-java-gke"             = "terraform-example-deploy-java-gke"
     "Migrate-Legacy-Java-App-GKE" = "Migrate-Legacy-Java-App-GKE"
+    "java-dynamic-point-of-sale"  = "terraform-example-java-dynamic-point-of-sale"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }

@@ -116,6 +116,13 @@ locals {
       owners      = ["NimJay"]
     },
     {
+      name        = "terraform-example-java-dynamic-point-of-sale"
+      short_name  = "java-dynamic-point-of-sale"
+      org         = "GoogleCloudPlatform"
+      description = "Deploys a dynamic Java webapp into a Google Kubernetes Engine cluster."
+      owners      = ["@GoogleCloudPlatform/dee-platform-ops"]
+    },
+    {
       name         = "terraform-example-foundation"
       short_name   = "example-foundation"
       org          = "terraform-google-modules"
