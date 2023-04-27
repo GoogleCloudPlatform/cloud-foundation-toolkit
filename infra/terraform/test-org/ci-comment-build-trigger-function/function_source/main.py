@@ -35,7 +35,7 @@ DISABLED_MODULES = ["terraform-example-foundation",
 
 
 def main(event, context):
-    """ Triggers a new downstream build based on a PubSub message 
+    """ Triggers a new downstream build based on a PubSub message
     originating from a parent cloudbuild """
     # if cloud build project is not set, exit
     if not os.getenv('CLOUDBUILD_PROJECT'):
