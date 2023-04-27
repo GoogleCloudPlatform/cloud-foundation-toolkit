@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# flake8: noqa
+
 import base64
 import sys
 import os
@@ -35,7 +37,7 @@ DISABLED_MODULES = ["terraform-example-foundation",
 
 
 def main(event, context):
-    """ Triggers a new downstream build based on a PubSub message 
+    """ Triggers a new downstream build based on a PubSub message
     originating from a parent cloudbuild """
     # if cloud build project is not set, exit
     if not os.getenv('CLOUDBUILD_PROJECT'):
