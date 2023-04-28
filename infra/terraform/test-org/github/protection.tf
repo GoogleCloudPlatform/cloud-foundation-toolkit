@@ -139,6 +139,22 @@ module "codeowners_gcp" {
   repos_map = local.gcp_modules_map
 }
 
+module "lint_yaml_tgm" {
+  source    = "../../modules/repo_file"
+  org       = "terraform-google-modules"
+  repo_list = module.repos_tgm.repos
+  filename  = ".github/workflows/lint.yaml"
+  content   = file("${path.module}/resources/lint.yaml")
+}
+
+module "lint_yaml_gcp" {
+  source    = "../../modules/repo_file"
+  org       = "GoogleCloudPlatform"
+  repo_list = module.repos_gcp.repos
+  filename  = ".github/workflows/lint.yaml"
+  content   = file("${path.module}/resources/lint.yaml")
+}
+
 # Special CI/branch protection case
 
 data "github_team" "cft-admins" {
@@ -164,7 +180,7 @@ resource "github_branch_protection" "terraform-example-foundation" {
       "cla/google",
       "terraform-example-foundation-int-trigger-default (cloud-foundation-cicd)",
       "terraform-example-foundation-int-trigger-HubAndSpoke (cloud-foundation-cicd)",
-      "terraform-example-foundation-lint-trigger (cloud-foundation-cicd)",
+      "lint / lint (pull_request)",
       "conventionalcommits.org"
     ]
   }
