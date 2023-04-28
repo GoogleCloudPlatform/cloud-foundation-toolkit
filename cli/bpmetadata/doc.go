@@ -25,9 +25,9 @@
 //
 // # Generating metadata for a Terraform package
 //
-//	Prerequisite: The Terraform package should conform to the folder structure defined by the
-//	[CFT Module Template]. A vanilla package can be generated using `cookiecutter` as explained in
-//	the CFT Module Template's documentation.
+// Prerequisite: The Terraform package should conform to the folder structure defined by the
+// [CFT Module Template]. A vanilla package can be generated using `cookiecutter` as explained in
+// the CFT Module Template's documentation.
 //
 // Generate metadata using the CLI by pointing the CLI to the root of the Terraform package as:
 //
