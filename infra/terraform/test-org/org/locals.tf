@@ -120,7 +120,7 @@ locals {
       short_name  = "java-dynamic-point-of-sale"
       org         = "GoogleCloudPlatform"
       description = "Deploys a dynamic Java webapp into a Google Kubernetes Engine cluster."
-      owners      = ["@GoogleCloudPlatform/dee-platform-ops"]
+      owners      = ["shabirmean", "Mukamik"]
     },
     {
       name         = "terraform-example-foundation"
