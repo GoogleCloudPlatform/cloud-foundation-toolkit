@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,7 @@
   Required variables
 *******************************************/
 
-variable "repos_map" {
-  description = "Map of Repos"
-  type = map(object({
-    name         = string
-    short_name   = optional(string)
-    org          = string
-    description  = optional(string)
-    owners       = optional(list(string), [])
-    homepage_url = optional(string, null)
-    module       = optional(bool, true)
-    topics       = optional(string)
-  }))
-}
-
-variable "team_id" {
-  description = "Team to add as repo collaborators"
-  type        = string
-  default     = null
+variable "users" {
+  description = "list of github users"
+  type        = list(string)
 }
