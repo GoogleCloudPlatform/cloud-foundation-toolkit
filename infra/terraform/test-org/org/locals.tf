@@ -590,5 +590,19 @@ locals {
       owners      = ["dulacp"]
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e], ["marketing"])
     },
+    {
+      name        = "terraform-large-data-sharing-java-webapp"
+      short_name  = "large-data-sharing-java-webapp"
+      org         = "GoogleCloudPlatform"
+      description = "Large data sharing Java web app"
+      owners      = ["donmccasland"]
+    },
+    {
+      name        = "terraform-large-data-sharing-golang-webapp"
+      short_name  = "large-data-sharing-golang-webapp"
+      org         = "GoogleCloudPlatform"
+      description = "Large data sharing Golang web app"
+      owners      = ["donmccasland"]
+    },
   ]
 }
