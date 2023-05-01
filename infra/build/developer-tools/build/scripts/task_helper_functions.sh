@@ -334,6 +334,22 @@ function generate_metadata() {
   fix_headers
 }
 
+function check_metadata() {
+  if [[ "${ENABLE_BPMETADATA:-}" -ne 1 ]]; then
+    echo "ENABLE_BPMETADATA not set to 1. Skipping metadata validation."
+    return 0
+  fi
+
+  echo "Validating blueprint metadata"
+  cft blueprint metadata -v
+  
+  if [ $? -eq 0 ]; then
+    echo "Success!"
+  else
+    echo "Warning! Unable to validate metadata."
+  fi
+}
+
 function check_tflint() {
   if [[ "${DISABLE_TFLINT:-}" ]]; then
     echo "DISABLE_TFLINT set. Skipping tflint check."
