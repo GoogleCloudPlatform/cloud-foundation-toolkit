@@ -599,16 +599,16 @@ locals {
     },
     {
       name        = "terraform-large-data-sharing-java-webapp"
-      short_name  = "large-data-sharing-java-webapp"
+      short_name  = "large-data-sharing-java-app"
       org         = "GoogleCloudPlatform"
-      description = "Large data sharing Java web app"
+      description = "Deploys a large data sharing Java web app"
       owners      = ["donmccasland"]
     },
     {
       name        = "terraform-large-data-sharing-golang-webapp"
-      short_name  = "large-data-sharing-golang-webapp"
+      short_name  = "large-data-sharing-go-app"
       org         = "GoogleCloudPlatform"
-      description = "Large data sharing Golang web app"
+      description = "Deploys a large data sharing Golang web app"
       owners      = ["donmccasland"]
     },
   ]
