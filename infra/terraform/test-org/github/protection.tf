@@ -140,19 +140,19 @@ module "codeowners_gcp" {
 }
 
 module "lint_yaml_tgm" {
-  source    = "../../modules/repo_file"
-  org       = "terraform-google-modules"
-  repo_list = module.repos_tgm.repos
-  filename  = ".github/workflows/lint.yaml"
-  content   = file("${path.module}/resources/lint.yaml")
+  source    = "../../modules/lint_file"
+  repos_map = local.tgm_modules_map
+  providers = {
+    github = github
+  }
 }
 
 module "lint_yaml_gcp" {
-  source    = "../../modules/repo_file"
-  org       = "GoogleCloudPlatform"
-  repo_list = module.repos_gcp.repos
-  filename  = ".github/workflows/lint.yaml"
-  content   = file("${path.module}/resources/lint.yaml")
+  source    = "../../modules/lint_file"
+  repos_map = local.gcp_modules_map
+  providers = {
+    github = github.gcp
+  }
 }
 
 # Special CI/branch protection case
