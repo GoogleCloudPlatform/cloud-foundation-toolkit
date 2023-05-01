@@ -38,6 +38,7 @@ locals {
     "Migrate-Legacy-Java-App-GKE"      = "Migrate-Legacy-Java-App-GKE"
     "large-data-sharing-java-webapp"   = "terraform-large-data-sharing-java-webapp"
     "large-data-sharing-golang-webapp" = "terraform-large-data-sharing-golang-webapp"
+    "java-dynamic-point-of-sale"       = "terraform-example-java-dynamic-point-of-sale"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
