@@ -38,6 +38,7 @@ messages='{
   "check_python": "Failed flake8 Python lint check.",
   "check_tflint": "Failed TFlint check. More details below.",
   "check_terraform": "Failed Terraform check. More details below."
+  "check_metadata": "Failed metadata validation check. More details below."
 }'
 rval=0
 failed_tests=()
@@ -50,6 +51,7 @@ tests=(
   check_python
   check_tflint
   check_terraform
+  check_metadata  
 )
 
 # parse args
