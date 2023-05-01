@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2022-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 locals {
   tgm_modules_map = { for value in local.modules : value.name => value if value.org == "terraform-google-modules" }
   gcp_modules_map = { for value in local.modules : value.name => value if value.org == "GoogleCloudPlatform" }
+  users           = distinct(flatten([for value in local.modules : value.owners if try(value.owners, null) != null]))
 }
 
 module "repos_tgm" {
   source    = "../../modules/repositories"
   repos_map = local.tgm_modules_map
+  team_id   = module.collaborators_tgm.id
   providers = {
     github = github
   }
@@ -30,6 +32,8 @@ module "repos_tgm" {
 module "repos_gcp" {
   source    = "../../modules/repositories"
   repos_map = local.gcp_modules_map
+  # TODO: filter team on users already part of the org
+  # team_id   = module.collaborators_gcp.id
   providers = {
     github = github.gcp
   }
@@ -171,4 +175,13 @@ resource "github_branch_protection" "terraform-example-foundation" {
     data.github_team.cft-admins.node_id
   ]
 
+}
+
+# collaborator teams for approved CI
+module "collaborators_tgm" {
+  source = "../../modules/team"
+  users  = local.users
+  providers = {
+    github = github
+  }
 }
