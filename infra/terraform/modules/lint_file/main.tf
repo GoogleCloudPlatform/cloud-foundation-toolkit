@@ -20,7 +20,7 @@ locals {
 }
 
 data "github_repository" "repo" {
-  for_each = toset(flatten([ for value in var.repos_map : value.name if value.disable_lint_yaml != true ]))
+  for_each = toset(flatten([for value in var.repos_map : value.name if value.disable_lint_yaml != true]))
   name     = each.value
 }
 
