@@ -18,8 +18,7 @@ terraform {
   required_providers {
     github = {
       source = "integrations/github"
-      # Hold at 5.7 till https://github.com/integrations/terraform-provider-github/pull/1431
-      version = "~> 5.7.0"
+      version = "~> 5.15"
     }
   }
 }

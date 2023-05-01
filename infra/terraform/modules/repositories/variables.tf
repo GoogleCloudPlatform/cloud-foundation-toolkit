@@ -35,4 +35,5 @@ variable "repos_map" {
 variable "team_id" {
   description = "Team to add as repo collaborators"
   type        = string
+  default     = null
 }

@@ -15,8 +15,10 @@
  */
 
 resource "github_team" "collaborators_team" {
-  name        = "collaborators"
-  description = "collaborators team for approved CI"
+  name        = "cft_collaborators_ci"
+  description = "CFT collaborators team for approved CI"
+
+  create_default_maintainer = true
 }
 
 resource "github_team_members" "collaborators" {

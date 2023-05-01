@@ -32,7 +32,8 @@ module "repos_tgm" {
 module "repos_gcp" {
   source    = "../../modules/repositories"
   repos_map = local.gcp_modules_map
-  team_id   = module.collaborators_gcp.id
+  # TODO: filter team on users already part of the org
+  # team_id   = module.collaborators_gcp.id
   providers = {
     github = github.gcp
   }
@@ -182,13 +183,5 @@ module "collaborators_tgm" {
   users  = local.users
   providers = {
     github = github
-  }
-}
-
-module "collaborators_gcp" {
-  source = "../../modules/team"
-  users  = local.users
-  providers = {
-    github = github.gcp
   }
 }

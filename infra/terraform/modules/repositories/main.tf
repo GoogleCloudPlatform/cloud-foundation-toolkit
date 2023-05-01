@@ -62,7 +62,7 @@ resource "github_repository_collaborator" "owners" {
 }
 
 resource "github_team_repository" "collaborators" {
-  for_each   = github_repository.repo
+  for_each   = var.team_id == null ? {} : github_repository.repo
   repository = each.value.name
   team_id    = var.team_id
   permission = "pull"
