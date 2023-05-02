@@ -18,6 +18,7 @@ locals {
   commit_author = "CFT Bot"
   commit_email  = "cloud-foundation-bot@google.com"
   owners        = { for value in var.repos_map : value.name => join(" ", formatlist("@%s", value.owners)) if length(value.owners) > 0 }
+  groups        = { for value in var.repos_map : value.name => join(" ", formatlist("@${value.org}/%s", value.groups)) if length(value.groups) > 0 }
 }
 
 data "github_repository" "repo" {
@@ -34,5 +35,5 @@ resource "github_repository_file" "CODEOWNERS" {
   commit_author       = local.commit_author
   commit_email        = local.commit_email
   overwrite_on_create = true
-  content             = "${trimspace("* @${var.org}/${var.owner} ${try(local.owners[each.value.name], "")}")}\n"
+  content             = "${trimspace("* @${var.org}/${var.owner} ${try(local.owners[each.value.name], "")} ${try(local.groups[each.value.name], "")}")}\n"
 }
