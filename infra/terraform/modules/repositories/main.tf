@@ -72,7 +72,7 @@ resource "github_repository_collaborator" "owners" {
 
 resource "github_team_repository" "groups" {
   for_each = {
-    for v in local.groups : "${v.repo}/${v.groups}" => v
+    for v in local.groups : "${v.repo}/${v.group}" => v
   }
   repository = each.value.repo
   team_id    = each.value.group
