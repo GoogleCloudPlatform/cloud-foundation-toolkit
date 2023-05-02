@@ -29,6 +29,7 @@ variable "repos_map" {
     homepage_url = optional(string, null)
     module       = optional(bool, true)
     topics       = optional(string)
+    groups       = optional(list(string), [])
   }))
 }
 

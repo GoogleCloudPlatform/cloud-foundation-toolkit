@@ -32,13 +32,9 @@ variable "owner" {
 variable "repos_map" {
   description = "Map of Repos"
   type = map(object({
-    name         = string
-    short_name   = optional(string)
-    org          = string
-    description  = optional(string)
-    owners       = optional(list(string), [])
-    homepage_url = optional(string, null)
-    module       = optional(bool, true)
-    topics       = optional(string)
+    name   = string
+    org    = string
+    owners = optional(list(string), [])
+    groups = optional(list(string), [])
   }))
 }

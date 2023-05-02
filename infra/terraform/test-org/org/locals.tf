@@ -60,6 +60,7 @@ locals {
  *  org          = "terraform-google-modules" or "GoogleCloudPlatform" (required)
  *  description  = "string" (required)
  *  owners       = "list(string)" ["user1", "user2"] (optional)
+ *  groups       = "list(string)" ["group1", "group1"] (optional)
  *  homepage_url = "string" (optional, overrides default)
  *  module       = BOOL (optional, default is true which includes GH repo configuration)
  *  topics       = "string1,string2,string3" (one or more of local.common_topics required if module = true)
@@ -114,6 +115,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
       owners      = ["arbrown", "bourgeoisor", "donmccasland", "minherz", "NimJay", "Shabirmean"]
+      groups      = ["dee-platform-ops"]
     },
     {
       name        = "terraform-example-java-dynamic-point-of-sale"
@@ -121,6 +123,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys a dynamic Java webapp into a Google Kubernetes Engine cluster."
       owners      = ["shabirmean", "Mukamik"]
+      groups      = ["dee-platform-ops"]
     },
     {
       name         = "terraform-example-foundation"
