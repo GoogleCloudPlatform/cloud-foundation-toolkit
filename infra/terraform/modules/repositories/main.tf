@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2022-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,15 @@ locals {
       for owner in val.owners : {
         "repo" : repo
         "owner" : owner
+      }
+    ]
+  ])
+
+  groups = flatten([
+    for repo, val in var.repos_map : [
+      for group in val.groups : {
+        "repo" : repo
+        "group" : group
       }
     ]
   ])
@@ -58,6 +67,15 @@ resource "github_repository_collaborator" "owners" {
   }
   repository = each.value.repo
   username   = each.value.owner
+  permission = "maintain"
+}
+
+resource "github_team_repository" "groups" {
+  for_each = {
+    for v in local.groups : "${v.repo}/${v.groups}" => v
+  }
+  repository = each.value.repo
+  team_id    = each.value.group
   permission = "maintain"
 }
 
