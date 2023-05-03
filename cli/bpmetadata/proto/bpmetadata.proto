@@ -316,14 +316,9 @@ message BlueprintListContent {
 message BlueprintVariable {
   string name = 1;
   string description = 2;
-  string var_type = 3;  
-  oneof default {
-    string string_default = 4;
-    int64 int64_default = 5;
-    bool bool_default = 6;
-  }
-  bool required = 7;
-  string default_value = 8;
+  string var_type = 3;
+  string default_value = 4;
+  bool required = 5;
 }
 
 // BlueprintVariableGroup is manually entered.
