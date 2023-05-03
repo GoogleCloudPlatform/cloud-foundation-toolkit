@@ -9,10 +9,10 @@ option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 message BlueprintUIInput {
 
   // variables is a map defining all inputs on the UI.
-  map<string, DisplayVariable> display_variables = 1;
+  map<string, DisplayVariable> variables = 1;
 
   // Sections is a generic structure for grouping inputs together.
-  repeated DisplaySection display_sections = 2;
+  repeated DisplaySection sections = 2;
 }
 
 message DisplayVariable {
@@ -63,7 +63,7 @@ message DisplayVariable {
   // UI extension associated with the input variable.
   // E.g. for rendering a GCE machine type selector:
   //
-  // x-googleProperty:
+  // xGoogleProperty:
   //   type: GCE_MACHINE_TYPE
   //   zoneProperty: myZone
   //   gceMachineType:

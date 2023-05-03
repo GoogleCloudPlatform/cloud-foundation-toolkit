@@ -41,7 +41,7 @@ func TestUIInputFromVariables(t *testing.T) {
 				},
 			},
 			UIinput: &BlueprintUIInput{
-				DisplayVariables: map[string]*DisplayVariable{
+				Variables: map[string]*DisplayVariable{
 					"test_var_1": {
 						Name: "test_var_1",
 					},
@@ -68,7 +68,7 @@ func TestUIInputFromVariables(t *testing.T) {
 				},
 			},
 			UIinput: &BlueprintUIInput{
-				DisplayVariables: map[string]*DisplayVariable{
+				Variables: map[string]*DisplayVariable{
 					"test_var_1": {
 						Name: "test_var_1",
 					},
@@ -86,12 +86,12 @@ func TestUIInputFromVariables(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			buildUIInputFromVariables(tt.coreVars, tt.UIinput)
 			for _, v := range tt.coreVars {
-				dispVar := tt.UIinput.DisplayVariables[v.Name]
+				dispVar := tt.UIinput.Variables[v.Name]
 				assert.NotNil(t, dispVar)
 				assert.Equal(t, v.Name, dispVar.Name)
 			}
 
-			assert.GreaterOrEqual(t, len(tt.UIinput.DisplayVariables), len(tt.coreVars))
+			assert.GreaterOrEqual(t, len(tt.UIinput.Variables), len(tt.coreVars))
 		})
 	}
 }

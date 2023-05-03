@@ -3,34 +3,34 @@ package bpmetadata
 type ExtensionType string
 
 const (
-	ExtTypeUndefined ExtensionType = "EXTENSIONTYPE_UNDEFINED"
+	ExtTypeUndefined ExtensionType = "ET_UNDEFINED"
 
 	// General formats.
-	EmailAddress    ExtensionType = "EMAIL_ADDRESS"
-	MultiLineString ExtensionType = "MULTI_LINE_STRING"
+	EmailAddress    ExtensionType = "ET_EMAIL_ADDRESS"
+	MultiLineString ExtensionType = "ET_MULTI_LINE_STRING"
 
 	// GCE related.
-	GCEDiskImage       ExtensionType = "GCE_DISK_IMAGE"
-	GCEDiskType        ExtensionType = "GCE_DISK_TYPE"
-	GCEDiskSize        ExtensionType = "GCE_DISK_SIZE"
-	GCEMachineType     ExtensionType = "GCE_MACHINE_TYPE"
-	GCENetwork         ExtensionType = "GCE_NETWORK"
-	GCEZone            ExtensionType = "GCE_ZONE"
-	GCESubnetwork      ExtensionType = "GCE_SUBNETWORK"
-	GCERegion          ExtensionType = "GCE_REGION"
-	GCEGPUType         ExtensionType = "GCE_GPU_TYPE"
-	GCEGPUCount        ExtensionType = "GCE_GPU_COUNT"
-	GCEExternalIP      ExtensionType = "GCE_EXTERNAL_IP"
-	GCEIPForwarding    ExtensionType = "GCE_IP_FORWARDING"
-	GCEFirewall        ExtensionType = "GCE_FIREWALL"
-	GCEFirewallRange   ExtensionType = "GCE_FIREWALL_RANGE"
-	GCEGenericResource ExtensionType = "GCE_GENERIC_RESOURCE"
+	GCEDiskImage       ExtensionType = "ET_GCE_DISK_IMAGE"
+	GCEDiskType        ExtensionType = "ET_GCE_DISK_TYPE"
+	GCEDiskSize        ExtensionType = "ET_GCE_DISK_SIZE"
+	GCEMachineType     ExtensionType = "ET_GCE_MACHINE_TYPE"
+	GCENetwork         ExtensionType = "ET_GCE_NETWORK"
+	GCEZone            ExtensionType = "ET_GCE_ZONE"
+	GCESubnetwork      ExtensionType = "ET_GCE_SUBNETWORK"
+	GCERegion          ExtensionType = "ET_GCE_REGION"
+	GCEGPUType         ExtensionType = "ET_GCE_GPU_TYPE"
+	GCEGPUCount        ExtensionType = "ET_GCE_GPU_COUNT"
+	GCEExternalIP      ExtensionType = "ET_GCE_EXTERNAL_IP"
+	GCEIPForwarding    ExtensionType = "ET_GCE_IP_FORWARDING"
+	GCEFirewall        ExtensionType = "ET_GCE_FIREWALL"
+	GCEFirewallRange   ExtensionType = "ET_GCE_FIREWALL_RANGE"
+	GCEGenericResource ExtensionType = "ET_GCE_GENERIC_RESOURCE"
 
 	// GCS related.
-	GCSBucket ExtensionType = "GCS_BUCKET"
+	GCSBucket ExtensionType = "ET_GCS_BUCKET"
 
 	// IAM related.
-	IAMServiceAccount ExtensionType = "IAM_SERVICE_ACCOUNT"
+	IAMServiceAccount ExtensionType = "ET_IAM_SERVICE_ACCOUNT"
 )
 
 // An extension for variables defined as part of DisplayVariable. The
@@ -108,8 +108,8 @@ type GCENetworkExtension struct {
 type ExternalIPType string
 
 const (
-	IPEphemeral ExternalIPType = "EPHEMERAL"
-	IPStaic     ExternalIPType = "STATIC"
+	IPEphemeral ExternalIPType = "IP_EPHEMERAL"
+	IPStatic    ExternalIPType = "IP_STATIC"
 )
 
 type GCEExternalIPExtension struct {
@@ -119,7 +119,7 @@ type GCEExternalIPExtension struct {
 
 	// Type specifies if the external IP is ephemeral or static.
 	// Defaults to ephemeral if not specified.
-	Type ExternalIPType `json:"externalIpType,omitempty" yaml:"externalIpType,omitempty"`
+	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty"`
 }
 
 type GCEIPForwardingExtension struct {
