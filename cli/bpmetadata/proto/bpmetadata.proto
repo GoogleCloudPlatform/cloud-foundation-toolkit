@@ -177,8 +177,8 @@ message BlueprintTimeEstimate {
   // ### DeploymentTime
   // - Configuration: X secs
   // - Deployment: Y secs
-  int32 configurationSecs = 1;
-  int32 deploymentSecs = 2;
+  int32 configuration_secs = 1;
+  int32 deployment_secs = 2;
 }
 
 // The cost estimate for the blueprint based on preconfigured variables.
@@ -208,9 +208,9 @@ message BlueprintCloudProduct {
 
 // QuotaResourceType defines the type of resource a quota is applied to.
 enum QuotaResourceType {
-  QUOTARESOURCETYPE_UNDEFINED = 0;
-  GCE_INSTANCE = 1;
-  GCE_DISK = 2;
+  QRT_UNDEFINED = 0;
+  QRT_RESOURCE_TYPE_GCE_INSTANCE = 1;
+  QRT_RESOURCE_TYPE_GCE_DISK = 2;
 }
 
 // BlueprintQuotaDetail defines the quota details for a blueprint.
@@ -248,9 +248,9 @@ message BlueprintAuthor {
 // SoftwareGroupType is a string enum representing the different types of software groups.
 enum SoftwareGroupType {
   // UNSPECIFIED is the default value for SoftwareGroupType.
-  UNSPECIFIED = 0;
+  SG_UNSPECIFIED = 0;
   // OS is a software group that represents an operating system.
-  OS = 1;
+  SG_OS = 1;
 }
 
 // BlueprintSoftwareGroup is a message that represents a group of related software components for the blueprint.
@@ -317,12 +317,8 @@ message BlueprintVariable {
   string name = 1;
   string description = 2;
   string var_type = 3;
-  oneof default {
-    string string_default = 4;
-    int64 int64_default = 5;
-    bool bool_default = 6;
-  }
-  bool required = 7;
+  string default_value = 4;
+  bool required = 5;
 }
 
 // BlueprintVariableGroup is manually entered.

@@ -9,6 +9,6 @@ spec:
       repo: https://github.com/GoogleCloudPlatform/terraform-google-module.git
       sourceType: git
     quotaDetails:
-    - type: GCE_INSTANCE
+    - resourceType: QRT_GCE_INSTANCE
       quotaType:
         MACHINE_TYPE: "n1-standard-8"

@@ -69,11 +69,11 @@ func TestTFInterfaces(t *testing.T) {
 	for _, tt := range varTests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Contains(t, got.Variables, BlueprintVariable{
-				Name:        tt.varName,
-				Description: tt.wantDescription,
-				Default:     tt.wantDefault,
-				Required:    tt.wantRequired,
-				VarType:     tt.wantVarType,
+				Name:         tt.varName,
+				Description:  tt.wantDescription,
+				DefaultValue: tt.wantDefault,
+				Required:     tt.wantRequired,
+				VarType:      tt.wantVarType,
 			})
 		})
 	}

@@ -220,11 +220,11 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 // build variable
 func getBlueprintVariable(modVar *tfconfig.Variable) BlueprintVariable {
 	return BlueprintVariable{
-		Name:        modVar.Name,
-		Description: modVar.Description,
-		Default:     modVar.Default,
-		Required:    modVar.Required,
-		VarType:     modVar.Type,
+		Name:         modVar.Name,
+		Description:  modVar.Description,
+		DefaultValue: modVar.Default,
+		Required:     modVar.Required,
+		VarType:      modVar.Type,
 	}
 }
 

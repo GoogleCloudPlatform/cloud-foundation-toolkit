@@ -7,34 +7,34 @@ option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 // ExtensionType specifies the type of extension.
 enum ExtensionType {
   // EXTENSIONTYPE_UNDEFINED indicates that the extension type is undefined.
-  EXTENSIONTYPE_UNDEFINED = 0;
+  ET_UNDEFINED = 0;
 
   // General formats.
-  EMAIL_ADDRESS     = 1;
-  MULTI_LINE_STRING = 2;
+  ET_EMAIL_ADDRESS     = 1;
+  ET_MULTI_LINE_STRING = 2;
 
   // GCE related.
-  GCE_DISK_IMAGE       = 3;
-  GCE_DISK_TYPE        = 4;
-  GCE_DISK_SIZE        = 5;
-  GCE_MACHINE_TYPE     = 6;
-  GCE_NETWORK          = 7;
-  GCE_ZONE             = 8;
-  GCE_SUBNETWORK       = 9;
-  GCE_REGION           = 10;
-  GCE_GPU_TYPE         = 11;
-  GCE_GPU_COUNT        = 12;
-  GCE_EXTERNAL_IP      = 13;
-  GCE_IP_FORWARDING    = 14;
-  GCE_FIREWALL         = 15;
-  GCE_FIREWALL_RANGE   = 16;
-  GCE_GENERIC_RESOURCE = 17;
+  ET_GCE_DISK_IMAGE       = 3;
+  ET_GCE_DISK_TYPE        = 4;
+  ET_GCE_DISK_SIZE        = 5;
+  ET_GCE_MACHINE_TYPE     = 6;
+  ET_GCE_NETWORK          = 7;
+  ET_GCE_ZONE             = 8;
+  ET_GCE_SUBNETWORK       = 9;
+  ET_GCE_REGION           = 10;
+  ET_GCE_GPU_TYPE         = 11;
+  ET_GCE_GPU_COUNT        = 12;
+  ET_GCE_EXTERNAL_IP      = 13;
+  ET_GCE_IP_FORWARDING    = 14;
+  ET_GCE_FIREWALL         = 15;
+  ET_GCE_FIREWALL_RANGE   = 16;
+  ET_GCE_GENERIC_RESOURCE = 17;
 
   // GCS related.
-  GCS_BUCKET = 18;
+  ET_GCS_BUCKET = 18;
 
   // IAM related.
-  IAM_SERVICE_ACCOUNT = 19;
+  ET_IAM_SERVICE_ACCOUNT = 19;
 }
 
 // An extension for variables defined as part of DisplayVariable. The
@@ -126,9 +126,9 @@ message GCENetworkExtension {
 // ExternalIPType specifies the type of external IP address.
 enum ExternalIPType {
   // EPHEMERAL indicates that the external IP address is ephemeral.
-  EPHEMERAL = 0;
+  IP_EPHEMERAL = 0;
   // STATIC indicates that the external IP address is static.
-  STATIC = 1;
+  IP_STATIC = 1;
 }
 
 message GCEExternalIPExtension {

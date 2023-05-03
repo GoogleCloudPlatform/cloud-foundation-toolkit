@@ -5,7 +5,7 @@
   "$defs": {
     "BlueprintActuationTool": {
       "properties": {
-        "type": {
+        "flavor": {
           "type": "string"
         },
         "version": {
@@ -17,7 +17,7 @@
     },
     "BlueprintArchitecture": {
       "properties": {
-        "diagram": {
+        "diagramUrl": {
           "type": "string"
         },
         "description": {
@@ -30,7 +30,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "diagram",
+        "diagramUrl",
         "description"
       ]
     },
@@ -338,14 +338,14 @@
     },
     "BlueprintQuotaDetail": {
       "properties": {
-        "variable": {
+        "dynamicVariable": {
           "type": "string"
         },
-        "type": {
+        "resourceType": {
           "type": "string",
           "enum": [
-            "GCE_INSTANCE",
-            "GCE_DISK"
+            "QRT_GCE_INSTANCE",
+            "QRT_GCE_DISK"
           ]
         },
         "quotaType": {
@@ -360,7 +360,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "type",
+        "resourceType",
         "quotaType"
       ]
     },
@@ -483,10 +483,10 @@
     },
     "BlueprintTimeEstimate": {
       "properties": {
-        "configuration": {
+        "configurationSecs": {
           "type": "integer"
         },
-        "deployment": {
+        "deploymentSecs": {
           "type": "integer"
         }
       },
@@ -548,10 +548,10 @@
         "description": {
           "type": "string"
         },
-        "type": {
+        "varType": {
           "type": "string"
         },
-        "default": true,
+        "defaultValue": true,
         "required": {
           "type": "boolean"
         }
@@ -645,7 +645,7 @@
         "section": {
           "type": "string"
         },
-        "x-googleProperty": {
+        "xGoogleProperty": {
           "$ref": "#/$defs/GooglePropertyExtension"
         }
       },
@@ -672,7 +672,7 @@
         "networkVariable": {
           "type": "string"
         },
-        "externalIpType": {
+        "type": {
           "type": "string"
         }
       },

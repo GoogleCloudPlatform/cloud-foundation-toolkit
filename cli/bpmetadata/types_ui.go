@@ -15,10 +15,10 @@ type BlueprintUI struct {
 type BlueprintUIInput struct {
 
 	// variables is a map defining all inputs on the UI.
-	DisplayVariables map[string]*DisplayVariable `json:"variables,omitempty" yaml:"variables,omitempty"`
+	Variables map[string]*DisplayVariable `json:"variables,omitempty" yaml:"variables,omitempty"`
 
 	// Sections is a generic structure for grouping inputs together.
-	DisplaySections []DisplaySection `json:"sections,omitempty" yaml:"sections,omitempty"`
+	Sections []DisplaySection `json:"sections,omitempty" yaml:"sections,omitempty"`
 }
 
 // Additional display specific metadata pertaining to a particular
@@ -71,13 +71,13 @@ type DisplayVariable struct {
 	// UI extension associated with the input variable.
 	// E.g. for rendering a GCE machine type selector:
 	//
-	// x-googleProperty:
+	// xGoogleProperty:
 	//   type: GCE_MACHINE_TYPE
 	//   zoneProperty: myZone
 	//   gceMachineType:
 	//     minCpu: 2
 	//     minRamGb: 6
-	UIDisplayVariableExtension GooglePropertyExtension `json:"x-googleProperty,omitempty" yaml:"x-googleProperty,omitempty"`
+	XGoogleProperty GooglePropertyExtension `json:"xGoogleProperty,omitempty" yaml:"xGoogleProperty,omitempty"`
 }
 
 // A logical group of variables. [Section][]s may also be grouped into
