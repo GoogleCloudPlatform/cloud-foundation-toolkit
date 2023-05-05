@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v1.0.3
+VERSION=v1.1.0
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
@@ -9,6 +9,7 @@ BUILD_DIR=./bin
 SCHEMA_DIR=./bpmetadata/schema
 NAME=cft
 BUCKET=gs://cft-cli
+INT_TEST_DIR=./bpmetadata/int-test
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
@@ -31,9 +32,13 @@ release: $(PLATFORMS)
 $(PLATFORMS):
 	GO111MODULE=on GOOS=$@ GOARCH=amd64 CGO_ENABLED=0 go build ${LDFLAGS} -o "${BUILD_DIR}/${NAME}-$@-amd64"
 
+.PHONY: int_test
+int_test:
+	${INT_TEST_DIR}/workflow.sh ${INT_TEST_DIR}
+
 .PHONY: go_test
 go_test:
 	go test ./...
 
 .PHONY: test
-test: build go_test
+test: build go_test int_test
