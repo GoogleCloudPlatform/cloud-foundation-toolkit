@@ -42,7 +42,7 @@ resource "github_branch_protection" "default" {
     contexts = [
       "cla/google",
       "${each.value.name}-int-trigger (cloud-foundation-cicd)",
-      "lint / lint (pull_request)",
+      "lint",
       "conventionalcommits.org"
     ]
   }

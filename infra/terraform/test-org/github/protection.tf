@@ -180,7 +180,7 @@ resource "github_branch_protection" "terraform-example-foundation" {
       "cla/google",
       "terraform-example-foundation-int-trigger-default (cloud-foundation-cicd)",
       "terraform-example-foundation-int-trigger-HubAndSpoke (cloud-foundation-cicd)",
-      "lint / lint (pull_request)",
+      "lint",
       "conventionalcommits.org"
     ]
   }
