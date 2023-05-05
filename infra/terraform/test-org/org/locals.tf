@@ -609,14 +609,14 @@ locals {
       short_name  = "large-data-sharing-java-app"
       org         = "GoogleCloudPlatform"
       description = "Deploys a large data sharing Java web app"
-      owners      = ["donmccasland"]
+      groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai"]
     },
     {
       name        = "terraform-large-data-sharing-golang-webapp"
       short_name  = "large-data-sharing-go-app"
       org         = "GoogleCloudPlatform"
       description = "Deploys a large data sharing Golang web app"
-      owners      = ["donmccasland"]
+      groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai"]
     },
   ]
 }
