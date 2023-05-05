@@ -28,12 +28,11 @@ jobs:
           go-version: '1.18'
           cache: false
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # v2.11.1
         id: changes
         with:
           filters: |
-            src:
-              - ${{ matrix.folder }}
+            src: [${{ matrix.folder }}]
       - if: steps.changes.outputs.src == 'true'
         name: golangci-lint
         uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5 # v3.4.0
