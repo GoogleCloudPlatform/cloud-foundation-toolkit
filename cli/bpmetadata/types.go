@@ -189,7 +189,7 @@ type BlueprintQuotaDetail struct {
 
 	// ResourceType is the type of resource the quota will be applied to i.e.
 	// GCE Instance or Disk etc.
-	ResourceType QuotaResourceType `json:"resourceType" yaml:"resourceType" jsonschema:"enum=QRT_GCE_INSTANCE,enum=QRT_GCE_DISK"`
+	ResourceType QuotaResourceType `json:"resourceType" yaml:"resourceType" jsonschema:"enum=QRT_GCE_INSTANCE,enum=QRT_GCE_DISK,enum=QRT_UNDEFINED"`
 
 	// QuotaType is a key/value pair of the actual quotas and their corresponding
 	// values.
@@ -217,7 +217,7 @@ const (
 // A group of related software components for the blueprint.
 type BlueprintSoftwareGroup struct {
 	// Pre-defined software types.
-	Type SoftwareGroupType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=UNSPECIFIED,enum=OS"`
+	Type SoftwareGroupType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=SG_UNSPECIFIED,enum=SG_OS"`
 
 	// Software components belonging to this group.
 	Software []BlueprintSoftware `json:"software,omitempty" yaml:"software,omitempty"`

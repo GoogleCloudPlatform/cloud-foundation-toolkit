@@ -37,7 +37,7 @@ const (
 // extension defines Google-specifc metadata necessary for choosing an
 // appropriate input widget or adding restrictions to GCP-specific resources.
 type GooglePropertyExtension struct {
-	Type ExtensionType `json:"type" yaml:"type" jsonschema:"enum=EMAIL_ADDRESS,enum=MULTI_LINE_STRING,enum=GCE_DISK_IMAGE,enum=GCE_DISK_TYPE,enum=GCE_DISK_SIZE,enum=GCE_MACHINE_TYPE,enum=GCE_NETWORK,enum=GCE_ZONE,enum=GCE_SUBNETWORK,enum=GCE_REGION,enum=GCE_GPU_TYPE,enum=GCE_GPU_COUNT,enum=GCE_EXTERNAL_IP,enum=GCE_IP_FORWARDING,enum=GCE_FIREWALL,enum=GCE_FIREWALL_RANGE,enum=GCE_GENERIC_RESOURCE,enum=GCS_BUCKET,enum=IAM_SERVICE_ACCOUNT"`
+	Type ExtensionType `json:"type" yaml:"type" jsonschema:"enum=ET_EMAIL_ADDRESS,enum=ET_MULTI_LINE_STRING,enum=ET_GCE_DISK_IMAGE,enum=ET_GCE_DISK_TYPE,enum=ET_GCE_DISK_SIZE,enum=ET_GCE_MACHINE_TYPE,enum=ET_GCE_NETWORK,enum=ET_GCE_ZONE,enum=ET_GCE_SUBNETWORK,enum=ET_GCE_REGION,enum=ET_GCE_GPU_TYPE,enum=ET_GCE_GPU_COUNT,enum=ET_GCE_EXTERNAL_IP,enum=ET_GCE_IP_FORWARDING,enum=ET_GCE_FIREWALL,enum=ET_GCE_FIREWALL_RANGE,enum=ET_GCE_GENERIC_RESOURCE,enum=GCS_BUCKET,enum=ET_IAM_SERVICE_ACCOUNT"`
 
 	// Some properties (e.g. GCE_MACHINE_TYPE) require a zone context in order to
 	// determine the set of allowable values. This field references another
@@ -119,7 +119,7 @@ type GCEExternalIPExtension struct {
 
 	// Type specifies if the external IP is ephemeral or static.
 	// Defaults to ephemeral if not specified.
-	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty"`
+	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=IP_EPHEMERAL,enum=IP_STATIC"`
 }
 
 type GCEIPForwardingExtension struct {
