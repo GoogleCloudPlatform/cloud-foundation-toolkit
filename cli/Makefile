@@ -19,7 +19,7 @@ LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 build:
 	go run ./${SCHEMA_DIR} -output=${SCHEMA_DIR}
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
-	
+
 .PHONY: publish
 publish:
 	gcloud alpha storage cp "${BUILD_DIR}/*" "${BUCKET}/${VERSION}"
@@ -42,3 +42,7 @@ go_test:
 
 .PHONY: test
 test: build go_test int_test
+
+.PHONY: docker_go_lint
+docker_go_lint:
+	docker run --rm -v $(PWD):/cli -w /cli  golangci/golangci-lint:v1.52.2 golangci-lint --timeout=5m -v run
