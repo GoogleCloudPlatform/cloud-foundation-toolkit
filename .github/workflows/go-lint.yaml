@@ -33,3 +33,4 @@ jobs:
         with:
           version: latest
           working-directory: ${{ matrix.folder }}
+          args: --timeout=5m
