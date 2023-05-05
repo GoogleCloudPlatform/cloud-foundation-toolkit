@@ -5,8 +5,8 @@ on:
       - master
     paths:
       - ".github/workflows/go-lint.yaml"
-      - "cli"
-      - "infra/blueprint-test"
+      - "cli/**"
+      - "infra/blueprint-test/**"
 permissions:
   contents: read
 
