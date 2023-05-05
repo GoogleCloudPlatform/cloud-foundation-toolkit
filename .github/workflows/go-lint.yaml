@@ -32,7 +32,9 @@ jobs:
         id: changes
         with:
           filters: |
-            src: [${{ matrix.folder }}]
+            src:
+              - ${{ matrix.folder }}
+              - ".github/workflows/go-lint.yaml"
       - if: steps.changes.outputs.src == 'true'
         name: golangci-lint
         uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5 # v3.4.0
