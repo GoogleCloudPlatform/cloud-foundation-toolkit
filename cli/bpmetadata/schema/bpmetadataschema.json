@@ -847,7 +847,7 @@
             "ET_GCE_FIREWALL",
             "ET_GCE_FIREWALL_RANGE",
             "ET_GCE_GENERIC_RESOURCE",
-            "GCS_BUCKET",
+            "ET_GCS_BUCKET",
             "ET_IAM_SERVICE_ACCOUNT"
           ]
         },
