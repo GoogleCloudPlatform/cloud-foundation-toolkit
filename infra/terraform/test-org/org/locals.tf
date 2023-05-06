@@ -64,6 +64,7 @@ locals {
  *  homepage_url      = "string" (optional, overrides default)
  *  module            = BOOL (optional, default is true which includes GH repo configuration)
  *  topics            = "string1,string2,string3" (one or more of local.common_topics required if module = true)
+ *  lint_env          = "map(string)" (optional)
  *  exclude_lint_dirs = "string"
  *  disable_lint_yaml = BOOL (optional, default is true)
  *
@@ -128,14 +129,18 @@ locals {
       groups      = ["dee-platform-ops"]
     },
     {
-      name              = "terraform-example-foundation"
-      short_name        = "example-foundation"
-      org               = "terraform-google-modules"
-      description       = "Shows how the CFT modules can be composed to build a secure cloud foundation"
-      owners            = ["rjerrems"]
-      homepage_url      = "https://cloud.google.com/architecture/security-foundations"
-      topics            = join(",", [local.common_topics.e2e, local.common_topics.ops])
-      exclude_lint_dirs = "\\./3-networks/modules/transitivity/assets"
+      name         = "terraform-example-foundation"
+      short_name   = "example-foundation"
+      org          = "terraform-google-modules"
+      description  = "Shows how the CFT modules can be composed to build a secure cloud foundation"
+      owners       = ["rjerrems"]
+      homepage_url = "https://cloud.google.com/architecture/security-foundations"
+      topics       = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      lint_env = {
+        "EXCLUDE_LINT_DIRS" = "\\./3-networks/modules/transitivity/assets",
+        "ENABLE_PARALLEL"   = "0",
+        "DISABLE_TFLINT"    = "1"
+      }
     },
     {
       name        = "terraform-google-log-analysis"
@@ -295,11 +300,11 @@ locals {
       topics      = local.common_topics.devtools
     },
     {
-      name              = "terraform-google-gcloud"
-      org               = "terraform-google-modules"
-      description       = "Executes Google Cloud CLI commands within Terraform"
-      topics            = local.common_topics.devtools
-      exclude_lint_dirs = "\\./cache"
+      name        = "terraform-google-gcloud"
+      org         = "terraform-google-modules"
+      description = "Executes Google Cloud CLI commands within Terraform"
+      topics      = local.common_topics.devtools
+      lint_env    = { "EXCLUDE_LINT_DIRS" = "\\./cache" }
     },
     {
       name        = "terraform-google-github-actions-runners"
