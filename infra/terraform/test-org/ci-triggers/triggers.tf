@@ -14,24 +14,6 @@
  * limitations under the License.
  */
 
-resource "google_cloudbuild_trigger" "lint_trigger" {
-  provider    = google-beta
-  project     = local.project_id
-  name        = "${each.key}-lint-trigger"
-  description = "Lint tests on pull request for ${each.key}"
-  for_each    = merge(local.repo_folder, local.example_foundation)
-  github {
-    owner = each.value.gh_org
-    name  = each.key
-    pull_request {
-      branch          = ".*"
-      comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
-    }
-  }
-
-  filename = "build/lint.cloudbuild.yaml"
-}
-
 resource "google_cloudbuild_trigger" "int_trigger" {
   provider    = google-beta
   project     = local.project_id

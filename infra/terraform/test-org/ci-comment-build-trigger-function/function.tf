@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/*
 locals {
   project_id = "cloud-foundation-cicd"
 }
@@ -54,3 +55,4 @@ module "pr_comment_build_function" {
     resource   = "projects/${local.project_id}/topics/cloud-builds"
   }
 }
+*/
