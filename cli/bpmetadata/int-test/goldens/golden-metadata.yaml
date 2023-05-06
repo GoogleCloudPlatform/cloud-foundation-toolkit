@@ -1,0 +1,251 @@
+apiVersion: blueprints.cloud.google.com/v1alpha1
+kind: BlueprintMetadata
+metadata:
+  name: cloud-foundation-toolkit
+  annotations:
+    config.kubernetes.io/local-config: "true"
+spec:
+  info:
+    title: Terraform Google Cloud Storage Module
+    source:
+      repo: https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit
+      sourceType: git
+    version: 4.0.0
+    actuationTool:
+      flavor: Terraform
+      version: '>= 0.13'
+    description: {}
+  content:
+    subBlueprints:
+    - name: simple_bucket
+      location: modules/simple_bucket
+    examples:
+    - name: multiple_buckets
+      location: examples/multiple_buckets
+    - name: simple_bucket
+      location: examples/simple_bucket
+  interfaces:
+    variables:
+    - name: admins
+      description: IAM-style members who will be granted roles/storage.objectAdmin on all buckets.
+      varType: list(string)
+      defaultValue: []
+    - name: bucket_admins
+      description: Map of lowercase unprefixed name => comma-delimited IAM-style per-bucket admins.
+      varType: map(string)
+      defaultValue: {}
+    - name: bucket_creators
+      description: Map of lowercase unprefixed name => comma-delimited IAM-style per-bucket creators.
+      varType: map(string)
+      defaultValue: {}
+    - name: bucket_hmac_key_admins
+      description: Map of lowercase unprefixed name => comma-delimited IAM-style per-bucket HMAC Key admins.
+      varType: map(string)
+      defaultValue: {}
+    - name: bucket_lifecycle_rules
+      description: Additional lifecycle_rules for specific buckets. Map of lowercase unprefixed name => list of lifecycle rules to configure.
+      varType: |-
+        map(set(object({
+            # Object with keys:
+            # - type - The type of the action of this Lifecycle Rule. Supported values: Delete and SetStorageClass.
+            # - storage_class - (Required if action type is SetStorageClass) The target Storage Class of objects affected by this Lifecycle Rule.
+            action = map(string)
+
+            # Object with keys:
+            # - age - (Optional) Minimum age of an object in days to satisfy this condition.
+            # - created_before - (Optional) Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.
+            # - with_state - (Optional) Match to live and/or archived objects. Supported values include: "LIVE", "ARCHIVED", "ANY".
+            # - matches_storage_class - (Optional) Comma delimited string for storage class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, STANDARD, DURABLE_REDUCED_AVAILABILITY.
+            # - num_newer_versions - (Optional) Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.
+            # - custom_time_before - (Optional) A date in the RFC 3339 format YYYY-MM-DD. This condition is satisfied when the customTime metadata for the object is set to an earlier date than the date used in this lifecycle condition.
+            # - days_since_custom_time - (Optional) The number of days from the Custom-Time metadata attribute after which this condition becomes true.
+            # - days_since_noncurrent_time - (Optional) Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.
+            # - noncurrent_time_before - (Optional) Relevant only for versioned objects. The date in RFC 3339 (e.g. 2017-06-13) when the object became nonconcurrent.
+            condition = map(string)
+          })))
+      defaultValue: {}
+    - name: bucket_policy_only
+      description: Disable ad-hoc ACLs on specified buckets. Defaults to true. Map of lowercase unprefixed name => boolean
+      varType: map(bool)
+      defaultValue: {}
+    - name: bucket_storage_admins
+      description: Map of lowercase unprefixed name => comma-delimited IAM-style per-bucket storage admins.
+      varType: map(string)
+      defaultValue: {}
+    - name: bucket_viewers
+      description: Map of lowercase unprefixed name => comma-delimited IAM-style per-bucket viewers.
+      varType: map(string)
+      defaultValue: {}
+    - name: cors
+      description: 'Set of maps of mixed type attributes for CORS values. See appropriate attribute types here: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#cors'
+      varType: set(any)
+      defaultValue: []
+    - name: creators
+      description: IAM-style members who will be granted roles/storage.objectCreators on all buckets.
+      varType: list(string)
+      defaultValue: []
+    - name: custom_placement_config
+      description: Map of lowercase unprefixed name => custom placement config object. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket#custom_placement_config
+      varType: any
+      defaultValue: {}
+    - name: default_event_based_hold
+      description: Enable event based hold to new objects added to specific bucket. Defaults to false. Map of lowercase unprefixed name => boolean
+      varType: map(bool)
+      defaultValue: {}
+    - name: encryption_key_names
+      description: Optional map of lowercase unprefixed name => string, empty strings are ignored.
+      varType: map(string)
+      defaultValue: {}
+    - name: folders
+      description: Map of lowercase unprefixed name => list of top level folder objects.
+      varType: map(list(string))
+      defaultValue: {}
+    - name: force_destroy
+      description: Optional map of lowercase unprefixed name => boolean, defaults to false.
+      varType: map(bool)
+      defaultValue: {}
+    - name: hmac_key_admins
+      description: IAM-style members who will be granted roles/storage.hmacKeyAdmin on all buckets.
+      varType: list(string)
+      defaultValue: []
+    - name: hmac_service_accounts
+      description: List of HMAC service accounts to grant access to GCS.
+      varType: map(string)
+      defaultValue: {}
+    - name: labels
+      description: Labels to be attached to the buckets
+      varType: map(string)
+      defaultValue: {}
+    - name: lifecycle_rules
+      description: List of lifecycle rules to configure. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket.html#lifecycle_rule except condition.matches_storage_class should be a comma delimited string.
+      varType: |-
+        set(object({
+            # Object with keys:
+            # - type - The type of the action of this Lifecycle Rule. Supported values: Delete and SetStorageClass.
+            # - storage_class - (Required if action type is SetStorageClass) The target Storage Class of objects affected by this Lifecycle Rule.
+            action = map(string)
+
+            # Object with keys:
+            # - age - (Optional) Minimum age of an object in days to satisfy this condition.
+            # - created_before - (Optional) Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.
+            # - with_state - (Optional) Match to live and/or archived objects. Supported values include: "LIVE", "ARCHIVED", "ANY".
+            # - matches_storage_class - (Optional) Comma delimited string for storage class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, STANDARD, DURABLE_REDUCED_AVAILABILITY.
+            # - matches_prefix - (Optional) One or more matching name prefixes to satisfy this condition.
+            # - matches_suffix - (Optional) One or more matching name suffixes to satisfy this condition.
+            # - num_newer_versions - (Optional) Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.
+            # - custom_time_before - (Optional) A date in the RFC 3339 format YYYY-MM-DD. This condition is satisfied when the customTime metadata for the object is set to an earlier date than the date used in this lifecycle condition.
+            # - days_since_custom_time - (Optional) The number of days from the Custom-Time metadata attribute after which this condition becomes true.
+            # - days_since_noncurrent_time - (Optional) Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.
+            # - noncurrent_time_before - (Optional) Relevant only for versioned objects. The date in RFC 3339 (e.g. 2017-06-13) when the object became nonconcurrent.
+            condition = map(string)
+          }))
+      defaultValue: []
+    - name: location
+      description: Bucket location.
+      varType: string
+      defaultValue: EU
+    - name: logging
+      description: Map of lowercase unprefixed name => bucket logging config object. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket.html#logging
+      varType: any
+      defaultValue: {}
+    - name: names
+      description: Bucket name suffixes.
+      varType: list(string)
+      required: true
+    - name: prefix
+      description: Prefix used to generate the bucket name.
+      varType: string
+      defaultValue: ""
+    - name: project_id
+      description: Bucket project id.
+      varType: string
+      required: true
+    - name: public_access_prevention
+      description: Prevents public access to a bucket. Acceptable values are inherited or enforced. If inherited, the bucket uses public access prevention, only if the bucket is subject to the public access prevention organization policy constraint.
+      varType: string
+      defaultValue: inherited
+    - name: randomize_suffix
+      description: Adds an identical, but randomized 4-character suffix to all bucket names
+      varType: bool
+      defaultValue: false
+    - name: retention_policy
+      description: Map of retention policy values. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket#retention_policy
+      varType: any
+      defaultValue: {}
+    - name: set_admin_roles
+      description: Grant roles/storage.objectAdmin role to admins and bucket_admins.
+      varType: bool
+      defaultValue: false
+    - name: set_creator_roles
+      description: Grant roles/storage.objectCreator role to creators and bucket_creators.
+      varType: bool
+      defaultValue: false
+    - name: set_hmac_access
+      description: Set S3 compatible access to GCS.
+      varType: bool
+      defaultValue: false
+    - name: set_hmac_key_admin_roles
+      description: Grant roles/storage.hmacKeyAdmin role to hmac_key_admins and bucket_hmac_key_admins.
+      varType: bool
+      defaultValue: false
+    - name: set_storage_admin_roles
+      description: Grant roles/storage.admin role to storage_admins and bucket_storage_admins.
+      varType: bool
+      defaultValue: false
+    - name: set_viewer_roles
+      description: Grant roles/storage.objectViewer role to viewers and bucket_viewers.
+      varType: bool
+      defaultValue: false
+    - name: storage_admins
+      description: IAM-style members who will be granted roles/storage.admin on all buckets.
+      varType: list(string)
+      defaultValue: []
+    - name: storage_class
+      description: Bucket storage class.
+      varType: string
+      defaultValue: STANDARD
+    - name: versioning
+      description: Optional map of lowercase unprefixed name => boolean, defaults to false.
+      varType: map(bool)
+      defaultValue: {}
+    - name: viewers
+      description: IAM-style members who will be granted roles/storage.objectViewer on all buckets.
+      varType: list(string)
+      defaultValue: []
+    - name: website
+      description: 'Map of website values. Supported attributes: main_page_suffix, not_found_page'
+      varType: map(any)
+      defaultValue: {}
+    outputs:
+    - name: bucket
+      description: Bucket resource (for single use).
+    - name: buckets
+      description: Bucket resources as list.
+    - name: buckets_map
+      description: Bucket resources by name.
+    - name: hmac_keys
+      description: List of HMAC keys.
+    - name: name
+      description: Bucket name (for single use).
+    - name: names
+      description: Bucket names.
+    - name: names_list
+      description: List of bucket names.
+    - name: url
+      description: Bucket URL (for single use).
+    - name: urls
+      description: Bucket URLs.
+    - name: urls_list
+      description: List of bucket URLs.
+  requirements:
+    roles:
+    - level: Project
+      roles:
+      - roles/storage.admin
+      - roles/iam.serviceAccountUser
+    services:
+    - iam.googleapis.com
+    - storage-api.googleapis.com
+    - cloudresourcemanager.googleapis.com
+    - compute.googleapis.com
+    - serviceusage.googleapis.com
