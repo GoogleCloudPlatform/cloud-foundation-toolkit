@@ -55,15 +55,17 @@ locals {
 
   /*
  *  repos schema
- *  name         = "string" (required for modules)
- *  short_name   = "string" (optional for modules, if not prefixed with 'terraform-google-')
- *  org          = "terraform-google-modules" or "GoogleCloudPlatform" (required)
- *  description  = "string" (required)
- *  owners       = "list(string)" ["user1", "user2"] (optional)
- *  groups       = "list(string)" ["group1", "group1"] (optional)
- *  homepage_url = "string" (optional, overrides default)
- *  module       = BOOL (optional, default is true which includes GH repo configuration)
- *  topics       = "string1,string2,string3" (one or more of local.common_topics required if module = true)
+ *  name              = "string" (required for modules)
+ *  short_name        = "string" (optional for modules, if not prefixed with 'terraform-google-')
+ *  org               = "terraform-google-modules" or "GoogleCloudPlatform" (required)
+ *  description       = "string" (required)
+ *  owners            = "list(string)" ["user1", "user2"] (optional)
+ *  groups            = "list(string)" ["group1", "group1"] (optional)
+ *  homepage_url      = "string" (optional, overrides default)
+ *  module            = BOOL (optional, default is true which includes GH repo configuration)
+ *  topics            = "string1,string2,string3" (one or more of local.common_topics required if module = true)
+ *  exclude_lint_dirs = "string"
+ *  disable_lint_yaml = BOOL (optional, default is true)
  *
  */
 
@@ -126,13 +128,14 @@ locals {
       groups      = ["dee-platform-ops"]
     },
     {
-      name         = "terraform-example-foundation"
-      short_name   = "example-foundation"
-      org          = "terraform-google-modules"
-      description  = "Shows how the CFT modules can be composed to build a secure cloud foundation"
-      owners       = ["rjerrems"]
-      homepage_url = "https://cloud.google.com/architecture/security-foundations"
-      topics       = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      name              = "terraform-example-foundation"
+      short_name        = "example-foundation"
+      org               = "terraform-google-modules"
+      description       = "Shows how the CFT modules can be composed to build a secure cloud foundation"
+      owners            = ["rjerrems"]
+      homepage_url      = "https://cloud.google.com/architecture/security-foundations"
+      topics            = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      exclude_lint_dirs = "\\./3-networks/modules/transitivity/assets"
     },
     {
       name        = "terraform-google-log-analysis"
@@ -292,10 +295,11 @@ locals {
       topics      = local.common_topics.devtools
     },
     {
-      name        = "terraform-google-gcloud"
-      org         = "terraform-google-modules"
-      description = "Executes Google Cloud CLI commands within Terraform"
-      topics      = local.common_topics.devtools
+      name              = "terraform-google-gcloud"
+      org               = "terraform-google-modules"
+      description       = "Executes Google Cloud CLI commands within Terraform"
+      topics            = local.common_topics.devtools
+      exclude_lint_dirs = "\\./cache"
     },
     {
       name        = "terraform-google-github-actions-runners"
@@ -605,14 +609,14 @@ locals {
       short_name  = "large-data-sharing-java-app"
       org         = "GoogleCloudPlatform"
       description = "Deploys a large data sharing Java web app"
-      owners      = ["donmccasland"]
+      groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai"]
     },
     {
       name        = "terraform-large-data-sharing-golang-webapp"
       short_name  = "large-data-sharing-go-app"
       org         = "GoogleCloudPlatform"
       description = "Deploys a large data sharing Golang web app"
-      owners      = ["donmccasland"]
+      groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai"]
     },
   ]
 }

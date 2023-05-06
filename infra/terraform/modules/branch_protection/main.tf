@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2022-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ resource "github_branch_protection" "default" {
     contexts = [
       "cla/google",
       "${each.value.name}-int-trigger (cloud-foundation-cicd)",
-      "${each.value.name}-lint-trigger (cloud-foundation-cicd)",
+      "lint",
       "conventionalcommits.org"
     ]
   }
