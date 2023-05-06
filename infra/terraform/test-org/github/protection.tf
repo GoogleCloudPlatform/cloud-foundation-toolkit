@@ -21,12 +21,12 @@ locals {
 }
 
 data "github_team" "cft-admins" {
-  slug = "cft-admins"
+  slug     = "cft-admins"
   provider = github
 }
 
 data "github_team" "blueprint-solutions" {
-  slug = "blueprint-solutions"
+  slug     = "blueprint-solutions"
   provider = github.gcp
 }
 
@@ -189,7 +189,7 @@ resource "github_branch_protection" "terraform-example-foundation" {
 
 # collaborator teams for approved CI
 module "collaborators_tgm" {
-  source = "../../modules/team"
-  users  = local.users
+  source    = "../../modules/team"
+  users     = local.users
   providers = { github = github }
 }

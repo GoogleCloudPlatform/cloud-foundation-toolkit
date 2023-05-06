@@ -20,7 +20,7 @@ locals {
 }
 
 resource "github_repository_file" "file" {
-  for_each            = {for k, v in var.repo_list : k => v if var.repos_map[k].disable_lint_yaml != true}
+  for_each            = { for k, v in var.repo_list : k => v if var.repos_map[k].disable_lint_yaml != true }
   repository          = each.key
   branch              = each.value.default_branch
   file                = ".github/workflows/lint.yaml"
