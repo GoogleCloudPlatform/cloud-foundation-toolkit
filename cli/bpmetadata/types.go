@@ -63,6 +63,9 @@ type BlueprintInfo struct {
 	// Manually authored.
 	CloudProducts []BlueprintCloudProduct `json:"cloudProducts,omitempty" yaml:"cloudProducts,omitempty"`
 
+	// A list of GCP org policies to be checked for successful deployment.
+	OrgPolicyChecks []BlueprintOrgPolicyCheck `json:"orgPolicyChecks,omitempty" yaml:"orgPolicyChecks,omitempty"`
+
 	// A configuration of fixed and dynamic GCP quotas that apply to the blueprint.
 	// Manually authored.
 	QuotaDetails []BlueprintQuotaDetail `json:"quotaDetails,omitempty" yaml:"quotaDetails,omitempty"`
@@ -162,6 +165,21 @@ type BlueprintCloudProduct struct {
 	// A label string for the product, if it is not an integrated GCP product.
 	// E.g. "Data Studio"
 	Label string `json:"label,omitempty" yaml:"label,omitempty"`
+
+	// Is the product's landing page external to the GCP console e.g.
+	// lookerstudio.google.com
+	IsExternal bool `json:"isExternal,omitempty" yaml:"isExternal,omitempty"`
+}
+
+// BlueprintOrgPolicyCheck defines GCP org policies to be checked
+// for successful deployment
+type BlueprintOrgPolicyCheck struct {
+	// Id for the policy e.g. "compute-vmExternalIpAccess"
+	PolicyId string `json:"policyId" yaml:"policyId"`
+
+	// If not set, it is assumed any version of this org policy
+	// prevents successful deployment of this solution.
+	RequiredValues []string `json:"requiredValues,omitempty" yaml:"requiredValues,omitempty"`
 }
 
 type QuotaResourceType string

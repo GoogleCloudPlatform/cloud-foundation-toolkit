@@ -62,6 +62,9 @@
         },
         "label": {
           "type": "string"
+        },
+        "isExternal": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
@@ -199,6 +202,12 @@
           },
           "type": "array"
         },
+        "orgPolicyChecks": {
+          "items": {
+            "$ref": "#/$defs/BlueprintOrgPolicyCheck"
+          },
+          "type": "array"
+        },
         "quotaDetails": {
           "items": {
             "$ref": "#/$defs/BlueprintQuotaDetail"
@@ -319,6 +328,24 @@
       "type": "object",
       "required": [
         "name"
+      ]
+    },
+    "BlueprintOrgPolicyCheck": {
+      "properties": {
+        "policyId": {
+          "type": "string"
+        },
+        "requiredValues": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "policyId"
       ]
     },
     "BlueprintOutput": {
@@ -653,7 +680,8 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "name"
+        "name",
+        "title"
       ]
     },
     "GCEDiskSizeExtension": {
