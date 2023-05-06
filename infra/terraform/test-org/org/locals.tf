@@ -65,7 +65,6 @@ locals {
  *  module            = BOOL (optional, default is true which includes GH repo configuration)
  *  topics            = "string1,string2,string3" (one or more of local.common_topics required if module = true)
  *  lint_env          = "map(string)" (optional)
- *  exclude_lint_dirs = "string"
  *  disable_lint_yaml = BOOL (optional, default is true)
  *
  */
