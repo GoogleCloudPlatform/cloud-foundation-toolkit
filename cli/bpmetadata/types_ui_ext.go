@@ -108,8 +108,9 @@ type GCENetworkExtension struct {
 type ExternalIPType string
 
 const (
-	IPEphemeral ExternalIPType = "IP_EPHEMERAL"
-	IPStatic    ExternalIPType = "IP_STATIC"
+	IPUnspecified ExternalIPType = "IP_UNSPECIFIED"
+	IPEphemeral   ExternalIPType = "IP_EPHEMERAL"
+	IPStatic      ExternalIPType = "IP_STATIC"
 )
 
 type GCEExternalIPExtension struct {
@@ -119,7 +120,7 @@ type GCEExternalIPExtension struct {
 
 	// Type specifies if the external IP is ephemeral or static.
 	// Defaults to ephemeral if not specified.
-	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=IP_EPHEMERAL,enum=IP_STATIC"`
+	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=IP_UNSPECIFIED,enum=IP_EPHEMERAL,enum=IP_STATIC"`
 }
 
 type GCEIPForwardingExtension struct {
