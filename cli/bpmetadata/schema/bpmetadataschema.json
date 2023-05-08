@@ -704,6 +704,7 @@
         "type": {
           "type": "string",
           "enum": [
+            "IP_UNSPECIFIED",
             "IP_EPHEMERAL",
             "IP_STATIC"
           ]
