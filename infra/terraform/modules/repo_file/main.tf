@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2022-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-provider "github" {
-  owner = var.org
-}
-
 locals {
   commit_author = "CFT Bot"
   commit_email  = "cloud-foundation-bot@google.com"
 }
 
-data "github_repository" "repo" {
-  for_each = toset(var.repo_list)
-  name     = each.value
-}
-
 resource "github_repository_file" "file" {
-  for_each            = data.github_repository.repo
-  repository          = each.value.name
+  for_each            = var.repo_list
+  repository          = each.key
   branch              = each.value.default_branch
   file                = var.filename
   commit_message      = "chore: update ${var.filename}"

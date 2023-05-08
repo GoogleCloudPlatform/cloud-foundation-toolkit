@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package google.cloud.config.bpmetadata;
 
-import "bpmetadata_ui_ext.proto";
+import "bpmetadata/proto/bpmetadata_ui_ext.proto";
 
 option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
 

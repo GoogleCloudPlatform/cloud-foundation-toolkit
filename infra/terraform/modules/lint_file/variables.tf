@@ -22,7 +22,12 @@ variable "repos_map" {
   description = "Map of Repos"
   type = map(object({
     name              = string
-    exclude_lint_dirs = optional(string)
+    lint_env          = optional(map(string))
     disable_lint_yaml = optional(bool)
   }))
+}
+
+variable "repo_list" {
+  description = "List of Repos"
+  type        = map(any)
 }
