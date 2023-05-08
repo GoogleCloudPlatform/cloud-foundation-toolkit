@@ -125,7 +125,7 @@ message GCENetworkExtension {
 
 // ExternalIPType specifies the type of external IP address.
 enum ExternalIPType {
-  IP_UNSPECIFIED =0;
+  IP_UNSPECIFIED = 0;
   // EPHEMERAL indicates that the external IP address is ephemeral.
   IP_EPHEMERAL = 1;
   // STATIC indicates that the external IP address is static.
