@@ -33,5 +33,5 @@ resource "github_repository_file" "file" {
   commit_author       = local.commit_author
   commit_email        = local.commit_email
   overwrite_on_create = true
-  content             = templatefile("${path.module}/lint.yaml.tftpl", { branch = each.value.default_branch, exclude_lint_dirs = var.repos_map[each.value.name].exclude_lint_dirs })
+  content             = templatefile("${path.module}/lint.yaml.tftpl", { branch = each.value.default_branch, lint_env = var.repos_map[each.value.name].lint_env })
 }
