@@ -95,3 +95,36 @@ func TestUIInputFromVariables(t *testing.T) {
 		})
 	}
 }
+
+func TestCreateTitleFromName(t *testing.T) {
+	tests := []struct {
+		name      string
+		inputName string
+		wantTitle string
+	}{
+		{
+			name:      "name with underscores",
+			inputName: "foo_bar_baz",
+			wantTitle: "Foo Bar Baz",
+		},
+		{
+			name:      "name with underscores w/ numbers",
+			inputName: "foo_bar_baz_01",
+			wantTitle: "Foo Bar Baz 01",
+		},
+		{
+			name:      "name w/o underscores",
+			inputName: "FooBarBaz",
+			wantTitle: "FooBarBaz",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := createTitleFromName(tt.inputName)
+			if got != tt.wantTitle {
+				t.Errorf("createTitleFromName() = %v, want %v", got, tt.wantTitle)
+			}
+		})
+	}
+}
