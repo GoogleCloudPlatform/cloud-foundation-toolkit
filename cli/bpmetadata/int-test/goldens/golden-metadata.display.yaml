@@ -13,77 +13,115 @@ spec:
       variables:
         admins:
           name: admins
+          title: Admins
         bucket_admins:
           name: bucket_admins
+          title: Bucket Admins
         bucket_creators:
           name: bucket_creators
+          title: Bucket Creators
         bucket_hmac_key_admins:
           name: bucket_hmac_key_admins
+          title: Bucket Hmac Key Admins
         bucket_lifecycle_rules:
           name: bucket_lifecycle_rules
+          title: Bucket Lifecycle Rules
         bucket_policy_only:
           name: bucket_policy_only
+          title: Bucket Policy Only
         bucket_storage_admins:
           name: bucket_storage_admins
+          title: Bucket Storage Admins
         bucket_viewers:
           name: bucket_viewers
+          title: Bucket Viewers
         cors:
           name: cors
+          title: Cors
         creators:
           name: creators
+          title: Creators
         custom_placement_config:
           name: custom_placement_config
+          title: Custom Placement Config
         default_event_based_hold:
           name: default_event_based_hold
+          title: Default Event Based Hold
         encryption_key_names:
           name: encryption_key_names
+          title: Encryption Key Names
         folders:
           name: folders
+          title: Folders
         force_destroy:
           name: force_destroy
+          title: Force Destroy
         hmac_key_admins:
           name: hmac_key_admins
+          title: Hmac Key Admins
         hmac_service_accounts:
           name: hmac_service_accounts
+          title: Hmac Service Accounts
         labels:
           name: labels
+          title: Labels
         lifecycle_rules:
           name: lifecycle_rules
+          title: Lifecycle Rules
         location:
           name: location
+          title: Location
         logging:
           name: logging
+          title: Logging
         names:
           name: names
+          title: Names
         prefix:
           name: prefix
+          title: Prefix
         project_id:
           name: project_id
+          title: Project Id
         public_access_prevention:
           name: public_access_prevention
+          title: Public Access Prevention
         randomize_suffix:
           name: randomize_suffix
+          title: Randomize Suffix
         retention_policy:
           name: retention_policy
+          title: Retention Policy
         set_admin_roles:
           name: set_admin_roles
+          title: Set Admin Roles
         set_creator_roles:
           name: set_creator_roles
+          title: Set Creator Roles
         set_hmac_access:
           name: set_hmac_access
+          title: Set Hmac Access
         set_hmac_key_admin_roles:
           name: set_hmac_key_admin_roles
+          title: Set Hmac Key Admin Roles
         set_storage_admin_roles:
           name: set_storage_admin_roles
+          title: Set Storage Admin Roles
         set_viewer_roles:
           name: set_viewer_roles
+          title: Set Viewer Roles
         storage_admins:
           name: storage_admins
+          title: Storage Admins
         storage_class:
           name: storage_class
+          title: Storage Class
         versioning:
           name: versioning
+          title: Versioning
         viewers:
           name: viewers
+          title: Viewers
         website:
           name: website
+          title: Website
