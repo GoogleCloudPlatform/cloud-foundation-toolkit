@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package google.cloud.config.bpmetadata;
 
-import "bpmetadata_ui.proto";
+import "bpmetadata/proto/bpmetadata_ui.proto";
 
 option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
 
@@ -84,6 +84,9 @@ message BlueprintInfo {
   // Support offered, if any for the blueprint.
   // Manually authored.
   BlueprintSupport support_info = 13;
+
+  // A list of GCP org policies to be checked for successful deployment.
+	repeated BlueprintOrgPolicyCheck org_policy_checks = 14;
 }
 
 // BlueprintContent defines the detail for blueprint related content such as
@@ -204,6 +207,21 @@ message BlueprintCloudProduct {
   // A label string for the product, if it is not an integrated GCP product.
   // E.g. "Data Studio"
   string label = 3;
+
+  // Is the product's landing page external to the GCP console e.g.
+	// lookerstudio.google.com
+	bool is_external = 4;
+}
+
+// BlueprintOrgPolicyCheck defines GCP org policies to be checked
+// for successful deployment
+message BlueprintOrgPolicyCheck {
+	// Id for the policy e.g. "compute-vmExternalIpAccess"
+	string policy_id = 1;
+
+	// If not set, it is assumed any version of this org policy
+	// prevents successful deployment of this solution.
+	repeated string required_values = 2;
 }
 
 // QuotaResourceType defines the type of resource a quota is applied to.
