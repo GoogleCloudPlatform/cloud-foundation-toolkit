@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2019-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,13 +122,13 @@ locals {
 module "repo_labels_gcp" {
   source    = "../../modules/repo_labels"
   org       = "GoogleCloudPlatform"
-  repo_list = module.repos_gcp.repos
+  repo_list = [for k, v in module.repos_gcp.repos : k]
   labels    = local.labels
 }
 
 module "repo_labels_tgm" {
   source    = "../../modules/repo_labels"
   org       = "terraform-google-modules"
-  repo_list = setunion(module.repos_tgm.repos, ["terraform-docs-samples"])
+  repo_list = setunion([for k, v in module.repos_tgm.repos : k], ["terraform-docs-samples"])
   labels    = local.labels
 }

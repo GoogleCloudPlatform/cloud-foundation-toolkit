@@ -19,14 +19,9 @@ locals {
   commit_email  = "cloud-foundation-bot@google.com"
 }
 
-data "github_repository" "repo" {
-  for_each = toset(flatten([for value in var.repos_map : value.name if value.disable_lint_yaml != true]))
-  name     = each.value
-}
-
 resource "github_repository_file" "file" {
-  for_each            = data.github_repository.repo
-  repository          = each.value.name
+  for_each            = { for k, v in var.repo_list : k => v if var.repos_map[k].disable_lint_yaml != true }
+  repository          = each.key
   branch              = each.value.default_branch
   file                = ".github/workflows/lint.yaml"
   commit_message      = "chore: update .github/workflows/lint.yaml"

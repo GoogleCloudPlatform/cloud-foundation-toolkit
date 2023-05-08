@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2022-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,14 @@ locals {
   groups        = { for value in var.repos_map : value.name => join(" ", formatlist("@${value.org}/%s", value.groups)) if length(value.groups) > 0 }
 }
 
-data "github_repository" "repo" {
-  for_each = var.repos_map
-  name     = each.value.name
-}
-
 resource "github_repository_file" "CODEOWNERS" {
-  for_each            = data.github_repository.repo
-  repository          = each.value.name
+  for_each            = var.repo_list
+  repository          = each.key
   branch              = each.value.default_branch
   file                = "CODEOWNERS"
   commit_message      = "chore: update CODEOWNERS"
   commit_author       = local.commit_author
   commit_email        = local.commit_email
   overwrite_on_create = true
-  content             = "${trimspace("* @${var.org}/${var.owner} ${try(local.owners[each.value.name], "")} ${try(local.groups[each.value.name], "")}")}\n"
+  content             = "${trimspace("* @${var.org}/${var.owner} ${try(local.owners[each.key], "")} ${try(local.groups[each.key], "")}")}\n"
 }

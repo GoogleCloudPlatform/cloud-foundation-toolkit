@@ -26,3 +26,8 @@ variable "repos_map" {
     disable_lint_yaml = optional(bool)
   }))
 }
+
+variable "repo_list" {
+  description = "List of Repos"
+  type        = map(any)
+}
