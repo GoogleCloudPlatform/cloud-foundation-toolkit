@@ -18,11 +18,6 @@ output "repo_folder" {
   value = { for k, v in local.repo_folder : k => v.folder_id }
 }
 
-
-output "lint_triggers" {
-  value = google_cloudbuild_trigger.lint_trigger.*
-}
-
 output "int_triggers" {
   value = google_cloudbuild_trigger.int_trigger.*
 }
