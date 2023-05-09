@@ -67,7 +67,7 @@ resource "github_repository_collaborator" "owners" {
   }
   repository = each.value.repo
   username   = each.value.owner
-  permission = "maintain"
+  permission = "admin"
 }
 
 resource "github_team_repository" "groups" {
@@ -76,7 +76,7 @@ resource "github_team_repository" "groups" {
   }
   repository = each.value.repo
   team_id    = each.value.group
-  permission = "maintain"
+  permission = "admin"
 }
 
 resource "github_team_repository" "collaborators" {
