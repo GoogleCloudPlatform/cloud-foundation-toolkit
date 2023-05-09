@@ -126,6 +126,9 @@ locals {
       description = "Deploys a dynamic Java webapp into a Google Kubernetes Engine cluster."
       owners      = ["shabirmean", "Mukamik"]
       groups      = ["dee-platform-ops"]
+      lint_env = {
+        "EXCLUDE_HEADER_CHECK" = "\\./infra/modules/spanner/sql-schema"
+      }
     },
     {
       name         = "terraform-example-foundation"
