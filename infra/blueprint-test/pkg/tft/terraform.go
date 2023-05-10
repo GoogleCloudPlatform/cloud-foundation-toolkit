@@ -306,7 +306,7 @@ func loadTFEnvVar(m map[string]string, new map[string]string) {
 
 // ShouldSkip checks if a test should be skipped
 func (b *TFBlueprintTest) ShouldSkip() bool {
-	return b.Spec.Skip
+	return b.BlueprintTestConfig.Spec.Skip
 }
 
 // shouldRunTerraformVet checks if terraform vet should be executed
@@ -416,7 +416,7 @@ func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *TFBlueprintTest) Test() {
 	if b.ShouldSkip() {
-		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.BlueprintTestConfig.Path)
 		b.t.SkipNow()
 		return
 	}
@@ -434,7 +434,7 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 		b.t.Fatalf("n should be 2 or greater but got: %d", n)
 	}
 	if b.ShouldSkip() {
-		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.BlueprintTestConfig.Path)
 		b.t.SkipNow()
 		return
 	}

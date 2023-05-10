@@ -61,9 +61,7 @@ func WithDir(dir string) krmtOption {
 
 func WithAdditionalResources(rscs ...string) krmtOption {
 	return func(f *KRMBlueprintTest) {
-		for _, dir := range rscs {
-			f.additionalResources = append(f.additionalResources, dir)
-		}
+		f.additionalResources = append(f.additionalResources, rscs...)
 	}
 }
 
@@ -235,7 +233,9 @@ func (b *KRMBlueprintTest) updateSetters() {
 	if err != nil {
 		b.t.Fatalf("unable to read resources in %s :%v", b.buildDir, err)
 	}
-	kpt.UpsertSetters(rs, b.setters)
+	if err := kpt.UpsertSetters(rs, b.setters); err != nil {
+		b.t.Fatalf("unable to upsert setters in %s :%v", b.buildDir, err)
+	}
 	err = kpt.WritePkgResources(b.buildDir, rs)
 	if err != nil {
 		b.t.Fatalf("unable to write resources in %s :%v", b.buildDir, err)
@@ -304,7 +304,7 @@ func (b *KRMBlueprintTest) DefaultTeardown(assert *assert.Assertions) {
 
 // ShouldSkip checks if a test should be skipped
 func (b *KRMBlueprintTest) ShouldSkip() bool {
-	return b.Spec.Skip
+	return b.BlueprintTestConfig.Spec.Skip
 }
 
 // AutoDiscoverAndTest discovers KRM config from examples/fixtures and runs tests.
@@ -361,7 +361,7 @@ func (b *KRMBlueprintTest) Teardown(assert *assert.Assertions) {
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *KRMBlueprintTest) Test() {
 	if b.ShouldSkip() {
-		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.BlueprintTestConfig.Path)
 		b.t.SkipNow()
 		return
 	}
