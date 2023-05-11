@@ -91,7 +91,10 @@ func findKptfile(nodes []*yaml.RNode) (*kptfilev1.KptFile, error) {
 				return nil, fmt.Errorf("unable to read Kptfile: %v", err)
 			}
 			kf, err := kptutil.DecodeKptfile(s)
-			return kf, fmt.Errorf("unable to read Kptfile: %v", err)
+			if err != nil {
+				return nil, fmt.Errorf("unable to decode Kptfile: %v", err)
+			}
+			return kf, nil
 		}
 	}
 	return nil, fmt.Errorf("unable to find Kptfile, please include --include-meta-resources flag if a Kptfile is present")
