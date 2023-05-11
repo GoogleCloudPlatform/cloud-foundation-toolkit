@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.5.1...infra/blueprint-test/v0.5.2) (2023-05-11)
+
+
+### Bug Fixes
+
+* bump GO modules and address lint ([#1541](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1541)) ([6b76dc1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6b76dc17db4e64a6aff52b980d5c3ac01b2a901a))
+
 ## [0.5.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.5.0...infra/blueprint-test/v0.5.1) (2023-03-20)
 
 
