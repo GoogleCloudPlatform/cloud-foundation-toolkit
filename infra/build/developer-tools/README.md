@@ -15,7 +15,7 @@ Review the `Makefile` to identify other variable inputs to the build and release
 ## Environment Variables
 
 The following environment variables are inputs to the running container.
-Enviornment variables also implement feature flags to enable or disable
+Environment variables also implement feature flags to enable or disable
 behavior.  These variables are considered a public API and interface into the
 running container instance.
 
