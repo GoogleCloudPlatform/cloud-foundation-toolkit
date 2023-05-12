@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2021-2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,8 @@
 # limitations under the License.
 # Download and verify the integrity of the download first
 
-FROM alpine:3.16.2
+ARG ALPINE_VERSION
+FROM alpine:$ALPINE_VERSION
 RUN apk update && apk add --no-cache \
         bash \
         git \
