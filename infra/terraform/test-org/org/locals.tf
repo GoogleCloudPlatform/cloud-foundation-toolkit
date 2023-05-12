@@ -116,7 +116,6 @@ locals {
       short_name  = "ecommerce-microservices"
       org         = "GoogleCloudPlatform"
       description = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
-      owners      = ["arbrown", "bourgeoisor", "donmccasland", "minherz", "NimJay", "Shabirmean"]
       groups      = ["dee-platform-ops"]
     },
     {
