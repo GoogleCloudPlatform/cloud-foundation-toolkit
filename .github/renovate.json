@@ -34,5 +34,13 @@
       "allowedVersions": "<1.19.0",
       "postUpdateOptions": ["gomodTidy"]
     }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["(^|/)Makefile$"],
+      "matchStrings": ["ALPINE_VERSION := (?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "alpine"
+    }
   ]
 }
