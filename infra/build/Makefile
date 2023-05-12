@@ -1,4 +1,4 @@
-# Copyright 2019 Google LLC
+# Copyright 2019-2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ TERRAFORM_VALIDATOR_VERSION := 0.13.0
 CLOUD_SDK_VERSION := 430.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.10.1
-RUBY_VERSION := 2.7.6
+RUBY_VERSION := 2.7.8
 BATS_VERSION := 0.4.0
-GOLANG_VERSION := 1.18
+GOLANG_VERSION := 1.20
 BATS_SUPPORT_VERSION := 0.3.0
 BATS_ASSERT_VERSION := 2.0.0
 BATS_MOCK_VERSION := 1.0.1
@@ -40,16 +40,16 @@ TINKEY_VERSION := 1.7.0
 ALPINE_VERSION := 3.16
 
 # For developer-tools-krm
-GOLANGCI_VERSION := 1.47.3
-ASMCLI_VERSION := 1.12
-KIND_VERSION := 0.17.0
+GOLANGCI_VERSION := 1.52.2
+ASMCLI_VERSION := 1.15
+KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
 GATOR_VERSION := 3.11.1
-OPA_VERSION := 0.42.2
+OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.15.1
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.11.8
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.12.0
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
@@ -90,6 +90,7 @@ build-image-developer-tools:
 	docker build . \
 		--build-arg TERRAFORM_VERSION=${TERRAFORM_VERSION} \
 		--build-arg CLOUD_SDK_VERSION=${CLOUD_SDK_VERSION} \
+		--build-arg ALPINE_VERSION=${ALPINE_VERSION} \
 		-t ${DOCKER_IMAGE_DEVELOPER_LIGHT}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} -f "./developer-tools-light/Dockerfile"
 	docker build \
 		--build-arg GOLANGCI_VERSION=${GOLANGCI_VERSION} \
