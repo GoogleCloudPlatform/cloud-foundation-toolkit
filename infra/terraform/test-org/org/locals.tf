@@ -170,6 +170,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Builds a secure CI/CD pipeline on Google Cloud"
       owners      = ["gtsorbo"]
+      groups      = ["jump-start-solutions-owners"]
       topics      = join(",", [local.common_topics.security, local.common_topics.devtools, local.common_topics.e2e])
     },
     {
