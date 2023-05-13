@@ -46,6 +46,40 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   ignored_files = ["**/*.md", ".gitignore", ".github/**", "**/metadata.yaml"]
 }
 
+# pull_request triggers do not support run trigger, so we have a shadow periodic trigger
+resource "google_cloudbuild_trigger" "periodic_int_trigger" {
+  provider    = google-beta
+  project     = local.project_id
+  name        = "${each.key}-periodic-int-trigger"
+  description = "Periodic integration tests on pull request for ${each.key}"
+  for_each    = { for k, v in local.repo_folder : k => v if contains(local.periodic_repos, k) }
+  github {
+    owner = each.value.gh_org
+    name  = each.key
+    # this will be invoked via cloud scheduler, hence using a regex that will not match any branch
+    push {
+      branch = ".^"
+    }
+  }
+  substitutions = merge(
+    {
+      _BILLING_ACCOUNT          = local.billing_account
+      _FOLDER_ID                = each.value.folder_id
+      _ORG_ID                   = local.org_id
+      _BILLING_IAM_TEST_ACCOUNT = each.key == "terraform-google-iam" ? local.billing_iam_test_account : null
+      _VOD_TEST_PROJECT_ID      = each.key == "terraform-google-media-cdn-vod" ? local.vod_test_project_id : null
+      _FILE_LOGS_BUCKET         = lookup(local.enable_file_log, each.key, false) ? module.filelogs_bucket.url : null
+      _LR_BILLING_ACCOUNT       = local.lr_billing_account
+    },
+    # add sfb substitutions
+    contains(local.bp_on_sfb, each.key) ? local.sfb_substs : {}
+  )
+
+  filename      = "build/int.cloudbuild.yaml"
+  ignored_files = ["**/*.md", ".gitignore", ".github/**", "**/metadata.yaml"]
+}
+
+
 resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests" {
   for_each = {
     tf12 = "0.12.31"
