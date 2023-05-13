@@ -14,7 +14,7 @@
      "stabilityDays":0
   },
   "separateMajorMinor":false,
-  "ignorePaths": ["config-connector/**", "docs/**"],
+  "ignorePaths": ["config-connector/**"],
   "additionalBranchPrefix": "{{parentDir}}-",
   "packageRules": [
     {
