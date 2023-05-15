@@ -177,11 +177,12 @@ func TestProcessMarkdownContent(t *testing.T) {
 
 func TestProcessArchitectureContent(t *testing.T) {
 	tests := []struct {
-		name     string
-		fileName string
-		title    string
-		want     *BlueprintArchitecture
-		wantErr  bool
+		name        string
+		fileName    string
+		title       string
+		want        *BlueprintArchitecture
+		wantErr     bool
+		wantFileErr bool
 	}{
 		{
 			name:     "Architecture details exists as BlueprintArchitecture",
@@ -203,16 +204,22 @@ func TestProcessArchitectureContent(t *testing.T) {
 			wantErr:  true,
 		},
 		{
-			name:     "md content file path for BlueprintArchitecture is invalid",
-			fileName: "list-content-bad-file-name.md",
-			title:    "Architecture",
-			wantErr:  true,
+			name:        "md content file path for BlueprintArchitecture is invalid",
+			fileName:    "list-content-bad-file-name.md",
+			title:       "Architecture",
+			wantErr:     true,
+			wantFileErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			content, _ := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			if (err != nil) != tt.wantFileErr {
+				t.Errorf("ReadFile() = %v, wantErr %v", err, tt.wantFileErr)
+				return
+			}
+
 			got, err := getArchitctureInfo(content, tt.title)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getArchitctureInfo() error = %v, wantErr %v", err, tt.wantErr)
