@@ -49,11 +49,11 @@ func GetTestConfig(path string) (BlueprintTestConfig, error) {
 
 // isValidTestConfig validates a given BlueprintTestConfig
 func isValidTestConfig(b BlueprintTestConfig) error {
-	if b.APIVersion != blueprintTestAPIVersion {
-		return fmt.Errorf("invalid APIVersion %s expected %s", b.APIVersion, blueprintTestAPIVersion)
+	if b.ResourceMeta.APIVersion != blueprintTestAPIVersion {
+		return fmt.Errorf("invalid APIVersion %s expected %s", b.ResourceMeta.APIVersion, blueprintTestAPIVersion)
 	}
-	if b.Kind != blueprintTestKind {
-		return fmt.Errorf("invalid Kind %s expected %s", b.Kind, blueprintTestKind)
+	if b.ResourceMeta.Kind != blueprintTestKind {
+		return fmt.Errorf("invalid Kind %s expected %s", b.ResourceMeta.Kind, blueprintTestKind)
 	}
 	return nil
 }

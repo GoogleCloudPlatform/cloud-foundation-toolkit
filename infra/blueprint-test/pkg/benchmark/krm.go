@@ -53,7 +53,9 @@ func CreateVariant(b testing.TB, baseDir string, buildDir string, variantName st
 	if err != nil {
 		b.Fatalf("unable to read resources in %s :%v", variantPath, err)
 	}
-	kpt.UpsertSetters(rs, setters)
+	if err := kpt.UpsertSetters(rs, setters); err != nil {
+		b.Fatalf("unable to upsert setters in %s :%v", variantPath, err)
+	}
 	err = kpt.WritePkgResources(variantPath, rs)
 	if err != nil {
 		b.Fatalf("unable to write resources in %s :%v", variantPath, err)
