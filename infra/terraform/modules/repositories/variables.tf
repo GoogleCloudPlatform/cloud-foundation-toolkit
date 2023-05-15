@@ -33,8 +33,8 @@ variable "repos_map" {
   }))
 }
 
-variable "team_id" {
-  description = "Team to add as repo collaborators"
-  type        = string
-  default     = null
+variable "ci_teams" {
+  description = "Repo collaborator teams for approved CI"
+  type        = list(string)
+  default     = []
 }
