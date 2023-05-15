@@ -19,8 +19,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/jsonpb" //nolint //https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1571
+	"github.com/golang/protobuf/proto"  //nolint //https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1571
 	"github.com/pkg/errors"
 )
 

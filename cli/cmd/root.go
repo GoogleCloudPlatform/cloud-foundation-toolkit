@@ -20,7 +20,7 @@ var rootCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		// no params means same as -h flag
-		if args == nil || len(args) == 0 {
+		if len(args) == 0 {
 			cmd.HelpFunc()(cmd, args)
 		}
 	},
@@ -71,7 +71,10 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 	}
 
 	rootCmd.PersistentFlags().BoolVar(&flags.verbose, "verbose", false, "Log output to stdout")
-	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
+	err := viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
+	if err != nil {
+		panic(err)
+	}
 
 	rootCmd.AddCommand(scorecard.Cmd)
 	rootCmd.AddCommand(report.Cmd)

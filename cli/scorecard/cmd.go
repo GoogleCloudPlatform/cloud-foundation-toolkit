@@ -27,13 +27,19 @@ func init() {
 	viper.AutomaticEnv()
 
 	Cmd.Flags().StringVar(&flags.policyPath, "policy-path", "", "Path to directory containing validation policies")
-	Cmd.MarkFlagRequired("policy-path")
+	err := Cmd.MarkFlagRequired("policy-path")
+	if err != nil {
+		panic(err)
+	}
 
 	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain scorecard outputs. Output to console if not specified")
 
 	Cmd.Flags().StringVar(&flags.outputFormat, "output-format", "txt", "Format of scorecard outputs, can be txt, json or csv")
 	viper.SetDefault("output-format", "txt")
-	viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
+	err = viper.BindPFlag("output-format", Cmd.Flags().Lookup("output-format"))
+	if err != nil {
+		panic(err)
+	}
 
 	Cmd.Flags().StringSliceVar(&flags.metadataFields, "output-metadata-fields", []string{}, "List of comma delimited violation metadata fields to include in output. By default no metadata fields in output when --output-format is txt or csv. All metadata will be in output when --output-format is json.")
 

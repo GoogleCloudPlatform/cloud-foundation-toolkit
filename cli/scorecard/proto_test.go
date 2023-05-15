@@ -23,10 +23,14 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func jsonToInterface(jsonStr string) map[string]interface{} {
+func jsonToInterface(jsonStr string) (map[string]interface{}, error) {
 	var interfaceVar map[string]interface{}
-	json.Unmarshal([]byte(jsonStr), &interfaceVar)
-	return interfaceVar
+	err := json.Unmarshal([]byte(jsonStr), &interfaceVar)
+	if err != nil {
+		return nil, err
+	}
+
+	return interfaceVar, nil
 }
 
 func TestDataTypeTransformation(t *testing.T) {
@@ -34,7 +38,10 @@ func TestDataTypeTransformation(t *testing.T) {
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
-	asset := jsonToInterface(string(fileContent))
+	asset, err := jsonToInterface(string(fileContent))
+	if err != nil {
+		t.Fatal("unexpected error", err)
+	}
 	wantedName := "//cloudresourcemanager.googleapis.com/projects/23456"
 
 	pbAsset := &validator.Asset{}

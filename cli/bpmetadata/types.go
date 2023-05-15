@@ -81,6 +81,10 @@ type BlueprintInfo struct {
 	// Support offered, if any for the blueprint.
 	// Manually authored.
 	SupportInfo BlueprintSupport `json:"supportInfo,omitempty" yaml:"supportInfo,omitempty"`
+
+	// Specifies if the blueprint supports single or multiple deployments per GCP project.
+	// If set to true, the blueprint can not be deployed more than once in the same GCP project.
+	SingleDeployment bool `json:"singleDeployment,omitempty" yaml:"singleDeployment,omitempty"`
 }
 
 type BlueprintRepoDetail struct {
@@ -318,7 +322,7 @@ type BlueprintDiagram struct {
 
 type BlueprintListContent struct {
 	Title string `json:"title" yaml:"title"`
-	URL   string `json:"url,omitempty" yaml:url,omitempty"`
+	URL   string `json:"url,omitempty" yaml:"url,omitempty"`
 }
 
 type BlueprintVariable struct {

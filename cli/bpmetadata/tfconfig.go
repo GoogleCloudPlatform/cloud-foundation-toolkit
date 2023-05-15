@@ -167,7 +167,12 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 			// get the module name from the version attribute and extract the
 			// version name only
 			var modName string
-			gohcl.DecodeExpression(versionAttr.Expr, nil, &modName)
+			diags := gohcl.DecodeExpression(versionAttr.Expr, nil, &modName)
+			err = hasHclErrors(diags)
+			if err != nil {
+				return "", err
+			}
+
 			m := re.FindStringSubmatch(modName)
 			if len(m) > 0 {
 				return m[len(m)-1], nil
@@ -290,7 +295,7 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
 			return nil, err
 		}
 
-		for k, _ := range iamAttrs {
+		for k := range iamAttrs {
 			var iamRoles []string
 			attrValue, _ := iamAttrs[k].Expr.Value(nil)
 			if !attrValue.Type().IsTupleType() {
@@ -346,7 +351,11 @@ func parseBlueprintServices(servicesFile *hcl.File) ([]string, error) {
 			return nil, fmt.Errorf("activate_apis not defined for project module")
 		}
 
-		gohcl.DecodeExpression(apisAttr.Expr, nil, &s)
+		diags = gohcl.DecodeExpression(apisAttr.Expr, nil, &s)
+		err = hasHclErrors(diags)
+		if err != nil {
+			return nil, err
+		}
 
 		// because we're only interested in the top-level modules block
 		break

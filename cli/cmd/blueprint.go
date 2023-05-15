@@ -23,7 +23,7 @@ var blueprintCmd = &cobra.Command{
 	Long:  `The CFT blueprint CLI is used to execute commands specific to blueprints such as test, builds & metadata`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		if args == nil || len(args) == 0 {
+		if len(args) == 0 {
 			cmd.HelpFunc()(cmd, args)
 		}
 	},

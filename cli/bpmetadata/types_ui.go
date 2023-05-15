@@ -58,10 +58,10 @@ type DisplayVariable struct {
 	MaximumLength int `json:"maxLength,omitempty" yaml:"maxLength,omitempty"`
 
 	// Minimum value for numeric types.
-	Minimum int `json:"min,omitempty" yaml:"min,omitempty"`
+	Minimum float32 `json:"min,omitempty" yaml:"min,omitempty"`
 
 	// Max value for numeric types.
-	Maximum int `json:"max,omitempty" yaml:"max,omitempty"`
+	Maximum float32 `json:"max,omitempty" yaml:"max,omitempty"`
 
 	// The name of a section to which this variable belongs.
 	// variables belong to the root section if this field is
