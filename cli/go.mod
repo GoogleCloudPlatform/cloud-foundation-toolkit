@@ -26,7 +26,7 @@ require (
 	github.com/migueleliasweb/go-github-mock v0.0.12
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64
 	github.com/open-policy-agent/gatekeeper v0.0.0-20210409021048-9b5e4cfe5d7e // indirect
-	github.com/open-policy-agent/opa v0.34.2
+	github.com/open-policy-agent/opa v0.42.0
 	github.com/otiai10/copy v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.4.0
