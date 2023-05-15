@@ -212,7 +212,7 @@ func TestProcessArchitectureContent(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			content, _ := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
 			got, err := getArchitctureInfo(content, tt.title)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getArchitctureInfo() error = %v, wantErr %v", err, tt.wantErr)
@@ -264,7 +264,7 @@ func TestProcessDeploymentDurationContent(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			content, _ := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
 			got, err := getDeploymentDuration(content, tt.title)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getDeploymentDuration() error = %v, wantErr %v", err, tt.wantErr)
@@ -308,7 +308,7 @@ func TestProcessCostEstimateContent(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
+			content, _ := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
 			got, err := getCostEstimate(content, tt.title)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getCostEstimate() error = %v, wantErr %v", err, tt.wantErr)

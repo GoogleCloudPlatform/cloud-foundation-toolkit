@@ -25,7 +25,7 @@ var launchpadCmd = &cobra.Command{
 	Cloud Foundation Ecosystem Convention. Taking YAML and generate opinionated
 	infrastructure resources ready to be deployed in Infrastructure as Code style`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if args == nil || len(args) == 0 {
+		if len(args) == 0 {
 			cmd.HelpFunc()(cmd, args)
 		}
 	},
@@ -38,7 +38,7 @@ var launchpadGenerateCmd = &cobra.Command{
 	Long:    `Generate infrastructure foundation via defined YAML`,
 	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if args == nil || len(args) == 0 {
+		if len(args) == 0 {
 			cmd.HelpFunc()(cmd, args)
 		} else {
 			launchpad.NewGenerate(args, launchpad.NewOutputFlavor(launchpadOutputFlavor), launchpadOutputDirectory)
