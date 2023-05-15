@@ -19,7 +19,7 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
     google = {
       version = ">= 3.39, < 5.0"

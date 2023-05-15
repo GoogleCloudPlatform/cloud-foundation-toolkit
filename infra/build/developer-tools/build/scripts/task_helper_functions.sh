@@ -311,7 +311,7 @@ function generate_docs() {
     echo "ENABLE_BPMETADATA not set to 1. Skipping metadata generation."
     return 0
   fi
-  generate_metadata $1
+  generate_metadata "${1-core}"
 }
 
 function generate_metadata() {
