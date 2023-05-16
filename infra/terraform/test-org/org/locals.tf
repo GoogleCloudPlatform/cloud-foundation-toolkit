@@ -36,7 +36,7 @@ locals {
       gh_org      = repo.org
     }
   }
-  jss_common_group = "jump-start-solution-owners"
+  jss_common_group = "jump-start-solutions-admins"
 
   common_topics = {
     hcls       = "healthcare-life-sciences",
