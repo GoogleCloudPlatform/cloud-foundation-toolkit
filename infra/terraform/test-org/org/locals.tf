@@ -559,7 +559,7 @@ locals {
       short_name   = "dynamic-python-webapp"
       org          = "GoogleCloudPlatform"
       description  = "Deploy a dynamic python webapp"
-      owners       = ["glasnt", "donmccasland", "GoogleCloudPlatform/torus-dpe"]
+      owners       = ["glasnt", "donmccasland", "torus-dpe"]
       homepage_url = "avocano.dev"
       groups       = [local.jss_common_group]
     },
