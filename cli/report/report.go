@@ -43,7 +43,11 @@ func GenerateReports(dirPath string, queryPath string, outputPath string, report
 	if err != nil {
 		return err
 	}
-	printReports(results, outputPath, reportFormat, fileSuffix)
+	err = printReports(results, outputPath, reportFormat, fileSuffix)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -128,7 +132,11 @@ func printReports(results interface{}, reportOutputPath string, format string, f
 							keys = append(keys, key)
 						}
 						sort.Strings(keys)
-						w.Write(keys)
+						err := w.Write(keys)
+						if err != nil {
+							return err
+						}
+
 						w.Flush()
 						for _, record := range contentSlice {
 							recordMap := record.(map[string]interface{})
@@ -136,7 +144,10 @@ func printReports(results interface{}, reportOutputPath string, format string, f
 							for _, key := range keys {
 								record = append(record, recordMap[key].(string))
 							}
-							w.Write(record)
+							err = w.Write(record)
+							if err != nil {
+								return err
+							}
 						}
 						w.Flush()
 					}

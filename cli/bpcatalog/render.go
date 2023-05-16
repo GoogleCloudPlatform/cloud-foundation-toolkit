@@ -135,7 +135,10 @@ type displayMeta struct {
 func render(r repos, w io.Writer, format renderFormat, verbose bool) error {
 	dm := reposToDisplayMeta(r)
 	if format == renderHTML {
-		w.Write([]byte(renderDocHTML(append(dm, staticDM...))))
+		_, err := w.Write([]byte(renderDocHTML(append(dm, staticDM...))))
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 

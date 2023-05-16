@@ -84,11 +84,15 @@ func getDiscoveredTests(intTestDir string) ([]bpTest, error) {
 
 func getExplicitTests(intTestDir string) ([]bpTest, error) {
 	// find all explicit test files ending with *_test.go excluding discover_test.go within intTestDir
-	testFiles := findFiles(intTestDir,
+	testFiles, err := findFiles(intTestDir,
 		func(d fs.DirEntry) bool {
 			return strings.HasSuffix(d.Name(), "_test.go") && d.Name() != discoverTestFilename
 		},
 	)
+
+	if err != nil {
+		Log.Warn(fmt.Sprintf("walking file path: %s : details: %v", intTestDir, err))
+	}
 
 	eTests := []bpTest{}
 	for _, testFile := range testFiles {
@@ -136,11 +140,16 @@ func getDiscoverTestName(dFileName string) (string, error) {
 // If not found, it returns current working directory.
 func discoverIntTestDir(cwd string) (string, error) {
 	// search for discover_test.go
-	discoverTestFiles := findFiles(cwd,
+	discoverTestFiles, err := findFiles(cwd,
 		func(d fs.DirEntry) bool {
 			return d.Name() == discoverTestFilename
 		},
 	)
+
+	if err != nil {
+		Log.Warn(fmt.Sprintf("walking file path: %s : details: %v", cwd, err))
+	}
+
 	if len(discoverTestFiles) > 1 {
 		return "", fmt.Errorf("found multiple %s files: %+q. Exactly one file was expected", discoverTestFilename, discoverTestFiles)
 	}
@@ -170,9 +179,9 @@ func getIntTestDir(intTestDir string) (string, error) {
 }
 
 // findFiles returns a slice of file paths matching matchFn
-func findFiles(dir string, matchFn func(d fs.DirEntry) bool) []string {
+func findFiles(dir string, matchFn func(d fs.DirEntry) bool) ([]string, error) {
 	files := []string{}
-	filepath.WalkDir(dir, func(fpath string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(dir, func(fpath string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -186,5 +195,10 @@ func findFiles(dir string, matchFn func(d fs.DirEntry) bool) []string {
 		}
 		return nil
 	})
-	return files
+
+	if err != nil {
+		return nil, err
+	}
+
+	return files, nil
 }

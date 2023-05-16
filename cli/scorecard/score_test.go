@@ -84,7 +84,11 @@ func TestWriteViolations(t *testing.T) {
 		}
 		expected := tc.listMaker(fileContent)
 
-		writeResults(config, output, tc.format, nil)
+		err = writeResults(config, output, tc.format, nil)
+		if err != nil {
+			t.Fatal("unexpected error", err)
+		}
+
 		actual := tc.listMaker(output.Bytes())
 
 		assert.ElementsMatch(t, expected, actual, tc.message)
