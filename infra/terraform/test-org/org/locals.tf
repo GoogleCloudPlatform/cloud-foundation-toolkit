@@ -128,7 +128,7 @@ locals {
       owners      = ["shabirmean", "Mukamik"]
       groups      = ["dee-platform-ops", local.jss_common_group]
       lint_env = {
-        "EXCLUDE_HEADER_CHECK" = "\\./infra/modules/spanner/sql-schema"
+        "EXCLUDE_HEADER_CHECK" = "\\./infra/sql-schema"
       }
     },
     {
