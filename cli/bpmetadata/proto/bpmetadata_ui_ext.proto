@@ -145,10 +145,10 @@ message GCEExternalIPExtension {
   ExternalIPType type = 2;
 
   // Flag to denote if an external IP should be configurable.
-	bool not_configurable = 3;
+  bool not_configurable = 3;
 
-	// Flag to denote if static IPs are allowed for the external IP.
-	bool allow_static_ips = 4;
+  // Flag to denote if static IPs are allowed for the external IP.
+  bool allow_static_ips = 4;
 }
 
 // GCEIPForwardingExtension specifies an IP forwarding extension for a GCE resource.

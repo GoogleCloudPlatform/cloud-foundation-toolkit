@@ -70,9 +70,9 @@ message DisplayVariable {
   GooglePropertyExtension x_google_property = 14;
 
   // Text describing the validation rules for the property. Typically shown
-	// after an invalid input.
-	// Optional. UTF-8 text. No markup. At most 128 characters.
-	string validation = 15;
+  // after an invalid input.
+  // Optional. UTF-8 text. No markup. At most 128 characters.
+  string validation = 15;
 }
 
 message DisplaySection {
