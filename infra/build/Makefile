@@ -32,7 +32,7 @@ KUSTOMIZE_VERSION := 3.6.1
 # Updated by Update Tooling Workflow
 KPT_VERSION := 1.0.0-beta.32
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 1.1.2
+CFT_CLI_VERSION := 1.1.3
 # Updated by Update Tooling Workflow
 KUBECTL_VERSION := 1.25.9
 TFLINT_VERSION := 0.41.0
@@ -49,7 +49,7 @@ OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.15.1
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.12.0
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.12.1
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
