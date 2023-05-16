@@ -32,9 +32,7 @@ message DisplayVariable {
   // Placeholder text (when there is no default).
   string placeholder = 5;
 
-  // Text describing the validation rules for the variable based
-  // on a regular expression.
-  // Typically shown after an invalid input.
+  // Regex based validation rules for the variable.
   string regex_validation = 6;
 
   // Minimum no. of inputs for the input variable.
@@ -70,6 +68,11 @@ message DisplayVariable {
   //     minCpu: 2
   //     minRamGb: 6
   GooglePropertyExtension x_google_property = 14;
+
+  // Text describing the validation rules for the property. Typically shown
+	// after an invalid input.
+	// Optional. UTF-8 text. No markup. At most 128 characters.
+	string validation = 15;
 }
 
 message DisplaySection {
