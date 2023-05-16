@@ -561,7 +561,7 @@ locals {
       description  = "Deploy a dynamic python webapp"
       owners       = ["glasnt", "donmccasland"]
       homepage_url = "avocano.dev"
-      groups       = [local.jss_common_group]
+      groups       = [local.jss_common_group, "torus-dpe"]
     },
     {
       name        = "terraform-example-deploy-java-multizone"
