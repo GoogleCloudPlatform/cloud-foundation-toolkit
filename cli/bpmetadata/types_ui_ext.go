@@ -71,7 +71,7 @@ type GCEMachineTypeExtension struct {
 	MinCPU int `json:"minCpu,omitempty" yaml:"minCpu,omitempty"`
 
 	// Minimum ram. Used to filter the list of selectable machine types.
-	MinRAMGB int `json:"minRamGb,omitempty" yaml:"minRamGb,omitempty"`
+	MinRAMGB float32 `json:"minRamGb,omitempty" yaml:"minRamGb,omitempty"`
 
 	// If true, custom machine types will not be selectable.
 	// More info:
@@ -80,8 +80,8 @@ type GCEMachineTypeExtension struct {
 }
 
 type GCEGPUTypeExtension struct {
-	MachineType string `json:"machineType" yaml:"machineType"`
-	GPUType     string `json:"gpuType,omitempty" yaml:"gpuType,omitempty"`
+	MachineType string   `json:"machineType" yaml:"machineType"`
+	GPUType     []string `json:"gpuType,omitempty" yaml:"gpuType,omitempty"`
 }
 
 type GCEGPUCountExtension struct {
@@ -103,6 +103,8 @@ type GCENetworkExtension struct {
 	// Used to indicate to which machine type this network interface will be
 	// attached to.
 	MachineTypeVariable string `json:"machineTypeVariable" yaml:"machineTypeVariable"`
+	// Label that will be in front of each Network Interface.
+	Labels []string `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 type ExternalIPType string
@@ -110,7 +112,7 @@ type ExternalIPType string
 const (
 	IPUnspecified ExternalIPType = "IP_UNSPECIFIED"
 	IPEphemeral   ExternalIPType = "IP_EPHEMERAL"
-	IPStatic      ExternalIPType = "IP_STATIC"
+	IPNone        ExternalIPType = "NONE"
 )
 
 type GCEExternalIPExtension struct {
@@ -120,7 +122,13 @@ type GCEExternalIPExtension struct {
 
 	// Type specifies if the external IP is ephemeral or static.
 	// Defaults to ephemeral if not specified.
-	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=IP_UNSPECIFIED,enum=IP_EPHEMERAL,enum=IP_STATIC"`
+	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=IP_UNSPECIFIED,enum=IP_EPHEMERAL,enum=NONE"`
+
+	// Flag to denote if an external IP should be configurable.
+	NotConfigurable bool `json:"notConfigurable,omitempty" yaml:"notConfigurable,omitempty"`
+
+	// Flag to denote if static IPs are allowed for the external IP.
+	AllowStaticIPs bool `json:"allowStaticIPs,omitempty" yaml:"allowStaticIPs,omitempty"`
 }
 
 type GCEIPForwardingExtension struct {
