@@ -225,6 +225,9 @@
         },
         "supportInfo": {
           "$ref": "#/$defs/BlueprintSupport"
+        },
+        "singleDeployment": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
@@ -665,10 +668,10 @@
           "type": "integer"
         },
         "min": {
-          "type": "integer"
+          "type": "number"
         },
         "max": {
-          "type": "integer"
+          "type": "number"
         },
         "section": {
           "type": "string"

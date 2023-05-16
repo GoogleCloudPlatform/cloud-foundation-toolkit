@@ -200,15 +200,21 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 		if err != nil {
 			return err
 		}
-		io.WriteString(dest, string(byteContent)+"\n")
+		_, err = io.WriteString(dest, string(byteContent)+"\n")
+		if err != nil {
+			return err
+		}
+
 		return nil
 	case "csv":
 		w := csv.NewWriter(dest)
 		header := []string{"Category", "Constraint", "Resource", "Message", "Parent"}
-		for _, field := range outputMetadataFields {
-			header = append(header, field)
+		header = append(header, outputMetadataFields...)
+		err := w.Write(header)
+		if err != nil {
+			return err
 		}
-		w.Write(header)
+
 		w.Flush()
 		for _, category := range config.categories {
 			for _, cv := range category.constraints {
@@ -223,7 +229,11 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 						value, _ := stringViaJSON(metadata)
 						record = append(record, value)
 					}
-					w.Write(record)
+					err := w.Write(record)
+					if err != nil {
+						return err
+					}
+
 					w.Flush()
 					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 				}
@@ -231,22 +241,44 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 		}
 		return nil
 	case "txt":
-		io.WriteString(dest, fmt.Sprintf("\n\n%v total issues found\n", config.CountViolations()))
+		_, err := io.WriteString(dest, fmt.Sprintf("\n\n%v total issues found\n", config.CountViolations()))
+		if err != nil {
+			return err
+		}
+
 		for _, category := range config.categories {
-			io.WriteString(dest, fmt.Sprintf("\n\n%v: %v issues found\n", category.Name, category.Count()))
-			io.WriteString(dest, fmt.Sprintf("----------\n"))
+			_, err = io.WriteString(dest, fmt.Sprintf("\n\n%v: %v issues found\n", category.Name, category.Count()))
+			if err != nil {
+				return err
+			}
+			_, err = io.WriteString(dest, "----------\n")
+			if err != nil {
+				return err
+			}
 			for _, cv := range category.constraints {
-				io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", getConstraintShortName(cv.constraint), cv.Count()))
+				_, err = io.WriteString(dest, fmt.Sprintf("%v: %v issues\n", getConstraintShortName(cv.constraint), cv.Count()))
+				if err != nil {
+					return err
+				}
 				for _, v := range cv.Violations {
-					io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
+					_, err = io.WriteString(dest, fmt.Sprintf("- %v\n", v.Message))
+					if err != nil {
+						return err
+					}
 					for _, field := range outputMetadataFields {
 						metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 						value, _ := stringViaJSON(metadata)
 						if value != "" {
-							io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
+							_, err = io.WriteString(dest, fmt.Sprintf("  %v: %v\n", field, value))
+							if err != nil {
+								return err
+							}
 						}
 					}
-					io.WriteString(dest, "\n")
+					_, err = io.WriteString(dest, "\n")
+					if err != nil {
+						return err
+					}
 					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 				}
 			}
@@ -289,7 +321,11 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 			}
 		}
 		// Code to measure
-		writeResults(config, dest, outputFormat, outputMetadataFields)
+		err := writeResults(config, dest, outputFormat, outputMetadataFields)
+		if err != nil {
+			return err
+		}
+
 	} else {
 		fmt.Println("No issues found found! You have a perfect score.")
 	}

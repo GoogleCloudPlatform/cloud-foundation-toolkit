@@ -31,22 +31,37 @@ func init() {
 	viper.AutomaticEnv()
 
 	Cmd.Flags().StringVar(&flags.queryPath, "query-path", "", "Path to directory containing inventory queries")
-	Cmd.MarkFlagRequired("query-path")
+	err := Cmd.MarkFlagRequired("query-path")
+	if err != nil {
+		panic(err)
+	}
 
 	Cmd.Flags().StringVar(&flags.outputPath, "output-path", "", "Path to directory to contain report outputs")
-	Cmd.MarkFlagRequired("output-path")
+	err = Cmd.MarkFlagRequired("output-path")
+	if err != nil {
+		panic(err)
+	}
 
 	//Cmd.Flags().StringVar(&flags.bucketName, "bucket", "", "GCS bucket name for storing inventory (conflicts with --dir-path)")
 	Cmd.Flags().StringVar(&flags.dirName, "dir-path", "", "Local directory path for storing inventory ")
-	Cmd.MarkFlagRequired("dir-path")
+	err = Cmd.MarkFlagRequired("dir-path")
+	if err != nil {
+		panic(err)
+	}
 
 	Cmd.Flags().StringVar(&flags.reportFormat, "report-format", "", "Format of inventory report outputs, can be json or csv, default is csv")
 	viper.SetDefault("report-format", "csv")
-	viper.BindPFlag("report-format", Cmd.Flags().Lookup("report-format"))
+	err = viper.BindPFlag("report-format", Cmd.Flags().Lookup("report-format"))
+	if err != nil {
+		panic(err)
+	}
 
 	Cmd.AddCommand(listCmd)
 	listCmd.Flags().StringVar(&flags.queryPath, "query-path", "", "Path to directory containing inventory queries")
-	listCmd.MarkFlagRequired("query-path")
+	err = listCmd.MarkFlagRequired("query-path")
+	if err != nil {
+		panic(err)
+	}
 
 }
 

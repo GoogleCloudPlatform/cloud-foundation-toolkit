@@ -50,10 +50,10 @@ message DisplayVariable {
   int32 max_length = 10;
 
   // Minimum value for numeric types.
-  int32 min = 11;
+  float min = 11;
 
   // Max value for numeric types.
-  int32 max = 12;
+  float max = 12;
 
   // The name of a section to which this variable belongs.
   // variables belong to the root section if this field is
