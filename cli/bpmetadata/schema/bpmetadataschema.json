@@ -652,6 +652,9 @@
         "placeholder": {
           "type": "string"
         },
+        "validation": {
+          "type": "string"
+        },
         "regexValidation": {
           "type": "string"
         },
@@ -709,8 +712,14 @@
           "enum": [
             "IP_UNSPECIFIED",
             "IP_EPHEMERAL",
-            "IP_STATIC"
+            "NONE"
           ]
+        },
+        "notConfigurable": {
+          "type": "boolean"
+        },
+        "allowStaticIPs": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
@@ -761,7 +770,10 @@
           "type": "string"
         },
         "gpuType": {
-          "type": "string"
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -821,7 +833,7 @@
           "type": "integer"
         },
         "minRamGb": {
-          "type": "integer"
+          "type": "number"
         },
         "disallowCustomMachineTypes": {
           "type": "boolean"
@@ -837,6 +849,12 @@
         },
         "machineTypeVariable": {
           "type": "string"
+        },
+        "labels": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
