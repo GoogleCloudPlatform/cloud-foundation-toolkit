@@ -154,12 +154,13 @@ locals {
       groups      = [local.jss_common_group]
     },
     {
-      name        = "terraform-google-three-tier-web-app"
-      org         = "GoogleCloudPlatform"
-      description = "Deploys a three tier web application using Cloud Run and Cloud SQL"
-      owners      = ["tpryan"]
-      topics      = join(",", [local.common_topics.serverless, local.common_topics.db])
-      groups      = [local.jss_common_group]
+      name            = "terraform-google-three-tier-web-app"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys a three tier web application using Cloud Run and Cloud SQL"
+      owners          = ["tpryan"]
+      topics          = join(",", [local.common_topics.serverless, local.common_topics.db])
+      groups          = [local.jss_common_group]
+      enable_periodic = true
     },
     {
       name        = "terraform-google-load-balanced-vms"
