@@ -113,8 +113,8 @@ func TestGetViolations(t *testing.T) {
 	}
 	violationMap := make(map[string]int)
 	for _, v := range violations {
-		violationMap[v.Constraint+"-"+v.Resource] = 1
-		Log.Debug("Found violation", "constraint", v.Constraint, "resource", v.Resource)
+		violationMap[v.Violation.Constraint+"-"+v.Resource] = 1
+		Log.Debug("Found violation", "constraint", v.Violation.Constraint, "resource", v.Resource)
 	}
 
 	for _, tc := range testCases {

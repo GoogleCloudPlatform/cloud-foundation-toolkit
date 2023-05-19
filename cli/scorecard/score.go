@@ -116,7 +116,7 @@ var availableCategories = map[string]string{
 }
 
 func (config *ScoringConfig) getConstraintForViolation(violation *RichViolation) (*constraintViolations, error) {
-	key := violation.GetConstraint()
+	key := violation.Violation.GetConstraint()
 	cv, found := config.constraints[key]
 	if !found {
 		constraint := key
@@ -125,7 +125,7 @@ func (config *ScoringConfig) getConstraintForViolation(violation *RichViolation)
 		}
 		config.constraints[key] = cv
 
-		metadata := violation.GetMetadata().GetStructValue().GetFields()["constraint"]
+		metadata := violation.Violation.GetMetadata().GetStructValue().GetFields()["constraint"]
 		annotations := metadata.GetStructValue().GetFields()["annotations"].GetStructValue().GetFields()
 		categoryKey := otherCategoryKey
 		categoryValue, found := annotations["bundles.validator.forsetisecurity.org/scorecard-v1"]
@@ -192,7 +192,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 						}
 					}
 					richViolations = append(richViolations, v)
-					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					Log.Debug("Violation metadata", "metadata", v.Violation.GetMetadata())
 				}
 			}
 		}
@@ -223,7 +223,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 					if len(v.asset.Ancestors) > 0 {
 						parent = v.asset.Ancestors[0]
 					}
-					record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message, parent}
+					record := []string{category.Name, getConstraintShortName(v.Violation.Constraint), v.Resource, v.Message, parent}
 					for _, field := range outputMetadataFields {
 						metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 						value, _ := stringViaJSON(metadata)
@@ -235,7 +235,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 					}
 
 					w.Flush()
-					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					Log.Debug("Violation metadata", "metadata", v.Violation.GetMetadata())
 				}
 			}
 		}
@@ -279,7 +279,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 					if err != nil {
 						return err
 					}
-					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
+					Log.Debug("Violation metadata", "metadata", v.Violation.GetMetadata())
 				}
 			}
 		}
