@@ -644,5 +644,10 @@ locals {
       owners      = ["xsxm", "ivanmkc", "balajismaniam", "donmccasland"]
       groups      = ["dee-data-ai", local.jss_common_group]
     },
+    {
+      name            = "terraform-google-out-of-band-security"
+      org             = "GoogleCloudPlatform"
+      description     = "Creates a 3P out-of-band security appliance deployment"
+    },
   ]
 }
