@@ -394,7 +394,7 @@ locals {
       name              = "terraform-google-module-template"
       org               = "terraform-google-modules"
       description       = "Provides a template for creating a Cloud Foundation Toolkit Terraform module"
-      disable_lint_yaml = false
+      disable_lint_yaml = true
     },
     {
       name        = "terraform-google-network"
