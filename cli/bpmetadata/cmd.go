@@ -180,7 +180,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	}
 
 	// verify that the blueprint path is valid & get repo details
-	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Info.Source, readmeContent)
+	repoDetails := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Info.Source, readmeContent)
 	if repoDetails.Name == "" && !mdFlags.quiet {
 		fmt.Printf("Provide a name for the blueprint at path [%s]: ", bpPath)
 		fmt.Scan(&repoDetails.Name)

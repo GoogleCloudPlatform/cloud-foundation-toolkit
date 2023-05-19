@@ -23,7 +23,7 @@ const (
 
 // getRepoDetailsByPath takes a local path for a blueprint and tries
 // to get repo details that include its name, path and type
-func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, readmeContent []byte) (*repoDetail, error) {
+func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, readmeContent []byte) *repoDetail {
 	rootRepoPath := getBpRootPath(bpPath)
 	if sourceUrl == nil {
 		bpPath = strings.TrimSuffix(bpPath, "/")
@@ -55,7 +55,7 @@ func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, readmeC
 			SourceType: "git",
 			RootPath:   rootRepoPath,
 		},
-	}, nil
+	}
 }
 
 // getBpRootPath determines if the provided bpPath is for a submodule
