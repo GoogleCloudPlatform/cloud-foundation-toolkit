@@ -186,12 +186,18 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		readmeContent)
 	if repoDetails.Name == "" && !mdFlags.quiet {
 		fmt.Printf("Provide a name for the blueprint at path [%s]: ", bpPath)
-		fmt.Scan(&repoDetails.Name)
+		_, err := fmt.Scan(&repoDetails.Name)
+		if err != nil {
+			fmt.Println("Unable to scan the name for the blueprint.")
+		}
 	}
 
 	if repoDetails.Source.Path == "" && !mdFlags.quiet {
 		fmt.Printf("Provide a URL for the blueprint source at path [%s]: ", bpPath)
-		fmt.Scan(&repoDetails.Source.Path)
+		_, err := fmt.Scan(&repoDetails.Source.Path)
+		if err != nil {
+			fmt.Println("Unable to scan the URL for the blueprint.")
+		}
 	}
 
 	// start creating blueprint metadata

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
+	"github.com/iancoleman/strcase"
 )
 
 type repoDetail struct {
@@ -39,14 +40,15 @@ func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, repoNam
 
 	if repoName == "" {
 		n, err := util.GetRepoName(sourceUrl.Repo)
-		repoName = n
 		if err != nil {
 			// Try to get the repo name from readme instead.
 			title, err := getMdContent(readmeContent, 1, 1, "", false)
 			if err == nil {
-				repoName = convertTitleCaseToKebabCase(title.literal)
+				n = strcase.ToKebab(title.literal)
 			}
 		}
+
+		repoName = n
 	}
 
 	return &repoDetail{
@@ -79,9 +81,4 @@ func getBpSubmoduleName(bpPath string) string {
 	}
 
 	return ""
-}
-
-func convertTitleCaseToKebabCase(title string) string {
-	title = strings.ToLower(title)
-	return strings.Replace(title, " ", "-", -1)
 }
