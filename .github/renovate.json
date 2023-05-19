@@ -29,13 +29,17 @@
       "groupName": "terraform google provider"
     },
     {
+      "matchDepTypes": ["module"],
+      "groupName": "terraform modules"
+    },
+    {
       "matchDepTypes": ["require"],
       "postUpdateOptions": ["gomodTidy"],
       "groupName": "GO modules"
     },
     {
       "matchPackageNames": ["go"],
-      "allowedVersions": "<1.19.0",
+      "allowedVersions": "<1.21.0",
       "postUpdateOptions": ["gomodTidy"]
     }
   ],
