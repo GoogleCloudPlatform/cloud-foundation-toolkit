@@ -100,12 +100,12 @@ func getConstraintShortName(constraintName string) string {
 
 // RichViolation holds a violation with its category
 type RichViolation struct {
-	validator.Violation `json:"-"`
-	Category            string // category of violation
-	Resource            string
-	Message             string
-	Metadata            *_struct.Value   `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	asset               *validator.Asset `json:"-"`
+	*validator.Violation `json:"-"`
+	Category             string // category of violation
+	Resource             string
+	Message              string
+	Metadata             *_struct.Value   `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	asset                *validator.Asset `json:"-"`
 }
 
 var availableCategories = map[string]string{

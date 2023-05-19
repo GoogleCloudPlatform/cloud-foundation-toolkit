@@ -36,7 +36,7 @@ func TestFolders_add(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			fs := folders{}
 			for _, newF := range tc.input {
-				_ = fs.add(newF) 	// silently ignore existing resource
+				_ = fs.add(newF) // silently ignore existing resource
 			}
 			assert.Equal(t, tc.output, fs, "expected folders to be the same")
 		})

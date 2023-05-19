@@ -15,8 +15,9 @@ import (
 // Code ready scripts based on specified output flavor.
 //
 // NewGenerate can be triggered by
-//   $ cft launchpad generate *.yaml
-//   $ cft lp g *.yaml
+//
+//	$ cft launchpad generate *.yaml
+//	$ cft lp g *.yaml
 func NewGenerate(rawPaths []string, outFlavor OutputFlavor, outputDir string) {
 	// attempt to load all configs with best effort
 	log.Println("debug: output location", outputDir) // Remove after generate code is written

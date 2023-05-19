@@ -137,7 +137,7 @@ func getViolations(inventory *InventoryConfig, config *ScoringConfig) ([]*RichVi
 				wp.Stop()
 			}
 			for _, violation := range violations {
-				richViolation := RichViolation{*violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
+				richViolation := RichViolation{violation, "", violation.Resource, violation.Message, violation.Metadata, asset}
 				mu.Lock()
 				richViolations = append(richViolations, &richViolation)
 				mu.Unlock()
