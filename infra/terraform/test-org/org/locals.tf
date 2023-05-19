@@ -391,9 +391,10 @@ locals {
       topics      = local.common_topics.db
     },
     {
-      name        = "terraform-google-module-template"
-      org         = "terraform-google-modules"
-      description = "Provides a template for creating a Cloud Foundation Toolkit Terraform module"
+      name              = "terraform-google-module-template"
+      org               = "terraform-google-modules"
+      description       = "Provides a template for creating a Cloud Foundation Toolkit Terraform module"
+      disable_lint_yaml = false
     },
     {
       name        = "terraform-google-network"
