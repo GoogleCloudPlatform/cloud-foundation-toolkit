@@ -12,6 +12,10 @@ const defaultRemote = "origin"
 
 // getRepoName finds upstream repo name from a given repo directory
 func GetRepoName(repoUrl string) (string, error) {
+	if repoUrl == "" {
+		return "", fmt.Errorf("empty URL")
+	}
+
 	u, err := url.Parse(repoUrl)
 	if err != nil {
 		return "", fmt.Errorf("malformed repo URL: %w", err)
