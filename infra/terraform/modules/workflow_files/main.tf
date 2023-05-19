@@ -30,3 +30,15 @@ resource "github_repository_file" "file" {
   overwrite_on_create = true
   content             = templatefile("${path.module}/lint.yaml.tftpl", { branch = each.value.default_branch, lint_env = var.repos_map[each.value.name].lint_env })
 }
+
+resource "github_repository_file" "reporter" {
+  for_each            = { for k, v in var.repo_list : k => v if var.repos_map[k].enable_periodic == true }
+  repository          = each.key
+  branch              = each.value.default_branch
+  file                = ".github/workflows/periodic-reporter.yaml"
+  commit_message      = "chore: update .github/workflows/periodic-reporter.yaml"
+  commit_author       = local.commit_author
+  commit_email        = local.commit_email
+  overwrite_on_create = true
+  content             = file("${path.module}/periodic-reporter.yaml")
+}
