@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # This intergration test does the following:
-# 1. Pulls downs a blueprint package with a specific version tag for metadata generation & validation 
+# 1. Pulls downs a blueprint package with a specific version tag for metadata generation & validation
 # 2. Generates metadata using the `metadata` subcommand on the blueprint version pulled from Github
 # 3. Runs metadata validation on golden blueprints stored under goldens/. This is to ensure that the
 #    latest schema hasn't caused any regressions to the existing/live metadata format. This is most
@@ -44,27 +44,19 @@ then
   rm -r -f $WORKING_FOLDER
 fi
 
-mkdir $WORKING_FOLDER && pushd $WORKING_FOLDER
+mkdir $WORKING_FOLDER && cd $WORKING_FOLDER
 
 # Get the blueprint package for v4.0.0 specifically because the golden metadata
 # to be validated is for that version.
-kpt pkg get https://github.com/terraform-google-modules/terraform-google-cloud-storage.git/@v4.0.0 "./$BLUPRINT_FOLDER/"
-pushd $BLUPRINT_FOLDER
-git init
-# We need to add the remote since the bpmetadata repo evaluation tries to
-# find the remote upstream in the package. In this case the upstream repo
-# remote is cloud-foundation-toolkit which is not what the golden metadata
-# refers to.
-git remote add --mirror=fetch origin https://github.com/terraform-google-modules/terraform-google-cloud-storage.git
-../../../../bin/cft blueprint metadata -d -q
-popd
+git config --global advice.detachedHead false
+git clone -b v4.0.0 --single-branch https://github.com/terraform-google-modules/terraform-google-cloud-storage.git "./$BLUPRINT_FOLDER/"
+../../../bin/cft blueprint metadata -p $BLUPRINT_FOLDER -d -q
 
 mkdir $GIT_FOLDER
 cp "../$GOLDENS_FOLDER/$GOLDEN_METADATA" "$GIT_FOLDER/$WORKING_METADATA"
 cp "../$GOLDENS_FOLDER/$GOLDEN_DISPLAY_METADATA" "$GIT_FOLDER/$WORKING_DISPLAY_METADATA"
 
-pushd "$GIT_FOLDER"
-
+cd "$GIT_FOLDER"
 # Confirm if the goldens are still valid with the blueprint schema
 ../../../../bin/cft blueprint metadata -v
 rval=$?
@@ -77,10 +69,8 @@ fi
 # Compare golden metadata to the generated metadata.
 git init
 git add .
-
 cp "../$BLUPRINT_FOLDER/$WORKING_METADATA" "$WORKING_METADATA"
 cp "../$BLUPRINT_FOLDER/$WORKING_DISPLAY_METADATA" "$WORKING_DISPLAY_METADATA"
-
 git diff --exit-code --quiet
 rval=$?
 
