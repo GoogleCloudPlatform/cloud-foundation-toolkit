@@ -648,6 +648,8 @@ locals {
       name            = "terraform-google-out-of-band-security"
       org             = "GoogleCloudPlatform"
       description     = "Creates a 3P out-of-band security appliance deployment"
+      owners          = ["Saipriyavk", "ChrisBarefoot"]
+      topics          = local.common_topics.net
     },
   ]
 }
