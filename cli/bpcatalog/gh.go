@@ -3,12 +3,15 @@ package bpcatalog
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"sort"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
 	"github.com/google/go-github/v47/github"
 	"golang.org/x/oauth2"
+	"gopkg.in/yaml.v2"
 )
 
 const ghTokenEnvVar = "GITHUB_TOKEN"
@@ -107,4 +110,46 @@ func (g *ghService) fetchRepos() (repos, error) {
 		}
 	}
 	return allRepos, nil
+}
+
+// findMetadataFiles finds blueprint metadata files using the GH code search API.
+// todo(bharathkkb): Add tests after finalizing consumption approach via search API or local git operations.
+func (g *ghService) findMetadataFiles() ([]*bpmetadata.BlueprintMetadata, error) {
+	mFiles := []*bpmetadata.BlueprintMetadata{}
+	for _, org := range g.orgs {
+		opts := &github.SearchOptions{ListOptions: github.ListOptions{PerPage: 100}}
+		for {
+			results, resp, err := g.client.Search.Code(g.ctx, fmt.Sprintf("org:%s filename:metadata.yaml BlueprintMetadata", org), opts)
+			if err != nil {
+				return nil, fmt.Errorf("failed metadata search: %v", err)
+			}
+			for _, r := range results.CodeResults {
+				allowed := metadataAllowList[r.GetRepository().GetName()]
+				if !allowed {
+					continue
+				}
+
+				cr, _, err := g.client.Repositories.DownloadContents(g.ctx, r.GetRepository().GetOwner().GetLogin(), r.GetRepository().GetName(), r.GetPath(), &github.RepositoryContentGetOptions{})
+				if err != nil {
+					return nil, fmt.Errorf("failed to download metadata %s from %s: %v", r.GetRepository(), r.GetPath(), err)
+				}
+				contents, err := io.ReadAll(cr)
+				if err != nil {
+					return nil, fmt.Errorf("failed to read metadata %s from %s: %v", r.GetRepository(), r.GetPath(), err)
+				}
+
+				var b bpmetadata.BlueprintMetadata
+				err = yaml.Unmarshal(contents, &b)
+				if err != nil {
+					return nil, fmt.Errorf("failed to unmarshal metadata %s from %s: %v", r.GetRepository(), r.GetPath(), err)
+				}
+				mFiles = append(mFiles, &b)
+			}
+			if resp.NextPage == 0 {
+				break
+			}
+			opts.Page = resp.NextPage
+		}
+	}
+	return mFiles, nil
 }

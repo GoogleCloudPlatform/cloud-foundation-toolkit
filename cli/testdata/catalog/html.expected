@@ -29,5 +29,19 @@ href="" class="external">foo</a></td>
       <td></td>
 </tr>
 
+<tr>
+      <td>End-to-end</td>
+      <td><a
+href="https:/github.com/GoogleCloudPlatform/terraform-google-module/tree/master/foo" class="external">module-dir</a></td>
+      <td>sample tagline</td>
+</tr>
+
+<tr>
+      <td>End-to-end</td>
+      <td><a
+href="https://github.com/GoogleCloudPlatform/terraform-google-module" class="external">module</a></td>
+      <td>sample tagline</td>
+</tr>
+
 </tbody>
 </table>

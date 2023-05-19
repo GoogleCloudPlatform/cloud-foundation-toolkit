@@ -8,14 +8,17 @@ import (
 	"testing"
 	"time"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
 	"github.com/google/go-github/v47/github"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 const (
-	expectedSuffix = ".expected"
-	updateEnvVar   = "UPDATE_EXPECTED"
-	testDataDir    = "../testdata/catalog"
+	expectedSuffix  = ".expected"
+	updateEnvVar    = "UPDATE_EXPECTED"
+	testDataDir     = "../testdata/catalog"
+	mockMetadataDir = "mock-metadata"
 )
 
 func TestRender(t *testing.T) {
@@ -41,6 +44,7 @@ func TestRender(t *testing.T) {
 	tests := []struct {
 		name    string
 		r       repos
+		m       []string
 		format  renderFormat
 		verbose bool
 		wantErr bool
@@ -64,6 +68,7 @@ func TestRender(t *testing.T) {
 		{
 			name:   "html",
 			r:      testRepoData,
+			m:      []string{"dir.yaml", "simple.yaml"},
 			format: renderHTML,
 		},
 		{
@@ -75,8 +80,16 @@ func TestRender(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			mockMeta := make([]*bpmetadata.BlueprintMetadata, 0, len(tt.m))
+			for _, p := range tt.m {
+				c := readFile(t, path.Join(testDataDir, mockMetadataDir, p))
+				var b bpmetadata.BlueprintMetadata
+				err := yaml.Unmarshal([]byte(c), &b)
+				assert.NoError(t, err)
+				mockMeta = append(mockMeta, &b)
+			}
 			var got bytes.Buffer
-			if err := render(tt.r, &got, tt.format, tt.verbose); (err != nil) != tt.wantErr {
+			if err := render(tt.r, mockMeta, &got, tt.format, tt.verbose); (err != nil) != tt.wantErr {
 				t.Errorf("render() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !tt.wantErr {

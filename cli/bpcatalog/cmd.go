@@ -28,6 +28,10 @@ var (
 	repoAllowList = map[string]bool{
 		"terraform-example-foundation": true,
 	}
+	// repos allowed for metadata discovery
+	metadataAllowList = map[string]bool{
+		"cloud-foundation-fabric": true,
+	}
 )
 
 func init() {
@@ -67,5 +71,9 @@ func listCatalog(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	return render(repos, os.Stdout, catalogListFlags.format, viper.GetBool("verbose"))
+	mFiles, err := gh.findMetadataFiles()
+	if err != nil {
+		return err
+	}
+	return render(repos, mFiles, os.Stdout, catalogListFlags.format, viper.GetBool("verbose"))
 }

@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"path"
 	"sort"
 	"strconv"
 	"strings"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
 	"github.com/jedib0t/go-pretty/table"
 )
 
@@ -132,9 +134,10 @@ type displayMeta struct {
 }
 
 // render writes given repo information in the specified renderFormat to w.
-func render(r repos, w io.Writer, format renderFormat, verbose bool) error {
+func render(r repos, m []*bpmetadata.BlueprintMetadata, w io.Writer, format renderFormat, verbose bool) error {
 	dm := reposToDisplayMeta(r)
 	if format == renderHTML {
+		dm = append(dm, bpMetaToDisplayMeta(m)...)
 		_, err := w.Write([]byte(renderDocHTML(append(dm, staticDM...))))
 		if err != nil {
 			return err
@@ -168,11 +171,37 @@ func render(r repos, w io.Writer, format renderFormat, verbose bool) error {
 	return nil
 }
 
+const modPrefix = "terraform-google-"
+
+// bpMetaToDisplayMeta converts blueprint metadata to displayMeta.
+func bpMetaToDisplayMeta(mFiles []*bpmetadata.BlueprintMetadata) []displayMeta {
+	dm := make([]displayMeta, 0, len(mFiles))
+	for _, meta := range mFiles {
+		// todo(bharathkkb): Guard against nil sections. Deferring this since we will switch to pb in the future.
+		displayName := strings.TrimPrefix(meta.Name, modPrefix)
+		url := strings.TrimSuffix(meta.Spec.Info.Source.Repo, ".git")
+		if meta.Spec.Info.Source.Dir != "" {
+			//todo(bharathkkb): We should get default branch from GH API or add it to metadata.
+			url = path.Join(url, "tree", "master", meta.Spec.Info.Source.Dir)
+		}
+		d := displayMeta{
+			Name:        meta.Name,
+			DisplayName: displayName,
+			URL:         url,
+			Description: strings.TrimSuffix(meta.Spec.Info.Description.Tagline, "."),
+			//todo(bharathkkb): Hardcoded to e2e for now. We should add this to metadata.
+			Categories: topicToCategory[e2eLabel],
+		}
+		dm = append(dm, d)
+	}
+	return dm
+}
+
 // reposToDisplayMeta converts repo to displayMeta.
 func reposToDisplayMeta(r repos) []displayMeta {
 	dm := make([]displayMeta, 0, len(r))
 	for _, repo := range r {
-		displayName := strings.TrimPrefix(repo.GetName(), "terraform-google-")
+		displayName := strings.TrimPrefix(repo.GetName(), modPrefix)
 		displayName = strings.TrimPrefix(displayName, "terraform-")
 		d := displayMeta{
 			Name:        repo.GetName(),

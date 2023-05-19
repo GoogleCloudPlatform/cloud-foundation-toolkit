@@ -42,7 +42,7 @@ func validateMetadata(bpPath, wdPath string) error {
 	var vErrs []error
 	for _, d := range moduleDirs {
 		// validate core metadata
-		core := path.Join(d, metadataFileName)
+		core := path.Join(d, MetadataFileName)
 		_, err := os.Stat(core)
 
 		// log info msg and continue if the file does not exist

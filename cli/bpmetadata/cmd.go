@@ -29,7 +29,7 @@ const (
 	iconFilePath            = "assets/icon.png"
 	modulesPath             = "modules"
 	examplesPath            = "examples"
-	metadataFileName        = "metadata.yaml"
+	MetadataFileName        = "metadata.yaml"
 	metadataDisplayFileName = "metadata.display.yaml"
 	metadataApiVersion      = "blueprints.cloud.google.com/v1alpha1"
 	metadataKind            = "BlueprintMetadata"
@@ -127,7 +127,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 func generateMetadataForBpPath(bpPath string) error {
 	//try to read existing metadata.yaml
-	bpObj, err := UnmarshalMetadata(bpPath, metadataFileName)
+	bpObj, err := UnmarshalMetadata(bpPath, MetadataFileName)
 	if err != nil && !mdFlags.force {
 		return err
 	}
@@ -139,7 +139,7 @@ func generateMetadataForBpPath(bpPath string) error {
 	}
 
 	// write core metadata to disk
-	err = WriteMetadata(bpMetaObj, bpPath, metadataFileName)
+	err = WriteMetadata(bpMetaObj, bpPath, MetadataFileName)
 	if err != nil {
 		return fmt.Errorf("error writing metadata to disk for blueprint at path: %s. Details: %w", bpPath, err)
 	}
