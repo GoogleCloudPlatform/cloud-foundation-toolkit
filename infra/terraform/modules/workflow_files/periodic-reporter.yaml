@@ -36,8 +36,7 @@ jobs:
 
                   // check if any reporter opened any issues previously
                   const prevIssues = await github.paginate(github.rest.issues.listForRepo, {
-                    owner: 'GoogleCloudPlatform',
-                    repo: 'terraform-google-secure-cicd',
+                    ...context.repo,
                     state: 'open',
                     creator: 'github-actions[bot]',
                     labels: [periodicLabel]
