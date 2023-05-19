@@ -322,10 +322,10 @@ function generate_metadata() {
     cft blueprint metadata
   elif [ $arg = "display" ]; then
     cft blueprint metadata -d
-  else    
+  else
     eval "cft blueprint metadata $arg"
   fi
-  
+
   if [ $? -eq 0 ]; then
     echo "Success!"
   else
@@ -344,7 +344,7 @@ function check_metadata() {
 
   echo "Validating blueprint metadata"
   cft blueprint metadata -v
-  
+
   if [ $? -eq 0 ]; then
     echo "Success!"
   else
@@ -436,7 +436,7 @@ function generate_modules() {
     # formatting the generated modules since formatting does not apply
     # to jinja templates
     echo "Running terraform fmt"
-    terraform fmt -recursive    
+    terraform fmt -recursive
   fi
 }
 
