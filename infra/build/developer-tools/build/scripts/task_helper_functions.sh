@@ -311,17 +311,19 @@ function generate_docs() {
     echo "ENABLE_BPMETADATA not set to 1. Skipping metadata generation."
     return 0
   fi
-  generate_metadata "${1-core}"
+  generate_metadata "${1-default}"
 }
 
 function generate_metadata() {
   echo "Generating blueprint metadata"
-  arg=$1
-  # check if metadata.display.yaml was requested
-  if [ $arg = "display" ]; then
-    cft blueprint metadata -d
-  else
+  arg=${1-default}
+  # check if metadata was request with parameters
+  if [ $arg = "default" ]; then
     cft blueprint metadata
+  elif [ $arg = "display" ]; then
+    cft blueprint metadata -d
+  else    
+    eval "cft blueprint metadata $arg"
   fi
   
   if [ $? -eq 0 ]; then
