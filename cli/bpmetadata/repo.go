@@ -1,10 +1,10 @@
 package bpmetadata
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
+	"github.com/iancoleman/strcase"
 )
 
 type repoDetail struct {
@@ -24,13 +24,13 @@ const (
 
 // getRepoDetailsByPath takes a local path for a blueprint and tries
 // to get repo details that include its name, path and type
-func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail) (*repoDetail, error) {
+func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, repoName string, readmeContent []byte) *repoDetail {
 	rootRepoPath := getBpRootPath(bpPath)
 	if sourceUrl == nil {
 		bpPath = strings.TrimSuffix(bpPath, "/")
 		repoUrl, err := util.GetRepoUrl(bpPath)
 		if err != nil {
-			return nil, fmt.Errorf("error getting the repo URL from the provided local repo path: %w", err)
+			repoUrl = ""
 		}
 
 		sourceUrl = &BlueprintRepoDetail{
@@ -38,9 +38,17 @@ func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail) (*repoD
 		}
 	}
 
-	repoName, err := util.GetRepoName(sourceUrl.Repo)
-	if err != nil {
-		return nil, fmt.Errorf("error getting the repo name from the provided local repo path: %w", err)
+	if repoName == "" {
+		n, err := util.GetRepoName(sourceUrl.Repo)
+		if err != nil {
+			// Try to get the repo name from readme instead.
+			title, err := getMdContent(readmeContent, 1, 1, "", false)
+			if err == nil {
+				n = strcase.ToKebab(title.literal)
+			}
+		}
+
+		repoName = n
 	}
 
 	return &repoDetail{
@@ -50,7 +58,7 @@ func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail) (*repoD
 			SourceType: "git",
 			RootPath:   rootRepoPath,
 		},
-	}, nil
+	}
 }
 
 // getBpRootPath determines if the provided bpPath is for a submodule

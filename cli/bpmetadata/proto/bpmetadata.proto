@@ -86,10 +86,10 @@ message BlueprintInfo {
   BlueprintSupport support_info = 13;
 
   // A list of GCP org policies to be checked for successful deployment.
-	repeated BlueprintOrgPolicyCheck org_policy_checks = 14;
+  repeated BlueprintOrgPolicyCheck org_policy_checks = 14;
 
   // Specifies if the blueprint supports single or multiple deployments per GCP project.
-	// If set to true, the blueprint can not be deployed more than once in the same GCP project.
+  // If set to true, the blueprint can not be deployed more than once in the same GCP project.
   bool single_deployment = 15;
 }
 
