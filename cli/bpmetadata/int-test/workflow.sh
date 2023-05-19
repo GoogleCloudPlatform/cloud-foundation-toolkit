@@ -32,7 +32,6 @@ GOLDEN_DISPLAY_METADATA="golden-metadata.display.yaml"
 WORKING_METADATA="metadata.yaml"
 WORKING_DISPLAY_METADATA="metadata.display.yaml"
 
-
 if [[ -n $CURRENT_DIR ]]; then
   WORKING_FOLDER="$CURRENT_DIR/.working"
 fi
