@@ -34,7 +34,11 @@ fi
 
 mkdir $WORKING_FOLDER && pushd $WORKING_FOLDER
 kpt pkg get https://github.com/terraform-google-modules/terraform-google-cloud-storage.git/@v4.0.0 "./$BLUPRINT_FOLDER/"
-../../../bin/cft blueprint metadata -d -p "$BLUPRINT_FOLDER/" -q
+pushd $BLUPRINT_FOLDER
+git init
+git remote add --mirror=fetch origin https://github.com/terraform-google-modules/terraform-google-cloud-storage.git
+../../../../bin/cft blueprint metadata -d -q
+popd
 
 mkdir $GIT_FOLDER
 cp "../$GOLDENS_FOLDER/$GOLDEN_METADATA" "$GIT_FOLDER/$WORKING_METADATA"

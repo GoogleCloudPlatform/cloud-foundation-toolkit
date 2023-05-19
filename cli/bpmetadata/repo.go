@@ -23,7 +23,7 @@ const (
 
 // getRepoDetailsByPath takes a local path for a blueprint and tries
 // to get repo details that include its name, path and type
-func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, readmeContent []byte) *repoDetail {
+func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, repoName string, readmeContent []byte) *repoDetail {
 	rootRepoPath := getBpRootPath(bpPath)
 	if sourceUrl == nil {
 		bpPath = strings.TrimSuffix(bpPath, "/")
@@ -37,14 +37,15 @@ func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, readmeC
 		}
 	}
 
-	repoName, err := util.GetRepoName(sourceUrl.Repo)
-	if err != nil {
-		// Try to get the repo name from readme instead.
-		title, err := getMdContent(readmeContent, 1, 1, "", false)
+	if repoName == "" {
+		n, err := util.GetRepoName(sourceUrl.Repo)
+		repoName = n
 		if err != nil {
-			repoName = ""
-		} else {
-			repoName = convertTitleCaseToKebabCase(title.literal)
+			// Try to get the repo name from readme instead.
+			title, err := getMdContent(readmeContent, 1, 1, "", false)
+			if err == nil {
+				repoName = convertTitleCaseToKebabCase(title.literal)
+			}
 		}
 	}
 
