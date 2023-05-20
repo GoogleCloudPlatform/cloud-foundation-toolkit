@@ -318,9 +318,9 @@ function generate_metadata() {
   echo "Generating blueprint metadata"
   arg=${1-default}
   # check if metadata was request with parameters
-  if [ $arg = "default" ]; then
+  if [ "${arg}" = "default" ]; then
     cft blueprint metadata
-  elif [ $arg = "display" ]; then
+  elif [ "${arg}" = "display" ]; then
     cft blueprint metadata -d
   else
     eval "cft blueprint metadata $arg"
