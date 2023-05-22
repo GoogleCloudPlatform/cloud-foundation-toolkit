@@ -119,6 +119,9 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
       groups      = ["dee-platform-ops", local.jss_common_group]
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-example-java-dynamic-point-of-sale"
@@ -161,6 +164,9 @@ locals {
       topics          = join(",", [local.common_topics.serverless, local.common_topics.db])
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-load-balanced-vms"
@@ -168,6 +174,9 @@ locals {
       description = "Creates a Managed Instance Group with a loadbalancer"
       owners      = ["tpryan"]
       topics      = local.common_topics.net
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-google-secure-cicd"
@@ -177,6 +186,9 @@ locals {
       topics          = join(",", [local.common_topics.security, local.common_topics.devtools, local.common_topics.e2e])
       enable_periodic = true
       groups          = [local.jss_common_group]
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-media-cdn-vod"
@@ -223,6 +235,9 @@ locals {
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
       owners      = ["davenportjw"]
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-bootstrap"
@@ -564,6 +579,9 @@ locals {
       owners       = ["glasnt", "donmccasland"]
       homepage_url = "avocano.dev"
       groups       = [local.jss_common_group, "torus-dpe"]
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-example-deploy-java-multizone"
@@ -572,6 +590,9 @@ locals {
       description = "Deploy a multizone Java application"
       owners      = ["donmccasland"]
       groups      = [local.jss_common_group]
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-itar-architectures"
@@ -593,6 +614,9 @@ locals {
       owners      = ["stevewalker-de"]
       topics      = local.common_topics.da
       groups      = [local.jss_common_group]
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-alloy-db"
@@ -615,6 +639,9 @@ locals {
       description = "Deploy a Legacy Java App GKE"
       owners      = ["donmccasland"]
       groups      = [local.jss_common_group]
+      lint_env        = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-crmint"
