@@ -24,6 +24,7 @@ variable "repos_map" {
     name              = string
     lint_env          = optional(map(string))
     disable_lint_yaml = optional(bool)
+    enable_periodic   = optional(bool)
   }))
 }
 

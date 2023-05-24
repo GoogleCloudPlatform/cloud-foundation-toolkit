@@ -5,13 +5,17 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/go-git/go-git/v5"
+	git "github.com/go-git/go-git/v5"
 )
 
 const defaultRemote = "origin"
 
 // getRepoName finds upstream repo name from a given repo directory
 func GetRepoName(repoUrl string) (string, error) {
+	if repoUrl == "" {
+		return "", fmt.Errorf("empty URL")
+	}
+
 	u, err := url.Parse(repoUrl)
 	if err != nil {
 		return "", fmt.Errorf("malformed repo URL: %w", err)

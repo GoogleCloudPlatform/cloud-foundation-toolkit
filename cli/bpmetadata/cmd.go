@@ -19,6 +19,7 @@ var mdFlags struct {
 	force    bool
 	display  bool
 	validate bool
+	quiet    bool
 }
 
 const (
@@ -43,6 +44,7 @@ func init() {
 	Cmd.Flags().StringVarP(&mdFlags.path, "path", "p", ".", "Path to the blueprint for generating metadata.")
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
 	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
+	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Run in quiet mode suppressing all prompts.")
 }
 
 var Cmd = &cobra.Command{
@@ -171,10 +173,31 @@ func generateMetadataForBpPath(bpPath string) error {
 }
 
 func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*BlueprintMetadata, error) {
-	// verfiy that the blueprint path is valid & get repo details
-	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Info.Source)
+	// Verify that readme is present.
+	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
+	}
+
+	// verify that the blueprint path is valid & get repo details
+	repoDetails := getRepoDetailsByPath(bpPath,
+		bpMetadataObj.Spec.Info.Source,
+		bpMetadataObj.ResourceMeta.ObjectMeta.NameMeta.Name,
+		readmeContent)
+	if repoDetails.Name == "" && !mdFlags.quiet {
+		fmt.Printf("Provide a name for the blueprint at path [%s]: ", bpPath)
+		_, err := fmt.Scan(&repoDetails.Name)
+		if err != nil {
+			fmt.Println("Unable to scan the name for the blueprint.")
+		}
+	}
+
+	if repoDetails.Source.Path == "" && !mdFlags.quiet {
+		fmt.Printf("Provide a URL for the blueprint source at path [%s]: ", bpPath)
+		_, err := fmt.Scan(&repoDetails.Source.Path)
+		if err != nil {
+			fmt.Println("Unable to scan the URL for the blueprint.")
+		}
 	}
 
 	// start creating blueprint metadata
@@ -193,14 +216,8 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		},
 	}
 
-	// start creating the Spec node
-	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
-	if err != nil {
-		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
-	}
-
 	// create blueprint info
-	err = bpMetadataObj.Spec.Info.create(bpPath, readmeContent)
+	err = bpMetadataObj.Spec.Info.create(bpPath, repoDetails, readmeContent)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
@@ -255,20 +272,15 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 	return bpDisp, nil
 }
 
-func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
+func (i *BlueprintInfo) create(bpPath string, r *repoDetail, readmeContent []byte) error {
 	title, err := getMdContent(readmeContent, 1, 1, "", false)
 	if err != nil {
 		return err
 	}
 
 	i.Title = title.literal
-	repoDetails, err := getRepoDetailsByPath(bpPath, i.Source)
-	if err != nil {
-		return err
-	}
-
 	i.Source = &BlueprintRepoDetail{
-		Repo:       repoDetails.Source.Path,
+		Repo:       r.Source.Path,
 		SourceType: "git",
 	}
 
@@ -313,7 +325,7 @@ func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 	}
 
 	// create icon
-	iPath := path.Join(repoDetails.Source.RootPath, iconFilePath)
+	iPath := path.Join(r.Source.RootPath, iconFilePath)
 	exists, _ := fileExists(iPath)
 	if exists {
 		i.Icon = iconFilePath

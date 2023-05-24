@@ -5,7 +5,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/go-git/go-git/v5"
+	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 )
 
@@ -87,6 +87,11 @@ func TestGetRepoNameFromUrl(t *testing.T) {
 			name:    "gerrit repo",
 			repoUrl: "sso://team/foo/bar",
 			want:    "bar",
+		},
+		{
+			name:    "empty Url",
+			repoUrl: "",
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

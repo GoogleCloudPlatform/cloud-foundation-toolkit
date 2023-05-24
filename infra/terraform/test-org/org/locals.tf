@@ -391,9 +391,10 @@ locals {
       topics      = local.common_topics.db
     },
     {
-      name        = "terraform-google-module-template"
-      org         = "terraform-google-modules"
-      description = "Provides a template for creating a Cloud Foundation Toolkit Terraform module"
+      name              = "terraform-google-module-template"
+      org               = "terraform-google-modules"
+      description       = "Provides a template for creating a Cloud Foundation Toolkit Terraform module"
+      disable_lint_yaml = true
     },
     {
       name        = "terraform-google-network"
@@ -643,6 +644,13 @@ locals {
       description = "Deploys an app for ml image annotation using gcf"
       owners      = ["xsxm", "ivanmkc", "balajismaniam", "donmccasland"]
       groups      = ["dee-data-ai", local.jss_common_group]
+    },
+    {
+      name        = "terraform-google-out-of-band-security"
+      org         = "GoogleCloudPlatform"
+      description = "Creates a 3P out-of-band security appliance deployment"
+      owners      = ["Saipriyavk", "ChrisBarefoot"]
+      topics      = local.common_topics.net
     },
   ]
 }

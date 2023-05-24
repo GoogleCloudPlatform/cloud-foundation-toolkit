@@ -142,14 +142,14 @@ module "codeowners_gcp" {
 }
 
 module "lint_yaml_tgm" {
-  source    = "../../modules/lint_file"
+  source    = "../../modules/workflow_files"
   repos_map = local.tgm_modules_map
   repo_list = module.repos_tgm.repos
   providers = { github = github }
 }
 
 module "lint_yaml_gcp" {
-  source    = "../../modules/lint_file"
+  source    = "../../modules/workflow_files"
   repos_map = local.gcp_modules_map
   repo_list = module.repos_gcp.repos
   providers = { github = github.gcp }
