@@ -23,7 +23,7 @@ import (
 	"github.com/pkg/errors"
 
 	asset "cloud.google.com/go/asset/apiv1"
-	assetpb "google.golang.org/genproto/googleapis/cloud/asset/v1"
+	assetpb "cloud.google.com/go/asset/apiv1/assetpb"
 )
 
 // InventoryConfig manages a CAI inventory
