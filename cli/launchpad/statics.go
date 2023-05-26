@@ -1,7 +1,8 @@
 package launchpad
+
 // WARNING: Generated file, do not modify directly!
 
-var statics = map[string]string {
+var statics = map[string]string{
 	"static/tmpl/tf/license.tf.tmpl": `/**
  * Copyright 2019 Google LLC
  *

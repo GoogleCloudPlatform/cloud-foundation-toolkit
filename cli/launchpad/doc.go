@@ -1,7 +1,7 @@
 // Package launchpad contains libraries for reading Cloud Foundation Toolkit custom
 // resource definitions and output Infrastructure as Code ready scripts.
 //
-// Supported resources can be found in generic.go
+// # Supported resources can be found in generic.go
 //
 // All resources implements resourceHandler interface and are expected
 // to have a full YAML representation with name {resource}YAML and additional
@@ -12,12 +12,12 @@
 // Implementer of a resource type should aim to track sub resources as an addition
 // field, as oppose to manipulating the parsed YAML directly. For example,
 //
-//   kind: Folder
-//   spec:
-//     id: X
-//     folders:
-//       - id: Y
-//		 - id: Z
+//	  kind: Folder
+//	  spec:
+//	    id: X
+//	    folders:
+//	      - id: Y
+//			 - id: Z
 //
 // Folder X have Y, Z folders as sub resources. In the evaluation hierarchy, folder X
 // is a folderYAML representation with folderSpecYAML spec. Subdirectories Y, Z are
@@ -38,22 +38,22 @@
 //
 // An implicit reference occurs if a resource is nested under another resource.
 //
-//   kind: Folder
-//   spec:
-//     id: X
-//     folders:
-//       - id: Y
+//	kind: Folder
+//	spec:
+//	  id: X
+//	  folders:
+//	    - id: Y
 //
 // Folder Y have an implicit reference of Folder X as a parent.
 //
 // An explicit reference occurs if a resource specified referenced type and id.
 //
-//   kind: Folder
-//   spec:
-//     id: Y
-//     parentRef:
-//       type: Folder
-//       id: X
+//	kind: Folder
+//	spec:
+//	  id: Y
+//	  parentRef:
+//	    type: Folder
+//	    id: X
 //
 // Folder Y have an explicit reference of Folder X as a parent.
 //
