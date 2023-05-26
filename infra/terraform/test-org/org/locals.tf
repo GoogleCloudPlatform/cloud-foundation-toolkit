@@ -656,6 +656,9 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys a large data sharing Java web app"
       groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-large-data-sharing-golang-webapp"
@@ -663,6 +666,9 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys a large data sharing Golang web app"
       groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-ml-image-annotation-gcf"
