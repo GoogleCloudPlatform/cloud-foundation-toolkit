@@ -44,7 +44,7 @@ func TestValidateMetadata(t *testing.T) {
 	}
 
 	// load schema from the binary
-	s := gojsonschema.NewReferenceLoader("file://schema/bpmetadataschema.json")
+	s := gojsonschema.NewReferenceLoader("file://schema/gcp-blueprint-metadata.json")
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

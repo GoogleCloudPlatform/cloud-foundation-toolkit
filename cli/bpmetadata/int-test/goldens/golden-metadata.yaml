@@ -8,7 +8,7 @@ spec:
   info:
     title: Terraform Google Cloud Storage Module
     source:
-      repo: https://github.com/terraform-google-modules/terraform-google-cloud-storage.git
+      repo: https://github.com/terraform-google-modules/terraform-google-cloud-storage
       sourceType: git
     version: 4.0.0
     actuationTool:

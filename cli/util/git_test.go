@@ -49,6 +49,25 @@ func TestGetRepoUrl(t *testing.T) {
 			remote: defaultRemote,
 			want:   "https://github.com/foo/bar",
 		},
+		{
+			name:   "simple w/ ssh remote",
+			repo:   "git@github.com:foo/bar.git",
+			remote: defaultRemote,
+			want:   "https://github.com/foo/bar",
+		},
+		{
+			name:   "simple w/ module sub directory w/ ssh remote",
+			repo:   "git@github.com:foo/bar.git",
+			remote: defaultRemote,
+			subDir: "modules/bp1",
+			want:   "https://github.com/foo/bar",
+		},
+		{
+			name:    "empty repo url",
+			repo:    "",
+			remote:  defaultRemote,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

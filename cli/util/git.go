@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
@@ -40,11 +41,26 @@ func GetRepoUrl(dir string) (string, error) {
 		return "", fmt.Errorf("error finding remote %s in git dir %s: %w", defaultRemote, dir, err)
 	}
 
+	repoURL := ""
+	if len(rm.Config().URLs) > 0 {
+		repoURL = resolveRemoteGitHibURLToHTTPS(rm.Config().URLs[0])
+	}
+
+	if repoURL == "" {
+		return "", fmt.Errorf("empty URL")
+	}
+
 	// validate remote URL
-	remoteURL, err := url.Parse(rm.Config().URLs[0])
+	_, err = url.Parse(repoURL)
 	if err != nil {
 		return "", fmt.Errorf("error parsing remote URL: %w", err)
 	}
 
-	return remoteURL.String(), nil
+	return repoURL, nil
+}
+
+func resolveRemoteGitHibURLToHTTPS(URL string) string {
+	githubSSHRegex := regexp.MustCompile(`git@github.com:`)
+	resolvedURL := githubSSHRegex.ReplaceAllString(URL, "https://github.com/")
+	return strings.TrimSuffix(resolvedURL, ".git")
 }

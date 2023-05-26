@@ -12,7 +12,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-//go:embed schema/bpmetadataschema.json
+//go:embed schema/gcp-blueprint-metadata.json
 var s []byte
 
 // validateMetadata validates the metadata files for the provided

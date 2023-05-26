@@ -28,7 +28,7 @@ const (
 	tfRolesFileName         = "test/setup/iam.tf"
 	tfServicesFileName      = "test/setup/main.tf"
 	iconFilePath            = "assets/icon.png"
-	modulesPath             = "modules"
+	modulesPath             = "modules/"
 	examplesPath            = "examples"
 	metadataFileName        = "metadata.yaml"
 	metadataDisplayFileName = "metadata.display.yaml"
@@ -49,7 +49,7 @@ func init() {
 
 var Cmd = &cobra.Command{
 	Use:   "metadata",
-	Short: "Generates blueprint metatda",
+	Short: "Generates blueprint metadata",
 	Long:  `Generates metadata.yaml for specified blueprint`,
 	Args:  cobra.NoArgs,
 	RunE:  generate,
@@ -81,7 +81,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 	// throw an error and exit if root level readme.md doesn't exist
 	if err != nil {
-		return fmt.Errorf("Top-level module does not have a readme. Details: %w\n", err)
+		return fmt.Errorf("top-level module does not have a readme. Details: %w\n", err)
 	}
 
 	allBpPaths = append(allBpPaths, currBpPath)
@@ -110,7 +110,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 		// log info if a sub-module doesn't have a readme.md and continue
 		if err != nil {
-			Log.Info("Skipping metadata for sub-module identified as an internal module", "Path:", modPath)
+			Log.Info("skipping metadata for sub-module identified as an internal module", "Path:", modPath)
 			continue
 		}
 
@@ -255,7 +255,8 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 			NameMeta: yaml.NameMeta{
 				Name: bpCore.ResourceMeta.ObjectMeta.Name + "-display",
 			},
-			Labels: bpDisp.ResourceMeta.ObjectMeta.Labels,
+			Labels:      bpDisp.ResourceMeta.ObjectMeta.Labels,
+			Annotations: map[string]string{"config.kubernetes.io/local-config": "true"},
 		},
 	}
 
