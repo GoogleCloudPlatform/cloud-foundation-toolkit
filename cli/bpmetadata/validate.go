@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
@@ -27,50 +26,17 @@ func validateMetadata(bpPath, wdPath string) error {
 		bpPath = path.Join(wdPath, bpPath)
 	}
 
-	moduleDirs := []string{bpPath}
-	modulesPath := path.Join(bpPath, modulesPath)
-	_, err := os.Stat(modulesPath)
-	if err == nil {
-		subModuleDirs, err := util.WalkTerraformDirs(modulesPath)
-		if err != nil {
-			Log.Warn("unable to read the submodules i.e. modules/ folder", "err", err)
-		}
-
-		moduleDirs = append(moduleDirs, subModuleDirs...)
+	metadataFiles, err := util.FindFilesWithPattern(bpPath, `.*/metadata(?:.display)?.yaml`)
+	if err != nil {
+		Log.Error("unable to read at: %s", bpPath, "err", err)
 	}
 
 	var vErrs []error
-	for _, d := range moduleDirs {
-		// validate core metadata
-		core := path.Join(d, metadataFileName)
-		_, err := os.Stat(core)
-
-		// log info msg and continue if the file does not exist
-		if err != nil {
-			Log.Info("core metadata for module does not exist", "path", core)
-			continue
-		}
-
-		err = validateMetadataYaml(core, schemaLoader)
+	for _, f := range metadataFiles {
+		err = validateMetadataYaml(f, schemaLoader)
 		if err != nil {
 			vErrs = append(vErrs, err)
 			Log.Error("core metadata validation failed", "err", err)
-		}
-
-		// validate display metadata
-		disp := path.Join(d, metadataDisplayFileName)
-		_, err = os.Stat(disp)
-
-		// log info msg and continue if the file does not exist
-		if err != nil {
-			Log.Info("display metadata for module does not exist", "path", disp)
-			continue
-		}
-
-		err = validateMetadataYaml(disp, schemaLoader)
-		if err != nil {
-			vErrs = append(vErrs, err)
-			Log.Error("display metadata validation failed", "err", err)
 		}
 	}
 
