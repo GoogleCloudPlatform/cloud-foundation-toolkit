@@ -18,7 +18,6 @@
 package gcloud
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -48,7 +47,7 @@ func TestActivateCredsAndEnvVars(t *testing.T) {
 			assert.Equal(os.Getenv("GOOGLE_CREDENTIALS"), creds)
 			pathEnvVars := []string{"CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE", "GOOGLE_APPLICATION_CREDENTIALS"}
 			for _, v := range pathEnvVars {
-				c, err := ioutil.ReadFile(os.Getenv(v))
+				c, err := os.ReadFile(os.Getenv(v))
 				assert.NoError(err)
 				assert.Equal(string(c), creds)
 			}

@@ -26,7 +26,3 @@ Cleanup test project:
 ```bash
 terraform -chdir=setup/simple_tf_module destroy
 ```
-
-Note:
-
-* `krm_simple_blueprint_test.go` will need a GKE cluster with [config-connector](https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall)

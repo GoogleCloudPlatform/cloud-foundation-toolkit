@@ -6,21 +6,27 @@ import (
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/krmt"
-	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestKRMSimpleBlueprint(t *testing.T) {
+	tfBlueprint := tft.NewTFBlueprintTest(t,
+		tft.WithTFDir("setup/simple_tf_module"),
+	)
+  gcloud.Run(t, fmt.Sprintf("container clusters get-credentials %s --region=%s --project %s -q", tfBlueprint.GetStringOutput("cluster_name"), tfBlueprint.GetStringOutput("region"), tfBlueprint.GetStringOutput("project_id")))
+
 	networkBlueprint := krmt.NewKRMBlueprintTest(t,
 		krmt.WithDir("../examples/simple_krm_blueprint"),
-		krmt.WithUpdateCommit("2b93fd6d4f1a3eabdf4dfce05b93ccb1f9f671c5"),
+		krmt.WithUpdatePkgs(false),
 	)
 	networkBlueprint.DefineVerify(
 		func(assert *assert.Assertions) {
 			networkBlueprint.DefaultVerify(assert)
-			op := gcloud.Run(t, fmt.Sprintf("compute networks describe custom-network --project %s", utils.ValFromEnv(t, "PROJECT_ID")))
-			assert.Equal("GLOBAL", op.Get("routingConfig.routingMode").String(), "should be GLOBAL")
-			assert.Equal("false", op.Get("autoCreateSubnetworks").String(), "autoCreateSubnetworks should not be enabled")
+			k8sOpts := k8s.KubectlOptions{}
+			op, _ := k8s.RunKubectlAndGetOutputE(t, &k8sOpts, "get", "namespaces", "simple-krm-blueprint", "--no-headers", "-o", "custom-columns=:metadata.name")
+			assert.Equal("simple-krm-blueprint", op)
 		})
 	networkBlueprint.Test()
 }
