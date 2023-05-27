@@ -26,7 +26,9 @@ func validateMetadata(bpPath, wdPath string) error {
 		bpPath = path.Join(wdPath, bpPath)
 	}
 
-	metadataFiles, err := util.FindFilesWithPattern(bpPath, `.*/metadata(?:.display)?.yaml`)
+	// We don't need to validate metadata under .terraform folders
+	skipDirsToValidate := []string{".terraform"}
+	metadataFiles, err := util.FindFilesWithPattern(bpPath, `.*/metadata(?:.display)?.yaml$`, skipDirsToValidate)
 	if err != nil {
 		Log.Error("unable to read at: %s", bpPath, "err", err)
 	}

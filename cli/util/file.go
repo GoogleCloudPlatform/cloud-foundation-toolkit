@@ -48,7 +48,7 @@ func WalkTerraformDirs(topLevelPath string) ([]string, error) {
 	return tfDirs, nil
 }
 
-func FindFilesWithPattern(dir string, pattern string) ([]string, error) {
+func FindFilesWithPattern(dir string, pattern string, skipPaths []string) ([]string, error) {
 	f, err := os.Stat(dir)
 	if err != nil {
 		return nil, fmt.Errorf("no such dir: %v", err)
@@ -71,6 +71,12 @@ func FindFilesWithPattern(dir string, pattern string) ([]string, error) {
 
 		if !re.MatchString(path) {
 			return nil
+		}
+
+		for _, p := range skipPaths {
+			if strings.Contains(path, p) {
+				return nil
+			}
 		}
 
 		if !file.IsDir() {
