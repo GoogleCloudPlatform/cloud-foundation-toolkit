@@ -67,7 +67,7 @@ func TestFindFilesWithPattern(t *testing.T) {
 		{
 			name:    "pattern for metadata files",
 			path:    "",
-			pattern: `.*/metadata(?:.display)?.yaml$`,
+			pattern: `^metadata(?:.display)?.yaml$`,
 			want: []string{
 				"../testdata/bpmetadata/content/examples/acm/acm-terraform-blog-part1/terraform/metadata.yaml",
 				"../testdata/bpmetadata/content/examples/acm/metadata.display.yaml",
@@ -110,7 +110,7 @@ func TestFindFilesWithPattern(t *testing.T) {
 		{
 			name:    "pattern for avoiding non-metadata yaml files",
 			path:    "schema",
-			pattern: `.*/metadata(?:.display)?.yaml$`,
+			pattern: `^metadata(?:.display)?.yaml$`,
 			want:    []string{},
 		},
 		{
