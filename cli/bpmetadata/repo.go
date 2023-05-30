@@ -13,9 +13,10 @@ type repoDetail struct {
 }
 
 type repoSource struct {
-	Path       string
-	RootPath   string
-	SourceType string
+	URL               string
+	BlueprintRootPath string
+	RepoRootPath      string
+	SourceType        string
 }
 
 const (
@@ -24,46 +25,47 @@ const (
 
 // getRepoDetailsByPath takes a local path for a blueprint and tries
 // to get repo details that include its name, path and type
-func getRepoDetailsByPath(bpPath string, sourceUrl *BlueprintRepoDetail, repoName string, readmeContent []byte) *repoDetail {
-	rootRepoPath := getBpRootPath(bpPath)
-	if sourceUrl == nil {
-		bpPath = strings.TrimSuffix(bpPath, "/")
-		repoUrl, err := util.GetRepoUrl(bpPath)
-		if err != nil {
-			repoUrl = ""
-		}
-
-		sourceUrl = &BlueprintRepoDetail{
-			Repo: repoUrl,
-		}
+func getRepoDetailsByPath(bpPath string, r *repoDetail, readme []byte) {
+	if strings.Contains(bpPath, nestedBpPath) {
+		return
 	}
 
-	if repoName == "" {
-		n, err := util.GetRepoName(sourceUrl.Repo)
-		if err != nil {
-			// Try to get the repo name from readme instead.
-			title, err := getMdContent(readmeContent, 1, 1, "", false)
-			if err == nil {
-				n = strcase.ToKebab(title.literal)
-			}
-		}
-
-		repoName = n
+	bpRootPath := getBlueprintRootPath(bpPath)
+	bpPath = strings.TrimSuffix(bpPath, "/")
+	repoUrl, repoRoot, err := util.GetRepoUrlAndRootPath(bpPath)
+	if err != nil {
+		repoUrl = ""
 	}
 
-	return &repoDetail{
-		Name: repoName,
+	n, err := util.GetRepoName(repoUrl)
+	if err != nil {
+		n = parseRepoNameFromMd(readme)
+	}
+
+	*r = repoDetail{
+		Name: n,
 		Source: &repoSource{
-			Path:       sourceUrl.Repo,
-			SourceType: "git",
-			RootPath:   rootRepoPath,
+			URL:               repoUrl,
+			SourceType:        "git",
+			BlueprintRootPath: bpRootPath,
+			RepoRootPath:      repoRoot,
 		},
 	}
 }
 
+func parseRepoNameFromMd(readme []byte) string {
+	n := ""
+	title, err := getMdContent(readme, 1, 1, "", false)
+	if err == nil {
+		n = strcase.ToKebab(title.literal)
+	}
+
+	return n
+}
+
 // getBpRootPath determines if the provided bpPath is for a submodule
 // and resolves it to the root module path if necessary
-func getBpRootPath(bpPath string) string {
+func getBlueprintRootPath(bpPath string) string {
 	if strings.Contains(bpPath, nestedBpPath) {
 		i := strings.Index(bpPath, nestedBpPath)
 		bpPath = bpPath[0:i]

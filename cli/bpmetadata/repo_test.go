@@ -44,9 +44,9 @@ func TestGetBpRootPath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := getBpRootPath(tt.path)
+			got := getBlueprintRootPath(tt.path)
 			if got != tt.want {
-				t.Errorf("getBpRootPath() = %v, want %v", got, tt.want)
+				t.Errorf("getBlueprintRootPath() = %v, want %v", got, tt.want)
 			}
 		})
 	}

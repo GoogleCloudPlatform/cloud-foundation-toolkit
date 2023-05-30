@@ -29,37 +29,42 @@ func GetRepoName(repoUrl string) (string, error) {
 	return repoName, nil
 }
 
-// getRepoName finds upstream repo name from a given repo directory
-func GetRepoUrl(dir string) (string, error) {
+// GetRepoUrlAndRootPath finds upstream repo URL and the root local path
+func GetRepoUrlAndRootPath(dir string) (string, string, error) {
 	opt := &git.PlainOpenOptions{DetectDotGit: true}
 	r, err := git.PlainOpenWithOptions(dir, opt)
 	if err != nil {
-		return "", fmt.Errorf("error opening git dir %s: %w", dir, err)
-	}
-	rm, err := r.Remote(defaultRemote)
-	if err != nil {
-		return "", fmt.Errorf("error finding remote %s in git dir %s: %w", defaultRemote, dir, err)
+		return "", "", fmt.Errorf("error opening git dir %s: %w", dir, err)
 	}
 
+	repoRootPath := ""
 	repoURL := ""
+	rm, err := r.Remote(defaultRemote)
+	if err != nil {
+		return repoURL, repoRootPath, fmt.Errorf("error finding remote %s in git dir %s: %w", defaultRemote, dir, err)
+	}
+
 	if len(rm.Config().URLs) > 0 {
-		repoURL = resolveRemoteGitHibURLToHTTPS(rm.Config().URLs[0])
+		repoURL = resolveRemoteSSHURLToHTTPS(rm.Config().URLs[0])
 	}
 
 	if repoURL == "" {
-		return "", fmt.Errorf("empty URL")
+		return repoURL, repoRootPath, fmt.Errorf("empty URL")
 	}
+
+	w, _ := r.Worktree()
+	repoRootPath = w.Filesystem.Root()
 
 	// validate remote URL
 	_, err = url.Parse(repoURL)
 	if err != nil {
-		return "", fmt.Errorf("error parsing remote URL: %w", err)
+		return repoURL, repoRootPath, fmt.Errorf("error parsing remote URL: %w", err)
 	}
 
-	return repoURL, nil
+	return repoURL, repoRootPath, nil
 }
 
-func resolveRemoteGitHibURLToHTTPS(URL string) string {
+func resolveRemoteSSHURLToHTTPS(URL string) string {
 	githubSSHRegex := regexp.MustCompile(`git@github.com:`)
 	resolvedURL := githubSSHRegex.ReplaceAllString(URL, "https://github.com/")
 	return strings.TrimSuffix(resolvedURL, ".git")
