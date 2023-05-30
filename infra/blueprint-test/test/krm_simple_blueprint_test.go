@@ -15,7 +15,7 @@ func TestKRMSimpleBlueprint(t *testing.T) {
 	tfBlueprint := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("setup/simple_tf_module"),
 	)
-  gcloud.Run(t, fmt.Sprintf("container clusters get-credentials %s --region=%s --project %s -q", tfBlueprint.GetStringOutput("cluster_name"), tfBlueprint.GetStringOutput("region"), tfBlueprint.GetStringOutput("project_id")))
+  gcloud.Run(t, fmt.Sprintf("container clusters get-credentials %s --region=%s --project %s -q", tfBlueprint.GetStringOutput("cluster_name"), tfBlueprint.GetStringOutput("cluster_region"), tfBlueprint.GetStringOutput("project_id")))
 
 	networkBlueprint := krmt.NewKRMBlueprintTest(t,
 		krmt.WithDir("../examples/simple_krm_blueprint"),

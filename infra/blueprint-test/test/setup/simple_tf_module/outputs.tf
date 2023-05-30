@@ -27,6 +27,6 @@ output "cluster_name" {
   value = module.kubernetes-engine_example_simple_autopilot_public.cluster_name
 }
 
-output "region" {
+output "cluster_region" {
   value = module.kubernetes-engine_example_simple_autopilot_public.region
 }
