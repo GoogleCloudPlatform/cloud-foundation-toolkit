@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   unit:
-    name: Flaky Build Finder Unit Tests
+    name: FBF ${{ matrix.operating-system }} Unit Tests
     runs-on: ${{ matrix.operating-system }}
     defaults:
       run:
