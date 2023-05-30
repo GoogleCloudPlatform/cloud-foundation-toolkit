@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -45,6 +46,52 @@ func WalkTerraformDirs(topLevelPath string) ([]string, error) {
 	}
 
 	return tfDirs, nil
+}
+
+func FindFilesWithPattern(dir string, pattern string, skipPaths []string) ([]string, error) {
+	f, err := os.Stat(dir)
+	if err != nil {
+		return nil, fmt.Errorf("no such dir: %v", err)
+	}
+	if !f.IsDir() {
+		return nil, fmt.Errorf("expected dir %s: got file", dir)
+	}
+
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, fmt.Errorf("invalid regex: %v", err)
+	}
+
+	filePaths := []string{}
+
+	err = filepath.WalkDir(dir, func(path string, file fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !re.MatchString(path) {
+			return nil
+		}
+
+		for _, p := range skipPaths {
+			if strings.Contains(path, p) {
+				return nil
+			}
+		}
+
+		if !file.IsDir() {
+			filePaths = append(filePaths, path)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		fmt.Printf("error accessing the path: %q. error: %v\n", dir, err)
+		return nil, err
+	}
+
+	return filePaths, nil
 }
 
 func Exists(path string) (bool, error) {

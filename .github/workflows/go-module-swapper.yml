@@ -1,0 +1,33 @@
+name: Module Swapper Tests
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'infra/build/developer-tools/build/scripts/module-swapper/**'
+      - '.github/workflows/go-module-swapper.yml'
+
+concurrency:
+  group: '${{github.workflow}}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Module Swapper Unit Tests
+    runs-on: ${{ matrix.operating-system }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: 'infra/build/developer-tools/build/scripts/module-swapper'
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v4
+      with:
+        go-version: '~1.18'
+    - run: |-
+        go test ./... -v
