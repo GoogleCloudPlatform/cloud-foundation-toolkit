@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   unit:
-    name: CLI unit tests
+    name: CLI ${{ matrix.operating-system }} unit tests
     runs-on: ${{ matrix.operating-system }}
     defaults:
       run:
