@@ -24,7 +24,7 @@ import (
 // RandStr generates rand lowercase strings of length l
 func RandStr(l int) string {
 	charSet := "abcdefghijklmnopqrstuvwxyz"
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 	lenCharSet := len(charSet)
 	bytes := make([]byte, l)
 	for i := range bytes {

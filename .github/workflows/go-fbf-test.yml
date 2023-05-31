@@ -1,0 +1,34 @@
+name: Flaky Build Finder Tests
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'infra/utils/fbf/**'
+      - '.github/workflows/go-fbf-test.yml'
+
+concurrency:
+  group: '${{github.workflow}}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: ${{ matrix.operating-system }} unit tests
+    runs-on: ${{ matrix.operating-system }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: 'infra/utils/fbf'
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v4
+      with:
+        go-version-file: infra/utils/fbf/go.mod
+        cache-dependency-path: infra/utils/fbf/go.sum
+    - run: |-
+        go test ./... -v
