@@ -19,7 +19,6 @@ package golden
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -119,7 +118,7 @@ func (g *GoldenFile) update(data string) {
 	// apply sanitizers on data
 	data = g.ApplySanitizers(data)
 
-	err = ioutil.WriteFile(fp, []byte(data), gfPerms)
+	err = os.WriteFile(fp, []byte(data), gfPerms)
 	if err != nil {
 		g.t.Fatalf("error updating result: %v", err)
 	}
