@@ -25,7 +25,9 @@ func TestKRMSimpleBlueprint(t *testing.T) {
 		func(assert *assert.Assertions) {
 			networkBlueprint.DefaultVerify(assert)
 			k8sOpts := k8s.KubectlOptions{}
-			op, _ := k8s.RunKubectlAndGetOutputE(t, &k8sOpts, "get", "namespaces", "simple-krm-blueprint", "--no-headers", "-o", "custom-columns=:metadata.name")
+			op, err := k8s.RunKubectlAndGetOutputE(t, &k8sOpts, "get", "namespaces", "simple-krm-blueprint", "--no-headers", "-o", "custom-columns=:metadata.name")
+			assert.NoError(err)
+			
 			assert.Equal("simple-krm-blueprint", op)
 		})
 	networkBlueprint.Test()
