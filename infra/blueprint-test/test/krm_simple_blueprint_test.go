@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
@@ -15,7 +14,7 @@ func TestKRMSimpleBlueprint(t *testing.T) {
 	tfBlueprint := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("setup/simple_tf_module"),
 	)
-  gcloud.Run(t, fmt.Sprintf("container clusters get-credentials %s --region=%s --project %s -q", tfBlueprint.GetStringOutput("cluster_name"), tfBlueprint.GetStringOutput("cluster_region"), tfBlueprint.GetStringOutput("project_id")))
+  gcloud.Runf(t, "container clusters get-credentials %s --region=%s --project %s -q", tfBlueprint.GetStringOutput("cluster_name"), tfBlueprint.GetStringOutput("cluster_region"), tfBlueprint.GetStringOutput("project_id"))
 
 	networkBlueprint := krmt.NewKRMBlueprintTest(t,
 		krmt.WithDir("../examples/simple_krm_blueprint"),
@@ -27,7 +26,6 @@ func TestKRMSimpleBlueprint(t *testing.T) {
 			k8sOpts := k8s.KubectlOptions{}
 			op, err := k8s.RunKubectlAndGetOutputE(t, &k8sOpts, "get", "namespaces", "simple-krm-blueprint", "--no-headers", "-o", "custom-columns=:metadata.name")
 			assert.NoError(err)
-			
 			assert.Equal("simple-krm-blueprint", op)
 		})
 	networkBlueprint.Test()
