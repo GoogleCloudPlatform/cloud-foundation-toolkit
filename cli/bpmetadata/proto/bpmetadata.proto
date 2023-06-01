@@ -272,7 +272,7 @@ message BlueprintCostEstimate {
   // Gen: auto-generated - Set using the content defined under "### Cost" as a link
 	// with a description E.g.
 	// ### Cost
-	// [View cost details](https://cloud.google.com/products/calculator?hl=en_US&_ga=2.1665458.-226505189.1675191136#id=02fb0c45-cc29-4567-8cc6-f72ac9024add)
+	// [$20.00](https://cloud.google.com/products/calculator?hl=en_US&_ga=2.1665458.-226505189.1675191136#id=02fb0c45-cc29-4567-8cc6-f72ac9024add)
   string description = 1;
   string url = 2;
 }

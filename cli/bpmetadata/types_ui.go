@@ -137,6 +137,11 @@ type BlueprintUIOutput struct {
 	// List of suggested actions to take.
 	// Gen: manually-authored
 	SuggestedActions []UIActionItem `json:"suggestedActions,omitempty" yaml:"suggestedActions,omitempty"`
+
+	// Outputs is a map defining a subset of Terraform outputs on the UI
+	// that may need additional UI configuration.
+	// Gen: manually-authored
+	Outputs map[string]DisplayOutput `json:"outputs,omitempty" yaml:"outputs,omitempty"`
 }
 
 // An item appearing in a list of required or suggested steps.
@@ -164,4 +169,18 @@ type UIActionItem struct {
 	// where `externalIP` is the output.
 	// Gen: manually-authored
 	ShowIf string `json:"showIf,omitempty" yaml:"showIf,omitempty"`
+}
+
+// Additional display specific metadata pertaining to a particular
+// Terraform output.
+type DisplayOutput struct {
+	// OpenInNewTab defines if the Output action should be opened
+	// in a new tab.
+	// Gen: manually-authored
+	OpenInNewTab bool `json:"openInNewTab,omitempty" yaml:"openInNewTab,omitempty"`
+
+	// ShowInNotification defines if the Output should shown in
+	// notification for the deployment.
+	// Gen: manually-authored
+	ShowInNotification bool `json:"showInNotification,omitempty" yaml:"showInNotification,omitempty"`
 }

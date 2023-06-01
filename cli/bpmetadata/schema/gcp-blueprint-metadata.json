@@ -565,6 +565,14 @@
             "$ref": "#/$defs/UIActionItem"
           },
           "type": "array"
+        },
+        "outputs": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/DisplayOutput"
+            }
+          },
+          "type": "object"
         }
       },
       "additionalProperties": false,
@@ -609,6 +617,18 @@
       "required": [
         "name"
       ]
+    },
+    "DisplayOutput": {
+      "properties": {
+        "openInNewTab": {
+          "type": "boolean"
+        },
+        "showInNotification": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "DisplaySection": {
       "properties": {
