@@ -132,7 +132,7 @@ func generate(cmd *cobra.Command, args []string) error {
 func generateMetadataForBpPath(bpPath string) error {
 	//try to read existing metadata.yaml
 	bpObj, err := UnmarshalMetadata(bpPath, metadataFileName)
-	if err != nil && !mdFlags.force {
+	if err != nil && !errors.Is(err, os.ErrNotExist) && !mdFlags.force {
 		return err
 	}
 
@@ -155,7 +155,7 @@ func generateMetadataForBpPath(bpPath string) error {
 	}
 
 	bpDpObj, err := UnmarshalMetadata(bpPath, metadataDisplayFileName)
-	if err != nil && !mdFlags.force {
+	if err != nil && !errors.Is(err, os.ErrNotExist) && !mdFlags.force {
 		return err
 	}
 
@@ -183,9 +183,9 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 
 	// verify that the blueprint path is valid & get repo details
 	getRepoDetailsByPath(bpPath, &repoDetails, readmeContent)
-	if repoDetails.Name == "" && !mdFlags.quiet {
+	if repoDetails.ModuleName == "" && !mdFlags.quiet {
 		fmt.Printf("Provide a name for the blueprint at path [%s]: ", bpPath)
-		_, err := fmt.Scan(&repoDetails.Name)
+		_, err := fmt.Scan(&repoDetails.ModuleName)
 		if err != nil {
 			fmt.Println("Unable to scan the name for the blueprint.")
 		}
@@ -207,7 +207,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		},
 		ObjectMeta: yaml.ObjectMeta{
 			NameMeta: yaml.NameMeta{
-				Name:      repoDetails.Name,
+				Name:      repoDetails.ModuleName,
 				Namespace: "",
 			},
 			Labels:      bpMetadataObj.ResourceMeta.ObjectMeta.Labels,
@@ -232,10 +232,10 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	svcsCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfServicesFileName)
 	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath)
 	if err != nil {
-		return nil, fmt.Errorf("error creating blueprint requirements: %w", err)
+		Log.Warn(fmt.Sprintf("Blueprint requirements could not be created. Details: %s", err.Error()))
+	} else {
+		bpMetadataObj.Spec.Requirements = *requirements
 	}
-
-	bpMetadataObj.Spec.Requirements = *requirements
 
 	// create blueprint content i.e. documentation, icons, etc.
 	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.BlueprintRootPath, readmeContent)
@@ -258,14 +258,8 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 		},
 	}
 
-	if bpDisp.Spec.Info.Title == "" {
-		bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
-	}
-
-	if bpDisp.Spec.Info.Source == nil {
-		bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
-	}
-
+	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
+	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
 	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, &bpDisp.Spec.UI.Input)
 
 	return bpDisp, nil
@@ -278,15 +272,16 @@ func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte
 	}
 
 	i.Title = title.literal
-	bpDir := strings.ReplaceAll(r.Source.BlueprintRootPath, r.Source.RepoRootPath, "")
-	i.Source = &BlueprintRepoDetail{
-		Repo:       r.Source.URL,
-		SourceType: "git",
-		Dir:        bpDir,
+	rootPath := r.Source.RepoRootPath
+	if rootPath == "" {
+		rootPath = r.Source.BlueprintRootPath
 	}
 
-	if dir := getBpSubmoduleName(bpPath); dir != "" {
-		i.Source.Dir = dir
+	bpDir := strings.ReplaceAll(bpPath, rootPath, "")
+	i.Source = &BlueprintRepoDetail{
+		Repo:       r.Source.URL,
+		SourceType: r.Source.SourceType,
+		Dir:        bpDir,
 	}
 
 	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
@@ -410,7 +405,7 @@ func UnmarshalMetadata(bpPath, fileName string) (*BlueprintMetadata, error) {
 
 	// return empty metadata if file does not exist or if the file is not read
 	if _, err := os.Stat(metaFilePath); errors.Is(err, os.ErrNotExist) {
-		return &bpObj, nil
+		return &bpObj, err
 	}
 
 	f, err := os.ReadFile(metaFilePath)

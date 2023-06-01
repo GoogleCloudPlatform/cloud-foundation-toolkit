@@ -41,7 +41,7 @@ type BlueprintInfo struct {
 	// Blueprint source location and source type.
 	// Gen: auto-generated - user will be prompted if repo information can not
 	// be determined from the blueprint path.
-	Source *BlueprintRepoDetail `json:"source" yaml:"source"`
+	Source *BlueprintRepoDetail `json:"source,omitempty" yaml:"source,omitempty"`
 
 	// Last released semantic version for the packaged blueprint.
 	// Gen: auto-generated - From the `module_name` attribute of

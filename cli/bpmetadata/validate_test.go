@@ -28,7 +28,7 @@ func TestValidateMetadata(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "invalid metadata - source missing",
+			name:    "invalid metadata - title missing",
 			path:    "invalid-metadata.yaml",
 			wantErr: true,
 		},

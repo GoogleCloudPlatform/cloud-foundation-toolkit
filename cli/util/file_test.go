@@ -72,6 +72,7 @@ func TestFindFilesWithPattern(t *testing.T) {
 				"../testdata/bpmetadata/content/examples/acm/acm-terraform-blog-part1/terraform/metadata.yaml",
 				"../testdata/bpmetadata/content/examples/acm/metadata.display.yaml",
 				"../testdata/bpmetadata/content/examples/acm/metadata.yaml",
+				"../testdata/bpmetadata/content/examples/simple_regional/metadata.yaml",
 			},
 		},
 		{
@@ -80,6 +81,7 @@ func TestFindFilesWithPattern(t *testing.T) {
 			pattern: `.+.tf$`,
 			want: []string{
 				"../testdata/bpmetadata/content/examples/simple_regional/main.tf",
+				"../testdata/bpmetadata/content/examples/simple_regional/modules/submodule-01/main.tf",
 			},
 		},
 		{
@@ -91,6 +93,7 @@ func TestFindFilesWithPattern(t *testing.T) {
 			pattern: `.+.tf$`,
 			want: []string{
 				"../testdata/bpmetadata/content/examples/simple_regional/main.tf",
+				"../testdata/bpmetadata/content/examples/simple_regional/modules/submodule-01/main.tf",
 				"../testdata/bpmetadata/content/examples/simple_regional_beta/main.tf",
 				"../testdata/bpmetadata/content/examples/simple_regional_beta/variables.tf",
 			},
@@ -105,6 +108,7 @@ func TestFindFilesWithPattern(t *testing.T) {
 			pattern: `.+.tf$`,
 			want: []string{
 				"../testdata/bpmetadata/content/examples/simple_regional/main.tf",
+				"../testdata/bpmetadata/content/examples/simple_regional/modules/submodule-01/main.tf",
 			},
 		},
 		{

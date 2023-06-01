@@ -5,3 +5,6 @@ metadata:
 spec:
   info:
     title: Terraform Google Module
+    source:
+      repo: https://github.com/GoogleCloudPlatform/terraform-google-module
+      sourceType: git
