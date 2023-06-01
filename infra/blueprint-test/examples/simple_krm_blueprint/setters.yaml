@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2021-2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata: # kpt-merge: /setters
   name: setters
+  annotations:
+    config.kubernetes.io/local-config: "true"
 data:
-  namespace: config-control
-  network-name: custom-network
-  project-id: project-id
+  namespace: simple-krm-blueprint

@@ -3,23 +3,9 @@ kind: Kptfile
 metadata:
   name: simple_krm_blueprint
   annotations:
-    blueprints.cloud.google.com/title: Virtual Private Cloud blueprint
-upstream:
-  type: git
-  git:
-    repo: https://github.com/GoogleCloudPlatform/blueprints
-    directory: /catalog/networking/network/vpc
-    ref: main
-  updateStrategy: resource-merge
-upstreamLock:
-  type: git
-  git:
-    repo: https://github.com/GoogleCloudPlatform/blueprints
-    directory: /catalog/networking/network/vpc
-    ref: main
-    commit: 1a24e4cdae0b16883657888b8165f282469dcd79
+    config.kubernetes.io/local-config: "true"
 info:
-  description: A Virtual Private Cloud (VPC)
+  description: simple krm blueprint
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/apply-setters:v0.1

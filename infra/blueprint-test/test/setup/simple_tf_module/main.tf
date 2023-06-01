@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Google LLC
+ * Copyright 2021-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,14 @@ locals {
     "roles/compute.securityAdmin",
     "roles/iam.serviceAccountUser",
     "roles/vpcaccess.admin",
-    "roles/serviceusage.serviceUsageAdmin"
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/container.admin"
   ]
 }
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 11.0"
+  version = "~> 14.0"
 
   name              = "ci-bptest"
   random_project_id = "true"
@@ -38,7 +39,8 @@ module "project" {
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "serviceusage.googleapis.com",
-    "vpcaccess.googleapis.com"
+    "vpcaccess.googleapis.com",
+    "container.googleapis.com"
   ]
 }
 
@@ -58,4 +60,10 @@ resource "google_project_iam_member" "roles" {
 
 resource "google_service_account_key" "key" {
   service_account_id = google_service_account.sa.id
+}
+
+module "kubernetes-engine_example_simple_autopilot_public" {
+  source  = "terraform-google-modules/kubernetes-engine/google//examples/simple_autopilot_public"
+  version                     = "~> 26.0"
+  project_id                  = module.project.project_id
 }
