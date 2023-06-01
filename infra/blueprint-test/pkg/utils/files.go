@@ -1,12 +1,10 @@
 package utils
 
-import (
-	"io/ioutil"
-)
+import "os"
 
 // WriteTmpFile writes data to a temp file and returns the path.
 func WriteTmpFile(data string) (string, error) {
-	f, err := ioutil.TempFile("", "*")
+	f, err := os.CreateTemp("", "*")
 	if err != nil {
 		return "", err
 	}
@@ -20,7 +18,7 @@ func WriteTmpFile(data string) (string, error) {
 
 // WriteTmpFileWithExtension writes data to a temp file with given extension and returns the path.
 func WriteTmpFileWithExtension(data string, extension string) (string, error) {
-	f, err := ioutil.TempFile("", "*."+extension)
+	f, err := os.CreateTemp("", "*."+extension)
 	if err != nil {
 		return "", err
 	}
