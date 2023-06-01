@@ -244,7 +244,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
-    | grep -v -E '\.(png|gz|tfvars|mp4|zip)$' \
+    | grep -v -E '\.(png|gz|tfvars|mp4|zip|ico)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
