@@ -1,7 +1,6 @@
 package discovery
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -66,10 +65,10 @@ spec:
 func setupTestCfg(t *testing.T, data string) string {
 	t.Helper()
 	assert := assert.New(t)
-	baseDir, err := ioutil.TempDir("", "")
+	baseDir, err := os.MkdirTemp("", "")
 	assert.NoError(err)
 	fPath := path.Join(baseDir, "test.yaml")
-	err = ioutil.WriteFile(fPath, []byte(data), 0644)
+	err = os.WriteFile(fPath, []byte(data), 0644)
 	assert.NoError(err)
 	return fPath
 }
