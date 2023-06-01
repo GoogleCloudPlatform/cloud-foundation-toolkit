@@ -38,3 +38,12 @@ module "folders-ci" {
 
   set_roles = false
 }
+
+module "bpt_ci_folder" {
+  source  = "terraform-google-modules/folders/google"
+  version = "~> 3.1"
+
+  parent = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
+  names = [ "ci-bpt" ]
+  set_roles = false
+}
