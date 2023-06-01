@@ -43,7 +43,7 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   )
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["**/*.md", ".gitignore", ".github/**", "**/metadata.yaml"]
+  ignored_files = ["**/*.md", ".gitignore", ".github/**", "**/metadata.yaml", "assets/**", "infra/assets/**"]
 }
 
 # pull_request triggers do not support run trigger, so we have a shadow periodic trigger
