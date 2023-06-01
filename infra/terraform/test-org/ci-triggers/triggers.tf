@@ -436,11 +436,11 @@ resource "google_cloudbuild_trigger" "bpt_int_trigger" {
     }
   }
   substitutions = {
-      _BILLING_ACCOUNT          = local.billing_account
-      _FOLDER_ID                = data.terraform_remote_state.org.outputs.bpt_folder
-      _ORG_ID                   = local.org_id
-    }
+    _BILLING_ACCOUNT = local.billing_account
+    _FOLDER_ID       = data.terraform_remote_state.org.outputs.bpt_folder
+    _ORG_ID          = local.org_id
+  }
 
-  filename      = "infra/blueprint-test/build/int.cloudbuild.yaml"
+  filename       = "infra/blueprint-test/build/int.cloudbuild.yaml"
   included_files = ["infra/blueprint-test/**"]
 }
