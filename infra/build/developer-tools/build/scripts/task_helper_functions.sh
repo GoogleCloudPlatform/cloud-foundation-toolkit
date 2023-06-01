@@ -233,7 +233,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip)$' \
+    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
