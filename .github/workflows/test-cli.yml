@@ -6,13 +6,13 @@ on:
       - 'master'
     paths:
       - 'cli/**'
-      - '.github/workflows/**'
+      - '.github/workflows/test-cli.yml'
   pull_request:
     branches:
       - 'master'
     paths:
       - 'cli/**'
-      - '.github/workflows/**'
+      - '.github/workflows/test-cli.yml'
 
 concurrency:
   group: '${{github.workflow}}-${{ github.head_ref || github.ref }}'
@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   unit:
-    name: CLI unit tests
+    name: ${{ matrix.operating-system }} unit tests
     runs-on: ${{ matrix.operating-system }}
     defaults:
       run:
@@ -34,6 +34,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-go@v4
       with:
-        go-version: '~1.18'
+        go-version-file: cli/go.mod
+        cache-dependency-path: cli/go.sum
     - run: |-
         go test ./... -v
