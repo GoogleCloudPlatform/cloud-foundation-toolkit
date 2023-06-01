@@ -74,6 +74,7 @@ find_files() {
     ".*/.*\.jpg"
     ".*/.*\.jpeg"
     ".*/.*\.svg"
+    ".*/.*\.ico"
     "\./autogen"
     "\./test/fixtures/all_examples"
     "\./test/fixtures/shared"
