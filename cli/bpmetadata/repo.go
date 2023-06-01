@@ -45,11 +45,16 @@ func getRepoDetailsByPath(bpPath string, r *repoDetail, readme []byte) {
 
 	s := "git"
 	bpRootPath := getBlueprintRootPath(bpPath)
+	currentRootRepoDetails := getRepoDetailsFromRootBp(bpRootPath)
 	bpPath = strings.TrimSuffix(bpPath, "/")
 	repoUrl, repoRoot, err := util.GetRepoUrlAndRootPath(bpPath)
 	if err != nil {
 		repoUrl = ""
 		s = ""
+	}
+
+	if currentRootRepoDetails.Source.URL != "" {
+		repoUrl = currentRootRepoDetails.Source.URL
 	}
 
 	n, err := util.GetRepoName(repoUrl)
