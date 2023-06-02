@@ -3,7 +3,8 @@
   "extends": [
     "config:base",
     ":semanticCommits",
-    ":preserveSemverRanges"
+    ":preserveSemverRanges",
+    "helpers:pinGitHubActionDigests"
   ],
   "stabilityDays":7,
   "labels": ["dependencies"],
