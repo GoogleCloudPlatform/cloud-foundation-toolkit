@@ -1,12 +1,12 @@
-name: Module Swapper Tests
+name: Flaky Build Finder Tests
 
 on:
   pull_request:
     branches:
       - 'master'
     paths:
-      - 'infra/build/developer-tools/build/scripts/module-swapper/**'
-      - '.github/workflows/go-module-swapper.yml'
+      - 'infra/utils/fbf/**'
+      - '.github/workflows/go-fbf-test.yml'
 
 concurrency:
   group: '${{github.workflow}}-${{ github.head_ref || github.ref }}'
@@ -19,7 +19,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: 'infra/build/developer-tools/build/scripts/module-swapper'
+        working-directory: 'infra/utils/fbf'
     strategy:
       fail-fast: false
       matrix:
@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-go@v4
       with:
-        go-version-file: infra/build/developer-tools/build/scripts/module-swapper/go.mod
-        cache-dependency-path: infra/build/developer-tools/build/scripts/module-swapper/go.sum
+        go-version-file: infra/utils/fbf/go.mod
+        cache-dependency-path: infra/utils/fbf/go.sum
     - run: |-
         go test ./... -v

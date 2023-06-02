@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,15 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: compute.cnrm.cloud.google.com/v1beta1
-kind: ComputeNetwork
-metadata: # kpt-merge: networking/network-name
-  name: network-name # kpt-set: ${network-name}
-  namespace: networking # kpt-set: ${namespace}
-  annotations:
-    cnrm.cloud.google.com/blueprint: cnrm/landing-zone:networking/v0.3.0
-    cnrm.cloud.google.com/project-id: project-id # kpt-set: ${project-id}
-spec:
-  autoCreateSubnetworks: false
-  deleteDefaultRoutesOnCreate: false
-  routingMode: GLOBAL
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default-namespace # kpt-set: ${namespace}

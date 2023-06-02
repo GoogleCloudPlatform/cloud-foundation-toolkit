@@ -43,14 +43,14 @@ resource "google_cloudbuild_trigger" "int_trigger" {
   )
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["**/*.md", ".gitignore", ".github/**", "**/metadata.yaml"]
+  ignored_files = ["**/*.md", ".gitignore", ".github/**", "**/metadata.yaml", "assets/**", "infra/assets/**"]
 }
 
 # pull_request triggers do not support run trigger, so we have a shadow periodic trigger
 resource "google_cloudbuild_trigger" "periodic_int_trigger" {
   provider    = google-beta
   project     = local.project_id
-  name        = "${each.key}-periodic-int-trigger"
+  name        = substr("${each.key}-periodic-int-trigger", 0, 64)
   description = "Periodic integration tests on pull request for ${each.key}"
   for_each    = { for k, v in local.repo_folder : k => v if contains(local.periodic_repos, k) }
   github {
@@ -419,4 +419,28 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
 
   filename      = "build/int.cloudbuild.yaml"
   ignored_files = ["**/*.md", ".gitignore", ".github/**"]
+}
+
+
+resource "google_cloudbuild_trigger" "bpt_int_trigger" {
+  provider    = google-beta
+  project     = local.project_id
+  name        = "bpt-int-trigger"
+  description = "Integration tests on pull request for blueprint test framework"
+  github {
+    owner = "GoogleCloudPlatform"
+    name  = "cloud-foundation-toolkit"
+    pull_request {
+      branch          = ".*"
+      comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
+    }
+  }
+  substitutions = {
+    _BILLING_ACCOUNT = local.billing_account
+    _FOLDER_ID       = data.terraform_remote_state.org.outputs.bpt_folder
+    _ORG_ID          = local.org_id
+  }
+
+  filename       = "infra/blueprint-test/build/int.cloudbuild.yaml"
+  included_files = ["infra/blueprint-test/**"]
 }
