@@ -269,7 +269,7 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte) error {
 	title, err := getMdContent(readmeContent, 1, 1, "", false)
 	if err != nil {
-		return err
+		return fmt.Errorf("title tag missing in markdown, err: %w", err)
 	}
 
 	i.Title = title.literal
