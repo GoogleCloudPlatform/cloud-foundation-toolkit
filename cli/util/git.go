@@ -11,6 +11,8 @@ import (
 
 const defaultRemote = "origin"
 
+var githubSSHRemoteRegex = regexp.MustCompile(`git@github.com:`)
+
 // getRepoName finds upstream repo name from a given repo directory
 func GetRepoName(repoUrl string) (string, error) {
 	if repoUrl == "" {
@@ -45,27 +47,25 @@ func GetRepoUrlAndRootPath(dir string) (string, string, error) {
 	}
 
 	if len(rm.Config().URLs) > 0 {
-		repoURL = resolveRemoteSSHURLToHTTPS(rm.Config().URLs[0])
+		repoURL = resolveRemoteGitHubSSHURLToHTTPS(rm.Config().URLs[0])
 	}
 
 	if repoURL == "" {
-		return repoURL, repoRootPath, fmt.Errorf("empty URL")
+		return repoURL, repoRootPath, fmt.Errorf("no remote urls")
 	}
 
-	w, _ := r.Worktree()
-	repoRootPath = w.Filesystem.Root()
-
-	// validate remote URL
-	_, err = url.Parse(repoURL)
+	w, err := r.Worktree()
 	if err != nil {
-		return repoURL, repoRootPath, fmt.Errorf("error parsing remote URL: %w", err)
+		return repoURL, repoRootPath, fmt.Errorf("unable to parse worktree for git: %w", err)
 	}
-
+	repoRootPath = w.Filesystem.Root()
 	return repoURL, repoRootPath, nil
 }
 
-func resolveRemoteSSHURLToHTTPS(URL string) string {
-	githubSSHRegex := regexp.MustCompile(`git@github.com:`)
-	resolvedURL := githubSSHRegex.ReplaceAllString(URL, "https://github.com/")
-	return strings.TrimSuffix(resolvedURL, ".git")
+func resolveRemoteGitHubSSHURLToHTTPS(URL string) string {
+	if !githubSSHRemoteRegex.MatchString(URL) {
+		return URL
+	}
+
+	return githubSSHRemoteRegex.ReplaceAllString(URL, "https://github.com/")
 }

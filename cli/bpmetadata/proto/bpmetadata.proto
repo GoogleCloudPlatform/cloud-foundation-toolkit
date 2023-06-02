@@ -13,15 +13,15 @@ option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 // All fields within BlueprintMetadata and its children are denoted as:
 // - Gen: auto-generated - <data source>
 // - Gen: manually-authored
-// - Gen: partial (contains child nodes that can be both auto-generated and manually authored)
+// - Gen: partial (contains nested messages that can include both auto-generated and manually authored)
 message BlueprintMetadata {
   // APIVersion is the apiVersion field of a metadata file
   // Gen: auto-generated
-	string api_version = 1;
+  string api_version = 1;
 
-	// Kind is the kind field of a metadata file
+  // Kind is the kind field of a metadata file
   // Gen: auto-generated
-	string kind = 2;
+  string kind = 2;
 
   // ResourceTypeMeta is the metadata field of a metadata file
   // Gen: partial
@@ -37,7 +37,7 @@ message ResourceTypeMeta {
   // Gen: auto-generated
   string name = 1;
 
-	// Labels is the metadata.labels field of a Resource
+  // Labels is the metadata.labels field of a Resource
   // Gen: manually-authored
   map<string, string> labels = 2;
 
@@ -74,71 +74,71 @@ message BlueprintMetadataSpec {
 // BlueprintInfo defines the basic information of the blueprint.
 message BlueprintInfo {
   // Title for the blueprint.
-	// Gen: auto-generated - First H1 text in readme.md.
+  // Gen: auto-generated - First H1 text in readme.md.
   string title = 1;
 
   // Blueprint source location and source type.
-	// Gen: auto-generated - user will be prompted if repo information can not
-	// be determined from the blueprint path.
+  // Gen: auto-generated - user will be prompted if repo information can not
+  // be determined from the blueprint path.
   BlueprintRepoDetail source = 2;
 
   // Last released semantic version for the packaged blueprint.
-	// Gen: auto-generated - From the `module_name` attribute of
-	// the `provider_meta "google"` block.
-	// E.g.
-	// provider_meta "google" {
-	//  module_name = "blueprints/terraform/terraform-google-log-analysis/v0.1.5"
-	// }
+  // Gen: auto-generated - From the `module_name` attribute of
+  // the `provider_meta "google"` block.
+  // E.g.
+  // provider_meta "google" {
+  //  module_name = "blueprints/terraform/terraform-google-log-analysis/v0.1.5"
+  // }
   string version = 3;
 
   // Actuation tool e.g. Terraform and its required version.
-	// Gen: auto-generated
+  // Gen: auto-generated
   BlueprintActuationTool actuation_tool = 4;
 
   // Various types of descriptions associated with the blueprint.
-	// Gen: auto-generated
+  // Gen: auto-generated
   BlueprintDescription description = 5;
 
   // Path to an image representing the icon for the blueprint.
-	// Will be set as "assets/icon.png", if present.
-	// Gen: auto-generated
+  // Will be set as "assets/icon.png", if present.
+  // Gen: auto-generated
   string icon = 6;
 
   // The time estimate for configuring and deploying the blueprint.
-	// Gen: auto-generated
+  // Gen: auto-generated
   BlueprintTimeEstimate deployment_duration = 7;
 
   // The cost estimate for the blueprint based on preconfigured variables.
-	// Gen: auto-generated
+  // Gen: auto-generated
   BlueprintCostEstimate cost_estimate = 8;
 
   // A list of GCP cloud products used in the blueprint.
-	// Gen: manually-authored
+  // Gen: manually-authored
   repeated BlueprintCloudProduct cloud_products = 9;
 
   // A configuration of fixed and dynamic GCP quotas that apply to the blueprint.
-	// Gen: manually-authored
+  // Gen: manually-authored
   repeated BlueprintQuotaDetail quota_details = 10;
 
   // Details on the author producing the blueprint.
-	// Gen: manually-authored
+  // Gen: manually-authored
   BlueprintAuthor author = 11;
 
   // Details on software installed as part of the blueprint.
-	// Gen: manually-authored
+  // Gen: manually-authored
   repeated BlueprintSoftwareGroup software_groups = 12;
 
   // Support offered, if any for the blueprint.
-	// Gen: manually-authored
+  // Gen: manually-authored
   BlueprintSupport support_info = 13;
 
   // A list of GCP org policies to be checked for successful deployment.
-	// Gen: manually-authored
+  // Gen: manually-authored
   repeated BlueprintOrgPolicyCheck org_policy_checks = 14;
 
   // Specifies if the blueprint supports single or multiple deployments per GCP project.
-	// If set to true, the blueprint can not be deployed more than once in the same GCP project.
-	// Gen: manually-authored
+  // If set to true, the blueprint can not be deployed more than once in the same GCP project.
+  // Gen: manually-authored
   bool single_deployment = 15;
 }
 
@@ -152,8 +152,8 @@ message BlueprintContent {
   repeated BlueprintDiagram diagrams = 2;
 
   // Gen: auto-generated - the list content following the "## Documentation" tag. E.g.
-	// ## Documentation
-	// - [Hosting a Static Website](https://cloud.google.com/storage/docs/hosting-static-website)
+  // ## Documentation
+  // - [Hosting a Static Website](https://cloud.google.com/storage/docs/hosting-static-website)
   repeated BlueprintListContent documentation = 3;
 
   // Gen: auto-generated - blueprints under the modules/ folder.
@@ -179,58 +179,58 @@ message BlueprintInterface {
 // that need to be enabled to provision blueprint resources.
 message BlueprintRequirements {
   // Gen: auto-generated - all roles required for the blueprint in test/setup/iam.tf
-	// as the "int_required_roles" local. E.g.
-	// locals {
-	//   int_required_roles = [
-	//     "roles/compute.admin",
-	//   ]
-	// }
+  // as the "int_required_roles" local. E.g.
+  // locals {
+  //   int_required_roles = [
+  //     "roles/compute.admin",
+  //   ]
+  // }
   repeated BlueprintRoles roles = 1;
 
   // Gen: auto-generated - all services required for the blueprint in test/setup/main.tf
-	// as "activate_apis" in the project module.
+  // as "activate_apis" in the project module.
   repeated string services = 2;
 }
 
 // BlueprintUI is the top-level structure for holding UI specific metadata.
 message BlueprintUI {
   // The top-level input section that defines the list of variables and
-	// their sections on the deployment page.
-	// Gen: partial
+  // their sections on the deployment page.
+  // Gen: partial
   BlueprintUIInput input = 1;
 
   // The top-level section for listing runtime (or blueprint output) information
-	// i.e. the console URL for the VM or a button to ssh into the VM etc based on.
-	// Gen: manually-authored
+  // i.e. the console URL for the VM or a button to ssh into the VM etc based on.
+  // Gen: manually-authored
   BlueprintUIOutput runtime = 2;
 }
 
 message BlueprintRepoDetail {
   // Gen: auto-generated - URL from the .git dir.
-	// Can be manually overridden with a custom URL if needed.
+  // Can be manually overridden with a custom URL if needed.
   string repo = 1;
 
   // Gen: auto-generated - set as "git" for now until more
-	// types are supported.
+  // types are supported.
   string source_type = 2;
 
   // Gen: auto-generated - not set for root modules but
-	// set as the module name for submodules, if found.
-	string dir = 3;
+  // set as the module name for submodules, if found.
+  string dir = 3;
 }
 
 // BlueprintActuationTool defines the actuation tool used to provision the blueprint.
 message BlueprintActuationTool {
   // Gen: auto-generated - set as "Terraform" for now until
-	//more flavors are supported.
+  //more flavors are supported.
   string flavor = 1;
 
   // Required version for the actuation tool.
-	// Gen: auto-generated - For Terraform this is the `required_version`
-	// set in `terraform` block. E.g.
-	// terraform {
-	//   required_version = ">= 0.13"
-	// }
+  // Gen: auto-generated - For Terraform this is the `required_version`
+  // set in `terraform` block. E.g.
+  // terraform {
+  //   required_version = ">= 0.13"
+  // }
   string version = 2;
 }
 
@@ -253,16 +253,16 @@ message BlueprintDescription {
   repeated string eula_urls = 5;
 
   // Gen: auto-generated - Markdown after "### Architecture"
-	// Deprecated. Use BlueprintContent.Architecture instead.
+  // Deprecated. Use BlueprintContent.Architecture instead.
   repeated string architecture = 6;
 }
 
 // A time estimate in secs required for configuring and deploying the blueprint.
 message BlueprintTimeEstimate {
   // Gen: auto-generated - Set using the content defined under "### DeploymentTime" E.g.
-	// ### DeploymentTime
-	// - Configuration: X secs
-	// - Deployment: Y secs
+  // ### DeploymentTime
+  // - Configuration: X secs
+  // - Deployment: Y secs
   int32 configuration_secs = 1;
   int32 deployment_secs = 2;
 }
@@ -270,9 +270,9 @@ message BlueprintTimeEstimate {
 // The cost estimate for the blueprint based on pre-configured variables.
 message BlueprintCostEstimate {
   // Gen: auto-generated - Set using the content defined under "### Cost" as a link
-	// with a description E.g.
-	// ### Cost
-	// [$20.00](https://cloud.google.com/products/calculator?hl=en_US&_ga=2.1665458.-226505189.1675191136#id=02fb0c45-cc29-4567-8cc6-f72ac9024add)
+  // with a description E.g.
+  // ### Cost
+  // [$20.00](https://cloud.google.com/products/calculator?hl=en_US&_ga=2.1665458.-226505189.1675191136#id=02fb0c45-cc29-4567-8cc6-f72ac9024add)
   string description = 1;
   string url = 2;
 }
@@ -280,36 +280,36 @@ message BlueprintCostEstimate {
 // GCP cloud product(s) used in the blueprint.
 message BlueprintCloudProduct {
   // A top-level (e.g. "Compute Engine") or secondary (e.g. "Binary Authorization")
-	// product used in the blueprint.
-	// Gen: manually-authored
+  // product used in the blueprint.
+  // Gen: manually-authored
   string product_id = 1;
 
   // Url for the product.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string page_url = 2;
 
   // A label string for the product, if it is not an integrated GCP product.
-	// E.g. "Data Studio"
-	// Gen: manually-authored
+  // E.g. "Data Studio"
+  // Gen: manually-authored
   string label = 3;
 
   // Is the product's landing page external to the GCP console e.g.
-	// lookerstudio.google.com
-	// Gen: manually-authored
-	bool is_external = 4;
+  // lookerstudio.google.com
+  // Gen: manually-authored
+  bool is_external = 4;
 }
 
 // BlueprintOrgPolicyCheck defines GCP org policies to be checked
 // for successful deployment
 message BlueprintOrgPolicyCheck {
-	// Id for the policy e.g. "compute-vmExternalIpAccess"
-	// Gen: manually-authored
-	string policy_id = 1;
+  // Id for the policy e.g. "compute-vmExternalIpAccess"
+  // Gen: manually-authored
+  string policy_id = 1;
 
-	// If not set, it is assumed any version of this org policy
-	// prevents successful deployment of this solution.
-	// Gen: manually-authored
-	repeated string required_values = 2;
+  // If not set, it is assumed any version of this org policy
+  // prevents successful deployment of this solution.
+  // Gen: manually-authored
+  repeated string required_values = 2;
 }
 
 // QuotaResourceType defines the type of resource a quota is applied to.
@@ -322,18 +322,18 @@ enum QuotaResourceType {
 // BlueprintQuotaDetail defines the quota details for a blueprint.
 message BlueprintQuotaDetail {
   // DynamicVariable, if provided, associates the provided input variable
-	// with the corresponding resource and quota type. In its absence, the quota
-	// detail is assumed to be fixed.
-	// Gen: manually-authored
+  // with the corresponding resource and quota type. In its absence, the quota
+  // detail is assumed to be fixed.
+  // Gen: manually-authored
   string dynamic_variable = 1;
 
   // ResourceType is the type of resource the quota will be applied to i.e.
-	// GCE Instance or Disk etc.
-	// Gen: manually-authored
+  // GCE Instance or Disk etc.
+  // Gen: manually-authored
   QuotaResourceType resource_type = 2;
 
   // QuotaType is a key/value pair of the actual quotas and their corresponding
-	// values. Valid keys for quota_type can be:
+  // values. Valid keys for quota_type can be:
   // MACHINE_TYPE,
   // CPUs,
   // DISK_TYPE OR
@@ -345,15 +345,15 @@ message BlueprintQuotaDetail {
 // BlueprintAuthor defines the author of a blueprint.
 message BlueprintAuthor {
   // Name of template author or organization.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string title = 1;
 
   // Description of the author.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string description = 2;
 
   // Link to the author's website.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string url = 3;
 }
 
@@ -368,11 +368,11 @@ enum SoftwareGroupType {
 // A group of related software components for the blueprint.
 message BlueprintSoftwareGroup {
   // Pre-defined software types.
-	// Gen: manually-authored
+  // Gen: manually-authored
   SoftwareGroupType type = 1;
 
   // Software components belonging to this group.
-	// Gen: manually-authored
+  // Gen: manually-authored
   repeated BlueprintSoftware software = 2;
 }
 
@@ -380,49 +380,49 @@ message BlueprintSoftwareGroup {
 // installed by the blueprint.
 message BlueprintSoftware {
   // User-visible title.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string title = 1;
 
   // Software version.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string version = 2;
 
   // Link to development site or marketing page for this software.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string url = 3;
 
   // Link to license page.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string license_url = 4;
 }
 
 // A description of a support option
 message BlueprintSupport {
   // Description of the support option.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string description = 1;
 
   // Link to the page providing this support option.
-	// Gen: manually-authored
+  // Gen: manually-authored
   string url = 2;
 
   // The organization or group that provides the support option (e.g.:
-	// "Community", "Google").
-	// Gen: manually-authored
+  // "Community", "Google").
+  // Gen: manually-authored
   string entity = 3;
 
   // Whether to show the customer's support ID.
-	// Gen: manually-authored
+  // Gen: manually-authored
   bool show_support_id = 4;
 }
 
 message BlueprintArchitecture {
   // Gen: auto-generated - the URL & list content following the "## Architecture" tag e.g.
-	// ## Architecture
-	// ![Blueprint Architecture](assets/architecture.png)
-	// 1. Step no. 1
-	// 2. Step no. 2
-	// 3. Step no. 3
+  // ## Architecture
+  // ![Blueprint Architecture](assets/architecture.png)
+  // 1. Step no. 1
+  // 2. Step no. 2
+  // 3. Step no. 3
   string diagram_url = 1;
 
   // Gen: auto-generated - the list items following the "## Architecture" tag.

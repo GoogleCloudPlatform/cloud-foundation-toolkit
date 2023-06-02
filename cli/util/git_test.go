@@ -54,14 +54,20 @@ func TestGetRepoUrlAndRootPath(t *testing.T) {
 			name:    "simple w/ ssh remote",
 			repo:    "git@github.com:foo/bar.git",
 			remote:  defaultRemote,
-			wantURL: "https://github.com/foo/bar",
+			wantURL: "https://github.com/foo/bar.git",
 		},
 		{
 			name:    "simple w/ module sub directory w/ ssh remote",
 			repo:    "git@github.com:foo/bar.git",
 			remote:  defaultRemote,
 			subDir:  "modules/bp1",
-			wantURL: "https://github.com/foo/bar",
+			wantURL: "https://github.com/foo/bar.git",
+		},
+		{
+			name:    "gitlab repo url should not be modified",
+			repo:    "git@gitlab.com:foo/bar.git",
+			remote:  defaultRemote,
+			wantURL: "git@gitlab.com:foo/bar.git",
 		},
 		{
 			name:    "empty repo url",

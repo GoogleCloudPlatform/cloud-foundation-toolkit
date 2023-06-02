@@ -52,7 +52,7 @@ message GooglePropertyExtension {
   string zone_property = 2;
 
   // Property-specific extensions.
-	// Gen: manually-authored (all property extensions and their child properties)
+  // Gen: manually-authored (all property extensions and their child properties)
   GCEMachineTypeExtension    gce_machine_type = 3;
   GCEDiskSizeExtension       gce_disk_size = 4;
   GCESubnetworkExtension     gce_subnetwork = 5;

@@ -37,7 +37,7 @@ func getRepoDetailsByPath(bpPath string, r *repoDetail, readme []byte) {
 		// overriden with "["repoName-submoduleName" if repoName is available
 		r.ModuleName = parseRepoNameFromMd(readme)
 		if r.RepoName != "" {
-			r.ModuleName = r.RepoName + "-" + getBpSubmoduleName(bpPath, true)
+			r.ModuleName = r.RepoName + "-" + getBpSubmoduleNameInKebabCase(bpPath)
 		}
 
 		return
@@ -132,19 +132,14 @@ func getBlueprintRootPath(bpPath string) string {
 	return bpPath
 }
 
-// getBpSubmoduleName gets the submodule name from the blueprint path
+// getBpSubmoduleNameInKebabCase gets the submodule name from the blueprint path
 // if it lives under the /modules directory
-func getBpSubmoduleName(bpPath string, makeKebab bool) string {
-	if strings.Contains(bpPath, nestedBpPath) {
-		i := strings.Index(bpPath, nestedBpPath)
-		subModuleName := bpPath[i+9:]
-
-		if makeKebab {
-			subModuleName = strcase.ToKebab(subModuleName)
-		}
-
-		return subModuleName
+func getBpSubmoduleNameInKebabCase(bpPath string) string {
+	i := strings.Index(bpPath, nestedBpPath)
+	if i == -1 {
+		return ""
 	}
 
-	return ""
+	// 9 is the length for "/modules" after which the submodule name starts
+	return strcase.ToKebab(bpPath[i+9:])
 }

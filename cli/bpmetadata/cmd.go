@@ -34,6 +34,7 @@ const (
 	metadataDisplayFileName = "metadata.display.yaml"
 	metadataApiVersion      = "blueprints.cloud.google.com/v1alpha1"
 	metadataKind            = "BlueprintMetadata"
+	localConfigAnnotation   = "config.kubernetes.io/local-config"
 )
 
 func init() {
@@ -211,7 +212,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 				Namespace: "",
 			},
 			Labels:      bpMetadataObj.ResourceMeta.ObjectMeta.Labels,
-			Annotations: map[string]string{"config.kubernetes.io/local-config": "true"},
+			Annotations: map[string]string{localConfigAnnotation: "true"},
 		},
 	}
 
@@ -254,7 +255,7 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 				Name: bpCore.ResourceMeta.ObjectMeta.Name + "-display",
 			},
 			Labels:      bpDisp.ResourceMeta.ObjectMeta.Labels,
-			Annotations: map[string]string{"config.kubernetes.io/local-config": "true"},
+			Annotations: map[string]string{localConfigAnnotation: "true"},
 		},
 	}
 
