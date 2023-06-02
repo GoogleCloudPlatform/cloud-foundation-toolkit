@@ -16,7 +16,7 @@
 
 module "scheduler-app-engine" {
   source      = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version     = "~> 13.0"
+  version     = "~> 14.0"
   location_id = local.app_location
   project_id  = module.cft-manager-project.project_id
 }
