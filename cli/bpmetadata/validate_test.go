@@ -28,7 +28,7 @@ func TestValidateMetadata(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "invalid metadata - source missing",
+			name:    "invalid metadata - title missing",
 			path:    "invalid-metadata.yaml",
 			wantErr: true,
 		},
@@ -44,7 +44,7 @@ func TestValidateMetadata(t *testing.T) {
 	}
 
 	// load schema from the binary
-	s := gojsonschema.NewReferenceLoader("file://schema/bpmetadataschema.json")
+	s := gojsonschema.NewReferenceLoader("file://schema/gcp-blueprint-metadata.json")
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
