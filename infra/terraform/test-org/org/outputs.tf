@@ -103,3 +103,7 @@ output "ci_media_cdn_vod_project_id" {
 output "modules" {
   value = [for value in local.repos : value if try(value.module, true)]
 }
+
+output "bpt_folder" {
+  value = module.bpt_ci_folder.id
+}

@@ -42,14 +42,17 @@ enum ExtensionType {
 // appropriate input widget or adding restrictions to GCP-specific resources.
 message GooglePropertyExtension {
   // Type specifies the type of extension.
+  // Gen: manually-authored
   ExtensionType type = 1;
 
   // Some properties (e.g. GCE_MACHINE_TYPE) require a zone context in order to
   // determine the set of allowable values. This field references another
   // property from the schema, which must have type GCE_ZONE.
+  // Gen: manually-authored
   string zone_property = 2;
 
   // Property-specific extensions.
+  // Gen: manually-authored (all property extensions and their child properties)
   GCEMachineTypeExtension    gce_machine_type = 3;
   GCEDiskSizeExtension       gce_disk_size = 4;
   GCESubnetworkExtension     gce_subnetwork = 5;
