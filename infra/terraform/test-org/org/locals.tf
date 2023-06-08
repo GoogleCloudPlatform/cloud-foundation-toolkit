@@ -663,5 +663,12 @@ locals {
       owners      = ["Saipriyavk", "ChrisBarefoot"]
       topics      = local.common_topics.net
     },
+    {
+      name        = "notebooks-blueprint-security"
+      org         = "GoogleCloudPlatform"
+      description = "Opinionated setup for securely using AI Platform Notebooks."
+      owners      = ["gtsorbo", "erlanderlo"]
+      topics      = join(",", [local.common_topics.da, local.common_topics.security]
+    },
   ]
 }
