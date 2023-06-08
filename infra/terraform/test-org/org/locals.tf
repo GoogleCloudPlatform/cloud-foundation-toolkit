@@ -114,11 +114,12 @@ locals {
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
-      name        = "terraform-ecommerce-microservices-on-gke"
-      short_name  = "ecommerce-microservices"
-      org         = "GoogleCloudPlatform"
-      description = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
-      groups      = ["dee-platform-ops", local.jss_common_group]
+      name            = "terraform-ecommerce-microservices-on-gke"
+      short_name      = "ecommerce-microservices"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
+      groups          = ["dee-platform-ops", local.jss_common_group]
+      enable_periodic = true
     },
     {
       name        = "terraform-example-java-dynamic-point-of-sale"
@@ -130,6 +131,7 @@ locals {
       lint_env = {
         "EXCLUDE_HEADER_CHECK" = "\\./infra/sql-schema"
       }
+      enable_periodic = true
     },
     {
       name         = "terraform-example-foundation"
@@ -146,12 +148,13 @@ locals {
       }
     },
     {
-      name        = "terraform-google-log-analysis"
-      org         = "GoogleCloudPlatform"
-      description = "Stores and analyzes log data"
-      owners      = ["ryotat7"]
-      topics      = local.common_topics.da
-      groups      = [local.jss_common_group]
+      name            = "terraform-google-log-analysis"
+      org             = "GoogleCloudPlatform"
+      description     = "Stores and analyzes log data"
+      owners          = ["ryotat7"]
+      topics          = local.common_topics.da
+      groups          = [local.jss_common_group]
+      enable_periodic = true
     },
     {
       name            = "terraform-google-three-tier-web-app"
@@ -179,12 +182,13 @@ locals {
       groups          = [local.jss_common_group]
     },
     {
-      name        = "terraform-google-media-cdn-vod"
-      org         = "GoogleCloudPlatform"
-      description = "Deploys Media CDN video-on-demand"
-      owners      = ["roddzurcher"]
-      topics      = local.common_topics.ops
-      groups      = [local.jss_common_group]
+      name            = "terraform-google-media-cdn-vod"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys Media CDN video-on-demand"
+      owners          = ["roddzurcher"]
+      topics          = local.common_topics.ops
+      groups          = [local.jss_common_group]
+      enable_periodic = true
     },
     {
       name        = "terraform-example-foundation-app"
@@ -557,21 +561,23 @@ locals {
       topics      = "cloudfunctions,functions,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
     },
     {
-      name         = "terraform-dynamic-python-webapp"
-      short_name   = "dynamic-python-webapp"
-      org          = "GoogleCloudPlatform"
-      description  = "Deploy a dynamic python webapp"
-      owners       = ["glasnt", "donmccasland"]
-      homepage_url = "avocano.dev"
-      groups       = [local.jss_common_group, "torus-dpe"]
+      name            = "terraform-dynamic-python-webapp"
+      short_name      = "dynamic-python-webapp"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy a dynamic python webapp"
+      owners          = ["glasnt", "donmccasland"]
+      homepage_url    = "avocano.dev"
+      groups          = [local.jss_common_group, "torus-dpe"]
+      enable_periodic = true
     },
     {
-      name        = "terraform-example-deploy-java-multizone"
-      short_name  = "deploy-java-multizone"
-      org         = "GoogleCloudPlatform"
-      description = "Deploy a multizone Java application"
-      owners      = ["donmccasland"]
-      groups      = [local.jss_common_group]
+      name            = "terraform-example-deploy-java-multizone"
+      short_name      = "deploy-java-multizone"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy a multizone Java application"
+      owners          = ["donmccasland"]
+      groups          = [local.jss_common_group]
+      enable_periodic = true
     },
     {
       name        = "terraform-google-itar-architectures"
@@ -587,12 +593,13 @@ locals {
       owners      = ["donmccasland"]
     },
     {
-      name        = "terraform-google-analytics-lakehouse"
-      org         = "GoogleCloudPlatform"
-      description = "Deploys a Lakehouse Architecture Solution"
-      owners      = ["stevewalker-de"]
-      topics      = local.common_topics.da
-      groups      = [local.jss_common_group]
+      name            = "terraform-google-analytics-lakehouse"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys a Lakehouse Architecture Solution"
+      owners          = ["jasondavenport"]
+      topics          = local.common_topics.da
+      groups          = [local.jss_common_group]
+      enable_periodic = true
     },
     {
       name        = "terraform-google-alloy-db"
@@ -609,12 +616,13 @@ locals {
       topics      = join(",", [local.common_topics.security, local.common_topics.net])
     },
     {
-      name        = "terraform-example-deploy-java-gke"
-      short_name  = "deploy-java-gke"
-      org         = "GoogleCloudPlatform"
-      description = "Deploy a Legacy Java App GKE"
-      owners      = ["donmccasland"]
-      groups      = [local.jss_common_group]
+      name            = "terraform-example-deploy-java-gke"
+      short_name      = "deploy-java-gke"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy a Legacy Java App GKE"
+      owners          = ["donmccasland"]
+      groups          = [local.jss_common_group]
+      enable_periodic = true
     },
     {
       name        = "terraform-google-crmint"
@@ -624,26 +632,29 @@ locals {
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e], ["marketing"])
     },
     {
-      name        = "terraform-large-data-sharing-java-webapp"
-      short_name  = "large-data-sharing-java-app"
-      org         = "GoogleCloudPlatform"
-      description = "Deploys a large data sharing Java web app"
-      groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      name            = "terraform-large-data-sharing-java-webapp"
+      short_name      = "large-data-sharing-java-app"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys a large data sharing Java web app"
+      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      enable_periodic = true
     },
     {
-      name        = "terraform-large-data-sharing-golang-webapp"
-      short_name  = "large-data-sharing-go-app"
-      org         = "GoogleCloudPlatform"
-      description = "Deploys a large data sharing Golang web app"
-      groups      = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      name            = "terraform-large-data-sharing-golang-webapp"
+      short_name      = "large-data-sharing-go-app"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys a large data sharing Golang web app"
+      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      enable_periodic = true
     },
     {
-      name        = "terraform-ml-image-annotation-gcf"
-      short_name  = "ml-image-annotation-gcf"
-      org         = "GoogleCloudPlatform"
-      description = "Deploys an app for ml image annotation using gcf"
-      owners      = ["xsxm", "ivanmkc", "balajismaniam", "donmccasland"]
-      groups      = ["dee-data-ai", local.jss_common_group]
+      name            = "terraform-ml-image-annotation-gcf"
+      short_name      = "ml-image-annotation-gcf"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys an app for ml image annotation using gcf"
+      owners          = ["xsxm", "ivanmkc", "balajismaniam", "donmccasland"]
+      groups          = ["dee-data-ai", local.jss_common_group]
+      enable_periodic = true
     },
     {
       name        = "terraform-google-out-of-band-security"

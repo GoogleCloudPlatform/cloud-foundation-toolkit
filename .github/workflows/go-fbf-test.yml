@@ -1,18 +1,12 @@
-name: CFT CLI Tests
+name: Flaky Build Finder Tests
 
 on:
-  push:
-    branches:
-      - 'master'
-    paths:
-      - 'cli/**'
-      - '.github/workflows/test-cli.yml'
   pull_request:
     branches:
       - 'master'
     paths:
-      - 'cli/**'
-      - '.github/workflows/test-cli.yml'
+      - 'infra/utils/fbf/**'
+      - '.github/workflows/go-fbf-test.yml'
 
 concurrency:
   group: '${{github.workflow}}-${{ github.head_ref || github.ref }}'
@@ -25,7 +19,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: 'cli'
+        working-directory: 'infra/utils/fbf'
     strategy:
       fail-fast: false
       matrix:
@@ -34,7 +28,7 @@ jobs:
     - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
     - uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4
       with:
-        go-version-file: cli/go.mod
-        cache-dependency-path: cli/go.sum
+        go-version-file: infra/utils/fbf/go.mod
+        cache-dependency-path: infra/utils/fbf/go.sum
     - run: |-
         go test ./... -v
