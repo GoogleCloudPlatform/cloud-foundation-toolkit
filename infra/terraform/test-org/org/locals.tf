@@ -245,12 +245,14 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates and manages Cloud DNS public or private zones and their records"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-nat"
       org         = "terraform-google-modules"
       description = "Creates and configures Cloud NAT"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-operations"
@@ -263,6 +265,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages a Cloud Router on Google Cloud"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-storage"
@@ -387,6 +390,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates log exports at the project, folder, or organization level"
       topics      = local.common_topics.ops
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-memorystore"
@@ -405,6 +409,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Sets up a new VPC network on Google Cloud"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-org-policy"
@@ -483,12 +488,14 @@ locals {
       org         = "terraform-google-modules"
       description = "Handles opinionated VPC Service Controls and Access Context Manager configuration and deployments"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-vpn"
       org         = "terraform-google-modules"
       description = "Sets up a Cloud VPN gateway"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       short_name = "anthos-platform"
