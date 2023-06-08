@@ -668,7 +668,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Opinionated setup for securely using AI Platform Notebooks."
       owners      = ["gtsorbo", "erlanderlo"]
-      topics      = join(",", [local.common_topics.da, local.common_topics.security]
+      topics      = join(",", [local.common_topics.da, local.common_topics.security])
     },
   ]
 }
