@@ -27,7 +27,7 @@ locals {
 
 module "project_factory" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 2.0"
+  version = "~> 14.0"
 
   random_project_id           = "true"
   name                        = "${var.username}-seed"

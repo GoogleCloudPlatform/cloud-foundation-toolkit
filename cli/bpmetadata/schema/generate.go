@@ -9,7 +9,7 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-const schemaFileName = "bpmetadataschema.json"
+const schemaFileName = "gcp-blueprint-metadata.json"
 
 // generateSchema creates a JSON Schema based on the types
 // defined in the type BlueprintMetadata and it's recursive
@@ -40,6 +40,7 @@ func generateSchemaFile(o, wdPath string) error {
 func GenerateSchema() ([]byte, error) {
 	r := &jsonschema.Reflector{}
 	s := r.Reflect(&bpmetadata.BlueprintMetadata{})
+	s.Version = "http://json-schema.org/draft-07/schema#"
 	sData, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
 		return nil, err
