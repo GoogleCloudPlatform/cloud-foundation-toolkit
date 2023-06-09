@@ -3,38 +3,39 @@ package util
 import (
 	"os"
 	"path"
+	"strings"
 	"testing"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 )
 
-func TestGetRepoUrl(t *testing.T) {
+func TestGetRepoUrlAndRootPath(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    string
 		subDir  string
 		remote  string
-		want    string
+		wantURL string
 		wantErr bool
 	}{
 		{
-			name:   "simple",
-			repo:   "https://github.com/foo/bar",
-			remote: defaultRemote,
-			want:   "https://github.com/foo/bar",
+			name:    "simple",
+			repo:    "https://github.com/foo/bar",
+			remote:  defaultRemote,
+			wantURL: "https://github.com/foo/bar",
 		},
 		{
-			name:   "simple trailing",
-			repo:   "https://gitlab.com/foo/bar/",
-			remote: defaultRemote,
-			want:   "https://gitlab.com/foo/bar/",
+			name:    "simple trailing",
+			repo:    "https://gitlab.com/foo/bar/",
+			remote:  defaultRemote,
+			wantURL: "https://gitlab.com/foo/bar/",
 		},
 		{
-			name:   "no scheme",
-			repo:   "github.com/foo/bar",
-			remote: defaultRemote,
-			want:   "github.com/foo/bar",
+			name:    "no scheme",
+			repo:    "github.com/foo/bar",
+			remote:  defaultRemote,
+			wantURL: "github.com/foo/bar",
 		},
 		{
 			name:    "invalid remote",
@@ -43,24 +44,58 @@ func TestGetRepoUrl(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:   "simple w/ module sub directory",
-			repo:   "https://github.com/foo/bar",
-			subDir: "modules/bp1",
-			remote: defaultRemote,
-			want:   "https://github.com/foo/bar",
+			name:    "simple w/ module sub directory",
+			repo:    "https://github.com/foo/bar",
+			subDir:  "modules/bp1",
+			remote:  defaultRemote,
+			wantURL: "https://github.com/foo/bar",
+		},
+		{
+			name:    "simple w/ ssh remote",
+			repo:    "git@github.com:foo/bar.git",
+			remote:  defaultRemote,
+			wantURL: "https://github.com/foo/bar.git",
+		},
+		{
+			name:    "simple w/ module sub directory w/ ssh remote",
+			repo:    "git@github.com:foo/bar.git",
+			remote:  defaultRemote,
+			subDir:  "modules/bp1",
+			wantURL: "https://github.com/foo/bar.git",
+		},
+		{
+			name:    "gitlab repo url should not be modified",
+			repo:    "git@gitlab.com:foo/bar.git",
+			remote:  defaultRemote,
+			wantURL: "git@gitlab.com:foo/bar.git",
+		},
+		{
+			name:    "empty repo url",
+			repo:    "",
+			remote:  defaultRemote,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dir := tempGitRepoWithRemote(t, tt.repo, tt.remote, tt.subDir)
-			got, err := GetRepoUrl(dir)
+			gotURL, gotPath, err := GetRepoUrlAndRootPath(dir)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("GetRepoUrl() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("GetRepoUrlAndRootPath() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			if got != tt.want {
-				t.Errorf("GetRepoUrl() = %v, want %v", got, tt.want)
+			if gotURL != tt.wantURL {
+				t.Errorf("URL - GetRepoUrlAndRootPath() = %v, want %v", gotURL, tt.wantURL)
+			}
+
+			wantPath := strings.TrimSuffix(strings.ReplaceAll(dir, tt.subDir, ""), "/")
+			if tt.wantErr {
+				wantPath = ""
+			}
+
+			if gotPath != wantPath {
+				t.Errorf("RootPath - GetRepoUrlAndRootPath() = %v, want %v", gotPath, wantPath)
 			}
 		})
 	}

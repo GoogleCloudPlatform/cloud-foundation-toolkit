@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/blueprint-metadata",
   "$ref": "#/$defs/BlueprintMetadata",
   "$defs": {
@@ -233,8 +233,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "title",
-        "source"
+        "title"
       ]
     },
     "BlueprintInterface": {
@@ -566,6 +565,14 @@
             "$ref": "#/$defs/UIActionItem"
           },
           "type": "array"
+        },
+        "outputs": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/DisplayOutput"
+            }
+          },
+          "type": "object"
         }
       },
       "additionalProperties": false,
@@ -610,6 +617,18 @@
       "required": [
         "name"
       ]
+    },
+    "DisplayOutput": {
+      "properties": {
+        "openInNewTab": {
+          "type": "boolean"
+        },
+        "showInNotification": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "DisplaySection": {
       "properties": {
