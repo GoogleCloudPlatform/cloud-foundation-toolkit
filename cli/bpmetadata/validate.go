@@ -11,7 +11,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-//go:embed schema/bpmetadataschema.json
+//go:embed schema/gcp-blueprint-metadata.json
 var s []byte
 
 // validateMetadata validates the metadata files for the provided
@@ -27,8 +27,8 @@ func validateMetadata(bpPath, wdPath string) error {
 	}
 
 	// We don't need to validate metadata under .terraform folders
-	skipDirsToValidate := []string{".terraform"}
-	metadataFiles, err := util.FindFilesWithPattern(bpPath, `.*/metadata(?:.display)?.yaml$`, skipDirsToValidate)
+	skipDirsToValidate := []string{".terraform/"}
+	metadataFiles, err := util.FindFilesWithPattern(bpPath, `^metadata(?:.display)?.yaml$`, skipDirsToValidate)
 	if err != nil {
 		Log.Error("unable to read at: %s", bpPath, "err", err)
 	}
