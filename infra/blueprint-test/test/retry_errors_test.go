@@ -28,7 +28,7 @@ import (
 func TestRetryErrors(t *testing.T) {
 	bpt := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("../examples/retry_errors"),
-		tft.WithSetupPath("./setup/simple_tf_module"),
+		tft.WithSetupPath("./setup"),
 		tft.WithRetryableTerraformErrors(tft.CommonRetryableErrors, 2, 3*time.Second),
 	)
 	bpt.DefineVerify(func(assert *assert.Assertions) {})

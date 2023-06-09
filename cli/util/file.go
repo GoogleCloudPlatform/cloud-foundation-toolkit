@@ -69,7 +69,7 @@ func FindFilesWithPattern(dir string, pattern string, skipPaths []string) ([]str
 			return err
 		}
 
-		if !re.MatchString(path) {
+		if !re.MatchString(filepath.Base(path)) {
 			return nil
 		}
 
