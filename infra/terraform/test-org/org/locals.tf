@@ -120,6 +120,9 @@ locals {
       description     = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
       groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-example-java-dynamic-point-of-sale"
@@ -164,6 +167,9 @@ locals {
       topics          = join(",", [local.common_topics.serverless, local.common_topics.db])
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-load-balanced-vms"
@@ -171,6 +177,9 @@ locals {
       description = "Creates a Managed Instance Group with a loadbalancer"
       owners      = ["tpryan"]
       topics      = local.common_topics.net
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-google-secure-cicd"
@@ -180,6 +189,9 @@ locals {
       topics          = join(",", [local.common_topics.security, local.common_topics.devtools, local.common_topics.e2e])
       enable_periodic = true
       groups          = [local.jss_common_group]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-google-media-cdn-vod"
@@ -227,6 +239,9 @@ locals {
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
       owners      = ["davenportjw"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-bootstrap"
@@ -576,6 +591,9 @@ locals {
       homepage_url    = "avocano.dev"
       groups          = [local.jss_common_group, "torus-dpe"]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-example-deploy-java-multizone"
@@ -585,6 +603,9 @@ locals {
       owners          = ["donmccasland"]
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-itar-architectures"
@@ -607,6 +628,9 @@ locals {
       topics          = local.common_topics.da
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-alloy-db"
@@ -630,6 +654,10 @@ locals {
       owners          = ["donmccasland"]
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+
     },
     {
       name        = "terraform-google-crmint"
@@ -645,6 +673,9 @@ locals {
       description     = "Deploys a large data sharing Java web app"
       groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-large-data-sharing-golang-webapp"
@@ -653,6 +684,9 @@ locals {
       description     = "Deploys a large data sharing Golang web app"
       groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-ml-image-annotation-gcf"
