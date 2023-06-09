@@ -120,6 +120,9 @@ locals {
       description     = "Deploys a web-based ecommerce app into a multi-cluster Google Kubernetes Engine setup."
       groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-example-java-dynamic-point-of-sale"
@@ -164,6 +167,9 @@ locals {
       topics          = join(",", [local.common_topics.serverless, local.common_topics.db])
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-load-balanced-vms"
@@ -171,6 +177,9 @@ locals {
       description = "Creates a Managed Instance Group with a loadbalancer"
       owners      = ["tpryan"]
       topics      = local.common_topics.net
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-google-secure-cicd"
@@ -180,6 +189,9 @@ locals {
       topics          = join(",", [local.common_topics.security, local.common_topics.devtools, local.common_topics.e2e])
       enable_periodic = true
       groups          = [local.jss_common_group]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-google-media-cdn-vod"
@@ -227,6 +239,9 @@ locals {
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
       owners      = ["davenportjw"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-bootstrap"
@@ -245,12 +260,14 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates and manages Cloud DNS public or private zones and their records"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-nat"
       org         = "terraform-google-modules"
       description = "Creates and configures Cloud NAT"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-operations"
@@ -263,6 +280,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages a Cloud Router on Google Cloud"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-storage"
@@ -387,6 +405,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates log exports at the project, folder, or organization level"
       topics      = local.common_topics.ops
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-memorystore"
@@ -405,6 +424,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Sets up a new VPC network on Google Cloud"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-org-policy"
@@ -483,12 +503,14 @@ locals {
       org         = "terraform-google-modules"
       description = "Handles opinionated VPC Service Controls and Access Context Manager configuration and deployments"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-vpn"
       org         = "terraform-google-modules"
       description = "Sets up a Cloud VPN gateway"
       topics      = local.common_topics.net
+      owners      = ["imrannayer"]
     },
     {
       short_name = "anthos-platform"
@@ -569,6 +591,9 @@ locals {
       homepage_url    = "avocano.dev"
       groups          = [local.jss_common_group, "torus-dpe"]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-example-deploy-java-multizone"
@@ -578,6 +603,9 @@ locals {
       owners          = ["donmccasland"]
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-itar-architectures"
@@ -596,10 +624,13 @@ locals {
       name            = "terraform-google-analytics-lakehouse"
       org             = "GoogleCloudPlatform"
       description     = "Deploys a Lakehouse Architecture Solution"
-      owners          = ["stevewalker-de"]
+      owners          = ["jasondavenport"]
       topics          = local.common_topics.da
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-alloy-db"
@@ -623,6 +654,10 @@ locals {
       owners          = ["donmccasland"]
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+
     },
     {
       name        = "terraform-google-crmint"
@@ -638,6 +673,9 @@ locals {
       description     = "Deploys a large data sharing Java web app"
       groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-large-data-sharing-golang-webapp"
@@ -646,6 +684,9 @@ locals {
       description     = "Deploys a large data sharing Golang web app"
       groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-ml-image-annotation-gcf"
