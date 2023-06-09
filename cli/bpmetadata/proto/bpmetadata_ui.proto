@@ -6,56 +6,74 @@ import "bpmetadata/proto/bpmetadata_ui_ext.proto";
 
 option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
 
+// BlueprintUIInput is the structure for holding Input and Input Section (i.e. groups) specific metadata.
 message BlueprintUIInput {
-
   // variables is a map defining all inputs on the UI.
+  // Gen: partial
   map<string, DisplayVariable> variables = 1;
 
   // Sections is a generic structure for grouping inputs together.
+  // Gen: manually-authored
   repeated DisplaySection sections = 2;
 }
 
+// Additional display specific metadata pertaining to a particular
+// input variable.
 message DisplayVariable {
   // The variable name from the corresponding standard metadata file.
+  // Gen: auto-generated - the Terraform variable name
   string name = 1;
 
   // Visible title for the variable on the UI. If not present,
   // Name will be used for the Title.
+  // Gen: auto-generated - the Terraform variable converted to title case e.g.
+  // variable "bucket_admins" will convert to "Bucket Admins" as the title.
   string title = 2;
 
   // A flag to hide or show the variable on the UI.
+  // Gen: manually-authored
   bool invisible = 3;
 
   // Variable tooltip.
+  // Gen: manually-authored
   string tooltip = 4;
 
   // Placeholder text (when there is no default).
+  // Gen: manually-authored
   string placeholder = 5;
 
   // Regex based validation rules for the variable.
+  // Gen: manually-authored
   string regex_validation = 6;
 
   // Minimum no. of inputs for the input variable.
+  // Gen: manually-authored
   int32 min_items = 7;
 
   // Max no. of inputs for the input variable.
+  // Gen: manually-authored
   int32 max_items = 8;
 
   // Minimum length for string values.
+  // Gen: manually-authored
   int32 min_length = 9;
 
   // Max length for string values.
+  // Gen: manually-authored
   int32 max_length = 10;
 
   // Minimum value for numeric types.
+  // Gen: manually-authored
   float min = 11;
 
   // Max value for numeric types.
+  // Gen: manually-authored
   float max = 12;
 
   // The name of a section to which this variable belongs.
   // variables belong to the root section if this field is
   // not set.
+  // Gen: manually-authored
   string section = 13;
 
   // UI extension associated with the input variable.
@@ -66,62 +84,96 @@ message DisplayVariable {
   //   zoneProperty: myZone
   //   gceMachineType:
   //     minCpu: 2
-  //     minRamGb: 6
+  //     minRamGb: 
+  // Gen: manually-authored
   GooglePropertyExtension x_google_property = 14;
 
   // Text describing the validation rules for the property. Typically shown
   // after an invalid input.
   // Optional. UTF-8 text. No markup. At most 128 characters.
+  // Gen: manually-authored
   string validation = 15;
 }
 
+// A logical group of variables. [Section][]s may also be grouped into
+// sub-sections.
 message DisplaySection {
   // The name of the section, referenced by DisplayVariable.Section
   // Section names must be unique.
+  // Gen: manually-authored
   string name = 1;
 
   // Section title.
   // If not provided, name will be used instead.
+  // Gen: manually-authored
   string title = 2;
 
   // Section tooltip.
+  // Gen: manually-authored
   string tooltip = 3;
 
   // Section subtext.
+  // Gen: manually-authored
   string subtext = 4;
 
   // The name of the parent section (if parent is not the root section).
+  // Gen: manually-authored
   string parent = 5;
 }
 
 message BlueprintUIOutput {
   // Short message to be displayed while the blueprint is deploying.
   // At most 128 characters.
+  // Gen: manually-authored
   string output_message = 1;
 
   // List of suggested actions to take.
+  // Gen: manually-authored
   repeated UIActionItem suggested_actions = 2;
+
+  // outputs is a map defining a subset of Terraform outputs on the UI
+  // that may need additional UI configuration.
+  // Gen: manually-authored
+  map<string, DisplayOutput> outputs = 3;
 }
 
 // An item appearing in a list of required or suggested steps.
 message UIActionItem {
   // Summary heading for the item.
   // Required. Accepts string expressions. At most 64 characters.
+  // Gen: manually-authored
   string heading = 1;
 
   // Longer description of the item.
   // At least one description or snippet is required.
   // Accepts string expressions. HTML <code>&lt;a href&gt;</code>
   // tags only. At most 512 characters.
+  // Gen: manually-authored
   string description = 2;
 
   // Fixed-width formatted code snippet.
   // At least one description or snippet is required.
   // Accepts string expressions. UTF-8 text. At most 512 characters.
+  // Gen: manually-authored
   string snippet = 3;
 
   // If present, this expression determines whether the item is shown.
   // Should be in the form of a Boolean expression e.g. outputs().hasExternalIP
   // where `externalIP` is the output.
+  // Gen: manually-authored
   string show_if = 4;
+}
+
+// Additional display specific metadata pertaining to a particular
+// Terraform output.
+message DisplayOutput {
+  // open_in_new_tab defines if the Output action should be opened
+  // in a new tab.
+  // Gen: manually-authored
+  bool open_in_new_tab = 1;
+
+  // show_in_notification defines if the Output should shown in
+  // notification for the deployment.
+  // Gen: manually-authored
+  bool show_in_notification = 2;
 }

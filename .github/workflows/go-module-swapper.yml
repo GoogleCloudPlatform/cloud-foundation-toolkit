@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   unit:
-    name: Module Swapper Unit Tests
+    name: ${{ matrix.operating-system }} unit tests
     runs-on: ${{ matrix.operating-system }}
     defaults:
       run:
@@ -25,9 +25,10 @@ jobs:
       matrix:
         operating-system: [ubuntu-latest, macos-latest]
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-go@v4
+    - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
+    - uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4
       with:
-        go-version: '~1.18'
+        go-version-file: infra/build/developer-tools/build/scripts/module-swapper/go.mod
+        cache-dependency-path: infra/build/developer-tools/build/scripts/module-swapper/go.sum
     - run: |-
         go test ./... -v

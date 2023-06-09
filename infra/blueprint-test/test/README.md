@@ -11,8 +11,8 @@ export TF_VAR_billing_account="your_billing_account_id"
 Create test project:
 
 ```bash
-terraform -chdir=setup/simple_tf_module init
-terraform -chdir=setup/simple_tf_module apply
+terraform -chdir=setup init
+terraform -chdir=setup apply
 ```
 
 Run tests:
@@ -24,5 +24,5 @@ go test [-v]
 Cleanup test project:
 
 ```bash
-terraform -chdir=setup/simple_tf_module destroy
+terraform -chdir=setup destroy
 ```

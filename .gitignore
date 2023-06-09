@@ -5,6 +5,5 @@ config-connector/tests/testcases/environments.yaml
 .DS_Store
 .vscode
 *.pyc
-schema
 cli/bpmetadata/proto/out*
 cli/bpmetadata/int-test/.working

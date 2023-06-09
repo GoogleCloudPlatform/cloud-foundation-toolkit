@@ -59,13 +59,13 @@ func TestTerraformVet(t *testing.T) {
 			temp := tft.NewTFBlueprintTest(fakeT,
 				tft.WithVars(vars),
 				tft.WithTFDir("../examples/tf_vet"),
-				tft.WithSetupPath("./setup/simple_tf_module"),
+				tft.WithSetupPath("./setup"),
 			)
 
 			bpt := tft.NewTFBlueprintTest(fakeT,
 				tft.WithVars(vars),
 				tft.WithTFDir("../examples/tf_vet"),
-				tft.WithSetupPath("./setup/simple_tf_module"),
+				tft.WithSetupPath("./setup"),
 				tft.WithPolicyLibraryPath(libraryPath, temp.GetTFSetupStringOutput("project_id")))
 			bpt.DefineVerify(
 				func(assert *assert.Assertions) {
