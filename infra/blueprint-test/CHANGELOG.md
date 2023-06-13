@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.5.2...infra/blueprint-test/v0.6.0) (2023-06-13)
+
+
+### Features
+
+* update to bpt GO 1.20 and rework krm test ([#1619](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1619)) ([50c2ab3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/50c2ab3165ab5eb159a8569ec90cd1518d427b7c))
+
 ## [0.5.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.5.1...infra/blueprint-test/v0.5.2) (2023-05-11)
 
 
