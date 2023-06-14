@@ -32,6 +32,7 @@ locals {
     "anthos-samples"              = "anthos-samples"
     "docs-samples"                = "terraform-docs-samples"
     "dynamic-python-webapp"       = "terraform-dynamic-python-webapp"
+    "dynamic-javascript-webapp"   = "terraform-dynamic-javascript-webapp"
     "deploy-java-multizone"       = "terraform-example-deploy-java-multizone"
     "ecommerce-microservices"     = "terraform-ecommerce-microservices-on-gke"
     "deploy-java-gke"             = "terraform-example-deploy-java-gke"
