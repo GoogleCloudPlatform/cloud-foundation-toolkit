@@ -36,7 +36,6 @@ locals {
     "deploy-java-multizone"       = "terraform-example-deploy-java-multizone"
     "ecommerce-microservices"     = "terraform-ecommerce-microservices-on-gke"
     "deploy-java-gke"             = "terraform-example-deploy-java-gke"
-    "Migrate-Legacy-Java-App-GKE" = "Migrate-Legacy-Java-App-GKE"
     "large-data-sharing-java-app" = "terraform-large-data-sharing-java-webapp"
     "large-data-sharing-go-app"   = "terraform-large-data-sharing-golang-webapp"
     "java-dynamic-point-of-sale"  = "terraform-example-java-dynamic-point-of-sale"

@@ -628,12 +628,6 @@ locals {
       topics      = join(",", [local.common_topics.compute], ["compliance"])
     },
     {
-      name        = "Migrate-Legacy-Java-App-GKE"
-      org         = "HSA-Integration"
-      description = "TODO"
-      owners      = ["donmccasland"]
-    },
-    {
       name            = "terraform-google-analytics-lakehouse"
       org             = "GoogleCloudPlatform"
       description     = "Deploys a Lakehouse Architecture Solution"
