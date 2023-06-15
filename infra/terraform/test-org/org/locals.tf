@@ -596,6 +596,19 @@ locals {
       }
     },
     {
+      name            = "terraform-dynamic-javascript-webapp"
+      short_name      = "dynamic-javascript-webapp"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy a dynamic javascript webapp"
+      owners          = ["glasnt", "donmccasland"]
+      homepage_url    = "avocano.dev"
+      groups          = [local.jss_common_group, "torus-dpe"]
+      enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
       name            = "terraform-example-deploy-java-multizone"
       short_name      = "deploy-java-multizone"
       org             = "GoogleCloudPlatform"
