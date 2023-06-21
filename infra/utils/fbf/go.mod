@@ -6,7 +6,7 @@ require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/jedib0t/go-pretty/v6 v6.4.6
 	github.com/stretchr/testify v1.8.4
-	google.golang.org/api v0.125.0
+	google.golang.org/api v0.127.0
 )
 
 require (
@@ -18,7 +18,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/s2a-go v0.1.4 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
+	github.com/googleapis/enterprise-certificate-proxy v0.2.4 // indirect
 	github.com/googleapis/gax-go/v2 v2.10.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
