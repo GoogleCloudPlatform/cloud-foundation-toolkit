@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
@@ -98,7 +97,7 @@ func convertKitchenTests() error {
 
 // getCurrentTestDirs returns current test dirs in intTestPath
 func getCurrentTestDirs() ([]string, error) {
-	files, err := ioutil.ReadDir(intTestPath)
+	files, err := os.ReadDir(intTestPath)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +113,7 @@ func getCurrentTestDirs() ([]string, error) {
 // convertTest converts a kitchen test in dir to blueprint test
 func convertTest(dir string) error {
 	// read inspec.yaml
-	f, err := ioutil.ReadFile(path.Join(dir, inspecInputsFile))
+	f, err := os.ReadFile(path.Join(dir, inspecInputsFile))
 	if err != nil {
 		return fmt.Errorf("error reading inspec file: %s", err)
 	}
@@ -193,7 +192,7 @@ func getBPTestFromTmpl(testName string, inputs []string) (string, error) {
 
 // writeFile writes content to file path
 func writeFile(p string, content string) error {
-	return ioutil.WriteFile(p, []byte(content), os.ModePerm)
+	return os.WriteFile(p, []byte(content), os.ModePerm)
 }
 
 // transformBuild transforms cloudbuild file contents with kitchen commands to CFT cli commands
@@ -245,7 +244,7 @@ func getCFTCmd(kitchenCmd string) (string, error) {
 
 // getBuildFromFile unmarshalls a cloudbuild file
 func getBuildFromFile(fp string) (*cb.Build, string, error) {
-	f, err := ioutil.ReadFile(fp)
+	f, err := os.ReadFile(fp)
 	if err != nil {
 		return nil, "", err
 	}

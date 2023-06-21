@@ -16,7 +16,7 @@ package scorecard
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/GoogleCloudPlatform/config-validator/pkg/api/validator"
@@ -34,7 +34,7 @@ func jsonToInterface(jsonStr string) (map[string]interface{}, error) {
 }
 
 func TestDataTypeTransformation(t *testing.T) {
-	fileContent, err := ioutil.ReadFile(testRoot + "/shared/iam_policy_audit_logs.json")
+	fileContent, err := os.ReadFile(testRoot + "/shared/iam_policy_audit_logs.json")
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}

@@ -1,9 +1,9 @@
 package bptest
 
 import (
-	"io/ioutil"
 	"path"
 	"testing"
+	"os"
 
 	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
@@ -151,7 +151,7 @@ func TestSimpleExample(t *testing.T) {
 				for name, expectedContent := range tt.expectedFilesContents {
 					pth := path.Join(tmpDir, name)
 					assert.FileExists(pth)
-					gotContents, err := ioutil.ReadFile(pth)
+					gotContents, err := os.ReadFile(pth)
 					assert.NoError(err)
 					assert.Equal(expectedContent, string(gotContents))
 				}

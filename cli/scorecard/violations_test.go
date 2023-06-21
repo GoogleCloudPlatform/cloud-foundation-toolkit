@@ -16,7 +16,7 @@ package scorecard
 
 import (
 	"context"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -58,7 +58,7 @@ func TestGetAssetFromJSON(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			fileContent, err := ioutil.ReadFile(testRoot + tc.assetJSONFile)
+			fileContent, err := os.ReadFile(testRoot + tc.assetJSONFile)
 			if err != nil {
 				t.Fatal("unexpected error", err)
 			}
