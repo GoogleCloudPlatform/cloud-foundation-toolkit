@@ -32,13 +32,14 @@ locals {
     "anthos-samples"              = "anthos-samples"
     "docs-samples"                = "terraform-docs-samples"
     "dynamic-python-webapp"       = "terraform-dynamic-python-webapp"
+    "dynamic-javascript-webapp"   = "terraform-dynamic-javascript-webapp"
     "deploy-java-multizone"       = "terraform-example-deploy-java-multizone"
     "ecommerce-microservices"     = "terraform-ecommerce-microservices-on-gke"
     "deploy-java-gke"             = "terraform-example-deploy-java-gke"
-    "Migrate-Legacy-Java-App-GKE" = "Migrate-Legacy-Java-App-GKE"
     "large-data-sharing-java-app" = "terraform-large-data-sharing-java-webapp"
     "large-data-sharing-go-app"   = "terraform-large-data-sharing-golang-webapp"
     "java-dynamic-point-of-sale"  = "terraform-example-java-dynamic-point-of-sale"
+    "ml-image-annotation-gcf"     = "terraform-ml-image-annotation-gcf"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }

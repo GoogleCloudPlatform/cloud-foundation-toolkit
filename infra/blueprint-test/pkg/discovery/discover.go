@@ -19,7 +19,6 @@ package discovery
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 
@@ -111,7 +110,7 @@ func GetKnownDirInParents(dir string, max int) (string, error) {
 // findDirs returns a map of directories in path
 func findDirs(path string) (map[string]bool, error) {
 	dirs := make(map[string]bool)
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return dirs, err
 	}

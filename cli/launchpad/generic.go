@@ -30,7 +30,7 @@ var (
 	errMissingRequiredField = errors.New("missing required field")
 	errInvalidParent        = errors.New("invalid parent reference")
 	errInvalidInput         = errors.New("invalid input")
-	tfNameRegex             = regexp.MustCompile("^[a-zA-Z][a-zA-Z\\d\\-\\_]*$")
+	tfNameRegex             = regexp.MustCompile(`^[a-zA-Z][a-zA-Z\d\-\_]*$`)
 )
 
 // resourceHandler represents a resource that can be processed by launchpad.

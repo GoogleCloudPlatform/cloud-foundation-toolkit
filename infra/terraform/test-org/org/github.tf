@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-/******************************************
-  Required variables
-*******************************************/
+locals {
+  owners = distinct(
+    flatten(
+      [for repo, val in local.repos : [for owner in val.owners : lower(owner)] if try(val.owners != null, false)]
+    )
+  )
 
-variable "users" {
-  description = "list of github users"
-  type        = list(string)
+  org_members = setunion(
+    [for login in data.github_organization.tgm.users[*].login : lower(login)],
+    [for login in data.github_organization.gcp.users[*].login : lower(login)]
+  )
+
+  invalid_owners = setsubtract(local.owners, local.org_members)
+}
+
+data "github_organization" "tgm" {
+  name = "terraform-google-modules"
+}
+
+data "github_organization" "gcp" {
+  name = "GoogleCloudPlatform"
 }

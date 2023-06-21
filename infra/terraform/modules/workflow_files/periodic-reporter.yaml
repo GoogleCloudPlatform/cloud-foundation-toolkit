@@ -1,0 +1,154 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: 'reporter'
+
+on:
+  schedule:
+    # 2 hours after scheduled periodic and once again in the evening
+    - cron: '0 5,17 * * *'
+  workflow_dispatch:
+
+jobs:
+  report:
+    permissions:
+      issues: 'write'
+
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - uses: 'actions/github-script@v6'
+        with:
+          script: |-
+                  // label for all issues opened by reporter
+                  const periodicLabel = 'periodic-failure';
+
+                  // check if any reporter opened any issues previously
+                  const prevIssues = await github.paginate(github.rest.issues.listForRepo, {
+                    ...context.repo,
+                    state: 'open',
+                    creator: 'github-actions[bot]',
+                    labels: [periodicLabel]
+                  });
+                  // createOrCommentIssue creates a new issue or comments on an existing issue.
+                  const createOrCommentIssue = async function (title, txt) {
+                    if (prevIssues.length < 1) {
+                      console.log('no previous issues found, creating one');
+                      await github.rest.issues.create({
+                        ...context.repo,
+                        title: title,
+                        body: txt,
+                        labels: [periodicLabel]
+                      });
+                      return;
+                    }
+                    if (prevIssues.length > 1) {
+                      console.warn(
+                        `found ${prevIssues.length} issues but only adding comment to ${prevIssues[0].html_url}`
+                      );
+                    }
+                    console.log(
+                      `found previous issue ${prevIssues[0].html_url}, adding comment`
+                    );
+                    await github.rest.issues.createComment({
+                      ...context.repo,
+                      issue_number: prevIssues[0].number,
+                      body: txt
+                    });
+                  };
+
+                  // updateAndCloseIssues comments on any existing issues and closes them. No-op if no issue exists.
+                  const updateAndCloseIssues = async function (txt) {
+                    if (prevIssues.length < 1) {
+                      console.log('no previous issues found, skipping close');
+                      return;
+                    }
+                    for (const prevIssue of prevIssues) {
+                      console.log(`found previous issue ${prevIssue.html_url}, adding comment`);
+                      await github.rest.issues.createComment({
+                        ...context.repo,
+                        issue_number: prevIssue.number,
+                        body: txt
+                      });
+                      console.log(`closing ${prevIssue.html_url}`);
+                      await github.rest.issues.update({
+                        ...context.repo,
+                        issue_number: prevIssue.number,
+                        body: txt,
+                        state: 'closed'
+                      });
+                    }
+                  };
+
+                  // Find status of check runs.
+                  // We will find check runs for each commit and then filter for the periodic.
+                  // Checks API only allows for ref and if we use main there could be edge cases where
+                  // the check run happened on a SHA that is different from head.
+                  const commits = await github.paginate(github.rest.repos.listCommits, {
+                    ...context.repo
+                  });
+
+                  var foundCheck = false;
+                  let periodicCheck = {};
+
+                  for (const commit of commits) {
+                    console.log(
+                      `checking runs at ${commit.html_url}: ${commit.commit.message}`
+                    );
+                    const checks = await github.rest.checks.listForRef({
+                      ...context.repo,
+                      ref: commit.sha
+                    });
+                    // find runs for this commit
+                    for (const check of checks.data.check_runs) {
+                      console.log(`found run ${check.name} for ${commit.html_url}`);
+                      if (check.name.includes('periodic-int-trigger')) {
+                        foundCheck = true;
+                        periodicCheck = check;
+                        break;
+                      }
+                    }
+
+                    if (foundCheck) {
+                      if (
+                        periodicCheck.status === 'completed' &&
+                        periodicCheck.conclusion === 'success'
+                      ) {
+                        updateAndCloseIssues(
+                          `[Passing periodic](${periodicCheck.html_url}) at ${commit.html_url}. Closing this issue.`
+                        );
+                      } else if (periodicCheck.status === 'in_progress') {
+                        console.log(
+                          `Check is pending ${periodicCheck.html_url} for ${commit.html_url}. Retry again later.`
+                        );
+                      }
+                      // error case
+                      else {
+                        createOrCommentIssue(
+                          'Failing periodic',
+                          `[Failing periodic](${periodicCheck.html_url}) at ${commit.html_url}.`
+                        );
+                      }
+                      // exit early as check was found
+                      return;
+                    }
+                  }
+
+                  // no periodic-int-trigger checks found across all commits, report it
+                  createOrCommentIssue(
+                    'Missing periodic',
+                    `Periodic test has not run in the past 24hrs. Last checked from ${
+                      commits[0].html_url
+                    } to ${commits[commits.length - 1].html_url}.`
+                  );

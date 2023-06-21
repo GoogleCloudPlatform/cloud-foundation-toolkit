@@ -37,14 +37,17 @@ const (
 // extension defines Google-specifc metadata necessary for choosing an
 // appropriate input widget or adding restrictions to GCP-specific resources.
 type GooglePropertyExtension struct {
+	// Gen: manually-authored
 	Type ExtensionType `json:"type" yaml:"type" jsonschema:"enum=ET_EMAIL_ADDRESS,enum=ET_MULTI_LINE_STRING,enum=ET_GCE_DISK_IMAGE,enum=ET_GCE_DISK_TYPE,enum=ET_GCE_DISK_SIZE,enum=ET_GCE_MACHINE_TYPE,enum=ET_GCE_NETWORK,enum=ET_GCE_ZONE,enum=ET_GCE_SUBNETWORK,enum=ET_GCE_REGION,enum=ET_GCE_GPU_TYPE,enum=ET_GCE_GPU_COUNT,enum=ET_GCE_EXTERNAL_IP,enum=ET_GCE_IP_FORWARDING,enum=ET_GCE_FIREWALL,enum=ET_GCE_FIREWALL_RANGE,enum=ET_GCE_GENERIC_RESOURCE,enum=ET_GCS_BUCKET,enum=ET_IAM_SERVICE_ACCOUNT"`
 
 	// Some properties (e.g. GCE_MACHINE_TYPE) require a zone context in order to
 	// determine the set of allowable values. This field references another
 	// property from the schema, which must have type GCE_ZONE.
+	// Gen: manually-authored
 	ZoneProperty string `json:"zoneProperty,omitempty" yaml:"zoneProperty,omitempty"`
 
 	// Property-specific extensions.
+	// Gen: manually-authored (all property extensions and their child properties)
 	GCEMachineType    GCEMachineTypeExtension     `json:"gceMachineType,omitempty" yaml:"gceMachineType,omitempty"`
 	GCEDiskSize       GCEDiskSizeExtension        `json:"gceDiskSize,omitempty" yaml:"gceDiskSize,omitempty"`
 	GCESubnetwork     GCESubnetworkExtension      `json:"gceSubnetwork,omitempty" yaml:"gceSubnetwork,omitempty"`
@@ -71,7 +74,7 @@ type GCEMachineTypeExtension struct {
 	MinCPU int `json:"minCpu,omitempty" yaml:"minCpu,omitempty"`
 
 	// Minimum ram. Used to filter the list of selectable machine types.
-	MinRAMGB int `json:"minRamGb,omitempty" yaml:"minRamGb,omitempty"`
+	MinRAMGB float32 `json:"minRamGb,omitempty" yaml:"minRamGb,omitempty"`
 
 	// If true, custom machine types will not be selectable.
 	// More info:
@@ -80,8 +83,8 @@ type GCEMachineTypeExtension struct {
 }
 
 type GCEGPUTypeExtension struct {
-	MachineType string `json:"machineType" yaml:"machineType"`
-	GPUType     string `json:"gpuType,omitempty" yaml:"gpuType,omitempty"`
+	MachineType string   `json:"machineType" yaml:"machineType"`
+	GPUType     []string `json:"gpuType,omitempty" yaml:"gpuType,omitempty"`
 }
 
 type GCEGPUCountExtension struct {
@@ -103,6 +106,8 @@ type GCENetworkExtension struct {
 	// Used to indicate to which machine type this network interface will be
 	// attached to.
 	MachineTypeVariable string `json:"machineTypeVariable" yaml:"machineTypeVariable"`
+	// Label that will be in front of each Network Interface.
+	Labels []string `json:"labels,omitempty" yaml:"labels,omitempty"`
 }
 
 type ExternalIPType string
@@ -110,7 +115,7 @@ type ExternalIPType string
 const (
 	IPUnspecified ExternalIPType = "IP_UNSPECIFIED"
 	IPEphemeral   ExternalIPType = "IP_EPHEMERAL"
-	IPStatic      ExternalIPType = "IP_STATIC"
+	IPNone        ExternalIPType = "NONE"
 )
 
 type GCEExternalIPExtension struct {
@@ -120,7 +125,13 @@ type GCEExternalIPExtension struct {
 
 	// Type specifies if the external IP is ephemeral or static.
 	// Defaults to ephemeral if not specified.
-	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=IP_UNSPECIFIED,enum=IP_EPHEMERAL,enum=IP_STATIC"`
+	Type ExternalIPType `json:"type,omitempty" yaml:"type,omitempty" jsonschema:"enum=IP_UNSPECIFIED,enum=IP_EPHEMERAL,enum=NONE"`
+
+	// Flag to denote if an external IP should be configurable.
+	NotConfigurable bool `json:"notConfigurable,omitempty" yaml:"notConfigurable,omitempty"`
+
+	// Flag to denote if static IPs are allowed for the external IP.
+	AllowStaticIPs bool `json:"allowStaticIPs,omitempty" yaml:"allowStaticIPs,omitempty"`
 }
 
 type GCEIPForwardingExtension struct {

@@ -17,7 +17,6 @@
 locals {
   tgm_modules_map = { for value in local.modules : value.name => value if value.org == "terraform-google-modules" }
   gcp_modules_map = { for value in local.modules : value.name => value if value.org == "GoogleCloudPlatform" }
-  users           = distinct(flatten([for value in local.modules : value.owners if try(value.owners, null) != null]))
 }
 
 data "github_team" "cft-admins" {
@@ -33,15 +32,14 @@ data "github_team" "blueprint-solutions" {
 module "repos_tgm" {
   source    = "../../modules/repositories"
   repos_map = local.tgm_modules_map
-  team_id   = module.collaborators_tgm.id
+  ci_teams  = ["blueprint-contributors"]
   providers = { github = github }
 }
 
 module "repos_gcp" {
   source    = "../../modules/repositories"
   repos_map = local.gcp_modules_map
-  # TODO: filter team on users already part of the org
-  # team_id   = module.collaborators_gcp.id
+  ci_teams  = ["blueprint-contributors"]
   providers = { github = github.gcp }
 }
 
@@ -144,14 +142,14 @@ module "codeowners_gcp" {
 }
 
 module "lint_yaml_tgm" {
-  source    = "../../modules/lint_file"
+  source    = "../../modules/workflow_files"
   repos_map = local.tgm_modules_map
   repo_list = module.repos_tgm.repos
   providers = { github = github }
 }
 
 module "lint_yaml_gcp" {
-  source    = "../../modules/lint_file"
+  source    = "../../modules/workflow_files"
   repos_map = local.gcp_modules_map
   repo_list = module.repos_gcp.repos
   providers = { github = github.gcp }
@@ -185,11 +183,4 @@ resource "github_branch_protection" "terraform-example-foundation" {
     data.github_team.cft-admins.node_id
   ]
 
-}
-
-# collaborator teams for approved CI
-module "collaborators_tgm" {
-  source    = "../../modules/team"
-  users     = local.users
-  providers = { github = github }
 }

@@ -42,14 +42,17 @@ enum ExtensionType {
 // appropriate input widget or adding restrictions to GCP-specific resources.
 message GooglePropertyExtension {
   // Type specifies the type of extension.
+  // Gen: manually-authored
   ExtensionType type = 1;
 
   // Some properties (e.g. GCE_MACHINE_TYPE) require a zone context in order to
   // determine the set of allowable values. This field references another
   // property from the schema, which must have type GCE_ZONE.
+  // Gen: manually-authored
   string zone_property = 2;
 
   // Property-specific extensions.
+  // Gen: manually-authored (all property extensions and their child properties)
   GCEMachineTypeExtension    gce_machine_type = 3;
   GCEDiskSizeExtension       gce_disk_size = 4;
   GCESubnetworkExtension     gce_subnetwork = 5;
@@ -81,7 +84,7 @@ message GCEMachineTypeExtension {
   int32 min_cpu = 1;
 
   // Minimum ram. Used to filter the list of selectable machine types.
-  int32 min_ram_gb = 2;
+  float min_ram_gb = 2;
 
   // If true, custom machine types will not be selectable.
   // More info:
@@ -94,8 +97,8 @@ message GCEGPUTypeExtension {
   // MachineType is the name of the machine type that the GPU is attached to.
   string machine_type = 1;
 
-  // GPUType is the type of GPU that is attached to the machine.
-  string gpu_type = 2;
+  // GPUType is the type(s) of GPU that is attached to the machine.
+  repeated string gpu_type = 2;
 }
 
 // GCEGPUCountExtension specifies the number of GPUs that should be attached to a machine.
@@ -121,6 +124,9 @@ message GCENetworkExtension {
   // Used to indicate to which machine type this network interface will be
   // attached to.
   string machine_type_variable = 2;
+
+  // Label that will be in front of each Network Interface.
+  repeated string labels = 3;
 }
 
 // ExternalIPType specifies the type of external IP address.
@@ -130,6 +136,8 @@ enum ExternalIPType {
   IP_EPHEMERAL = 1;
   // STATIC indicates that the external IP address is static.
   IP_STATIC = 2;
+  // NONE indicates that an external IP is not assigned.
+  IP_NONE = 3;
 }
 
 message GCEExternalIPExtension {
@@ -138,6 +146,12 @@ message GCEExternalIPExtension {
 
   // Type specifies the type of external IP address. Defaults to EPHEMERAL if not specified.
   ExternalIPType type = 2;
+
+  // Flag to denote if an external IP should be configurable.
+  bool not_configurable = 3;
+
+  // Flag to denote if static IPs are allowed for the external IP.
+  bool allow_static_ips = 4;
 }
 
 // GCEIPForwardingExtension specifies an IP forwarding extension for a GCE resource.

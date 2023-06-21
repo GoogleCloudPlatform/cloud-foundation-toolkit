@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/blueprint-metadata",
   "$ref": "#/$defs/BlueprintMetadata",
   "$defs": {
@@ -225,13 +225,15 @@
         },
         "supportInfo": {
           "$ref": "#/$defs/BlueprintSupport"
+        },
+        "singleDeployment": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "title",
-        "source"
+        "title"
       ]
     },
     "BlueprintInterface": {
@@ -563,6 +565,14 @@
             "$ref": "#/$defs/UIActionItem"
           },
           "type": "array"
+        },
+        "outputs": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/DisplayOutput"
+            }
+          },
+          "type": "object"
         }
       },
       "additionalProperties": false,
@@ -608,6 +618,18 @@
         "name"
       ]
     },
+    "DisplayOutput": {
+      "properties": {
+        "openInNewTab": {
+          "type": "boolean"
+        },
+        "showInNotification": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "DisplaySection": {
       "properties": {
         "name": {
@@ -649,6 +671,9 @@
         "placeholder": {
           "type": "string"
         },
+        "validation": {
+          "type": "string"
+        },
         "regexValidation": {
           "type": "string"
         },
@@ -665,10 +690,10 @@
           "type": "integer"
         },
         "min": {
-          "type": "integer"
+          "type": "number"
         },
         "max": {
-          "type": "integer"
+          "type": "number"
         },
         "section": {
           "type": "string"
@@ -706,8 +731,14 @@
           "enum": [
             "IP_UNSPECIFIED",
             "IP_EPHEMERAL",
-            "IP_STATIC"
+            "NONE"
           ]
+        },
+        "notConfigurable": {
+          "type": "boolean"
+        },
+        "allowStaticIPs": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
@@ -758,7 +789,10 @@
           "type": "string"
         },
         "gpuType": {
-          "type": "string"
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -818,7 +852,7 @@
           "type": "integer"
         },
         "minRamGb": {
-          "type": "integer"
+          "type": "number"
         },
         "disallowCustomMachineTypes": {
           "type": "boolean"
@@ -834,6 +868,12 @@
         },
         "machineTypeVariable": {
           "type": "string"
+        },
+        "labels": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,

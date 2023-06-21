@@ -18,7 +18,6 @@ package golden
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -62,7 +61,7 @@ func TestUpdate(t *testing.T) {
 			if !tt.skipUpdate {
 				defer os.Remove(got.GetName())
 			}
-			j, err := ioutil.ReadFile(got.GetName())
+			j, err := os.ReadFile(got.GetName())
 			assert.NoError(err)
 			assert.Equal(tt.want, string(j))
 

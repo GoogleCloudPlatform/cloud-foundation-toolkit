@@ -19,7 +19,7 @@ jobs:
   update-tools:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
       - name: Update Tools
         run: |
           PR_UPDATE_BODY=""
@@ -87,7 +87,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
-        uses: peter-evans/create-pull-request@8fbd83c22f75399752e97774e7b0b8ad245f55ca
+        uses: peter-evans/create-pull-request@eebb6ccce1e609378f84426acf60c49144cf2d3a
         with:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}

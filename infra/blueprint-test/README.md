@@ -133,7 +133,7 @@ the environment variable with “TF_VAR”.
 
 E.g. to set the project_id variable (above), setting the value in a “TF_VAR_project_id” environment variable
 would automatically populate its value upon execution. This is illustrated the file 
-`test/setup/simple_tf_module/outputs.tf` where the `project_id` is being exported as an env variable.
+`test/setup/outputs.tf` where the `project_id` is being exported as an env variable.
 ```
 
 #### 3.1.1.2 Output variables for the test

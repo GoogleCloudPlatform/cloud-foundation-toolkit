@@ -32,6 +32,16 @@ locals {
       }
     ]
   ])
+
+  teams = flatten([
+    for repo, val in var.repos_map : [
+      for team in var.ci_teams : {
+        "repo" : repo
+        "team" : team
+      }
+    ]
+  ])
+
 }
 
 resource "github_repository" "repo" {
@@ -79,9 +89,11 @@ resource "github_team_repository" "groups" {
   permission = "admin"
 }
 
-resource "github_team_repository" "collaborators" {
-  for_each   = var.team_id == null ? {} : github_repository.repo
-  repository = each.value.name
-  team_id    = var.team_id
-  permission = "pull"
+resource "github_team_repository" "ci_teams" {
+  for_each = {
+    for v in local.teams : "${v.repo}/${v.team}" => v
+  }
+  repository = each.value.repo
+  team_id    = each.value.team
+  permission = "triage"
 }
