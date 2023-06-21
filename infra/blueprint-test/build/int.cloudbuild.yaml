@@ -19,7 +19,7 @@ steps:
   dir: 'infra/blueprint-test'
 - id: test
   name: 'gcr.io/cloud-foundation-cicd/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS'
-  args: ['/bin/bash', '-c', 'go test']
+  args: ['/bin/bash', '-c', 'git config user.email "<>"; go test']
   dir: 'infra/blueprint-test/test'
 - id: teardown
   name: 'gcr.io/cloud-foundation-cicd/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS'
