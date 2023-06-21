@@ -31,7 +31,7 @@ jobs:
     name: 'lint-infra-terraform'
     runs-on: 'ubuntu-latest'
     steps:
-      - uses: 'actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab' # v3
+      - uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9' # v3
       - run: docker run --rm -e EXCLUDE_LINT_DIRS -e EXCLUDE_HEADER_CHECK -v ${{ github.workspace }}:/workspace gcr.io/cloud-foundation-cicd/cft/developer-tools:1 /usr/local/bin/test_lint.sh
         env:
           EXCLUDE_LINT_DIRS: '\./dm|\./config-connector|\./cli|\./infra/build|\./infra/utils|\./infra/blueprint-test|\./infra/concourse|\./infra/modules|\./reports|\./.github|\./docs'
