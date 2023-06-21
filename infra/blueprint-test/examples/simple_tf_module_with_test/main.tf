@@ -15,11 +15,11 @@
  */
 
 provider "google" {
-  version = "~> 3.45.0"
+  version = ">= 3.45.0"
 }
 
 provider "null" {
-  version = "~> 2.1"
+  version = ">= 2.1"
 }
 
 module "test-vpc-module" {
