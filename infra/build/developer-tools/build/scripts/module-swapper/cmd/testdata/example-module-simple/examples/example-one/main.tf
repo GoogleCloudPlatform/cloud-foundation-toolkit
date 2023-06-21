@@ -15,7 +15,7 @@
  */
 
 provider "google" {
-  version = "~> 4.0"
+  version = ">= 3.0"
 }
 
 # [START cloudrouter_create]
