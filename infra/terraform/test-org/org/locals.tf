@@ -711,5 +711,14 @@ locals {
       owners      = ["Saipriyavk", "ChrisBarefoot"]
       topics      = local.common_topics.net
     },
+    {
+      name            = "terraform-google-gen-ai-document-summarization"
+      short_name      = "gen-ai-document-summarization"
+      org             = "GoogleCloudPlatform"
+      description     = "Summarizes document using OCR and Vertex Generative AI LLM"
+      owners          = ["asrivast", "balajismaniam", "erschmid", "liyvonne", "nicain"]
+      groups          = ["dee-data-ai", local.jss_common_group]
+      enable_periodic = true
+    },
   ]
 }
