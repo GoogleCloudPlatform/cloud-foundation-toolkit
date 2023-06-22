@@ -1,9 +1,9 @@
 package bptest
 
 import (
+	"os"
 	"path"
 	"testing"
-	"os"
 
 	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
