@@ -28,9 +28,9 @@ import (
 
 func TestCFTSimpleModule(t *testing.T) {
 	path, _ := os.Getwd()
-	statePath := fmt.Sprintf("%s/../examples/local_backend.tfstate", path)
+	statePath := fmt.Sprintf("%s/../examples/simple_tf_module/local_backend.tfstate", path)
 	networkBlueprint := tft.NewTFBlueprintTest(t,
-		tft.WithTFDir("../examples"),
+		tft.WithTFDir("../examples/simple_tf_module"),
 		tft.WithBackendConfig(map[string]interface{}{
 			"path": statePath,
 		}),
