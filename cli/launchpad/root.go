@@ -2,13 +2,13 @@ package launchpad
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 )
 
 // NewGenerate takes file patterns as input YAMLs and output Infrastructure as
@@ -105,7 +105,7 @@ func loadResources(rawPaths []string) []resourceHandler {
 // can in theory place their own file in matching relative path and overwrite the binary
 // default.
 func loadFile(fp string) (string, error) {
-	if content, err := ioutil.ReadFile(fp); err == nil {
+	if content, err := os.ReadFile(fp); err == nil {
 		return string(content), nil
 	} else {
 		if !os.IsNotExist(err) {

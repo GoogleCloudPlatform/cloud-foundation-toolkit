@@ -1,7 +1,6 @@
 package bptest
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -249,7 +248,7 @@ func Test_discoverIntTestDir(t *testing.T) {
 
 func createFilesInTmpDir(t *testing.T, files []string) (string, func()) {
 	assert := assert.New(t)
-	tempDir, err := ioutil.TempDir("", "bpt-")
+	tempDir, err := os.MkdirTemp("", "bpt-")
 	assert.NoError(err)
 	cleanup := func() { os.RemoveAll(tempDir) }
 
