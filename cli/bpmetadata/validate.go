@@ -3,7 +3,7 @@ package bpmetadata
 import (
 	_ "embed"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
@@ -82,7 +82,7 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 // validation of YAML is not possible
 func convertYamlToJson(m string) ([]byte, error) {
 	// read metadata for validation
-	b, err := ioutil.ReadFile(m)
+	b, err := os.ReadFile(m)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read metadata at path %s. error: %s", m, err)
 	}
