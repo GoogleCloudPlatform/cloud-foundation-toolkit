@@ -19,7 +19,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -61,7 +60,7 @@ func convertAndGenerateTempAssetFile(caiPath string, outputPath string, fileMidN
 	}
 	outJSON, _ := json.MarshalIndent(wrapped, "", "  ")
 	rawAssetFileName = "raw_assets_" + fileMidName + ".json"
-	err = ioutil.WriteFile(filepath.Join(outputPath, rawAssetFileName), outJSON, 0644)
+	err = os.WriteFile(filepath.Join(outputPath, rawAssetFileName), outJSON, 0644)
 	if err != nil {
 		return "", err
 	}
@@ -113,7 +112,7 @@ func printReports(results interface{}, reportOutputPath string, format string, f
 					if err != nil {
 						return err
 					}
-					err = ioutil.WriteFile(filepath.Join(reportOutputPath, reportFileName), fileContent, 0644)
+					err = os.WriteFile(filepath.Join(reportOutputPath, reportFileName), fileContent, 0644)
 					if err != nil {
 						return err
 					}
