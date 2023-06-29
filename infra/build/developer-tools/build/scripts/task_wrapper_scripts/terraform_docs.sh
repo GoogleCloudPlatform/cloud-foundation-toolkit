@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2019 Google LLC
+# Copyright 2019-2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,7 +62,6 @@ terraform_docs() {
     ((index+=1))
   done
 
-  readonly tmp_file=$(mktemp)
   readonly text_file="README.md"
 
   for path_uniq in $(echo "${paths[*]}" | tr ' ' '\n' | sort -u); do
@@ -75,15 +74,7 @@ terraform_docs() {
       continue
     fi
 
-    terraform-docs --hide-all --show inputs --show outputs $args md ./ > "$tmp_file"
-
-    # Replace content between markers with the placeholder - https://stackoverflow.com/questions/1212799/how-do-i-extract-lines-between-two-line-delimiters-in-perl#1212834
-    perl -i -ne 'if (/BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK/../END OF PRE-COMMIT-TERRAFORM DOCS HOOK/) { print $_ if /BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK/; print "I_WANT_TO_BE_REPLACED\n$_" if /END OF PRE-COMMIT-TERRAFORM DOCS HOOK/;} else { print $_ }' "$text_file"
-
-    # Replace placeholder with the content of the file
-    perl -i -e 'open(F, "'"$tmp_file"'"); $f = join "", <F>; while(<>){if (/I_WANT_TO_BE_REPLACED/) {print $f} else {print $_};}' "$text_file"
-
-    rm -f "$tmp_file"
+    terraform-docs --output-template "<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->\n{{ .Content }}\n\n<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->" --anchor=false --show inputs --show outputs --output-file=$text_file $args md ./
 
     popd > /dev/null
   done
