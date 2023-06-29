@@ -16,7 +16,7 @@
 
 module "filelogs_bucket" {
   source  = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version = "~> 3.3"
+  version = "~> 4.0"
 
   name       = "${local.project_id}-filelogs"
   project_id = local.project_id

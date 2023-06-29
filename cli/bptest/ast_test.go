@@ -1,7 +1,6 @@
 package bptest
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -71,7 +70,7 @@ func OtherHelper(t *testing.T) {
 
 func writeTmpFile(t *testing.T, data string) (string, func()) {
 	assert := assert.New(t)
-	f, err := ioutil.TempFile("", "*.go")
+	f, err := os.CreateTemp("", "*.go")
 	assert.NoError(err)
 	cleanup := func() { os.Remove(f.Name()) }
 	_, err = f.Write([]byte(data))
