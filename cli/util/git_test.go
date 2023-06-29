@@ -57,10 +57,10 @@ func TestGetRepoUrlAndRootPath(t *testing.T) {
 			wantURL: "https://github.com/foo/bar.git",
 		},
 		{
-			name:    "invalid ssh remote",
+			name:    "non git@github@com ssh remote",
 			repo:    "git@githubAcom:foo/bar.git",
 			remote:  defaultRemote,
-			wantErr: true,
+			wantURL: "git@githubAcom:foo/bar.git",
 		},
 		{
 			name:    "simple w/ module sub directory w/ ssh remote",
