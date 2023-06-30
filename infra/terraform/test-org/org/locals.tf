@@ -713,7 +713,7 @@ locals {
     },
     {
       name            = "terraform-genai-doc-summarization"
-      short_name      = "gen-ai-document-summarization"
+      short_name      = "genai-doc-summarization"
       org             = "GoogleCloudPlatform"
       description     = "Summarizes document using OCR and Vertex Generative AI LLM"
       owners          = ["asrivas", "balajismaniam", "telpirion", "yil532", "nicain"]
