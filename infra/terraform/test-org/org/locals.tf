@@ -99,7 +99,7 @@ locals {
       owners      = ["erlanderlo"]
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e])
       lint_env = {
-        SHELLCHECK_OPTS="-e SC2154 -e SC2171 -e SC2086"
+        SHELLCHECK_OPTS = "-e SC2154 -e SC2171 -e SC2086"
       }
     },
     {
