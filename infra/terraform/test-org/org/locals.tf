@@ -98,6 +98,9 @@ locals {
       description = "Deploys a secured BigQuery data warehouse"
       owners      = ["erlanderlo"]
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e])
+      lint_env = {
+        SHELLCHECK_OPTS="-e SC2154 -e SC2171 -e SC2086"
+      }
     },
     {
       name        = "terraform-google-anthos-vm"
