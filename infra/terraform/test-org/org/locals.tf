@@ -712,7 +712,7 @@ locals {
       topics      = local.common_topics.net
     },
     {
-      name            = "terraform-google-gen-ai-document-summarization"
+      name            = "terraform-genai-doc-summarization"
       short_name      = "gen-ai-document-summarization"
       org             = "GoogleCloudPlatform"
       description     = "Summarizes document using OCR and Vertex Generative AI LLM"
