@@ -30,8 +30,9 @@
       "groupName": "terraform google provider"
     },
     {
+      "matchManagers": ["terraform"],
       "matchDepTypes": ["module"],
-      "groupName": "terraform modules"
+      "enabled": false
     },
     {
       "matchDepTypes": ["require"],

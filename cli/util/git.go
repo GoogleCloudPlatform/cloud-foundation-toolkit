@@ -11,7 +11,7 @@ import (
 
 const defaultRemote = "origin"
 
-var githubSSHRemoteRegex = regexp.MustCompile(`git@github.com:`)
+var githubSSHRemoteRegex = regexp.MustCompile(`git@github\.com:`)
 
 // getRepoName finds upstream repo name from a given repo directory
 func GetRepoName(repoUrl string) (string, error) {
