@@ -88,11 +88,19 @@ func getRepoDetailsFromRootBp(bpPath string) repoDetail {
 		}
 	}
 
+	if err != nil && strings.Contains(err.Error(), "proto:") {
+		return repoDetail{
+			Source: &repoSource{
+				BlueprintRootPath: rootBp,
+			},
+		}
+	}
+
 	// There is metadata for root but does not have source info
 	// which means this is a non-git hosted blueprint
 	if b.Spec.Info.Source == nil {
 		return repoDetail{
-			RepoName: b.ResourceMeta.ObjectMeta.NameMeta.Name,
+			RepoName: b.Metadata.Name,
 			Source: &repoSource{
 				BlueprintRootPath: rootBp,
 			},
@@ -101,7 +109,7 @@ func getRepoDetailsFromRootBp(bpPath string) repoDetail {
 
 	// If we get here, root metadata exists and has git info
 	return repoDetail{
-		RepoName: b.ResourceMeta.ObjectMeta.NameMeta.Name,
+		RepoName: b.Metadata.Name,
 		Source: &repoSource{
 			URL:               b.Spec.Info.Source.Repo,
 			SourceType:        "git",

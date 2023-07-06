@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.cloud.config.bpmetadata;
 
+// TODO: update copybara configuration for go to java package transformation
 option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
 
 // ExtensionType specifies the type of extension.
@@ -43,90 +44,90 @@ enum ExtensionType {
 message GooglePropertyExtension {
   // Type specifies the type of extension.
   // Gen: manually-authored
-  ExtensionType type = 1;
+  ExtensionType type = 1; // @gotags: json:"type" yaml:"type"
 
   // Some properties (e.g. GCE_MACHINE_TYPE) require a zone context in order to
   // determine the set of allowable values. This field references another
   // property from the schema, which must have type GCE_ZONE.
   // Gen: manually-authored
-  string zone_property = 2;
+  string zone_property = 2; // @gotags: json:"zoneProperty,omitempty" yaml:"zoneProperty,omitempty"
 
   // Property-specific extensions.
   // Gen: manually-authored (all property extensions and their child properties)
-  GCEMachineTypeExtension    gce_machine_type = 3;
-  GCEDiskSizeExtension       gce_disk_size = 4;
-  GCESubnetworkExtension     gce_subnetwork = 5;
-  GCEGenericResourceExtension gce_resource = 6;
-  GCEGPUTypeExtension        gce_gpu_type = 7;
-  GCEGPUCountExtension       gce_gpu_count = 8;
-  GCENetworkExtension        gce_network = 9;
-  GCEExternalIPExtension     gce_external_ip = 10;
-  GCEIPForwardingExtension    gce_ip_forwarding = 11;
-  GCEFirewallExtension       gce_firewall = 12;
-  GCEFirewallRangeExtension  gce_firewall_range = 13;
-  GCELocationExtension       gce_zone = 14;
-  GCELocationExtension       gce_region = 15;
-  IAMServiceAccountExtension iam_service_account = 16;
+  GCEMachineTypeExtension    gce_machine_type = 3; // @gotags: json:"gceMachineType,omitempty" yaml:"gceMachineType,omitempty"
+  GCEDiskSizeExtension       gce_disk_size = 4; // @gotags: json:"gceDiskSize,omitempty" yaml:"gceDiskSize,omitempty"
+  GCESubnetworkExtension     gce_subnetwork = 5; // @gotags: json:"gceSubnetwork,omitempty" yaml:"gceSubnetwork,omitempty"
+  GCEGenericResourceExtension gce_resource = 6; // @gotags: json:"gceResource,omitempty" yaml:"gceResource,omitempty"
+  GCEGPUTypeExtension        gce_gpu_type = 7; // @gotags: json:"gceGpuType,omitempty" yaml:"gceGpuType,omitempty"
+  GCEGPUCountExtension       gce_gpu_count = 8; // @gotags: json:"gceGpuCount,omitempty" yaml:"gceGpuCount,omitempty"
+  GCENetworkExtension        gce_network = 9; // @gotags: json:"gceNetwork,omitempty" yaml:"gceNetwork,omitempty"
+  GCEExternalIPExtension     gce_external_ip = 10; // @gotags: json:"gceExternalIp,omitempty" yaml:"gceExternalIp,omitempty"
+  GCEIPForwardingExtension    gce_ip_forwarding = 11; // @gotags: json:"gceIpForwarding,omitempty" yaml:"gceIpForwarding,omitempty"
+  GCEFirewallExtension       gce_firewall = 12; // @gotags: json:"gceFirewall,omitempty" yaml:"gceFirewall,omitempty"
+  GCEFirewallRangeExtension  gce_firewall_range = 13; // @gotags: json:"gceFirewallRange,omitempty" yaml:"gceFirewallRange,omitempty"
+  GCELocationExtension       gce_zone = 14; // @gotags: json:"gceZone,omitempty" yaml:"gceZone,omitempty"
+  GCELocationExtension       gce_region = 15; // @gotags: json:"gceRegion,omitempty" yaml:"gceRegion,omitempty"
+  IAMServiceAccountExtension iam_service_account = 16; // @gotags: json:"iamServiceAccount,omitempty" yaml:"iamServiceAccount,omitempty"
 }
 
 // GCELocationExtension specifies a location extension for a Google Compute Engine (GCE) resource.
 message GCELocationExtension {
   // AllowlistedZones is a list of zones that are allowed for the resource.
-  repeated string allowlisted_zones = 1;
+  repeated string allowlisted_zones = 1; // @gotags: json:"allowlistedZones,omitempty" yaml:"allowlistedZones,omitempty"
 
   // AllowlistedRegions is a list of regions that are allowed for the resource.
-  repeated string allowlisted_regions = 2;
+  repeated string allowlisted_regions = 2; // @gotags: json:"allowlistedRegions,omitempty" yaml:"allowlistedRegions,omitempty"
 }
 
 // GCEMachineTypeExtension specifies a machine type extension for a GCE resource.
 message GCEMachineTypeExtension {
   // Minimum cpu. Used to filter the list of selectable machine types.
-  int32 min_cpu = 1;
+  int32 min_cpu = 1; // @gotags: json:"minCpu,omitempty" yaml:"minCpu,omitempty"
 
   // Minimum ram. Used to filter the list of selectable machine types.
-  float min_ram_gb = 2;
+  float min_ram_gb = 2; // @gotags: json:"minRamGb,omitempty" yaml:"minRamGb,omitempty"
 
   // If true, custom machine types will not be selectable.
   // More info:
   // https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type
-  bool disallow_custom_machine_types = 3;
+  bool disallow_custom_machine_types = 3; // @gotags: json:"disallowCustomMachineTypes,omitempty" yaml:"disallowCustomMachineTypes,omitempty"
 }
 
 // GCEGPUTypeExtension specifies a GPU type extension for a GCE resource.
 message GCEGPUTypeExtension {
   // MachineType is the name of the machine type that the GPU is attached to.
-  string machine_type = 1;
+  string machine_type = 1; // @gotags: json:"machineType" yaml:"machineType"
 
   // GPUType is the type(s) of GPU that is attached to the machine.
-  repeated string gpu_type = 2;
+  repeated string gpu_type = 2; // @gotags: json:"gpuType,omitempty" yaml:"gpuType,omitempty"
 }
 
 // GCEGPUCountExtension specifies the number of GPUs that should be attached to a machine.
 message GCEGPUCountExtension {
   // This field references another variable from the schema,
   // which must have type GCEMachineType.
-  string machine_type_variable = 1;
+  string machine_type_variable = 1; // @gotags: json:"machineTypeVariable" yaml:"machineTypeVariable"
 }
 
 // GCEDiskSizeExtension specifies the size of a disk for a GCE resource.
 message GCEDiskSizeExtension {
   // The allowable range of disk sizes depends on the disk type. This field
   // references another variable from the schema, which must have type GCEDiskType.
-  string disk_type_variable = 1;
+  string disk_type_variable = 1; // @gotags: json:"diskTypeVariable" yaml:"diskTypeVariable"
 }
 
 // GCENetworkExtension specifies a network extension for a GCE resource.
 message GCENetworkExtension {
   // AllowSharedVpcs indicates this solution can receive
   // shared VPC selflinks (fully qualified compute links).
-  bool allow_shared_vpcs = 1;
+  bool allow_shared_vpcs = 1; // @gotags: json:"allowSharedVpcs,omitempty" yaml:"allowSharedVpcs,omitempty"
 
   // Used to indicate to which machine type this network interface will be
   // attached to.
-  string machine_type_variable = 2;
+  string machine_type_variable = 2; // @gotags: json:"machineTypeVariable" yaml:"machineTypeVariable"
 
   // Label that will be in front of each Network Interface.
-  repeated string labels = 3;
+  repeated string labels = 3; // @gotags: json:"labels,omitempty" yaml:"labels,omitempty"
 }
 
 // ExternalIPType specifies the type of external IP address.
@@ -142,54 +143,54 @@ enum ExternalIPType {
 
 message GCEExternalIPExtension {
   // NetworkVariable is the name of the network variable that the external IP address belongs to.
-  string network_variable = 1;
+  string network_variable = 1; // @gotags: json:"networkVariable" yaml:"networkVariable"
 
   // Type specifies the type of external IP address. Defaults to EPHEMERAL if not specified.
-  ExternalIPType type = 2;
+  ExternalIPType type = 2; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
 
   // Flag to denote if an external IP should be configurable.
-  bool not_configurable = 3;
+  bool not_configurable = 3; // @gotags: json:"notConfigurable,omitempty" yaml:"notConfigurable,omitempty"
 
   // Flag to denote if static IPs are allowed for the external IP.
-  bool allow_static_ips = 4;
+  bool allow_static_ips = 4; // @gotags: json:"allowStaticIPs,omitempty" yaml:"allowStaticIPs,omitempty"
 }
 
 // GCEIPForwardingExtension specifies an IP forwarding extension for a GCE resource.
 message GCEIPForwardingExtension {
   // NetworkVariable is the name of the network variable that the IP forwarding belongs to.
-  string network_variable = 1;
+  string network_variable = 1; // @gotags: json:"networkVariable" yaml:"networkVariable"
 
   // NotConfigurable specifies whether the IP forwarding is configurable. Defaults to false if not specified.
-  bool not_configurable = 2;
+  bool not_configurable = 2; // @gotags: json:"notConfigurable,omitempty" yaml:"notConfigurable,omitempty"
 }
 
 message GCEFirewallExtension {
   // NetworkVariable is used to indicate the network variable in the schema
   // this external IP belongs to.
-  string network_variable = 1;
+  string network_variable = 1; // @gotags: json:"networkVariable" yaml:"networkVariable"
 }
 
 message GCEFirewallRangeExtension {
   // FirewallVariable is used to indicate the firewall variable with the type
   // GCEFirewall in the schema to which this firewall range belongs to.
-  string firewall_variable = 1;
+  string firewall_variable = 1; // @gotags: json:"firewallVariable" yaml:"firewallVariable"
 }
 
 message GCESubnetworkExtension {
   // Subnetwork variable requires a network context in order to determine the
   // set of available subnetworks. This field references another
   // variable from the schema, which must have type GCENetwork.
-  string network_variable = 1;
+  string network_variable = 1; // @gotags: json:"networkVariable" yaml:"networkVariable"
 }
 
 message GCEGenericResourceExtension {
   // GCE resource type to be fetched. This field references another
   // property from the schema, which must have type GCEGenericResource.
-  string resource_variable = 1;
+  string resource_variable = 1; // @gotags: json:"resourceVariable" yaml:"resourceVariable"
 }
 
 message IAMServiceAccountExtension {
   // List of IAM roles that to  grant to a new SA, or the roles to filter
   // existing SAs with.
-  repeated string roles = 1;
+  repeated string roles = 1; // @gotags: json:"roles" yaml:"roles"
 }

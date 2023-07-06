@@ -8,9 +8,11 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
+	goyaml "github.com/goccy/go-yaml"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"sigs.k8s.io/kustomize/kyaml/yaml"
+	"google.golang.org/protobuf/encoding/protojson"
+	"sigs.k8s.io/yaml"
 )
 
 var mdFlags struct {
@@ -84,7 +86,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 	// throw an error and exit if root level readme.md doesn't exist
 	if err != nil {
-		return fmt.Errorf("top-level module does not have a readme. Details: %w\n", err)
+		return fmt.Errorf("top-level module does not have a readme: %w", err)
 	}
 
 	allBpPaths = append(allBpPaths, currBpPath)
@@ -201,25 +203,32 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	}
 
 	// start creating blueprint metadata
-	bpMetadataObj.ResourceMeta = yaml.ResourceMeta{
-		TypeMeta: yaml.TypeMeta{
-			APIVersion: metadataApiVersion,
-			Kind:       metadataKind,
-		},
-		ObjectMeta: yaml.ObjectMeta{
-			NameMeta: yaml.NameMeta{
-				Name:      repoDetails.ModuleName,
-				Namespace: "",
-			},
-			Labels:      bpMetadataObj.ResourceMeta.ObjectMeta.Labels,
+	bpMetadataObj.ApiVersion = metadataApiVersion
+	bpMetadataObj.Kind = metadataKind
+
+	if bpMetadataObj.Metadata == nil {
+		bpMetadataObj.Metadata = &ResourceTypeMeta{
+			Name:        repoDetails.ModuleName,
 			Annotations: map[string]string{localConfigAnnotation: "true"},
-		},
+		}
+	}
+
+	if bpMetadataObj.Spec == nil {
+		bpMetadataObj.Spec = &BlueprintMetadataSpec{}
+	}
+
+	if bpMetadataObj.Spec.Info == nil {
+		bpMetadataObj.Spec.Info = &BlueprintInfo{}
 	}
 
 	// create blueprint info
 	err = bpMetadataObj.Spec.Info.create(bpPath, repoDetails, readmeContent)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
+	}
+
+	if bpMetadataObj.Spec.Interfaces == nil {
+		bpMetadataObj.Spec.Interfaces = &BlueprintInterface{}
 	}
 
 	// create blueprint interfaces i.e. variables & outputs
@@ -235,7 +244,11 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	if err != nil {
 		Log.Warn(fmt.Sprintf("Blueprint requirements could not be created. Details: %s", err.Error()))
 	} else {
-		bpMetadataObj.Spec.Requirements = *requirements
+		bpMetadataObj.Spec.Requirements = requirements
+	}
+
+	if bpMetadataObj.Spec.Content == nil {
+		bpMetadataObj.Spec.Content = &BlueprintContent{}
 	}
 
 	// create blueprint content i.e. documentation, icons, etc.
@@ -245,23 +258,32 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 
 func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMetadata) (*BlueprintMetadata, error) {
 	// start creating blueprint metadata
-	bpDisp.ResourceMeta = yaml.ResourceMeta{
-		TypeMeta: yaml.TypeMeta{
-			APIVersion: bpCore.ResourceMeta.APIVersion,
-			Kind:       bpCore.ResourceMeta.Kind,
-		},
-		ObjectMeta: yaml.ObjectMeta{
-			NameMeta: yaml.NameMeta{
-				Name: bpCore.ResourceMeta.ObjectMeta.Name + "-display",
-			},
-			Labels:      bpDisp.ResourceMeta.ObjectMeta.Labels,
+	bpDisp.ApiVersion = bpCore.ApiVersion
+	bpDisp.Kind = bpCore.Kind
+
+	if bpDisp.Metadata == nil {
+		bpDisp.Metadata = &ResourceTypeMeta{
+			Name:        bpCore.Metadata.Name + "-display",
 			Annotations: map[string]string{localConfigAnnotation: "true"},
-		},
+		}
+	}
+
+	if bpDisp.Spec == nil {
+		bpDisp.Spec = &BlueprintMetadataSpec{}
+	}
+
+	if bpDisp.Spec.Info == nil {
+		bpDisp.Spec.Info = &BlueprintInfo{}
+	}
+
+	if bpDisp.Spec.Ui == nil {
+		bpDisp.Spec.Ui = &BlueprintUI{}
+		bpDisp.Spec.Ui.Input = &BlueprintUIInput{}
 	}
 
 	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
 	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
-	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, &bpDisp.Spec.UI.Input)
+	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, bpDisp.Spec.Ui.Input)
 
 	return bpDisp, nil
 }
@@ -288,7 +310,7 @@ func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte
 	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
 	if err == nil {
 		i.Version = versionInfo.moduleVersion
-		i.ActuationTool = BlueprintActuationTool{
+		i.ActuationTool = &BlueprintActuationTool{
 			Version: versionInfo.requiredTfVersion,
 			Flavor:  "Terraform",
 		}
@@ -330,12 +352,12 @@ func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte
 
 	d, err := getDeploymentDuration(readmeContent, "Deployment Duration")
 	if err == nil {
-		i.DeploymentDuration = *d
+		i.DeploymentDuration = d
 	}
 
 	c, err := getCostEstimate(readmeContent, "Cost")
 	if err == nil {
-		i.CostEstimate = *c
+		i.CostEstimate = c
 	}
 
 	return nil
@@ -354,13 +376,13 @@ func (i *BlueprintInterface) create(bpPath string) error {
 }
 
 func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent []byte) {
-	var docListToSet []BlueprintListContent
+	var docListToSet []*BlueprintListContent
 	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
 	if err == nil {
 		for _, li := range documentation.listItems {
-			doc := BlueprintListContent{
+			doc := &BlueprintListContent{
 				Title: li.text,
-				URL:   li.url,
+				Url:   li.url,
 			}
 
 			docListToSet = append(docListToSet, doc)
@@ -372,7 +394,7 @@ func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent 
 	// create architecture
 	a, err := getArchitctureInfo(readmeContent, "Architecture")
 	if err == nil {
-		c.Architecture = *a
+		c.Architecture = a
 	}
 
 	// create sub-blueprints
@@ -391,13 +413,19 @@ func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent 
 }
 
 func WriteMetadata(obj *BlueprintMetadata, bpPath, fileName string) error {
-	// marshal and write the file
-	yFile, err := yaml.Marshal(obj)
+	jBytes, err := protojson.Marshal(obj)
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(path.Join(bpPath, fileName), yFile, 0644)
+	// convert json bytes to yaml bytes for before writing to disk
+	// using go-yaml package here since that preserves the order of fields
+	yBytes, err := goyaml.JSONToYAML(jBytes)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(path.Join(bpPath, fileName), yBytes, 0644)
 }
 
 func UnmarshalMetadata(bpPath, fileName string) (*BlueprintMetadata, error) {
@@ -414,13 +442,19 @@ func UnmarshalMetadata(bpPath, fileName string) (*BlueprintMetadata, error) {
 		return &bpObj, fmt.Errorf("unable to read metadata from the existing file: %w", err)
 	}
 
-	err = yaml.Unmarshal(f, &bpObj)
+	// convert yaml bytes to json bytes for unmarshaling metadata
+	// content to proto definition
+	j, err := yaml.YAMLToJSON(f)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := protojson.Unmarshal(j, &bpObj); err != nil {
 		return &bpObj, err
 	}
 
-	currVersion := bpObj.ResourceMeta.TypeMeta.APIVersion
-	currKind := bpObj.ResourceMeta.TypeMeta.Kind
+	currVersion := bpObj.ApiVersion
+	currKind := bpObj.Kind
 
 	//validate GVK for current metadata
 	if currVersion != metadataApiVersion {

@@ -41,6 +41,16 @@ func GenerateSchema() ([]byte, error) {
 	r := &jsonschema.Reflector{}
 	s := r.Reflect(&bpmetadata.BlueprintMetadata{})
 	s.Version = "http://json-schema.org/draft-07/schema#"
+
+	// defaultValue was defined as interface{} and has changed to
+	// string type with proto definitions. To keep backwards
+	// compatibility for schema validation, this is being set to
+	// true i.e. it's presence is validated regardless of type.
+	vDef, defExists := s.Definitions["BlueprintVariable"]
+	if defExists {
+		vDef.Properties.Set("defaultValue", true)
+	}
+
 	sData, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
 		return nil, err

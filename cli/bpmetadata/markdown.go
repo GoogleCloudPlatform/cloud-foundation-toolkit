@@ -136,12 +136,12 @@ func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEsti
 		}
 
 		if m[1] == "Configuration" {
-			timeEstimate.ConfigurationSecs = i * 60
+			timeEstimate.ConfigurationSecs = int32(i) * 60
 			continue
 		}
 
 		if m[1] == "Deployment" {
-			timeEstimate.DeploymentSecs = i * 60
+			timeEstimate.DeploymentSecs = int32(i) * 60
 			continue
 		}
 	}
@@ -159,7 +159,7 @@ func getCostEstimate(content []byte, headTitle string) (*BlueprintCostEstimate, 
 
 	return &BlueprintCostEstimate{
 		Description: costDetails.literal,
-		URL:         costDetails.url,
+		Url:         costDetails.url,
 	}, nil
 }
 
@@ -203,7 +203,7 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 		if isImage {
 			return &BlueprintArchitecture{
 				Description: dList,
-				DiagramURL:  string(iNode.Destination),
+				DiagramUrl:  string(iNode.Destination),
 			}, nil
 		}
 
@@ -211,7 +211,7 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 		if isLink {
 			return &BlueprintArchitecture{
 				Description: dList,
-				DiagramURL:  string(lNode.Destination),
+				DiagramUrl:  string(lNode.Destination),
 			}, nil
 		}
 	}
