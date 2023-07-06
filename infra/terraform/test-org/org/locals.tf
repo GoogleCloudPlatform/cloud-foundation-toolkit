@@ -716,6 +716,7 @@ locals {
     },
     {
       name        = "notebooks-blueprint-security"
+      short_name  = "secured-notebook"
       org         = "GoogleCloudPlatform"
       description = "Opinionated setup for securely using AI Platform Notebooks."
       owners      = ["gtsorbo", "erlanderlo"]
