@@ -41,6 +41,7 @@ locals {
     "java-dynamic-point-of-sale"  = "terraform-example-java-dynamic-point-of-sale"
     "ml-image-annotation-gcf"     = "terraform-ml-image-annotation-gcf"
     "genai-doc-summarization"     = "terraform-genai-doc-summarization"
+    "secured-notebook"            = "notebooks-blueprint-security"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }

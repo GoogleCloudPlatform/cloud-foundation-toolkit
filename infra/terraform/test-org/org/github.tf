@@ -29,6 +29,12 @@ locals {
   invalid_owners = setsubtract(local.owners, local.org_members)
 }
 
+variable "temp_allow_invalid_owners" {
+  type        = list(string)
+  description = "Googlers added as owners on TF blueprint repos but are not part of the GCP or TGM orgs yet."
+  default     = []
+}
+
 data "github_organization" "tgm" {
   name = "terraform-google-modules"
 }

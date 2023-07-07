@@ -104,8 +104,8 @@ output "modules" {
   value = [for value in local.repos : value if try(value.module, true)]
 
   precondition {
-    condition     = length(local.invalid_owners) == 0
-    error_message = "Provided Repo Owners are not currently members of GCP or TGM Orgs: ${join(", ", local.invalid_owners)}"
+    condition     = length(setsubtract(local.invalid_owners, var.temp_allow_invalid_owners)) == 0
+    error_message = "Provided Repo Owners are not currently members of GCP or TGM Orgs: ${join(", ", local.invalid_owners)}. You can bypass this error by setting these members in temp_allow_invalid_owners var when running plan/apply."
   }
 
 }

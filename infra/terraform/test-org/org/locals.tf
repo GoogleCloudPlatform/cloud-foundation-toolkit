@@ -715,6 +715,14 @@ locals {
       topics      = local.common_topics.net
     },
     {
+      name        = "notebooks-blueprint-security"
+      short_name  = "secured-notebook"
+      org         = "GoogleCloudPlatform"
+      description = "Opinionated setup for securely using AI Platform Notebooks."
+      owners      = ["gtsorbo", "erlanderlo"]
+      topics      = join(",", [local.common_topics.da, local.common_topics.security])
+    },
+    {
       name            = "terraform-genai-doc-summarization"
       short_name      = "genai-doc-summarization"
       org             = "GoogleCloudPlatform"
