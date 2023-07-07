@@ -31,7 +31,7 @@ locals {
 
 variable "temp_allow_invalid_owners" {
   type        = list(string)
-  description = "Googlers that are added as owners on TF blueprint repos but are not part of the GCP or TGM orgs."
+  description = "Googlers added as owners on TF blueprint repos but are not part of the GCP or TGM orgs yet."
   default     = []
 }
 
