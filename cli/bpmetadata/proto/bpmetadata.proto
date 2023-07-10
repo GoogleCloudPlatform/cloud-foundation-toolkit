@@ -264,8 +264,8 @@ message BlueprintTimeEstimate {
   // ### DeploymentTime
   // - Configuration: X secs
   // - Deployment: Y secs
-  int32 configuration_secs = 1; // @gotags: json:"configurationSecs,omitempty" yaml:"configurationSecs,omitempty"
-  int32 deployment_secs = 2; // @gotags: json:"deploymentSecs,omitempty" yaml:"deploymentSecs,omitempty"
+  int64 configuration_secs = 1; // @gotags: json:"configurationSecs,omitempty" yaml:"configurationSecs,omitempty"
+  int64 deployment_secs = 2; // @gotags: json:"deploymentSecs,omitempty" yaml:"deploymentSecs,omitempty"
 }
 
 // The cost estimate for the blueprint based on pre-configured variables.

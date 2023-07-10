@@ -130,18 +130,18 @@ func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEsti
 	var timeEstimate BlueprintTimeEstimate
 	for _, m := range matches {
 		// each m[2] will have the time in mins
-		i, err := strconv.Atoi(m[2])
+		i, err := strconv.ParseInt(m[2], 10, 64)
 		if err != nil {
 			continue
 		}
 
 		if m[1] == "Configuration" {
-			timeEstimate.ConfigurationSecs = int32(i) * 60
+			timeEstimate.ConfigurationSecs = i * 60
 			continue
 		}
 
 		if m[1] == "Deployment" {
-			timeEstimate.DeploymentSecs = int32(i) * 60
+			timeEstimate.DeploymentSecs = i * 60
 			continue
 		}
 	}
