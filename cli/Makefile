@@ -17,7 +17,7 @@ PROTOC_DIR=./bpmetadata
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
 .PHONY: build
-build: build-schema		
+build: build-schema
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
 .PHONY: build-schema
@@ -36,7 +36,7 @@ protoc-gen:
 protoc-deps:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/favadi/protoc-go-inject-tag@v1.4.0	
+	go install github.com/favadi/protoc-go-inject-tag@v1.4.0
 
 .PHONY: publish
 publish:
