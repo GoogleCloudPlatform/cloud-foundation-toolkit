@@ -40,7 +40,7 @@ func TestAssertSuccess(t *testing.T) {
 		}
 
 		it := &inspectableT{t, nil}
-		ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+		ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 		ah.AssertSuccess(it, r)
 
 		if it.err != nil {
@@ -71,7 +71,7 @@ func TestAssertSuccess(t *testing.T) {
 		}
 
 		it := &inspectableT{t, nil}
-		ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+		ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 		ah.AssertSuccess(it, r)
 
 		if it.err != nil {
@@ -93,7 +93,7 @@ func TestAssertResponse(t *testing.T) {
 		}
 
 		it := &inspectableT{t, nil}
-		ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+		ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 		ah.AssertResponse(it, r, http.StatusOK)
 		if it.err != nil {
 			t.Errorf("wanted success, got %v", it.err)
@@ -111,7 +111,7 @@ func TestAssertResponse(t *testing.T) {
 		}
 
 		it := &inspectableT{t, nil}
-		ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+		ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 		ah.AssertResponse(it, r, http.StatusServiceUnavailable)
 
 		if it.err == nil {
@@ -130,7 +130,7 @@ func TestAssertResponse(t *testing.T) {
 		}
 
 		it := &inspectableT{t, nil}
-		ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+		ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 		ah.AssertResponse(it, r, http.StatusServiceUnavailable)
 
 		if it.err != nil {
@@ -150,7 +150,7 @@ func TestAssertResponse(t *testing.T) {
 
 		t.Run("success", func(t *testing.T) {
 			it := &inspectableT{t, nil}
-			ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+			ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 			ah.AssertResponse(it, r, http.StatusOK, "Hello", "World")
 			if it.err != nil {
 				t.Errorf("wanted success, got %v", it.err)
@@ -158,7 +158,7 @@ func TestAssertResponse(t *testing.T) {
 		})
 		t.Run("error", func(t *testing.T) {
 			it := &inspectableT{t, nil}
-			ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+			ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 			ah.AssertResponse(it, r, http.StatusOK, "Hello", "Moon")
 			if it.err == nil {
 				t.Error("wanted error, got success")
@@ -166,7 +166,7 @@ func TestAssertResponse(t *testing.T) {
 		})
 		t.Run("error multiple", func(t *testing.T) {
 			it := &inspectableT{t, nil}
-			ah := utils.NewAssertHTTP().SetHTTPClient(ts.Client())
+			ah := utils.NewAssertHTTP(utils.WithHTTPClient(ts.Client()))
 			ah.AssertResponse(it, r, http.StatusOK, "Hello", "Moon", "People")
 			if it.err == nil {
 				t.Error("wanted error, got success")

@@ -30,53 +30,56 @@ type AssertHTTP struct {
 	httpClient *http.Client
 }
 
-// NewAssertHTTP creates a new AssertHTTP.
-func NewAssertHTTP() *AssertHTTP {
-	return &AssertHTTP{http.DefaultClient}
+type assertOption func(*AssertHTTP)
+
+// WithHTTPClient specifies an HTTP client for the AssertHTTP use.
+func WithHTTPClient(c *http.Client) assertOption {
+	return func(ah *AssertHTTP) {
+		ah.httpClient = c
+	}
 }
 
-// SetHTTPClient sets a substitute HTTP Client for assert requests.
-func (ah *AssertHTTP) SetHTTPClient(c *http.Client) *AssertHTTP {
-	if c != nil {
-		ah.httpClient = c
+// NewAssertHTTP creates a new AssertHTTP with option overrides.
+func NewAssertHTTP(opts ...assertOption) *AssertHTTP {
+	ah := &AssertHTTP{http.DefaultClient}
+	for _, opt := range opts {
+		opt(ah)
 	}
 	return ah
 }
 
 // AssertSuccessWithRetry runs httpRequest and retries on errors outside client control.
-func (ah *AssertHTTP) AssertSuccessWithRetry(t testing.T, r *http.Request) {
+func (ah *AssertHTTP) AssertSuccessWithRetry(t testing.TB, r *http.Request) {
 	t.Helper()
 	Poll(t, ah.httpRequest(t, r), 3, 2*time.Second)
 }
 
 // AssertSuccess runs httpRequest without retry.
-func (ah *AssertHTTP) AssertSuccess(t testing.T, r *http.Request) error {
+func (ah *AssertHTTP) AssertSuccess(t testing.TB, r *http.Request) {
 	t.Helper()
 	_, err := ah.httpRequest(t, r)()
 	if err != nil {
 		t.Fatal(err)
 	}
-	return err
 }
 
 // AssertResponseWithRetry runs httpResponse and retries on errors outside client control.
-func (ah *AssertHTTP) AssertResponseWithRetry(t testing.T, r *http.Request, wantCode int, want ...string) {
+func (ah *AssertHTTP) AssertResponseWithRetry(t testing.TB, r *http.Request, wantCode int, want ...string) {
 	t.Helper()
 	Poll(t, ah.httpResponse(t, r, wantCode, want...), 3, 2*time.Second)
 }
 
 // AssertResponse runs httpResponse without retry.
-func (ah *AssertHTTP) AssertResponse(t testing.T, r *http.Request, wantCode int, want ...string) error {
+func (ah *AssertHTTP) AssertResponse(t testing.TB, r *http.Request, wantCode int, want ...string) {
 	t.Helper()
 	_, err := ah.httpResponse(t, r, wantCode, want...)()
 	if err != nil {
 		t.Fatal(err)
 	}
-	return err
 }
 
 // httpRequest verifies the request is successful by HTTP status code.
-func (ah *AssertHTTP) httpRequest(t testing.T, r *http.Request) func() (bool, error) {
+func (ah *AssertHTTP) httpRequest(t testing.TB, r *http.Request) func() (bool, error) {
 	t.Helper()
 	return func() (bool, error) {
 		t.Logf("Sending HTTP Request %s %s", r.Method, r.URL.String())
@@ -84,12 +87,21 @@ func (ah *AssertHTTP) httpRequest(t testing.T, r *http.Request) func() (bool, er
 		if err != nil {
 			return false, err
 		}
-		return httpRetryCondition(got.StatusCode), nil
+		// Keep trying until the result is success or the request responsibility.
+		if retry := httpRetryCondition(got.StatusCode); retry {
+			return true, nil
+		}
+		// Any HTTP success will work. For a specific status use AssertResponse.
+		if got.StatusCode < http.StatusOK || got.StatusCode >= http.StatusMultipleChoices {
+			t.Errorf("want 2xx, got %d", got.StatusCode)
+		}
+
+		return false, nil
 	}
 }
 
 // httpResponse verifies the requested response has the wanted status code and payload.
-func (ah *AssertHTTP) httpResponse(t testing.T, r *http.Request, wantCode int, want ...string) func() (bool, error) {
+func (ah *AssertHTTP) httpResponse(t testing.TB, r *http.Request, wantCode int, want ...string) func() (bool, error) {
 	t.Helper()
 	return func() (bool, error) {
 		t.Logf("Sending HTTP Request %s %s", r.Method, r.URL.String())
@@ -101,7 +113,7 @@ func (ah *AssertHTTP) httpResponse(t testing.T, r *http.Request, wantCode int, w
 
 		if got.StatusCode != wantCode {
 			t.Errorf("response code: got %d, want %d", got.StatusCode, wantCode)
-			// Unwanted status code be a server-side error condition that will clear.
+			// Unwanted status code may be a server-side error condition that will clear.
 			// Assume unwanted success is not going to change.
 			return httpRetryCondition(got.StatusCode), nil
 		}
@@ -132,6 +144,7 @@ func (ah *AssertHTTP) httpResponse(t testing.T, r *http.Request, wantCode int, w
 
 // httpRetryCondition indicates retry should be attempted on HTTP 1xx, 401, 403, and 5xx errors.
 // 401 and 403 are retried in case of lagging authorization configuration.
+// On true return value a retry is preferred.
 func httpRetryCondition(code int) bool {
 	switch {
 	case code >= http.StatusOK && code < http.StatusMultipleChoices:
