@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-output "project_id" {
-  value = module.project.project_id
+/******************************************
+  Required variables
+*******************************************/
+
+variable "repos_map" {
+  description = "Map of Repos"
+  type = map(object({
+    name              = string
+    lint_env          = optional(map(string))
+    disable_lint_yaml = optional(bool)
+    enable_periodic   = optional(bool)
+  }))
 }
 
-output "sa_key" {
-  value     = google_service_account_key.key.private_key
-  sensitive = true
+variable "repo_list" {
+  description = "List of Repos"
+  type        = map(any)
 }

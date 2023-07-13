@@ -18,8 +18,8 @@ package test
 
 import (
 	"fmt"
-	"testing"
 	"os"
+	"testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
@@ -29,13 +29,13 @@ import (
 
 func TestSimpleTFModule(t *testing.T) {
 	path, _ := os.Getwd()
-	statePath:= fmt.Sprintf("%s/../examples/simple_tf_module/local_backend.tfstate", path)
+	statePath := fmt.Sprintf("%s/../examples/simple_tf_module/local_backend.tfstate", path)
 	nt := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("../examples/simple_tf_module"),
 		tft.WithBackendConfig(map[string]interface{}{
 			"path": statePath,
 		}),
-		tft.WithSetupPath("setup/simple_tf_module"),
+		tft.WithSetupPath("setup"),
 		tft.WithEnvVars(map[string]string{"network_name": fmt.Sprintf("foo-%s", utils.RandStr(5))}),
 	)
 

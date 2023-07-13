@@ -74,6 +74,7 @@ find_files() {
     ".*/.*\.jpg"
     ".*/.*\.jpeg"
     ".*/.*\.svg"
+    ".*/.*\.ico"
     "\./autogen"
     "\./test/fixtures/all_examples"
     "\./test/fixtures/shared"
@@ -232,7 +233,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip)$' \
+    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -243,7 +244,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
-    | grep -v -E '\.(png|gz|tfvars|mp4|zip)$' \
+    | grep -v -E '\.(png|gz|tfvars|mp4|zip|ico)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
@@ -311,19 +312,21 @@ function generate_docs() {
     echo "ENABLE_BPMETADATA not set to 1. Skipping metadata generation."
     return 0
   fi
-  generate_metadata "${1-core}"
+  generate_metadata "${1-default}"
 }
 
 function generate_metadata() {
   echo "Generating blueprint metadata"
-  arg=$1
-  # check if metadata.display.yaml was requested
-  if [ $arg = "display" ]; then
+  arg=${1-default}
+  # check if metadata was request with parameters
+  if [ "${arg}" = "default" ]; then
+    cft blueprint metadata
+  elif [ "${arg}" = "display" ]; then
     cft blueprint metadata -d
   else
-    cft blueprint metadata
+    eval "cft blueprint metadata $arg"
   fi
-  
+
   if [ $? -eq 0 ]; then
     echo "Success!"
   else
@@ -342,7 +345,7 @@ function check_metadata() {
 
   echo "Validating blueprint metadata"
   cft blueprint metadata -v
-  
+
   if [ $? -eq 0 ]; then
     echo "Success!"
   else
@@ -434,7 +437,7 @@ function generate_modules() {
     # formatting the generated modules since formatting does not apply
     # to jinja templates
     echo "Running terraform fmt"
-    terraform fmt -recursive    
+    terraform fmt -recursive
   fi
 }
 

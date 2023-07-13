@@ -16,7 +16,7 @@ package scorecard
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/GoogleCloudPlatform/config-validator/pkg/api/validator"
@@ -34,7 +34,7 @@ func jsonToInterface(jsonStr string) (map[string]interface{}, error) {
 }
 
 func TestDataTypeTransformation(t *testing.T) {
-	fileContent, err := ioutil.ReadFile(testRoot + "/shared/iam_policy_audit_logs.json")
+	fileContent, err := os.ReadFile(testRoot + "/shared/iam_policy_audit_logs.json")
 	if err != nil {
 		t.Fatal("unexpected error", err)
 	}
@@ -79,7 +79,7 @@ func TestDataTypeTransformation(t *testing.T) {
 			t.Fatalf("failed to parse JSON string %v: %v", gotStr, err)
 		}
 
-		wantStr := `{"name":"//cloudresourcemanager.googleapis.com/projects/23456","assetType":"cloudresourcemanager.googleapis.com/Project","iamPolicy":{"version":1,"bindings":[{"role":"roles/owner","members":["user:user@example.com"]}]},"ancestors":["projects/1234","organizations/56789"]}`
+		wantStr := `{"name":"//cloudresourcemanager.googleapis.com/projects/23456","assetType":"cloudresourcemanager.googleapis.com/Project","iamPolicy":{"version":1,"bindings":[{"role":"roles/owner","members":["user:user@example.com"]}],"auditConfigs":[{"service":"storage.googleapis.com","auditLogConfigs":[{"logType":"ADMIN_READ"},{"logType":"DATA_READ"},{"logType":"DATA_WRITE"}]}]},"ancestors":["projects/1234","organizations/56789"]}`
 		var wantJSON map[string]interface{}
 		if err := json.Unmarshal([]byte(wantStr), &wantJSON); err != nil {
 			t.Fatalf("failed to parse JSON string %v: %v", wantStr, err)

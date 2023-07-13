@@ -17,7 +17,6 @@
 package tft
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -81,11 +80,11 @@ func getTFOutputMap(t *testing.T, tf string) map[string]interface{} {
 	assert := assert.New(t)
 
 	// setup tf file
-	tfDir, err := ioutil.TempDir("", "")
+	tfDir, err := os.MkdirTemp("", "")
 	assert.NoError(err)
 	defer os.RemoveAll(tfDir)
 	tfFilePath := path.Join(tfDir, "test.tf")
-	err = ioutil.WriteFile(tfFilePath, []byte(tf), 0644)
+	err = os.WriteFile(tfFilePath, []byte(tf), 0644)
 	assert.NoError(err)
 
 	// apply tf and get outputs

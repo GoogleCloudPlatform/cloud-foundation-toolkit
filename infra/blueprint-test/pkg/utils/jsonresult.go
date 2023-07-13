@@ -17,7 +17,7 @@
 package utils
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/tidwall/gjson"
@@ -26,7 +26,7 @@ import (
 // LoadJSON reads and parses a json file into a gjson.Result.
 // It fails test if not unable to parse.
 func LoadJSON(t testing.TB, path string) gjson.Result {
-	j, err := ioutil.ReadFile(path)
+	j, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("Error reading json file %s", path)
 	}

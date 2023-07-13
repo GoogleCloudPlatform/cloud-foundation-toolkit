@@ -16,7 +16,7 @@ package scorecard
 
 import (
 	"context"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -58,7 +58,7 @@ func TestGetAssetFromJSON(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			fileContent, err := ioutil.ReadFile(testRoot + tc.assetJSONFile)
+			fileContent, err := os.ReadFile(testRoot + tc.assetJSONFile)
 			if err != nil {
 				t.Fatal("unexpected error", err)
 			}
@@ -113,8 +113,8 @@ func TestGetViolations(t *testing.T) {
 	}
 	violationMap := make(map[string]int)
 	for _, v := range violations {
-		violationMap[v.Constraint+"-"+v.Resource] = 1
-		Log.Debug("Found violation", "constraint", v.Constraint, "resource", v.Resource)
+		violationMap[v.Violation.Constraint+"-"+v.Resource] = 1
+		Log.Debug("Found violation", "constraint", v.Violation.Constraint, "resource", v.Resource)
 	}
 
 	for _, tc := range testCases {

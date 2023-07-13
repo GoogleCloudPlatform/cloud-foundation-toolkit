@@ -18,8 +18,8 @@ package test
 
 import (
 	"fmt"
-	"testing"
 	"os"
+	"testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
@@ -28,13 +28,13 @@ import (
 
 func TestCFTSimpleModule(t *testing.T) {
 	path, _ := os.Getwd()
-	statePath:= fmt.Sprintf("%s/../examples/simple_tf_module/local_backend.tfstate", path)
+	statePath := fmt.Sprintf("%s/../examples/simple_tf_module/local_backend.tfstate", path)
 	networkBlueprint := tft.NewTFBlueprintTest(t,
 		tft.WithTFDir("../examples/simple_tf_module"),
 		tft.WithBackendConfig(map[string]interface{}{
 			"path": statePath,
 		}),
-		tft.WithSetupPath("setup/simple_tf_module"),
+		tft.WithSetupPath("setup"),
 	)
 	networkBlueprint.DefineVerify(
 		func(assert *assert.Assertions) {
@@ -45,7 +45,7 @@ func TestCFTSimpleModule(t *testing.T) {
 			assert.FileExists(statePath)
 
 			//test for GetTFSetupStringOutput
-			assert.Contains(networkBlueprint.GetTFSetupStringOutput("project_id"),"ci-bptest")
+			assert.Contains(networkBlueprint.GetTFSetupStringOutput("project_id"), "ci-bptest")
 		})
 	networkBlueprint.Test()
 }

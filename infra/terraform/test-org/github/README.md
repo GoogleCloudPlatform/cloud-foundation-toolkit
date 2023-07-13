@@ -13,3 +13,18 @@ export GITHUB_TOKEN=aaaaaaa
 ```
 
 Note, because of the many resources involved, you might need to run Terraform with `-refresh=false`.
+
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Inputs
+
+No inputs.
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| labels | n/a |
+| protected\_repos | n/a |
+
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2019-2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,4 +102,14 @@ output "ci_media_cdn_vod_project_id" {
 
 output "modules" {
   value = [for value in local.repos : value if try(value.module, true)]
+
+  precondition {
+    condition     = length(setsubtract(local.invalid_owners, var.temp_allow_invalid_owners)) == 0
+    error_message = "Provided Repo Owners are not currently members of GCP or TGM Orgs: ${join(", ", local.invalid_owners)}. You can bypass this error by setting these members in temp_allow_invalid_owners var when running plan/apply."
+  }
+
+}
+
+output "bpt_folder" {
+  value = module.bpt_ci_folder.id
 }

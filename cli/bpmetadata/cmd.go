@@ -19,6 +19,7 @@ var mdFlags struct {
 	force    bool
 	display  bool
 	validate bool
+	quiet    bool
 }
 
 const (
@@ -27,12 +28,13 @@ const (
 	tfRolesFileName         = "test/setup/iam.tf"
 	tfServicesFileName      = "test/setup/main.tf"
 	iconFilePath            = "assets/icon.png"
-	modulesPath             = "modules"
+	modulesPath             = "modules/"
 	examplesPath            = "examples"
 	metadataFileName        = "metadata.yaml"
 	metadataDisplayFileName = "metadata.display.yaml"
 	metadataApiVersion      = "blueprints.cloud.google.com/v1alpha1"
 	metadataKind            = "BlueprintMetadata"
+	localConfigAnnotation   = "config.kubernetes.io/local-config"
 )
 
 func init() {
@@ -43,15 +45,18 @@ func init() {
 	Cmd.Flags().StringVarP(&mdFlags.path, "path", "p", ".", "Path to the blueprint for generating metadata.")
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
 	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
+	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Run in quiet mode suppressing all prompts.")
 }
 
 var Cmd = &cobra.Command{
 	Use:   "metadata",
-	Short: "Generates blueprint metatda",
+	Short: "Generates blueprint metadata",
 	Long:  `Generates metadata.yaml for specified blueprint`,
 	Args:  cobra.NoArgs,
 	RunE:  generate,
 }
+
+var repoDetails repoDetail
 
 // The top-level command function that generates metadata based on the provided flags
 func generate(cmd *cobra.Command, args []string) error {
@@ -79,7 +84,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 	// throw an error and exit if root level readme.md doesn't exist
 	if err != nil {
-		return fmt.Errorf("Top-level module does not have a readme. Details: %w\n", err)
+		return fmt.Errorf("top-level module does not have a readme. Details: %w\n", err)
 	}
 
 	allBpPaths = append(allBpPaths, currBpPath)
@@ -108,7 +113,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 		// log info if a sub-module doesn't have a readme.md and continue
 		if err != nil {
-			Log.Info("Skipping metadata for sub-module identified as an internal module", "Path:", modPath)
+			Log.Info("skipping metadata for sub-module identified as an internal module", "Path:", modPath)
 			continue
 		}
 
@@ -128,7 +133,7 @@ func generate(cmd *cobra.Command, args []string) error {
 func generateMetadataForBpPath(bpPath string) error {
 	//try to read existing metadata.yaml
 	bpObj, err := UnmarshalMetadata(bpPath, metadataFileName)
-	if err != nil && !mdFlags.force {
+	if err != nil && !errors.Is(err, os.ErrNotExist) && !mdFlags.force {
 		return err
 	}
 
@@ -151,7 +156,7 @@ func generateMetadataForBpPath(bpPath string) error {
 	}
 
 	bpDpObj, err := UnmarshalMetadata(bpPath, metadataDisplayFileName)
-	if err != nil && !mdFlags.force {
+	if err != nil && !errors.Is(err, os.ErrNotExist) && !mdFlags.force {
 		return err
 	}
 
@@ -171,10 +176,28 @@ func generateMetadataForBpPath(bpPath string) error {
 }
 
 func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*BlueprintMetadata, error) {
-	// verfiy that the blueprint path is valid & get repo details
-	repoDetails, err := getRepoDetailsByPath(bpPath, bpMetadataObj.Spec.Info.Source)
+	// Verify that readme is present.
+	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
+	}
+
+	// verify that the blueprint path is valid & get repo details
+	getRepoDetailsByPath(bpPath, &repoDetails, readmeContent)
+	if repoDetails.ModuleName == "" && !mdFlags.quiet {
+		fmt.Printf("Provide a name for the blueprint at path [%s]: ", bpPath)
+		_, err := fmt.Scan(&repoDetails.ModuleName)
+		if err != nil {
+			fmt.Println("Unable to scan the name for the blueprint.")
+		}
+	}
+
+	if repoDetails.Source.URL == "" && !mdFlags.quiet {
+		fmt.Printf("Provide a URL for the blueprint source at path [%s]: ", bpPath)
+		_, err := fmt.Scan(&repoDetails.Source.URL)
+		if err != nil {
+			fmt.Println("Unable to scan the URL for the blueprint.")
+		}
 	}
 
 	// start creating blueprint metadata
@@ -185,22 +208,16 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		},
 		ObjectMeta: yaml.ObjectMeta{
 			NameMeta: yaml.NameMeta{
-				Name:      repoDetails.Name,
+				Name:      repoDetails.ModuleName,
 				Namespace: "",
 			},
 			Labels:      bpMetadataObj.ResourceMeta.ObjectMeta.Labels,
-			Annotations: map[string]string{"config.kubernetes.io/local-config": "true"},
+			Annotations: map[string]string{localConfigAnnotation: "true"},
 		},
 	}
 
-	// start creating the Spec node
-	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
-	if err != nil {
-		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
-	}
-
 	// create blueprint info
-	err = bpMetadataObj.Spec.Info.create(bpPath, readmeContent)
+	err = bpMetadataObj.Spec.Info.create(bpPath, repoDetails, readmeContent)
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
@@ -212,18 +229,17 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	}
 
 	// get blueprint requirements
-	rolesCfgPath := path.Join(repoDetails.Source.RootPath, tfRolesFileName)
-	svcsCfgPath := path.Join(repoDetails.Source.RootPath, tfServicesFileName)
+	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)
+	svcsCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfServicesFileName)
 	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath)
 	if err != nil {
-		return nil, fmt.Errorf("error creating blueprint requirements: %w", err)
+		Log.Warn(fmt.Sprintf("Blueprint requirements could not be created. Details: %s", err.Error()))
+	} else {
+		bpMetadataObj.Spec.Requirements = *requirements
 	}
 
-	bpMetadataObj.Spec.Requirements = *requirements
-
 	// create blueprint content i.e. documentation, icons, etc.
-	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.RootPath, readmeContent)
-
+	bpMetadataObj.Spec.Content.create(bpPath, repoDetails.Source.BlueprintRootPath, readmeContent)
 	return bpMetadataObj, nil
 }
 
@@ -238,42 +254,35 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 			NameMeta: yaml.NameMeta{
 				Name: bpCore.ResourceMeta.ObjectMeta.Name + "-display",
 			},
-			Labels: bpDisp.ResourceMeta.ObjectMeta.Labels,
+			Labels:      bpDisp.ResourceMeta.ObjectMeta.Labels,
+			Annotations: map[string]string{localConfigAnnotation: "true"},
 		},
 	}
 
-	if bpDisp.Spec.Info.Title == "" {
-		bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
-	}
-
-	if bpDisp.Spec.Info.Source == nil {
-		bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
-	}
-
+	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
+	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
 	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, &bpDisp.Spec.UI.Input)
 
 	return bpDisp, nil
 }
 
-func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
+func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte) error {
 	title, err := getMdContent(readmeContent, 1, 1, "", false)
 	if err != nil {
-		return err
+		return fmt.Errorf("title tag missing in markdown, err: %w", err)
 	}
 
 	i.Title = title.literal
-	repoDetails, err := getRepoDetailsByPath(bpPath, i.Source)
-	if err != nil {
-		return err
+	rootPath := r.Source.RepoRootPath
+	if rootPath == "" {
+		rootPath = r.Source.BlueprintRootPath
 	}
 
+	bpDir := strings.ReplaceAll(bpPath, rootPath, "")
 	i.Source = &BlueprintRepoDetail{
-		Repo:       repoDetails.Source.Path,
-		SourceType: "git",
-	}
-
-	if dir := getBpSubmoduleName(bpPath); dir != "" {
-		i.Source.Dir = dir
+		Repo:       r.Source.URL,
+		SourceType: r.Source.SourceType,
+		Dir:        bpDir,
 	}
 
 	versionInfo, err := getBlueprintVersion(path.Join(bpPath, tfVersionsFileName))
@@ -313,7 +322,7 @@ func (i *BlueprintInfo) create(bpPath string, readmeContent []byte) error {
 	}
 
 	// create icon
-	iPath := path.Join(repoDetails.Source.RootPath, iconFilePath)
+	iPath := path.Join(r.Source.BlueprintRootPath, iconFilePath)
 	exists, _ := fileExists(iPath)
 	if exists {
 		i.Icon = iconFilePath
@@ -397,7 +406,7 @@ func UnmarshalMetadata(bpPath, fileName string) (*BlueprintMetadata, error) {
 
 	// return empty metadata if file does not exist or if the file is not read
 	if _, err := os.Stat(metaFilePath); errors.Is(err, os.ErrNotExist) {
-		return &bpObj, nil
+		return &bpObj, err
 	}
 
 	f, err := os.ReadFile(metaFilePath)

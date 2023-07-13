@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright 2019 Google LLC
+# Copyright 2019-2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,5 +20,6 @@ cd /build
 
 TERRAFORM_DOCS_VERSION=$1
 
-wget "https://github.com/segmentio/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64"
-install -o 0 -g 0 -m 0755 "terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64" /usr/local/bin/terraform-docs
+wget -q "https://github.com/segmentio/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64.tar.gz"
+tar xzf ./terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64.tar.gz
+install -o 0 -g 0 -m 0755 "terraform-docs" /usr/local/bin/terraform-docs
