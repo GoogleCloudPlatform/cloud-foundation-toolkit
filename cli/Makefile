@@ -17,15 +17,12 @@ PROTOC_DIR=./bpmetadata
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
 .PHONY: build
-build: build-schema
+build: protoc-gen build-schema
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
 .PHONY: build-schema
 build-schema:
 	go run ./${SCHEMA_DIR} -output=${SCHEMA_DIR}
-
-.PHONY: protoc
-protoc: protoc-deps protoc-gen
 
 .PHONY: protoc-gen
 protoc-gen:

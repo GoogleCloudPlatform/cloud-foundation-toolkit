@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -231,8 +232,9 @@ func getBlueprintVariable(modVar *tfconfig.Variable) *BlueprintVariable {
 		VarType:     modVar.Type,
 	}
 
-	if modVar.Default != nil {
-		v.DefaultValue = fmt.Sprintf("%v", modVar.Default)
+	vl, err := structpb.NewValue(modVar.Default)
+	if err == nil {
+		v.DefaultValue = vl
 	}
 
 	return v

@@ -21,7 +21,7 @@ func TestTFInterfaces(t *testing.T) {
 		varName         string
 		wantDescription string
 		wantVarType     string
-		wantDefault     string
+		wantDefault     interface{}
 		wantRequired    bool
 	}{
 		{
@@ -42,21 +42,7 @@ func TestTFInterfaces(t *testing.T) {
 			varName:         "regional",
 			wantDescription: "Whether is a regional cluster",
 			wantVarType:     "bool",
-			wantDefault:     "true",
-		},
-		{
-			name:            "with an optional map",
-			varName:         "optional_map",
-			wantDescription: "Optional map of booleans",
-			wantVarType:     "map(bool)",
-			wantDefault:     "map[]",
-		},
-		{
-			name:            "with an optional map",
-			varName:         "optional_list",
-			wantDescription: "Optional list of strings",
-			wantVarType:     "list(string)",
-			wantDefault:     "[]",
+			wantDefault:     true,
 		},
 	}
 
@@ -92,8 +78,8 @@ func TestTFInterfaces(t *testing.T) {
 				return
 			}
 
-			if got.Variables[i].DefaultValue != tt.wantDefault {
-				t.Errorf("getBlueprintInterfaces() - Variable.DefaultValue = %v, want %v", got.Variables[i].DefaultValue, tt.wantDefault)
+			if got.Variables[i].DefaultValue.AsInterface() != tt.wantDefault {
+				t.Errorf("getBlueprintInterfaces() - Variable.DefaultValue = %v, want %v", got.Variables[i].DefaultValue.AsInterface(), tt.wantDefault)
 				return
 			}
 

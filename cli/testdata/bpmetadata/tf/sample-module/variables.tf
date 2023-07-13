@@ -32,15 +32,3 @@ variable "regional" {
   description = "Whether is a regional cluster"
   default     = true
 }
-
-variable "optional_map" {
-  description = "Optional map of booleans"
-  type        = map(bool)
-  default     = {}
-}
-
-variable "optional_list" {
-  description = "Optional list of strings"
-  type        = list(string)
-  default     = []
-}

@@ -1025,6 +1025,16 @@
       "required": [
         "heading"
       ]
+    },
+    "Value": {
+      "properties": {
+        "Kind": true
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "Kind"
+      ]
     }
   }
 }

@@ -3,6 +3,7 @@ syntax = "proto3";
 package google.cloud.config.bpmetadata;
 
 import "bpmetadata_ui.proto";
+import "google/protobuf/struct.proto";
 
 // TODO: update copybara configuration for go to java package transformation
 option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
@@ -450,7 +451,7 @@ message BlueprintVariable {
   string name = 1; // @gotags: json:"name,omitempty" yaml:"name,omitempty"
   string description = 2; // @gotags: json:"description,omitempty" yaml:"description,omitempty"
   string var_type = 3; // @gotags: json:"varType,omitempty" yaml:"varType,omitempty"
-  string default_value = 4; // @gotags: json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"
+  google.protobuf.Value default_value = 4; // @gotags: json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"
   bool required = 5; // @gotags: json:"required,omitempty" yaml:"required,omitempty"
 }
 
