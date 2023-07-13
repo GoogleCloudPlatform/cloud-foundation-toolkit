@@ -52,7 +52,7 @@ int_test:
 	${INT_TEST_DIR}/workflow.sh ${INT_TEST_DIR}
 
 .PHONY: go_test
-go_test:
+go_test: build
 	go test ./...
 
 .PHONY: test
