@@ -165,7 +165,7 @@ RUN /build/install_tinkey.sh ${TINKEY_VERSION}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN gem install bundler:2.1.4 && bundle install
+RUN gem install bundler:2.2.33 && bundle install
 
 COPY ./build/install_verify_boilerplate.sh /build/
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
