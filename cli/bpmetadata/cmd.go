@@ -179,7 +179,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	// Verify that readme is present.
 	readmeContent, err := os.ReadFile(path.Join(bpPath, readmeFileName))
 	if err != nil {
-		return nil, fmt.Errorf("error reading blueprint readme markdown: %w", err)
+		return nil, fmt.Errorf("blueprint readme markdown is missing, create one using https://tinyurl.com/tf-mod-readme | error: %w", err)
 	}
 
 	// verify that the blueprint path is valid & get repo details
@@ -233,7 +233,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	svcsCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfServicesFileName)
 	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath)
 	if err != nil {
-		Log.Warn(fmt.Sprintf("Blueprint requirements could not be created. Details: %s", err.Error()))
+		Log.Info("blueprint requirements (roles and services) were not found")
 	} else {
 		bpMetadataObj.Spec.Requirements = *requirements
 	}

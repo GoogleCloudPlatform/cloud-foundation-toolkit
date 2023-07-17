@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v1.1.10
+VERSION=v1.1.11
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
@@ -17,7 +17,7 @@ LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
 # need an extra build command to embed an most up to date schema in the binary
 .PHONY: build
-build:
+build: protoc
 	go run ./${SCHEMA_DIR} -output=${SCHEMA_DIR}
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
