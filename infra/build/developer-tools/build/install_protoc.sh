@@ -26,7 +26,9 @@ cd /build
 curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip"
 unzip "protoc-${PROTOC_VERSION}-linux-x86_64.zip" -d $HOME/.local
 rm "protoc-${PROTOC_VERSION}-linux-x86_64.zip"
-install -o 0 -g 0 -m 0755 $HOME/.local/bin/protoc /usr/local/bin/protoc
+chmod 755 $HOME/.local/bin/protoc
+cp $HOME/.local/bin/protoc /usr/local/bin/
+cp -R $HOME/.local/include/* /usr/local/include/
 
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOC_GEN_GO_VERSION}
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${PROTOC_GEN_GO_GRPC_VERSION}

@@ -236,6 +236,10 @@ RUN terraform --version && \
     cft version && \
     protoc --version
 
+# Add GO_PATH TO PATH
+ENV GO_PATH="/root/go"
+ENV PATH=$GO_PATH/bin:$PATH
+
 # Cleanup intermediate build artifacts
 RUN rm -rf /build
 RUN go version
