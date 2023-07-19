@@ -31,6 +31,10 @@ TERRAGRUNT_VERSION := 0.25.3
 KUSTOMIZE_VERSION := 3.6.1
 # Updated by Update Tooling Workflow
 KPT_VERSION := 1.0.0-beta.38
+PROTOC_VERSION := 23.4
+PROTOC_GEN_GO_VERSION := 1.31
+PROTOC_GEN_GO_GRPC_VERSION := 1.3
+PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
 CFT_CLI_VERSION := 1.1.10
 # Updated by Update Tooling Workflow
@@ -77,6 +81,10 @@ build-image-developer-tools:
 		--build-arg TERRAGRUNT_VERSION=${TERRAGRUNT_VERSION} \
 		--build-arg KUSTOMIZE_VERSION=${KUSTOMIZE_VERSION} \
 		--build-arg KPT_VERSION=${KPT_VERSION} \
+		--build-arg PROTOC_VERSION=${PROTOC_VERSION} \
+		--build-arg PROTOC_GEN_GO_VERSION=${PROTOC_GEN_GO_VERSION} \
+		--build-arg PROTOC_GEN_GO_GRPC_VERSION=${PROTOC_GEN_GO_GRPC_VERSION} \
+		--build-arg PROTOC_GEN_GO_INJECT_TAG=${PROTOC_GEN_GO_INJECT_TAG} \
 		--build-arg CFT_CLI_VERSION=${CFT_CLI_VERSION} \
 		--build-arg KUBECTL_VERSION=${KUBECTL_VERSION} \
 		--build-arg TFLINT_VERSION=${TFLINT_VERSION} \
