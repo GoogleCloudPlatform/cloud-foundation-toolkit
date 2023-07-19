@@ -672,7 +672,7 @@ locals {
     {
       name        = "terraform-google-crmint"
       org         = "GoogleCloudPlatform"
-      description = "Deploy the Marketing Analytics application CRMint"
+      description = "Deploy the marketing analytics application, CRMint"
       owners      = ["dulacp"]
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e], ["marketing"])
     },
