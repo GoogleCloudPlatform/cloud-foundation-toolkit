@@ -2,11 +2,13 @@ package kpt
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	kptfilev1 "github.com/GoogleContainerTools/kpt-functions-sdk/go/api/kptfile/v1"
 	kptutil "github.com/GoogleContainerTools/kpt-functions-sdk/go/api/util"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/mitchellh/go-testing-interface"
 	"sigs.k8s.io/kustomize/kyaml/kio/kioutil"
@@ -21,6 +23,7 @@ type CmdCfg struct {
 	dir       string         // dir to execute commands in
 	logger    *logger.Logger // custom logger
 	t         testing.TB     // TestingT or TestingB
+	tries     int            // qty to try kpt command, default: 3
 }
 
 type cmdOption func(*CmdCfg)
@@ -48,6 +51,7 @@ func NewCmdConfig(t testing.TB, opts ...cmdOption) *CmdCfg {
 	kOpts := &CmdCfg{
 		logger: utils.GetLoggerFromT(),
 		t:      t,
+		tries:  3,
 	}
 	// apply options
 	for _, opt := range opts {
@@ -75,7 +79,10 @@ func (k *CmdCfg) RunCmd(args ...string) string {
 		Logger:     k.logger,
 		WorkingDir: k.dir,
 	}
-	op, err := shell.RunCommandAndGetStdOutE(k.t, kptCmd)
+	command := func() (string, error) {
+		return shell.RunCommandAndGetStdOutE(k.t, kptCmd)
+	}
+	op, err := retry.DoWithRetryE(k.t, "run kpt command", k.tries, 15*time.Second, command)
 	if err != nil {
 		k.t.Fatal(err)
 	}
