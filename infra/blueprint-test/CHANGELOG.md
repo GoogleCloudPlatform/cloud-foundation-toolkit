@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.6.1...infra/blueprint-test/v0.7.0) (2023-07-20)
+
+
+### Features
+
+* Add HTTP Assert test helpers ([#1707](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1707)) ([9c423f9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/9c423f910c14899eb311bf9b026439eb70378602))
+* add retry for kpt commands ([#1717](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1717)) ([55c9c8d](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/55c9c8dcf85b8eacdb8ff2c9d19582a445e192ab))
+
 ## [0.6.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.6.0...infra/blueprint-test/v0.6.1) (2023-06-27)
 
 
