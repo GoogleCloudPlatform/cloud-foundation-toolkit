@@ -731,5 +731,13 @@ locals {
       groups          = ["dee-data-ai", local.jss_common_group]
       enable_periodic = true
     },
+    {
+      name            = "terraform-google-secured-data-warehouse-onprem-ingest"
+      short_name      = "sdw-onprem-ingest"
+      org             = "GoogleCloudPlatform"
+      description     = "Secured Data Warehouse blueprint variant for ingesting encrypted data from on-prem sources"
+      owners          = ["lanreogunmola"]
+      topics          = join(",", [local.common_topics.da, local.common_topics.security, local.common_topics.e2e])
+    },
   ]
 }
