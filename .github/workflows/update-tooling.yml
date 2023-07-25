@@ -9,9 +9,9 @@ env:
   CLOUD_SDK_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
   KPT_URL: "https://api.github.com/repos/GoogleContainerTools/kpt/releases"
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
-  KUBECTL_MINOR: "1.25"
+  KUBECTL_MINOR: "1.26"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
-  GATOR_MINOR: "3.11"
+  GATOR_MINOR: "3.12"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
   GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases/latest"
 
