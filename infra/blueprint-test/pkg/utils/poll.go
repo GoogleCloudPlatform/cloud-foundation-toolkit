@@ -17,6 +17,7 @@
 package utils
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/mitchellh/go-testing-interface"
@@ -25,12 +26,21 @@ import (
 // Polls on a particular condition function while the returns true.
 // It fails the test if the condition is not met within numRetries.
 func Poll(t testing.TB, condition func() (bool, error), numRetries int, interval time.Duration) {
+	err := PollE(t, condition, numRetries, interval)
+	if err != nil {
+		t.Fatalf("failed to pull provided condition after %d retries, last error: %v", numRetries, err)
+	}
+}
+
+// Polls on a particular condition function while the returns true.
+// Returns an error if the condition is not met within numRetries.
+func PollE(t testing.TB, condition func() (bool, error), numRetries int, interval time.Duration) error {
 	if numRetries < 0 {
-		t.Fatal("invalid value for numRetries. Must be >= 0")
+		return fmt.Errorf("invalid value for numRetries. Must be >= 0")
 	}
 
 	if interval <= 0 {
-		t.Fatal("invalid value for numRetries. Must be > 0")
+		return fmt.Errorf("invalid value for numRetries. Must be > 0")
 	}
 
 	retry, err := condition()
@@ -45,10 +55,12 @@ func Poll(t testing.TB, condition func() (bool, error), numRetries int, interval
 	}
 
 	if err != nil {
-		t.Fatalf("failed to pull provided condition after %d retries, last error: %v", numRetries, err)
+		return fmt.Errorf("failed to pull provided condition after %d retries, last error: %v", numRetries, err)
 	}
 
 	if retry {
-		t.Fatalf("polling timed out after %d retries with %d second intervals", numRetries, interval/time.Second)
+		return fmt.Errorf("polling timed out after %d retries with %d second intervals", numRetries, interval/time.Second)
 	}
+
+	return nil
 }
