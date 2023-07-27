@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source 'https://rubygems.org/' do
-  gem "kitchen-terraform", "~> 6.0"
-  gem "kubeclient", "~> 4.9"
-  gem "rest-client", "~> 2.0"
-  gem 'nokogiri', '~> 1.14'
-end
-ruby '~> 2.7.8'
+source 'https://rubygems.org/'
+gem "kitchen-terraform", "~> 6.1"
+gem "kubeclient", "~> 4.9"
+gem "rest-client", "~> 2.0"
+gem 'nokogiri', '~> 1.14'
+ruby '~> 3.0.6'
