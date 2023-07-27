@@ -17,7 +17,7 @@
 resource "google_cloudbuild_trigger" "int_trigger" {
   provider    = google-beta
   project     = local.project_id
-  name        = "${each.key}-int-trigger"
+  name        = "${substr(each.key, 0, 50)}-int-trigger"
   description = "Integration tests on pull request for ${each.key}"
   for_each    = local.repo_folder
   github {
