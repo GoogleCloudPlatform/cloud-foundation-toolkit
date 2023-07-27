@@ -70,6 +70,7 @@ type TFBlueprintTest struct {
 	apply                         func(*assert.Assertions) // apply function
 	verify                        func(*assert.Assertions) // verify function
 	teardown                      func(*assert.Assertions) // teardown function
+	setupOutputOverrides          map[string]interface{}   // override outputs from the Setup phase
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -146,6 +147,12 @@ func WithVars(vars map[string]interface{}) tftOption {
 func WithLogger(logger *logger.Logger) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.logger = logger
+	}
+}
+
+func WithSetupOutputs(vars map[string]interface{}) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.setupOutputOverrides = vars
 	}
 }
 
@@ -282,6 +289,9 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 // GetTFSetupOutputListVal returns TF output from setup for a given key as list.
 // It fails test if given key does not output a list type.
 func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
+	if v, ok := b.setupOutputOverrides[key]; ok {
+		return v.([]string)
+	}
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
@@ -291,6 +301,9 @@ func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 // GetTFSetupStringOutput returns TF setup output for a given key as string.
 // It fails test if given key does not output a primitive or if setupDir is not configured.
 func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
+	if v, ok := b.setupOutputOverrides[key]; ok {
+		return v.(string)
+	}
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}

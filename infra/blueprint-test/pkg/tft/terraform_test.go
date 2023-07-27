@@ -75,20 +75,28 @@ output "simple_map" {
 	}
 }
 
-func getTFOutputMap(t *testing.T, tf string) map[string]interface{} {
+// newTestDir creates a new directory suitable for use as TFDir
+func newTestDir(t *testing.T, pattern string, input string) string {
 	t.Helper()
 	assert := assert.New(t)
 
 	// setup tf file
-	tfDir, err := os.MkdirTemp("", "")
+	tfDir, err := os.MkdirTemp("", pattern)
 	assert.NoError(err)
-	defer os.RemoveAll(tfDir)
 	tfFilePath := path.Join(tfDir, "test.tf")
-	err = os.WriteFile(tfFilePath, []byte(tf), 0644)
+	err = os.WriteFile(tfFilePath, []byte(input), 0644)
 	assert.NoError(err)
+	return tfDir
+}
+
+func getTFOutputMap(t *testing.T, tf string) map[string]interface{} {
+	t.Helper()
+
+	tfDir := newTestDir(t, "", tf)
+	defer os.RemoveAll(tfDir)
 
 	// apply tf and get outputs
-	tOpts := &terraform.Options{TerraformDir: path.Dir(tfFilePath), Logger: logger.Discard}
+	tOpts := &terraform.Options{TerraformDir: tfDir, Logger: logger.Discard}
 	terraform.Init(t, tOpts)
 	terraform.Apply(t, tOpts)
 	return terraform.OutputAll(t, tOpts)
@@ -117,6 +125,138 @@ func TestGetKVFromOutputString(t *testing.T) {
 				assert.NoError(err)
 				assert.Equal(tt.wantKey, gotKey)
 				assert.Equal(tt.wantVal, gotVal)
+			}
+		})
+	}
+}
+
+func TestSetupOverrideString(t *testing.T) {
+	tests := []struct {
+		name      string
+		tfOutputs string
+		overrides map[string]interface{}
+		want      map[string]string
+	}{
+		{name: "no overrides",
+			tfOutputs: `
+			output "simple_string" {
+			  value = "foo"
+			}
+			
+			output "simple_num" {
+			  value = 1
+			}
+			
+			output "simple_bool" {
+			  value = true
+			}
+			`,
+			overrides: map[string]interface{}{},
+			want: map[string]string{
+				"simple_string": "foo",
+				"simple_num":    "1",
+				"simple_bool":   "true",
+			},
+		},
+		{name: "all overrides",
+			tfOutputs: `
+			output "simple_string" {
+			  value = "foo"
+			}
+			
+			output "simple_num" {
+			  value = 1
+			}
+			
+			output "simple_bool" {
+			  value = true
+			}
+			`,
+			overrides: map[string]interface{}{
+				"simple_string": "bar",
+				"simple_num":    "2",
+				"simple_bool":   "false",
+			},
+			want: map[string]string{
+				"simple_string": "bar",
+				"simple_num":    "2",
+				"simple_bool":   "false",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			emptyDir := newTestDir(t, "empty*", "")
+			setupDir := newTestDir(t, "setup-*", tt.tfOutputs)
+			defer os.RemoveAll(emptyDir)
+			defer os.RemoveAll(setupDir)
+			b := NewTFBlueprintTest(&testingiface.RuntimeT{},
+				WithSetupOutputs(tt.overrides),
+				WithTFDir(emptyDir),
+				WithSetupPath(setupDir))
+			// create outputs from setup
+			_, err := terraform.ApplyE(t, &terraform.Options{TerraformDir: setupDir})
+			if err != nil {
+				t.Fatalf("Failed to apply setup: %v", err)
+			}
+			for k, want := range tt.want {
+				if b.GetTFSetupStringOutput(k) != want {
+					t.Errorf("unexpected string output for %s: want %s got %s", k, want, b.GetStringOutput(k))
+				}
+			}
+		})
+	}
+}
+func TestSetupOverrideList(t *testing.T) {
+	tests := []struct {
+		name      string
+		tfOutputs string
+		overrides map[string]interface{}
+		want      map[string][]string
+	}{
+		{name: "no overrides",
+			tfOutputs: `
+				output "simple_list" {
+					value = ["foo","bar"]
+				}
+			`,
+			overrides: map[string]interface{}{},
+			want: map[string][]string{
+				"simple_list": {"foo", "bar"},
+			},
+		},
+		{name: "all overrides",
+			tfOutputs: `
+				output "simple_list" {
+					value = ["foo","bar"]
+				}
+			`,
+			overrides: map[string]interface{}{
+				"simple_list": []string{"apple", "orange"},
+			},
+			want: map[string][]string{
+				"simple_list": {"apple", "orange"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			emptyDir := newTestDir(t, "empty*", "")
+			setupDir := newTestDir(t, "setup-*", tt.tfOutputs)
+			defer os.RemoveAll(emptyDir)
+			defer os.RemoveAll(setupDir)
+			b := NewTFBlueprintTest(&testingiface.RuntimeT{},
+				WithSetupOutputs(tt.overrides),
+				WithTFDir(emptyDir),
+				WithSetupPath(setupDir))
+			// create outputs from setup
+			_, err := terraform.ApplyE(t, &terraform.Options{TerraformDir: setupDir})
+			if err != nil {
+				t.Fatalf("Failed to apply setup: %v", err)
+			}
+			for k, want := range tt.want {
+				got := b.GetTFSetupOutputListVal(k)
+				assert.ElementsMatchf(t, got, want, "list mismatch: want %s got %s", want)
 			}
 		})
 	}
