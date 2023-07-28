@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths:
-      - 'infra/build/developer-tools/build/scripts/module-swapper/**'
+      - 'infra/build/developer-tools/module-swapper/**'
       - '.github/workflows/go-module-swapper.yml'
 
 concurrency:
@@ -19,7 +19,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: 'infra/build/developer-tools/build/scripts/module-swapper'
+        working-directory: 'infra/build/developer-tools/module-swapper'
     strategy:
       fail-fast: false
       matrix:
@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
     - uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4
       with:
-        go-version-file: infra/build/developer-tools/build/scripts/module-swapper/go.mod
-        cache-dependency-path: infra/build/developer-tools/build/scripts/module-swapper/go.sum
+        go-version-file: infra/build/developer-tools/module-swapper/go.mod
+        cache-dependency-path: infra/build/developer-tools/module-swapper/go.sum
     - run: |-
         go test ./... -v
