@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v1.1.11
+VERSION=v1.1.12
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
@@ -11,20 +11,27 @@ BUCKET=gs://cft-cli
 INT_TEST_DIR=./bpmetadata/int-test
 SCHEMA_DIR=./bpmetadata/schema
 PROTO_DIR=./bpmetadata/proto
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.14
+DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
+REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 
-# need an extra build command to embed an most up to date schema in the binary
 .PHONY: build
-build: protoc
+build: protoc build-go
+
+.PHONY: build-go
+build-go:
 	go run ./${SCHEMA_DIR} -output=${SCHEMA_DIR}
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
 .PHONY: protoc
 protoc:
-	protoc --go_out=${PROTO_DIR}/out --go_opt=paths=source_relative ${PROTO_DIR}/*.proto
-	go build ${PROTO_DIR}/out/...
+	docker run --rm -it \
+		-v "$(CURDIR)":/workspace \
+		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
+		mkdir -p ${PROTO_DIR}/out && protoc --go_out=${PROTO_DIR}/out --go_opt=paths=source_relative ${PROTO_DIR}/*.proto
 
 .PHONY: publish
 publish:
