@@ -74,6 +74,19 @@ ENV KUSTOMIZE_VERSION ${KUSTOMIZE_VERSION}
 ARG KPT_VERSION
 ENV KPT_VERSION ${KPT_VERSION}
 
+# Required to install protoc-gen dependencies
+ARG PROTOC_VERSION
+ENV PROTOC_VERSION ${PROTOC_VERSION}
+
+ARG PROTOC_GEN_GO_VERSION
+ENV PROTOC_GEN_GO_VERSION ${PROTOC_GEN_GO_VERSION}
+
+ARG PROTOC_GEN_GO_GRPC_VERSION
+ENV PROTOC_GEN_GO_GRPC_VERSION ${PROTOC_GEN_GO_GRPC_VERSION}
+
+ARG PROTOC_GEN_GO_INJECT_TAG
+ENV PROTOC_GEN_GO_INJECT_TAG ${PROTOC_GEN_GO_INJECT_TAG}
+
 # Required to download and install CFT CLI
 ARG CFT_CLI_VERSION
 ENV CFT_CLI_VERSION ${CFT_CLI_VERSION}
@@ -156,6 +169,9 @@ RUN /build/install_addlicense.sh
 ADD ./build/install_cft_cli.sh /build/
 RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
 
+ADD ./build/install_protoc.sh /build/
+RUN /build/install_protoc.sh ${PROTOC_VERSION} ${PROTOC_GEN_GO_VERSION} ${PROTOC_GEN_GO_GRPC_VERSION} ${PROTOC_GEN_GO_INJECT_TAG}
+
 ADD ./build/install_tflint.sh /build/
 RUN /build/install_tflint.sh ${TFLINT_VERSION}
 
@@ -165,7 +181,7 @@ RUN /build/install_tinkey.sh ${TINKEY_VERSION}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN gem install bundler:2.1.4 && bundle install
+RUN gem install bundler:2.2.33 && bundle install
 
 COPY ./build/install_verify_boilerplate.sh /build/
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
@@ -217,7 +233,12 @@ RUN terraform --version && \
     terragrunt -version && \
     kustomize version && \
     addlicense -help && \
-    cft version
+    cft version && \
+    protoc --version
+
+# Add GO_PATH TO PATH
+ENV GO_PATH="/root/go"
+ENV PATH=$GO_PATH/bin:$PATH
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build

@@ -12,6 +12,9 @@ INT_TEST_DIR=./bpmetadata/int-test
 SCHEMA_DIR=./bpmetadata/schema
 SRC_PROTO_DIR=./bpmetadata/proto
 PROTOC_DIR=./bpmetadata
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.14
+DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
+REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
@@ -20,20 +23,17 @@ LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
 build: protoc-gen build-schema
 	go build ${LDFLAGS} -o ${BUILD_DIR}/${NAME}
 
+.PHONY: protoc-gen
+protoc-gen:
+	docker run --rm -it \
+		-v "$(CURDIR)":/workspace \
+		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \		
+    protoc -I=${SRC_PROTO_DIR} --go_opt=paths=source_relative --go_out=${PROTOC_DIR} ${SRC_PROTO_DIR}/*.proto && \
+	  protoc-go-inject-tag -input="${PROTOC_DIR}/*.pb.go"
+
 .PHONY: build-schema
 build-schema:
 	go run ./${SCHEMA_DIR} -output=${SCHEMA_DIR}
-
-.PHONY: protoc-gen
-protoc-gen:
-	protoc -I=${SRC_PROTO_DIR} --go_opt=paths=source_relative --go_out=${PROTOC_DIR} ${SRC_PROTO_DIR}/*.proto
-	protoc-go-inject-tag -input="${PROTOC_DIR}/*.pb.go"
-
-.PHONY: protoc-deps
-protoc-deps:
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/favadi/protoc-go-inject-tag@v1.4.0
 
 .PHONY: publish
 publish:
