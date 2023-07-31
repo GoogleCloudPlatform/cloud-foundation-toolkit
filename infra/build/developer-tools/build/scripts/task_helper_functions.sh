@@ -329,9 +329,7 @@ function generate_metadata() {
     eval "cft blueprint metadata $arg"
   fi
 
-  if [ $? -eq 0 ]; then
-    echo "Success!"
-  else
+  if [ $? -ne 0 ]; then    
     echo "Warning! Unable to generate metadata."
   fi
   # add headers since comments are not preserved with metadata generation

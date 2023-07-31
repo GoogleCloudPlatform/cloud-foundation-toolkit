@@ -51,6 +51,13 @@
       "matchStrings": ["ALPINE_VERSION := (?<currentValue>.*?)\\n"],
       "datasourceTemplate": "docker",
       "depNameTemplate": "alpine"
+    },
+    {
+      "fileMatch": ["(^|/)Makefile$"],
+      "matchStrings": ["DOCKER_TAG_VERSION_DEVELOPER_TOOLS := (?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "docker",
+      "registryUrlTemplate": "https://gcr.io/cloud-foundation-cicd",
+      "depNameTemplate": "cft/developer-tools"
     }
   ]
 }
