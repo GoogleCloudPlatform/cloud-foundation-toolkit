@@ -2,8 +2,10 @@ syntax = "proto3";
 
 package google.cloud.config.bpmetadata;
 
-import "bpmetadata/proto/bpmetadata_ui.proto";
+import "bpmetadata_ui.proto";
+import "google/protobuf/struct.proto";
 
+// TODO: update copybara configuration for go to java package transformation
 option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
 
 // BlueprintMetadata defines the overall structure for blueprint metadata.
@@ -17,70 +19,70 @@ option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 message BlueprintMetadata {
   // APIVersion is the apiVersion field of a metadata file
   // Gen: auto-generated
-  string api_version = 1;
+  string api_version = 1; // @gotags: json:"apiVersion,omitempty" yaml:"apiVersion,omitempty"
 
   // Kind is the kind field of a metadata file
   // Gen: auto-generated
-  string kind = 2;
+  string kind = 2; // @gotags: json:"kind,omitempty" yaml:"kind,omitempty"
 
   // ResourceTypeMeta is the metadata field of a metadata file
   // Gen: partial
-  ResourceTypeMeta metadata = 3;
+  ResourceTypeMeta metadata = 3; // @gotags: json:"metadata,omitempty" yaml:"metadata,omitempty"
 
   // BlueprintMetadataSpec is the metadata specification for the blueprint
   // Gen: partial
-  BlueprintMetadataSpec spec = 4;
+  BlueprintMetadataSpec spec = 4; // @gotags: yaml:"spec" json:"spec"
 }
 
 message ResourceTypeMeta {
   // Name is the metadata.name field of a Resource
   // Gen: auto-generated
-  string name = 1;
+  string name = 1; // @gotags: json:"name,omitempty" yaml:"name,omitempty"
 
   // Labels is the metadata.labels field of a Resource
   // Gen: manually-authored
-  map<string, string> labels = 2;
+  map<string, string> labels = 2; // @gotags: json:"labels,omitempty" yaml:"labels,omitempty"
 
   // Annotations is the metadata.annotations field of a Resource.
   // Gen: auto-generated
-  map<string, string> annotations = 3;
+  map<string, string> annotations = 3; // @gotags: json:"annotations,omitempty" yaml:"annotations,omitempty"
 }
 
 // BlueprintMetadataSpec defines the spec portion of the blueprint metadata.
 message BlueprintMetadataSpec {
   // BlueprintInfo defines the basic information of the blueprint.
   // Gen: partial
-  BlueprintInfo info = 1;
+  BlueprintInfo info = 1; // @gotags: json:"info,omitempty" yaml:"info,omitempty"
 
   // BlueprintContent defines the detail for blueprint related content such as
   // related documentation, diagrams, examples etc.
   // Gen: partial
-  BlueprintContent content = 2;
+  BlueprintContent content = 2; // @gotags: json:"content,omitempty" yaml:"content,omitempty"
 
   // BlueprintInterface defines the input and output variables for the blueprint.
   // Gen: partial
-  BlueprintInterface interfaces = 3;
+  BlueprintInterface interfaces = 3; // @gotags: json:"interfaces,omitempty" yaml:"interfaces,omitempty"
 
   // BlueprintRequirements defines the roles required and the associated services
   // that need to be enabled to provision blueprint resources.
   // Gen: auto-generated
-  BlueprintRequirements requirements = 4;
+  BlueprintRequirements requirements = 4; // @gotags: json:"requirements,omitempty" yaml:"requirements,omitempty"
 
   // BlueprintUI defines the user interface for the blueprint.
   // Gen: partial
-  BlueprintUI ui = 5;
+  BlueprintUI ui = 5; // @gotags: json:"ui,omitempty" yaml:"ui,omitempty"
 }
 
 // BlueprintInfo defines the basic information of the blueprint.
 message BlueprintInfo {
   // Title for the blueprint.
   // Gen: auto-generated - First H1 text in readme.md.
-  string title = 1;
+  string title = 1; // @gotags: json:"title" yaml:"title"
 
   // Blueprint source location and source type.
   // Gen: auto-generated - user will be prompted if repo information can not
   // be determined from the blueprint path.
-  BlueprintRepoDetail source = 2;
+  BlueprintRepoDetail source = 2; // @gotags: json:"source,omitempty" yaml:"source,omitempty"
 
   // Last released semantic version for the packaged blueprint.
   // Gen: auto-generated - From the `module_name` attribute of
@@ -89,90 +91,90 @@ message BlueprintInfo {
   // provider_meta "google" {
   //  module_name = "blueprints/terraform/terraform-google-log-analysis/v0.1.5"
   // }
-  string version = 3;
+  string version = 3; // @gotags: json:"version,omitempty" yaml:"version,omitempty"
 
   // Actuation tool e.g. Terraform and its required version.
   // Gen: auto-generated
-  BlueprintActuationTool actuation_tool = 4;
+  BlueprintActuationTool actuation_tool = 4; // @gotags: json:"actuationTool,omitempty" yaml:"actuationTool,omitempty"
 
   // Various types of descriptions associated with the blueprint.
   // Gen: auto-generated
-  BlueprintDescription description = 5;
+  BlueprintDescription description = 5; // @gotags: json:"description,omitempty" yaml:"description,omitempty"
 
   // Path to an image representing the icon for the blueprint.
   // Will be set as "assets/icon.png", if present.
   // Gen: auto-generated
-  string icon = 6;
+  string icon = 6; // @gotags: json:"icon,omitempty" yaml:"icon,omitempty"
 
   // The time estimate for configuring and deploying the blueprint.
   // Gen: auto-generated
-  BlueprintTimeEstimate deployment_duration = 7;
+  BlueprintTimeEstimate deployment_duration = 7; // @gotags: json:"deploymentDuration,omitempty" yaml:"deploymentDuration,omitempty"
 
   // The cost estimate for the blueprint based on preconfigured variables.
   // Gen: auto-generated
-  BlueprintCostEstimate cost_estimate = 8;
+  BlueprintCostEstimate cost_estimate = 8; // @gotags: json:"costEstimate,omitempty" yaml:"costEstimate,omitempty"
 
   // A list of GCP cloud products used in the blueprint.
   // Gen: manually-authored
-  repeated BlueprintCloudProduct cloud_products = 9;
+  repeated BlueprintCloudProduct cloud_products = 9; // @gotags: json:"cloudProducts,omitempty" yaml:"cloudProducts,omitempty"
 
   // A configuration of fixed and dynamic GCP quotas that apply to the blueprint.
   // Gen: manually-authored
-  repeated BlueprintQuotaDetail quota_details = 10;
+  repeated BlueprintQuotaDetail quota_details = 10; // @gotags: json:"quotaDetails,omitempty" yaml:"quotaDetails,omitempty"
 
   // Details on the author producing the blueprint.
   // Gen: manually-authored
-  BlueprintAuthor author = 11;
+  BlueprintAuthor author = 11; // @gotags: json:"author,omitempty" yaml:"author,omitempty"
 
   // Details on software installed as part of the blueprint.
   // Gen: manually-authored
-  repeated BlueprintSoftwareGroup software_groups = 12;
+  repeated BlueprintSoftwareGroup software_groups = 12; // @gotags: json:"softwareGroups,omitempty" yaml:"softwareGroups,omitempty"
 
   // Support offered, if any for the blueprint.
   // Gen: manually-authored
-  BlueprintSupport support_info = 13;
+  BlueprintSupport support_info = 13; // @gotags: json:"supportInfo,omitempty" yaml:"supportInfo,omitempty"
 
   // A list of GCP org policies to be checked for successful deployment.
   // Gen: manually-authored
-  repeated BlueprintOrgPolicyCheck org_policy_checks = 14;
+  repeated BlueprintOrgPolicyCheck org_policy_checks = 14; // @gotags: json:"orgPolicyChecks,omitempty" yaml:"orgPolicyChecks,omitempty"
 
   // Specifies if the blueprint supports single or multiple deployments per GCP project.
   // If set to true, the blueprint can not be deployed more than once in the same GCP project.
   // Gen: manually-authored
-  bool single_deployment = 15;
+  bool single_deployment = 15; // @gotags: json:"singleDeployment,omitempty" yaml:"singleDeployment,omitempty"
 }
 
 // BlueprintContent defines the detail for blueprint related content such as
 // related documentation, diagrams, examples etc.
 message BlueprintContent {
   // Gen: auto-generated
-  BlueprintArchitecture architecture = 1;
+  BlueprintArchitecture architecture = 1; // @gotags: json:"architecture,omitempty" yaml:"architecture,omitempty"
 
   // Gen: manually-authored
-  repeated BlueprintDiagram diagrams = 2;
+  repeated BlueprintDiagram diagrams = 2; // @gotags: json:"diagrams,omitempty" yaml:"diagrams,omitempty"
 
   // Gen: auto-generated - the list content following the "## Documentation" tag. E.g.
   // ## Documentation
   // - [Hosting a Static Website](https://cloud.google.com/storage/docs/hosting-static-website)
-  repeated BlueprintListContent documentation = 3;
+  repeated BlueprintListContent documentation = 3; // @gotags: json:"documentation,omitempty" yaml:"documentation,omitempty"
 
   // Gen: auto-generated - blueprints under the modules/ folder.
-  repeated BlueprintMiscContent sub_blueprints = 4;
+  repeated BlueprintMiscContent sub_blueprints = 4; // @gotags: json:"subBlueprints,omitempty" yaml:"subBlueprints,omitempty"
 
   // Gen: auto-generated - examples under the examples/ folder.
-  repeated BlueprintMiscContent examples = 5;
+  repeated BlueprintMiscContent examples = 5; // @gotags: json:"examples,omitempty" yaml:"examples,omitempty"
 }
 
 // BlueprintInterface defines the input and output variables for the blueprint.
 message BlueprintInterface {
   // Gen: auto-generated - all defined variables for the blueprint
-  repeated BlueprintVariable variables = 1;
+  repeated BlueprintVariable variables = 1; // @gotags: json:"variables,omitempty" yaml:"variables,omitempty"
 
   // Gen: manually-authored
-  repeated BlueprintVariableGroup variable_groups = 2;
+  repeated BlueprintVariableGroup variable_groups = 2; // @gotags: json:"variableGroups,omitempty" yaml:"variableGroups,omitempty"
 
   // Gen: auto-generated - all defined outputs for the blueprint
-  repeated BlueprintOutput outputs = 3;
+  repeated BlueprintOutput outputs = 3; // @gotags: json:"outputs,omitempty" yaml:"outputs,omitempty"
 }
 
 // BlueprintRequirements defines the roles required and the associated services
@@ -185,11 +187,11 @@ message BlueprintRequirements {
   //     "roles/compute.admin",
   //   ]
   // }
-  repeated BlueprintRoles roles = 1;
+  repeated BlueprintRoles roles = 1; // @gotags: json:"roles,omitempty" yaml:"roles,omitempty"
 
   // Gen: auto-generated - all services required for the blueprint in test/setup/main.tf
   // as "activate_apis" in the project module.
-  repeated string services = 2;
+  repeated string services = 2; // @gotags: json:"services,omitempty" yaml:"services,omitempty"
 }
 
 // BlueprintUI is the top-level structure for holding UI specific metadata.
@@ -197,33 +199,33 @@ message BlueprintUI {
   // The top-level input section that defines the list of variables and
   // their sections on the deployment page.
   // Gen: partial
-  BlueprintUIInput input = 1;
+  BlueprintUIInput input = 1; // @gotags: json:"input,omitempty" yaml:"input,omitempty"
 
   // The top-level section for listing runtime (or blueprint output) information
   // i.e. the console URL for the VM or a button to ssh into the VM etc based on.
   // Gen: manually-authored
-  BlueprintUIOutput runtime = 2;
+  BlueprintUIOutput runtime = 2; // @gotags: json:"runtime,omitempty" yaml:"runtime,omitempty"
 }
 
 message BlueprintRepoDetail {
   // Gen: auto-generated - URL from the .git dir.
   // Can be manually overridden with a custom URL if needed.
-  string repo = 1;
+  string repo = 1; // @gotags: json:"repo" yaml:"repo"
 
   // Gen: auto-generated - set as "git" for now until more
   // types are supported.
-  string source_type = 2;
+  string source_type = 2; // @gotags: json:"sourceType" yaml:"sourceType"
 
   // Gen: auto-generated - not set for root modules but
   // set as the module name for submodules, if found.
-  string dir = 3;
+  string dir = 3; // @gotags: json:"dir,omitempty" yaml:"dir,omitempty"
 }
 
 // BlueprintActuationTool defines the actuation tool used to provision the blueprint.
 message BlueprintActuationTool {
   // Gen: auto-generated - set as "Terraform" for now until
   //more flavors are supported.
-  string flavor = 1;
+  string flavor = 1; // @gotags: json:"flavor,omitempty" yaml:"flavor,omitempty"
 
   // Required version for the actuation tool.
   // Gen: auto-generated - For Terraform this is the `required_version`
@@ -231,30 +233,30 @@ message BlueprintActuationTool {
   // terraform {
   //   required_version = ">= 0.13"
   // }
-  string version = 2;
+  string version = 2; // @gotags: json:"version,omitempty" yaml:"version,omitempty"
 }
 
 // All descriptions are set with the markdown content immediately
 // after each type's heading declaration in readme.md.
 message BlueprintDescription {
   // Gen: auto-generated - Markdown after "### Tagline".
-  string tagline = 1;
+  string tagline = 1; // @gotags: json:"tagline,omitempty" yaml:"tagline,omitempty"
 
   // Gen: auto-generated - Markdown after "### Detailed".
-  string detailed = 2;
+  string detailed = 2; // @gotags: json:"detailed,omitempty" yaml:"detailed,omitempty"
 
   // Gen: auto-generated - Markdown after "### PreDeploy".
-  string pre_deploy = 3;
+  string pre_deploy = 3; // @gotags: json:"preDeploy,omitempty" yaml:"preDeploy,omitempty"
 
   // Gen: auto-generated - Markdown after "### Html".
-  string html = 4;
+  string html = 4; // @gotags: json:"html,omitempty" yaml:"html,omitempty"
 
   // Gen: auto-generated - Markdown after "### EulaUrls".
-  repeated string eula_urls = 5;
+  repeated string eula_urls = 5; // @gotags: json:"eulaUrls,omitempty" yaml:"eulaUrls,omitempty"
 
   // Gen: auto-generated - Markdown after "### Architecture"
   // Deprecated. Use BlueprintContent.Architecture instead.
-  repeated string architecture = 6;
+  repeated string architecture = 6; // @gotags: json:"architecture,omitempty" yaml:"architecture,omitempty"
 }
 
 // A time estimate in secs required for configuring and deploying the blueprint.
@@ -263,8 +265,8 @@ message BlueprintTimeEstimate {
   // ### DeploymentTime
   // - Configuration: X secs
   // - Deployment: Y secs
-  int32 configuration_secs = 1;
-  int32 deployment_secs = 2;
+  int64 configuration_secs = 1; // @gotags: json:"configurationSecs,omitempty" yaml:"configurationSecs,omitempty"
+  int64 deployment_secs = 2; // @gotags: json:"deploymentSecs,omitempty" yaml:"deploymentSecs,omitempty"
 }
 
 // The cost estimate for the blueprint based on pre-configured variables.
@@ -273,8 +275,8 @@ message BlueprintCostEstimate {
   // with a description E.g.
   // ### Cost
   // [$20.00](https://cloud.google.com/products/calculator?hl=en_US&_ga=2.1665458.-226505189.1675191136#id=02fb0c45-cc29-4567-8cc6-f72ac9024add)
-  string description = 1;
-  string url = 2;
+  string description = 1; // @gotags: json:"description" yaml:"description"
+  string url = 2; // @gotags: json:"url" yaml:"url"
 }
 
 // GCP cloud product(s) used in the blueprint.
@@ -282,21 +284,21 @@ message BlueprintCloudProduct {
   // A top-level (e.g. "Compute Engine") or secondary (e.g. "Binary Authorization")
   // product used in the blueprint.
   // Gen: manually-authored
-  string product_id = 1;
+  string product_id = 1; // @gotags: json:"productId,omitempty" yaml:"productId,omitempty"
 
   // Url for the product.
   // Gen: manually-authored
-  string page_url = 2;
+  string page_url = 2; // @gotags: json:"pageUrl" yaml:"pageUrl"
 
   // A label string for the product, if it is not an integrated GCP product.
   // E.g. "Data Studio"
   // Gen: manually-authored
-  string label = 3;
+  string label = 3; // @gotags: json:"label,omitempty" yaml:"label,omitempty"
 
   // Is the product's landing page external to the GCP console e.g.
   // lookerstudio.google.com
   // Gen: manually-authored
-  bool is_external = 4;
+  bool is_external = 4; // @gotags: json:"isExternal,omitempty" yaml:"isExternal,omitempty"
 }
 
 // BlueprintOrgPolicyCheck defines GCP org policies to be checked
@@ -304,12 +306,12 @@ message BlueprintCloudProduct {
 message BlueprintOrgPolicyCheck {
   // Id for the policy e.g. "compute-vmExternalIpAccess"
   // Gen: manually-authored
-  string policy_id = 1;
+  string policy_id = 1; // @gotags: json:"policyId" yaml:"policyId"
 
   // If not set, it is assumed any version of this org policy
   // prevents successful deployment of this solution.
   // Gen: manually-authored
-  repeated string required_values = 2;
+  repeated string required_values = 2; // @gotags: json:"requiredValues,omitempty" yaml:"requiredValues,omitempty"
 }
 
 // QuotaResourceType defines the type of resource a quota is applied to.
@@ -325,12 +327,12 @@ message BlueprintQuotaDetail {
   // with the corresponding resource and quota type. In its absence, the quota
   // detail is assumed to be fixed.
   // Gen: manually-authored
-  string dynamic_variable = 1;
+  string dynamic_variable = 1; // @gotags: json:"dynamicVariable,omitempty" yaml:"dynamicVariable,omitempty"
 
   // ResourceType is the type of resource the quota will be applied to i.e.
   // GCE Instance or Disk etc.
   // Gen: manually-authored
-  QuotaResourceType resource_type = 2;
+  QuotaResourceType resource_type = 2; // @gotags: json:"resourceType" yaml:"resourceType"
 
   // QuotaType is a key/value pair of the actual quotas and their corresponding
   // values. Valid keys for quota_type can be:
@@ -339,22 +341,22 @@ message BlueprintQuotaDetail {
   // DISK_TYPE OR
   // SIZE_GB.
   // Gen: manually-authored
-  map<string, string> quota_type = 3;
+  map<string, string> quota_type = 3; // @gotags: json:"quotaType" yaml:"quotaType"
 }
 
 // BlueprintAuthor defines the author of a blueprint.
 message BlueprintAuthor {
   // Name of template author or organization.
   // Gen: manually-authored
-  string title = 1;
+  string title = 1; // @gotags: json:"title" yaml:"title"
 
   // Description of the author.
   // Gen: manually-authored
-  string description = 2;
+  string description = 2; // @gotags: json:"description,omitempty"  yaml:"description,omitempty"
 
   // Link to the author's website.
   // Gen: manually-authored
-  string url = 3;
+  string url = 3; // @gotags: json:"url,omitempty" yaml:"url,omitempty"
 }
 
 // SoftwareGroupType is a string enum representing the different types of software groups.
@@ -369,11 +371,11 @@ enum SoftwareGroupType {
 message BlueprintSoftwareGroup {
   // Pre-defined software types.
   // Gen: manually-authored
-  SoftwareGroupType type = 1;
+  SoftwareGroupType type = 1; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
 
   // Software components belonging to this group.
   // Gen: manually-authored
-  repeated BlueprintSoftware software = 2;
+  repeated BlueprintSoftware software = 2; // @gotags: json:"software,omitempty" yaml:"software,omitempty"
 }
 
 // A description of a piece of a single software component
@@ -381,39 +383,39 @@ message BlueprintSoftwareGroup {
 message BlueprintSoftware {
   // User-visible title.
   // Gen: manually-authored
-  string title = 1;
+  string title = 1; // @gotags: json:"title" yaml:"title"
 
   // Software version.
   // Gen: manually-authored
-  string version = 2;
+  string version = 2; // @gotags: json:"version,omitempty" yaml:"version,omitempty"
 
   // Link to development site or marketing page for this software.
   // Gen: manually-authored
-  string url = 3;
+  string url = 3; // @gotags: json:"url,omitempty" yaml:"url,omitempty"
 
   // Link to license page.
   // Gen: manually-authored
-  string license_url = 4;
+  string license_url = 4; // @gotags: json:"licenseUrl,omitempty" yaml:"licenseUrl,omitempty"
 }
 
 // A description of a support option
 message BlueprintSupport {
   // Description of the support option.
   // Gen: manually-authored
-  string description = 1;
+  string description = 1; // @gotags: json:"description" yaml:"description"
 
   // Link to the page providing this support option.
   // Gen: manually-authored
-  string url = 2;
+  string url = 2; // @gotags: json:"url,omitempty" yaml:"url,omitempty"
 
   // The organization or group that provides the support option (e.g.:
   // "Community", "Google").
   // Gen: manually-authored
-  string entity = 3;
+  string entity = 3; // @gotags: json:"entity,omitempty" yaml:"entity,omitempty"
 
   // Whether to show the customer's support ID.
   // Gen: manually-authored
-  bool show_support_id = 4;
+  bool show_support_id = 4; // @gotags: json:"showSupportId,omitempty" yaml:"showSupportId,omitempty"
 }
 
 message BlueprintArchitecture {
@@ -423,49 +425,49 @@ message BlueprintArchitecture {
   // 1. Step no. 1
   // 2. Step no. 2
   // 3. Step no. 3
-  string diagram_url = 1;
+  string diagram_url = 1; // @gotags: json:"diagramUrl" yaml:"diagramUrl"
 
   // Gen: auto-generated - the list items following the "## Architecture" tag.
-  repeated string description = 2;
+  repeated string description = 2; // @gotags: json:"description" yaml:"description"
 }
 
 message BlueprintMiscContent {
-  string name = 1;
-  string location = 2;
+  string name = 1; // @gotags: json:"name" yaml:"name"
+  string location = 2; // @gotags: json:"location,omitempty" yaml:"location,omitempty"
 }
 
 message BlueprintDiagram {
-  string name = 1;
-  string alt_text = 2;
-  string description = 3;
+  string name = 1; // @gotags: json:"name" yaml:"name"
+  string alt_text = 2; // @gotags: json:"altText,omitempty" yaml:"altText,omitempty"
+  string description = 3; // @gotags: json:"description,omitempty" yaml:"description,omitempty"
 }
 
 message BlueprintListContent {
-  string title = 1;
-  string url = 2;
+  string title = 1; // @gotags: json:"title" yaml:"title"
+  string url = 2; // @gotags: json:"url,omitempty" yaml:"url,omitempty"
 }
 
 message BlueprintVariable {
-  string name = 1;
-  string description = 2;
-  string var_type = 3;
-  string default_value = 4;
-  bool required = 5;
+  string name = 1; // @gotags: json:"name,omitempty" yaml:"name,omitempty"
+  string description = 2; // @gotags: json:"description,omitempty" yaml:"description,omitempty"
+  string var_type = 3; // @gotags: json:"varType,omitempty" yaml:"varType,omitempty"
+  google.protobuf.Value default_value = 4; // @gotags: json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"
+  bool required = 5; // @gotags: json:"required,omitempty" yaml:"required,omitempty"
 }
 
 // BlueprintVariableGroup is manually entered.
 message BlueprintVariableGroup {
-  string name = 1;
-  string description = 2;
-  repeated string variables = 3;
+  string name = 1; // @gotags: json:"name" yaml:"name"
+  string description = 2; // @gotags: json:"description,omitempty" yaml:"description,omitempty"
+  repeated string variables = 3; // @gotags: json:"variables,omitempty" yaml:"variables,omitempty"
 }
 
 message BlueprintOutput {
-  string name = 1;
-  string description = 2;
+  string name = 1; // @gotags: json:"name" yaml:"name"
+  string description = 2; // @gotags: json:"description,omitempty" yaml:"description,omitempty"
 }
 
 message BlueprintRoles {
-  string level = 1;
-  repeated string roles = 2;
+  string level = 1; // @gotags: json:"level" yaml:"level"
+  repeated string roles = 2; // @gotags: json:"roles" yaml:"roles"
 }

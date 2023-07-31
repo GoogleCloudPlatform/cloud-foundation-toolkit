@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/exp/slices"
 )
 
 const (
@@ -35,15 +36,13 @@ func TestTFInterfaces(t *testing.T) {
 			wantDescription: "The description of the cluster",
 			wantVarType:     "string",
 			wantDefault:     "some description",
-			wantRequired:    false,
 		},
 		{
-			name:            "with required as fasle",
+			name:            "with required as false",
 			varName:         "regional",
 			wantDescription: "Whether is a regional cluster",
 			wantVarType:     "bool",
 			wantDefault:     true,
-			wantRequired:    false,
 		},
 	}
 
@@ -68,22 +67,46 @@ func TestTFInterfaces(t *testing.T) {
 	require.NoError(t, err)
 	for _, tt := range varTests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Contains(t, got.Variables, BlueprintVariable{
-				Name:         tt.varName,
-				Description:  tt.wantDescription,
-				DefaultValue: tt.wantDefault,
-				Required:     tt.wantRequired,
-				VarType:      tt.wantVarType,
-			})
+			i := slices.IndexFunc(got.Variables, func(v *BlueprintVariable) bool { return v.Name == tt.varName })
+			if got.Variables[i].Name != tt.varName {
+				t.Errorf("getBlueprintInterfaces() - Variable.Name = %v, want %v", got.Variables[i].Name, tt.varName)
+				return
+			}
+
+			if got.Variables[i].Description != tt.wantDescription {
+				t.Errorf("getBlueprintInterfaces() - Variable.Description = %v, want %v", got.Variables[i].Description, tt.wantDescription)
+				return
+			}
+
+			if got.Variables[i].DefaultValue.AsInterface() != tt.wantDefault {
+				t.Errorf("getBlueprintInterfaces() - Variable.DefaultValue = %v, want %v", got.Variables[i].DefaultValue.AsInterface(), tt.wantDefault)
+				return
+			}
+
+			if got.Variables[i].Required != tt.wantRequired {
+				t.Errorf("getBlueprintInterfaces() - Variable.Required = %v, want %v", got.Variables[i].Required, tt.wantRequired)
+				return
+			}
+
+			if got.Variables[i].VarType != tt.wantVarType {
+				t.Errorf("getBlueprintInterfaces() - Variable.VarType = %v, want %v", got.Variables[i].VarType, tt.wantVarType)
+				return
+			}
 		})
 	}
 
 	for _, tt := range outTests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Contains(t, got.Outputs, BlueprintOutput{
-				Name:        tt.outName,
-				Description: tt.wantDescription,
-			})
+			i := slices.IndexFunc(got.Outputs, func(o *BlueprintOutput) bool { return o.Name == tt.outName })
+			if got.Outputs[i].Name != tt.outName {
+				t.Errorf("getBlueprintInterfaces() - Output.Name = %v, want %v", got.Outputs[i].Name, tt.outName)
+				return
+			}
+
+			if got.Outputs[i].Description != tt.wantDescription {
+				t.Errorf("getBlueprintInterfaces() - Output.Description = %v, want %v", got.Outputs[i].Description, tt.wantDescription)
+				return
+			}
 		})
 	}
 }
@@ -211,12 +234,12 @@ func TestTFRoles(t *testing.T) {
 	tests := []struct {
 		name       string
 		configName string
-		wantRoles  []BlueprintRoles
+		wantRoles  []*BlueprintRoles
 	}{
 		{
 			name:       "simple list of roles",
 			configName: "iam.tf",
-			wantRoles: []BlueprintRoles{
+			wantRoles: []*BlueprintRoles{
 				{
 					Level: "Project",
 					Roles: []string{

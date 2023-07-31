@@ -9,12 +9,12 @@ import (
 func TestUIInputFromVariables(t *testing.T) {
 	tests := []struct {
 		name     string
-		coreVars []BlueprintVariable
+		coreVars []*BlueprintVariable
 		UIinput  *BlueprintUIInput
 	}{
 		{
 			name: "display metadata does not exist",
-			coreVars: []BlueprintVariable{
+			coreVars: []*BlueprintVariable{
 				{
 					Name: "test_var_1",
 				},
@@ -29,7 +29,7 @@ func TestUIInputFromVariables(t *testing.T) {
 		},
 		{
 			name: "display metadata exists and is in line with core metadata",
-			coreVars: []BlueprintVariable{
+			coreVars: []*BlueprintVariable{
 				{
 					Name: "test_var_1",
 				},
@@ -56,7 +56,7 @@ func TestUIInputFromVariables(t *testing.T) {
 		},
 		{
 			name: "display metadata exists and is not in line with core metadata",
-			coreVars: []BlueprintVariable{
+			coreVars: []*BlueprintVariable{
 				{
 					Name: "test_var_1",
 				},
