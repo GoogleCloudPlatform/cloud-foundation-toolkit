@@ -17,6 +17,7 @@
 package utils
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/mitchellh/go-testing-interface"
@@ -25,12 +26,21 @@ import (
 // Polls on a particular condition function while the returns true.
 // It fails the test if the condition is not met within numRetries.
 func Poll(t testing.TB, condition func() (bool, error), numRetries int, interval time.Duration) {
+	err := PollE(t, condition, numRetries, interval)
+	if err != nil {
+		t.Fatalf("failed to pull provided condition after %d retries, last error: %v", numRetries, err)
+	}
+}
+
+// Polls on a particular condition function while the returns true.
+// Returns an error if the condition is not met within numRetries.
+func PollE(t testing.TB, condition func() (bool, error), numRetries int, interval time.Duration) error {
 	if numRetries < 0 {
-		t.Fatal("invalid value for numRetries. Must be >= 0")
+		return &PollParameterError{"invalid value for numRetries. Must be >= 0"}
 	}
 
 	if interval <= 0 {
-		t.Fatal("invalid value for numRetries. Must be > 0")
+		return &PollParameterError{"invalid value for interval. Must be > 0"}
 	}
 
 	retry, err := condition()
@@ -45,10 +55,45 @@ func Poll(t testing.TB, condition func() (bool, error), numRetries int, interval
 	}
 
 	if err != nil {
-		t.Fatalf("failed to pull provided condition after %d retries, last error: %v", numRetries, err)
+		return &PollConditionError{err: err, numRetries: numRetries}
 	}
 
 	if retry {
-		t.Fatalf("polling timed out after %d retries with %d second intervals", numRetries, interval/time.Second)
+		return &PollRetryLimitExceededError{interval: interval, numRetries: numRetries}
 	}
+
+	return nil
+}
+
+// PollParameterError is returend by PollE when input parameters are invalid.
+type PollParameterError struct {
+	msg string
+}
+
+func (e *PollParameterError) Error() string {
+	return e.msg
+}
+
+// PollRetryLimitExceededError is returned by PollE when retries exceed numRetries.
+type PollRetryLimitExceededError struct {
+	numRetries int
+	interval   time.Duration
+}
+
+func (e *PollRetryLimitExceededError) Error() string {
+	return fmt.Sprintf("polling timed out after %d retries with %.2f second intervals", e.numRetries, e.interval.Seconds())
+}
+
+// PollConditionError is an error returned on the final PollE attempt.
+type PollConditionError struct {
+	err        error
+	numRetries int
+}
+
+func (e *PollConditionError) Error() string {
+	return fmt.Sprintf("failed to pull provided condition after %d retries, last error: %v", e.numRetries, e.err)
+}
+
+func (e *PollConditionError) Unwrap() error {
+	return e.err
 }

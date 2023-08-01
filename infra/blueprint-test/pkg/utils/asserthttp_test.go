@@ -17,7 +17,6 @@
 package utils_test
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -177,33 +176,4 @@ func TestAssertResponse(t *testing.T) {
 			}
 		})
 	})
-}
-
-// inspectableT wraps testing.T, overriding testing behavior to make error cases retrievable.
-type inspectableT struct {
-	*testing.T
-	err error
-}
-
-func (it *inspectableT) Error(args ...interface{}) {
-	it.addError(args...)
-}
-
-func (it *inspectableT) Errorf(format string, args ...interface{}) {
-	a := append([]interface{}{format}, args)
-	it.addError(a)
-}
-
-func (it *inspectableT) Fatal(args ...interface{}) {
-	it.addError(args...)
-}
-
-func (it *inspectableT) Fatalf(format string, args ...interface{}) {
-	a := append([]interface{}{format}, args)
-	it.addError(a)
-}
-
-func (it *inspectableT) addError(args ...interface{}) {
-	s := fmt.Sprint(args...)
-	it.err = errors.Join(it.err, errors.New(s))
 }
