@@ -57,27 +57,27 @@ func TestDirContent(t *testing.T) {
 		name    string
 		path    string
 		regex   string
-		want    []BlueprintMiscContent
+		want    []*BlueprintMiscContent
 		wantErr bool
 	}{
 		{
 			name:  "valid examples",
 			path:  "content/examples",
 			regex: regexExamples,
-			want: []BlueprintMiscContent{
-				BlueprintMiscContent{
+			want: []*BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "terraform",
 					Location: "examples/acm/acm-terraform-blog-part1/terraform",
 				},
-				BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "acm-terraform-blog-part2",
 					Location: "examples/acm/acm-terraform-blog-part2",
 				},
-				BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "simple_regional",
 					Location: "examples/simple_regional",
 				},
-				BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "simple_regional_beta",
 					Location: "examples/simple_regional_beta",
 				},
@@ -88,16 +88,16 @@ func TestDirContent(t *testing.T) {
 			name:  "valid modules",
 			path:  "content/modules",
 			regex: regexModules,
-			want: []BlueprintMiscContent{
-				BlueprintMiscContent{
+			want: []*BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "beta-public-cluster",
 					Location: "modules/beta-public-cluster",
 				},
-				BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "binary-authorization",
 					Location: "modules/binary-authorization",
 				},
-				BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "private-cluster",
 					Location: "modules/private-cluster",
 				},
@@ -114,12 +114,12 @@ func TestDirContent(t *testing.T) {
 			name:  "some example folders without any tf",
 			path:  "content/examples-some-without-tf/examples",
 			regex: regexExamples,
-			want: []BlueprintMiscContent{
-				BlueprintMiscContent{
+			want: []*BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "terraform",
 					Location: "examples/acm/acm-terraform-blog-part1/terraform",
 				},
-				BlueprintMiscContent{
+				&BlueprintMiscContent{
 					Name:     "simple_regional",
 					Location: "examples/simple_regional",
 				},
@@ -130,14 +130,14 @@ func TestDirContent(t *testing.T) {
 			name:    "all module folders without any tf",
 			path:    "content/modules-no-tf/modules",
 			regex:   regexModules,
-			want:    []BlueprintMiscContent{},
+			want:    []*BlueprintMiscContent{},
 			wantErr: false,
 		},
 		{
 			name:    "mismatched regex",
 			path:    "content/modules",
 			regex:   "badRegex",
-			want:    []BlueprintMiscContent{},
+			want:    []*BlueprintMiscContent{},
 			wantErr: false,
 		},
 	}

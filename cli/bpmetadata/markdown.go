@@ -130,7 +130,7 @@ func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEsti
 	var timeEstimate BlueprintTimeEstimate
 	for _, m := range matches {
 		// each m[2] will have the time in mins
-		i, err := strconv.Atoi(m[2])
+		i, err := strconv.ParseInt(m[2], 10, 64)
 		if err != nil {
 			continue
 		}
@@ -159,7 +159,7 @@ func getCostEstimate(content []byte, headTitle string) (*BlueprintCostEstimate, 
 
 	return &BlueprintCostEstimate{
 		Description: costDetails.literal,
-		URL:         costDetails.url,
+		Url:         costDetails.url,
 	}, nil
 }
 
@@ -203,7 +203,7 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 		if isImage {
 			return &BlueprintArchitecture{
 				Description: dList,
-				DiagramURL:  string(iNode.Destination),
+				DiagramUrl:  string(iNode.Destination),
 			}, nil
 		}
 
@@ -211,7 +211,7 @@ func getArchitctureInfo(content []byte, headTitle string) (*BlueprintArchitectur
 		if isLink {
 			return &BlueprintArchitecture{
 				Description: dList,
-				DiagramURL:  string(lNode.Destination),
+				DiagramUrl:  string(lNode.Destination),
 			}, nil
 		}
 	}

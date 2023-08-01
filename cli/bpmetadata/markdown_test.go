@@ -194,7 +194,7 @@ func TestProcessArchitectureContent(t *testing.T) {
 					`2. Step 2`,
 					`3. Step 3`,
 				},
-				DiagramURL: "https://i.redd.it/w3kr4m2fi3111.png",
+				DiagramUrl: "https://i.redd.it/w3kr4m2fi3111.png",
 			},
 		},
 		{
@@ -296,7 +296,7 @@ func TestProcessCostEstimateContent(t *testing.T) {
 			title:    "Cost",
 			want: &BlueprintCostEstimate{
 				Description: "Solution cost details",
-				URL:         "https://cloud.google.com/products/calculator?id=02fb0c45-cc29-4567-8cc6-f72ac9024add",
+				Url:         "https://cloud.google.com/products/calculator?id=02fb0c45-cc29-4567-8cc6-f72ac9024add",
 			},
 		},
 		{

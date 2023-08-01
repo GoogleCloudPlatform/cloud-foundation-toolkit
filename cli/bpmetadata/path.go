@@ -33,19 +33,19 @@ func fileExists(path string) (bool, error) {
 	return true, nil
 }
 
-func getExamples(configPath string) ([]BlueprintMiscContent, error) {
+func getExamples(configPath string) ([]*BlueprintMiscContent, error) {
 	return getDirPaths(configPath, reExamples)
 }
 
-func getModules(configPath string) ([]BlueprintMiscContent, error) {
+func getModules(configPath string) ([]*BlueprintMiscContent, error) {
 	return getDirPaths(configPath, reModules)
 }
 
 // getDirPaths traverses a given path and looks for directories
 // with TF configs while ignoring the .terraform* directories created and
 // used internally by the Terraform CLI
-func getDirPaths(configPath string, re *regexp.Regexp) ([]BlueprintMiscContent, error) {
-	paths := []BlueprintMiscContent{}
+func getDirPaths(configPath string, re *regexp.Regexp) ([]*BlueprintMiscContent, error) {
+	paths := []*BlueprintMiscContent{}
 	err := filepath.Walk(configPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return fmt.Errorf("error accessing examples in the path %q: %v", configPath, err)
@@ -60,7 +60,7 @@ func getDirPaths(configPath string, re *regexp.Regexp) ([]BlueprintMiscContent, 
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".tf") {
 			d := filepath.Dir(path)
 			if l := trimPath(d, re); l != "" {
-				dirPath := BlueprintMiscContent{
+				dirPath := &BlueprintMiscContent{
 					Name:     filepath.Base(d),
 					Location: l,
 				}

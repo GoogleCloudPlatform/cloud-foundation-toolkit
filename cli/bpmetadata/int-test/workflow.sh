@@ -49,7 +49,7 @@ mkdir $WORKING_FOLDER && cd $WORKING_FOLDER
 # to be validated is for that version.
 git config --global advice.detachedHead false
 git clone -b v4.0.0 --single-branch https://github.com/terraform-google-modules/terraform-google-cloud-storage.git "./$BLUPRINT_FOLDER/"
-../../../bin/cft blueprint metadata -p $BLUPRINT_FOLDER -d -q
+../../../bin/cft blueprint metadata -p $BLUPRINT_FOLDER -d -q -f
 
 mkdir $GIT_FOLDER
 cp "../$GOLDENS_FOLDER/$GOLDEN_METADATA" "$GIT_FOLDER/$WORKING_METADATA"
