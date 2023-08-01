@@ -19,6 +19,7 @@ package tft
 
 import (
 	b64 "encoding/base64"
+	"flag"
 	"fmt"
 	"os"
 	"path"
@@ -154,6 +155,19 @@ func WithSetupOutputs(vars map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.setupOutputOverrides = vars
 	}
+}
+
+func WithSetupFromArgs() tftOption {
+	argmap := map[string]interface{}{}
+	for _, a := range flag.Args() {
+		k, v, err := getKVFromOutputString(a)
+		if err != nil {
+			continue
+		}
+		fmt.Printf("Found Argument: %s, %s\n", k, v)
+		argmap[k] = v
+	}
+	return WithSetupOutputs(argmap)
 }
 
 // NewTFBlueprintTest sets defaults, validates and returns a TFBlueprintTest.
