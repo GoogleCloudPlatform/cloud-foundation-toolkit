@@ -151,12 +151,15 @@ func WithLogger(logger *logger.Logger) tftOption {
 	}
 }
 
+// WithSetupOutputs overrides output values from the setup stage
 func WithSetupOutputs(vars map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.setupOutputOverrides = vars
 	}
 }
 
+// WithSetupFromArgs reads key=value args, and creates Setup Outputs.
+// Only works with string values.
 func WithSetupFromArgs() tftOption {
 	argmap := map[string]interface{}{}
 	for _, a := range flag.Args() {
@@ -164,7 +167,6 @@ func WithSetupFromArgs() tftOption {
 		if err != nil {
 			continue
 		}
-		fmt.Printf("Found Argument: %s, %s\n", k, v)
 		argmap[k] = v
 	}
 	return WithSetupOutputs(argmap)
@@ -304,7 +306,11 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 // It fails test if given key does not output a list type.
 func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 	if v, ok := b.setupOutputOverrides[key]; ok {
-		return v.([]string)
+		if listval, ok := v.([]string); ok {
+			return listval
+		} else {
+			b.t.Fatalf("Setup Override %s is not a list value", key)
+		}
 	}
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
