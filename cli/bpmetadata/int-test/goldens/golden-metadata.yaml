@@ -13,7 +13,7 @@ spec:
     version: 4.0.0
     actuationTool:
       flavor: Terraform
-      version: '>= 0.13'
+      version: ">= 0.13"
     description: {}
   content:
     subBlueprints:
@@ -44,25 +44,7 @@ spec:
       defaultValue: {}
     - name: bucket_lifecycle_rules
       description: Additional lifecycle_rules for specific buckets. Map of lowercase unprefixed name => list of lifecycle rules to configure.
-      varType: |-
-        map(set(object({
-            # Object with keys:
-            # - type - The type of the action of this Lifecycle Rule. Supported values: Delete and SetStorageClass.
-            # - storage_class - (Required if action type is SetStorageClass) The target Storage Class of objects affected by this Lifecycle Rule.
-            action = map(string)
-
-            # Object with keys:
-            # - age - (Optional) Minimum age of an object in days to satisfy this condition.
-            # - created_before - (Optional) Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.
-            # - with_state - (Optional) Match to live and/or archived objects. Supported values include: "LIVE", "ARCHIVED", "ANY".
-            # - matches_storage_class - (Optional) Comma delimited string for storage class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, STANDARD, DURABLE_REDUCED_AVAILABILITY.
-            # - num_newer_versions - (Optional) Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.
-            # - custom_time_before - (Optional) A date in the RFC 3339 format YYYY-MM-DD. This condition is satisfied when the customTime metadata for the object is set to an earlier date than the date used in this lifecycle condition.
-            # - days_since_custom_time - (Optional) The number of days from the Custom-Time metadata attribute after which this condition becomes true.
-            # - days_since_noncurrent_time - (Optional) Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.
-            # - noncurrent_time_before - (Optional) Relevant only for versioned objects. The date in RFC 3339 (e.g. 2017-06-13) when the object became nonconcurrent.
-            condition = map(string)
-          })))
+      varType: "map(set(object({\n    # Object with keys:\n    # - type - The type of the action of this Lifecycle Rule. Supported values: Delete and SetStorageClass.\n    # - storage_class - (Required if action type is SetStorageClass) The target Storage Class of objects affected by this Lifecycle Rule.\n    action = map(string)\n\n    # Object with keys:\n    # - age - (Optional) Minimum age of an object in days to satisfy this condition.\n    # - created_before - (Optional) Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.\n    # - with_state - (Optional) Match to live and/or archived objects. Supported values include: \"LIVE\", \"ARCHIVED\", \"ANY\".\n    # - matches_storage_class - (Optional) Comma delimited string for storage class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, STANDARD, DURABLE_REDUCED_AVAILABILITY.\n    # - num_newer_versions - (Optional) Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.\n    # - custom_time_before - (Optional) A date in the RFC 3339 format YYYY-MM-DD. This condition is satisfied when the customTime metadata for the object is set to an earlier date than the date used in this lifecycle condition.\n    # - days_since_custom_time - (Optional) The number of days from the Custom-Time metadata attribute after which this condition becomes true.\n    # - days_since_noncurrent_time - (Optional) Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.\n    # - noncurrent_time_before - (Optional) Relevant only for versioned objects. The date in RFC 3339 (e.g. 2017-06-13) when the object became nonconcurrent.\n    condition = map(string)\n  })))"
       defaultValue: {}
     - name: bucket_policy_only
       description: Disable ad-hoc ACLs on specified buckets. Defaults to true. Map of lowercase unprefixed name => boolean
@@ -77,7 +59,7 @@ spec:
       varType: map(string)
       defaultValue: {}
     - name: cors
-      description: 'Set of maps of mixed type attributes for CORS values. See appropriate attribute types here: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#cors'
+      description: "Set of maps of mixed type attributes for CORS values. See appropriate attribute types here: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#cors"
       varType: set(any)
       defaultValue: []
     - name: creators
@@ -85,7 +67,7 @@ spec:
       varType: list(string)
       defaultValue: []
     - name: custom_placement_config
-      description: Map of lowercase unprefixed name => custom placement config object. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket#custom_placement_config
+      description: "Map of lowercase unprefixed name => custom placement config object. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket#custom_placement_config"
       varType: any
       defaultValue: {}
     - name: default_event_based_hold
@@ -117,40 +99,21 @@ spec:
       varType: map(string)
       defaultValue: {}
     - name: lifecycle_rules
-      description: List of lifecycle rules to configure. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket.html#lifecycle_rule except condition.matches_storage_class should be a comma delimited string.
-      varType: |-
-        set(object({
-            # Object with keys:
-            # - type - The type of the action of this Lifecycle Rule. Supported values: Delete and SetStorageClass.
-            # - storage_class - (Required if action type is SetStorageClass) The target Storage Class of objects affected by this Lifecycle Rule.
-            action = map(string)
-
-            # Object with keys:
-            # - age - (Optional) Minimum age of an object in days to satisfy this condition.
-            # - created_before - (Optional) Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.
-            # - with_state - (Optional) Match to live and/or archived objects. Supported values include: "LIVE", "ARCHIVED", "ANY".
-            # - matches_storage_class - (Optional) Comma delimited string for storage class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, STANDARD, DURABLE_REDUCED_AVAILABILITY.
-            # - matches_prefix - (Optional) One or more matching name prefixes to satisfy this condition.
-            # - matches_suffix - (Optional) One or more matching name suffixes to satisfy this condition.
-            # - num_newer_versions - (Optional) Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.
-            # - custom_time_before - (Optional) A date in the RFC 3339 format YYYY-MM-DD. This condition is satisfied when the customTime metadata for the object is set to an earlier date than the date used in this lifecycle condition.
-            # - days_since_custom_time - (Optional) The number of days from the Custom-Time metadata attribute after which this condition becomes true.
-            # - days_since_noncurrent_time - (Optional) Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.
-            # - noncurrent_time_before - (Optional) Relevant only for versioned objects. The date in RFC 3339 (e.g. 2017-06-13) when the object became nonconcurrent.
-            condition = map(string)
-          }))
+      description: "List of lifecycle rules to configure. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket.html#lifecycle_rule except condition.matches_storage_class should be a comma delimited string."
+      varType: "set(object({\n    # Object with keys:\n    # - type - The type of the action of this Lifecycle Rule. Supported values: Delete and SetStorageClass.\n    # - storage_class - (Required if action type is SetStorageClass) The target Storage Class of objects affected by this Lifecycle Rule.\n    action = map(string)\n\n    # Object with keys:\n    # - age - (Optional) Minimum age of an object in days to satisfy this condition.\n    # - created_before - (Optional) Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.\n    # - with_state - (Optional) Match to live and/or archived objects. Supported values include: \"LIVE\", \"ARCHIVED\", \"ANY\".\n    # - matches_storage_class - (Optional) Comma delimited string for storage class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, STANDARD, DURABLE_REDUCED_AVAILABILITY.\n    # - matches_prefix - (Optional) One or more matching name prefixes to satisfy this condition.\n    # - matches_suffix - (Optional) One or more matching name suffixes to satisfy this condition.\n    # - num_newer_versions - (Optional) Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.\n    # - custom_time_before - (Optional) A date in the RFC 3339 format YYYY-MM-DD. This condition is satisfied when the customTime metadata for the object is set to an earlier date than the date used in this lifecycle condition.\n    # - days_since_custom_time - (Optional) The number of days from the Custom-Time metadata attribute after which this condition becomes true.\n    # - days_since_noncurrent_time - (Optional) Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.\n    # - noncurrent_time_before - (Optional) Relevant only for versioned objects. The date in RFC 3339 (e.g. 2017-06-13) when the object became nonconcurrent.\n    condition = map(string)\n  }))"
       defaultValue: []
     - name: location
       description: Bucket location.
       varType: string
       defaultValue: EU
     - name: logging
-      description: Map of lowercase unprefixed name => bucket logging config object. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket.html#logging
+      description: "Map of lowercase unprefixed name => bucket logging config object. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket.html#logging"
       varType: any
       defaultValue: {}
     - name: names
       description: Bucket name suffixes.
       varType: list(string)
+      defaultValue: null
       required: true
     - name: prefix
       description: Prefix used to generate the bucket name.
@@ -159,6 +122,7 @@ spec:
     - name: project_id
       description: Bucket project id.
       varType: string
+      defaultValue: null
       required: true
     - name: public_access_prevention
       description: Prevents public access to a bucket. Acceptable values are inherited or enforced. If inherited, the bucket uses public access prevention, only if the bucket is subject to the public access prevention organization policy constraint.
@@ -169,7 +133,7 @@ spec:
       varType: bool
       defaultValue: false
     - name: retention_policy
-      description: Map of retention policy values. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket#retention_policy
+      description: "Map of retention policy values. Format is the same as described in provider documentation https://www.terraform.io/docs/providers/google/r/storage_bucket#retention_policy"
       varType: any
       defaultValue: {}
     - name: set_admin_roles
@@ -213,7 +177,7 @@ spec:
       varType: list(string)
       defaultValue: []
     - name: website
-      description: 'Map of website values. Supported attributes: main_page_suffix, not_found_page'
+      description: "Map of website values. Supported attributes: main_page_suffix, not_found_page"
       varType: map(any)
       defaultValue: {}
     outputs:

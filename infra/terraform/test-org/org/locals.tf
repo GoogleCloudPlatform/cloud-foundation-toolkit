@@ -96,7 +96,7 @@ locals {
       name        = "terraform-google-secured-data-warehouse"
       org         = "GoogleCloudPlatform"
       description = "Deploys a secured BigQuery data warehouse"
-      owners      = ["erlanderlo"]
+      owners      = ["lanreogunmola"]
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e])
       lint_env = {
         SHELLCHECK_OPTS = "-e SC2154 -e SC2171 -e SC2086"
@@ -738,6 +738,12 @@ locals {
       description = "Secured Data Warehouse blueprint variant for ingesting encrypted data from on-prem sources"
       owners      = ["lanreogunmola"]
       topics      = join(",", [local.common_topics.da, local.common_topics.security, local.common_topics.e2e])
+    },
+    {
+      name        = "terraform-google-tf-cloud-agents"
+      org         = "GoogleCloudPlatform"
+      description = "Creates self-hosted Terraform Cloud Agent on Google Cloud"
+      topics      = join(",", [local.common_topics.ops, local.common_topics.security, local.common_topics.devtools])
     },
   ]
 }
