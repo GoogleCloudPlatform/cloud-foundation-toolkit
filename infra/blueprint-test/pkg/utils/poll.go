@@ -36,11 +36,11 @@ func Poll(t testing.TB, condition func() (bool, error), numRetries int, interval
 // Returns an error if the condition is not met within numRetries.
 func PollE(t testing.TB, condition func() (bool, error), numRetries int, interval time.Duration) error {
 	if numRetries < 0 {
-		return fmt.Errorf("invalid value for numRetries. Must be >= 0")
+		return &PollParameterError{"invalid value for numRetries. Must be >= 0"}
 	}
 
 	if interval <= 0 {
-		return fmt.Errorf("invalid value for numRetries. Must be > 0")
+		return &PollParameterError{"invalid value for interval. Must be > 0"}
 	}
 
 	retry, err := condition()
@@ -55,12 +55,45 @@ func PollE(t testing.TB, condition func() (bool, error), numRetries int, interva
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to pull provided condition after %d retries, last error: %v", numRetries, err)
+		return &PollConditionError{err: err, numRetries: numRetries}
 	}
 
 	if retry {
-		return fmt.Errorf("polling timed out after %d retries with %d second intervals", numRetries, interval/time.Second)
+		return &PollRetryLimitExceededError{interval: interval, numRetries: numRetries}
 	}
 
 	return nil
+}
+
+// PollParameterError is returend by PollE when input parameters are invalid.
+type PollParameterError struct {
+	msg string
+}
+
+func (e *PollParameterError) Error() string {
+	return e.msg
+}
+
+// PollRetryLimitExceededError is returned by PollE when retries exceed numRetries.
+type PollRetryLimitExceededError struct {
+	numRetries int
+	interval   time.Duration
+}
+
+func (e *PollRetryLimitExceededError) Error() string {
+	return fmt.Sprintf("polling timed out after %d retries with %.2f second intervals", e.numRetries, e.interval.Seconds())
+}
+
+// PollConditionError is an error returned on the final PollE attempt.
+type PollConditionError struct {
+	err        error
+	numRetries int
+}
+
+func (e *PollConditionError) Error() string {
+	return fmt.Sprintf("failed to pull provided condition after %d retries, last error: %v", e.numRetries, e.err)
+}
+
+func (e *PollConditionError) Unwrap() error {
+	return e.err
 }
