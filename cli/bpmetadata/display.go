@@ -7,7 +7,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-func buildUIInputFromVariables(vars []BlueprintVariable, input *BlueprintUIInput) {
+func buildUIInputFromVariables(vars []*BlueprintVariable, input *BlueprintUIInput) {
 	if input.Variables == nil {
 		input.Variables = make(map[string]*DisplayVariable)
 	}

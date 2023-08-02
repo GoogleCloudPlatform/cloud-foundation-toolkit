@@ -331,6 +331,7 @@ function generate_metadata() {
 
   if [ $? -ne 0 ]; then    
     echo "Warning! Unable to generate metadata."
+    return 1
   fi
   # add headers since comments are not preserved with metadata generation
   # TODO: b/260869608

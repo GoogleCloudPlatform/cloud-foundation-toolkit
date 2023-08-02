@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -197,7 +198,7 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		return nil, err
 	}
 
-	var variables []BlueprintVariable
+	var variables []*BlueprintVariable
 	for _, val := range mod.Variables {
 		v := getBlueprintVariable(val)
 		variables = append(variables, v)
@@ -206,7 +207,7 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 	// Sort variables
 	sort.SliceStable(variables, func(i, j int) bool { return variables[i].Name < variables[j].Name })
 
-	var outputs []BlueprintOutput
+	var outputs []*BlueprintOutput
 	for _, val := range mod.Outputs {
 		o := getBlueprintOutput(val)
 
@@ -223,19 +224,25 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 }
 
 // build variable
-func getBlueprintVariable(modVar *tfconfig.Variable) BlueprintVariable {
-	return BlueprintVariable{
-		Name:         modVar.Name,
-		Description:  modVar.Description,
-		DefaultValue: modVar.Default,
-		Required:     modVar.Required,
-		VarType:      modVar.Type,
+func getBlueprintVariable(modVar *tfconfig.Variable) *BlueprintVariable {
+	v := &BlueprintVariable{
+		Name:        modVar.Name,
+		Description: modVar.Description,
+		Required:    modVar.Required,
+		VarType:     modVar.Type,
 	}
+
+	vl, err := structpb.NewValue(modVar.Default)
+	if err == nil {
+		v.DefaultValue = vl
+	}
+
+	return v
 }
 
 // build output
-func getBlueprintOutput(modOut *tfconfig.Output) BlueprintOutput {
-	return BlueprintOutput{
+func getBlueprintOutput(modOut *tfconfig.Output) *BlueprintOutput {
+	return &BlueprintOutput{
 		Name:        modOut.Name,
 		Description: modOut.Description,
 	}
@@ -276,8 +283,8 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath string) (*Blue
 }
 
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
-func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
-	var r []BlueprintRoles
+func parseBlueprintRoles(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
+	var r []*BlueprintRoles
 	iamContent, _, diags := rolesFile.Body.PartialContent(rootSchema)
 	err := hasHclErrors(diags)
 	if err != nil {
@@ -308,7 +315,7 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]BlueprintRoles, error) {
 				iamRoles = append(iamRoles, v.AsString())
 			}
 
-			containerRoles := BlueprintRoles{
+			containerRoles := &BlueprintRoles{
 				// TODO: (b/248123274) no good way to associate granularity yet
 				Level: "Project",
 				Roles: iamRoles,
