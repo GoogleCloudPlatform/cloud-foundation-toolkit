@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package google.cloud.config.bpmetadata;
 
-import "bpmetadata_ui.proto";
 import "google/protobuf/struct.proto";
+import "bpmetadata_ui.proto";
 
 // TODO: update copybara configuration for go to java package transformation
 option go_package = "github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata";
