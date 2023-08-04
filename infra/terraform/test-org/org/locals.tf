@@ -745,5 +745,12 @@ locals {
       description = "Creates self-hosted Terraform Cloud Agent on Google Cloud"
       topics      = join(",", [local.common_topics.ops, local.common_topics.security, local.common_topics.devtools])
     },
+    {
+      name        = "terraform-google-cloud-spanner"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy Spanner"
+      owners      = ["anaik91", "imrannayer"]
+      topics      = local.common_topics.db
+    },
   ]
 }
