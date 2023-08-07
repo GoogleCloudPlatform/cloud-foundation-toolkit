@@ -476,6 +476,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
+      owners      = ["isaurabhuttam"]
     },
     {
       name        = "terraform-google-startup-scripts"
