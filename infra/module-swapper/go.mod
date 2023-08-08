@@ -1,4 +1,4 @@
-module github.com/GoogleCloudPlatform/infra/module-swapper
+module github.com/GoogleCloudPlatform/infra/developer-tools/build/scripts/module-swapper
 
 go 1.18
 
