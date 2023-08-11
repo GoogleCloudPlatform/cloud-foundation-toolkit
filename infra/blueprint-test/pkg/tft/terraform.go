@@ -239,6 +239,9 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.logger.Logf(tft.t, "Skipping credential activation %s output from setup", setupKeyOutputName)
 		}
 	}
+	// Load env vars to supplement/override setup
+	tft.logger.Logf(tft.t, "Loading setup from environment")
+	tft.setupOutputOverrides = extractFromEnv("CFT_SETUP_")
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
 	return tft
@@ -335,6 +338,24 @@ func loadTFEnvVar(m map[string]string, new map[string]string) {
 	for k, v := range new {
 		m[fmt.Sprintf("TF_VAR_%s", k)] = v
 	}
+}
+
+// extractFromEnv parses environment variables with the given prefix, and returns a key-value map.
+// e.g. CFT_SETUP_key=value returns map[string]string{"key": "value"}
+func extractFromEnv(prefix string) map[string]interface{} {
+	r := make(map[string]interface{})
+	for _, s := range os.Environ() {
+		k, v, ok := strings.Cut(s, "=")
+		if !ok {
+			// skip malformed entries in os.Environ
+			continue
+		}
+		// For env vars with the prefix, extract the key and value
+		if setupvar, ok := strings.CutPrefix(k, prefix); ok {
+			r[setupvar] = v
+		}
+	}
+	return r
 }
 
 // ShouldSkip checks if a test should be skipped

@@ -260,4 +260,15 @@ func TestSetupOverrideList(t *testing.T) {
 			}
 		})
 	}
+
+}
+
+func TestSetupOverrideFromEnv(t *testing.T) {
+	t.Setenv("CFT_SETUP_my-key", "my-value")
+	emptyDir := newTestDir(t, "empty*", "")
+	defer os.RemoveAll(emptyDir)
+	b := NewTFBlueprintTest(&testingiface.RuntimeT{},
+		WithTFDir(emptyDir))
+	got := b.GetTFSetupStringOutput("my-key")
+	assert.Equal(t, got, "my-value")
 }
