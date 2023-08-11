@@ -28,6 +28,8 @@ const (
 	// startBufSize is the initial of the buffer token
 	maxScanTokenSize = 10 * 1024 * 1024
 	startBufSize     = 4096
+	// This must be kept in sync with what github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft parses.
+	setupEnvVarPrefix = "CFT_SETUP_"
 )
 
 var allTestArgs = []string{"-p", "1", "-count", "1", "-timeout", "0"}
@@ -99,13 +101,17 @@ func streamExec(cmd *exec.Cmd) error {
 }
 
 // getTestCmd returns a prepared cmd for running the specified tests(s)
-func getTestCmd(intTestDir string, testStage string, testName string, relTestPkg string) (*exec.Cmd, error) {
+func getTestCmd(intTestDir string, testStage string, testName string, relTestPkg string, setupVars map[string]string) (*exec.Cmd, error) {
 
 	// pass all current env vars to test command
 	env := os.Environ()
 	// set test stage env var if specified
 	if testStage != "" {
 		env = append(env, fmt.Sprintf("%s=%s", testStageEnvVarKey, testStage))
+	}
+	// Load the env with any setup-vars specified
+	for k, v := range setupVars {
+		env = append(env, fmt.Sprintf("%s%s=%s", setupEnvVarPrefix, k, v))
 	}
 
 	// determine binary and args used for test execution

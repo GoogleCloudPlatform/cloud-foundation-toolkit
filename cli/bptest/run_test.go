@@ -69,7 +69,9 @@ func TestGetTestCmd(t *testing.T) {
 		testStage  string
 		testName   string
 		relTestPkg string
+		setupVars  map[string]string
 		wantArgs   []string
+		wantEnv    []string
 		errMsg     string
 	}{
 		{
@@ -88,6 +90,15 @@ func TestGetTestCmd(t *testing.T) {
 			testName:  "TestFoo",
 			testStage: "init",
 			wantArgs:  []string{"./...", "-run", "TestFoo", "-p", "1", "-count", "1", "-timeout", "0"},
+			wantEnv:   []string{"RUN_STAGE=init"},
+		},
+		{
+			name:      "setup vars",
+			testName:  "TestFoo",
+			testStage: "verify",
+			setupVars: map[string]string{"my-key": "my-value"},
+			wantArgs:  []string{"./...", "-run", "TestFoo", "-p", "1", "-count", "1", "-timeout", "0"},
+			wantEnv:   []string{"RUN_STAGE=verify", "CFT_SETUP_my-key=my-value"},
 		},
 	}
 	for _, tt := range tests {
@@ -99,7 +110,7 @@ func TestGetTestCmd(t *testing.T) {
 			if tt.relTestPkg == "" {
 				tt.relTestPkg = "./..."
 			}
-			gotCmd, err := getTestCmd(tt.intTestDir, tt.testStage, tt.testName, tt.relTestPkg)
+			gotCmd, err := getTestCmd(tt.intTestDir, tt.testStage, tt.testName, tt.relTestPkg, tt.setupVars)
 			if tt.errMsg != "" {
 				assert.NotNil(err)
 				assert.Contains(err.Error(), tt.errMsg)
@@ -110,6 +121,7 @@ func TestGetTestCmd(t *testing.T) {
 					assert.Contains(gotCmd.Env, fmt.Sprintf("RUN_STAGE=%s", tt.testStage))
 				}
 			}
+			assert.Subset(gotCmd.Env, tt.wantEnv)
 		})
 	}
 }
