@@ -9,6 +9,13 @@
       "component": "infra/blueprint-test",
       "pull-request-title-pattern": "chore${scope}: release blueprint-test ${version}",
       "bump-minor-pre-major": true
+    },
+    "infra/module-swapper": {
+      "release-type": "go",
+      "package-name": "module-swapper",
+      "component": "infra/module-swapper",
+      "pull-request-title-pattern": "chore${scope}: release module-swapper ${version}",
+      "bump-minor-pre-major": true
     }
   }
 }
