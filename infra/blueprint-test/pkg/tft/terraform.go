@@ -19,7 +19,6 @@ package tft
 
 import (
 	b64 "encoding/base64"
-	"flag"
 	"fmt"
 	"os"
 	"path"
@@ -158,20 +157,6 @@ func WithSetupOutputs(vars map[string]interface{}) tftOption {
 	}
 }
 
-// WithSetupFromArgs reads key=value args, and creates Setup Outputs.
-// Only works with string values.
-func WithSetupFromArgs() tftOption {
-	argmap := map[string]interface{}{}
-	for _, a := range flag.Args() {
-		k, v, err := getKVFromOutputString(a)
-		if err != nil {
-			continue
-		}
-		argmap[k] = v
-	}
-	return WithSetupOutputs(argmap)
-}
-
 // NewTFBlueprintTest sets defaults, validates and returns a TFBlueprintTest.
 func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	tft := &TFBlueprintTest{
@@ -241,7 +226,12 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 	// Load env vars to supplement/override setup
 	tft.logger.Logf(tft.t, "Loading setup from environment")
-	tft.setupOutputOverrides = extractFromEnv("CFT_SETUP_")
+	if tft.setupOutputOverrides == nil {
+		tft.setupOutputOverrides = make(map[string]interface{})
+	}
+	for k, v := range extractFromEnv("CFT_SETUP_") {
+		tft.setupOutputOverrides[k] = v
+	}
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
 	return tft
