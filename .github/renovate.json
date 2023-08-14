@@ -1,29 +1,24 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":semanticCommits",
     ":preserveSemverRanges",
     "helpers:pinGitHubActionDigests"
   ],
-  "stabilityDays":7,
+  "minimumReleaseAge": "7 days",
   "labels": ["dependencies"],
-    "vulnerabilityAlerts":{
-     "labels":[
-       "type:security"
-     ],
-     "stabilityDays":0
+  "vulnerabilityAlerts": {
+    "labels": ["type:security"],
+    "minimumReleaseAge": null
   },
-  "separateMajorMinor":false,
+  "separateMajorMinor": false,
   "ignorePaths": ["config-connector/**"],
   "additionalBranchPrefix": "{{parentDir}}-",
   "packageRules": [
     {
-      "matchPaths": [".github/**"],
-      "extends": [
-        ":semanticCommitTypeAll(chore)",
-        ":rebaseStalePrs"
-      ]
+      "matchFileNames": [".github/**"],
+      "extends": [":semanticCommitTypeAll(chore)", ":rebaseStalePrs"]
     },
     {
       "matchPackageNames": ["google", "google-beta"],
@@ -54,7 +49,9 @@
     },
     {
       "fileMatch": ["(^|/)Makefile$"],
-      "matchStrings": ["DOCKER_TAG_VERSION_DEVELOPER_TOOLS := (?<currentValue>.*?)\\n"],
+      "matchStrings": [
+        "DOCKER_TAG_VERSION_DEVELOPER_TOOLS := (?<currentValue>.*?)\\n"
+      ],
       "datasourceTemplate": "docker",
       "registryUrlTemplate": "https://gcr.io/cloud-foundation-cicd",
       "depNameTemplate": "cft/developer-tools"

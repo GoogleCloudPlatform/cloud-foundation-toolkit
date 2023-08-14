@@ -476,6 +476,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
+      owners      = ["isaurabhuttam"]
     },
     {
       name        = "terraform-google-startup-scripts"
@@ -661,8 +662,7 @@ locals {
       short_name      = "deploy-java-gke"
       org             = "GoogleCloudPlatform"
       description     = "Deploy a Legacy Java App GKE"
-      owners          = ["donmccasland"]
-      groups          = [local.jss_common_group]
+      groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -744,6 +744,13 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Creates self-hosted Terraform Cloud Agent on Google Cloud"
       topics      = join(",", [local.common_topics.ops, local.common_topics.security, local.common_topics.devtools])
+    },
+    {
+      name        = "terraform-google-cloud-spanner"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy Spanner"
+      owners      = ["anaik91", "imrannayer"]
+      topics      = local.common_topics.db
     },
   ]
 }
