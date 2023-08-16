@@ -75,6 +75,7 @@ find_files() {
     ".*/.*\.jpeg"
     ".*/.*\.svg"
     ".*/.*\.ico"
+    ".*/.*\.parquet"
     ".*/.*\.pb"
     ".*/.*\.index"
     "\./autogen"
@@ -235,7 +236,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico|pb|index)$' \
+    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -246,7 +247,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
-    | grep -v -E '\.(png|gz|tfvars|mp4|zip|ico|pb|index)$' \
+    | grep -v -E '\.(png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
@@ -329,7 +330,7 @@ function generate_metadata() {
     eval "cft blueprint metadata $arg"
   fi
 
-  if [ $? -ne 0 ]; then    
+  if [ $? -ne 0 ]; then
     echo "Warning! Unable to generate metadata."
     return 1
   fi
@@ -364,30 +365,30 @@ function check_tflint() {
   rval=0
   echo "Checking for tflint"
   local path
-    while read -r path; do
-      local tflintCfg
-      # skip any tf configs under test/
+  while read -r path; do
+    local tflintCfg
+    # skip any tf configs under test/
       if [[ $path == "./test"* ]];then
-        echo "Skipping ${path}"
-        continue
-      fi
-      # load default ruleset
-      tflintCfg="/root/tflint/.tflint.example.hcl"
-      # if module, load tighter ruleset
+      echo "Skipping ${path}"
+      continue
+    fi
+    # load default ruleset
+    tflintCfg="/root/tflint/.tflint.example.hcl"
+    # if module, load tighter ruleset
       if [[ $path == "." || $path == "./modules"* ]];then
-        tflintCfg="/root/tflint/.tflint.module.hcl"
-      fi
+      tflintCfg="/root/tflint/.tflint.module.hcl"
+    fi
 
-      cd "${path}" && echo "Working in ${path} ..."
-      tflint --config=${tflintCfg} --no-color
-      rc=$?
-      if [[ "${rc}" -ne 0 ]]; then
-        echo "tflint failed ${path} "
-        ((rval++))
-      else
-        echo "tflint passed ${path} "
-      fi
-      cd - >/dev/null
+    cd "${path}" && echo "Working in ${path} ..."
+    tflint --config=${tflintCfg} --no-color
+    rc=$?
+    if [[ "${rc}" -ne 0 ]]; then
+      echo "tflint failed ${path} "
+      ((rval++))
+    else
+      echo "tflint passed ${path} "
+    fi
+    cd - >/dev/null
     done < <(find_files . -name '*.tf' -print0 \
       | compat_xargs -0 -n1 dirname \
       | sort -u)
@@ -448,7 +449,7 @@ function post_lint_status_pr_comment() {
   export GITHUB_PAT_TOKEN=$(gcloud secrets versions access latest --secret="gh-pat-token")
   final_message=$(/usr/local/bin/test_lint.sh --markdown --contrib-guide=../blob/master/CONTRIBUTING.md)
   if [ -z "$final_message" ]; then
-  final_message="Thanks for the PR! 🚀<br/>✅ Lint checks have passed."
+    final_message="Thanks for the PR! 🚀<br/>✅ Lint checks have passed."
   fi
   python3 /usr/local/bin/gh_lint_comment.py -r "${REPO_NAME}" -p "${_PR_NUMBER}" -c "${final_message}"
 }
@@ -560,7 +561,7 @@ init_credentials() {
 }
 
 init_credentials_if_found() {
-   if [[ -z "${SERVICE_ACCOUNT_JSON:-}" ]]; then
+  if [[ -z "${SERVICE_ACCOUNT_JSON:-}" ]]; then
     echo "Proceeding using application default credentials"
   else
     init_credentials
@@ -583,7 +584,7 @@ prepare_environment() {
   fi
 }
 
- # Destroy the setup environment
+# Destroy the setup environment
 cleanup_environment() {
   set -eu
 
@@ -627,12 +628,12 @@ kitchen_do() {
   local command="$1"
   shift
   case "$command" in
-    create | converge | destroy | setup | test | verify)
-      kitchen "$command" "$@" --test-base-path="$KITCHEN_TEST_BASE_PATH"
-      ;;
-    *)
-      kitchen "$command" "$@"
-      ;;
+  create | converge | destroy | setup | test | verify)
+    kitchen "$command" "$@" --test-base-path="$KITCHEN_TEST_BASE_PATH"
+    ;;
+  *)
+    kitchen "$command" "$@"
+    ;;
   esac
 }
 
@@ -681,28 +682,28 @@ run_terraform_validator() {
 
 
   if [ ! -d "$tmp_plan" ]; then
-      mkdir -p "$tmp_plan/" || exit 1
+    mkdir -p "$tmp_plan/" || exit 1
   fi
 
   if [ -z "$policy_file_path" ]; then
-      echo "no policy repo found! Check the argument provided for policysource to this script."
-      echo "https://github.com/GoogleCloudPlatform/terraform-validator/blob/main/docs/policy_library.md"
-      exit 1
+    echo "no policy repo found! Check the argument provided for policysource to this script."
+    echo "https://github.com/GoogleCloudPlatform/terraform-validator/blob/main/docs/policy_library.md"
+    exit 1
   else
-      if [ -d "$tf_full_path" ]; then
+    if [ -d "$tf_full_path" ]; then
 
-          cd "$tf_full_path" || exit 1
+      cd "$tf_full_path" || exit 1
 
           terraform plan -input=false -out "$tmp_plan/plan.tfplan"  || exit 1
           terraform show -json "$tmp_plan/plan.tfplan" > "$tmp_plan/plan.json" || exit 1
 
-          terraform-validator validate "$tmp_plan/plan.json" --policy-path="$policy_file_path" --project="$project" || exit 1
+      terraform-validator validate "$tmp_plan/plan.json" --policy-path="$policy_file_path" --project="$project" || exit 1
 
-          cd "$base_dir" || exit
-      else
-        echo "ERROR:  $tf_full_path does not exist"
-        exit 1
-      fi
+      cd "$base_dir" || exit
+    else
+      echo "ERROR:  $tf_full_path does not exist"
+      exit 1
+    fi
   fi
 }
 
