@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -87,7 +86,7 @@ func findSubModules(path, rootModuleFQN string) []LocalTerraformModule {
 		log.Print("No submodules found")
 		return subModules
 	}
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatalf("Error finding submodules: %v", err)
 	}
@@ -183,7 +182,7 @@ func getTFFiles(path string) []string {
 		log.Fatal(fmt.Errorf("Unable to find %s : %v", path, err))
 	}
 	var files = make([]string, 0)
-	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if err != nil && info.IsDir() {
 			return nil
 		}
@@ -193,6 +192,9 @@ func getTFFiles(path string) []string {
 		}
 		return nil
 	})
+	if err != nil {
+		log.Printf("Error walking files: %v", err)
+	}
 	return files
 
 }
@@ -215,7 +217,7 @@ func SwapModules(rootPath, moduleRegistrySuffix, subModulesDir, examplesDir stri
 	// find all TF files in examples dir to process
 	exampleTFFiles := getTFFiles(examplesPath)
 	for _, TFFilePath := range exampleTFFiles {
-		file, err := ioutil.ReadFile(TFFilePath)
+		file, err := os.ReadFile(TFFilePath)
 		if err != nil {
 			log.Printf("Error reading file: %v", err)
 		}
@@ -231,7 +233,7 @@ func SwapModules(rootPath, moduleRegistrySuffix, subModulesDir, examplesDir stri
 		}
 
 		if newFile != nil {
-			err = ioutil.WriteFile(TFFilePath, newFile, 0644)
+			err = os.WriteFile(TFFilePath, newFile, 0644)
 			if err != nil {
 				log.Printf("Error writing file: %v", err)
 			}
