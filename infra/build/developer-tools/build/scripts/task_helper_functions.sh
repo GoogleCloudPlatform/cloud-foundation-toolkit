@@ -65,7 +65,7 @@ maketemp() {
 #                            ONLY WHEN the "for_header_check" flag is passed in
 #     E.g.: EXCLUDE_HEADER_CHECK="\./config/foo_resource.yml|\./scripts/bar_script.sh"
 find_files() {
-  local pth="$1" find_path_regex="(" exclude_dirs=( ".*/\.git"
+  local pth="$1" find_path_regex="(" exclude_dirs=(".*/\.git"
     ".*/\.terraform"
     ".*/\.terraform.lock.hcl"
     ".*/\.kitchen"
@@ -82,11 +82,11 @@ find_files() {
     "\./test/fixtures/all_examples"
     "\./test/fixtures/shared"
     "\./cache"
-    "\./test/source\.sh" )
+    "\./test/source\.sh")
   shift
 
   # Concat all of the above dirs except the last, separated by a pipe
-  for ((index=0; index<$((${#exclude_dirs[@]}-1)); ++index)); do
+  for ((index = 0; index < $((${#exclude_dirs[@]} - 1)); ++index)); do
     find_path_regex+="${exclude_dirs[index]}|"
   done
 
@@ -145,8 +145,8 @@ function basefiles() {
 # every file named 'Dockerfile'
 function lint_docker() {
   echo "Running hadolint on Dockerfiles"
-  find_files . -name "Dockerfile" -print0 \
-    | compat_xargs -0 hadolint
+  find_files . -name "Dockerfile" -print0 |
+    compat_xargs -0 hadolint
 }
 
 # This function creates TF_PLUGIN_CACHE_DIR if TF_PLUGIN_CACHE_DIR envvar is set
@@ -176,7 +176,7 @@ function check_terraform() {
       echo "Check the output for diffs and correct using terraform fmt <dir>" >&2
       rval="$rc"
     fi
-  done <<< "$(find_files . -name "*.tf" -print)"
+  done <<<"$(find_files . -name "*.tf" -print)"
   if [[ "${rval}" -ne 0 ]]; then
     return "${rval}"
   fi
@@ -186,18 +186,18 @@ function check_terraform() {
 
   # If enable parallel, run validate in parallel
   if [[ "${ENABLE_PARALLEL:-}" -eq 1 ]]; then
-    find_files . -name "*.tf" -print \
-    | grep -v 'test/fixtures/shared' \
-    | compat_xargs -n1 dirname \
-    | sort -u \
-    | parallel --keep-order --retries 3 --joblog /tmp/lint_log terraform_validate
+    find_files . -name "*.tf" -print |
+      grep -v 'test/fixtures/shared' |
+      compat_xargs -n1 dirname |
+      sort -u |
+      parallel --keep-order --retries 3 --joblog /tmp/lint_log terraform_validate
     cat /tmp/lint_log
   else
-    find_files . -name "*.tf" -print \
-    | grep -v 'test/fixtures/shared' \
-    | compat_xargs -n1 dirname \
-    | sort -u \
-    | compat_xargs -t -n1 terraform_validate
+    find_files . -name "*.tf" -print |
+      grep -v 'test/fixtures/shared' |
+      compat_xargs -n1 dirname |
+      sort -u |
+      compat_xargs -t -n1 terraform_validate
   fi
 }
 
@@ -235,9 +235,9 @@ function check_trailing_whitespace() {
 check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
-  find_files . -print \
-    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' \
-    | compat_xargs grep -H -n '[[:blank:]]$'
+  find_files . -print |
+    grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' |
+    compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
     printf "Error: Trailing whitespace found in the lines above.\n\n"
@@ -246,10 +246,10 @@ check_whitespace() {
     rc=0
   fi
   echo "Checking for missing newline at end of file"
-  find_files . -print \
-    | grep -v -E '\.(png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' \
-    | compat_xargs check_eof_newline
-  return $((rc+$?))
+  find_files . -print |
+    grep -v -E '\.(png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' |
+    compat_xargs check_eof_newline
+  return $((rc + $?))
 }
 
 # Helper function to facilitate switch to a 0.12 compatible doc generator:
@@ -306,9 +306,9 @@ function generate_docs() {
     else
       echo "Skipping ${path} because README.md does not exist."
     fi
-  done < <(find_files . -name '*.tf' -print0 \
-    | compat_xargs -0 -n1 dirname \
-    | sort -u)
+  done < <(find_files . -name '*.tf' -print0 |
+    compat_xargs -0 -n1 dirname |
+    sort -u)
 
   # disable opt in after https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1353
   if [[ "${ENABLE_BPMETADATA:-}" -ne 1 ]]; then
@@ -368,14 +368,14 @@ function check_tflint() {
   while read -r path; do
     local tflintCfg
     # skip any tf configs under test/
-      if [[ $path == "./test"* ]];then
+    if [[ $path == "./test"* ]]; then
       echo "Skipping ${path}"
       continue
     fi
     # load default ruleset
     tflintCfg="/root/tflint/.tflint.example.hcl"
     # if module, load tighter ruleset
-      if [[ $path == "." || $path == "./modules"* ]];then
+    if [[ $path == "." || $path == "./modules"* ]]; then
       tflintCfg="/root/tflint/.tflint.module.hcl"
     fi
 
@@ -389,9 +389,9 @@ function check_tflint() {
       echo "tflint passed ${path} "
     fi
     cd - >/dev/null
-    done < <(find_files . -name '*.tf' -print0 \
-      | compat_xargs -0 -n1 dirname \
-      | sort -u)
+  done < <(find_files . -name '*.tf' -print0 |
+    compat_xargs -0 -n1 dirname |
+    sort -u)
   return $((rval))
 }
 
@@ -514,8 +514,7 @@ function check_headers() {
 function fix_headers() {
   echo "Adding file license headers"
   YEAR=$(date +'%Y')
-  if [ $# -eq 0 ]
-  then
+  if [ $# -eq 0 ]; then
     find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -y $YEAR
   else
     addlicense -y $YEAR "$@"
@@ -543,7 +542,7 @@ init_credentials() {
   local tmpfile
   # shellcheck disable=SC2119
   tmpfile="$(maketemp)"
-  echo "${SERVICE_ACCOUNT_JSON}" > "${tmpfile}"
+  echo "${SERVICE_ACCOUNT_JSON}" >"${tmpfile}"
 
   # Terraform and most other tools respect GOOGLE_CREDENTIALS
   # https://www.terraform.io/docs/providers/google/provider_reference.html#credentials-1
@@ -657,7 +656,6 @@ finish_integration() {
   exit "${rv}"
 }
 
-
 # This function is called by /usr/local/bin/test_validator.sh and can be
 # overridden on a per-module basis to implement additional steps.
 run_terraform_validator() {
@@ -668,18 +666,15 @@ run_terraform_validator() {
   project="$2"
   policy_file_path="$3"
 
-
   export tf_name=$(basename -- $tf_full_path)
   export base_dir=$(pwd)
   export tmp_plan="${base_dir}/test/integration/tmp/tfvt/${tf_name}"
-
 
   echo "*************** TFV VALIDATE ************************"
   echo "      Validating $tf_name at path $tf_full_path"
   echo "      Using policy from: $policy_file_path "
   echo "      in project: $project"
   echo "*****************************************************"
-
 
   if [ ! -d "$tmp_plan" ]; then
     mkdir -p "$tmp_plan/" || exit 1
@@ -694,8 +689,8 @@ run_terraform_validator() {
 
       cd "$tf_full_path" || exit 1
 
-          terraform plan -input=false -out "$tmp_plan/plan.tfplan"  || exit 1
-          terraform show -json "$tmp_plan/plan.tfplan" > "$tmp_plan/plan.json" || exit 1
+      terraform plan -input=false -out "$tmp_plan/plan.tfplan" || exit 1
+      terraform show -json "$tmp_plan/plan.tfplan" >"$tmp_plan/plan.json" || exit 1
 
       terraform-validator validate "$tmp_plan/plan.json" --policy-path="$policy_file_path" --project="$project" || exit 1
 
@@ -706,7 +701,6 @@ run_terraform_validator() {
     fi
   fi
 }
-
 
 # Intended to allow a module to customize a particular check or behavior.  For
 # example, the pubsub module runs "kitchen converge" twice instead of the
