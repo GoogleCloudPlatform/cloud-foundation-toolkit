@@ -28,8 +28,8 @@ protoc-gen:
 	docker run --rm -it \
 		-v "$(CURDIR)":/workspace \
 		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
-		protoc -I=${SRC_PROTO_DIR} --go_opt=paths=source_relative --go_out=${PROTOC_DIR} ${SRC_PROTO_DIR}/*.proto && \
-		protoc-go-inject-tag -input="${PROTOC_DIR}/*.pb.go"
+		/bin/bash -c "protoc -I=${SRC_PROTO_DIR} --go_opt=paths=source_relative --go_out=${PROTOC_DIR} ${SRC_PROTO_DIR}/*.proto && \
+		protoc-go-inject-tag -input='${PROTOC_DIR}/*.pb.go'"
 
 .PHONY: build-schema
 build-schema:
