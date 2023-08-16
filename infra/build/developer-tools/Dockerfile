@@ -16,12 +16,6 @@ ARG RUBY_VERSION
 ARG GOLANG_VERSION
 ARG ALPINE_VERSION
 
-# Builds module-swapper
-FROM golang:$GOLANG_VERSION-alpine AS module-swapper-builder
-WORKDIR /go/src/github.com/GoogleCloudPlatform/infra/developer-tools/build/scripts/module-swapper
-COPY ./build/scripts/module-swapper ./
-RUN go build -v -o /usr/local/bin/module-swapper
-
 FROM golang:$GOLANG_VERSION-alpine AS go
 
 FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
@@ -102,6 +96,10 @@ ENV TFLINT_VERSION ${TFLINT_VERSION}
 ARG TINKEY_VERSION
 ENV TINKEY_VERSION ${TINKEY_VERSION}
 
+# Required to download and install module-swapper
+ARG MODULE_SWAPPER_VERSION
+ENV MODULE_SWAPPER_VERSION ${MODULE_SWAPPER_VERSION}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
@@ -136,8 +134,8 @@ COPY --from=go /usr/local/go/ /usr/local/go/
 RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
 RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
-# Install module swapper
-COPY --from=module-swapper-builder /usr/local/bin/module-swapper /usr/local/bin/module-swapper
+ADD ./build/install_module-swapper.sh /build/
+RUN /build/install_module-swapper.sh
 
 ADD ./build/install_shellcheck.sh /build/
 RUN /build/install_shellcheck.sh
