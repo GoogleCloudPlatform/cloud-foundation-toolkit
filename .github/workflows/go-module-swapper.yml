@@ -32,21 +32,20 @@ jobs:
         cache-dependency-path: infra/module-swapper/go.sum
     - run: |-
         go test ./... -v
-# TODO: Enable after inital commit
-#  golangci:
-#    name: lint
-#    runs-on: ubuntu-latest
-#    strategy:
-#      fail-fast: false
-#    steps:
-#      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
-#      - uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
-#        with:
-#          go-version-file: infra/module-swapper/go.mod
-#          cache-dependency-path: infra/module-swapper/go.sum
-#      - name: golangci-lint
-#        uses: golangci/golangci-lint-action@639cd343e1d3b897ff35927a75193d57cfcba299 # v3.6.0
-#        with:
-#          version: latest
-#          working-directory: 'infra/module-swapper'
-#          args: --timeout=5m
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+      - uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
+        with:
+          go-version-file: infra/module-swapper/go.mod
+          cache-dependency-path: infra/module-swapper/go.sum
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@639cd343e1d3b897ff35927a75193d57cfcba299 # v3.6.0
+        with:
+          version: latest
+          working-directory: 'infra/module-swapper'
+          args: --timeout=5m
