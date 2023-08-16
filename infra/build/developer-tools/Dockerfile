@@ -135,7 +135,7 @@ RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
 RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
 ADD ./build/install_module-swapper.sh /build/
-RUN /build/install_module-swapper.sh
+RUN /build/install_module-swapper.sh ${MODULE_SWAPPER_VERSION}
 
 ADD ./build/install_shellcheck.sh /build/
 RUN /build/install_shellcheck.sh
