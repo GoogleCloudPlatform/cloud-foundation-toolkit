@@ -298,7 +298,7 @@ func (b *KRMBlueprintTest) DefaultVerify(assert *assert.Assertions) {
 
 // DefaultTeardown destroys resources from cluster and polls until deleted.
 func (b *KRMBlueprintTest) DefaultTeardown(assert *assert.Assertions) {
-	b.kpt.RunCmd("live", "destroy")
+	b.kpt.RunCmd("live", "destroy", "--show-status-events")
 	b.kpt.RunCmd("live", "status", "--output", "json", "--poll-until", "deleted", "--timeout", b.timeout)
 }
 

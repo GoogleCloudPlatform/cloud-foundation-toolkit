@@ -82,9 +82,9 @@ func (k *CmdCfg) RunCmd(args ...string) string {
 	command := func() (string, error) {
 		return shell.RunCommandAndGetStdOutE(k.t, kptCmd)
 	}
-	op, err := retry.DoWithRetryE(k.t, fmt.Sprintf("kpt [%v]",  kptCmd.Args), k.tries, 15*time.Second, command)
+	op, err := retry.DoWithRetryE(k.t, fmt.Sprintf("kpt %v",  kptCmd.Args), k.tries, 15*time.Second, command)
 	if err != nil {
-		k.t.Fatal(err)
+		k.t.Fatal(err, op)
 	}
 	return op
 }
