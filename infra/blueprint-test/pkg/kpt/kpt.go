@@ -84,7 +84,7 @@ func (k *CmdCfg) RunCmd(args ...string) string {
 	}
 	op, err := retry.DoWithRetryE(k.t, fmt.Sprintf("kpt %v",  kptCmd.Args), k.tries, 15*time.Second, command)
 	if err != nil {
-		k.t.Fatal(err, op)
+		k.t.Fatal(err)
 	}
 	return op
 }
