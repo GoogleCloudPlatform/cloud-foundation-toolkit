@@ -19,6 +19,7 @@ func TestKRMSimpleBlueprint(t *testing.T) {
 	networkBlueprint := krmt.NewKRMBlueprintTest(t,
 		krmt.WithDir("../examples/simple_krm_blueprint"),
 		krmt.WithUpdatePkgs(false),
+		krmt.WithTimeout("30m"),
 	)
 	networkBlueprint.DefineVerify(
 		func(assert *assert.Assertions) {
