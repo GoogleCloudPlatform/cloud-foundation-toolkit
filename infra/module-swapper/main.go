@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/GoogleCloudPlatform/infra/developer-tools/build/scripts/module-swapper/cmd"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/module-swapper/cmd"
 )
 
 func main() {

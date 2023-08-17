@@ -1,3 +1,4 @@
 {
-  "infra/blueprint-test": "0.7.0"
+  "infra/blueprint-test": "0.7.0",
+  "infra/module-swapper": "0.2.0"
 }

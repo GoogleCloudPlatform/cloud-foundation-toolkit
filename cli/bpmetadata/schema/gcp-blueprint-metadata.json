@@ -863,6 +863,9 @@
         },
         "disallowCustomMachineTypes": {
           "type": "boolean"
+        },
+        "diskImageProperty": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
