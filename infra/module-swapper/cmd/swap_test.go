@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,7 +28,7 @@ func getAbsPathHelper(p string) string {
 }
 
 func getFileHelper(p string) []byte {
-	f, err := ioutil.ReadFile(p)
+	f, err := os.ReadFile(p)
 	if err != nil {
 		log.Fatalf("Error reading file: %v", err)
 	}
@@ -151,7 +150,7 @@ func Test_processFile(t *testing.T) {
 }
 
 func getTempDir() string {
-	d, err := ioutil.TempDir("", "gitrmtest")
+	d, err := os.MkdirTemp("", "gitrmtest")
 	if err != nil {
 		log.Fatalf("Error creating tempdir: %v", err)
 	}
