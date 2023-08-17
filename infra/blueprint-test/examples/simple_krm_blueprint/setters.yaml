@@ -19,4 +19,4 @@ metadata: # kpt-merge: /setters
   annotations:
     config.kubernetes.io/local-config: "true"
 data:
-  namespace: simple-krm-blueprint
+  pod_name: simple-krm-blueprint

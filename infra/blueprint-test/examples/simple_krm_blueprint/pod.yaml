@@ -12,7 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 apiVersion: v1
-kind: Namespace
+kind: Pod
 metadata:
-  name: default-namespace # kpt-set: ${namespace}
+  name: nginx # kpt-set: ${pod_name}
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
