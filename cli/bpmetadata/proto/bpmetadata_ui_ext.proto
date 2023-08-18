@@ -91,6 +91,10 @@ message GCEMachineTypeExtension {
   // More info:
   // https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type
   bool disallow_custom_machine_types = 3; // @gotags: json:"disallowCustomMachineTypes,omitempty" yaml:"disallowCustomMachineTypes,omitempty"
+
+  // Disk Image allows us to reference the image that is being used
+  // to help provide/gather data such as the image architecture.
+  string disk_image_property = 4; // @gotags: json:"diskImageProperty,omitempty" yaml:"diskImageProperty,omitempty"
 }
 
 // GCEGPUTypeExtension specifies a GPU type extension for a GCE resource.

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.7.0...infra/blueprint-test/v0.8.0) (2023-08-17)
+
+
+### Features
+
+* add utils.PollE ([#1729](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1729)) ([e256d2f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e256d2fdfb10a8a7f86a37145f3388df353cea13))
+
+
+### Bug Fixes
+
+* **deps:** update bpt go modules ([#1748](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1748)) ([f90deec](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f90deec4e6a9728505acee667ae1083a8a270a84))
+* logging and TestKRMSimpleBlueprint timeout ([#1774](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1774)) ([5bc7a56](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5bc7a564422144df44a5a488c33e6e7d7bb00de1))
+
 ## [0.7.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.6.1...infra/blueprint-test/v0.7.0) (2023-07-20)
 
 
