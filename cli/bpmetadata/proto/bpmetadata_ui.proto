@@ -58,7 +58,7 @@ message DisplayVariable {
   // Minimum length for string values.
   // Gen: manually-authored
   int32 min_length = 9; // @gotags: json:"minLength,omitempty" yaml:"minLength,omitempty"
-
+ 
   // Max length for string values.
   // Gen: manually-authored
   int32 max_length = 10; // @gotags: json:"maxLength,omitempty" yaml:"maxLength,omitempty"
@@ -94,6 +94,20 @@ message DisplayVariable {
   // Optional. UTF-8 text. No markup. At most 128 characters.
   // Gen: manually-authored
   string validation = 15; // @gotags: json:"validation,omitempty" yaml:"validation,omitempty"
+
+  // Property subtext, displayed below the title.
+  // Gen: manually-authored
+  string subtext = 16; // @gotags: json:"subtext,omitempty" yaml:"subtext,omitempty"
+
+  // Labels for enum values.
+  // Values must be UTF-8 text with no markup, and at most 64 characters.
+  // Gen: manually-authored
+  repeated ValueLabel enum_value_labels = 17; // @gotags: json:"enumValueLabels,omitempty" yaml:"enumValueLabels,omitempty"
+}
+
+message ValueLabel {
+  string label = 1; // @gotags: json:"label,omitempty" yaml:"label,omitempty"
+  string value = 2; // @gotags: json:"value,omitempty" yaml:"value,omitempty"
 }
 
 // A logical group of variables. [Section][]s may also be grouped into

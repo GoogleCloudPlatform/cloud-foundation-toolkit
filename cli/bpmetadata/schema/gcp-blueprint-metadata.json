@@ -705,6 +705,15 @@
         },
         "validation": {
           "type": "string"
+        },
+        "subtext": {
+          "type": "string"
+        },
+        "enumValueLabels": {
+          "items": {
+            "$ref": "#/$defs/ValueLabel"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -1038,6 +1047,18 @@
       "required": [
         "Kind"
       ]
+    },
+    "ValueLabel": {
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     }
   }
 }
