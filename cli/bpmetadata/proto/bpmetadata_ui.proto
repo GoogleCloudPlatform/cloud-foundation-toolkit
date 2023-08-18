@@ -58,7 +58,7 @@ message DisplayVariable {
   // Minimum length for string values.
   // Gen: manually-authored
   int32 min_length = 9; // @gotags: json:"minLength,omitempty" yaml:"minLength,omitempty"
- 
+
   // Max length for string values.
   // Gen: manually-authored
   int32 max_length = 10; // @gotags: json:"maxLength,omitempty" yaml:"maxLength,omitempty"
