@@ -24,7 +24,7 @@ jobs:
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          tools=("CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT")
 
           for tool in ${tools[@]}
           do
