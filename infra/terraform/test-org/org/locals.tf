@@ -144,7 +144,7 @@ locals {
       short_name   = "example-foundation"
       org          = "terraform-google-modules"
       description  = "Shows how the CFT modules can be composed to build a secure cloud foundation"
-      owners       = ["rjerrems"]
+      owners       = ["rjerrems", "gtsorbo"]
       homepage_url = "https://cloud.google.com/architecture/security-foundations"
       topics       = join(",", [local.common_topics.e2e, local.common_topics.ops])
       lint_env = {
