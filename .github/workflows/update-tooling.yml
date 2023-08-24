@@ -11,7 +11,7 @@ env:
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   KUBECTL_MINOR: "1.26"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
-  GATOR_MINOR: "3.13"
+  GATOR_MINOR: "3.12"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
   GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases/latest"
 
@@ -24,7 +24,7 @@ jobs:
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          tools=("CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT")
 
           for tool in ${tools[@]}
           do
