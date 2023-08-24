@@ -26,110 +26,46 @@ FROM golang:$GOLANG_VERSION-alpine AS go
 
 FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
 
-# Required to download and install terraform-docs
-ARG TERRAFORM_DOCS_VERSION
-ENV TERRAFORM_DOCS_VERSION ${TERRAFORM_DOCS_VERSION}
-
-# Required to download and install the Terraform gsuite provider
-ARG GSUITE_PROVIDER_VERSION
-ENV GSUITE_PROVIDER_VERSION ${GSUITE_PROVIDER_VERSION}
-
-# Required to download and install Google Cloud SDK
-# Google Cloud SDK is located at /usr/local/google-cloud-sdk
-ARG CLOUD_SDK_VERSION
-ENV CLOUD_SDK_VERSION ${CLOUD_SDK_VERSION}
-
-# Required to override base path
-ARG KITCHEN_TEST_BASE_PATH="test/integration"
-ENV KITCHEN_TEST_BASE_PATH ${KITCHEN_TEST_BASE_PATH}
-
-# Required to download and install Bats
-ARG BATS_VERSION
-ENV BATS_VERSION ${BATS_VERSION}
-
-# Required to download and install Bats-support
-ARG BATS_SUPPORT_VERSION
-ENV BATS_SUPPORT_VERSION ${BATS_SUPPORT_VERSION}
-
-# Required to download and install Bats-assert
-ARG BATS_ASSERT_VERSION
-ENV BATS_ASSERT_VERSION ${BATS_ASSERT_VERSION}
-
-# Required to download and install Bats-mock
-ARG BATS_MOCK_VERSION
-ENV BATS_MOCK_VERSION ${BATS_MOCK_VERSION}
-
-# Required to download and install Terraform
-ARG TERRAFORM_VERSION
-ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
-
-ARG TERRAGRUNT_VERSION
-ENV TERRAGRUNT_VERSION ${TERRAGRUNT_VERSION}
-
-# Required to download and install Kustomize
-ARG KUSTOMIZE_VERSION
-ENV KUSTOMIZE_VERSION ${KUSTOMIZE_VERSION}
-
-# Required to download and install Kpt
-ARG KPT_VERSION
-ENV KPT_VERSION ${KPT_VERSION}
-
-# Required to install protoc-gen dependencies
-ARG PROTOC_VERSION
-ENV PROTOC_VERSION ${PROTOC_VERSION}
-
-ARG PROTOC_GEN_GO_VERSION
-ENV PROTOC_GEN_GO_VERSION ${PROTOC_GEN_GO_VERSION}
-
-ARG PROTOC_GEN_GO_GRPC_VERSION
-ENV PROTOC_GEN_GO_GRPC_VERSION ${PROTOC_GEN_GO_GRPC_VERSION}
-
-ARG PROTOC_GEN_GO_INJECT_TAG
-ENV PROTOC_GEN_GO_INJECT_TAG ${PROTOC_GEN_GO_INJECT_TAG}
-
-# Required to download and install CFT CLI
-ARG CFT_CLI_VERSION
-ENV CFT_CLI_VERSION ${CFT_CLI_VERSION}
-
-ARG KUBECTL_VERSION
-ENV KUBECTL_VERSION ${KUBECTL_VERSION}
-
-# Required to download and install TFlint
-ARG TFLINT_VERSION
-ENV TFLINT_VERSION ${TFLINT_VERSION}
-
-# Required to download and install tinkey
-ARG TINKEY_VERSION
-ENV TINKEY_VERSION ${TINKEY_VERSION}
-
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
 ENV WORKSPACE="/workspace"
 ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
 
-# bash is preferred over /bin/sh
-RUN apk add --no-cache bash parallel
-
-# All package-level dependencies are handled by install_dependencies.sh
-ADD ./build/install_dependencies.sh /build/
-RUN /build/install_dependencies.sh
-
-ADD ./build/install_cloud_sdk.sh /build/
-RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
-
-ADD ./build/install_gsuite_terraform_provider.sh /build/
-RUN /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION}
-
-
-# Required to download and install Terraform Validator
-ARG TERRAFORM_VALIDATOR_VERSION
-ENV TERRAFORM_VALIDATOR_VERSION ${TERRAFORM_VALIDATOR_VERSION}
-ADD ./build/install_terraform_validator.sh /build/
-RUN /build/install_terraform_validator.sh ${TERRAFORM_VALIDATOR_VERSION}
-
-ADD ./build/install_terraform.sh /build/
-RUN ./build/install_terraform.sh ${TERRAFORM_VERSION}
+# Install Distro Dependencies
+# diffutils contains the full version of diff needed for the -exclude argument.
+# That argument is needed for check_documentation in task_helper_functions.sh
+# rsync is needed for check_documentation in task_helper_functions.sh
+# install gcompat, because protoc needs a real glibc or compatible layer
+RUN apk add --no-cache \
+    bash \
+    parallel \
+    coreutils \
+    curl \
+    findutils \
+    git \
+    grep \
+    g++ \
+    jq \
+    make \
+    python3-dev \
+    musl-dev \
+    openssh \
+    python3 \
+    py-pip \
+    ca-certificates \
+    diffutils \
+    rsync \
+    gcompat \
+    gettext \
+    libintl \
+    py3-crcmod \
+    py3-flake8 \
+    py3-jinja2 \
+    py3-google-auth \
+    py3-google-api-python-client \
+    py3-pygithub \
+    py3-requests
 
 # Install Golang
 COPY --from=go /usr/local/go/ /usr/local/go/
@@ -139,51 +75,61 @@ RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 # Install module swapper
 COPY --from=module-swapper-builder /usr/local/bin/module-swapper /usr/local/bin/module-swapper
 
-ADD ./build/install_shellcheck.sh /build/
-RUN /build/install_shellcheck.sh
+# Add all build scripts
+ADD ./build/*.sh /build/
 
-ADD ./build/install_hadolint.sh /build/
-RUN /build/install_hadolint.sh
+# Add cloud sdk first, gsutil required by some installers
+ARG CLOUD_SDK_VERSION
+RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 
-ADD ./build/install_terraform_docs.sh /build/
-RUN /build/install_terraform_docs.sh ${TERRAFORM_DOCS_VERSION}
+# Optimized to minimize layers
+ARG GSUITE_PROVIDER_VERSION
+ARG TERRAFORM_VALIDATOR_VERSION
+ARG TERRAFORM_DOCS_VERSION
+ARG BATS_VERSION
+ARG BATS_SUPPORT_VERSION
+ARG BATS_ASSERT_VERSION
+ARG BATS_MOCK_VERSION
+ARG TERRAGRUNT_VERSION
+ARG KUSTOMIZE_VERSION
+ARG PROTOC_VERSION
+ARG PROTOC_GEN_GO_VERSION
+ARG PROTOC_GEN_GO_GRPC_VERSION
+ARG PROTOC_GEN_GO_INJECT_TAG
+ARG TFLINT_VERSION
+ARG TINKEY_VERSION
+RUN /build/install_shellcheck.sh && \
+    /build/install_hadolint.sh && \
+    /build/install_addlicense.sh && \
+    /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION} && \
+    /build/install_terraform_validator.sh ${TERRAFORM_VALIDATOR_VERSION} && \
+    /build/install_terraform_docs.sh ${TERRAFORM_DOCS_VERSION} && \
+    /build/install_bats.sh ${BATS_VERSION} ${BATS_SUPPORT_VERSION} ${BATS_ASSERT_VERSION} ${BATS_MOCK_VERSION} && \
+    /build/install_terragrunt.sh ${TERRAGRUNT_VERSION} && \
+    /build/install_kustomize.sh ${KUSTOMIZE_VERSION} && \
+    /build/install_protoc.sh ${PROTOC_VERSION} ${PROTOC_GEN_GO_VERSION} ${PROTOC_GEN_GO_GRPC_VERSION} ${PROTOC_GEN_GO_INJECT_TAG} && \
+    /build/install_tflint.sh ${TFLINT_VERSION} && \
+    /build/install_tinkey.sh ${TINKEY_VERSION}
 
-ADD ./build/install_bats.sh /build/
-RUN /build/install_bats.sh ${BATS_VERSION} ${BATS_SUPPORT_VERSION} ${BATS_ASSERT_VERSION} ${BATS_MOCK_VERSION}
+# Optimized to independently cache layers for commonly updated tools:
+# https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/.github/workflows/update-tooling.yml
+ARG TERRAFORM_VERSION
+RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
 
-ADD ./build/install_kubectl.sh /build/
-RUN /build/install_kubectl.sh ${KUBECTL_VERSION}
+ARG KPT_VERSION
+RUN /build/install_kpt.sh ${KPT_VERSION}
 
-ADD ./build/install_terragrunt.sh /build/
-RUN ./build/install_terragrunt.sh ${TERRAGRUNT_VERSION}
-
-ADD ./build/install_kustomize.sh /build/
-RUN ./build/install_kustomize.sh ${KUSTOMIZE_VERSION}
-
-ADD ./build/install_kpt.sh /build/
-RUN ./build/install_kpt.sh ${KPT_VERSION}
-
-ADD ./build/install_addlicense.sh /build/
-RUN /build/install_addlicense.sh
-
-ADD ./build/install_cft_cli.sh /build/
+ARG CFT_CLI_VERSION
 RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
 
-ADD ./build/install_protoc.sh /build/
-RUN /build/install_protoc.sh ${PROTOC_VERSION} ${PROTOC_GEN_GO_VERSION} ${PROTOC_GEN_GO_GRPC_VERSION} ${PROTOC_GEN_GO_INJECT_TAG}
-
-ADD ./build/install_tflint.sh /build/
-RUN /build/install_tflint.sh ${TFLINT_VERSION}
-
-ADD ./build/install_tinkey.sh /build/
-RUN /build/install_tinkey.sh ${TINKEY_VERSION}
+ARG KUBECTL_VERSION
+RUN /build/install_kubectl.sh ${KUBECTL_VERSION}
 
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN gem install bundler:2.2.33 && bundle install
+RUN gem install bundler:2.2.33 && bundle install --retry=10
 
-COPY ./build/install_verify_boilerplate.sh /build/
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
 RUN /build/install_verify_boilerplate.sh
 
