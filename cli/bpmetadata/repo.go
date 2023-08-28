@@ -32,7 +32,7 @@ func getRepoDetailsByPath(bpPath string, r *repoDetail, readme []byte) {
 	// For a submodule, we'll try to get repo details from the
 	// root blueprint or just return the current repoDetail object
 	// if it's still in memory.
-	if strings.Contains(bpPath, nestedBpPath) {
+	if strings.Contains(bpPath, nestedBpPath) && r.Source != nil {
 		// try to parse the module name from MD which will get
 		// overriden with "["repoName-submoduleName" if repoName is available
 		r.ModuleName = parseRepoNameFromMd(readme)

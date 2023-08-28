@@ -32,14 +32,9 @@ gcloud config set core/disable_usage_reporting true
 gcloud config set component_manager/disable_update_check true
 gcloud config set survey/disable_prompts true
 gcloud config set enable_feature_flags false
-gcloud components install beta --quiet
-gcloud components install alpha --quiet
-
 # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
-gcloud components install gke-gcloud-auth-plugin --quiet
-
 # https://cloud.google.com/docs/terraform/policy-validation/quickstart
-gcloud components install terraform-tools --quiet
+gcloud components install alpha beta terraform-tools gke-gcloud-auth-plugin --quiet
 
 gcloud --version
 gsutil version -l

@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v1.2.2
+VERSION=v1.2.4
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
@@ -60,4 +60,4 @@ test: build go_test int_test
 
 .PHONY: docker_go_lint
 docker_go_lint:
-	docker run --rm -v $(PWD):/cli -w /cli  golangci/golangci-lint:v1.52.2 golangci-lint --timeout=5m -v run
+	docker run --rm -v $(PWD):/cli -w /cli  golangci/golangci-lint:v1.54.1 golangci-lint --timeout=5m -v run
