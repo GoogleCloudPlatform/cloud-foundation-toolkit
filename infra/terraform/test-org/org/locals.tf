@@ -752,5 +752,23 @@ locals {
       owners      = ["anaik91", "imrannayer"]
       topics      = local.common_topics.db
     },
+    {
+      name            = "terraform-pubsub-integration-golang"
+      short_name      = "pubsub-golang-app"
+      org             = "GoogleCloudPlatform"
+      description     = "Reliable low-latency server-to-server communication around the globe"
+      owners          = ["anguillanneuf", "balajismaniam", "donmccasland", "msampathkumar"]
+      # groups          = ["dee-data-ai", local.jss_common_group]
+      # enable_periodic = true
+    },
+    {
+      name            = "terraform-pubsub-integration-java"
+      short_name      = "pubsub-java-app"
+      org             = "GoogleCloudPlatform"
+      description     = "Cost-effective high-throughput data ingestion"
+      owners          = ["anguillanneuf", "balajismaniam", "donmccasland", "msampathkumar"]
+      # groups          = ["dee-data-ai", local.jss_common_group]
+      # enable_periodic = true
+    },
   ]
 }
