@@ -26,6 +26,10 @@ FROM golang:$GOLANG_VERSION-alpine AS go
 
 FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
 
+# Required to override base path
+ARG KITCHEN_TEST_BASE_PATH="test/integration"
+ENV KITCHEN_TEST_BASE_PATH ${KITCHEN_TEST_BASE_PATH}
+
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
