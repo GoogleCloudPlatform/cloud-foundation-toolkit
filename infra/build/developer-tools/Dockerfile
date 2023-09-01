@@ -16,12 +16,6 @@ ARG RUBY_VERSION
 ARG GOLANG_VERSION
 ARG ALPINE_VERSION
 
-# Builds module-swapper
-FROM golang:$GOLANG_VERSION-alpine AS module-swapper-builder
-WORKDIR /go/src/github.com/GoogleCloudPlatform/infra/developer-tools/build/scripts/module-swapper
-COPY ./build/scripts/module-swapper ./
-RUN go build -v -o /usr/local/bin/module-swapper
-
 FROM golang:$GOLANG_VERSION-alpine AS go
 
 FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
@@ -76,9 +70,6 @@ COPY --from=go /usr/local/go/ /usr/local/go/
 RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
 RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
-# Install module swapper
-COPY --from=module-swapper-builder /usr/local/bin/module-swapper /usr/local/bin/module-swapper
-
 # Add all build scripts
 ADD ./build/*.sh /build/
 
@@ -128,6 +119,9 @@ RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
 
 ARG KUBECTL_VERSION
 RUN /build/install_kubectl.sh ${KUBECTL_VERSION}
+
+ARG MODULE_SWAPPER_VERSION
+RUN /build/install_module-swapper.sh ${MODULE_SWAPPER_VERSION}
 
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
