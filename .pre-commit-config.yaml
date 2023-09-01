@@ -1,3 +1,11 @@
+exclude: |
+  (?x)^(
+    config-connector/.*|
+    dm/.*|
+    reports/.*|
+    cli/testdata/.*|
+    cli/bptest/.*
+  )$
 repos:
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 36.40.3
@@ -6,6 +14,6 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-      -  id: check-yaml
-      -  id: end-of-file-fixer
-      -  id: trailing-whitespace
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
