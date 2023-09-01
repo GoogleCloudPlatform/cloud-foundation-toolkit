@@ -9,6 +9,7 @@ env:
   CLOUD_SDK_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
   KPT_URL: "https://api.github.com/repos/GoogleContainerTools/kpt/releases"
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
+  MODULE_SWAPPER_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   KUBECTL_MINOR: "1.26"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
   GATOR_MINOR: "3.13"
@@ -24,7 +25,7 @@ jobs:
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER")
 
           for tool in ${tools[@]}
           do
@@ -41,9 +42,12 @@ jobs:
             elif [ "$tool" == "CFT_CLI" ]; then
               # get latest CFT_CLI release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "cli/v")
+            elif [ "$tool" == "MODULE_SWAPPER" ]; then
+              # get latest MODULE_SWAPPER release
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("infra/module-swapper"))][0].tag_name' | tr -d "infra/module-swapper/v")
             elif [ "$tool" == "KUBECTL" ]; then
               # get latest KUBECTL_MINOR release
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name' | tr -d "v")              
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name' | tr -d "v")
             elif [ "$tool" == "GATOR" ]; then
               # get latest GATOR_MINOR release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${GATOR_MINOR}'"))][0].tag_name' | tr -d "v")
