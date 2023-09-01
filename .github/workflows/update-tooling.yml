@@ -44,7 +44,7 @@ jobs:
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "cli/v")
             elif [ "$tool" == "MODULE_SWAPPER" ]; then
               # get latest MODULE_SWAPPER release
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("infra/module-swapper"))][0].tag_name' | tr -d "infra/module-swapper/v")
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("infra/module-swapper"))][0].tag_name' | tr -d "infra/module\-swapper/v")
             elif [ "$tool" == "KUBECTL" ]; then
               # get latest KUBECTL_MINOR release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${KUBECTL_MINOR}'"))][0].tag_name' | tr -d "v")
