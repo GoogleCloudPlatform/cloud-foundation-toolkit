@@ -3,6 +3,9 @@ on:
   schedule:
     - cron: "0 2 * * *"
   workflow_dispatch:
+  push:
+    branches:
+      - 'master'
 
 env:
   TERRAFORM_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
