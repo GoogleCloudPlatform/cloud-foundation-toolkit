@@ -64,3 +64,7 @@ RUN rm -rf /build
 # Add dind helper for prow
 ADD ./build/scripts/runner.sh /usr/local/bin/
 ADD ./build/scripts/prow_entrypoint.sh /usr/local/bin/
+
+# cookiecutter is used for terraform-google-module-template tests
+# https://github.com/terraform-google-modules/terraform-google-module-template
+RUN pip install cookiecutter

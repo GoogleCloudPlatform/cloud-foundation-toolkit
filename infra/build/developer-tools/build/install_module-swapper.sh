@@ -1,4 +1,5 @@
-# Copyright 2018-2023 Google LLC
+#! /bin/bash
+# Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source 'https://rubygems.org/'
-gem "kitchen-terraform", "~> 7.0"
-gem "kubeclient", "~> 4.11"
-gem "rest-client", "~> 2.1"
-gem 'nokogiri', '~> 1.15'
-ruby '~> 3.2.2'
+set -e
+set -u
+
+MODULE_SWAPPER_VERSION=$1
+
+cd /build
+
+go install github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/module-swapper@v${MODULE_SWAPPER_VERSION}
+ln -s $(go env GOPATH)/bin/module-swapper /usr/local/bin/

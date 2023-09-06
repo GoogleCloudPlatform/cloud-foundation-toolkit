@@ -21,9 +21,6 @@ BATS_SUPPORT_VERSION=$2
 BATS_ASSERT_VERSION=$3
 BATS_MOCK_VERSION=$4
 
-# bats required envsubst missing in Alpine by default
-apk add gettext libintl
-
 cd /build
 wget "https://github.com/sstephenson/bats/archive/v${BATS_VERSION}.zip"
 unzip "v${BATS_VERSION}.zip"
