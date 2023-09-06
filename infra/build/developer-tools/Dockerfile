@@ -158,6 +158,10 @@ RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 ENV TF_VALIDATOR_TMP_PLAN_DIR /workspace/test/integration/tmp/tfvt/
 RUN mkdir -p ${TF_VALIDATOR_TMP_PLAN_DIR}
 
+# Add GO_PATH TO PATH
+ENV GO_PATH="/root/go"
+ENV PATH=$GO_PATH/bin:$PATH
+
 WORKDIR $WORKSPACE
 RUN terraform --version && \
     terraform-docs --version && \
