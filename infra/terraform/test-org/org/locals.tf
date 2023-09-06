@@ -756,12 +756,16 @@ locals {
       name            = "terraform-pubsub-integration-golang"
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-golang-app"
+      owners          = ["shabirmean", "Mukamik"]
+      groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
     },
     {
       name            = "terraform-pubsub-integration-java"
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-java-app"
+      owners          = ["shabirmean", "Mukamik"]
+      groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
     },
   ]
