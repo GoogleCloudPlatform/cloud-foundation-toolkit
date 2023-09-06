@@ -12,7 +12,7 @@ INT_TEST_DIR=./bpmetadata/int-test
 SCHEMA_DIR=./bpmetadata/schema
 SRC_PROTO_DIR=./bpmetadata/proto
 PROTOC_DIR=./bpmetadata
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.14
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.15
 DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
