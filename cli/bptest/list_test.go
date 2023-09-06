@@ -11,7 +11,7 @@ import (
 
 const (
 	testDirWithDiscovery = "testdata/with-discovery"
-	intTestDir           = "test/intergration"
+	intTestDir           = "test/integration"
 )
 
 func TestGetDiscoveredTests(t *testing.T) {

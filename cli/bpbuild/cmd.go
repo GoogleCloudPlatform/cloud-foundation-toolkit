@@ -34,7 +34,6 @@ func init() {
 	avgTimeCmd.Flags().StringVar(&avgTimeFlags.lookUpEnd, "end-time", "", "Time to stop computing build step avg in form MM-DD-YYYY. Defaults to current date.")
 	avgTimeCmd.Flags().StringVar(&avgTimeFlags.projectId, "project-id", "cloud-foundation-cicd", "Project ID where builds are executed.")
 	avgTimeCmd.Flags().StringVar(&avgTimeFlags.repoName, "repo", "", "Name of repo that triggered the builds. Defaults to extracting from git config.")
-
 }
 
 var Cmd = &cobra.Command{

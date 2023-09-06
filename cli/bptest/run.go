@@ -22,7 +22,7 @@ const (
 
 	// The tfplan.json files that are being used as input for the terraform validation tests
 	// through the gcloud beta terraform vet are higher than the buffer default value (64*1024),
-	// after some tests we had evidences that the value were arround from 3MB to 5MB, so
+	// after some tests we had evidences that the value were around from 3MB to 5MB, so
 	// we choosed a value that is at least 2x higher than the original one to avoid errors.
 	// maxScanTokenSize is the maximum size used to buffer a token
 	// startBufSize is the initial of the buffer token
@@ -87,20 +87,19 @@ func streamExec(cmd *exec.Cmd) error {
 			fmt.Println(scanner.Text())
 		}
 		if err := scanner.Err(); err != nil {
-			Log.Error(fmt.Sprintf("error reading output: %v", err))
+			Log.Error(fmt.Sprintf("error reading output: %s", err))
 		}
 	}()
 
 	// run command
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("error running command: %v", err)
+		return fmt.Errorf("error running command: %w", err)
 	}
 	return nil
 }
 
 // getTestCmd returns a prepared cmd for running the specified tests(s)
 func getTestCmd(intTestDir string, testStage string, testName string, relTestPkg string) (*exec.Cmd, error) {
-
 	// pass all current env vars to test command
 	env := os.Environ()
 	// set test stage env var if specified

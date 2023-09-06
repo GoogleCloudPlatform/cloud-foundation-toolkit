@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-github/v53/github"
+	"github.com/google/go-github/v55/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -305,7 +305,6 @@ func TestRenderDocHTML(t *testing.T) {
 			updateExpected(t, expectedPath, got)
 			expected := readFile(t, expectedPath)
 			assert.Equal(t, expected, got)
-
 		})
 	}
 }

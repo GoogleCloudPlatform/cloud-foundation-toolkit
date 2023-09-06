@@ -91,7 +91,7 @@ func getBlueprintVersion(configPath string) (*blueprintVersion, error) {
 	//parse out the blueprint version from the config
 	modName, err := parseBlueprintVersion(versionsFile, diags)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing blueprint version: %v", err)
+		return nil, fmt.Errorf("error parsing blueprint version: %w", err)
 	}
 
 	//parse out the required version from the config

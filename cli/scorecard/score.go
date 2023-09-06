@@ -325,7 +325,6 @@ func (inventory *InventoryConfig) Score(config *ScoringConfig, outputPath string
 		if err != nil {
 			return err
 		}
-
 	} else {
 		fmt.Println("No issues found found! You have a perfect score.")
 	}

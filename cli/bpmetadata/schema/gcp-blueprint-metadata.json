@@ -381,10 +381,8 @@
           ]
         },
         "quotaType": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
+          "additionalProperties": {
+            "type": "string"
           },
           "type": "object"
         }
@@ -543,10 +541,8 @@
     "BlueprintUIInput": {
       "properties": {
         "variables": {
-          "patternProperties": {
-            ".*": {
-              "$ref": "#/$defs/DisplayVariable"
-            }
+          "additionalProperties": {
+            "$ref": "#/$defs/DisplayVariable"
           },
           "type": "object"
         },
@@ -572,10 +568,8 @@
           "type": "array"
         },
         "outputs": {
-          "patternProperties": {
-            ".*": {
-              "$ref": "#/$defs/DisplayOutput"
-            }
+          "additionalProperties": {
+            "$ref": "#/$defs/DisplayOutput"
           },
           "type": "object"
         }
@@ -998,18 +992,14 @@
           "type": "string"
         },
         "labels": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
+          "additionalProperties": {
+            "type": "string"
           },
           "type": "object"
         },
         "annotations": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
+          "additionalProperties": {
+            "type": "string"
           },
           "type": "object"
         }

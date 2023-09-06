@@ -62,7 +62,6 @@ func TestIsValidTestName(t *testing.T) {
 }
 
 func TestGetTestCmd(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		intTestDir string

@@ -39,20 +39,20 @@ func initTest(name string) error {
 		}
 		err = writeFile(goModpath, fmt.Sprintf(goMod, path.Base(cwd)))
 		if err != nil {
-			return fmt.Errorf("error writing go mod file: %v", err)
+			return fmt.Errorf("error writing go mod file: %w", err)
 		}
 	}
 
 	// discover test configs
 	testCfg, err := discovery.GetConfigDirFromTestDir(testDir)
 	if err != nil {
-		return fmt.Errorf("unable to discover test configs for %s: %v", testDir, err)
+		return fmt.Errorf("unable to discover test configs for %s: %w", testDir, err)
 	}
 
 	// Parse config to expose outputs within test
 	mod, diags := tfconfig.LoadModule(testCfg)
 	if diags.HasErrors() {
-		return fmt.Errorf("error parsing outputs: %v", diags)
+		return fmt.Errorf("error parsing outputs: %w", diags)
 	}
 	outputs := make([]string, 0, len(mod.Outputs))
 	for _, op := range mod.Outputs {
@@ -63,11 +63,11 @@ func initTest(name string) error {
 	// render and write test
 	testFile, err := getBPTestFromTmpl(name, outputs)
 	if err != nil {
-		return fmt.Errorf("error creating blueprint test: %v", err)
+		return fmt.Errorf("error creating blueprint test: %w", err)
 	}
 	err = os.MkdirAll(testDir, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("error creating test dir: %v", err)
+		return fmt.Errorf("error creating test dir: %w", err)
 	}
 	return writeFile(path.Join(testDir, fmt.Sprintf("%s_test.go", strcase.ToSnake(name))), testFile)
 }

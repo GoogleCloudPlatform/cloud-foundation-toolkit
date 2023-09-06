@@ -28,7 +28,7 @@ func WalkTerraformDirs(topLevelPath string) ([]string, error) {
 	var tfDirs []string
 	err := filepath.Walk(topLevelPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
-			return fmt.Errorf("failure in accessing the path %q: %v\n", path, err)
+			return fmt.Errorf("failure in accessing the path %q: %w\n", path, err)
 		}
 		if info.IsDir() && (strings.HasPrefix(info.Name(), tfInternalDirPrefix) || skipDiscoverDirs[info.Name()]) {
 			return filepath.SkipDir
@@ -42,7 +42,7 @@ func WalkTerraformDirs(topLevelPath string) ([]string, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error walking the path %q: %v\n", topLevelPath, err)
+		return nil, fmt.Errorf("error walking the path %q: %w\n", topLevelPath, err)
 	}
 
 	return tfDirs, nil
@@ -51,7 +51,7 @@ func WalkTerraformDirs(topLevelPath string) ([]string, error) {
 func FindFilesWithPattern(dir string, pattern string, skipPaths []string) ([]string, error) {
 	f, err := os.Stat(dir)
 	if err != nil {
-		return nil, fmt.Errorf("no such dir: %v", err)
+		return nil, fmt.Errorf("no such dir: %w", err)
 	}
 	if !f.IsDir() {
 		return nil, fmt.Errorf("expected dir %s: got file", dir)
@@ -59,7 +59,7 @@ func FindFilesWithPattern(dir string, pattern string, skipPaths []string) ([]str
 
 	re, err := regexp.Compile(pattern)
 	if err != nil {
-		return nil, fmt.Errorf("invalid regex: %v", err)
+		return nil, fmt.Errorf("invalid regex: %w", err)
 	}
 
 	filePaths := []string{}
@@ -102,5 +102,5 @@ func Exists(path string) (bool, error) {
 	if errors.Is(err, os.ErrNotExist) {
 		return false, nil
 	}
-	return false, fmt.Errorf("error checking if %s exists: %v", path, err)
+	return false, fmt.Errorf("error checking if %s exists: %w", path, err)
 }

@@ -1,8 +1,9 @@
 package launchpad
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // newTestFolder generates a fully formed folder for testing usage.

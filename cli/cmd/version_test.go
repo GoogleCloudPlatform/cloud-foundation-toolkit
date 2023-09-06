@@ -22,7 +22,6 @@ func TestVersionCommand(t *testing.T) {
 }
 
 func TestVersionCommandHelp(t *testing.T) {
-
 	output, err := ExecuteCommand(rootCmd, "version", "-h")
 	if !strings.HasPrefix(output, versionCmd.Long) {
 		t.Errorf("Unexpected output: %v", output)

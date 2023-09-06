@@ -34,7 +34,7 @@ func getRepoDetailsByPath(bpPath string, r *repoDetail, readme []byte) {
 	// if it's still in memory.
 	if strings.Contains(bpPath, nestedBpPath) && r.Source != nil {
 		// try to parse the module name from MD which will get
-		// overriden with "["repoName-submoduleName" if repoName is available
+		// overridden with "["repoName-submoduleName" if repoName is available
 		r.ModuleName = parseRepoNameFromMd(readme)
 		if r.RepoName != "" {
 			r.ModuleName = r.RepoName + "-" + getBpSubmoduleNameInKebabCase(bpPath)

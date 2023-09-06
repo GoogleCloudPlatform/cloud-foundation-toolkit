@@ -19,7 +19,7 @@ func TestTFDirectories(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "multiple directores",
+			name: "multiple directories",
 			path: "content/examples",
 			want: []string{
 				"../testdata/bpmetadata/content/examples/acm/acm-terraform-blog-part1/terraform",
