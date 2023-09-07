@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v1.2.5
+VERSION=v1.2.6
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
@@ -12,7 +12,7 @@ INT_TEST_DIR=./bpmetadata/int-test
 SCHEMA_DIR=./bpmetadata/schema
 SRC_PROTO_DIR=./bpmetadata/proto
 PROTOC_DIR=./bpmetadata
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.14
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.15
 DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 
