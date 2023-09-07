@@ -697,7 +697,7 @@ run_terraform_validator() {
           terraform plan -input=false -out "$tmp_plan/plan.tfplan"  || exit 1
           terraform show -json "$tmp_plan/plan.tfplan" > "$tmp_plan/plan.json" || exit 1
 
-          terraform-validator validate "$tmp_plan/plan.json" --policy-path="$policy_file_path" --project="$project" || exit 1
+          gcloud beta terraform vet "$tmp_plan/plan.json" --policy-library="$policy_file_path" --project="$project" || exit 1
 
           cd "$base_dir" || exit
       else

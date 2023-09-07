@@ -17,17 +17,20 @@ env:
   GATOR_MINOR: "3.13"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
   GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases/latest"
+  KUSTOMIZE_URL: "https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest"
+  TERRAGRUNT_URL: "https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest"
+  TFLINT_URL: "https://api.github.com/repos/terraform-linters/tflint/releases/latest"
 
 jobs:
   update-tools:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
       - name: Update Tools
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER" "KUSTOMIZE" "TERRAGRUNT" "TFLINT")
 
           for tool in ${tools[@]}
           do
@@ -53,6 +56,9 @@ jobs:
             elif [ "$tool" == "GATOR" ]; then
               # get latest GATOR_MINOR release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("'${GATOR_MINOR}'"))][0].tag_name' | tr -d "v")
+            elif [ "$tool" == "KUSTOMIZE" ]; then
+              # get latest KUSTOMIZE release
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("kustomize"))][0].tag_name' | tr -d "kustomize/v")
             else
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output .tag_name | tr -d "v")
             fi
