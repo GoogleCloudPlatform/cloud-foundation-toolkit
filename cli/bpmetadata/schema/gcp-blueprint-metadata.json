@@ -729,6 +729,18 @@
         "diskTypeVariable"
       ]
     },
+    "GCEDiskTypeExtension": {
+      "properties": {
+        "machineTypeVariable": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "machineTypeVariable"
+      ]
+    },
     "GCEExternalIPExtension": {
       "properties": {
         "networkVariable": {
@@ -963,6 +975,9 @@
         },
         "iamServiceAccount": {
           "$ref": "#/$defs/IAMServiceAccountExtension"
+        },
+        "gceDiskType": {
+          "$ref": "#/$defs/GCEDiskTypeExtension"
         }
       },
       "additionalProperties": false,
