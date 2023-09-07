@@ -6,4 +6,3 @@
 fly --target cft login --team-name cft \
     --concourse-url https://concourse.infra.cft.tips
 ```
-
