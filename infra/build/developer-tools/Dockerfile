@@ -12,13 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # Download and verify the integrity of the download first
-ARG RUBY_VERSION
-ARG GOLANG_VERSION
 ARG ALPINE_VERSION
-
-FROM golang:$GOLANG_VERSION-alpine AS go
-
-FROM ruby:$RUBY_VERSION-alpine$ALPINE_VERSION
+FROM alpine:$ALPINE_VERSION
 
 # Required to override base path
 ARG KITCHEN_TEST_BASE_PATH="test/integration"
@@ -63,12 +58,9 @@ RUN apk add --no-cache \
     py3-google-auth \
     py3-google-api-python-client \
     py3-pygithub \
-    py3-requests
-
-# Install Golang
-COPY --from=go /usr/local/go/ /usr/local/go/
-RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
-RUN ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+    py3-requests \
+    ruby-dev \
+    go
 
 # Add all build scripts
 ADD ./build/*.sh /build/
@@ -126,7 +118,7 @@ RUN /build/install_module-swapper.sh ${MODULE_SWAPPER_VERSION}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN gem install bundler:2.2.33 && bundle install --retry=10
+RUN gem install bundler:2.4.19 && bundle install --retry=10
 
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
 RUN /build/install_verify_boilerplate.sh
@@ -166,6 +158,10 @@ RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 ENV TF_VALIDATOR_TMP_PLAN_DIR /workspace/test/integration/tmp/tfvt/
 RUN mkdir -p ${TF_VALIDATOR_TMP_PLAN_DIR}
 
+# Add GO_PATH TO PATH
+ENV GO_PATH="/root/go"
+ENV PATH=$GO_PATH/bin:$PATH
+
 WORKDIR $WORKSPACE
 RUN terraform --version && \
     terraform-docs --version && \
@@ -178,13 +174,9 @@ RUN terraform --version && \
     kustomize version && \
     addlicense -help && \
     cft version && \
-    protoc --version
-
-# Add GO_PATH TO PATH
-ENV GO_PATH="/root/go"
-ENV PATH=$GO_PATH/bin:$PATH
+    protoc --version && \
+    go version
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build
-RUN go version
 CMD ["/bin/bash"]

@@ -6,3 +6,4 @@ config-connector/tests/testcases/environments.yaml
 .vscode
 *.pyc
 cli/bpmetadata/int-test/.working
+go.work.sum
