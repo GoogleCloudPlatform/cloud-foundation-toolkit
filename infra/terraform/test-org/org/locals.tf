@@ -757,7 +757,7 @@ locals {
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-golang-app"
       owners          = ["shabirmean", "Mukamik"]
-      groups          = ["dee-platform-ops", local.jss_common_group]
+      groups          = ["blueprint-solutions", "dee-platform-ops", local.jss_common_group]
       enable_periodic = true
     },
     {
@@ -765,7 +765,7 @@ locals {
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-java-app"
       owners          = ["shabirmean", "Mukamik"]
-      groups          = ["dee-platform-ops", local.jss_common_group]
+      groups          = ["blueprint-solutions", "dee-platform-ops", local.jss_common_group]
       enable_periodic = true
     },
   ]
