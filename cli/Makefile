@@ -25,7 +25,7 @@ build: protoc-gen build-schema
 
 .PHONY: protoc-gen
 protoc-gen:
-	docker run --rm -it \
+	docker run --rm \
 		-v "$(CURDIR)":/workspace \
 		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
 		/bin/bash -c "protoc -I=${SRC_PROTO_DIR} --go_opt=paths=source_relative --go_out=${PROTOC_DIR} ${SRC_PROTO_DIR}/*.proto && \
