@@ -29,4 +29,3 @@ terraform {
     }
   }
 }
-

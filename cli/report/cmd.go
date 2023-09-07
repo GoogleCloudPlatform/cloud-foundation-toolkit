@@ -69,7 +69,7 @@ var Cmd = &cobra.Command{
 	Use:   "report",
 	Short: "Generate inventory reports based on CAI outputs in a directory.",
 	Long: `Generate inventory reports for resources in Cloud Asset Inventory (CAI) output files, with reports defined in rego (in '<path_to_cloud-foundation-toolkit>/reports/sample' folder).
-	
+
 	Example:
 	  cft report --query-path <path_to_cloud-foundation-toolkit>/reports/sample \
 		--dir-path <path-to-directory-containing-cai-export> \
@@ -99,7 +99,7 @@ var listCmd = &cobra.Command{
 	Use:   "list-available-reports",
 	Short: "List available inventory report queries.",
 	Long: `List available inventory report queries for resources in Cloud Asset Inventory (CAI).
-	
+
 	Example:
 	  cft report list-available-reports --query-path <path_to_cloud-foundation-toolkit>/reports/sample
 	`,

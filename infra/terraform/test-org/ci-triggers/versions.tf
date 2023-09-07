@@ -20,4 +20,3 @@ terraform {
     google-beta = ">= 2.18, < 5.0"
   }
 }
-
