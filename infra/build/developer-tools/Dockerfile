@@ -30,7 +30,8 @@ ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
 # That argument is needed for check_documentation in task_helper_functions.sh
 # rsync is needed for check_documentation in task_helper_functions.sh
 # install gcompat, because protoc needs a real glibc or compatible layer
-RUN apk add --no-cache \
+RUN apk upgrade -U && \
+    apk add --no-cache \
     bash \
     parallel \
     coreutils \
