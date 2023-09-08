@@ -121,7 +121,8 @@ func generate(cmd *cobra.Command, args []string) error {
 
 		err = generateMetadataForBpPath(modPath)
 		if err != nil {
-			errors = append(errors, err.Error())
+			e := fmt.Sprintf("path: %s\n %s", modPath, err.Error())
+			errors = append(errors, e)
 		}
 	}
 
