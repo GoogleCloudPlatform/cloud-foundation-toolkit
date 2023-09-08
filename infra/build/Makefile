@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.5.6
+TERRAFORM_VERSION := 1.5.7
 TERRAFORM_VALIDATOR_VERSION := 0.13.0
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 445.0.0
@@ -53,7 +53,7 @@ OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.16.1
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.15.3
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.15.4
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
