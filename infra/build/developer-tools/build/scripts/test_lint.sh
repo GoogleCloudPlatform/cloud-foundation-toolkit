@@ -51,7 +51,7 @@ tests=(
   check_python
   check_tflint
   check_terraform
-  check_metadata  
+  check_metadata
 )
 
 # parse args

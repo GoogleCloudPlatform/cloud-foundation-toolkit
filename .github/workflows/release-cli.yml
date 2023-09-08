@@ -1,7 +1,7 @@
 name: Release new CLI versions
 on:
   push:
-    branches: 
+    branches:
       - "master"
     paths:
       - "cli/Makefile"
@@ -38,7 +38,7 @@ jobs:
           version: "410.0.0"
 
       # used by make release which runs gcloud alpha storage
-      - name: Install gcloud alpha commands 
+      - name: Install gcloud alpha commands
         run: gcloud components install alpha
 
       - name: Retrieve last released version

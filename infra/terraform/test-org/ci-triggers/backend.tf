@@ -44,4 +44,3 @@ data "terraform_remote_state" "sfb-bootstrap" {
     prefix = "terraform/bootstrap/state"
   }
 }
-

@@ -33,4 +33,3 @@ module "projects_cleanup" {
   target_excluded_labels   = local.exclude_labels
   target_folder_id         = local.cleanup_folder
 }
-

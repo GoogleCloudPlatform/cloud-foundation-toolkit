@@ -20,4 +20,3 @@ terraform {
     prefix = "state/test-cleanup"
   }
 }
-
