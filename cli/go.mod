@@ -11,17 +11,16 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gammazero/workerpool v1.1.3
 	github.com/go-git/go-git/v5 v5.8.1
-	github.com/goccy/go-yaml v1.11.0
 	github.com/golang/protobuf v1.5.3
 	github.com/gomarkdown/markdown v0.0.0-20230716120725-531d2d74bc12
 	github.com/google/go-cmp v0.5.9
 	github.com/google/go-github/v53 v53.0.0
-	github.com/google/go-github/v54 v54.0.0
 	github.com/hashicorp/hcl/v2 v2.18.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230825013512-b800820f61b8
 	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/log15 v0.0.0-20201112154412-8562bdadbbac
 	github.com/invopop/jsonschema v0.7.0
+	github.com/itchyny/json2yaml v0.1.4
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.4.7
 	github.com/manifoldco/promptui v0.9.0
@@ -40,7 +39,6 @@ require (
 	google.golang.org/api v0.138.0
 	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v2 v2.4.0
-	gopkg.in/yaml.v3 v3.0.1
 	sigs.k8s.io/yaml v1.3.0
 )
 
@@ -102,7 +100,6 @@ require (
 	github.com/google/gnostic v0.6.9 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
-	github.com/google/pprof v0.0.0-20220318212150-b2ab0324ddda // indirect
 	github.com/google/s2a-go v0.1.5 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.5 // indirect
@@ -190,6 +187,7 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/api v0.27.2 // indirect
 	k8s.io/apiextensions-apiserver v0.27.2 // indirect
 	k8s.io/apimachinery v0.27.2 // indirect
