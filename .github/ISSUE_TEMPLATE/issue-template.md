@@ -9,7 +9,7 @@ assignees: ''
 
 ############################ NOTE #######################
 
-Dear CFT User! 
+Dear CFT User!
 
 If you are looking to build new GCP infrastructure, we recommend that you use [Terraform CFT modules](https://g.co/dev/terraformfoundation)
 Terraform CFT supports the most recent GCP resources, reflects GCP best practices can be used off-the-shelf to quickly build a repeatable enterprise-ready foundation.

@@ -330,7 +330,7 @@ function generate_metadata() {
     eval "cft blueprint metadata $arg"
   fi
 
-  if [ $? -ne 0 ]; then    
+  if [ $? -ne 0 ]; then
     echo "Warning! Unable to generate metadata."
     return 1
   fi
