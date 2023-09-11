@@ -11,7 +11,6 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gammazero/workerpool v1.1.3
 	github.com/go-git/go-git/v5 v5.8.1
-	github.com/goccy/go-yaml v1.11.0
 	github.com/golang/protobuf v1.5.3
 	github.com/gomarkdown/markdown v0.0.0-20230716120725-531d2d74bc12
 	github.com/google/go-cmp v0.5.9
@@ -21,6 +20,7 @@ require (
 	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/log15 v2.16.0+incompatible
 	github.com/invopop/jsonschema v0.8.0
+	github.com/itchyny/json2yaml v0.1.4
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.4.7
 	github.com/manifoldco/promptui v0.9.0
