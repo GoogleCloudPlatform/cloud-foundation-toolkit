@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
-	goyaml "github.com/goccy/go-yaml"
+	"github.com/itchyny/json2yaml"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -121,7 +121,8 @@ func generate(cmd *cobra.Command, args []string) error {
 
 		err = generateMetadataForBpPath(modPath)
 		if err != nil {
-			errors = append(errors, err.Error())
+			e := fmt.Sprintf("path: %s\n %s", modPath, err.Error())
+			errors = append(errors, e)
 		}
 	}
 
@@ -419,14 +420,13 @@ func WriteMetadata(obj *BlueprintMetadata, bpPath, fileName string) error {
 		return err
 	}
 
-	// convert json bytes to yaml bytes for before writing to disk
-	// using go-yaml package here since that preserves the order of fields
-	yBytes, err := goyaml.JSONToYAML(jBytes)
-	if err != nil {
+	input := strings.NewReader(string(jBytes))
+	var output strings.Builder
+	if err := json2yaml.Convert(&output, input); err != nil {
 		return err
 	}
 
-	return os.WriteFile(path.Join(bpPath, fileName), yBytes, 0644)
+	return os.WriteFile(path.Join(bpPath, fileName), []byte(output.String()), 0644)
 }
 
 func UnmarshalMetadata(bpPath, fileName string) (*BlueprintMetadata, error) {
