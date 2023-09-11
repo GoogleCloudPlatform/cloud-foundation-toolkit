@@ -142,11 +142,11 @@ func TestSetupOverrideString(t *testing.T) {
 			output "simple_string" {
 			  value = "foo"
 			}
-			
+
 			output "simple_num" {
 			  value = 1
 			}
-			
+
 			output "simple_bool" {
 			  value = true
 			}
@@ -163,11 +163,11 @@ func TestSetupOverrideString(t *testing.T) {
 			output "simple_string" {
 			  value = "foo"
 			}
-			
+
 			output "simple_num" {
 			  value = 1
 			}
-			
+
 			output "simple_bool" {
 			  value = true
 			}
