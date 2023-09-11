@@ -22,6 +22,7 @@ func generateSchemaFile(o, wdPath string) error {
 	if err != nil {
 		return err
 	}
+	sData = append(sData, []byte("\n")...)
 
 	// check if the provided output path is relative
 	if !path.IsAbs(o) {
