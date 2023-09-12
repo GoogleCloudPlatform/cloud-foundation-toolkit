@@ -9,7 +9,7 @@ on:
 env:
   TERRAFORM_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
   CLOUD_SDK_URL: "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz"
-  KPT_URL: "https://api.github.com/repos/GoogleContainerTools/kpt/releases"
+  KPT_URL: "https://api.github.com/repos/kptdev/kpt/releases"
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   MODULE_SWAPPER_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   KUBECTL_MINOR: "1.26"
