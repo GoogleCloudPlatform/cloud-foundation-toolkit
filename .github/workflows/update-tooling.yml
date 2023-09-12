@@ -105,3 +105,4 @@ jobs:
           labels: automated pr
           reviewers: bharathkkb, apeabody
           branch: create-pull-request/patch-tools-version
+          base: master
