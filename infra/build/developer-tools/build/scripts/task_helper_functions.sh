@@ -574,6 +574,8 @@ prepare_environment() {
 
   init_credentials_if_found
 
+  init_tf_plugin_cache
+
   cd test/setup/ || exit
   terraform init
   terraform apply -auto-approve
