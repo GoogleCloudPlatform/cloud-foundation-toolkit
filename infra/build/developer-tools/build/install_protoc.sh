@@ -21,11 +21,11 @@ PROTOC_GEN_GO_VERSION=$2
 PROTOC_GEN_GO_GRPC_VERSION=$3
 PROTOC_GEN_GO_INJECT_TAG=$4
 
-cd /build
+mkdir -p /build/install_protoc
+cd /build/install_protoc
 
 curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip"
-unzip "protoc-${PROTOC_VERSION}-linux-x86_64.zip" -d $HOME/.local
-rm "protoc-${PROTOC_VERSION}-linux-x86_64.zip"
+unzip -q "protoc-${PROTOC_VERSION}-linux-x86_64.zip" -d $HOME/.local
 chmod 755 $HOME/.local/bin/protoc
 cp $HOME/.local/bin/protoc /usr/local/bin/
 cp -R $HOME/.local/include/ /usr/local/include/
@@ -33,3 +33,5 @@ cp -R $HOME/.local/include/ /usr/local/include/
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v${PROTOC_GEN_GO_VERSION}
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${PROTOC_GEN_GO_GRPC_VERSION}
 go install github.com/favadi/protoc-go-inject-tag@v${PROTOC_GEN_GO_INJECT_TAG}
+
+rm -rf /build/install_protoc

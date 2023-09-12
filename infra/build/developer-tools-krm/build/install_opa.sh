@@ -16,9 +16,12 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_opa
+cd /build/install_opa
 
 OPA_VERSION=$1
 
-wget -q https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_amd64_static -O opa
+wget -nv "https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_amd64_static" -O opa
 install -o 0 -g 0 -m 0755 opa /usr/local/bin/opa
+
+rm -rf /build/install_opa

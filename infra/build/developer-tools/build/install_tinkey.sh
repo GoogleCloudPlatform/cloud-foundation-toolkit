@@ -16,16 +16,15 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_tinkey
+cd /build/install_tinkey
 
 TINKEY_VERSION=$1
 
-mkdir ./tinkey
+gsutil cp "gs://tinkey/tinkey-${TINKEY_VERSION}.tar.gz" .
+tar -xzf "tinkey-${TINKEY_VERSION}.tar.gz"
 
-gsutil cp "gs://tinkey/tinkey-${TINKEY_VERSION}.tar.gz" ./tinkey
-tar -xzvf "./tinkey/tinkey-${TINKEY_VERSION}.tar.gz" -C ./tinkey
+install -o 0 -g 0 -m 0755 tinkey_deploy.jar /usr/bin/
+install -o 0 -g 0 -m 0755 tinkey /usr/bin/
 
-install -o 0 -g 0 -m 0755 ./tinkey/tinkey_deploy.jar /usr/bin/
-install -o 0 -g 0 -m 0755 ./tinkey/tinkey /usr/bin/
-
-rm -rf ./tinkey
+rm -rf /build/install_tinkey

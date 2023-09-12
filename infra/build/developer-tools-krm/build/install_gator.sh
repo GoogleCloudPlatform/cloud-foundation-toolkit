@@ -16,10 +16,13 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_gator
+cd /build/install_gator
 
 GATOR_VERSION=$1
 
-wget -q https://github.com/open-policy-agent/gatekeeper/releases/download/v${GATOR_VERSION}/gator-v${GATOR_VERSION}-linux-amd64.tar.gz
+wget -nv "https://github.com/open-policy-agent/gatekeeper/releases/download/v${GATOR_VERSION}/gator-v${GATOR_VERSION}-linux-amd64.tar.gz"
 tar -xf gator-v${GATOR_VERSION}-linux-amd64.tar.gz
 install -o 0 -g 0 -m 0755 gator /usr/local/bin/gator
+
+rm -rf /build/install_gator

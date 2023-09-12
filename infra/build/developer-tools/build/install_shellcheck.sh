@@ -16,9 +16,11 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_shellcheck
+cd /build/install_shellcheck
 
-wget https://github.com/koalaman/shellcheck/releases/download/v0.6.0/shellcheck-v0.6.0.linux.x86_64.tar.xz
+wget -nv "https://github.com/koalaman/shellcheck/releases/download/v0.6.0/shellcheck-v0.6.0.linux.x86_64.tar.xz"
 tar -xf shellcheck-v0.6.0.linux.x86_64.tar.xz
 install -o 0 -g 0 -m 0755 shellcheck-v0.6.0/shellcheck /usr/local/bin/shellcheck
-rm -rf shellcheck-v0.6.0 shellcheck-v0.6.0.linux.x86_64.tar.xz
+
+rm -rf /build/install_shellcheck

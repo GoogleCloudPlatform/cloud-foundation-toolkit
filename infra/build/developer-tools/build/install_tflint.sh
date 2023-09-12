@@ -16,10 +16,13 @@
 set -e
 set -u
 
+mkdir -p /build/install_tflint
+cd /build/install_tflint
+
 TF_LINT_VERSION=$1
 
-cd /build
-
-wget "https://github.com/terraform-linters/tflint/releases/download/v${TF_LINT_VERSION}/tflint_linux_amd64.zip"
-unzip tflint_linux_amd64.zip
+wget -nv "https://github.com/terraform-linters/tflint/releases/download/v${TF_LINT_VERSION}/tflint_linux_amd64.zip"
+unzip -q tflint_linux_amd64.zip
 install -o 0 -g 0 -m 0755 tflint /usr/local/bin/tflint
+
+rm -rf /build/install_tflint

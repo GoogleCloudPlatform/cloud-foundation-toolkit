@@ -16,9 +16,12 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_asmcli
+cd /build/install_asmcli
 
 ASMCLI_VERSION=$1
 
 curl https://storage.googleapis.com/csm-artifacts/asm/asmcli_${ASMCLI_VERSION} > asmcli
 install -o 0 -g 0 -m 0755 asmcli /usr/local/bin/asmcli
+
+rm -rf /build/install_asmcli
