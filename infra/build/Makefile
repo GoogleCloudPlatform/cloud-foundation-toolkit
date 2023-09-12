@@ -16,7 +16,7 @@ SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
 TERRAFORM_VERSION := 1.5.7
 # Updated by Update Tooling Workflow
-CLOUD_SDK_VERSION := 445.0.0
+CLOUD_SDK_VERSION := 446.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.16.0
 BATS_VERSION := 0.4.0
@@ -35,7 +35,7 @@ PROTOC_GEN_GO_VERSION := 1.31
 PROTOC_GEN_GO_GRPC_VERSION := 1.3
 PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 1.2.5
+CFT_CLI_VERSION := 1.2.6
 # Updated by Update Tooling Workflow
 KUBECTL_VERSION := 1.26.8
 # Updated by Update Tooling Workflow
