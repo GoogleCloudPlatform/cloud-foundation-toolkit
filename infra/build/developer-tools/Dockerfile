@@ -72,7 +72,6 @@ RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 
 # Optimized to minimize layers
 ARG GSUITE_PROVIDER_VERSION
-ARG TERRAFORM_VALIDATOR_VERSION
 ARG TERRAFORM_DOCS_VERSION
 ARG BATS_VERSION
 ARG BATS_SUPPORT_VERSION
@@ -90,7 +89,6 @@ RUN /build/install_shellcheck.sh && \
     /build/install_hadolint.sh && \
     /build/install_addlicense.sh && \
     /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION} && \
-    /build/install_terraform_validator.sh ${TERRAFORM_VALIDATOR_VERSION} && \
     /build/install_terraform_docs.sh ${TERRAFORM_DOCS_VERSION} && \
     /build/install_bats.sh ${BATS_VERSION} ${BATS_SUPPORT_VERSION} ${BATS_ASSERT_VERSION} ${BATS_MOCK_VERSION} && \
     /build/install_terragrunt.sh ${TERRAGRUNT_VERSION} && \
@@ -155,10 +153,6 @@ ADD ./build/home/.tflint.module.hcl /root/tflint/.tflint.module.hcl
 ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
 RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 
-# Set TF Validator temporary plan dir
-ENV TF_VALIDATOR_TMP_PLAN_DIR /workspace/test/integration/tmp/tfvt/
-RUN mkdir -p ${TF_VALIDATOR_TMP_PLAN_DIR}
-
 # Add GO_PATH TO PATH
 ENV GO_PATH="/root/go"
 ENV PATH=$GO_PATH/bin:$PATH
@@ -166,7 +160,6 @@ ENV PATH=$GO_PATH/bin:$PATH
 WORKDIR $WORKSPACE
 RUN terraform --version && \
     terraform-docs --version && \
-    terraform-validator version && \
     gcloud --version && \
     ruby --version && \
     bundle --version && \
