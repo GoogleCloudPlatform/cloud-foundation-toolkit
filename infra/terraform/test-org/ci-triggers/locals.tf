@@ -43,6 +43,8 @@ locals {
     "genai-doc-summarization"     = "terraform-genai-doc-summarization"
     "secured-notebook"            = "notebooks-blueprint-security"
     "sdw-onprem-ingest"           = "terraform-google-secured-data-warehouse-onprem-ingest"
+    "pubsub-golang-app"           = "terraform-pubsub-integration-golang"
+    "pubsub-java-app"             = "terraform-pubsub-integration-java"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
