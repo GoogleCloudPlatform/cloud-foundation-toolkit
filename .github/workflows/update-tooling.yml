@@ -17,7 +17,7 @@ env:
   GATOR_MINOR: "3.13"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
   GCRANE_URL: "https://api.github.com/repos/google/go-containerregistry/releases/latest"
-  KUSTOMIZE_URL: "https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest"
+  KUSTOMIZE_URL: "https://api.github.com/repos/kubernetes-sigs/kustomize/releases"
   TERRAGRUNT_URL: "https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest"
   TFLINT_URL: "https://api.github.com/repos/terraform-linters/tflint/releases/latest"
 
