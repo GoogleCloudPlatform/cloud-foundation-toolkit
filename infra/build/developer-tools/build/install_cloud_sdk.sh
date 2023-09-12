@@ -36,5 +36,7 @@ gcloud config set enable_feature_flags false
 # https://cloud.google.com/docs/terraform/policy-validation/quickstart
 gcloud components install alpha beta terraform-tools gke-gcloud-auth-plugin --quiet
 
+rm -rf /usr/local/google-cloud-sdk/.install/.backup
+
 gcloud --version
 gsutil version -l
