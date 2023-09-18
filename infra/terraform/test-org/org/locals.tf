@@ -768,5 +768,12 @@ locals {
       groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
     },
+    {
+      name            = "terraform-google-backup-dr"
+      org             = "GoogleCloudPlatform"
+      short_name      = "backup-dr"
+      description     = "Terraform module for Google BackupDR components"
+      owners          = ["umeshkumhar"]
+    }
   ]
 }
