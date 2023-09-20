@@ -20,7 +20,7 @@ CLOUD_SDK_VERSION=$1
 
 cd /build
 
-wget "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz"
+wget -nv "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz"
 tar -C /usr/local -xzf "google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz"
 rm "google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz"
 

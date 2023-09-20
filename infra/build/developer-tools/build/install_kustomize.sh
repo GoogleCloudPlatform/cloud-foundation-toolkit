@@ -16,10 +16,13 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_kustomize
+cd /build/install_kustomize
 
 KUSTOMIZE_VERSION=$1
 
-wget -q https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
-tar xzf ./kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
+wget -nv https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
+tar -xzf kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz
 install -o 0 -g 0 -m 0755 kustomize /usr/local/bin/kustomize
+
+rm -rf /build/install_kustomize
