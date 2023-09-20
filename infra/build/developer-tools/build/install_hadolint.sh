@@ -16,7 +16,10 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_hadolint
+cd /build/install_hadolint
 
-wget https://github.com/hadolint/hadolint/releases/download/v1.15.0/hadolint-Linux-x86_64
+wget -nv "https://github.com/hadolint/hadolint/releases/download/v1.15.0/hadolint-Linux-x86_64"
 install -o 0 -g 0 -m 0755 hadolint-Linux-x86_64 /usr/local/bin/hadolint
+
+rm -rf /build/install_hadolint

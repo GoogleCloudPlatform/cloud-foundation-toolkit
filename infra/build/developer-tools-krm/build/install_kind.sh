@@ -16,9 +16,12 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_kind
+cd /build/install_kind
 
 KIND_VERSION=$1
 
-wget -q https://kind.sigs.k8s.io/dl/v${KIND_VERSION}/kind-linux-amd64
+wget -nv "https://kind.sigs.k8s.io/dl/v${KIND_VERSION}/kind-linux-amd64"
 install -o 0 -g 0 -m 0755 kind-linux-amd64 /usr/local/bin/kind
+
+rm -rf /build/install_kind
