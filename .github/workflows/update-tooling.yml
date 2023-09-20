@@ -5,6 +5,11 @@ on:
   workflow_dispatch:
   release:
     types: [released]
+  push:
+    branches:
+      - "master"
+    paths:
+      - "infra/build/Makefile"
 
 env:
   TERRAFORM_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
