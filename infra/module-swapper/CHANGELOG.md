@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.2.0...infra/module-swapper/v0.2.1) (2023-09-06)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/go-git/go-git/v5 to v5.8.1 ([#1733](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1733)) ([668f901](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/668f90157ee5e3d1b07dc23caefeb1e2083bab3c))
+
 ## [0.2.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.1.0...infra/module-swapper/v0.2.0) (2023-08-16)
 
 

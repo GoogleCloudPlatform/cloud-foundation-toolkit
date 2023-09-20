@@ -23,4 +23,3 @@ locals {
   region          = "us-central1"
   app_location    = "us-central"
 }
-

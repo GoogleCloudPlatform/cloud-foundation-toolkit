@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright 2019 Google LLC
+# Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@
 set -e
 set -u
 
+MODULE_SWAPPER_VERSION=$1
+
 cd /build
 
-TERRAFORM_VALIDATOR_VERSION=$1
-
-gsutil cp gs://terraform-validator/releases/v${TERRAFORM_VALIDATOR_VERSION}/terraform-validator_linux_amd64-${TERRAFORM_VALIDATOR_VERSION}.tar.gz .
-tar -xzvf terraform-validator_linux_amd64-${TERRAFORM_VALIDATOR_VERSION}.tar.gz
-
-install -o 0 -g 0 -m 0755  terraform-validator /usr/bin/
-rm terraform-validator_linux_amd64-${TERRAFORM_VALIDATOR_VERSION}.tar.gz
-rm THIRD_PARTY_NOTICES.zip
+go install github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/module-swapper@v${MODULE_SWAPPER_VERSION}
+ln -s $(go env GOPATH)/bin/module-swapper /usr/local/bin/

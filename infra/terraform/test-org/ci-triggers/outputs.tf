@@ -19,9 +19,9 @@ output "repo_folder" {
 }
 
 output "int_triggers" {
-  value = google_cloudbuild_trigger.int_trigger.*
+  value = google_cloudbuild_trigger.int_trigger[*]
 }
 
 output "int_periodic_triggers" {
-  value = google_cloudbuild_trigger.periodic_int_trigger.*
+  value = google_cloudbuild_trigger.periodic_int_trigger[*]
 }

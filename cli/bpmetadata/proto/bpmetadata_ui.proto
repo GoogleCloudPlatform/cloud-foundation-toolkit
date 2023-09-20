@@ -85,7 +85,7 @@ message DisplayVariable {
   //   zoneProperty: myZone
   //   gceMachineType:
   //     minCpu: 2
-  //     minRamGb: 
+  //     minRamGb:
   // Gen: manually-authored
   GooglePropertyExtension x_google_property = 14; // @gotags: json:"xGoogleProperty,omitempty" yaml:"xGoogleProperty,omitempty"
 

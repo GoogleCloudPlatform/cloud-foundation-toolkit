@@ -66,4 +66,3 @@ vpc.yaml       compute.cnrm.cloud.google.com/v1beta1       ComputeNetwork  netwo
     ```
     kpt live status --output table --poll-until current
     ```
-

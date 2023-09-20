@@ -21,4 +21,3 @@ output "project_id" {
 output "excluded_labels" {
   value = local.exclude_labels
 }
-

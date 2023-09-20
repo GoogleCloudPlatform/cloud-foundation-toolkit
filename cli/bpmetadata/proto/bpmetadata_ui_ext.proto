@@ -68,6 +68,7 @@ message GooglePropertyExtension {
   GCELocationExtension       gce_zone = 14; // @gotags: json:"gceZone,omitempty" yaml:"gceZone,omitempty"
   GCELocationExtension       gce_region = 15; // @gotags: json:"gceRegion,omitempty" yaml:"gceRegion,omitempty"
   IAMServiceAccountExtension iam_service_account = 16; // @gotags: json:"iamServiceAccount,omitempty" yaml:"iamServiceAccount,omitempty"
+  GCEDiskTypeExtension       gce_disk_type = 17; // @gotags: json:"gceDiskType,omitempty" yaml:"gceDiskType,omitempty"
 }
 
 // GCELocationExtension specifies a location extension for a Google Compute Engine (GCE) resource.
@@ -108,6 +109,13 @@ message GCEGPUTypeExtension {
 
 // GCEGPUCountExtension specifies the number of GPUs that should be attached to a machine.
 message GCEGPUCountExtension {
+  // This field references another variable from the schema,
+  // which must have type GCEMachineType.
+  string machine_type_variable = 1; // @gotags: json:"machineTypeVariable" yaml:"machineTypeVariable"
+}
+
+// GCEDiskTypeExtension specifies the type of disk for a GCE resource.
+message GCEDiskTypeExtension {
   // This field references another variable from the schema,
   // which must have type GCEMachineType.
   string machine_type_variable = 1; // @gotags: json:"machineTypeVariable" yaml:"machineTypeVariable"

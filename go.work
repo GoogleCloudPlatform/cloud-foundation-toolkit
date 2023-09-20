@@ -1,0 +1,8 @@
+go 1.20
+
+use (
+  ./cli
+  ./infra/blueprint-test
+  ./infra/module-swapper
+  ./infra/utils/fbf
+)

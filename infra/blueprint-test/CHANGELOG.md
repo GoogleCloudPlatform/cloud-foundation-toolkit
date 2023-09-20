@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.8.0...infra/blueprint-test/v0.8.1) (2023-09-08)
+
+
+### Bug Fixes
+
+* update bpt go modules ([#1820](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1820)) ([5f35095](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5f350959aa03b4f73116cbfa0e13a73ebf359ca3))
+
 ## [0.8.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.7.0...infra/blueprint-test/v0.8.0) (2023-08-17)
 
 

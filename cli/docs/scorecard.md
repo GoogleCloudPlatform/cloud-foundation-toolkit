@@ -74,16 +74,16 @@ The user guide in rest of this document provides examples for Linux and OS X env
 You can also use --refresh flag to create or overwrite CAI export files in GCS bucket and perform analysis, within one step.
 
 ```
-# Running Cloud Asset Inventory API via Cloud SDK requires a service account and does not support end user credentials. 
+# Running Cloud Asset Inventory API via Cloud SDK requires a service account and does not support end user credentials.
 # Configure Application Default Credential to use a service account key if running outside GCP
-# The service account needs be created in a Cloud Asset Inventory enabled project, 
-# with Cloud Asset Viewer role at target project/folder/org, 
+# The service account needs be created in a Cloud Asset Inventory enabled project,
+# with Cloud Asset Viewer role at target project/folder/org,
 # and Storage Object Viewer role at $CAI_BUCKET_NAME
 export GOOGLE_APPLICATION_CREDENTIALS=sa_key.json
 
 ./cft scorecard --policy-path ./policy-library \
   --bucket=$CAI_BUCKET_NAME \
-  --refresh 
+  --refresh
 ```
 
 ### Using a local export
@@ -117,7 +117,7 @@ Print a scorecard of your GCP environment, for resources and IAM policies in Clo
 
 Usage:
   cft scorecard [flags]
-  
+
 
 Flags:
       --bucket string                GCS bucket name for storing inventory (conflicts with --dir-path or --stdin)
