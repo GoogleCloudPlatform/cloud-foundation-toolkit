@@ -15,6 +15,7 @@
   "separateMajorMinor": false,
   "ignorePaths": ["config-connector/**"],
   "additionalBranchPrefix": "{{parentDir}}-",
+  "constraints": {"go": "1.20"},
   "packageRules": [
     {
       "matchFileNames": [".github/**"],
