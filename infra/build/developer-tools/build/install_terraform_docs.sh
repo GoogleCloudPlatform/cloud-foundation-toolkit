@@ -16,10 +16,13 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_terraform_docs
+cd /build/install_terraform_docs
 
 TERRAFORM_DOCS_VERSION=$1
 
-wget -q "https://github.com/segmentio/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64.tar.gz"
-tar xzf ./terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64.tar.gz
+wget -nv "https://github.com/segmentio/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64.tar.gz"
+tar -xzf terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64.tar.gz
 install -o 0 -g 0 -m 0755 "terraform-docs" /usr/local/bin/terraform-docs
+
+rm -rf /build/install_terraform_docs
