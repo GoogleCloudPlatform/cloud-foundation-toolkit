@@ -16,9 +16,12 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_terragrunt
+cd /build/install_terragrunt
 
 TERRAGRUNT_VERSION=$1
 
-wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64
+wget -nv "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64"
 install -o 0 -g 0 -m 0755 terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+rm -rf /build/install_terragrunt

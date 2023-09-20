@@ -16,11 +16,13 @@
 set -e
 set -u
 
+mkdir -p /build/install_kpt
+cd /build/install_kpt
+
 KPT_VERSION=$1
 
-cd /build
-
-wget "https://github.com/GoogleContainerTools/kpt/releases/download/v${KPT_VERSION}/kpt_linux_amd64-${KPT_VERSION}.tar.gz"
-tar xzf "kpt_linux_amd64-${KPT_VERSION}.tar.gz"
-rm "kpt_linux_amd64-${KPT_VERSION}.tar.gz"
+wget -nv "https://github.com/GoogleContainerTools/kpt/releases/download/v${KPT_VERSION}/kpt_linux_amd64-${KPT_VERSION}.tar.gz"
+tar -xzf "kpt_linux_amd64-${KPT_VERSION}.tar.gz"
 install -o 0 -g 0 -m 0755 kpt /usr/local/bin/
+
+rm -rf /build/install_kpt
