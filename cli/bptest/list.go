@@ -116,7 +116,6 @@ func getExplicitTests(intTestDir string) ([]bpTest, error) {
 		for _, fnName := range testFns {
 			eTests = append(eTests, bpTest{name: fnName, location: testFile, config: testCfg, bptestCfg: bptestCfg})
 		}
-
 	}
 	sort.SliceStable(eTests, func(i, j int) bool { return eTests[i].name < eTests[j].name })
 	return eTests, nil

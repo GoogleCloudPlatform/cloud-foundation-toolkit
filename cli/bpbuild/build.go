@@ -7,7 +7,7 @@ import (
 	"time"
 
 	cloudbuild "google.golang.org/api/cloudbuild/v1"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -22,12 +22,12 @@ func getCBBuildsWithFilter(projectID string, filter string, cFilters []clientBui
 	ctx := context.Background()
 	cloudbuildService, err := cloudbuild.NewService(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("error creating cloudbuild service: %v", err)
+		return nil, fmt.Errorf("error creating cloudbuild service: %w", err)
 	}
 
 	c, err := cloudbuildService.Projects.Builds.List(projectID).Filter(filter).Do()
 	if err != nil {
-		return nil, fmt.Errorf("error listing builds with filter %s in project %s: %v", filter, projectID, err)
+		return nil, fmt.Errorf("error listing builds with filter %s in project %s: %w", filter, projectID, err)
 	}
 
 	cbBuilds := []*cloudbuild.Build{}
@@ -56,7 +56,7 @@ func getCBBuildsWithFilter(projectID string, filter string, cFilters []clientBui
 	for {
 		c, err = cloudbuildService.Projects.Builds.List(projectID).Filter(filter).PageToken(c.NextPageToken).Do()
 		if err != nil {
-			return nil, fmt.Errorf("error retriving next page with token %s: %v", c.NextPageToken, err)
+			return nil, fmt.Errorf("error retrieving next page with token %s: %w", c.NextPageToken, err)
 		}
 		appendClientFilteredBuilds(c.Builds)
 		if c.NextPageToken == "" {

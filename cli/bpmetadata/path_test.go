@@ -65,19 +65,19 @@ func TestDirContent(t *testing.T) {
 			path:  "content/examples",
 			regex: regexExamples,
 			want: []*BlueprintMiscContent{
-				&BlueprintMiscContent{
+				{
 					Name:     "terraform",
 					Location: "examples/acm/acm-terraform-blog-part1/terraform",
 				},
-				&BlueprintMiscContent{
+				{
 					Name:     "acm-terraform-blog-part2",
 					Location: "examples/acm/acm-terraform-blog-part2",
 				},
-				&BlueprintMiscContent{
+				{
 					Name:     "simple_regional",
 					Location: "examples/simple_regional",
 				},
-				&BlueprintMiscContent{
+				{
 					Name:     "simple_regional_beta",
 					Location: "examples/simple_regional_beta",
 				},
@@ -89,15 +89,15 @@ func TestDirContent(t *testing.T) {
 			path:  "content/modules",
 			regex: regexModules,
 			want: []*BlueprintMiscContent{
-				&BlueprintMiscContent{
+				{
 					Name:     "beta-public-cluster",
 					Location: "modules/beta-public-cluster",
 				},
-				&BlueprintMiscContent{
+				{
 					Name:     "binary-authorization",
 					Location: "modules/binary-authorization",
 				},
-				&BlueprintMiscContent{
+				{
 					Name:     "private-cluster",
 					Location: "modules/private-cluster",
 				},
@@ -115,11 +115,11 @@ func TestDirContent(t *testing.T) {
 			path:  "content/examples-some-without-tf/examples",
 			regex: regexExamples,
 			want: []*BlueprintMiscContent{
-				&BlueprintMiscContent{
+				{
 					Name:     "terraform",
 					Location: "examples/acm/acm-terraform-blog-part1/terraform",
 				},
-				&BlueprintMiscContent{
+				{
 					Name:     "simple_regional",
 					Location: "examples/simple_regional",
 				},

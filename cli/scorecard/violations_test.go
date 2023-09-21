@@ -78,7 +78,6 @@ func TestGetAssetFromJSON(t *testing.T) {
 			if tc.isIamPolicy && pbAsset.IamPolicy == nil {
 				t.Errorf("wanted IAM Policy bindings, got %s", pbAsset)
 			}
-
 		})
 	}
 }

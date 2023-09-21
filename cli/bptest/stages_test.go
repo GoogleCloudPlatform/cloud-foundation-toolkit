@@ -7,7 +7,6 @@ import (
 )
 
 func TestValidateAndGetStage(t *testing.T) {
-
 	tests := []struct {
 		name   string
 		stage  string

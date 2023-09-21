@@ -16,10 +16,13 @@
 set -e
 set -u
 
-cd /build
+mkdir -p /build/install_terraform
+cd /build/install_terraform
 
 TERRAFORM_VERSION=$1
 
-wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-unzip ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+wget -nv "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+unzip -q terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 install -o 0 -g 0 -m 0755 terraform /usr/local/bin/terraform
+
+rm -rf /build/install_terraform
