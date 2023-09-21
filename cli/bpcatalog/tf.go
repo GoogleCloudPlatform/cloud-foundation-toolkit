@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/google/go-github/v53/github"
+	"github.com/google/go-github/v55/github"
 )
 
 // sortOption defines the set of sort options for catalog.
@@ -55,7 +55,7 @@ var (
 func fetchSortedTFRepos(gh *ghService, sortOpt sortOption) (repos, error) {
 	repos, err := gh.fetchRepos()
 	if err != nil {
-		return nil, fmt.Errorf("error fetching repos: %v", err)
+		return nil, fmt.Errorf("error fetching repos: %w", err)
 	}
 	repos = repos.filter(func(r *github.Repository) bool {
 		if r.GetArchived() {

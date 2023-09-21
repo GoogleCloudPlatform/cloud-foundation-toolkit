@@ -174,7 +174,6 @@ func TestTFVersions(t *testing.T) {
 					t.Errorf("getBlueprintVersion() = %v, want %v", got.moduleVersion, tt.wantModuleVersion)
 					return
 				}
-
 			} else {
 				if tt.wantModuleVersion != "" && tt.wantRequiredVersion != "" {
 					t.Errorf("getBlueprintVersion() = returned nil when we want core: %v and bpVersion: %v", tt.wantRequiredVersion, tt.wantModuleVersion)

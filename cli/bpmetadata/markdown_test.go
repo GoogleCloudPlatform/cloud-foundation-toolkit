@@ -100,10 +100,10 @@ func TestProcessMarkdownContent(t *testing.T) {
 			getContent: true,
 			want: &mdContent{
 				listItems: []mdListItem{
-					mdListItem{
+					{
 						text: "User requests are sent to the front end, which is deployed on two Cloud Run services as containers to support high scalability applications.",
 					},
-					mdListItem{
+					{
 						text: "The request then lands on the middle tier, which is the API layer that provides access to the backend. This is also deployed on Cloud Run for scalability and ease of deployment in multiple languages. This middleware is a Golang based API.",
 					},
 				},
@@ -127,19 +127,19 @@ func TestProcessMarkdownContent(t *testing.T) {
 			getContent: true,
 			want: &mdContent{
 				listItems: []mdListItem{
-					mdListItem{
+					{
 						text: "document-01",
 						url:  "http://google.com/doc-01",
 					},
-					mdListItem{
+					{
 						text: "document-02",
 						url:  "http://google.com/doc-02",
 					},
-					mdListItem{
+					{
 						text: "document-03",
 						url:  "http://google.com/doc-03",
 					},
-					mdListItem{
+					{
 						text: "document-04",
 						url:  "http://google.com/doc-04",
 					},
@@ -155,10 +155,10 @@ func TestProcessMarkdownContent(t *testing.T) {
 			getContent: true,
 			want: &mdContent{
 				listItems: []mdListItem{
-					mdListItem{
+					{
 						text: "text-document-01",
 					},
-					mdListItem{
+					{
 						text: "text-document-02",
 					},
 				},

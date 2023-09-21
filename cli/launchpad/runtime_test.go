@@ -2,8 +2,9 @@ package launchpad
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
-import "github.com/stretchr/testify/assert"
 
 type dummyResource struct {
 	headerYAML

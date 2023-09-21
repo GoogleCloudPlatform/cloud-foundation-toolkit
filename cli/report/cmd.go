@@ -62,7 +62,6 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
 }
 
 // Cmd represents the base report command

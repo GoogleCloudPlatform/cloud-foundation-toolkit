@@ -38,7 +38,7 @@ var Cmd = &cobra.Command{
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list tests",
-	Long:  "Lists both auto discovered and explicit intergration tests",
+	Long:  "Lists both auto discovered and explicit integration tests",
 
 	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -80,7 +80,7 @@ var runCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		intTestDir, err := getIntTestDir(flags.testDir)
 		if err != nil {
-			return fmt.Errorf("error discovering test dir: %v", err)
+			return fmt.Errorf("error discovering test dir: %w", err)
 		}
 		testStage, err := validateAndGetStage(flags.testStage)
 		if err != nil {

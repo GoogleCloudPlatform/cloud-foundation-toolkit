@@ -54,7 +54,7 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 	// prepare metadata for validation by converting it from YAML to JSON
 	mBytes, err := convertYamlToJson(m)
 	if err != nil {
-		return fmt.Errorf("yaml to json conversion failed for metadata at path %s. error: %s", m, err)
+		return fmt.Errorf("yaml to json conversion failed for metadata at path %s. error: %w", m, err)
 	}
 
 	// load metadata from the path
@@ -63,7 +63,7 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 	// validate metadata against the schema
 	result, err := gojsonschema.Validate(schema, yamlLoader)
 	if err != nil {
-		return fmt.Errorf("metadata validation failed for %s. error: %s", m, err)
+		return fmt.Errorf("metadata validation failed for %s. error: %w", m, err)
 	}
 
 	if !result.Valid() {
@@ -84,7 +84,7 @@ func convertYamlToJson(m string) ([]byte, error) {
 	// read metadata for validation
 	b, err := os.ReadFile(m)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read metadata at path %s. error: %s", m, err)
+		return nil, fmt.Errorf("unable to read metadata at path %s. error: %w", m, err)
 	}
 
 	if len(b) == 0 {
