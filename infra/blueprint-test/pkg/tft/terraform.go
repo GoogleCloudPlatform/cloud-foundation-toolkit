@@ -70,6 +70,7 @@ type TFBlueprintTest struct {
 	apply                         func(*assert.Assertions) // apply function
 	verify                        func(*assert.Assertions) // verify function
 	teardown                      func(*assert.Assertions) // teardown function
+	setupOutputOverrides          map[string]interface{}   // override outputs from the Setup phase
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -149,6 +150,13 @@ func WithLogger(logger *logger.Logger) tftOption {
 	}
 }
 
+// WithSetupOutputs overrides output values from the setup stage
+func WithSetupOutputs(vars map[string]interface{}) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.setupOutputOverrides = vars
+	}
+}
+
 // NewTFBlueprintTest sets defaults, validates and returns a TFBlueprintTest.
 func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	tft := &TFBlueprintTest{
@@ -216,6 +224,14 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.logger.Logf(tft.t, "Skipping credential activation %s output from setup", setupKeyOutputName)
 		}
 	}
+	// Load env vars to supplement/override setup
+	tft.logger.Logf(tft.t, "Loading setup from environment")
+	if tft.setupOutputOverrides == nil {
+		tft.setupOutputOverrides = make(map[string]interface{})
+	}
+	for k, v := range extractFromEnv("CFT_SETUP_") {
+		tft.setupOutputOverrides[k] = v
+	}
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
 	return tft
@@ -282,6 +298,13 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 // GetTFSetupOutputListVal returns TF output from setup for a given key as list.
 // It fails test if given key does not output a list type.
 func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
+	if v, ok := b.setupOutputOverrides[key]; ok {
+		if listval, ok := v.([]string); ok {
+			return listval
+		} else {
+			b.t.Fatalf("Setup Override %s is not a list value", key)
+		}
+	}
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
@@ -291,6 +314,9 @@ func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 // GetTFSetupStringOutput returns TF setup output for a given key as string.
 // It fails test if given key does not output a primitive or if setupDir is not configured.
 func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
+	if v, ok := b.setupOutputOverrides[key]; ok {
+		return v.(string)
+	}
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
@@ -302,6 +328,24 @@ func loadTFEnvVar(m map[string]string, new map[string]string) {
 	for k, v := range new {
 		m[fmt.Sprintf("TF_VAR_%s", k)] = v
 	}
+}
+
+// extractFromEnv parses environment variables with the given prefix, and returns a key-value map.
+// e.g. CFT_SETUP_key=value returns map[string]string{"key": "value"}
+func extractFromEnv(prefix string) map[string]interface{} {
+	r := make(map[string]interface{})
+	for _, s := range os.Environ() {
+		k, v, ok := strings.Cut(s, "=")
+		if !ok {
+			// skip malformed entries in os.Environ
+			continue
+		}
+		// For env vars with the prefix, extract the key and value
+		if setupvar, ok := strings.CutPrefix(k, prefix); ok {
+			r[setupvar] = v
+		}
+	}
+	return r
 }
 
 // ShouldSkip checks if a test should be skipped
