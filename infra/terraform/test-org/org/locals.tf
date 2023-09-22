@@ -794,7 +794,7 @@ locals {
       name        = "terraform-google-backup-dr"
       org         = "GoogleCloudPlatform"
       short_name  = "backup-dr"
-      description = "Terraform module for Google BackupDR components"
+      description = "Deploy Backup and DR appliances"
       owners      = ["umeshkumhar"]
     }
   ]
