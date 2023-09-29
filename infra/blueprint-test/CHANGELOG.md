@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.8.1...infra/blueprint-test/v0.9.0) (2023-09-29)
+
+
+### Features
+
+* allow user to specify/override outputs from the setup stage ([#1741](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1741)) ([8365efb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/8365efbff6938727ec712a86ad19cd973a2f064d))
+
 ## [0.8.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.8.0...infra/blueprint-test/v0.8.1) (2023-09-08)
 
 

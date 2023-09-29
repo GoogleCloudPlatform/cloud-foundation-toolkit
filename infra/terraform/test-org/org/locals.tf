@@ -635,7 +635,7 @@ locals {
       name            = "terraform-google-analytics-lakehouse"
       org             = "GoogleCloudPlatform"
       description     = "Deploys a Lakehouse Architecture Solution"
-      owners          = ["davenportjw"]
+      owners          = ["davenportjw", "bradmiro"]
       topics          = local.common_topics.da
       groups          = [local.jss_common_group]
       enable_periodic = true
