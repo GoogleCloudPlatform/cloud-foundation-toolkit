@@ -23,7 +23,8 @@
     },
     {
       "matchPackageNames": ["google", "google-beta"],
-      "groupName": "terraform google provider"
+      "groupName": "terraform google provider",
+      "rangeStrategy": "widen"
     },
     {
       "matchManagers": ["terraform"],
