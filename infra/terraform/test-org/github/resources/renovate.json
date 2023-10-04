@@ -16,7 +16,7 @@
   "constraints": {"go": "1.20"},
   "packageRules": [
     {
-      "matchFileNames": ["examples/**", "test/**", ".github/**"],
+      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**"],
       "commitMessagePrefix": "chore(deps):"
     },
     {
@@ -42,7 +42,8 @@
     },
     {
       "matchDepNames": ["google", "google-beta"],
-      "groupName": "Terraform Google Provider"
+      "groupName": "Terraform Google Provider",
+      "rangeStrategy": "widen"
     }
   ],
   "regexManagers": [
