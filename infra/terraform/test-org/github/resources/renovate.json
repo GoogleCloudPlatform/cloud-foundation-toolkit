@@ -43,7 +43,8 @@
     {
       "matchDepNames": ["google", "google-beta"],
       "groupName": "Terraform Google Provider",
-      "rangeStrategy": "widen"
+      "rangeStrategy": "widen",
+      "commitMessagePrefix": "feat(deps):"
     }
   ],
   "regexManagers": [
