@@ -63,7 +63,7 @@ module "renovate_json_tgm" {
   source    = "../../modules/repo_file"
   repo_list = { for k, v in module.repos_tgm.repos : k => v if k != "terraform-example-foundation" }
   filename  = ".github/renovate.json"
-  content   = file("${path.module}/resources/renovate.json")
+  content   = file("${path.module}/resources/renovate-repo-config.json")
   providers = { github = github }
 }
 
@@ -71,7 +71,7 @@ module "renovate_json_gcp" {
   source    = "../../modules/repo_file"
   repo_list = module.repos_gcp.repos
   filename  = ".github/renovate.json"
-  content   = file("${path.module}/resources/renovate.json")
+  content   = file("${path.module}/resources/renovate-repo-config.json")
   providers = { github = github.gcp }
 }
 
