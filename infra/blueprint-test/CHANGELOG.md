@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.10.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test-v0.9.10...infra/blueprint-test/v0.10.0) (2023-10-19)
+
+
+### Features
+
+* Add HTTP Assert test helpers ([#1707](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1707)) ([9c423f9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/9c423f910c14899eb311bf9b026439eb70378602))
+* add project ID param to tft vet ([#1226](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1226)) ([e95dc64](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e95dc64d9b4596135cfc8bac481402c739e1c6a4))
+* add retry for kpt commands ([#1717](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1717)) ([55c9c8d](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/55c9c8dcf85b8eacdb8ff2c9d19582a445e192ab))
+* add utils.PollE ([#1729](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1729)) ([e256d2f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e256d2fdfb10a8a7f86a37145f3388df353cea13))
+* allow user to specify/override outputs from the setup stage ([#1741](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1741)) ([8365efb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/8365efbff6938727ec712a86ad19cd973a2f064d))
+* allow var overrides for workspace mode ([#1292](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1292)) ([f6ffa1f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f6ffa1f60039f03a6fb77e122894641caa739fef))
+* blueprint-test file logger ([a284f16](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/a284f164fccc58db86dfb8999b8013642e5d2bd7))
+* enable no color ([#1293](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1293)) ([06fae23](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/06fae232e1f97b1d78df6809eff65898fddb5268))
+* new test strategy for redeploy validation ([#1286](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1286)) ([de5d509](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/de5d5090980f5f12e0321365a935e119493518ec))
+* update blueprint-test to GO 1.18 and test fixes ([#1373](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1373)) ([0234ad6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0234ad6f0da169aec58a9fd848094907aa4b6851))
+* update to bpt GO 1.20 and rework krm test ([#1619](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1619)) ([50c2ab3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/50c2ab3165ab5eb159a8569ec90cd1518d427b7c))
+
+
+### Bug Fixes
+
+* blueprint-test tests ([#1675](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1675)) ([6ed5385](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6ed538548fb9fd91a81663796efecb5e53c8a66e))
+* bump GO modules and address lint ([#1541](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1541)) ([6b76dc1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6b76dc17db4e64a6aff52b980d5c3ac01b2a901a))
+* **deps:** bump golang.org/x/net from 0.15.0 to 0.17.0 in /infra/blueprint-test ([#1874](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1874)) ([334a17e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/334a17e81720b7235971b15ee26f6f6cbfb049c8))
+* **deps:** update bpt go modules ([#1748](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1748)) ([f90deec](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f90deec4e6a9728505acee667ae1083a8a270a84))
+* **deps:** update for go-sdk refactor ([#1217](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1217)) ([5c50728](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5c50728b825fda6187ca9b73151741c733e623ec))
+* **deps:** update go modules ([#1416](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1416)) ([5f01e1f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5f01e1ffd04d9ad47bf7bdb28c92716028d1977f))
+* kpt tests without existing working dir ([#1447](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1447)) ([c9cc7af](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/c9cc7af901d8ff6c100358c540eb9eea5f8015a4))
+* logging and TestKRMSimpleBlueprint timeout ([#1774](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1774)) ([5bc7a56](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5bc7a564422144df44a5a488c33e6e7d7bb00de1))
+* remove terraform plan file needed for the terraform vet execution after validation ([#1321](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1321)) ([1edc5df](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1edc5df7267c78a917eec0f2b5ad3f4024ca5e98))
+* update blueprint-test for kpt v1.0.0-beta.16+ ([#1367](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1367)) ([3613491](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/36134916e2fd859b0aea4384c1b4a5ab79d65eac))
+* update bpt go modules ([#1677](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1677)) ([4c9aaec](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/4c9aaeca68db7198165d52227b3d03752d8f817d))
+* update bpt go modules ([#1820](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1820)) ([5f35095](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5f350959aa03b4f73116cbfa0e13a73ebf359ca3))
+
 ## [0.9.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.0...infra/blueprint-test/v0.9.1) (2023-10-17)
 
 
