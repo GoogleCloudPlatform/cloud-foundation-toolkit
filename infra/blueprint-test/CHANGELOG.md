@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.0...infra/blueprint-test/v0.9.1) (2023-10-17)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/net from 0.15.0 to 0.17.0 in /infra/blueprint-test ([#1874](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1874)) ([334a17e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/334a17e81720b7235971b15ee26f6f6cbfb049c8))
+
 ## [0.9.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.8.1...infra/blueprint-test/v0.9.0) (2023-09-29)
 
 
