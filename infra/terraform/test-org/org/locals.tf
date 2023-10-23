@@ -796,6 +796,12 @@ locals {
       short_name  = "backup-dr"
       description = "Terraform module for Google BackupDR components"
       owners      = ["umeshkumhar"]
+    },
+    {
+      name        = "terraform-google-tags"
+      org         = "GoogleCloudPlatform"
+      description = "Terraform module for creating Google Cloud Tags."
+      owners      = ["nidhi0710"]
     }
   ]
 }
