@@ -111,7 +111,7 @@ message DisplayVariable {
   // implementation.
   // Optional.
   // Gen: manually-authored
-  int32 level = 18; // @gotags: json:"level" yaml:"level"
+  int32 level = 18; // @gotags: json:"level,omitempty" yaml:"level,omitempty"
 }
 
 message ValueLabel {
