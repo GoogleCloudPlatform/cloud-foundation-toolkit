@@ -103,6 +103,11 @@ message DisplayVariable {
   // Values must be UTF-8 text with no markup, and at most 64 characters.
   // Gen: manually-authored
   repeated ValueLabel enum_value_labels = 17; // @gotags: json:"enumValueLabels,omitempty" yaml:"enumValueLabels,omitempty"
+
+  // Indicates the "advanced" level of the input property.
+  // Optional.
+  // Gen: manually-authored
+  int32 level = 18; // @gotags: json:"level" yaml:"level"
 }
 
 message ValueLabel {
