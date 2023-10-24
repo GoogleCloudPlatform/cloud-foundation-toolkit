@@ -708,6 +708,9 @@
             "$ref": "#/$defs/ValueLabel"
           },
           "type": "array"
+        },
+        "level": {
+          "type": "integer"
         }
       },
       "additionalProperties": false,
