@@ -49,7 +49,7 @@ func GenerateSchema() ([]byte, error) {
 	// true i.e. it's presence is validated regardless of type.
 	vDef, defExists := s.Definitions["BlueprintVariable"]
 	if defExists {
-		vDef.Properties.Set("defaultValue", true)
+		vDef.Properties.Set("defaultValue", jsonschema.TrueSchema)
 	}
 
 	sData, err := json.MarshalIndent(s, "", "  ")
