@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.1...infra/blueprint-test/v0.9.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* bump google.golang.org/grpc from 1.58.0 to 1.58.3 in /infra/blueprint-test ([#1906](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1906)) ([5af9071](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5af907153307d9acc8cec009b468bdbe9a2a7bff))
+* **deps:** update go modules ([#1865](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1865)) ([df69583](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/df69583d3fdad5626e8cbf90f2c787428d064a48))
+
 ## [0.9.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.0...infra/blueprint-test/v0.9.1) (2023-10-17)
 
 
