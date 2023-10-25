@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.2.3...infra/module-swapper/v0.2.4) (2023-10-25)
+
+
+### Bug Fixes
+
+* bump the all group in /infra/module-swapper with 1 update ([#1897](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1897)) ([05757d9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/05757d901b2c53ab28904ad03557168c44215b81))
+
 ## [0.2.3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.2.2...infra/module-swapper/v0.2.3) (2023-10-17)
 
 
