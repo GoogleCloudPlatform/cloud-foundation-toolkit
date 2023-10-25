@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/utils/fbf
 
-go 1.18
+go 1.20
 
 require (
 	github.com/briandowns/spinner v1.23.0
