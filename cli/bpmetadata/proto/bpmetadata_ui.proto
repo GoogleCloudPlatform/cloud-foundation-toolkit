@@ -103,6 +103,15 @@ message DisplayVariable {
   // Values must be UTF-8 text with no markup, and at most 64 characters.
   // Gen: manually-authored
   repeated ValueLabel enum_value_labels = 17; // @gotags: json:"enumValueLabels,omitempty" yaml:"enumValueLabels,omitempty"
+
+  // Indicates the "advanced" level of the input property. Level 0 (default)
+  // will always be shown. Level 1 corresponds to one expansion (user clicks
+  // "show advanced options" or "more options"). Higher levels correspond to
+  // further expansions, or they may be collapsed to level 1 by the UI
+  // implementation.
+  // Optional.
+  // Gen: manually-authored
+  int32 level = 18; // @gotags: json:"level,omitempty" yaml:"level,omitempty"
 }
 
 message ValueLabel {
