@@ -18,7 +18,6 @@
 package bq
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
