@@ -39,7 +39,7 @@ func TestStringFromTextAndArgs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
-            funcOut := StringFromTextAndArgs(append([]interface{}{tt.cmd}, tt.args...) ...)
+			funcOut := StringFromTextAndArgs(append([]interface{}{tt.cmd}, tt.args...) ...)
 			assert.Equal(tt.output, funcOut)
 		})
 	}
