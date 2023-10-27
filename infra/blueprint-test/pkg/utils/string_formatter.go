@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
- package utils
+package utils
 
- import "fmt"
+import "fmt"
 
 // StringFromTextAndArgs converts msg and args to formatted text
 func StringFromTextAndArgs(msgAndArgs ...interface{}) string {

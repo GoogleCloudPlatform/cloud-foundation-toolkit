@@ -24,22 +24,22 @@ import (
 
 func TestStringFromTextAndArgs(t *testing.T) {
 	tests := []struct {
-		name    string
-		cmd     string
-		args    []interface{}
-		output  string
+		name   string
+		cmd    string
+		args   []interface{}
+		output string
 	}{
 		{
-			name:    "one arg",
-			cmd:     "project list --filter=%s",
-			args:    []interface{}{"TEST_PROJECT"},
-			output:  "project list --filter=TEST_PROJECT",
+			name:   "one arg",
+			cmd:    "project list --filter=%s",
+			args:   []interface{}{"TEST_PROJECT"},
+			output: "project list --filter=TEST_PROJECT",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
-			funcOut := StringFromTextAndArgs(append([]interface{}{tt.cmd}, tt.args...) ...)
+			funcOut := StringFromTextAndArgs(append([]interface{}{tt.cmd}, tt.args...)...)
 			assert.Equal(tt.output, funcOut)
 		})
 	}

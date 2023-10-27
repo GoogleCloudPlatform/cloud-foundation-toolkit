@@ -29,9 +29,9 @@ import (
 )
 
 type CmdCfg struct {
-	bqBinary string             // path to bq binary
-	commonArgs   []string       // common arguments to pass to bq calls
-	logger       *logger.Logger // custom logger
+	bqBinary   string         // path to bq binary
+	commonArgs []string       // common arguments to pass to bq calls
+	logger     *logger.Logger // custom logger
 }
 
 type cmdOption func(*CmdCfg)
