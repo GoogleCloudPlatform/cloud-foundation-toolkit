@@ -35,10 +35,8 @@ locals {
     "roles/resourcemanager.lienModifier" : ["serviceAccount:${local.project_cleaner}"],
     "roles/resourcemanager.organizationAdmin" : [
       "group:${local.cft_ci_group}",
-      "group:${local.gcp_admins_group_test}",
-      "serviceAccount:${data.google_secret_manager_secret_version.org-admin-sa.secret_data}",
+      "group:${local.gcp_admins_group_test}",      
     ],
-    "roles/iam.organizationRoleAdmin" : ["serviceAccount:${data.google_secret_manager_secret_version.org-role-admin-sa.secret_data}", ],
     "roles/resourcemanager.organizationViewer" : ["group:${local.cft_ci_group}"],
     "roles/resourcemanager.projectDeleter" : ["serviceAccount:${local.project_cleaner}"],
     "roles/owner" : ["group:${local.gcp_admins_group_test}", "serviceAccount:${local.project_cleaner}"],
@@ -66,16 +64,6 @@ locals {
       "serviceAccount:${local.ci_gsuite_sa}",
     ], jsondecode(data.google_storage_bucket_object_content.ba-users.content))
   }
-}
-
-data "google_secret_manager_secret_version" "org-admin-sa" {
-  project = "cloud-foundation-cicd"
-  secret  = "org-admin-sa"
-}
-
-data "google_secret_manager_secret_version" "org-role-admin-sa" {
-  project = "cloud-foundation-cicd"
-  secret  = "org-role-admin-sa"
 }
 
 data "google_secret_manager_secret_version" "ba-admin-1" {
