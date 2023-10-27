@@ -35,7 +35,7 @@ locals {
     "roles/resourcemanager.lienModifier" : ["serviceAccount:${local.project_cleaner}"],
     "roles/resourcemanager.organizationAdmin" : [
       "group:${local.cft_ci_group}",
-      "group:${local.gcp_admins_group_test}",      
+      "group:${local.gcp_admins_group_test}",
     ],
     "roles/resourcemanager.organizationViewer" : ["group:${local.cft_ci_group}"],
     "roles/resourcemanager.projectDeleter" : ["serviceAccount:${local.project_cleaner}"],
