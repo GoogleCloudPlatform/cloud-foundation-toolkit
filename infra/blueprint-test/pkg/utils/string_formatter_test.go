@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,38 +14,33 @@
  * limitations under the License.
  */
 
-// Package bq provides a set of helpers to interact with bq tool (part of CloudSDK)
-package bq
+package utils
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRunf(t *testing.T) {
+func TestStringFromTextAndArgs(t *testing.T) {
 	tests := []struct {
-		name            string
-		cmd             string
-		projectIdEnvVar string
+		name    string
+		cmd     string
+		args    []interface{}
+		output  string
 	}{
 		{
-			name:            "Runf",
-			cmd:             "ls --datasets --project_id=%s",
-			projectIdEnvVar: "bigquery-public-data",
+			name:    "one arg",
+			cmd:     "project list --filter=%s",
+			args:    []interface{}{"TEST_PROJECT"},
+			output:  "project list --filter=TEST_PROJECT",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if projectName, present := os.LookupEnv(tt.projectIdEnvVar); present {
-				op := Runf(t, tt.cmd, projectName)
-				assert := assert.New(t)
-				assert.Equal("bigquery#dataset", op.Array()[0].Get("kind").String())
-			} else {
-				t.Logf("Skipping test, %s envvar not set", tt.projectIdEnvVar)
-				t.Skip()
-			}
+			assert := assert.New(t)
+            funcOut := StringFromTextAndArgs(append([]interface{}{tt.cmd}, tt.args...) ...)
+			assert.Equal(tt.output, funcOut)
 		})
 	}
 }
