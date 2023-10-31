@@ -34,6 +34,7 @@ variable "temp_allow_invalid_owners" {
   description = "Googlers added as owners on TF blueprint repos but are not part of the GCP or TGM orgs yet."
   default = [
     "dulacp",
+    "nidhi0710", # remove once heynidhi@ is added to GCP org
   ]
 }
 
