@@ -54,6 +54,7 @@ resource "github_repository" "repo" {
   allow_merge_commit          = false
   allow_rebase_merge          = false
   allow_update_branch         = true
+  allow_auto_merge            = true
   delete_branch_on_merge      = true
   has_issues                  = true
   has_projects                = false
