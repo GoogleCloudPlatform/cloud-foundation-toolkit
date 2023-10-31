@@ -66,10 +66,10 @@ resource "github_repository" "repo" {
 
   security_and_analysis {
     secret_scanning {
-      status = enabled
+      status = "enabled"
     }
     secret_scanning_push_protection {
-      status = enabled
+      status = "enabled"
     }
   }
 }
