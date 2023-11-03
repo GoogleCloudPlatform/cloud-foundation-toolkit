@@ -5,7 +5,7 @@ go 1.20
 require (
 	cloud.google.com/go/asset v1.15.1
 	cloud.google.com/go/storage v1.33.0
-	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.9.2
+	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.10.0
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
 	github.com/briandowns/spinner v1.23.0
 	github.com/fatih/color v1.15.0
