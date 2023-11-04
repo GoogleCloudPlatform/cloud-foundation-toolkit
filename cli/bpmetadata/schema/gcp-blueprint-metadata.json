@@ -712,7 +712,7 @@
         "level": {
           "type": "integer"
         },
-        "isRequired": {
+        "required": {
           "type": "boolean"
         }
       },

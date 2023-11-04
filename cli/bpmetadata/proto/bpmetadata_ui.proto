@@ -114,7 +114,7 @@ message DisplayVariable {
   int32 level = 18; // @gotags: json:"level,omitempty" yaml:"level,omitempty"
 
   // Whether the property is required for the deployment or not.
-  bool is_required = 19; // @gotags: json:"isRequired,omitempty" yaml:"isRequired,omitempty"
+  bool required = 19; // @gotags: json:"required,omitempty" yaml:"required,omitempty"
 }
 
 message ValueLabel {
