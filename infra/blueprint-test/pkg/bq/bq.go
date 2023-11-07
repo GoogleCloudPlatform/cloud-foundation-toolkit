@@ -95,7 +95,7 @@ func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error) {
 	args := strings.Fields(cmd)
 	bqCmd := shell.Command{
 		Command: "bq",
-		Args:    append(args, gOpts.commonArgs...),
+		Args:    append(gOpts.commonArgs, args...),
 		Logger:  gOpts.logger,
 	}
 	return shell.RunCommandAndGetStdOutE(t, bqCmd)
