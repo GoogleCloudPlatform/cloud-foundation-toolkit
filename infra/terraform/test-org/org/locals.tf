@@ -416,6 +416,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a fully functional Google Memorystore (redis) instance"
       topics      = local.common_topics.db
+      owners      = ["imrannayer"]
     },
     {
       name              = "terraform-google-module-template"
@@ -447,6 +448,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-sap"
