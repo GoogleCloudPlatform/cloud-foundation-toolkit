@@ -112,6 +112,9 @@ message DisplayVariable {
   // Optional.
   // Gen: manually-authored
   int32 level = 18; // @gotags: json:"level,omitempty" yaml:"level,omitempty"
+
+  // Whether the property is required for the deployment or not.
+  bool required = 19; // @gotags: json:"required,omitempty" yaml:"required,omitempty"
 }
 
 message ValueLabel {
