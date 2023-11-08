@@ -21,10 +21,10 @@ terraform {
       version = ">= 1.2, < 3.0"
     }
     google = {
-      version = ">= 3.19, < 5.0"
+      version = ">= 3.19, < 6"
     }
     google-beta = {
-      version = ">= 3.19, < 5.0"
+      version = ">= 3.19, < 6"
     }
     null = {
       version = ">= 2.1, < 4.0"
