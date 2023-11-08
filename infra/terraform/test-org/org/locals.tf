@@ -113,7 +113,7 @@ locals {
       name        = "terraform-google-kubernetes-engine"
       org         = "terraform-google-modules"
       description = "Configures opinionated GKE clusters"
-      owners      = ["Jberlinsky", "ericyz"]
+      owners      = ["ericyz"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
@@ -277,6 +277,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages Google Cloud's operations suite (Cloud Logging and Cloud Monitoring)"
       topics      = local.common_topics.ops
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-router"
@@ -415,6 +416,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a fully functional Google Memorystore (redis) instance"
       topics      = local.common_topics.db
+      owners      = ["imrannayer"]
     },
     {
       name              = "terraform-google-module-template"
@@ -446,6 +448,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-sap"
@@ -476,7 +479,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
-      owners      = ["isaurabhuttam"]
+      owners      = ["isaurabhuttam", "imrannayer"]
     },
     {
       name        = "terraform-google-startup-scripts"

@@ -54,6 +54,7 @@ resource "github_repository" "repo" {
   allow_merge_commit          = false
   allow_rebase_merge          = false
   allow_update_branch         = true
+  allow_auto_merge            = true
   delete_branch_on_merge      = true
   has_issues                  = true
   has_projects                = false
@@ -62,6 +63,15 @@ resource "github_repository" "repo" {
   has_downloads               = false
   squash_merge_commit_message = "BLANK"
   squash_merge_commit_title   = "PR_TITLE"
+
+  security_and_analysis {
+    secret_scanning {
+      status = "enabled"
+    }
+    secret_scanning_push_protection {
+      status = "enabled"
+    }
+  }
 }
 
 resource "github_repository_collaborator" "dpebot" {

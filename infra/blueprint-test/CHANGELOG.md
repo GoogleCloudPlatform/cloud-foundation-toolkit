@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.2...infra/blueprint-test/v0.10.0) (2023-11-01)
+
+
+### Features
+
+* adding support for bq ([#1878](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1878)) ([d4b0385](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/d4b0385ba88ced63bbe2ba7cd84a7d759cc4d10c))
+
 ## [0.9.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.1...infra/blueprint-test/v0.9.2) (2023-10-25)
 
 

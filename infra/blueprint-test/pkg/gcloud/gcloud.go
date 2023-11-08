@@ -130,7 +130,7 @@ func TFVet(t testing.TB, planFilePath string, policyLibraryPath, terraformVetPro
 //
 // It fails the test if there are any errors executing the gcloud command or parsing the output value.
 func RunWithCmdOptsf(t testing.TB, opts []cmdOption, cmd string, args ...interface{}) gjson.Result {
-	return Run(t, stringFromTextAndArgs(append([]interface{}{cmd}, args...)...), opts...)
+	return Run(t, utils.StringFromTextAndArgs(append([]interface{}{cmd}, args...)...), opts...)
 }
 
 // Runf executes a gcloud command and returns value as gjson.Result.
@@ -139,25 +139,7 @@ func RunWithCmdOptsf(t testing.TB, opts []cmdOption, cmd string, args ...interfa
 //
 // It fails the test if there are any errors executing the gcloud command or parsing the output value.
 func Runf(t testing.TB, cmd string, args ...interface{}) gjson.Result {
-	return Run(t, stringFromTextAndArgs(append([]interface{}{cmd}, args...)...))
-}
-
-// stringFromTextAndArgs convert msg and args to formatted text
-func stringFromTextAndArgs(msgAndArgs ...interface{}) string {
-	if len(msgAndArgs) == 0 || msgAndArgs == nil {
-		return ""
-	}
-	if len(msgAndArgs) == 1 {
-		msg := msgAndArgs[0]
-		if msgAsStr, ok := msg.(string); ok {
-			return msgAsStr
-		}
-		return fmt.Sprintf("%+v", msg)
-	}
-	if len(msgAndArgs) > 1 {
-		return fmt.Sprintf(msgAndArgs[0].(string), msgAndArgs[1:]...)
-	}
-	return ""
+	return Run(t, utils.StringFromTextAndArgs(append([]interface{}{cmd}, args...)...))
 }
 
 // ActivateCredsAndEnvVars activates credentials and exports auth related envvars.
