@@ -32,7 +32,7 @@ func TestRunf(t *testing.T) {
 	}{
 		{
 			name:            "Runf",
-			cmd:             "ls --datasets --project_id=%s",
+			cmd:             "query --nouse_legacy_sql 'select * FROM %s.samples.INFORMATION_SCHEMA.TABLES limit 1;'",
 			projectIdEnvVar: "bigquery-public-data",
 		},
 	}
@@ -41,7 +41,7 @@ func TestRunf(t *testing.T) {
 			if projectName, present := os.LookupEnv(tt.projectIdEnvVar); present {
 				op := Runf(t, tt.cmd, projectName)
 				assert := assert.New(t)
-				assert.Equal("bigquery#dataset", op.Array()[0].Get("kind").String())
+				assert.Contains(op.Array()[0], "creation_time")
 			} else {
 				t.Logf("Skipping test, %s envvar not set", tt.projectIdEnvVar)
 				t.Skip()
