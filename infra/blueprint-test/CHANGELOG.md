@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.0...infra/blueprint-test/v0.10.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* bump the all group in /infra/blueprint-test with 2 updates ([#1952](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1952)) ([04d9184](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/04d9184146efb8d6b8b94d67a91e0d4e2f748220))
+* changing order in which args and commonOpts slices are combined ([#1943](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1943)) ([2dc6b44](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2dc6b44462152b208646a7311d55d1bf4c9eb16a))
+
 ## [0.10.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.2...infra/blueprint-test/v0.10.0) (2023-11-01)
 
 
