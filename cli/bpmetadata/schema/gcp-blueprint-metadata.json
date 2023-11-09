@@ -711,9 +711,6 @@
         },
         "level": {
           "type": "integer"
-        },
-        "required": {
-          "type": "boolean"
         }
       },
       "additionalProperties": false,
