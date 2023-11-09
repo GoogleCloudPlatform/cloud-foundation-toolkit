@@ -297,6 +297,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages Cloud Composer v1 and v2 along with option to manage networking"
       topics      = join(",", [local.common_topics.da, local.common_topics.ops, local.common_topics.e2e])
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-container-vm"
