@@ -21,6 +21,8 @@ message BlueprintUIInput {
 // Additional display specific metadata pertaining to a particular
 // input variable.
 message DisplayVariable {
+  reserved 19;
+
   // The variable name from the corresponding standard metadata file.
   // Gen: auto-generated - the Terraform variable name
   string name = 1; // @gotags: json:"name" yaml:"name"
@@ -112,9 +114,6 @@ message DisplayVariable {
   // Optional.
   // Gen: manually-authored
   int32 level = 18; // @gotags: json:"level,omitempty" yaml:"level,omitempty"
-
-  // Whether the property is required for the deployment or not.
-  bool required = 19; // @gotags: json:"required,omitempty" yaml:"required,omitempty"
 }
 
 message ValueLabel {
