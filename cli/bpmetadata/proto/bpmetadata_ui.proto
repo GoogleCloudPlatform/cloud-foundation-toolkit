@@ -21,6 +21,8 @@ message BlueprintUIInput {
 // Additional display specific metadata pertaining to a particular
 // input variable.
 message DisplayVariable {
+  reserved 19;
+
   // The variable name from the corresponding standard metadata file.
   // Gen: auto-generated - the Terraform variable name
   string name = 1; // @gotags: json:"name" yaml:"name"
