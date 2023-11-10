@@ -58,10 +58,9 @@ module "branch_protection_gcp" {
   providers = { github = github.gcp }
 }
 
-// terraform-example-foundation renovate is a special case - below
 module "renovate_json_tgm" {
   source    = "../../modules/repo_file"
-  repo_list = { for k, v in module.repos_tgm.repos : k => v if k != "terraform-example-foundation" }
+  repo_list = module.repos_tgm.repos
   filename  = ".github/renovate.json"
   content   = file("${path.module}/resources/renovate-repo-config.json")
   providers = { github = github }
