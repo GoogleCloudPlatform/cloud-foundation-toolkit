@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
-	github.com/gruntwork-io/terratest v0.46.6
+	github.com/gruntwork-io/terratest v0.46.7
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
 	github.com/otiai10/copy v1.14.0
 	github.com/stretchr/testify v1.8.4
