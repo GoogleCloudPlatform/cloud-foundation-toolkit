@@ -36,8 +36,8 @@
     },
     {
       "matchDatasources": ["golang-version"],
-      "rangeStrategy": "bump",
-      "allowedVersions": "<1.21.0",
+      "rangeStrategy": "replace",
+      "allowedVersions": "1.20",
       "postUpdateOptions": ["gomodTidy"]
     },
     {
