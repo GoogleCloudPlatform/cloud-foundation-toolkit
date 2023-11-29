@@ -241,7 +241,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
-      owners      = ["davenportjw"]
+      owners      = ["davenportjw", "shanecglass"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
