@@ -794,7 +794,7 @@ type GCEExternalIPExtension struct {
 	// Flag to denote if an external IP should be configurable.
 	NotConfigurable bool `protobuf:"varint,3,opt,name=not_configurable,json=notConfigurable,proto3" json:"notConfigurable,omitempty" yaml:"notConfigurable,omitempty"` // @gotags: json:"notConfigurable,omitempty" yaml:"notConfigurable,omitempty"
 	// Flag to denote if static IPs are allowed for the external IP.
-	AllowStaticIps bool `protobuf:"varint,4,opt,name=allow_static_ips,json=allowStaticIps,proto3" json:"allowStaticIPs,omitempty" yaml:"allowStaticIPs,omitempty"` // @gotags: json:"allowStaticIPs,omitempty" yaml:"allowStaticIPs,omitempty"
+	AllowStaticIps bool `protobuf:"varint,4,opt,name=allow_static_ips,json=allowStaticIps,proto3" json:"allowStaticIps,omitempty" yaml:"allowStaticIps,omitempty"` // @gotags: json:"allowStaticIps,omitempty" yaml:"allowStaticIps,omitempty"
 }
 
 func (x *GCEExternalIPExtension) Reset() {

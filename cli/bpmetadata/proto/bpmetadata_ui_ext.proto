@@ -164,7 +164,7 @@ message GCEExternalIPExtension {
   bool not_configurable = 3; // @gotags: json:"notConfigurable,omitempty" yaml:"notConfigurable,omitempty"
 
   // Flag to denote if static IPs are allowed for the external IP.
-  bool allow_static_ips = 4; // @gotags: json:"allowStaticIPs,omitempty" yaml:"allowStaticIPs,omitempty"
+  bool allow_static_ips = 4; // @gotags: json:"allowStaticIps,omitempty" yaml:"allowStaticIps,omitempty"
 }
 
 // GCEIPForwardingExtension specifies an IP forwarding extension for a GCE resource.

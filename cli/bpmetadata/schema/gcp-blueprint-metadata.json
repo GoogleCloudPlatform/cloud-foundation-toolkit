@@ -762,7 +762,7 @@
         "notConfigurable": {
           "type": "boolean"
         },
-        "allowStaticIPs": {
+        "allowStaticIps": {
           "type": "boolean"
         }
       },
