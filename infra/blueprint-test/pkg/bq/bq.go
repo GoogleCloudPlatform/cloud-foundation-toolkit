@@ -85,14 +85,13 @@ func initBq() (error) {
 	}
 	fileName := homeDir + "/.bigqueryrc"
 	 _ , err = os.Stat(fileName)
-	if os.IsNotExist(err) {
-		file, err := os.Create(fileName)
-		if err != nil {
-			return err
-		}
-		file.Close()
+	if !os.IsNotExist(err) { return nil }
+	file, err := os.Create(fileName)
+	if err != nil {
+		return err
 	}
-        return nil
+	file.Close()
+	return nil
 }
 
 // RunCmd executes a bq command and fails test if there are any errors.
