@@ -84,7 +84,7 @@ func initBq() (error) {
 		return err
 	}
 	fileName := homeDir + "/.bigqueryrc"
-	 _ , err := os.Stat(fileName)
+	 _ , err = os.Stat(fileName)
 	if os.IsNotExist(err) {
 		file, err := os.Create(fileName)
 		if err != nil {
@@ -111,7 +111,7 @@ func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error) {
 		t.Fatal(err)
 	}
 
-	err := initBq()
+	err = initBq()
 	if err != nil {
 		t.Fatal(err)
 	}
