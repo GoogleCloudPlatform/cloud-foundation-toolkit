@@ -85,8 +85,8 @@ func initBq(t testing.TB) {
 	}
 	fileName := homeDir + "/.bigqueryrc"
 	 _ , err = os.Stat(fileName)
-	if err != nil && !os.IsNotExist(err) { 
-		t.Fatal(err) 
+	if err != nil && !os.IsNotExist(err) {
+		t.Fatal(err)
 	}
 	file, err := os.Create(fileName)
 	if err != nil {
