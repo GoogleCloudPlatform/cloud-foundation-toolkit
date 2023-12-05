@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.1...infra/blueprint-test/v0.10.2) (2023-12-05)
+
+
+### Bug Fixes
+
+* add bq init step to create local config file ([#2000](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2000)) ([ee8cc7c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/ee8cc7c8eacd3ce5c00272259a2149279a28591b))
+* bump the all group in /infra/blueprint-test with 1 update ([#1965](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1965)) ([31e2ab3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/31e2ab34fd45a8277ba0b41f98bb5a8c2b220f6c))
+
 ## [0.10.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.0...infra/blueprint-test/v0.10.1) (2023-11-08)
 
 
