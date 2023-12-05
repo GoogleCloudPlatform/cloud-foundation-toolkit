@@ -46,7 +46,7 @@ ALPINE_VERSION := 3.18
 MODULE_SWAPPER_VERSION := 0.2.5
 
 # For developer-tools-krm
-GOLANGCI_VERSION := 1.54.1
+GOLANGCI_VERSION := 1.55.2
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
