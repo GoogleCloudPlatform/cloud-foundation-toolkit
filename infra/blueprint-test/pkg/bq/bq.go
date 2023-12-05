@@ -78,20 +78,21 @@ func newCmdConfig(opts ...cmdOption) (*CmdCfg, error) {
 }
 
 // initBq checks for a local .bigqueryrc file and creates an empty one if not to avoid forced bigquery initialization, which doesn't output valid json.
-func initBq() (error) {
+func initBq(t testing.TB) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 	fileName := homeDir + "/.bigqueryrc"
 	 _ , err = os.Stat(fileName)
-	if !os.IsNotExist(err) { return nil }
+	if err != nil && !os.IsNotExist(err) { 
+		t.Fatal(err) 
+	}
 	file, err := os.Create(fileName)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 	file.Close()
-	return nil
 }
 
 // RunCmd executes a bq command and fails test if there are any errors.
@@ -109,11 +110,7 @@ func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	err = initBq()
-	if err != nil {
-		t.Fatal(err)
-	}
+        initBq(t)
 	// split command into args
 	args := strings.Fields(cmd)
 	bqCmd := shell.Command{
