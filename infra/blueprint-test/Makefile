@@ -1,5 +1,6 @@
 SHELL := /bin/bash
+GOLANGCI_VERSION := 1.55.2
 
 .PHONY: docker_go_lint
 docker_go_lint:
-	docker run --rm -v $(PWD):/blueprint-test -w /blueprint-test  golangci/golangci-lint:v1.54.1 golangci-lint --timeout=5m -v run
+	docker run --rm -v $(PWD):/blueprint-test -w /blueprint-test  golangci/golangci-lint:v${GOLANGCI_VERSION} golangci-lint --timeout=5m -v run
