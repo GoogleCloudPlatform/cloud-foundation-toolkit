@@ -66,6 +66,12 @@
       "datasourceTemplate": "docker",
       "registryUrlTemplate": "https://gcr.io/cloud-foundation-cicd",
       "depNameTemplate": "cft/developer-tools"
+    },
+    {
+      "fileMatch": ["(^|/)Makefile$"],
+      "matchStrings": ["GOLANGCI_VERSION := (?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "golangci/golangci-lint"
     }
   ]
 }

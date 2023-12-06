@@ -18,6 +18,7 @@
 package bq
 
 import (
+	"os"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
@@ -76,6 +77,24 @@ func newCmdConfig(opts ...cmdOption) (*CmdCfg, error) {
 	return gOpts, nil
 }
 
+// initBq checks for a local .bigqueryrc file and creates an empty one if not to avoid forced bigquery initialization, which doesn't output valid json.
+func initBq(t testing.TB) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	fileName := homeDir + "/.bigqueryrc"
+	 _ , err = os.Stat(fileName)
+	if err != nil && !os.IsNotExist(err) {
+		t.Fatal(err)
+	}
+	file, err := os.Create(fileName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	file.Close()
+}
+
 // RunCmd executes a bq command and fails test if there are any errors.
 func RunCmd(t testing.TB, cmd string, opts ...cmdOption) string {
 	op, err := RunCmdE(t, cmd, opts...)
@@ -91,6 +110,7 @@ func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error) {
 	if err != nil {
 		t.Fatal(err)
 	}
+        initBq(t)
 	// split command into args
 	args := strings.Fields(cmd)
 	bqCmd := shell.Command{

@@ -15,6 +15,7 @@ PROTOC_DIR=./bpmetadata
 DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.17
 DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
+GOLANGCI_VERSION := 1.55.2
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
@@ -60,4 +61,4 @@ test: build go_test int_test
 
 .PHONY: docker_go_lint
 docker_go_lint:
-	docker run --rm -v $(PWD):/cli -w /cli  golangci/golangci-lint:v1.54.1 golangci-lint --timeout=5m -v run
+	docker run --rm -v $(PWD):/cli -w /cli  golangci/golangci-lint:v${GOLANGCI_VERSION} golangci-lint --timeout=5m -v run
