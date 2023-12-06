@@ -3,6 +3,37 @@
   "$id": "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/blueprint-metadata",
   "$ref": "#/$defs/BlueprintMetadata",
   "$defs": {
+    "ApplicationTable": {
+      "properties": {
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ApplicationTable_Row"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ApplicationTable_Row": {
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "showIf": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "label",
+        "value"
+      ]
+    },
     "BlueprintActuationTool": {
       "properties": {
         "flavor": {
@@ -551,6 +582,12 @@
             "$ref": "#/$defs/DisplaySection"
           },
           "type": "array"
+        },
+        "booleanGroups": {
+          "items": {
+            "$ref": "#/$defs/BooleanGroup"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -572,6 +609,9 @@
             "$ref": "#/$defs/DisplayOutput"
           },
           "type": "object"
+        },
+        "applicationTable": {
+          "$ref": "#/$defs/ApplicationTable"
         }
       },
       "additionalProperties": false,
@@ -615,6 +655,28 @@
       "type": "object",
       "required": [
         "name"
+      ]
+    },
+    "BooleanGroup": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "tooltip": {
+          "type": "string"
+        },
+        "subtext": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "title"
       ]
     },
     "DisplayOutput": {
@@ -711,6 +773,9 @@
         },
         "level": {
           "type": "integer"
+        },
+        "booleanGroup": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
