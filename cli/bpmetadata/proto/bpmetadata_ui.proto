@@ -203,36 +203,6 @@ message BlueprintUIOutput {
   // that may need additional UI configuration.
   // Gen: manually-authored
   map<string, DisplayOutput> outputs = 3; // @gotags: json:"outputs,omitempty" yaml:"outputs,omitempty"
-
-  // A table of application-specific label/value pairs.
-  // Gen: manually-authored
-  ApplicationTable application_table = 4; // @gotags: json:"applicationTable,omitempty" yaml:"applicationTable,omitempty"
-}
-
-// A table of label value pairs. Child of [Runtime][].
-message ApplicationTable {
-  message Row {
-    // Row label.
-    // Required. Accepts string expressions. UTF-8 text. No markup.
-    // At most 64 characters.
-    // Gen: manually-authored
-    string label = 1; // @gotags: json:"label" yaml:"label"
-
-    // Row value.
-    // Required. Accepts string expressions. UTF-8 text. HTML
-    // <code>&lt;a href&gt;</code> tags only. At most 128 characters.
-    // Gen: manually-authored
-    string value = 2; // @gotags: json:"value" yaml:"value"
-
-    // If present, this expresssion determines whether the row is shown.
-    // Boolean expression.
-    // Gen: manually-authored
-    string show_if = 3; // @gotags: json:"showIf,omitempty" yaml:"showIf,omitempty"
-  }
-
-  // An ordered list of label/value rows to show in the table.
-  // Gen: manually-authored
-  repeated Row rows = 1; // @gotags: json:"rows,omitempty" yaml:"rows,omitempty"
 }
 
 // An item appearing in a list of required or suggested steps.

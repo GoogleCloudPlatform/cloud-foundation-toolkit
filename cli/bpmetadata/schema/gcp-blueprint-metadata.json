@@ -3,37 +3,6 @@
   "$id": "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/blueprint-metadata",
   "$ref": "#/$defs/BlueprintMetadata",
   "$defs": {
-    "ApplicationTable": {
-      "properties": {
-        "rows": {
-          "items": {
-            "$ref": "#/$defs/ApplicationTable_Row"
-          },
-          "type": "array"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "ApplicationTable_Row": {
-      "properties": {
-        "label": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        },
-        "showIf": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "label",
-        "value"
-      ]
-    },
     "BlueprintActuationTool": {
       "properties": {
         "flavor": {
@@ -609,9 +578,6 @@
             "$ref": "#/$defs/DisplayOutput"
           },
           "type": "object"
-        },
-        "applicationTable": {
-          "$ref": "#/$defs/ApplicationTable"
         }
       },
       "additionalProperties": false,
