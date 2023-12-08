@@ -15,7 +15,7 @@
 ARG BASE_IMAGE_VERSION
 FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
-RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat ansible-lint py3-jsonschema
+RUN apk update && apk add --no-cache openrc docker-cli docker screen nodejs-current npm yamllint util-linux-misc libc6-compat ansible-lint py3-jsonschema pipx
 
 # Required to download and install golangci-lint
 ARG GOLANGCI_VERSION
@@ -67,4 +67,4 @@ ADD ./build/scripts/prow_entrypoint.sh /usr/local/bin/
 
 # cookiecutter is used for terraform-google-module-template tests
 # https://github.com/terraform-google-modules/terraform-google-module-template
-RUN pip install cookiecutter
+RUN pipx install cookiecutter
