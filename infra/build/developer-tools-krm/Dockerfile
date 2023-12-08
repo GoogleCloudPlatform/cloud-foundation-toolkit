@@ -67,4 +67,4 @@ ADD ./build/scripts/prow_entrypoint.sh /usr/local/bin/
 
 # cookiecutter is used for terraform-google-module-template tests
 # https://github.com/terraform-google-modules/terraform-google-module-template
-RUN pip install cookiecutter
+RUN pipx install cookiecutter
