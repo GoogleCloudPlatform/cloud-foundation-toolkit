@@ -36,6 +36,9 @@ enum ExtensionType {
 
   // IAM related.
   ET_IAM_SERVICE_ACCOUNT = 19;
+
+  // GKE related.
+  ET_GKE_CLUSTER = 20;
 }
 
 // An extension for variables defined as part of DisplayVariable. The
