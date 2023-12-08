@@ -419,7 +419,7 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
   }
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["**/*.md", ".gitignore", ".github/**"]
+  ignored_files = ["**/*.md", "**/*.png", ".gitignore", ".github/**"]
 }
 
 
