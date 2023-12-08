@@ -27,7 +27,7 @@ PACKER_VERSION := 1.4.4
 # Updated by Update Tooling Workflow
 TERRAGRUNT_VERSION := 0.53.8
 # Updated by Update Tooling Workflow
-KUSTOMIZE_VERSION := 5.2.1
+KUSTOMIZE_VERSION := 5.3.0
 # Updated by Update Tooling Workflow
 KPT_VERSION := 1.0.0-beta.48
 PROTOC_VERSION := 23.4
@@ -35,7 +35,7 @@ PROTOC_GEN_GO_VERSION := 1.31
 PROTOC_GEN_GO_GRPC_VERSION := 1.3
 PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 1.2.9
+CFT_CLI_VERSION := 1.2.10
 # Updated by Update Tooling Workflow
 KUBECTL_VERSION := 1.26.11
 # Updated by Update Tooling Workflow
