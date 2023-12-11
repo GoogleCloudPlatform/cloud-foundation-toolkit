@@ -551,6 +551,12 @@
             "$ref": "#/$defs/DisplaySection"
           },
           "type": "array"
+        },
+        "booleanGroups": {
+          "items": {
+            "$ref": "#/$defs/BooleanGroup"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -615,6 +621,28 @@
       "type": "object",
       "required": [
         "name"
+      ]
+    },
+    "BooleanGroup": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "tooltip": {
+          "type": "string"
+        },
+        "subtext": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "title"
       ]
     },
     "DisplayOutput": {
@@ -711,6 +739,9 @@
         },
         "level": {
           "type": "integer"
+        },
+        "booleanGroup": {
+          "type": "string"
         }
       },
       "additionalProperties": false,

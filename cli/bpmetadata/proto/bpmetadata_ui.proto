@@ -16,6 +16,10 @@ message BlueprintUIInput {
   // Sections is a generic structure for grouping inputs together.
   // Gen: manually-authored
   repeated DisplaySection sections = 2; // @gotags: json:"sections,omitempty" yaml:"sections,omitempty"
+
+  // List of boolean groups that will be referenced by properties.
+  // Gen: manually-authored
+  repeated BooleanGroup boolean_groups = 3; // @gotags: json:"booleanGroups,omitempty" yaml:"booleanGroups,omitempty"
 }
 
 // Additional display specific metadata pertaining to a particular
@@ -114,6 +118,14 @@ message DisplayVariable {
   // Optional.
   // Gen: manually-authored
   int32 level = 18; // @gotags: json:"level,omitempty" yaml:"level,omitempty"
+
+  // The name of a boolean group from Input.booleanGroups to which this
+  // property belongs. Only allowed for properties declared as type boolean in
+  // the schema. Properties in a boolean group must be adjacent in the
+  // properties list and must belong to the same section (if any).
+  // Optional.
+  // Gen: manually-authored
+  string boolean_group = 20; // @gotags: json:"booleanGroup,omitempty" yaml:"booleanGroup,omitempty"
 }
 
 message ValueLabel {
@@ -145,6 +157,36 @@ message DisplaySection {
   // The name of the parent section (if parent is not the root section).
   // Gen: manually-authored
   string parent = 5; // @gotags: json:"parent,omitempty" yaml:"parent,omitempty"
+}
+
+// Groups a list of boolean properties into one logical property for the
+// purposes of the configuration form. The title of a [BooleanGroup][] has the
+// same styling as the title of an ordinary property, and individual properties
+// in the group will be packed more tightly together to indicate their
+// association. Child of [Input][].
+message BooleanGroup {
+  // The name of the group, referenced by [Property][]
+  // <code>.booleanGroup</code>.
+  // BooleanGroup names must be unique. Required.
+  // Gen: manually-authored
+  string name = 1; // @gotags: json:"name" yaml:"name"
+
+  // Group title.
+  // Required. UTF-8 text. No markup. At most 64 characters.
+  // Gen: manually-authored
+  string title = 2; // @gotags: json:"title" yaml:"title"
+
+  // Group tooltip.
+  // Optional. HTML (<code>&lt;a href&gt;</code> tags only). At most 256
+  // characters.
+  // Gen: manually-authored
+  string tooltip = 3; // @gotags: json:"tooltip,omitempty" yaml:"tooltip,omitempty"
+
+  // Group subtext.
+  // Optional. HTML (<code>&lt;a href&gt;</code> tags only). At most 256
+  // characters.
+  // Gen: manually-authored
+  string subtext = 4; // @gotags: json:"subtext,omitempty" yaml:"subtext,omitempty"
 }
 
 message BlueprintUIOutput {
