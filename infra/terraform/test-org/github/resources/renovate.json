@@ -30,13 +30,7 @@
     },
     {"matchDepTypes": ["module"], "groupName": "TF modules"},
     {
-      "matchDepTypes": ["require"],
-      "groupName": "GO modules",
-      "postUpdateOptions": ["gomodTidy"]
-    },
-    {
-      "matchDatasources": ["golang-version"],
-      "matchManagers": [ "regex" ],
+      "matchManagers": ["regex", "gomod"],
       "rangeStrategy": "bump",
       "postUpdateOptions": ["gomodTidy"]
     },
