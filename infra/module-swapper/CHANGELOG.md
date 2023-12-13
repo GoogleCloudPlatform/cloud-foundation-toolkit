@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.2.5...infra/module-swapper/v0.3.0) (2023-12-13)
+
+
+### Features
+
+* update to GO 1.21 ([#2037](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2037)) ([e76ff55](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e76ff55afb5ee9c8c57b7b8a802acdab1ca15130))
+
 ## [0.2.5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.2.4...infra/module-swapper/v0.2.5) (2023-11-28)
 
 
