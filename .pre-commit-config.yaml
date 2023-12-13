@@ -9,11 +9,11 @@ exclude: |
   )$
 repos:
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 36.40.3
+    rev: 37.89.7
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
