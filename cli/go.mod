@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
-go 1.20
+go 1.21
 
 require (
 	cloud.google.com/go/asset v1.15.3
@@ -15,7 +15,6 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20230922112808-5421fefb8386
 	github.com/google/go-cmp v0.6.0
 	github.com/google/go-github/v55 v55.0.0
-	github.com/google/go-github/v56 v56.0.0
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230925220900-5a6f8d18746d
 	github.com/iancoleman/strcase v0.3.0
@@ -100,6 +99,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/cel-go v0.12.6 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
+	github.com/google/go-github/v56 v56.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect

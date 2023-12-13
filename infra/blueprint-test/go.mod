@@ -1,10 +1,11 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test
 
-go 1.20
+go 1.21
 
 require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
 	github.com/gruntwork-io/terratest v0.46.8
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20231204233900-a34142ec2a72
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
 	github.com/otiai10/copy v1.14.0
 	github.com/stretchr/testify v1.8.4
@@ -53,7 +54,6 @@ require (
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f // indirect
 	github.com/hashicorp/hcl/v2 v2.18.0 // indirect
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20231204233900-a34142ec2a72 // indirect
 	github.com/hashicorp/terraform-json v0.17.1 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
