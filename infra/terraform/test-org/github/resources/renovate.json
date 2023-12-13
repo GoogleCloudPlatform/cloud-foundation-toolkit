@@ -31,6 +31,7 @@
     {"matchDepTypes": ["module"], "groupName": "TF modules"},
     {
       "matchManagers": ["regex", "gomod"],
+      "groupName": "GO and Dev-Tools",
       "rangeStrategy": "bump",
       "postUpdateOptions": ["gomodTidy"]
     },
