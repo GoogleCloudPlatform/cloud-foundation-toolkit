@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const testProjectIDEnvVar = "TEST_GCLOUD_PROJECT"
+const testProjectID = "foo"
 
 func TestUpdate(t *testing.T) {
 	tests := []struct {
@@ -93,7 +93,7 @@ func TestJSONEq(t *testing.T) {
 		},
 		{
 			name:         "sanitize projectID",
-			data:         fmt.Sprintf("{\"foo\":\"bar\",\"baz\":{\"qux\":\"%s\"}}", os.Getenv(testProjectIDEnvVar)),
+			data:         fmt.Sprintf("{\"foo\":\"bar\",\"baz\":{\"qux\":\"%s\"}}", testProjectID),
 			opts:         []goldenFileOption{WithSanitizer(ProjectIDSanitizer(t))},
 			setProjectID: true,
 			eqPath:       "baz",
@@ -101,10 +101,10 @@ func TestJSONEq(t *testing.T) {
 		},
 		{
 			name:   "no gcloud projectID set",
-			data:   fmt.Sprintf("{\"foo\":\"bar\",\"baz\":{\"qux\":\"%s\"}}", os.Getenv(testProjectIDEnvVar)),
+			data:   fmt.Sprintf("{\"foo\":\"bar\",\"baz\":{\"qux\":\"%s\"}}", testProjectID),
 			opts:   []goldenFileOption{WithSanitizer(ProjectIDSanitizer(t))},
 			eqPath: "baz",
-			want:   fmt.Sprintf("{\"qux\":\"%s\"}", os.Getenv(testProjectIDEnvVar)),
+			want:   fmt.Sprintf("{\"qux\":\"%s\"}", testProjectID),
 		},
 		{
 			name: "multiple sanitizers quz",
@@ -121,7 +121,7 @@ func TestJSONEq(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
 			if tt.setProjectID {
-				gcloud.Runf(t, "config set project %s", os.Getenv(testProjectIDEnvVar))
+				gcloud.Runf(t, "config set project %s", testProjectID)
 				defer gcloud.Run(t, "config unset project")
 			}
 			os.Setenv(gfUpdateEnvVar, "true")

@@ -4,7 +4,8 @@ exclude: |
     dm/.*|
     reports/.*|
     cli/testdata/.*|
-    cli/bptest/.*
+    cli/bptest/.*|
+    infra/blueprint-test/.*.json
   )$
 repos:
   - repo: https://github.com/renovatebot/pre-commit-hooks
