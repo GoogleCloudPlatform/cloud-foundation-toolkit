@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.3...infra/blueprint-test/v0.11.0) (2023-12-13)
+
+
+### Features
+
+* **tft:** skip logging sensitive setup outputs ([#2035](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2035)) ([775a50c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/775a50ca6953196d62be223fd530ea1344410141))
+* update to GO 1.21 ([#2037](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2037)) ([e76ff55](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e76ff55afb5ee9c8c57b7b8a802acdab1ca15130))
+
 ## [0.10.3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.2...infra/blueprint-test/v0.10.3) (2023-12-08)
 
 
