@@ -30,10 +30,14 @@
     },
     {"matchDepTypes": ["module"], "groupName": "TF modules"},
     {
+      "matchDatasources": ["golang-version"],
+      "rangeStrategy": "replace",
+      "allowedVersions": "1.21",
+      "postUpdateOptions": ["gomodTidy"]
+    },
+    {
       "matchManagers": ["regex", "gomod"],
       "groupName": "GO and Dev-Tools",
-      "rangeStrategy": "bump",
-      "postUpdateOptions": ["gomodTidy"]
     },
     {
       "matchDepNames": ["google", "google-beta"],
