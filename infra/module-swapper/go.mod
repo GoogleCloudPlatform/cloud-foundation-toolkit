@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/module-swapper
 
-go 1.20
+go 1.21
 
 require (
 	github.com/go-git/go-git/v5 v5.10.1
