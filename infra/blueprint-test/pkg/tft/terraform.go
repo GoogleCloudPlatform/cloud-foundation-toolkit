@@ -32,6 +32,7 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
 )
@@ -65,6 +66,7 @@ type TFBlueprintTest struct {
 	terraformVetProject           string                   // optional a valid existing project that will be used when a plan has resources in a project that still does not exist.
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
+	sensitiveLogger               *logger.Logger           // custom logger for sensitive logging
 	t                             testing.TB               // TestingT or TestingB
 	init                          func(*assert.Assertions) // init function
 	apply                         func(*assert.Assertions) // apply function
@@ -150,6 +152,12 @@ func WithLogger(logger *logger.Logger) tftOption {
 	}
 }
 
+func WithSensitiveLogger(logger *logger.Logger) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.sensitiveLogger = logger
+	}
+}
+
 // WithSetupOutputs overrides output values from the setup stage
 func WithSetupOutputs(vars map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
@@ -176,6 +184,10 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	// if no custom logger, set default based on test verbosity
 	if tft.logger == nil {
 		tft.logger = utils.GetLoggerFromT()
+	}
+	// If no custom sensitive logger, use discard logger.
+	if tft.sensitiveLogger == nil {
+		tft.sensitiveLogger = logger.Discard
 	}
 	// if explicit tfDir is provided, validate it else try auto discovery
 	if tft.tfDir != "" {
@@ -213,7 +225,8 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	// load TFEnvVars from setup outputs
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
-		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger, NoColor: true})))
+		outputs := tft.getOutputs(tft.sensitiveOutputs(tft.setupDir))
+		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(outputs))
 		if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; tft.saKey == "" && exists {
 			if credDec, err := b64.StdEncoding.DecodeString(credsEnc); err == nil {
 				gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
@@ -235,6 +248,35 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
 	return tft
+}
+
+// sensitiveOutputs returns a map of sensitive output keys for module in dir.
+func (b *TFBlueprintTest) sensitiveOutputs(dir string) map[string]bool {
+	mod, err := tfconfig.LoadModule(dir)
+	if err != nil {
+		b.t.Fatalf("error loading module in %s: %v", dir, err)
+	}
+	sensitiveOP := map[string]bool{}
+	for _, op := range mod.Outputs {
+		if op.Sensitive {
+			sensitiveOP[op.Name] = true
+		}
+	}
+	return sensitiveOP
+}
+
+// getOutputs returns all output values.
+func (b *TFBlueprintTest) getOutputs(sensitive map[string]bool) map[string]interface{} {
+	outputs := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.sensitiveLogger, NoColor: true})
+	for k, v := range outputs {
+		_, s := sensitive[k]
+		if s {
+			b.sensitiveLogger.Logf(b.t, "output key %q: %v", k, v)
+		} else {
+			b.logger.Logf(b.t, "output key %q: %v", k, v)
+		}
+	}
+	return outputs
 }
 
 // GetTFOptions generates terraform.Options used by Terratest.
