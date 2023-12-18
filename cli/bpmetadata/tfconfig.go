@@ -231,12 +231,12 @@ func getBlueprintVariable(modVar *tfconfig.Variable) *BlueprintVariable {
 		Required:    modVar.Required,
 		VarType:     modVar.Type,
 	}
-
-	vl, err := structpb.NewValue(modVar.Default)
-	if err == nil {
-		v.DefaultValue = vl
+	if modVar.Default != nil {
+		vl, err := structpb.NewValue(modVar.Default)
+		if err == nil {
+			v.DefaultValue = vl
+		}
 	}
-
 	return v
 }
 

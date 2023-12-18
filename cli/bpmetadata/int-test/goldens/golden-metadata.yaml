@@ -151,7 +151,6 @@ spec:
       - name: names
         description: Bucket name suffixes.
         varType: list(string)
-        defaultValue: null
         required: true
       - name: prefix
         description: Prefix used to generate the bucket name.
@@ -160,7 +159,6 @@ spec:
       - name: project_id
         description: Bucket project id.
         varType: string
-        defaultValue: null
         required: true
       - name: public_access_prevention
         description: Prevents public access to a bucket. Acceptable values are inherited or enforced. If inherited, the bucket uses public access prevention, only if the bucket is subject to the public access prevention organization policy constraint.
