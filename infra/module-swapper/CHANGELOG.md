@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.3.0...infra/module-swapper/v0.3.1) (2023-12-19)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/crypto from 0.16.0 to 0.17.0 in /infra/module-swapper ([#2050](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2050)) ([3f6092f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3f6092f1a44b83f92c0b6b8c4529f20ac1478d7d))
+* **deps:** update module github.com/go-git/go-git/v5 to v5.11.0 ([#2042](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2042)) ([384f9de](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/384f9de317f3a47f590572730c521fe5228e9cc9))
+
 ## [0.3.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.2.5...infra/module-swapper/v0.3.0) (2023-12-13)
 
 
