@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.11.0...infra/blueprint-test/v0.11.1) (2023-12-19)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/crypto from 0.14.0 to 0.17.0 in /infra/blueprint-test ([#2049](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2049)) ([bd2df12](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bd2df128855540c3eba71b8690300d01d06c7bfc))
+
 ## [0.11.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.3...infra/blueprint-test/v0.11.0) (2023-12-13)
 
 
