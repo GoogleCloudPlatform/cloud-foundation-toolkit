@@ -385,8 +385,9 @@ func writeModuleRefs(f []byte, p string, moduleRefs map[string]string) ([]byte, 
 func SwapModules(rootPath, moduleRegistrySuffix, moduleRegistryPrefix, subModulesDir, examplesDir string, restore bool) {
 	rootPath = filepath.Clean(rootPath)
 	moduleName, foundRegistryPrefix, err := getModuleNameRegistry(rootPath)
-	if err != nil {
-		log.Fatal(err)
+	if err != nil && moduleRegistryPrefix == "" {
+		log.Printf("failed to get module name and registry: %v", err)
+		return
 	}
 
 	if moduleRegistryPrefix != "" {
