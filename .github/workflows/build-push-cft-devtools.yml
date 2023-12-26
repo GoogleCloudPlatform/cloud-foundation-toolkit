@@ -13,6 +13,7 @@ jobs:
   build-push-dev-tools:
     name: Build and push new CFT dev tools image
     runs-on: ubuntu-latest
+    if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
 
     permissions:
       contents: 'read'
