@@ -8,7 +8,14 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/hashicorp/hcl/v2"
+	"github.com/hashicorp/hcl/v2/gohcl"
+	"github.com/hashicorp/hcl/v2/hclparse"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/pmezard/go-difflib/difflib"
+	"github.com/zclconf/go-cty/cty"
+
+	giturl "github.com/chainguard-dev/git-urls"
 )
 
 type LocalTerraformModule struct {
@@ -17,11 +24,16 @@ type LocalTerraformModule struct {
 	ModuleFQN string
 }
 
-var (
+const (
+	moduleBlockType    = "module"
+	sourceAttrib       = "source"
 	terraformExtension = "*.tf"
 	restoreMarker      = "[restore-marker]"
 	linebreak          = "\n"
-	localModules       = []LocalTerraformModule{}
+)
+
+var (
+	localModules = []LocalTerraformModule{}
 )
 
 // getRemoteURL gets the URL of a given remote from git repo at dir
@@ -54,28 +66,30 @@ func getModuleNameRegistry(dir string) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-
-	// GH remote will be of form https://github.com/ModuleRegistry/ModuleName
-	if !strings.Contains(remote, "https://github.com/") {
-		return "", "", fmt.Errorf("Expected GitHub remote of form https://github.com/ModuleRegistry/ModuleRepo. Got: %s", remote)
+	u, err := giturl.Parse(remote)
+	if err != nil {
+		return "", "", err
 	}
-
-	// remotes maybe suffixed with a trailing / or .git
-	remote = trimAnySuffixes(remote, []string{"/", ".git"})
-	namePrefix := strings.ReplaceAll(remote, "https://github.com/", "")
-	if !strings.Contains(namePrefix, "/") {
-		return "", "", fmt.Errorf("Expected GitHub org/owner of form ModuleRegistry/ModuleRepo. Got: %s", namePrefix)
+	if u.Host != "github.com" {
+		return "", "", fmt.Errorf("expected GitHub remote, got: %s", remote)
 	}
-	moduleRegistry := namePrefix[:strings.LastIndex(namePrefix, "/")]
-	repoName := namePrefix[strings.LastIndex(namePrefix, "/")+1:]
+	orgRepo := u.Path
+	orgRepo = trimAnySuffixes(orgRepo, []string{"/", ".git"})
+	orgRepo = strings.TrimPrefix(orgRepo, "/")
+
+	split := strings.Split(orgRepo, "/")
+	if len(split) != 2 {
+		return "", "", fmt.Errorf("expected GitHub remote of form https://github.com/ModuleRegistry/ModuleRepo, got: %s", remote)
+	}
+	org, repoName := split[0], split[1]
 
 	// module repos are prefixed with terraform-google-
 	if !strings.HasPrefix(repoName, "terraform-google-") {
-		return "", "", fmt.Errorf("Expected to find repo name prefixed with terraform-google-. Got: %s", repoName)
+		return "", "", fmt.Errorf("expected to find repo name prefixed with terraform-google-. Got: %s", repoName)
 	}
 	moduleName := strings.ReplaceAll(repoName, "terraform-google-", "")
 	log.Printf("Module name set from remote to %s", moduleName)
-	return moduleName, moduleRegistry, nil
+	return moduleName, org, nil
 }
 
 // findSubModules generates slice of LocalTerraformModule for submodules
@@ -109,7 +123,7 @@ func restoreModules(f []byte, p string) ([]byte, error) {
 	}
 	strFile := string(f)
 	if !strings.Contains(strFile, restoreMarker) {
-		return nil, nil
+		return f, nil
 	}
 	lines := strings.Split(strFile, linebreak)
 	for i, line := range lines {
@@ -120,15 +134,117 @@ func restoreModules(f []byte, p string) ([]byte, error) {
 	return []byte(strings.Join(lines, linebreak)), nil
 }
 
-// replaceLocalModules swaps current local module registry references with local path
-func replaceLocalModules(f []byte, p string) ([]byte, error) {
+// matchedModule returns matching local TF module based on local path.
+func matchedModule(localPath string) *LocalTerraformModule {
+	for _, l := range localModules {
+		if localPath == l.Dir {
+			return &l
+		}
+	}
+	return nil
+}
+
+// localToRemote converts all local references in f to remote references.
+func localToRemote(f []byte, p string) ([]byte, error) {
 	if _, err := os.Stat(p); err != nil {
 		return nil, err
 	}
 	absPath, err := filepath.Abs(filepath.Dir(p))
 	if err != nil {
-		return nil, fmt.Errorf("Error finding example absolute path: %v", err)
+		return nil, fmt.Errorf("failed to get absolute path: %v", err)
 	}
+	f, err = restoreModules(f, p)
+	if err != nil {
+		return nil, err
+	}
+
+	currentReferences, err := moduleSourceRefs(f, p)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write find module sources: %v", err)
+	}
+	newReferences := map[string]string{}
+	for label, source := range currentReferences {
+		localModule := matchedModule(filepath.Clean(filepath.Join(absPath, source)))
+		if localModule == nil {
+			log.Printf("no matches for %s", source)
+			continue
+		}
+		newReferences[label] = localModule.ModuleFQN
+	}
+	if len(currentReferences) == 0 {
+		return f, nil
+	}
+	updated, err := writeModuleRefs(f, p, newReferences)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write updated module sources: %v", err)
+	}
+	// print diff info
+	log.Printf("Modifications made to file %s", p)
+	diff := difflib.UnifiedDiff{
+		A:        difflib.SplitLines(string(f)),
+		B:        difflib.SplitLines(string(updated)),
+		FromFile: "Original",
+		ToFile:   "Modified",
+		Context:  3,
+	}
+	diffInfo, _ := difflib.GetUnifiedDiffString(diff)
+	log.Println(diffInfo)
+	return updated, nil
+}
+
+// remoteToLocal converts all remote references in f to local references.
+func remoteToLocal(f []byte, p string) ([]byte, error) {
+	if _, err := os.Stat(p); err != nil {
+		return nil, err
+	}
+	f = commentVersions(f)
+	absPath, err := filepath.Abs(filepath.Dir(p))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get absolute path: %v", err)
+	}
+	fqnMap := make(map[string]LocalTerraformModule, len(localModules))
+	for _, l := range localModules {
+		fqnMap[l.ModuleFQN] = l
+	}
+	currentReferences, err := moduleSourceRefs(f, p)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write find module sources: %v", err)
+	}
+	newReferences := map[string]string{}
+	for label, source := range currentReferences {
+		localModule, exists := fqnMap[source]
+		if !exists {
+			continue
+		}
+		newModulePath, err := filepath.Rel(absPath, localModule.Dir)
+		if err != nil {
+			return nil, fmt.Errorf("failed to find relative path: %v", err)
+		}
+		newReferences[label] = newModulePath
+	}
+	if len(currentReferences) == 0 {
+		return f, nil
+	}
+	updated, err := writeModuleRefs(f, p, newReferences)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write updated module sources: %v", err)
+	}
+	// print diff info
+	log.Printf("Modifications made to file %s", p)
+	diff := difflib.UnifiedDiff{
+		A:        difflib.SplitLines(string(f)),
+		B:        difflib.SplitLines(string(updated)),
+		FromFile: "Original",
+		ToFile:   "Modified",
+		Context:  3,
+	}
+	diffInfo, _ := difflib.GetUnifiedDiffString(diff)
+	log.Println(diffInfo)
+	return updated, nil
+}
+
+// commentVersions comments version attributes for local modules.
+func commentVersions(f []byte) []byte {
 	strFile := string(f)
 	lines := strings.Split(strFile, linebreak)
 	for _, localModule := range localModules {
@@ -136,43 +252,18 @@ func replaceLocalModules(f []byte, p string) ([]byte, error) {
 		if !strings.Contains(strFile, localModule.ModuleFQN) {
 			continue
 		}
-		// get relative path from example to local module
-		newModulePath, err := filepath.Rel(absPath, localModule.Dir)
-		if err != nil {
-			return nil, fmt.Errorf("Error finding relative path: %v", err)
-		}
 		for i, line := range lines {
-			if strings.Contains(line, fmt.Sprintf("\"%s\"", localModule.ModuleFQN)) && !strings.Contains(line, restoreMarker) {
-				// swap with local module and add restore point
-				leadingWhiteSpace := line[:strings.Index(line, "source")]
-				newSource := fmt.Sprintf("source = \"%s\"", newModulePath)
-				lines[i] = leadingWhiteSpace + newSource + fmt.Sprintf(" # %s %s", restoreMarker, line)
-				// if next line is a version declaration, disable that as well
-				if i < len(lines)-1 && strings.Contains(lines[i+1], "version") {
-					leadingWhiteSpace = lines[i+1][:strings.Index(lines[i+1], "version")]
-					lines[i+1] = fmt.Sprintf("%s# %s %s", leadingWhiteSpace, restoreMarker, lines[i+1])
-				}
+			if !strings.Contains(line, localModule.ModuleFQN) {
+				continue
+			}
+			if i < len(lines)-1 && strings.Contains(lines[i+1], "version") && !strings.Contains(lines[i+1], restoreMarker) {
+				leadingWhiteSpace := lines[i+1][:strings.Index(lines[i+1], "version")]
+				lines[i+1] = fmt.Sprintf("%s# %s %s", leadingWhiteSpace, restoreMarker, lines[i+1])
 			}
 		}
 	}
 	newExample := strings.Join(lines, linebreak)
-	// check if any swaps have been made
-	if newExample == strFile {
-		return nil, nil
-	}
-	// print diff info
-	log.Printf("Modifications made to file %s", p)
-	diff := difflib.UnifiedDiff{
-		A:        difflib.SplitLines(strFile),
-		B:        difflib.SplitLines(newExample),
-		FromFile: "Original",
-		ToFile:   "Modified",
-		Context:  3,
-	}
-	diffInfo, _ := difflib.GetUnifiedDiffString(diff)
-	log.Println(diffInfo)
-	return []byte(newExample), nil
-
+	return []byte(newExample)
 }
 
 // getTFFiles returns a slice of valid TF file paths
@@ -199,14 +290,112 @@ func getTFFiles(path string) []string {
 
 }
 
-func SwapModules(rootPath, moduleRegistrySuffix, subModulesDir, examplesDir string, restore bool) {
-	moduleName, moduleRegistryPrefix, err := getModuleNameRegistry(rootPath)
+var (
+	// Partial schema of examples.
+	exampleSchema = &hcl.BodySchema{
+		Blocks: []hcl.BlockHeaderSchema{
+			{
+				Type:       moduleBlockType,
+				LabelNames: []string{"name"},
+			},
+		},
+	}
+	// Partial schema of each module.
+	moduleSchema = &hcl.BodySchema{
+		Attributes: []hcl.AttributeSchema{
+			{
+				Name: sourceAttrib,
+			},
+		},
+	}
+)
+
+// moduleSourceRefs returns a map of module label to corresponding source references.
+func moduleSourceRefs(f []byte, TFFilePath string) (map[string]string, error) {
+	refs := map[string]string{}
+	p, err := hclparse.NewParser().ParseHCL(f, TFFilePath)
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("failed to parse hcl: %v", err)
+	}
+	c, _, diags := p.Body.PartialContent(exampleSchema)
+	if diags.HasErrors() {
+		return nil, fmt.Errorf("failed to parse example content: %v", diags.Error())
+	}
+
+	for _, b := range c.Blocks {
+		if b.Type != moduleBlockType {
+			continue
+		}
+		if len(b.Labels) != 1 {
+			log.Printf("got multiple labels %v, module should only have one", b.Labels)
+			continue
+		}
+
+		content, _, diags := b.Body.PartialContent(moduleSchema)
+		if diags.HasErrors() {
+			log.Printf("skipping %s module, failed to parse module content: %v", b.Labels[0], diags.Error())
+			continue
+		}
+
+		sourcrAttr, exists := content.Attributes[sourceAttrib]
+		if !exists {
+			log.Printf("skipping %s module, no source attribute", b.Labels[0])
+			continue
+		}
+		var sourceName string
+		diags = gohcl.DecodeExpression(sourcrAttr.Expr, nil, &sourceName)
+		if diags.HasErrors() {
+			log.Printf("skipping %s module, failed to decode source value: %v", b.Labels[0], diags.Error())
+			continue
+		}
+		refs[b.Labels[0]] = sourceName
+	}
+	return refs, nil
+}
+
+// writeModuleRefs appends or overwrites provided moduleRefs to file f.
+func writeModuleRefs(f []byte, p string, moduleRefs map[string]string) ([]byte, error) {
+	wf, diags := hclwrite.ParseConfig(f, p, hcl.Pos{})
+	if diags.HasErrors() {
+		return nil, fmt.Errorf("failed to parse hcl: %v", diags.Error())
+	}
+	for _, b := range wf.Body().Blocks() {
+		if b.Type() != moduleBlockType {
+			continue
+		}
+		if len(b.Labels()) != 1 {
+			log.Printf("got multiple labels %v, module should only have one", b.Labels())
+			continue
+		}
+		newSource, exists := moduleRefs[b.Labels()[0]]
+		if !exists {
+			continue
+		}
+		b.Body().SetAttributeValue(sourceAttrib, cty.StringVal(newSource))
+	}
+
+	var testS strings.Builder
+	_, err := wf.WriteTo(&testS)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write hcl: %v", diags.Error())
+	}
+	return []byte(testS.String()), nil
+}
+
+func SwapModules(rootPath, moduleRegistrySuffix, moduleRegistryPrefix, subModulesDir, examplesDir string, restore bool) {
+	rootPath = filepath.Clean(rootPath)
+	moduleName, foundRegistryPrefix, err := getModuleNameRegistry(rootPath)
+	if err != nil && moduleRegistryPrefix == "" {
+		log.Printf("failed to get module name and registry: %v", err)
+		return
+	}
+
+	if moduleRegistryPrefix != "" {
+		foundRegistryPrefix = moduleRegistryPrefix
 	}
 
 	// add root module to slice of localModules
-	localModules = append(localModules, LocalTerraformModule{moduleName, rootPath, fmt.Sprintf("%s/%s/%s", moduleRegistryPrefix, moduleName, moduleRegistrySuffix)})
+	localModules = append(localModules, LocalTerraformModule{moduleName, rootPath, fmt.Sprintf("%s/%s/%s", foundRegistryPrefix, moduleName, moduleRegistrySuffix)})
 	examplesPath := fmt.Sprintf("%s/%s", rootPath, examplesDir)
 	subModulesPath := fmt.Sprintf("%s/%s", rootPath, subModulesDir)
 
@@ -224,9 +413,9 @@ func SwapModules(rootPath, moduleRegistrySuffix, subModulesDir, examplesDir stri
 
 		var newFile []byte
 		if restore {
-			newFile, err = restoreModules(file, TFFilePath)
+			newFile, err = localToRemote(file, TFFilePath)
 		} else {
-			newFile, err = replaceLocalModules(file, TFFilePath)
+			newFile, err = remoteToLocal(file, TFFilePath)
 		}
 		if err != nil {
 			log.Printf("Error processing file: %v", err)
@@ -238,7 +427,5 @@ func SwapModules(rootPath, moduleRegistrySuffix, subModulesDir, examplesDir stri
 				log.Printf("Error writing file: %v", err)
 			}
 		}
-
 	}
-
 }

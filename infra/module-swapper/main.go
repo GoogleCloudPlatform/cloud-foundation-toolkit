@@ -13,6 +13,7 @@ func main() {
 	subModulesDir := flag.String("submods-path", "modules", "Path to a submodules if any that maybe referenced. Defaults to working dir/modules")
 	examplesDir := flag.String("examples-path", "examples", "Path to examples that should be swapped. Defaults to cwd/examples")
 	moduleRegistrySuffix := flag.String("registry-suffix", "google", "Module registry suffix")
+	moduleRegistryPrefix := flag.String("registry-prefix", "", "Module registry prefix")
 	restore := flag.Bool("restore", false, "Restores disabled modules")
 	flag.Parse()
 	rootPath := *workDir
@@ -24,5 +25,5 @@ func main() {
 		}
 		rootPath = cwd
 	}
-	cmd.SwapModules(rootPath, *moduleRegistrySuffix, *subModulesDir, *examplesDir, *restore)
+	cmd.SwapModules(rootPath, *moduleRegistrySuffix, *moduleRegistryPrefix, *subModulesDir, *examplesDir, *restore)
 }
