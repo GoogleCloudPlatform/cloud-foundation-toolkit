@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+	"github.com/google/go-cmp/cmp"
 )
 
 var (
@@ -27,10 +28,10 @@ func getAbsPathHelper(p string) string {
 	return a
 }
 
-func getFileHelper(p string) []byte {
+func getFileHelper(t *testing.T, p string) []byte {
 	f, err := os.ReadFile(p)
 	if err != nil {
-		log.Fatalf("Error reading file: %v", err)
+		t.Fatalf("Error reading file: %v", err)
 	}
 	return f
 }
@@ -91,62 +92,75 @@ func Test_findSubModules(t *testing.T) {
 	}
 }
 
-func getProcessFileTestArgs(p, m string) struct {
-	f       []byte
-	p       string
-	modules []LocalTerraformModule
-} {
-	f := struct {
-		f       []byte
-		p       string
-		modules []LocalTerraformModule
-	}{
-		getFileHelper(p),
-		p,
-		append(
-			findSubModules("testdata/"+m+"/modules", "terraform-google-modules/"+m+"/google"),
-			LocalTerraformModule{m, getAbsPathHelper("testdata/" + m), fmt.Sprintf("%s/%s/%s", moduleRegistryPrefix, m, moduleRegistrySuffix)},
-		),
-	}
-	return f
-}
-
 func Test_processFile(t *testing.T) {
-	type args struct {
-		f       []byte
-		p       string
-		modules []LocalTerraformModule
-	}
 	tests := []struct {
-		name    string
-		args    args
-		want    []byte
-		wantErr bool
+		name              string
+		modules           []LocalTerraformModule
+		exampleRemotePath string
+		exampleLocalPath  string
 	}{
-		{"simple", getProcessFileTestArgs("testdata/example-module-simple/examples/example-one/main.tf", "example-module-simple"), getFileHelper("testdata/example-module-simple/examples/example-one/main.tf.good"), false},
-		{"simple-submodules-single-submod", getProcessFileTestArgs("testdata/example-module-with-submodules/examples/example-one/main.tf", "example-module-with-submodules"), getFileHelper("testdata/example-module-with-submodules/examples/example-one/main.tf.good"), false},
-		{"simple-submodules-multiple-modules", getProcessFileTestArgs("testdata/example-module-with-submodules/examples/example-two/main.tf", "example-module-with-submodules"), getFileHelper("testdata/example-module-with-submodules/examples/example-two/main.tf.good"), false},
+		{
+			name:              "simple",
+			modules:           testModules("example-module-simple"),
+			exampleRemotePath: "example-module-simple/examples/example-one/main.tf",
+			exampleLocalPath:  "example-module-simple/examples/example-one/main.tf.local",
+		},
+		{
+			name:              "simple-submodules-single-submod",
+			modules:           testModules("example-module-with-submodules"),
+			exampleRemotePath: "example-module-with-submodules/examples/example-one/main.tf",
+			exampleLocalPath:  "example-module-with-submodules/examples/example-one/main.tf.local",
+		},
+		{
+			name:              "simple-submodules-multiple-modules",
+			modules:           testModules("example-module-with-submodules"),
+			exampleRemotePath: "example-module-with-submodules/examples/example-two/main.tf",
+			exampleLocalPath:  "example-module-with-submodules/examples/example-two/main.tf.local",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			setupProcessFileTest(tt.args.modules)
+			setupProcessFileTest(tt.modules)
 			var buf bytes.Buffer
 			log.SetOutput(&buf)
 			defer func() {
 				log.SetOutput(os.Stderr)
 			}()
-			got, err := replaceLocalModules(tt.args.f, tt.args.p)
-			t.Log(buf.String())
-			if (err != nil) != tt.wantErr {
-				t.Errorf("processFile() error = %v, wantErr %v", err, tt.wantErr)
+			tt.exampleRemotePath = path.Join(testDataDir, tt.exampleRemotePath)
+			tt.exampleLocalPath = path.Join(testDataDir, tt.exampleLocalPath)
+			remoteExample := getFileHelper(t, tt.exampleRemotePath)
+			localExample := getFileHelper(t, tt.exampleLocalPath)
+
+			// Swap remote references to local.
+			got, err := remoteToLocal(remoteExample, tt.exampleRemotePath)
+			if err != nil {
+				t.Fatalf("remoteToLocal() error = %v", err)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("processFile() = %v, want %v", string(got), string(tt.want))
+			if diff := cmp.Diff(localExample, got); diff != "" {
+				t.Errorf("remoteToLocal() returned unexpected difference (-want +got):\n%s", diff)
+			}
+
+			// Swap local references to remote.
+			got, err = localToRemote(localExample, tt.exampleLocalPath)
+			t.Log(buf.String())
+			if err != nil {
+				t.Errorf("localToRemote() error = %v", err)
+				return
+			}
+			if diff := cmp.Diff(remoteExample, got); diff != "" {
+				t.Errorf("localToRemote() returned unexpected difference (-want +got):\n%s", diff)
 			}
 			tearDownProcessFileTest()
 		})
 	}
+}
+
+const testDataDir = "testdata"
+
+func testModules(m string) []LocalTerraformModule {
+	root := LocalTerraformModule{m, getAbsPathHelper(path.Join(testDataDir, m)), path.Join(moduleRegistryPrefix, m, moduleRegistrySuffix)}
+	return append(findSubModules(path.Join(testDataDir, m, "modules"), path.Join(moduleRegistryPrefix, m, moduleRegistrySuffix)), root)
 }
 
 func getTempDir() string {
@@ -185,14 +199,16 @@ func Test_getModuleNameRegistry(t *testing.T) {
 		wantErr    bool
 		wantErrStr string
 	}{
-		{"simple", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar", "origin")}, "bar", "foo", false, ""},
+		{"simple-https", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar", "origin")}, "bar", "foo", false, ""},
+		{"simple-git", args{tempGitRepoWithRemote("git@github.com:foo/terraform-google-bar.git", "origin")}, "bar", "foo", false, ""},
 		{"simple-with-trailing-slash", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar/", "origin")}, "bar", "foo", false, ""},
 		{"simple-with-trailing-git", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar.git", "origin")}, "bar", "foo", false, ""},
 		{"err-no-remote-origin", args{tempGitRepoWithRemote("https://github.com/foo/terraform-google-bar", "foo")}, "", "", true, ""},
 		{"err-not-git-repo", args{getTempDir()}, "", "", true, ""},
-		{"err-not-github-repo", args{tempGitRepoWithRemote("https://gitlab.com/foo/terraform-google-bar", "origin")}, "", "", true, "Expected GitHub remote of form https://github.com/ModuleRegistry/ModuleRepo"},
-		{"err-not-prefixed-repo", args{tempGitRepoWithRemote("https://github.com/foo/bar", "origin")}, "", "", true, "Expected to find repo name prefixed with terraform-google-"},
-		{"err-malformed-remote", args{tempGitRepoWithRemote("https://github.com/footerraform-google-bar", "origin")}, "", "", true, "Expected GitHub org/owner of form ModuleRegistry/ModuleRepo"},
+		{"err-not-github-repo-https", args{tempGitRepoWithRemote("https://gitlab.com/foo/terraform-google-bar", "origin")}, "", "", true, "expected GitHub remote, got: https://gitlab.com/foo/terraform-google-bar"},
+		{"err-not-github-repo-ssh", args{tempGitRepoWithRemote("git@gitlab.com:foo/terraform-google-bar.git", "origin")}, "", "", true, "expected GitHub remote, got: git@gitlab.com:foo/terraform-google-bar.git"},
+		{"err-not-prefixed-repo", args{tempGitRepoWithRemote("https://github.com/foo/bar", "origin")}, "", "", true, "expected to find repo name prefixed with terraform-google-"},
+		{"err-malformed-remote", args{tempGitRepoWithRemote("https://github.com/footerraform-google-bar", "origin")}, "", "", true, "expected GitHub remote of form https://github.com/ModuleRegistry/ModuleRepo"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

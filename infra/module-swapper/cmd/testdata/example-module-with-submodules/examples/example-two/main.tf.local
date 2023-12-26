@@ -9,7 +9,7 @@ module "test-unrelated-submodule" {
 }
 
 module "test-module" {
-  source = "../.." # [restore-marker]   source  = "terraform-google-modules/example-module-with-submodules/google"
+  source = "../.."
   # [restore-marker]   version = "~> 3.2.0"
 
   project_id   = var.project_id # Replace this with your project ID in quotes
@@ -18,7 +18,7 @@ module "test-module" {
 }
 
 module "test-submodule-1" {
-  source = "../../modules/bar-module" # [restore-marker]   source  = "terraform-google-modules/example-module-with-submodules/google//modules/bar-module"
+  source = "../../modules/bar-module"
   # [restore-marker]   version = "~> 3.2.0"
 
   project_id   = var.project_id # Replace this with your project ID in quotes
@@ -27,7 +27,7 @@ module "test-submodule-1" {
 }
 
 module "test-submodule-2" {
-  source = "../../modules/foo-module" # [restore-marker]   source  = "terraform-google-modules/example-module-with-submodules/google//modules/foo-module"
+  source = "../../modules/foo-module"
   # [restore-marker]   version = "~> 3.2.0"
 
   project_id   = var.project_id # Replace this with your project ID in quotes
