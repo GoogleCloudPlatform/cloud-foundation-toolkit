@@ -804,8 +804,16 @@ locals {
     {
       name        = "terraform-google-tags"
       org         = "GoogleCloudPlatform"
-      description = "Terraform module for creating Google Cloud Tags."
+      description = "Create and manage Google Cloud Tags."
       owners      = ["nidhi0710"]
+      topics      = join(",", [local.common_topics.security, local.common_topics.ops])
+    },
+    {
+      name        = "terraform-google-dataplex-auto-data-quality"
+      org         = "GoogleCloudPlatform"
+      description = "Move data between environments using Dataplex."
+      owners      = ["bradmiro"]
+      topics      = local.common_topics.da
     }
   ]
 }
