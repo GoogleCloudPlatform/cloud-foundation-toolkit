@@ -18,23 +18,23 @@ terraform {
   required_version = ">= 1.4.4"
   required_providers {
     external = {
-      source = "hashicorp/external"
+      source  = "hashicorp/external"
       version = ">= 1.2, < 3"
     }
     google = {
-      source = "hashicorp/google"
+      source  = "hashicorp/google"
       version = ">= 3.19, < 6"
     }
     google-beta = {
-      source = "hashicorp/google-beta"
+      source  = "hashicorp/google-beta"
       version = ">= 3.19, < 6"
     }
     null = {
-      source = "hashicorp/null"
+      source  = "hashicorp/null"
       version = ">= 2.1, < 4"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = ">= 2.3.1, < 4"
     }
     github = {
@@ -42,7 +42,7 @@ terraform {
       version = "~> 5.0"
     }
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = ">= 2.13"
     }
   }
