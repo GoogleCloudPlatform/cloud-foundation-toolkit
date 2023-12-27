@@ -19,7 +19,7 @@
 // there are no reason to create an ephemeral test project + service account each build.
 module "terraform_validator_test_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 13.0"
+  version = "~> 14.0"
 
   name              = local.terraform_validator_project_name
   random_project_id = true
