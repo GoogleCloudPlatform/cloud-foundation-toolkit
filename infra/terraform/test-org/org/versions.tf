@@ -18,23 +18,32 @@ terraform {
   required_version = ">= 1.4.4"
   required_providers {
     external = {
-      version = ">= 1.2, < 3.0"
+      source  = "hashicorp/external"
+      version = ">= 1.2, < 3"
     }
     google = {
+      source  = "hashicorp/google"
       version = ">= 3.19, < 6"
     }
     google-beta = {
+      source  = "hashicorp/google-beta"
       version = ">= 3.19, < 6"
     }
     null = {
-      version = ">= 2.1, < 4.0"
+      source  = "hashicorp/null"
+      version = ">= 2.1, < 4"
     }
     random = {
-      version = ">= 2.3.1, < 4.0"
+      source  = "hashicorp/random"
+      version = ">= 2.3.1, < 4"
     }
     github = {
       source  = "integrations/github"
       version = "~> 5.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.13, < 3"
     }
   }
 }
