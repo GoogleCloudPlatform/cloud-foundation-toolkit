@@ -13,13 +13,14 @@ jobs:
   build-push-dev-tools:
     name: Build and push new CFT dev tools image
     runs-on: ubuntu-latest
+    if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
 
     permissions:
       contents: 'read'
       id-token: 'write'
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -30,7 +31,6 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@5a5f7b85fca43e76e53463acaa9d408a03c98d3a # v2.0.1
         with:
-          version: "410.0.0"
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Build
@@ -52,5 +52,5 @@ jobs:
                   repo: context.repo.repo,
                   title: 'build-push-dev-tools job failed',
                   body: 'Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}',
-                  assignee: 'bharathkkb'
+                  assignees: ['bharathkkb','apeabody']
                 })
