@@ -19,7 +19,7 @@ resource "google_secret_manager_secret" "tfe_token" {
   secret_id = "tke-token"
 
   replication {
-    automatic = true
+    auto {}
   }
 }
 
