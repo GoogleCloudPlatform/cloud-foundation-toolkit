@@ -27,6 +27,8 @@ env:
 jobs:
   update-tools:
     runs-on: ubuntu-latest
+    if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
+
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
