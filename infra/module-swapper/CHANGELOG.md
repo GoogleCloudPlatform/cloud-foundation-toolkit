@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.3.1...infra/module-swapper/v0.4.0) (2024-01-08)
+
+
+### Features
+
+* module swapper hcl source targeting ([#2056](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2056)) ([e691715](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e691715314f3f3d5a2cf10103f81f9ac7a80a3f1))
+
+
+### Bug Fixes
+
+* **deps:** bump github.com/cloudflare/circl from 1.3.3 to 1.3.7 in /infra/module-swapper ([#2077](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2077)) ([3a015c1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3a015c166ed27c9a53ee743ae3d44543ae3b9f12))
+
 ## [0.3.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.3.0...infra/module-swapper/v0.3.1) (2023-12-19)
 
 
