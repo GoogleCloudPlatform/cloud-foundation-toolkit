@@ -6,7 +6,7 @@ require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
 	github.com/gruntwork-io/terratest v0.46.9
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20231204233900-a34142ec2a72
-	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
+	github.com/mitchellh/go-testing-interface v1.14.1
 	github.com/otiai10/copy v1.14.0
 	github.com/stretchr/testify v1.8.4
 	github.com/tidwall/gjson v1.17.0
