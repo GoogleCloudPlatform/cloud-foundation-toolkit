@@ -9,7 +9,7 @@ exclude: |
   )$
 repos:
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 37.89.7
+    rev: 37.128.3
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/pre-commit/pre-commit-hooks
