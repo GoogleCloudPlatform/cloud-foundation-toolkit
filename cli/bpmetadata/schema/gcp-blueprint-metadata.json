@@ -953,6 +953,22 @@
         "networkVariable"
       ]
     },
+    "GKEClusterExtension": {
+      "properties": {
+        "locationVariable": {
+          "type": "string"
+        },
+        "clusterCreationVariable": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "locationVariable",
+        "clusterCreationVariable"
+      ]
+    },
     "GooglePropertyExtension": {
       "properties": {
         "type": {
@@ -1012,6 +1028,12 @@
         },
         "gceDiskType": {
           "$ref": "#/$defs/GCEDiskTypeExtension"
+        },
+        "gceLocation": {
+          "$ref": "#/$defs/GCELocationExtension"
+        },
+        "gkeCluster": {
+          "$ref": "#/$defs/GKEClusterExtension"
         }
       },
       "additionalProperties": false,

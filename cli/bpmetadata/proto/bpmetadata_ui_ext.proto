@@ -39,6 +39,9 @@ enum ExtensionType {
 
   // GKE related.
   ET_GKE_CLUSTER = 20;
+  ET_GKE_CREATE_CLUSTER = 21;
+
+  ET_GCE_LOCATION = 22;
 }
 
 // An extension for variables defined as part of DisplayVariable. The
@@ -72,6 +75,8 @@ message GooglePropertyExtension {
   GCELocationExtension       gce_region = 15; // @gotags: json:"gceRegion,omitempty" yaml:"gceRegion,omitempty"
   IAMServiceAccountExtension iam_service_account = 16; // @gotags: json:"iamServiceAccount,omitempty" yaml:"iamServiceAccount,omitempty"
   GCEDiskTypeExtension       gce_disk_type = 17; // @gotags: json:"gceDiskType,omitempty" yaml:"gceDiskType,omitempty"
+  GCELocationExtension       gce_location = 18; // @gotags: json:"gceLocation,omitempty" yaml:"gceLocation,omitempty"
+  GKEClusterExtension        gke_cluster = 19; // @gotags: json:"gkeCluster,omitempty" yaml:"gkeCluster,omitempty"
 }
 
 // GCELocationExtension specifies a location extension for a Google Compute Engine (GCE) resource.
@@ -208,4 +213,11 @@ message IAMServiceAccountExtension {
   // List of IAM roles that to  grant to a new SA, or the roles to filter
   // existing SAs with.
   repeated string roles = 1; // @gotags: json:"roles" yaml:"roles"
+}
+
+message GKEClusterExtension {
+  // GKE Cluster variable to be used for gathering context needed to select/create
+  // a GKE Cluster for GKE AI Products.
+  string location_variable = 1; // @gotags: json:"locationVariable" yaml:"locationVariable"
+  string cluster_creation_variable = 2; // @gotags: json:"clusterCreationVariable" yaml:"clusterCreationVariable"
 }
