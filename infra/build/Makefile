@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.7.0
+TERRAFORM_VERSION := 1.6.6
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 461.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
