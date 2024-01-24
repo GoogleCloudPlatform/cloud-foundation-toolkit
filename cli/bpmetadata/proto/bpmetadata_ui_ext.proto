@@ -13,6 +13,7 @@ enum ExtensionType {
   // General formats.
   ET_EMAIL_ADDRESS     = 1;
   ET_MULTI_LINE_STRING = 2;
+  ET_CREATE_RESOURCE = 21;
 
   // GCE related.
   ET_GCE_DISK_IMAGE       = 3;
@@ -30,6 +31,7 @@ enum ExtensionType {
   ET_GCE_FIREWALL         = 15;
   ET_GCE_FIREWALL_RANGE   = 16;
   ET_GCE_GENERIC_RESOURCE = 17;
+  ET_GCE_LOCATION = 22;
 
   // GCS related.
   ET_GCS_BUCKET = 18;
@@ -72,6 +74,8 @@ message GooglePropertyExtension {
   GCELocationExtension       gce_region = 15; // @gotags: json:"gceRegion,omitempty" yaml:"gceRegion,omitempty"
   IAMServiceAccountExtension iam_service_account = 16; // @gotags: json:"iamServiceAccount,omitempty" yaml:"iamServiceAccount,omitempty"
   GCEDiskTypeExtension       gce_disk_type = 17; // @gotags: json:"gceDiskType,omitempty" yaml:"gceDiskType,omitempty"
+  GCELocationExtension       gce_location = 18; // @gotags: json:"gceLocation,omitempty" yaml:"gceLocation,omitempty"
+  GKEClusterExtension        gke_cluster = 19; // @gotags: json:"gkeCluster,omitempty" yaml:"gkeCluster,omitempty"
 }
 
 // GCELocationExtension specifies a location extension for a Google Compute Engine (GCE) resource.
@@ -208,4 +212,12 @@ message IAMServiceAccountExtension {
   // List of IAM roles that to  grant to a new SA, or the roles to filter
   // existing SAs with.
   repeated string roles = 1; // @gotags: json:"roles" yaml:"roles"
+}
+
+message GKEClusterExtension {
+  // GKE Cluster variable to be used for gathering context needed to select/create
+  // a GKE Cluster for GKE AI Products.
+  string location_variable = 1; // @gotags: json:"locationVariable" yaml:"locationVariable"
+  // Variable that will indicate if we are creating a cluster or using an existing one.
+  string cluster_creation_variable = 2; // @gotags: json:"clusterCreationVariable" yaml:"clusterCreationVariable"
 }
