@@ -27,9 +27,9 @@ locals {
       description : "Something isn't working"
     },
     {
-      name : "question",
-      color : "d876e3",
-      description : "Further information is requested"
+      name : "good first issue",
+      color : "7057ff"
+      description : "Good for newcomers"
     },
     {
       name : "triaged",
