@@ -29,6 +29,11 @@
       "commitMessagePrefix": "fix(deps)!:"
     },
     {
+      "matchDepTypes": ["module"],
+      "groupName": "terraform modules",
+      "matchUpdateTypes": "minor",
+    },
+    {
       "matchDepTypes": ["require"],
       "postUpdateOptions": ["gomodTidy"]
     },
