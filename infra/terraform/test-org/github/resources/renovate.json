@@ -31,7 +31,7 @@
     {
       "matchDepTypes": ["module"],
       "groupName": "terraform modules",
-      "matchUpdateTypes": "minor"
+      "matchUpdateTypes": ["minor", "patch"]
     },
     {
       "matchDepTypes": ["require"],
