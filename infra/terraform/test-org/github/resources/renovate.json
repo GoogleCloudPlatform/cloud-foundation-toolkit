@@ -45,7 +45,8 @@
     },
     {
       "matchManagers": ["regex", "gomod"],
-      "groupName": "go modules and/or dev-tools"
+      "groupName": "go modules and/or dev-tools",
+      "additionalBranchPrefix": "{{parentDir}}-"
     },
     {
       "matchDepNames": ["google", "google-beta"],
