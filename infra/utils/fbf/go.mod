@@ -4,9 +4,9 @@ go 1.21
 
 require (
 	github.com/briandowns/spinner v1.23.0
-	github.com/jedib0t/go-pretty/v6 v6.5.3
+	github.com/jedib0t/go-pretty/v6 v6.5.4
 	github.com/stretchr/testify v1.8.4
-	google.golang.org/api v0.159.0
+	google.golang.org/api v0.160.0
 )
 
 require (
