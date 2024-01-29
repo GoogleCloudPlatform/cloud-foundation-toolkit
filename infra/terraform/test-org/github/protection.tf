@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2023 Google LLC
+ * Copyright 2022-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,13 @@ module "repos_gcp" {
   repos_map = local.gcp_modules_map
   ci_teams  = ["blueprint-contributors"]
   providers = { github = github.gcp }
+}
+
+// All new repos are created in advance in the GCP org
+import {
+  for_each = local.gcp_modules_map
+  to       = module.repos_gcp.github_repository.repo[each.value.name]
+  id       = each.value.name
 }
 
 // terraform-example-foundation CI is a special case - below

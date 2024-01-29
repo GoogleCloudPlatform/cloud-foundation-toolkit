@@ -63,15 +63,6 @@ resource "github_repository" "repo" {
   has_downloads               = false
   squash_merge_commit_message = "BLANK"
   squash_merge_commit_title   = "PR_TITLE"
-
-  security_and_analysis {
-    secret_scanning {
-      status = "enabled"
-    }
-    secret_scanning_push_protection {
-      status = "enabled"
-    }
-  }
 }
 
 resource "github_repository_collaborator" "dpebot" {
