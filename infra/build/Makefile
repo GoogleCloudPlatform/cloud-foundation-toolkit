@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.6.6
+TERRAFORM_VERSION := 1.7.1
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 461.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
@@ -35,7 +35,7 @@ PROTOC_GEN_GO_VERSION := 1.31
 PROTOC_GEN_GO_GRPC_VERSION := 1.3
 PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 1.2.14
+CFT_CLI_VERSION := 1.2.15
 # Updated by Update Tooling Workflow
 KUBECTL_VERSION := 1.26.13
 # Updated by Update Tooling Workflow
@@ -55,7 +55,7 @@ OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.18.0
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.18.5
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.19.0
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
