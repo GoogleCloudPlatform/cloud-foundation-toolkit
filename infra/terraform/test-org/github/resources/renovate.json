@@ -28,7 +28,11 @@
       "matchUpdateTypes": "major",
       "commitMessagePrefix": "fix(deps)!:"
     },
-    {"matchDepTypes": ["module"], "groupName": "TF modules"},
+    {
+      "matchDepTypes": ["module"],
+      "groupName": "terraform modules",
+      "matchUpdateTypes": ["minor", "patch"]
+    },
     {
       "matchDepTypes": ["require"],
       "postUpdateOptions": ["gomodTidy"]
@@ -41,7 +45,8 @@
     },
     {
       "matchManagers": ["regex", "gomod"],
-      "groupName": "GO and Dev-Tools"
+      "groupName": "go modules and/or dev-tools",
+      "additionalBranchPrefix": "{{parentDir}}-"
     },
     {
       "matchDepNames": ["google", "google-beta"],
