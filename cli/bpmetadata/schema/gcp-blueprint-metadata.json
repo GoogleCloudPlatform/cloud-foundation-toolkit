@@ -652,6 +652,9 @@
         },
         "showInNotification": {
           "type": "boolean"
+        },
+        "label": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
