@@ -226,14 +226,14 @@ message UIActionItem {
   string snippet = 3; // @gotags: json:"snippet,omitempty" yaml:"snippet,omitempty"
 
   // If present, this expression determines whether the item is shown.
-  // Should be in the form of a Boolean expression e.g. outputs().hasExternalIP
+  // Should be in the form of a Boolean expression e.g. outputs.hasExternalIP
   // where `externalIP` is the output.
   // Gen: manually-authored
   string show_if = 4; // @gotags: json:"showIf,omitempty" yaml:"showIf,omitempty"
 }
 
 // Additional display specific metadata pertaining to a particular
-// Terraform output.
+// Terraform output. Only applicable for Outputs that are URLs.
 message DisplayOutput {
   // open_in_new_tab defines if the Output action should be opened
   // in a new tab.
@@ -244,4 +244,8 @@ message DisplayOutput {
   // notification for the deployment.
   // Gen: manually-authored
   bool show_in_notification = 2; // @gotags: json:"showInNotification,omitempty" yaml:"showInNotification,omitempty"
+
+  // label to display on the Output action button
+  // Gen: manually-authored
+  string label = 3; // @gotags: json:"label,omitempty" yaml:"label,omitEmpty"
 }
