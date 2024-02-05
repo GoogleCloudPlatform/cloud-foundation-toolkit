@@ -16,7 +16,7 @@
   "constraints": {"go": "1.21"},
   "packageRules": [
     {
-      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "Makefile"],
+      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "build/**", "Makefile"],
       "commitMessagePrefix": "chore(deps):"
     },
     {
