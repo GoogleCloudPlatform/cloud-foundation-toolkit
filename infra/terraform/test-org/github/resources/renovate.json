@@ -11,16 +11,16 @@
   "labels": ["dependencies"],
   "vulnerabilityAlerts": {
     "labels": ["type:security"],
-    "minimumReleaseAge": null
+    "minimumReleaseAge": "0 days"
   },
   "constraints": {"go": "1.21"},
   "packageRules": [
     {
-      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**"],
+      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "build/**", "Makefile"],
       "commitMessagePrefix": "chore(deps):"
     },
     {
-      "matchFileNames": ["*", "modules/**"],
+      "matchFileNames": ["*", "modules/**", "!Makefile"],
       "commitMessagePrefix": "fix(deps):"
     },
     {
@@ -29,15 +29,17 @@
       "commitMessagePrefix": "fix(deps)!:"
     },
     {
+      "matchManagers": ["terraform"],
       "matchDepTypes": ["module"],
       "groupName": "terraform modules",
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
-      "matchDepTypes": ["require"],
+      "matchManagers": ["gomod"],
       "postUpdateOptions": ["gomodTidy"]
     },
     {
+      "matchManagers": ["gomod"],
       "matchDatasources": ["golang-version"],
       "rangeStrategy": "replace",
       "allowedVersions": "1.21",
@@ -45,10 +47,10 @@
     },
     {
       "matchManagers": ["regex", "gomod"],
-      "groupName": "go modules and/or dev-tools",
-      "additionalBranchPrefix": "{{parentDir}}-"
+      "groupName": "go modules and/or dev-tools"
     },
     {
+      "matchManagers": ["terraform"],
       "matchDepNames": ["google", "google-beta"],
       "groupName": "Terraform Google Provider",
       "rangeStrategy": "widen",
