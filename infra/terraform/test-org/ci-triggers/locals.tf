@@ -47,6 +47,7 @@ locals {
     "sdw-onprem-ingest"           = "terraform-google-secured-data-warehouse-onprem-ingest"
     "pubsub-golang-app"           = "terraform-pubsub-integration-golang"
     "pubsub-java-app"             = "terraform-pubsub-integration-java"
+    "genai-rag"                   = "terraform-genai-rag"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
