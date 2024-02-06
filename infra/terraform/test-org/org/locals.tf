@@ -831,7 +831,7 @@ locals {
     },
     {
       name            = "terraform-genai-rag"
-      short_name      = "genai-rag" 
+      short_name      = "genai-rag"
       org             = "GoogleCloudPlatform"
       description     = "Deploys a Generative AI RAG solution"
       owners          = ["davenportjw", "bradmiro"]
