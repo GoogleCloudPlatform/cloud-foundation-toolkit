@@ -577,6 +577,13 @@ locals {
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
     },
     {
+      name        = "terraform-google-netapp-volumes"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy NetApp Storage Volumes"
+      owners      = ["imrannayer"]
+      topics      = join(",", [local.common_topics.compute, local.common_topics.net])
+    },
+    {
       name        = "terraform-google-cloud-deploy"
       org         = "GoogleCloudPlatform"
       description = "Create Cloud Deploy pipelines and targets"
