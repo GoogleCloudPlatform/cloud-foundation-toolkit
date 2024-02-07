@@ -72,6 +72,13 @@ resource "github_repository_collaborator" "dpebot" {
   permission = "pull"
 }
 
+resource "github_repository_collaborator" "cftbot" {
+  for_each   = github_repository.repo
+  repository = each.value.name
+  username   = "cloud-foundation-bot"
+  permission = "admin"
+}
+
 resource "github_repository_collaborator" "owners" {
   for_each = {
     for v in local.owners : "${v.repo}/${v.owner}" => v
