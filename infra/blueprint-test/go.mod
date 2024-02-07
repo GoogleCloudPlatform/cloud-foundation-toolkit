@@ -11,7 +11,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/tidwall/gjson v1.17.0
 	github.com/tidwall/sjson v1.2.5
-	golang.org/x/mod v0.14.0
+	golang.org/x/mod v0.15.0
 	sigs.k8s.io/kustomize/kyaml v0.16.0
 )
 

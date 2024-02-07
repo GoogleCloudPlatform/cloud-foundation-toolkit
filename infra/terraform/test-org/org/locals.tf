@@ -577,6 +577,13 @@ locals {
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
     },
     {
+      name        = "terraform-google-netapp-volumes"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy NetApp Storage Volumes"
+      owners      = ["imrannayer"]
+      topics      = join(",", [local.common_topics.compute, local.common_topics.net])
+    },
+    {
       name        = "terraform-google-cloud-deploy"
       org         = "GoogleCloudPlatform"
       description = "Create Cloud Deploy pipelines and targets"
@@ -821,6 +828,18 @@ locals {
       description = "Deploy an enterprise developer platform on Google Cloud."
       owners      = ["gtsorbo"]
       topics      = join(",", [local.common_topics.e2e, local.common_topics.ops])
+    },
+    {
+      name            = "terraform-genai-rag"
+      short_name      = "genai-rag"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys a Generative AI RAG solution"
+      owners          = ["davenportjw", "bradmiro"]
+      groups          = ["dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     }
   ]
 }
