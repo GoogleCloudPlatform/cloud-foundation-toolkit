@@ -30,6 +30,7 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
+	"github.com/alexflint/go-filemutex"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
@@ -37,7 +38,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const setupKeyOutputName = "sa_key"
+const (
+	setupKeyOutputName = "sa_key"
+	tftCacheMutexFilename  = "/tmp/bpt-tft-cache.lock"
+)
 
 var (
 	CommonRetryableErrors = map[string]string{
@@ -73,6 +77,7 @@ type TFBlueprintTest struct {
 	verify                        func(*assert.Assertions) // verify function
 	teardown                      func(*assert.Assertions) // teardown function
 	setupOutputOverrides          map[string]interface{}   // override outputs from the Setup phase
+	tftCacheMutex                 *filemutex.FileMutex     // Mutex to protect Terraform plugin cache
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -167,10 +172,16 @@ func WithSetupOutputs(vars map[string]interface{}) tftOption {
 
 // NewTFBlueprintTest sets defaults, validates and returns a TFBlueprintTest.
 func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
+	var err error
 	tft := &TFBlueprintTest{
 		name:      fmt.Sprintf("%s TF Blueprint", t.Name()),
 		tfEnvVars: make(map[string]string),
 		t:         t,
+	}
+	// initiate tft cache file mutex
+	tft.tftCacheMutex, err = filemutex.New(tftCacheMutexFilename)
+	if err != nil {
+		t.Fatalf("tft lock file <%s> could not created: %v", tftCacheMutexFilename, err)
 	}
 	// default TF blueprint methods
 	tft.init = tft.DefaultInit
@@ -204,7 +215,6 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 
 	// discover test config
-	var err error
 	tft.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
 	if err != nil {
 		t.Fatal(err)
@@ -481,21 +491,57 @@ func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
 
 // Init runs the default or custom init function for the blueprint.
 func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
+	// allow only single write as Terraform plugin cache isn't concurrent safe
+	if err := b.tftCacheMutex.Lock(); err != nil {
+		b.t.Fatalf("Could not acquire lock: %v", err)
+	}
+	defer func() {
+		if err := b.tftCacheMutex.Unlock(); err != nil {
+			b.t.Fatalf("Could not release lock: %v", err)
+		}
+	}()
 	b.init(assert)
 }
 
 // Apply runs the default or custom apply function for the blueprint.
 func (b *TFBlueprintTest) Apply(assert *assert.Assertions) {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	if err := b.tftCacheMutex.RLock(); err != nil {
+		b.t.Fatalf("Could not acquire read lock: %v", err)
+	}
+	defer func() {
+		if err := b.tftCacheMutex.RUnlock(); err != nil {
+			b.t.Fatalf("Could not release read lock: %v", err)
+		}
+	}()
 	b.apply(assert)
 }
 
 // Verify runs the default or custom verify function for the blueprint.
 func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	if err := b.tftCacheMutex.RLock(); err != nil {
+		b.t.Fatalf("Could not acquire read lock: %v", err)
+	}
+	defer func() {
+		if err := b.tftCacheMutex.RUnlock(); err != nil {
+			b.t.Fatalf("Could not release read lock: %v", err)
+		}
+	}()
 	b.verify(assert)
 }
 
 // Teardown runs the default or custom teardown function for the blueprint.
 func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	if err := b.tftCacheMutex.RLock(); err != nil {
+		b.t.Fatalf("Could not acquire read lock:%v", err)
+	}
+	defer func() {
+		if err := b.tftCacheMutex.RUnlock(); err != nil {
+			b.t.Fatalf("Could not release read lock: %v", err)
+		}
+	}()
 	b.teardown(assert)
 }
 
