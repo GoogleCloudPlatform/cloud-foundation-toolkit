@@ -15,7 +15,7 @@ env:
   KPT_URL: "https://api.github.com/repos/kptdev/kpt/releases"
   CFT_CLI_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
   MODULE_SWAPPER_URL: "https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases"
-  KUBECTL_MINOR: "1.26"
+  KUBECTL_MINOR: "1.28"
   KUBECTL_URL: "https://api.github.com/repos/kubernetes/kubernetes/releases"
   GATOR_MINOR: "3.14"
   GATOR_URL: "https://api.github.com/repos/open-policy-agent/gatekeeper/releases"
