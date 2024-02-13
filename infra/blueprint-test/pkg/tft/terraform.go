@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Google LLC
+ * Copyright 2021-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ import (
 
 const (
 	setupKeyOutputName = "sa_key"
-	tftCacheMutexFilename  = "/tmp/bpt-tft-cache.lock"
+	tftCacheMutexFilename  = "bpt-tft-cache.lock"
+	vetFilename = "plan.tfplan"
 )
 
 var (
@@ -179,9 +180,9 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		t:         t,
 	}
 	// initiate tft cache file mutex
-	tft.tftCacheMutex, err = filemutex.New(tftCacheMutexFilename)
+	tft.tftCacheMutex, err = filemutex.New(filepath.Join(os.TempDir(), tftCacheMutexFilename))
 	if err != nil {
-		t.Fatalf("tft lock file <%s> could not created: %v", tftCacheMutexFilename, err)
+		t.Fatalf("tft lock file <%s> could not created: %v", filepath.Join(os.TempDir(), tftCacheMutexFilename), err)
 	}
 	// default TF blueprint methods
 	tft.init = tft.DefaultInit
@@ -277,6 +278,9 @@ func (b *TFBlueprintTest) sensitiveOutputs(dir string) map[string]bool {
 
 // getOutputs returns all output values.
 func (b *TFBlueprintTest) getOutputs(sensitive map[string]bool) map[string]interface{} {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	outputs := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.sensitiveLogger, NoColor: true})
 	for k, v := range outputs {
 		_, s := sensitive[k]
@@ -360,6 +364,9 @@ func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
@@ -372,6 +379,9 @@ func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
@@ -469,8 +479,14 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 
 // Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
 func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
+	vetTempDir, err := os.MkdirTemp(os.TempDir(), "btp")
+	if err != nil {
+		b.t.Fatalf("Temp directory %q could not created: %v", vetTempDir, err)
+	}
+	defer os.RemoveAll(vetTempDir)
+
 	localOptions := b.GetTFOptions()
-	localOptions.PlanFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
+	localOptions.PlanFilePath = filepath.Join(vetTempDir, vetFilename)
 	terraform.Plan(b.t, localOptions)
 	jsonPlan := terraform.Show(b.t, localOptions)
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
@@ -506,42 +522,24 @@ func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
 // Apply runs the default or custom apply function for the blueprint.
 func (b *TFBlueprintTest) Apply(assert *assert.Assertions) {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
-	if err := b.tftCacheMutex.RLock(); err != nil {
-		b.t.Fatalf("Could not acquire read lock: %v", err)
-	}
-	defer func() {
-		if err := b.tftCacheMutex.RUnlock(); err != nil {
-			b.t.Fatalf("Could not release read lock: %v", err)
-		}
-	}()
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	b.apply(assert)
 }
 
 // Verify runs the default or custom verify function for the blueprint.
 func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
-	if err := b.tftCacheMutex.RLock(); err != nil {
-		b.t.Fatalf("Could not acquire read lock: %v", err)
-	}
-	defer func() {
-		if err := b.tftCacheMutex.RUnlock(); err != nil {
-			b.t.Fatalf("Could not release read lock: %v", err)
-		}
-	}()
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	b.verify(assert)
 }
 
 // Teardown runs the default or custom teardown function for the blueprint.
 func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
-	if err := b.tftCacheMutex.RLock(); err != nil {
-		b.t.Fatalf("Could not acquire read lock:%v", err)
-	}
-	defer func() {
-		if err := b.tftCacheMutex.RUnlock(); err != nil {
-			b.t.Fatalf("Could not release read lock: %v", err)
-		}
-	}()
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	b.teardown(assert)
 }
 
@@ -592,5 +590,18 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 		}(i)
 		utils.RunStage("apply", func() { b.Apply(a) })
 		utils.RunStage("verify", func() { b.Verify(a) })
+	}
+}
+
+// rLockFn sets a read mutex lock, and returns the corresponding unlock function
+func (b *TFBlueprintTest) rLockFn() func() {
+	if err := b.tftCacheMutex.RLock(); err != nil {
+		b.t.Fatalf("Could not acquire read lock:%v", err)
+	}
+
+	return func() {
+		if err := b.tftCacheMutex.RUnlock(); err != nil {
+			b.t.Fatalf("Could not release read lock: %v", err)
+		}
 	}
 }
