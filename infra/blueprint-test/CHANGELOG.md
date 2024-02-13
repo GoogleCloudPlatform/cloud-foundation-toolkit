@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.12.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.11.1...infra/blueprint-test/v0.12.0) (2024-02-12)
+
+
+### Features
+
+* **tft:** add filemutex for tft plugin cache ([#2140](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2140)) ([3568196](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3568196e2517fb62479115f6f615c827a4734e60))
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.11 ([#2092](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2092)) ([daa1417](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/daa14179116ca3fb9263cb20fc19955b436ab7b5))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.9 ([#2080](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2080)) ([da6b03f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/da6b03f3e6eaabb8dbab8b21236cf1ffaffb8cd7))
+* **deps:** update module golang.org/x/mod to v0.15.0 ([#2131](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2131)) ([b0d5ff0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b0d5ff035fbe4d78758f385d0c8f731c30715952))
+
 ## [0.11.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.11.0...infra/blueprint-test/v0.11.1) (2023-12-19)
 
 
