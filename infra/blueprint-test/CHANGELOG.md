@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.12.0...infra/blueprint-test/v0.12.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* **tft:** parallel-safe a few edge cases ([#2145](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2145)) ([3ba8188](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3ba81882a48222f7897f9cabbc4388b494ce3326))
+
 ## [0.12.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.11.1...infra/blueprint-test/v0.12.0) (2024-02-12)
 
 
