@@ -72,6 +72,7 @@
       "matchStrings": ["GOLANGCI_VERSION := (?<currentValue>.*?)\\n"],
       "datasourceTemplate": "docker",
       "depNameTemplate": "golangci/golangci-lint"
+      "extractVersionTemplate": "^v?(?<version>.*)$"
     }
   ]
 }
