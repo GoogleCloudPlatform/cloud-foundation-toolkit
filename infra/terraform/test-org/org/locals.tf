@@ -844,7 +844,7 @@ locals {
     {
       name        = "terraform-google-artifact-registry"
       org         = "GoogleCloudPlatform"
-      description = "Terraform Module to create Google Artifact Registry Repositories"
+      description = "Create and manage Google Artifact Registry Repositories"
       owners      = ["prabhu34"]
     }
   ]
