@@ -840,6 +840,12 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
+    },
+    {
+      name        = "terraform-google-artifact-registry"
+      org         = "GoogleCloudPlatform"
+      description = "Terraform Module to create Google Artifact Registry Repositories"
+      owners      = ["prabhu34"]
     }
   ]
 }
