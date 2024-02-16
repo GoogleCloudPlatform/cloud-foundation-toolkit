@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.12.1...infra/blueprint-test/v0.13.0) (2024-02-16)
+
+
+### Features
+
+* **tft:** add GetStringOutputList ([#2159](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2159)) ([48810af](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/48810afccc60d8ad569c5a8ff202e3bb38425891))
+
 ## [0.12.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.12.0...infra/blueprint-test/v0.12.1) (2024-02-13)
 
 
