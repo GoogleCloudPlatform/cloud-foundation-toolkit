@@ -71,7 +71,8 @@
       "fileMatch": ["(^|/)Makefile$"],
       "matchStrings": ["GOLANGCI_VERSION := (?<currentValue>.*?)\\n"],
       "datasourceTemplate": "docker",
-      "depNameTemplate": "golangci/golangci-lint"
+      "depNameTemplate": "golangci/golangci-lint",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
     }
   ]
 }

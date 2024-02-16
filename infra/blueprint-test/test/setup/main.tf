@@ -1,5 +1,5 @@
 /**
- * Copyright 2021-2023 Google LLC
+ * Copyright 2021-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,6 @@ resource "google_service_account_key" "key" {
 
 module "kubernetes-engine_example_simple_autopilot_public" {
   source  = "terraform-google-modules/kubernetes-engine/google//examples/simple_autopilot_public"
-  version                     = "~> 26.0"
+  version                     = "~> 30.0"
   project_id                  = module.project.project_id
 }
