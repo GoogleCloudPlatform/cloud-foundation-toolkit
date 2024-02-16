@@ -356,7 +356,7 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 
 // GetStringOutputList returns TF output for a given key as list.
 // It fails test if given key does not output a primitive.
-func (b *TFBlueprintTest) GetStringOutput(name string) string {
+func (b *TFBlueprintTest) GetStringOutputList(name string) []string {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
