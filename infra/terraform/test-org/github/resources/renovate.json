@@ -27,7 +27,7 @@
     {
       "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "build/**", "Makefile"],
       "commitMessagePrefix": "chore(deps):"
-    },    
+    },
     {
       "matchManagers": ["terraform"],
       "matchDepTypes": ["module"],
