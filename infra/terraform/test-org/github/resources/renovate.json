@@ -16,11 +16,7 @@
   "constraints": {"go": "1.21"},
   "packageRules": [
     {
-      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "build/**", "Makefile"],
-      "commitMessagePrefix": "chore(deps):"
-    },
-    {
-      "matchFileNames": ["*", "modules/**", "!Makefile"],
+      "matchFileNames": ["*", "modules/**"],
       "commitMessagePrefix": "fix(deps):"
     },
     {
@@ -28,6 +24,10 @@
       "matchUpdateTypes": "major",
       "commitMessagePrefix": "fix(deps)!:"
     },
+    {
+      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "build/**", "Makefile"],
+      "commitMessagePrefix": "chore(deps):"
+    },    
     {
       "matchManagers": ["terraform"],
       "matchDepTypes": ["module"],
