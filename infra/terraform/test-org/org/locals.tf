@@ -536,9 +536,10 @@ locals {
       module     = false
     },
     {
-      short_name = "docs-samples"
-      org        = "terraform-google-modules"
-      module     = false
+      short_name      = "docs-samples"
+      org             = "terraform-google-modules"
+      module          = false
+      enable_periodic = true
     },
     {
       short_name = "migrate"
