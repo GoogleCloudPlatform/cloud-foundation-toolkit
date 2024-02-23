@@ -847,6 +847,13 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Create and manage Google Artifact Registry Repositories"
       owners      = ["prabhu34"]
+    },
+    {
+      name        = "terraform-google-secure-web-proxy"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Secure Web Proxy in GCP for secured egress web traffic."
+      owners      = ["maitreya-source"]
+      topics      = join(",", [local.common_topics.security, local.common_topics.net])
     }
   ]
 }
