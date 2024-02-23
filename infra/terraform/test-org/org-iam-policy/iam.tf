@@ -51,6 +51,7 @@ locals {
     "roles/accesscontextmanager.policyReader" : ["group:${local.cft_ci_group}"],
     "roles/assuredworkloads.admin" : ["group:${local.cft_ci_group}"],
     "roles/iam.denyAdmin" : ["group:${local.cft_ci_group}"],
+    "roles/resourcemanager.tagAdmin" : ["group:${local.cft_ci_group}"],
   }
 
   billing_policy = {

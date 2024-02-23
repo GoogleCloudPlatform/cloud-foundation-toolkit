@@ -113,7 +113,7 @@ locals {
       name        = "terraform-google-kubernetes-engine"
       org         = "terraform-google-modules"
       description = "Configures opinionated GKE clusters"
-      owners      = ["ericyz"]
+      owners      = ["ericyz", "gtsorbo"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
@@ -536,9 +536,10 @@ locals {
       module     = false
     },
     {
-      short_name = "docs-samples"
-      org        = "terraform-google-modules"
-      module     = false
+      short_name      = "docs-samples"
+      org             = "terraform-google-modules"
+      module          = false
+      enable_periodic = true
     },
     {
       short_name = "migrate"

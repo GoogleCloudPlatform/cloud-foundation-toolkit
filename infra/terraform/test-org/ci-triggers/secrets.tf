@@ -29,3 +29,35 @@ resource "google_secret_manager_secret_iam_member" "tfe_token_member" {
   role      = "roles/secretmanager.secretAccessor"
   member    = "group:${data.terraform_remote_state.org.outputs.cft_ci_group}"
 }
+
+resource "google_secret_manager_secret" "im_github_pat" {
+  project   = local.project_id
+  secret_id = "im_github_pat"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_iam_member" "im_github_pat_member" {
+  project   = google_secret_manager_secret.im_github_pat.project
+  secret_id = google_secret_manager_secret.im_github_pat.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "group:${data.terraform_remote_state.org.outputs.cft_ci_group}"
+}
+
+resource "google_secret_manager_secret" "im_gitlab_pat" {
+  project   = local.project_id
+  secret_id = "im_gitlab_pat"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_iam_member" "im_gitlab_pat_member" {
+  project   = google_secret_manager_secret.im_gitlab_pat.project
+  secret_id = google_secret_manager_secret.im_gitlab_pat.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "group:${data.terraform_remote_state.org.outputs.cft_ci_group}"
+}
