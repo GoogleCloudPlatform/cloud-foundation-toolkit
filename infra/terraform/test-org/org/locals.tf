@@ -854,6 +854,18 @@ locals {
       description = "Create and manage Secure Web Proxy in GCP for secured egress web traffic."
       owners      = ["maitreya-source"]
       topics      = join(",", [local.common_topics.security, local.common_topics.net])
+    },
+    {
+      name            = "terraform-cloud-client-api"
+      short_name      = "cloud-client-api"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys an example application that uses Cloud Client APIs"
+      owners          = ["glasnt", "sigje"]
+      groups          = ["team-egg", local.jss_common_group]
+      enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     }
   ]
 }
