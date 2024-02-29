@@ -48,6 +48,7 @@ locals {
     "pubsub-golang-app"           = "terraform-pubsub-integration-golang"
     "pubsub-java-app"             = "terraform-pubsub-integration-java"
     "genai-rag"                   = "terraform-genai-rag"
+    "cloud-client-api"            = "terraform-cloud-client-api"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
