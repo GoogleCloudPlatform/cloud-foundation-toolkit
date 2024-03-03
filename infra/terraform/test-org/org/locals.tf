@@ -860,7 +860,7 @@ locals {
       short_name      = "cloud-client-api"
       org             = "GoogleCloudPlatform"
       description     = "Deploys an example application that uses Cloud Client APIs"
-      owners          = ["glasnt", "sigje"]
+      owners          = ["glasnt", "iennae"]
       groups          = ["team-egg", local.jss_common_group]
       enable_periodic = true
       lint_env = {
