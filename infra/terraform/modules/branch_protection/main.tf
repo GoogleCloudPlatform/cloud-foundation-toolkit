@@ -34,11 +34,10 @@ resource "github_branch_protection" "default" {
     ]
   }
 
-  enforce_admins   = false
-  blocks_creations = false
+  enforce_admins = false
 
-  push_restrictions = [
-    var.admin
-  ]
-
+  restrict_pushes {
+    push_allowances  = [var.admin]
+    blocks_creations = false
+  }
 }

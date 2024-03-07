@@ -186,8 +186,7 @@ resource "github_branch_protection" "terraform-example-foundation" {
 
   enforce_admins = false
 
-  push_restrictions = [
-    data.github_team.cft-admins.node_id
-  ]
-
+  restrict_pushes {
+    push_allowances = [data.github_team.cft-admins.node_id]
+  }
 }
