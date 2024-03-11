@@ -13,33 +13,36 @@
 # limitations under the License.
 
 steps:
-  # - name: "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS"
-  #   dir: "infra/terraform/test-org/image-cleanup"
-  #   id: "purge-dev-tools"
-  #   args:
-  #     [
-  #       "./cft-image-cleanup.sh",
-  #       "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS",
-  #       "DELETE",
-  #     ]
-  # - name: "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS"
-  #   dir: "infra/terraform/test-org/image-cleanup"
-  #   id: "purge-dev-tools-light"
-  #   args:
-  #     [
-  #       "./cft-image-cleanup.sh",
-  #       "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_LIGHT",
-  #       "DELETE",
-  #     ]
-  # - name: "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS"
-  #   dir: "infra/terraform/test-org/image-cleanup"
-  #   id: "purge-dev-tool-krm"
-  #   args:
-  #     [
-  #       "./cft-image-cleanup.sh",
-  #       "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_KRM",
-  #       "DELETE",
-  #     ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    dir: "infra/terraform/test-org/image-cleanup"
+    id: "purge-dev-tools"
+    entrypoint: "bash"
+    args:
+      [
+        "./cft-image-cleanup.sh",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS",
+        "DELETE",
+      ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    dir: "infra/terraform/test-org/image-cleanup"
+    id: "purge-dev-tools-light"
+    entrypoint: "bash"
+    args:
+      [
+        "./cft-image-cleanup.sh",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_LIGHT",
+        "DELETE",
+      ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    dir: "infra/terraform/test-org/image-cleanup"
+    id: "purge-dev-tool-krm"
+    entrypoint: "bash"
+    args:
+      [
+        "./cft-image-cleanup.sh",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_KRM",
+        "DELETE",
+      ]
   - name: "gcr.io/cloud-builders/gcloud"
     dir: "infra/terraform/test-org/image-cleanup"
     id: "purge-dev-tools-jenkins"
@@ -56,4 +59,3 @@ substitutions:
   _DOCKER_IMAGE_DEVELOPER_TOOLS_LIGHT: "cft/developer-tools-light"
   _DOCKER_IMAGE_DEVELOPER_TOOLS_KRM: "cft/developer-tools-krm"
   _DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS: "cft/developer-tools-jenkins"
-  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: "1.18"
