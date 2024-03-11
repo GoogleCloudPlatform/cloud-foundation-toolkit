@@ -40,9 +40,10 @@ steps:
   #       "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_KRM",
   #       "DELETE",
   #     ]
-  - name: "bash"
+  - name: "gcr.io/cloud-builders/gcloud"
     dir: "infra/terraform/test-org/image-cleanup"
     id: "purge-dev-tools-jenkins"
+    entrypoint: "bash"
     args:
       [
         "./cft-image-cleanup.sh",
