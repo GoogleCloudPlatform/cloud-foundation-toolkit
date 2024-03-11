@@ -19,7 +19,7 @@ steps:
   #   args:
   #     [
   #       "./cft-image-cleanup.sh",
-  #       "$__REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS",
+  #       "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS",
   #       "DELETE",
   #     ]
   # - name: "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS"
@@ -28,7 +28,7 @@ steps:
   #   args:
   #     [
   #       "./cft-image-cleanup.sh",
-  #       "$__REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_LIGHT",
+  #       "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_LIGHT",
   #       "DELETE",
   #     ]
   # - name: "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS"
@@ -37,17 +37,16 @@ steps:
   #   args:
   #     [
   #       "./cft-image-cleanup.sh",
-  #       "$__REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_KRM",
+  #       "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_KRM",
   #       "DELETE",
   #     ]
-  - name: "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS:$_DOCKER_TAG_VERSION_DEVELOPER_TOOLS"
+  - name: "bash"
     dir: "infra/terraform/test-org/image-cleanup"
     id: "purge-dev-tools-jenkins"
     args:
       [
         "./cft-image-cleanup.sh",
-        "$__REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS",
-        "DELETE",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS",
       ]
 substitutions:
   _REGISTRY_URL: "gcr.io/cloud-foundation-cicd"
