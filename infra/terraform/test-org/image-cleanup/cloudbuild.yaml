@@ -1,0 +1,65 @@
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+  - name: "gcr.io/cloud-builders/gcloud"
+    dir: "infra/terraform/test-org/image-cleanup"
+    id: "purge-dev-tools"
+    waitFor: ["-"]
+    entrypoint: "bash"
+    args:
+      [
+        "./cft-image-cleanup.sh",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS",
+        "DELETE",
+      ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    dir: "infra/terraform/test-org/image-cleanup"
+    id: "purge-dev-tools-light"
+    waitFor: ["-"]
+    entrypoint: "bash"
+    args:
+      [
+        "./cft-image-cleanup.sh",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_LIGHT",
+        "DELETE",
+      ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    dir: "infra/terraform/test-org/image-cleanup"
+    id: "purge-dev-tool-krm"
+    waitFor: ["-"]
+    entrypoint: "bash"
+    args:
+      [
+        "./cft-image-cleanup.sh",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_KRM",
+        "DELETE",
+      ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    dir: "infra/terraform/test-org/image-cleanup"
+    id: "purge-dev-tools-jenkins"
+    waitFor: ["-"]
+    entrypoint: "bash"
+    args:
+      [
+        "./cft-image-cleanup.sh",
+        "$_REGISTRY_URL/$_DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS",
+        "DELETE",
+      ]
+substitutions:
+  _REGISTRY_URL: "gcr.io/cloud-foundation-cicd"
+  _DOCKER_IMAGE_DEVELOPER_TOOLS: "cft/developer-tools"
+  _DOCKER_IMAGE_DEVELOPER_TOOLS_LIGHT: "cft/developer-tools-light"
+  _DOCKER_IMAGE_DEVELOPER_TOOLS_KRM: "cft/developer-tools-krm"
+  _DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS: "cft/developer-tools-jenkins"
