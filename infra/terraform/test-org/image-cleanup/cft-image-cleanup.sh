@@ -18,7 +18,7 @@ fi
 main(){
   local C=0
   IMAGE="${1}"
-  for digest in $(gcloud container images list-tags ${IMAGE} --limit=999999 --sort-by=TIMESTAMP \
+  for digest in $(gcloud container images list-tags "${IMAGE}" --limit=999999 --sort-by=TIMESTAMP \
     --format='get(digest)' --filter='-tags:*'); do
     if [[ "$MODE" == "DRYRUN" ]]; then
       echo "to delete:" $digest
