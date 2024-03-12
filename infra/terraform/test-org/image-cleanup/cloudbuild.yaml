@@ -16,6 +16,7 @@ steps:
   - name: "gcr.io/cloud-builders/gcloud"
     dir: "infra/terraform/test-org/image-cleanup"
     id: "purge-dev-tools"
+    waitFor: ["-"]
     entrypoint: "bash"
     args:
       [
@@ -26,6 +27,7 @@ steps:
   - name: "gcr.io/cloud-builders/gcloud"
     dir: "infra/terraform/test-org/image-cleanup"
     id: "purge-dev-tools-light"
+    waitFor: ["-"]
     entrypoint: "bash"
     args:
       [
@@ -36,6 +38,7 @@ steps:
   - name: "gcr.io/cloud-builders/gcloud"
     dir: "infra/terraform/test-org/image-cleanup"
     id: "purge-dev-tool-krm"
+    waitFor: ["-"]
     entrypoint: "bash"
     args:
       [
@@ -46,6 +49,7 @@ steps:
   - name: "gcr.io/cloud-builders/gcloud"
     dir: "infra/terraform/test-org/image-cleanup"
     id: "purge-dev-tools-jenkins"
+    waitFor: ["-"]
     entrypoint: "bash"
     args:
       [
