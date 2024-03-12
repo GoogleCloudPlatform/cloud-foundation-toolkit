@@ -21,14 +21,14 @@ main(){
   for digest in $(gcloud container images list-tags "${IMAGE}" --limit=999999 --sort-by=TIMESTAMP \
     --format='get(digest)' --filter='-tags:*'); do
     if [[ "$MODE" == "DRYRUN" ]]; then
-      echo "to delete:" $digest
+      echo "to delete: $digest"
     elif [[ "$MODE" == "DELETE" ]]; then
       (
         set -x
         gcloud container images delete -q --force-delete-tags "${IMAGE}@${digest}"
       )
     fi
-    let C=C+1
+    (( C=C+1 ))
   done
   echo "Deleted ${C} images in ${IMAGE}." >&2
 }
