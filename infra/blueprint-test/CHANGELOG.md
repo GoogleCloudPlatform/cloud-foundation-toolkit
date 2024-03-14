@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.13.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.0...infra/blueprint-test/v0.13.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **deps:** bump google.golang.org/protobuf from 1.31.0 to 1.33.0 in /infra/blueprint-test ([#2207](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2207)) ([43f002f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/43f002fe3302fcbe3de487699354c76a42b03bce))
+* **deps:** update go modules ([#2195](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2195)) ([af8a62c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/af8a62cc8c0db6fe00616921d1bed527253ebaa6))
+* **deps:** update module github.com/tidwall/gjson to v1.17.1 ([#2172](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2172)) ([3f3199e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3f3199e05baf84360fbb4a066b59cb0119ba1067))
+
 ## [0.13.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.12.1...infra/blueprint-test/v0.13.0) (2024-02-16)
 
 
