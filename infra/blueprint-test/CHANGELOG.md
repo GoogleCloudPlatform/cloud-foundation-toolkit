@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.13.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.1...infra/blueprint-test/v0.13.2) (2024-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.12 ([#2216](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2216)) ([765f4bb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/765f4bbd33b3d5752f94a471beb3262609ed1e62))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.13 ([#2221](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2221)) ([b0e2940](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b0e2940f4c45f3aa790bcf276d32ece681383c23))
+* **tft:** Correct message in DefaultVerify ([#2213](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2213)) ([2d67c60](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2d67c60903880b2d9dacfdf8b34a53be4a20c6ed))
+
 ## [0.13.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.0...infra/blueprint-test/v0.13.1) (2024-03-14)
 
 
