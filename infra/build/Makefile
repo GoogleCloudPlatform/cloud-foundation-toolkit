@@ -64,7 +64,7 @@ DOCKER_IMAGE_DEVELOPER_KRM := cft/developer-tools-krm
 DOCKER_IMAGE_DEVELOPER_LIGHT := cft/developer-tools-light
 DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS := cft/developer-tools-jenkins
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
-DEP_TAG_PREFIX := deprecated-public-image-
+DEP_TAG_PREFIX := infrastructure-public-image-
 
 
 .PHONY: build-image-developer-tools
