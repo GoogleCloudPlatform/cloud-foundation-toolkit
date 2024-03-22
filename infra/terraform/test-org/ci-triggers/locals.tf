@@ -30,6 +30,8 @@ locals {
     "cloud-foundation-training"   = "cloud-foundation-training",
     "example-foundation-app"      = "terraform-example-foundation-app",
     "anthos-samples"              = "anthos-samples"
+    "cloud-deployment-gce"        = "terraform-cloud-deployment-gce",
+    "cloud-deployment-gke"        = "terraform-cloud-deployment-gke",
     "docs-samples"                = "terraform-docs-samples"
     "dynamic-python-webapp"       = "terraform-dynamic-python-webapp"
     "dynamic-javascript-webapp"   = "terraform-dynamic-javascript-webapp"
@@ -46,6 +48,8 @@ locals {
     "sdw-onprem-ingest"           = "terraform-google-secured-data-warehouse-onprem-ingest"
     "pubsub-golang-app"           = "terraform-pubsub-integration-golang"
     "pubsub-java-app"             = "terraform-pubsub-integration-java"
+    "genai-rag"                   = "terraform-genai-rag"
+    "cloud-client-api"            = "terraform-cloud-client-api"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }

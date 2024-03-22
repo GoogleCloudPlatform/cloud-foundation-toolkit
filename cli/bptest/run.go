@@ -22,12 +22,14 @@ const (
 
 	// The tfplan.json files that are being used as input for the terraform validation tests
 	// through the gcloud beta terraform vet are higher than the buffer default value (64*1024),
-	// after some tests we had evidences that the value were arround from 3MB to 5MB, so
+	// after some tests we had evidences that the value were around from 3MB to 5MB, so
 	// we choosed a value that is at least 2x higher than the original one to avoid errors.
 	// maxScanTokenSize is the maximum size used to buffer a token
 	// startBufSize is the initial of the buffer token
 	maxScanTokenSize = 10 * 1024 * 1024
 	startBufSize     = 4096
+	// This must be kept in sync with what github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft parses.
+	setupEnvVarPrefix = "CFT_SETUP_"
 )
 
 var allTestArgs = []string{"-p", "1", "-count", "1", "-timeout", "0"}
@@ -87,25 +89,29 @@ func streamExec(cmd *exec.Cmd) error {
 			fmt.Println(scanner.Text())
 		}
 		if err := scanner.Err(); err != nil {
-			Log.Error(fmt.Sprintf("error reading output: %v", err))
+			Log.Error(fmt.Sprintf("error reading output: %s", err))
 		}
 	}()
 
 	// run command
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("error running command: %v", err)
+		return fmt.Errorf("error running command: %w", err)
 	}
 	return nil
 }
 
 // getTestCmd returns a prepared cmd for running the specified tests(s)
-func getTestCmd(intTestDir string, testStage string, testName string, relTestPkg string) (*exec.Cmd, error) {
+func getTestCmd(intTestDir string, testStage string, testName string, relTestPkg string, setupVars map[string]string) (*exec.Cmd, error) {
 
 	// pass all current env vars to test command
 	env := os.Environ()
 	// set test stage env var if specified
 	if testStage != "" {
 		env = append(env, fmt.Sprintf("%s=%s", testStageEnvVarKey, testStage))
+	}
+	// Load the env with any setup-vars specified
+	for k, v := range setupVars {
+		env = append(env, fmt.Sprintf("%s%s=%s", setupEnvVarPrefix, k, v))
 	}
 
 	// determine binary and args used for test execution

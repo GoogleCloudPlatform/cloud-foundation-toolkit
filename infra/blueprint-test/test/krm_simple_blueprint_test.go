@@ -1,6 +1,7 @@
 package test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
@@ -26,7 +27,8 @@ func TestKRMSimpleBlueprint(t *testing.T) {
 			k8sOpts := k8s.KubectlOptions{}
 			op, err := k8s.RunKubectlAndGetOutputE(t, &k8sOpts, "get", "pod", "simple-krm-blueprint", "--no-headers", "-o", "custom-columns=:metadata.name")
 			assert.NoError(err)
-			assert.Equal("simple-krm-blueprint", op)
+			result := strings.Split(op, "\n")
+			assert.Equal("simple-krm-blueprint", result[len(result)-1])
 		})
 	networkBlueprint.Test()
 }

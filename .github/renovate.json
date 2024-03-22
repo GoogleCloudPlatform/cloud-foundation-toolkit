@@ -15,7 +15,7 @@
   "separateMajorMinor": false,
   "ignorePaths": ["config-connector/**"],
   "additionalBranchPrefix": "{{parentDir}}-",
-  "constraints": {"go": "1.20"},
+  "constraints": {"go": "1.21"},
   "packageRules": [
     {
       "matchFileNames": [".github/**"],
@@ -23,7 +23,8 @@
     },
     {
       "matchPackageNames": ["google", "google-beta"],
-      "groupName": "terraform google provider"
+      "groupName": "terraform google provider",
+      "rangeStrategy": "widen"
     },
     {
       "matchManagers": ["terraform"],
@@ -37,7 +38,7 @@
     },
     {
       "matchPackageNames": ["go"],
-      "allowedVersions": "<1.21.0",
+      "allowedVersions": "1.21",
       "postUpdateOptions": ["gomodTidy"]
     }
   ],
@@ -65,6 +66,13 @@
       "datasourceTemplate": "docker",
       "registryUrlTemplate": "https://gcr.io/cloud-foundation-cicd",
       "depNameTemplate": "cft/developer-tools"
+    },
+    {
+      "fileMatch": ["(^|/)Makefile$"],
+      "matchStrings": ["GOLANGCI_VERSION := (?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "golangci/golangci-lint",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
     }
   ]
 }

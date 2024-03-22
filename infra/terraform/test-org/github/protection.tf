@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2023 Google LLC
+ * Copyright 2022-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,13 @@ module "repos_gcp" {
   providers = { github = github.gcp }
 }
 
+// All new repos are created in advance in the GCP org
+import {
+  for_each = local.gcp_modules_map
+  to       = module.repos_gcp.github_repository.repo[each.value.name]
+  id       = each.value.name
+}
+
 // terraform-example-foundation CI is a special case - below
 module "branch_protection_tgm" {
   source    = "../../modules/branch_protection"
@@ -58,12 +65,12 @@ module "branch_protection_gcp" {
   providers = { github = github.gcp }
 }
 
-// terraform-example-foundation renovate is a special case - below
+// terraform-example-foundation renovate is a special case
 module "renovate_json_tgm" {
   source    = "../../modules/repo_file"
   repo_list = { for k, v in module.repos_tgm.repos : k => v if k != "terraform-example-foundation" }
   filename  = ".github/renovate.json"
-  content   = file("${path.module}/resources/renovate.json")
+  content   = file("${path.module}/resources/renovate-repo-config.json")
   providers = { github = github }
 }
 
@@ -71,7 +78,7 @@ module "renovate_json_gcp" {
   source    = "../../modules/repo_file"
   repo_list = module.repos_gcp.repos
   filename  = ".github/renovate.json"
-  content   = file("${path.module}/resources/renovate.json")
+  content   = file("${path.module}/resources/renovate-repo-config.json")
   providers = { github = github.gcp }
 }
 
@@ -179,8 +186,7 @@ resource "github_branch_protection" "terraform-example-foundation" {
 
   enforce_admins = false
 
-  push_restrictions = [
-    data.github_team.cft-admins.node_id
-  ]
-
+  restrict_pushes {
+    push_allowances = [data.github_team.cft-admins.node_id]
+  }
 }

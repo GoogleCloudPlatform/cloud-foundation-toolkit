@@ -36,7 +36,6 @@ func init() {
 
 	listCmd.Flags().Var(&catalogListFlags.format, "format", fmt.Sprintf("Format to display catalog. Defaults to table. Options are %+v.", renderFormats))
 	listCmd.Flags().Var(&catalogListFlags.sort, "sort", fmt.Sprintf("Sort results. Defaults to created date. Options are %+v.", sortOptions))
-
 }
 
 var Cmd = &cobra.Command{

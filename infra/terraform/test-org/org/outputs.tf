@@ -113,3 +113,7 @@ output "modules" {
 output "bpt_folder" {
   value = module.bpt_ci_folder.id
 }
+
+output "periodic_repos" {
+  value = sort([for value in local.repos : coalesce(try(value.name, null), try(value.short_name, null)) if try(value.enable_periodic, false)])
+}

@@ -54,6 +54,7 @@ resource "github_repository" "repo" {
   allow_merge_commit          = false
   allow_rebase_merge          = false
   allow_update_branch         = true
+  allow_auto_merge            = true
   delete_branch_on_merge      = true
   has_issues                  = true
   has_projects                = false
@@ -69,6 +70,13 @@ resource "github_repository_collaborator" "dpebot" {
   repository = each.value.name
   username   = "dpebot"
   permission = "pull"
+}
+
+resource "github_repository_collaborator" "cftbot" {
+  for_each   = github_repository.repo
+  repository = each.value.name
+  username   = "cloud-foundation-bot"
+  permission = "admin"
 }
 
 resource "github_repository_collaborator" "owners" {

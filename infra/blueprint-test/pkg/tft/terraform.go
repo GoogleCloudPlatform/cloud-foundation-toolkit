@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Google LLC
+ * Copyright 2021-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,19 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/discovery"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
+	"github.com/alexflint/go-filemutex"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
 )
 
-const setupKeyOutputName = "sa_key"
+const (
+	setupKeyOutputName = "sa_key"
+	tftCacheMutexFilename  = "bpt-tft-cache.lock"
+	vetFilename = "plan.tfplan"
+)
 
 var (
 	CommonRetryableErrors = map[string]string{
@@ -65,11 +71,14 @@ type TFBlueprintTest struct {
 	terraformVetProject           string                   // optional a valid existing project that will be used when a plan has resources in a project that still does not exist.
 	vars                          map[string]interface{}   // variables to pass to Terraform as flags
 	logger                        *logger.Logger           // custom logger
+	sensitiveLogger               *logger.Logger           // custom logger for sensitive logging
 	t                             testing.TB               // TestingT or TestingB
 	init                          func(*assert.Assertions) // init function
 	apply                         func(*assert.Assertions) // apply function
 	verify                        func(*assert.Assertions) // verify function
 	teardown                      func(*assert.Assertions) // teardown function
+	setupOutputOverrides          map[string]interface{}   // override outputs from the Setup phase
+	tftCacheMutex                 *filemutex.FileMutex     // Mutex to protect Terraform plugin cache
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -149,12 +158,31 @@ func WithLogger(logger *logger.Logger) tftOption {
 	}
 }
 
+func WithSensitiveLogger(logger *logger.Logger) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.sensitiveLogger = logger
+	}
+}
+
+// WithSetupOutputs overrides output values from the setup stage
+func WithSetupOutputs(vars map[string]interface{}) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.setupOutputOverrides = vars
+	}
+}
+
 // NewTFBlueprintTest sets defaults, validates and returns a TFBlueprintTest.
 func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
+	var err error
 	tft := &TFBlueprintTest{
 		name:      fmt.Sprintf("%s TF Blueprint", t.Name()),
 		tfEnvVars: make(map[string]string),
 		t:         t,
+	}
+	// initiate tft cache file mutex
+	tft.tftCacheMutex, err = filemutex.New(filepath.Join(os.TempDir(), tftCacheMutexFilename))
+	if err != nil {
+		t.Fatalf("tft lock file <%s> could not created: %v", filepath.Join(os.TempDir(), tftCacheMutexFilename), err)
 	}
 	// default TF blueprint methods
 	tft.init = tft.DefaultInit
@@ -168,6 +196,10 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	// if no custom logger, set default based on test verbosity
 	if tft.logger == nil {
 		tft.logger = utils.GetLoggerFromT()
+	}
+	// If no custom sensitive logger, use discard logger.
+	if tft.sensitiveLogger == nil {
+		tft.sensitiveLogger = logger.Discard
 	}
 	// if explicit tfDir is provided, validate it else try auto discovery
 	if tft.tfDir != "" {
@@ -184,7 +216,6 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 
 	// discover test config
-	var err error
 	tft.BlueprintTestConfig, err = discovery.GetTestConfig(path.Join(tft.tfDir, discovery.DefaultTestConfigFilename))
 	if err != nil {
 		t.Fatal(err)
@@ -205,7 +236,8 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	// load TFEnvVars from setup outputs
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
-		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(terraform.OutputAll(tft.t, &terraform.Options{TerraformDir: tft.setupDir, Logger: tft.logger, NoColor: true})))
+		outputs := tft.getOutputs(tft.sensitiveOutputs(tft.setupDir))
+		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(outputs))
 		if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; tft.saKey == "" && exists {
 			if credDec, err := b64.StdEncoding.DecodeString(credsEnc); err == nil {
 				gcloud.ActivateCredsAndEnvVars(tft.t, string(credDec))
@@ -216,9 +248,49 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.logger.Logf(tft.t, "Skipping credential activation %s output from setup", setupKeyOutputName)
 		}
 	}
+	// Load env vars to supplement/override setup
+	tft.logger.Logf(tft.t, "Loading setup from environment")
+	if tft.setupOutputOverrides == nil {
+		tft.setupOutputOverrides = make(map[string]interface{})
+	}
+	for k, v := range extractFromEnv("CFT_SETUP_") {
+		tft.setupOutputOverrides[k] = v
+	}
 
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
 	return tft
+}
+
+// sensitiveOutputs returns a map of sensitive output keys for module in dir.
+func (b *TFBlueprintTest) sensitiveOutputs(dir string) map[string]bool {
+	mod, err := tfconfig.LoadModule(dir)
+	if err != nil {
+		b.t.Fatalf("error loading module in %s: %v", dir, err)
+	}
+	sensitiveOP := map[string]bool{}
+	for _, op := range mod.Outputs {
+		if op.Sensitive {
+			sensitiveOP[op.Name] = true
+		}
+	}
+	return sensitiveOP
+}
+
+// getOutputs returns all output values.
+func (b *TFBlueprintTest) getOutputs(sensitive map[string]bool) map[string]interface{} {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
+	outputs := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.sensitiveLogger, NoColor: true})
+	for k, v := range outputs {
+		_, s := sensitive[k]
+		if s {
+			b.sensitiveLogger.Logf(b.t, "output key %q: %v", k, v)
+		} else {
+			b.logger.Logf(b.t, "output key %q: %v", k, v)
+		}
+	}
+	return outputs
 }
 
 // GetTFOptions generates terraform.Options used by Terratest.
@@ -276,24 +348,52 @@ func getKVFromOutputString(v string) (string, string, error) {
 // GetStringOutput returns TF output for a given key as string.
 // It fails test if given key does not output a primitive.
 func (b *TFBlueprintTest) GetStringOutput(name string) string {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	return terraform.Output(b.t, b.GetTFOptions(), name)
+}
+
+// GetStringOutputList returns TF output for a given key as list.
+// It fails test if given key does not output a primitive.
+func (b *TFBlueprintTest) GetStringOutputList(name string) []string {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
+	return terraform.OutputList(b.t, b.GetTFOptions(), name)
 }
 
 // GetTFSetupOutputListVal returns TF output from setup for a given key as list.
 // It fails test if given key does not output a list type.
 func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
+	if v, ok := b.setupOutputOverrides[key]; ok {
+		if listval, ok := v.([]string); ok {
+			return listval
+		} else {
+			b.t.Fatalf("Setup Override %s is not a list value", key)
+		}
+	}
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
 // GetTFSetupStringOutput returns TF setup output for a given key as string.
 // It fails test if given key does not output a primitive or if setupDir is not configured.
 func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
+	if v, ok := b.setupOutputOverrides[key]; ok {
+		return v.(string)
+	}
 	if b.setupDir == "" {
 		b.t.Fatal("Setup path not set")
 	}
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
@@ -302,6 +402,24 @@ func loadTFEnvVar(m map[string]string, new map[string]string) {
 	for k, v := range new {
 		m[fmt.Sprintf("TF_VAR_%s", k)] = v
 	}
+}
+
+// extractFromEnv parses environment variables with the given prefix, and returns a key-value map.
+// e.g. CFT_SETUP_key=value returns map[string]string{"key": "value"}
+func extractFromEnv(prefix string) map[string]interface{} {
+	r := make(map[string]interface{})
+	for _, s := range os.Environ() {
+		k, v, ok := strings.Cut(s, "=")
+		if !ok {
+			// skip malformed entries in os.Environ
+			continue
+		}
+		// For env vars with the prefix, extract the key and value
+		if setupvar, ok := strings.CutPrefix(k, prefix); ok {
+			r[setupvar] = v
+		}
+	}
+	return r
 }
 
 // ShouldSkip checks if a test should be skipped
@@ -356,7 +474,7 @@ func (b *TFBlueprintTest) DefaultVerify(assert *assert.Assertions) {
 	// exit code 0 is success with no diffs, 2 is success with non-empty diff
 	// https://www.terraform.io/docs/cli/commands/plan.html#detailed-exitcode
 	assert.NotEqual(1, e, "plan after apply should not fail")
-	assert.NotEqual(2, e, "plan after apply should have non-empty diff")
+	assert.NotEqual(2, e, "plan after apply should have no diff")
 }
 
 // DefaultInit runs TF init and validate on a blueprint.
@@ -373,8 +491,14 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 
 // Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
 func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
+	vetTempDir, err := os.MkdirTemp(os.TempDir(), "btp")
+	if err != nil {
+		b.t.Fatalf("Temp directory %q could not created: %v", vetTempDir, err)
+	}
+	defer os.RemoveAll(vetTempDir)
+
 	localOptions := b.GetTFOptions()
-	localOptions.PlanFilePath = filepath.Join(os.TempDir(), "plan.tfplan")
+	localOptions.PlanFilePath = filepath.Join(vetTempDir, vetFilename)
 	terraform.Plan(b.t, localOptions)
 	jsonPlan := terraform.Show(b.t, localOptions)
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
@@ -395,21 +519,39 @@ func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
 
 // Init runs the default or custom init function for the blueprint.
 func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
+	// allow only single write as Terraform plugin cache isn't concurrent safe
+	if err := b.tftCacheMutex.Lock(); err != nil {
+		b.t.Fatalf("Could not acquire lock: %v", err)
+	}
+	defer func() {
+		if err := b.tftCacheMutex.Unlock(); err != nil {
+			b.t.Fatalf("Could not release lock: %v", err)
+		}
+	}()
 	b.init(assert)
 }
 
 // Apply runs the default or custom apply function for the blueprint.
 func (b *TFBlueprintTest) Apply(assert *assert.Assertions) {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	b.apply(assert)
 }
 
 // Verify runs the default or custom verify function for the blueprint.
 func (b *TFBlueprintTest) Verify(assert *assert.Assertions) {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	b.verify(assert)
 }
 
 // Teardown runs the default or custom teardown function for the blueprint.
 func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	b.teardown(assert)
 }
 
@@ -460,5 +602,18 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 		}(i)
 		utils.RunStage("apply", func() { b.Apply(a) })
 		utils.RunStage("verify", func() { b.Verify(a) })
+	}
+}
+
+// rLockFn sets a read mutex lock, and returns the corresponding unlock function
+func (b *TFBlueprintTest) rLockFn() func() {
+	if err := b.tftCacheMutex.RLock(); err != nil {
+		b.t.Fatalf("Could not acquire read lock:%v", err)
+	}
+
+	return func() {
+		if err := b.tftCacheMutex.RUnlock(); err != nil {
+			b.t.Fatalf("Could not release read lock: %v", err)
+		}
 	}
 }

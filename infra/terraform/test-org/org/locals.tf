@@ -113,7 +113,7 @@ locals {
       name        = "terraform-google-kubernetes-engine"
       org         = "terraform-google-modules"
       description = "Configures opinionated GKE clusters"
-      owners      = ["Jberlinsky", "ericyz"]
+      owners      = ["ericyz", "gtsorbo"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
@@ -144,7 +144,7 @@ locals {
       short_name   = "example-foundation"
       org          = "terraform-google-modules"
       description  = "Shows how the CFT modules can be composed to build a secure cloud foundation"
-      owners       = ["rjerrems", "gtsorbo"]
+      owners       = ["rjerrems", "gtsorbo", "eeaton"]
       homepage_url = "https://cloud.google.com/architecture/security-foundations"
       topics       = join(",", [local.common_topics.e2e, local.common_topics.ops])
       lint_env = {
@@ -241,7 +241,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
-      owners      = ["davenportjw"]
+      owners      = ["davenportjw", "shanecglass"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -277,6 +277,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages Google Cloud's operations suite (Cloud Logging and Cloud Monitoring)"
       topics      = local.common_topics.ops
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-cloud-router"
@@ -296,6 +297,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages Cloud Composer v1 and v2 along with option to manage networking"
       topics      = join(",", [local.common_topics.da, local.common_topics.ops, local.common_topics.e2e])
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-container-vm"
@@ -415,6 +417,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a fully functional Google Memorystore (redis) instance"
       topics      = local.common_topics.db
+      owners      = ["imrannayer"]
     },
     {
       name              = "terraform-google-module-template"
@@ -446,6 +449,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-sap"
@@ -476,7 +480,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
-      owners      = ["isaurabhuttam"]
+      owners      = ["isaurabhuttam", "imrannayer"]
     },
     {
       name        = "terraform-google-startup-scripts"
@@ -532,9 +536,10 @@ locals {
       module     = false
     },
     {
-      short_name = "docs-samples"
-      org        = "terraform-google-modules"
-      module     = false
+      short_name      = "docs-samples"
+      org             = "terraform-google-modules"
+      module          = false
+      enable_periodic = true
     },
     {
       short_name = "migrate"
@@ -569,6 +574,13 @@ locals {
       name        = "terraform-google-cloud-armor"
       org         = "GoogleCloudPlatform"
       description = "Deploy Cloud Armor security policy"
+      owners      = ["imrannayer"]
+      topics      = join(",", [local.common_topics.compute, local.common_topics.net])
+    },
+    {
+      name        = "terraform-google-netapp-volumes"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy NetApp Storage Volumes"
       owners      = ["imrannayer"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
     },
@@ -635,7 +647,7 @@ locals {
       name            = "terraform-google-analytics-lakehouse"
       org             = "GoogleCloudPlatform"
       description     = "Deploys a Lakehouse Architecture Solution"
-      owners          = ["davenportjw"]
+      owners          = ["davenportjw", "bradmiro"]
       topics          = local.common_topics.da
       groups          = [local.jss_common_group]
       enable_periodic = true
@@ -762,6 +774,28 @@ locals {
       topics      = local.common_topics.db
     },
     {
+      name            = "terraform-cloud-deployment-gce"
+      short_name      = "cloud-deployment-gce"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy a change to a live stateful service (Java on GCE)"
+      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name            = "terraform-cloud-deployment-gke"
+      short_name      = "cloud-deployment-gke"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy a change to a live stateful service (Go on GKE)"
+      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
       name            = "terraform-pubsub-integration-golang"
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-golang-app"
@@ -781,8 +815,66 @@ locals {
       name        = "terraform-google-backup-dr"
       org         = "GoogleCloudPlatform"
       short_name  = "backup-dr"
-      description = "Terraform module for Google BackupDR components"
+      description = "Deploy Backup and DR appliances"
       owners      = ["umeshkumhar"]
+    },
+    {
+      name        = "terraform-google-tags"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Tags."
+      owners      = ["nidhi0710"]
+      topics      = join(",", [local.common_topics.security, local.common_topics.ops])
+    },
+    {
+      name        = "terraform-google-dataplex-auto-data-quality"
+      org         = "GoogleCloudPlatform"
+      description = "Move data between environments using Dataplex."
+      owners      = ["bradmiro"]
+      topics      = local.common_topics.da
+    },
+    {
+      name        = "terraform-google-enterprise-application"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy an enterprise developer platform on Google Cloud."
+      owners      = ["gtsorbo"]
+      topics      = join(",", [local.common_topics.e2e, local.common_topics.ops])
+    },
+    {
+      name            = "terraform-genai-rag"
+      short_name      = "genai-rag"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys a Generative AI RAG solution"
+      owners          = ["davenportjw", "bradmiro"]
+      groups          = ["dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-artifact-registry"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Artifact Registry Repositories"
+      owners      = ["prabhu34"]
+    },
+    {
+      name        = "terraform-google-secure-web-proxy"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Secure Web Proxy in GCP for secured egress web traffic."
+      owners      = ["maitreya-source"]
+      topics      = join(",", [local.common_topics.security, local.common_topics.net])
+    },
+    {
+      name            = "terraform-cloud-client-api"
+      short_name      = "cloud-client-api"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploys an example application that uses Cloud Client APIs"
+      owners          = ["glasnt", "iennae"]
+      groups          = ["team-egg", local.jss_common_group]
+      enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     }
   ]
 }

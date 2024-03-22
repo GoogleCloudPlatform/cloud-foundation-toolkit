@@ -38,6 +38,8 @@ resource "google_cloudbuild_trigger" "int_trigger" {
       _FILE_LOGS_BUCKET         = lookup(local.enable_file_log, each.key, false) ? module.filelogs_bucket.url : null
       _LR_BILLING_ACCOUNT       = local.lr_billing_account
       _TFE_TOKEN_SECRET_ID      = each.key == "terraform-google-tf-cloud-agents" ? google_secret_manager_secret.tfe_token.id : null
+      _IM_GITHUB_PAT_SECRET_ID  = each.key == "terraform-google-bootstrap" ? google_secret_manager_secret.im_github_pat.id : null
+      _IM_GITLAB_PAT_SECRET_ID  = each.key == "terraform-google-bootstrap" ? google_secret_manager_secret.im_gitlab_pat.id : null
     },
     # add sfb substitutions
     contains(local.bp_on_sfb, each.key) ? local.sfb_substs : {}
@@ -71,6 +73,7 @@ resource "google_cloudbuild_trigger" "periodic_int_trigger" {
       _VOD_TEST_PROJECT_ID      = each.key == "terraform-google-media-cdn-vod" ? local.vod_test_project_id : null
       _FILE_LOGS_BUCKET         = lookup(local.enable_file_log, each.key, false) ? module.filelogs_bucket.url : null
       _LR_BILLING_ACCOUNT       = local.lr_billing_account
+      _PERIODIC                 = true
     },
     # add sfb substitutions
     contains(local.bp_on_sfb, each.key) ? local.sfb_substs : {}
@@ -419,7 +422,7 @@ resource "google_cloudbuild_trigger" "example_foundations_int_trigger" {
   }
 
   filename      = "build/int.cloudbuild.yaml"
-  ignored_files = ["**/*.md", ".gitignore", ".github/**"]
+  ignored_files = ["**/*.md", "**/*.png", ".gitignore", ".github/**"]
 }
 
 

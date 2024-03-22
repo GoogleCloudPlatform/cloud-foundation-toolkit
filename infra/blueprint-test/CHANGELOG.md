@@ -1,5 +1,118 @@
 # Changelog
 
+## [0.13.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.1...infra/blueprint-test/v0.13.2) (2024-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.12 ([#2216](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2216)) ([765f4bb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/765f4bbd33b3d5752f94a471beb3262609ed1e62))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.13 ([#2221](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2221)) ([b0e2940](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b0e2940f4c45f3aa790bcf276d32ece681383c23))
+* **tft:** Correct message in DefaultVerify ([#2213](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2213)) ([2d67c60](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2d67c60903880b2d9dacfdf8b34a53be4a20c6ed))
+
+## [0.13.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.0...infra/blueprint-test/v0.13.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **deps:** bump google.golang.org/protobuf from 1.31.0 to 1.33.0 in /infra/blueprint-test ([#2207](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2207)) ([43f002f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/43f002fe3302fcbe3de487699354c76a42b03bce))
+* **deps:** update go modules ([#2195](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2195)) ([af8a62c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/af8a62cc8c0db6fe00616921d1bed527253ebaa6))
+* **deps:** update module github.com/tidwall/gjson to v1.17.1 ([#2172](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2172)) ([3f3199e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3f3199e05baf84360fbb4a066b59cb0119ba1067))
+
+## [0.13.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.12.1...infra/blueprint-test/v0.13.0) (2024-02-16)
+
+
+### Features
+
+* **tft:** add GetStringOutputList ([#2159](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2159)) ([48810af](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/48810afccc60d8ad569c5a8ff202e3bb38425891))
+
+## [0.12.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.12.0...infra/blueprint-test/v0.12.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* **tft:** parallel-safe a few edge cases ([#2145](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2145)) ([3ba8188](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3ba81882a48222f7897f9cabbc4388b494ce3326))
+
+## [0.12.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.11.1...infra/blueprint-test/v0.12.0) (2024-02-12)
+
+
+### Features
+
+* **tft:** add filemutex for tft plugin cache ([#2140](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2140)) ([3568196](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3568196e2517fb62479115f6f615c827a4734e60))
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.11 ([#2092](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2092)) ([daa1417](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/daa14179116ca3fb9263cb20fc19955b436ab7b5))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.9 ([#2080](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2080)) ([da6b03f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/da6b03f3e6eaabb8dbab8b21236cf1ffaffb8cd7))
+* **deps:** update module golang.org/x/mod to v0.15.0 ([#2131](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2131)) ([b0d5ff0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b0d5ff035fbe4d78758f385d0c8f731c30715952))
+
+## [0.11.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.11.0...infra/blueprint-test/v0.11.1) (2023-12-19)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/crypto from 0.14.0 to 0.17.0 in /infra/blueprint-test ([#2049](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2049)) ([bd2df12](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bd2df128855540c3eba71b8690300d01d06c7bfc))
+
+## [0.11.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.3...infra/blueprint-test/v0.11.0) (2023-12-13)
+
+
+### Features
+
+* **tft:** skip logging sensitive setup outputs ([#2035](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2035)) ([775a50c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/775a50ca6953196d62be223fd530ea1344410141))
+* update to GO 1.21 ([#2037](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2037)) ([e76ff55](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e76ff55afb5ee9c8c57b7b8a802acdab1ca15130))
+
+## [0.10.3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.2...infra/blueprint-test/v0.10.3) (2023-12-08)
+
+
+### Bug Fixes
+
+* **deps:** update go modules ([#2018](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2018)) ([bca6c94](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bca6c9483bfde81aa05da832d436908b6d40ab1d))
+
+## [0.10.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.1...infra/blueprint-test/v0.10.2) (2023-12-05)
+
+
+### Bug Fixes
+
+* add bq init step to create local config file ([#2000](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2000)) ([ee8cc7c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/ee8cc7c8eacd3ce5c00272259a2149279a28591b))
+* bump the all group in /infra/blueprint-test with 1 update ([#1965](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1965)) ([31e2ab3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/31e2ab34fd45a8277ba0b41f98bb5a8c2b220f6c))
+
+## [0.10.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.10.0...infra/blueprint-test/v0.10.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* bump the all group in /infra/blueprint-test with 2 updates ([#1952](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1952)) ([04d9184](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/04d9184146efb8d6b8b94d67a91e0d4e2f748220))
+* changing order in which args and commonOpts slices are combined ([#1943](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1943)) ([2dc6b44](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2dc6b44462152b208646a7311d55d1bf4c9eb16a))
+
+## [0.10.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.2...infra/blueprint-test/v0.10.0) (2023-11-01)
+
+
+### Features
+
+* adding support for bq ([#1878](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1878)) ([d4b0385](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/d4b0385ba88ced63bbe2ba7cd84a7d759cc4d10c))
+
+## [0.9.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.1...infra/blueprint-test/v0.9.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* bump google.golang.org/grpc from 1.58.0 to 1.58.3 in /infra/blueprint-test ([#1906](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1906)) ([5af9071](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5af907153307d9acc8cec009b468bdbe9a2a7bff))
+* **deps:** update go modules ([#1865](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1865)) ([df69583](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/df69583d3fdad5626e8cbf90f2c787428d064a48))
+
+## [0.9.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.9.0...infra/blueprint-test/v0.9.1) (2023-10-17)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/net from 0.15.0 to 0.17.0 in /infra/blueprint-test ([#1874](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1874)) ([334a17e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/334a17e81720b7235971b15ee26f6f6cbfb049c8))
+
+## [0.9.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.8.1...infra/blueprint-test/v0.9.0) (2023-09-29)
+
+
+### Features
+
+* allow user to specify/override outputs from the setup stage ([#1741](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/1741)) ([8365efb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/8365efbff6938727ec712a86ad19cd973a2f064d))
+
 ## [0.8.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.8.0...infra/blueprint-test/v0.8.1) (2023-09-08)
 
 

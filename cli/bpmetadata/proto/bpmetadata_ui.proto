@@ -16,11 +16,17 @@ message BlueprintUIInput {
   // Sections is a generic structure for grouping inputs together.
   // Gen: manually-authored
   repeated DisplaySection sections = 2; // @gotags: json:"sections,omitempty" yaml:"sections,omitempty"
+
+  // List of boolean groups that will be referenced by properties.
+  // Gen: manually-authored
+  repeated BooleanGroup boolean_groups = 3; // @gotags: json:"booleanGroups,omitempty" yaml:"booleanGroups,omitempty"
 }
 
 // Additional display specific metadata pertaining to a particular
 // input variable.
 message DisplayVariable {
+  reserved 19;
+
   // The variable name from the corresponding standard metadata file.
   // Gen: auto-generated - the Terraform variable name
   string name = 1; // @gotags: json:"name" yaml:"name"
@@ -103,6 +109,23 @@ message DisplayVariable {
   // Values must be UTF-8 text with no markup, and at most 64 characters.
   // Gen: manually-authored
   repeated ValueLabel enum_value_labels = 17; // @gotags: json:"enumValueLabels,omitempty" yaml:"enumValueLabels,omitempty"
+
+  // Indicates the "advanced" level of the input property. Level 0 (default)
+  // will always be shown. Level 1 corresponds to one expansion (user clicks
+  // "show advanced options" or "more options"). Higher levels correspond to
+  // further expansions, or they may be collapsed to level 1 by the UI
+  // implementation.
+  // Optional.
+  // Gen: manually-authored
+  int32 level = 18; // @gotags: json:"level,omitempty" yaml:"level,omitempty"
+
+  // The name of a boolean group from Input.booleanGroups to which this
+  // property belongs. Only allowed for properties declared as type boolean in
+  // the schema. Properties in a boolean group must be adjacent in the
+  // properties list and must belong to the same section (if any).
+  // Optional.
+  // Gen: manually-authored
+  string boolean_group = 20; // @gotags: json:"booleanGroup,omitempty" yaml:"booleanGroup,omitempty"
 }
 
 message ValueLabel {
@@ -134,6 +157,36 @@ message DisplaySection {
   // The name of the parent section (if parent is not the root section).
   // Gen: manually-authored
   string parent = 5; // @gotags: json:"parent,omitempty" yaml:"parent,omitempty"
+}
+
+// Groups a list of boolean properties into one logical property for the
+// purposes of the configuration form. The title of a [BooleanGroup][] has the
+// same styling as the title of an ordinary property, and individual properties
+// in the group will be packed more tightly together to indicate their
+// association. Child of [Input][].
+message BooleanGroup {
+  // The name of the group, referenced by [Property][]
+  // <code>.booleanGroup</code>.
+  // BooleanGroup names must be unique. Required.
+  // Gen: manually-authored
+  string name = 1; // @gotags: json:"name" yaml:"name"
+
+  // Group title.
+  // Required. UTF-8 text. No markup. At most 64 characters.
+  // Gen: manually-authored
+  string title = 2; // @gotags: json:"title" yaml:"title"
+
+  // Group tooltip.
+  // Optional. HTML (<code>&lt;a href&gt;</code> tags only). At most 256
+  // characters.
+  // Gen: manually-authored
+  string tooltip = 3; // @gotags: json:"tooltip,omitempty" yaml:"tooltip,omitempty"
+
+  // Group subtext.
+  // Optional. HTML (<code>&lt;a href&gt;</code> tags only). At most 256
+  // characters.
+  // Gen: manually-authored
+  string subtext = 4; // @gotags: json:"subtext,omitempty" yaml:"subtext,omitempty"
 }
 
 message BlueprintUIOutput {
@@ -173,14 +226,14 @@ message UIActionItem {
   string snippet = 3; // @gotags: json:"snippet,omitempty" yaml:"snippet,omitempty"
 
   // If present, this expression determines whether the item is shown.
-  // Should be in the form of a Boolean expression e.g. outputs().hasExternalIP
+  // Should be in the form of a Boolean expression e.g. outputs.hasExternalIP
   // where `externalIP` is the output.
   // Gen: manually-authored
   string show_if = 4; // @gotags: json:"showIf,omitempty" yaml:"showIf,omitempty"
 }
 
 // Additional display specific metadata pertaining to a particular
-// Terraform output.
+// Terraform output. Only applicable for Outputs that are URLs.
 message DisplayOutput {
   // open_in_new_tab defines if the Output action should be opened
   // in a new tab.
@@ -191,4 +244,8 @@ message DisplayOutput {
   // notification for the deployment.
   // Gen: manually-authored
   bool show_in_notification = 2; // @gotags: json:"showInNotification,omitempty" yaml:"showInNotification,omitempty"
+
+  // label to display on the Output action button
+  // Gen: manually-authored
+  string label = 3; // @gotags: json:"label,omitempty" yaml:"label,omitEmpty"
 }

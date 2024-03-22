@@ -381,10 +381,8 @@
           ]
         },
         "quotaType": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
+          "additionalProperties": {
+            "type": "string"
           },
           "type": "object"
         }
@@ -543,16 +541,20 @@
     "BlueprintUIInput": {
       "properties": {
         "variables": {
-          "patternProperties": {
-            ".*": {
-              "$ref": "#/$defs/DisplayVariable"
-            }
+          "additionalProperties": {
+            "$ref": "#/$defs/DisplayVariable"
           },
           "type": "object"
         },
         "sections": {
           "items": {
             "$ref": "#/$defs/DisplaySection"
+          },
+          "type": "array"
+        },
+        "booleanGroups": {
+          "items": {
+            "$ref": "#/$defs/BooleanGroup"
           },
           "type": "array"
         }
@@ -572,10 +574,8 @@
           "type": "array"
         },
         "outputs": {
-          "patternProperties": {
-            ".*": {
-              "$ref": "#/$defs/DisplayOutput"
-            }
+          "additionalProperties": {
+            "$ref": "#/$defs/DisplayOutput"
           },
           "type": "object"
         }
@@ -623,6 +623,28 @@
         "name"
       ]
     },
+    "BooleanGroup": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "tooltip": {
+          "type": "string"
+        },
+        "subtext": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "title"
+      ]
+    },
     "DisplayOutput": {
       "properties": {
         "openInNewTab": {
@@ -630,6 +652,9 @@
         },
         "showInNotification": {
           "type": "boolean"
+        },
+        "label": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -714,6 +739,12 @@
             "$ref": "#/$defs/ValueLabel"
           },
           "type": "array"
+        },
+        "level": {
+          "type": "integer"
+        },
+        "booleanGroup": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -765,7 +796,7 @@
         "notConfigurable": {
           "type": "boolean"
         },
-        "allowStaticIPs": {
+        "allowStaticIps": {
           "type": "boolean"
         }
       },
@@ -925,6 +956,22 @@
         "networkVariable"
       ]
     },
+    "GKEClusterExtension": {
+      "properties": {
+        "locationVariable": {
+          "type": "string"
+        },
+        "clusterCreationVariable": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "locationVariable",
+        "clusterCreationVariable"
+      ]
+    },
     "GooglePropertyExtension": {
       "properties": {
         "type": {
@@ -984,6 +1031,12 @@
         },
         "gceDiskType": {
           "$ref": "#/$defs/GCEDiskTypeExtension"
+        },
+        "gceLocation": {
+          "$ref": "#/$defs/GCELocationExtension"
+        },
+        "gkeCluster": {
+          "$ref": "#/$defs/GKEClusterExtension"
         }
       },
       "additionalProperties": false,
@@ -1013,18 +1066,14 @@
           "type": "string"
         },
         "labels": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
+          "additionalProperties": {
+            "type": "string"
           },
           "type": "object"
         },
         "annotations": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
+          "additionalProperties": {
+            "type": "string"
           },
           "type": "object"
         }

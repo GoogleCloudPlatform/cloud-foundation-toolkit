@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v1.2.6
+VERSION=v1.2.17
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
@@ -12,9 +12,10 @@ INT_TEST_DIR=./bpmetadata/int-test
 SCHEMA_DIR=./bpmetadata/schema
 SRC_PROTO_DIR=./bpmetadata/proto
 PROTOC_DIR=./bpmetadata
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.16
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.19
 DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
+GOLANGCI_VERSION := 1.57.1
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"
@@ -60,4 +61,4 @@ test: build go_test int_test
 
 .PHONY: docker_go_lint
 docker_go_lint:
-	docker run --rm -v $(PWD):/cli -w /cli  golangci/golangci-lint:v1.54.1 golangci-lint --timeout=5m -v run
+	docker run --rm -v $(PWD):/cli -w /cli  golangci/golangci-lint:v${GOLANGCI_VERSION} golangci-lint --timeout=5m -v run

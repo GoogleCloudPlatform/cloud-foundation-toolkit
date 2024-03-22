@@ -14,6 +14,7 @@ import (
 var flags struct {
 	testDir   string
 	testStage string
+	setupVars map[string]string
 }
 
 func init() {
@@ -25,6 +26,7 @@ func init() {
 
 	Cmd.PersistentFlags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
 	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, apply, verify, teardown)")
+	runCmd.Flags().StringToStringVar(&flags.setupVars, "setup-var", map[string]string{}, "Specify outputs from the setup phase (useful with --stage=verify)")
 }
 
 var Cmd = &cobra.Command{
@@ -38,7 +40,7 @@ var Cmd = &cobra.Command{
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list tests",
-	Long:  "Lists both auto discovered and explicit intergration tests",
+	Long:  "Lists both auto discovered and explicit integration tests",
 
 	Args: cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -80,7 +82,7 @@ var runCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		intTestDir, err := getIntTestDir(flags.testDir)
 		if err != nil {
-			return fmt.Errorf("error discovering test dir: %v", err)
+			return fmt.Errorf("error discovering test dir: %w", err)
 		}
 		testStage, err := validateAndGetStage(flags.testStage)
 		if err != nil {
@@ -90,7 +92,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		testCmd, err := getTestCmd(intTestDir, testStage, args[0], relTestPkg)
+		testCmd, err := getTestCmd(intTestDir, testStage, args[0], relTestPkg, flags.setupVars)
 		if err != nil {
 			return err
 		}
