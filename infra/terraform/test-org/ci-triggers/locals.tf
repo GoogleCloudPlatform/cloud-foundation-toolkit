@@ -43,6 +43,7 @@ locals {
     "java-dynamic-point-of-sale"  = "terraform-example-java-dynamic-point-of-sale"
     "ml-image-annotation-gcf"     = "terraform-ml-image-annotation-gcf"
     "genai-doc-summarization"     = "terraform-genai-doc-summarization"
+    "genai-knowledge-base"        = "terraform-genai-knowledge-base"
     "secured-notebook"            = "notebooks-blueprint-security"
     "sdw-onprem-ingest"           = "terraform-google-secured-data-warehouse-onprem-ingest"
     "pubsub-golang-app"           = "terraform-pubsub-integration-golang"

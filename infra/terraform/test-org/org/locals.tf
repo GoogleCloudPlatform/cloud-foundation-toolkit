@@ -744,6 +744,15 @@ locals {
       enable_periodic = true
     },
     {
+      name            = "terraform-genai-knowledge-base"
+      short_name      = "genai-knowledge-base"
+      org             = "GoogleCloudPlatform"
+      description     = "Fine tune an LLM model to answer questions from your documents."
+      owners          = ["davidcavazos"]
+      groups          = [local.jss_common_group]
+      enable_periodic = true
+    },
+    {
       name        = "terraform-google-secured-data-warehouse-onprem-ingest"
       short_name  = "sdw-onprem-ingest"
       org         = "GoogleCloudPlatform"
