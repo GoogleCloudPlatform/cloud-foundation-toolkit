@@ -745,7 +745,7 @@ locals {
     },
     {
       name            = "terraform-genai-knowledge-base"
-      short_name      = "genai-doc-knowledge-base"
+      short_name      = "genai-knowledge-base"
       org             = "GoogleCloudPlatform"
       description     = "Fine tune an LLM model to answer questions from your documents."
       owners          = ["davidcavazos"]
