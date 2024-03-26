@@ -824,11 +824,12 @@ locals {
       topics      = local.common_topics.da
     },
     {
-      name        = "terraform-google-enterprise-application"
-      org         = "GoogleCloudPlatform"
-      description = "Deploy an enterprise developer platform on Google Cloud."
-      owners      = ["gtsorbo"]
-      topics      = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      name            = "terraform-google-enterprise-application"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy an enterprise developer platform on Google Cloud."
+      owners          = ["gtsorbo"]
+      topics          = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      enable_periodic = true
     },
     {
       name            = "terraform-genai-rag"
