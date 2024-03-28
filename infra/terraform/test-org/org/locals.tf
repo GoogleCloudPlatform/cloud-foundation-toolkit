@@ -251,6 +251,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Bootstraps Terraform usage and related CI/CD in a new Google Cloud organization"
       topics      = join(",", [local.common_topics.ops, local.common_topics.devtools])
+      owners      = ["josephdt12"]
     },
     {
       name        = "terraform-google-cloud-datastore"
