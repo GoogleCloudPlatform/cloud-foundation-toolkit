@@ -885,6 +885,6 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
-    },
+    }
   ]
 }
