@@ -875,6 +875,15 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
+    },
+    {
+      name        = "kms-solutions"
+      org         = "GoogleCloudPlatform"
+      description = "Store Cloud KMS scripts, artifacts, code samples, and more."
+      owners      = ["tdbhacks"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     }
   ]
 }
