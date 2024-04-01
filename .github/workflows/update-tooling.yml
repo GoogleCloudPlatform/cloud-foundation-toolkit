@@ -23,6 +23,7 @@ env:
   KUSTOMIZE_URL: "https://api.github.com/repos/kubernetes-sigs/kustomize/releases"
   TERRAGRUNT_URL: "https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest"
   TFLINT_URL: "https://api.github.com/repos/terraform-linters/tflint/releases/latest"
+  GOLANGCI_URL: "https://api.github.com/repos/golangci/golangci-lint/releases/latest"
 
 jobs:
   update-tools:
@@ -37,7 +38,7 @@ jobs:
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER" "KUSTOMIZE" "TERRAGRUNT" "TFLINT")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER" "KUSTOMIZE" "TERRAGRUNT" "TFLINT" "GOLANGCI")
 
           for tool in ${tools[@]}
           do
