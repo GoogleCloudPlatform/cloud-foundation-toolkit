@@ -881,7 +881,6 @@ locals {
       org             = "GoogleCloudPlatform"
       description     = "Store Cloud KMS scripts, artifacts, code samples, and more."
       owners          = ["tdbhacks"]
-      enable_periodic = true
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
