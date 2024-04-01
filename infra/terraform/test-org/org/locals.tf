@@ -875,6 +875,12 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
-    }
+    },
+    {
+      name        = "terraform-dataanalytics-eventdriven"
+      org         = "GoogleCloudPlatform"
+      description = "This repo will be used to integrate the existing repo (https://github.com/GoogleCloudPlatform/click-to-deploy-solutions/tree/main/data-analytics-platform-event-driven) to JumpStartSolution."
+      owners      = ["fellipeamedeiros", "sylvioneto"]
+    },
   ]
 }

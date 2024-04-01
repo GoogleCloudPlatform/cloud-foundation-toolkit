@@ -50,6 +50,7 @@ locals {
     "pubsub-java-app"             = "terraform-pubsub-integration-java"
     "genai-rag"                   = "terraform-genai-rag"
     "cloud-client-api"            = "terraform-cloud-client-api"
+    "dataanalytics-eventdriven"   = "terraform-dataanalytics-eventdriven"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
