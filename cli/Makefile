@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Changing this value will trigger a new release
-VERSION=v1.2.19
+VERSION=v1.2.20
 BINARY=bin/cft
 GITHUB_REPO=github.com/GoogleCloudPlatform/cloud-foundation-toolkit
 PLATFORMS := linux windows darwin
@@ -15,7 +15,7 @@ PROTOC_DIR=./bpmetadata
 DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.19
 DOCKER_IMAGE_DEVELOPER_TOOLS := cft/developer-tools
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
-GOLANGCI_VERSION := 1.57.1
+GOLANGCI_VERSION := 1.57.2
 
 # Setup the -ldflags option for go build here, interpolate the variable values
 LDFLAGS=-ldflags "-X $(GITHUB_REPO)/cli/cmd.Version=$(VERSION)"

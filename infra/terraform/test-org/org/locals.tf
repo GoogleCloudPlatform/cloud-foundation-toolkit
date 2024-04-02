@@ -251,6 +251,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Bootstraps Terraform usage and related CI/CD in a new Google Cloud organization"
       topics      = join(",", [local.common_topics.ops, local.common_topics.devtools])
+      owners      = ["josephdt12"]
     },
     {
       name        = "terraform-google-cloud-datastore"
@@ -873,6 +874,15 @@ locals {
       owners          = ["glasnt", "iennae"]
       groups          = ["team-egg", local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "kms-solutions"
+      org         = "GoogleCloudPlatform"
+      description = "Store Cloud KMS scripts, artifacts, code samples, and more."
+      owners      = ["tdbhacks"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
