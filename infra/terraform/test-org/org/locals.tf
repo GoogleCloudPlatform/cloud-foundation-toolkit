@@ -888,8 +888,9 @@ locals {
     },
     {
       name        = "terraform-dataanalytics-eventdriven"
+      short_name  = "dataanalytics-eventdriven"
       org         = "GoogleCloudPlatform"
-      description = "This architecture uses click-to-deploy to demonstrate how to load data from Google Cloud Storage to BigQuery using an event-driven load function."
+      description = "Uses click-to-deploy to demonstrate how to load data from Cloud Storage to BigQuery using an event-driven load function."
       owners      = ["fellipeamedeiros", "sylvioneto"]
     },
   ]
