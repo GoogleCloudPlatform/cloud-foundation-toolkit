@@ -276,7 +276,7 @@ locals {
     {
       name        = "terraform-google-cloud-operations"
       org         = "terraform-google-modules"
-      description = "Manages Google Cloud's operations suite (Cloud Logging and Cloud Monitoring)"
+      description = "Manages Cloud Logging and Cloud Monitoring"
       topics      = local.common_topics.ops
       owners      = ["imrannayer"]
     },
