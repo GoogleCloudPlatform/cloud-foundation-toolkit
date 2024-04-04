@@ -50,6 +50,7 @@ locals {
     "pubsub-java-app"             = "terraform-pubsub-integration-java"
     "genai-rag"                   = "terraform-genai-rag"
     "cloud-client-api"            = "terraform-cloud-client-api"
+    "dataanalytics-eventdriven"   = "terraform-dataanalytics-eventdriven"
     "kms-solutions"               = "kms-solutions"
   }
   # example foundation has custom test modes
