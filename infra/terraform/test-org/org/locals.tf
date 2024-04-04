@@ -887,6 +887,13 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
-    }
+    },
+    {
+      name        = "terraform-dataanalytics-eventdriven"
+      short_name  = "dataanalytics-eventdriven"
+      org         = "GoogleCloudPlatform"
+      description = "Uses click-to-deploy to demonstrate how to load data from Cloud Storage to BigQuery using an event-driven load function."
+      owners      = ["fellipeamedeiros", "sylvioneto"]
+    },
   ]
 }
