@@ -889,7 +889,7 @@ locals {
     {
       name        = "terraform-dataanalytics-eventdriven"
       org         = "GoogleCloudPlatform"
-      description = "This repo will be used to integrate the existing repo (https://github.com/GoogleCloudPlatform/click-to-deploy-solutions/tree/main/data-analytics-platform-event-driven) to JumpStartSolution."
+      description = "This architecture uses click-to-deploy to demonstrate how to load data from Google Cloud Storage to BigQuery using an event-driven load function."
       owners      = ["fellipeamedeiros", "sylvioneto"]
     },
   ]
