@@ -1,7 +1,5 @@
 exclude: |
   (?x)^(
-    config-connector/.*|
-    dm/.*|
     reports/.*|
     cli/testdata/.*|
     cli/bptest/.*|

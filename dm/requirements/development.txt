@@ -1,8 +1,0 @@
-coverage
-mock
-pylint
-pytest
-pytest-cov
-setuptools
-yapf
-jsonschema

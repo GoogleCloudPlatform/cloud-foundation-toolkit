@@ -1,1 +1,0 @@
-include VERSION requirements/install.txt requirements/development.txt
