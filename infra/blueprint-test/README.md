@@ -408,7 +408,7 @@ Complete code files for the fixture module can be found [here](https://github.co
 
 ### 5.1.2 Plan Assertions
 
-`plan` stage can be used to perform additional assertions on planfiles. This can be useful for scenarios where additional validation is useful to fail fast before proceeding to more expensive stages like `apply` or smoke testing configuration without performing an `apply` at all.
+The `plan` stage can be used to perform additional assertions on planfiles. This can be useful for scenarios where additional validation is useful to fail fast before proceeding to more expensive stages like `apply`, or smoke testing configuration without performing an `apply` at all.
 
 Currently a default plan function does not exist and cannot be used with auto generated tests. Plan stage can be activated by providing a custom plan function. Plan function recieves a parsed `PlanStruct` which contains the [raw TF plan JSON representation](https://www.terraform.io/docs/internals/json-format.html#plan-representation) as well as some additional processed data like map of resource changes.
 
