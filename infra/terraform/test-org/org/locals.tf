@@ -276,7 +276,7 @@ locals {
     {
       name        = "terraform-google-cloud-operations"
       org         = "terraform-google-modules"
-      description = "Manages Google Cloud's operations suite (Cloud Logging and Cloud Monitoring)"
+      description = "Manages Cloud Logging and Cloud Monitoring"
       topics      = local.common_topics.ops
       owners      = ["imrannayer"]
     },
@@ -297,7 +297,7 @@ locals {
       name        = "terraform-google-composer"
       org         = "terraform-google-modules"
       description = "Manages Cloud Composer v1 and v2 along with option to manage networking"
-      topics      = join(",", [local.common_topics.da, local.common_topics.ops, local.common_topics.e2e])
+      topics      = join(",", [local.common_topics.da, local.common_topics.ops])
       owners      = ["imrannayer"]
     },
     {
@@ -757,7 +757,7 @@ locals {
       name        = "terraform-google-secured-data-warehouse-onprem-ingest"
       short_name  = "sdw-onprem-ingest"
       org         = "GoogleCloudPlatform"
-      description = "Secured Data Warehouse blueprint variant for ingesting encrypted data from on-prem sources"
+      description = "Deploys a secured data warehouse variant for ingesting encrypted data from on-prem sources"
       owners      = ["lanre-OG"]
       topics      = join(",", [local.common_topics.da, local.common_topics.security, local.common_topics.e2e])
     },
@@ -770,7 +770,7 @@ locals {
     {
       name        = "terraform-google-cloud-spanner"
       org         = "GoogleCloudPlatform"
-      description = "Deploy Spanner"
+      description = "Deploy Spanner instances"
       owners      = ["anaik91", "imrannayer"]
       topics      = local.common_topics.db
     },
@@ -818,18 +818,19 @@ locals {
       short_name  = "backup-dr"
       description = "Deploy Backup and DR appliances"
       owners      = ["umeshkumhar"]
+      topics      = join(",", [local.common_topics.compute, local.common_topics.ops])
     },
     {
       name        = "terraform-google-tags"
       org         = "GoogleCloudPlatform"
-      description = "Create and manage Google Cloud Tags."
+      description = "Create and manage Google Cloud Tags"
       owners      = ["nidhi0710"]
       topics      = join(",", [local.common_topics.security, local.common_topics.ops])
     },
     {
       name        = "terraform-google-dataplex-auto-data-quality"
       org         = "GoogleCloudPlatform"
-      description = "Move data between environments using Dataplex."
+      description = "Move data between environments using Dataplex"
       owners      = ["bradmiro"]
       topics      = local.common_topics.da
     },
@@ -856,13 +857,14 @@ locals {
     {
       name        = "terraform-google-artifact-registry"
       org         = "GoogleCloudPlatform"
-      description = "Create and manage Google Artifact Registry Repositories"
+      description = "Create and manage Artifact Registry repositories"
       owners      = ["prabhu34"]
+      topics      = join(",", [local.common_topics.containers, local.common_topics.devtools])
     },
     {
       name        = "terraform-google-secure-web-proxy"
       org         = "GoogleCloudPlatform"
-      description = "Create and manage Secure Web Proxy in GCP for secured egress web traffic."
+      description = "Create and manage Secure Web Proxy on GCP for secured egress web traffic"
       owners      = ["maitreya-source"]
       topics      = join(",", [local.common_topics.security, local.common_topics.net])
     },
@@ -886,6 +888,14 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
-    }
+    },
+    {
+      name        = "terraform-dataanalytics-eventdriven"
+      short_name  = "dataanalytics-eventdriven"
+      org         = "GoogleCloudPlatform"
+      description = "Uses click-to-deploy to demonstrate how to load data from Cloud Storage to BigQuery using an event-driven load function."
+      groups      = [local.jss_common_group]
+      owners      = ["fellipeamedeiros", "sylvioneto"]
+    },
   ]
 }

@@ -4,21 +4,10 @@
 
 The Cloud Foundation toolkit (henceforth, CFT) includes the following parts:
 
-- A comprehensive set of production-ready resource templates that follow
-  Google's best practices, which can be used with the CFT or the gcloud
-  utility (part of the Google Cloud SDK) - see
-  [the template directory](dm/templates/)
-- A command-line interface (henceforth, CLI) that deploys resources defined in
-  single or multiple CFT-compliant config files - see:
-  - The CFT source Python files (the `src/` directory)
-  - The [CFT DM User Guide](dm/docs/userguide.md)
-- A growing set of sample [Config
-  Connector](https://cloud.google.com/config-connector/docs/overview)
-  YAML configurations - see [the solutions directory](config-connector/solutions/)
-
-In addition, the CFT repository includes a sample pipeline that enables running
-CFT deployment operations from Jenkins - see the
-[pipeline directory](dm/pipeline/README.md).
+- A comprehensive set of production-ready Terraform blueprints that follow
+  Google's best practices. See https://cloud.google.com/docs/terraform/blueprints/terraform-blueprints for a complete list.
+- A command-line interface (henceforth, CLI) that provides developer tooling for creating and managing Terraform blueprints.
+- For the latest Config Connector blueprints, refer to https://github.com/GoogleCloudPlatform/blueprints. Older DM and Config Connector templates can be found in [previous releases](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/v0.5.2).
 
 You can see a comparison between CFT and Fabric [here](https://github.com/GoogleCloudPlatform/cloud-foundation-fabric/blob/master/FABRIC-AND-CFT.md).
 

@@ -1,8 +1,0 @@
-apiVersion: sql.cnrm.cloud.google.com/v1beta1
-kind: SQLDatabase
-metadata:
-  name: {{ required "dbName is required!" .Values.database.dbName }}
-spec:
-  charset: utf8
-  instanceRef:
-    name: {{ required "instanceName is required!" .Values.database.instanceName }}

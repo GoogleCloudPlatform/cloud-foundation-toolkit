@@ -383,7 +383,7 @@ Here, the custom assertion failed since the expected region and zone configured 
 
 # 5. Appendix
 
-## 5.1 Advanced Topic
+## 5.1 Advanced Topics
 
 ### 5.1.1 Terraform Fixtures
 Fixtures can also be used to test similar examples and modules when the only thing changing is the data. The following example illustrates the usage of the `examples/mysql-public` as the source and passing in the data required to execute the test.
@@ -405,3 +405,17 @@ module "mysql-fixture" {
 
 Similar to the example module, outputs can be configured for the fixture module as well, especially for the generated values that need to be asserted in the test.
 Complete code files for the fixture module can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/tree/master/test/fixtures/mysql-public).
+
+### 5.1.2 Plan Assertions
+
+The `plan` stage can be used to perform additional assertions on planfiles. This can be useful for scenarios where additional validation is useful to fail fast before proceeding to more expensive stages like `apply`, or smoke testing configuration without performing an `apply` at all.
+
+Currently a default plan function does not exist and cannot be used with auto generated tests. Plan stage can be activated by providing a custom plan function. Plan function recieves a parsed `PlanStruct` which contains the [raw TF plan JSON representation](https://www.terraform.io/docs/internals/json-format.html#plan-representation) as well as some additional processed data like map of resource changes.
+
+```go
+networkBlueprint.DefinePlan(func(ps *terraform.PlanStruct, assert *assert.Assertions) {
+      ...
+	})
+```
+
+Additionally, the `TFBlueprintTest` also exposes a `PlanAndShow` method which can be used to perform ad-hoc plans (for example in `verify` stage).

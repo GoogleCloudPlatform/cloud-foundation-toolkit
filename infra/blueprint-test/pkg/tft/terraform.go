@@ -39,9 +39,9 @@ import (
 )
 
 const (
-	setupKeyOutputName = "sa_key"
-	tftCacheMutexFilename  = "bpt-tft-cache.lock"
-	vetFilename = "plan.tfplan"
+	setupKeyOutputName    = "sa_key"
+	tftCacheMutexFilename = "bpt-tft-cache.lock"
+	planFilename          = "plan.tfplan"
 )
 
 var (
@@ -56,29 +56,30 @@ var (
 
 // TFBlueprintTest implements bpt.Blueprint and stores information associated with a Terraform blueprint test.
 type TFBlueprintTest struct {
-	discovery.BlueprintTestConfig                          // additional blueprint test configs
-	name                          string                   // descriptive name for the test
-	saKey                         string                   // optional setup sa key
-	tfDir                         string                   // directory containing Terraform configs
-	tfEnvVars                     map[string]string        // variables to pass to Terraform as environment variables prefixed with TF_VAR_
-	backendConfig                 map[string]interface{}   // backend configuration for terraform init
-	retryableTerraformErrors      map[string]string        // If Terraform apply fails with one of these (transient) errors, retry. The keys are a regexp to match against the error and the message is what to display to a user if that error is matched.
-	maxRetries                    int                      // Maximum number of times to retry errors matching RetryableTerraformErrors
-	timeBetweenRetries            time.Duration            // The amount of time to wait between retries
-	migrateState                  bool                     // suppress user confirmation in a migration in terraform init
-	setupDir                      string                   // optional directory containing applied TF configs to import outputs as variables for the test
-	policyLibraryPath             string                   // optional absolute path to directory containing policy library constraints
-	terraformVetProject           string                   // optional a valid existing project that will be used when a plan has resources in a project that still does not exist.
-	vars                          map[string]interface{}   // variables to pass to Terraform as flags
-	logger                        *logger.Logger           // custom logger
-	sensitiveLogger               *logger.Logger           // custom logger for sensitive logging
-	t                             testing.TB               // TestingT or TestingB
-	init                          func(*assert.Assertions) // init function
-	apply                         func(*assert.Assertions) // apply function
-	verify                        func(*assert.Assertions) // verify function
-	teardown                      func(*assert.Assertions) // teardown function
-	setupOutputOverrides          map[string]interface{}   // override outputs from the Setup phase
-	tftCacheMutex                 *filemutex.FileMutex     // Mutex to protect Terraform plugin cache
+	discovery.BlueprintTestConfig                                                 // additional blueprint test configs
+	name                          string                                          // descriptive name for the test
+	saKey                         string                                          // optional setup sa key
+	tfDir                         string                                          // directory containing Terraform configs
+	tfEnvVars                     map[string]string                               // variables to pass to Terraform as environment variables prefixed with TF_VAR_
+	backendConfig                 map[string]interface{}                          // backend configuration for terraform init
+	retryableTerraformErrors      map[string]string                               // If Terraform apply fails with one of these (transient) errors, retry. The keys are a regexp to match against the error and the message is what to display to a user if that error is matched.
+	maxRetries                    int                                             // Maximum number of times to retry errors matching RetryableTerraformErrors
+	timeBetweenRetries            time.Duration                                   // The amount of time to wait between retries
+	migrateState                  bool                                            // suppress user confirmation in a migration in terraform init
+	setupDir                      string                                          // optional directory containing applied TF configs to import outputs as variables for the test
+	policyLibraryPath             string                                          // optional absolute path to directory containing policy library constraints
+	terraformVetProject           string                                          // optional a valid existing project that will be used when a plan has resources in a project that still does not exist.
+	vars                          map[string]interface{}                          // variables to pass to Terraform as flags
+	logger                        *logger.Logger                                  // custom logger
+	sensitiveLogger               *logger.Logger                                  // custom logger for sensitive logging
+	t                             testing.TB                                      // TestingT or TestingB
+	init                          func(*assert.Assertions)                        // init function
+	plan                          func(*terraform.PlanStruct, *assert.Assertions) // plan function
+	apply                         func(*assert.Assertions)                        // apply function
+	verify                        func(*assert.Assertions)                        // verify function
+	teardown                      func(*assert.Assertions)                        // teardown function
+	setupOutputOverrides          map[string]interface{}                          // override outputs from the Setup phase
+	tftCacheMutex                 *filemutex.FileMutex                            // Mutex to protect Terraform plugin cache
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -186,6 +187,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 	// default TF blueprint methods
 	tft.init = tft.DefaultInit
+	// No default plan function, plan is skipped if no custom func provided.
 	tft.apply = tft.DefaultApply
 	tft.verify = tft.DefaultVerify
 	tft.teardown = tft.DefaultTeardown
@@ -448,6 +450,11 @@ func (b *TFBlueprintTest) DefineInit(init func(*assert.Assertions)) {
 	b.init = init
 }
 
+// DefinePlan defines a custom plan function for the blueprint.
+func (b *TFBlueprintTest) DefinePlan(plan func(*terraform.PlanStruct, *assert.Assertions)) {
+	b.plan = plan
+}
+
 // DefineApply defines a custom apply function for the blueprint.
 func (b *TFBlueprintTest) DefineApply(apply func(*assert.Assertions)) {
 	b.apply = apply
@@ -491,20 +498,14 @@ func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
 
 // Vet runs TF plan, TF show, and gcloud terraform vet on a blueprint.
 func (b *TFBlueprintTest) Vet(assert *assert.Assertions) {
-	vetTempDir, err := os.MkdirTemp(os.TempDir(), "btp")
-	if err != nil {
-		b.t.Fatalf("Temp directory %q could not created: %v", vetTempDir, err)
-	}
-	defer os.RemoveAll(vetTempDir)
-
-	localOptions := b.GetTFOptions()
-	localOptions.PlanFilePath = filepath.Join(vetTempDir, vetFilename)
-	terraform.Plan(b.t, localOptions)
-	jsonPlan := terraform.Show(b.t, localOptions)
+	jsonPlan, _ := b.PlanAndShow()
 	filepath, err := utils.WriteTmpFileWithExtension(jsonPlan, "json")
-	defer os.Remove(filepath)
-	defer os.Remove(localOptions.PlanFilePath)
 	assert.NoError(err)
+	defer func() {
+		if err := os.Remove(filepath); err != nil {
+			b.t.Fatalf("Could not remove plan json: %v", err)
+		}
+	}()
 	results := gcloud.TFVet(b.t, filepath, b.policyLibraryPath, b.terraformVetProject).Array()
 	assert.Empty(results, "Should have no Terraform Vet violations")
 }
@@ -531,6 +532,43 @@ func (b *TFBlueprintTest) Init(assert *assert.Assertions) {
 	b.init(assert)
 }
 
+// PlanAndShow performs a Terraform plan, show and returns the parsed plan output.
+func (b *TFBlueprintTest) PlanAndShow() (string, *terraform.PlanStruct) {
+	tDir, err := os.MkdirTemp(os.TempDir(), "btp")
+	if err != nil {
+		b.t.Fatalf("Temp directory %q could not created: %v", tDir, err)
+	}
+	defer func() {
+		if err := os.RemoveAll(tDir); err != nil {
+			b.t.Fatalf("Could not remove plan temp dir: %v", err)
+		}
+	}()
+
+	planOpts := b.GetTFOptions()
+	planOpts.PlanFilePath = filepath.Join(tDir, planFilename)
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
+	terraform.Plan(b.t, planOpts)
+	// Logging show output is not useful since we log plan output above
+	// and show output is parsed and retured.
+	planOpts.Logger = logger.Discard
+	planJSON := terraform.Show(b.t, planOpts)
+	ps, err := terraform.ParsePlanJSON(planJSON)
+	assert.NoError(b.t, err)
+	return planJSON, ps
+}
+
+// Plan runs the custom plan function for the blueprint.
+// If not custom plan function is defined, this stage is skipped.
+func (b *TFBlueprintTest) Plan(assert *assert.Assertions) {
+	if b.plan == nil {
+		b.logger.Logf(b.t, "skipping plan as no function defined")
+		return
+	}
+	_, ps := b.PlanAndShow()
+	b.plan(ps, assert)
+}
+
 // Apply runs the default or custom apply function for the blueprint.
 func (b *TFBlueprintTest) Apply(assert *assert.Assertions) {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
@@ -555,6 +593,14 @@ func (b *TFBlueprintTest) Teardown(assert *assert.Assertions) {
 	b.teardown(assert)
 }
 
+const (
+	initStage     = "init"
+	planStage     = "plan"
+	applyStage    = "apply"
+	verifyStage   = "verify"
+	teardownStage = "teardown"
+)
+
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *TFBlueprintTest) Test() {
 	if b.ShouldSkip() {
@@ -564,10 +610,11 @@ func (b *TFBlueprintTest) Test() {
 	}
 	a := assert.New(b.t)
 	// run stages
-	utils.RunStage("init", func() { b.Init(a) })
-	defer utils.RunStage("teardown", func() { b.Teardown(a) })
-	utils.RunStage("apply", func() { b.Apply(a) })
-	utils.RunStage("verify", func() { b.Verify(a) })
+	utils.RunStage(initStage, func() { b.Init(a) })
+	defer utils.RunStage(teardownStage, func() { b.Teardown(a) })
+	utils.RunStage(planStage, func() { b.Plan(a) })
+	utils.RunStage(applyStage, func() { b.Apply(a) })
+	utils.RunStage(verifyStage, func() { b.Verify(a) })
 }
 
 // RedeployTest deploys the test n times in separate workspaces before teardown.
@@ -594,14 +641,15 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 	for i := 1; i <= n; i++ {
 		ws := terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), fmt.Sprintf("test-%d", i))
 		overrideVars(i)
-		utils.RunStage("init", func() { b.Init(a) })
+		utils.RunStage(initStage, func() { b.Init(a) })
 		defer func(i int) {
 			overrideVars(i)
 			terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), ws)
-			utils.RunStage("teardown", func() { b.Teardown(a) })
+			utils.RunStage(teardownStage, func() { b.Teardown(a) })
 		}(i)
-		utils.RunStage("apply", func() { b.Apply(a) })
-		utils.RunStage("verify", func() { b.Verify(a) })
+		utils.RunStage(planStage, func() { b.Plan(a) })
+		utils.RunStage(applyStage, func() { b.Apply(a) })
+		utils.RunStage(verifyStage, func() { b.Verify(a) })
 	}
 }
 
