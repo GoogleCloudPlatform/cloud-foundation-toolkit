@@ -546,6 +546,8 @@ func (b *TFBlueprintTest) PlanAndShow() (string, *terraform.PlanStruct) {
 
 	planOpts := b.GetTFOptions()
 	planOpts.PlanFilePath = filepath.Join(tDir, planFilename)
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
 	terraform.Plan(b.t, planOpts)
 	// Logging show output is not useful since we log plan output above
 	// and show output is parsed and retured.
