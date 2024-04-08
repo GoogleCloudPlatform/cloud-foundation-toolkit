@@ -565,8 +565,6 @@ func (b *TFBlueprintTest) Plan(assert *assert.Assertions) {
 		b.logger.Logf(b.t, "skipping plan as no function defined")
 		return
 	}
-	rUnlockFn := b.rLockFn()
-	defer rUnlockFn()
 	_, ps := b.PlanAndShow()
 	b.plan(ps, assert)
 }
