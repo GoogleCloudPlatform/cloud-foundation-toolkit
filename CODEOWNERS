@@ -1,8 +1,2 @@
 # Main team administering overall repo
 *           @bharathkkb @g-awmalik @apeabody
-
-# Deployment Manager Reviewers
-/dm/        @ocsig @sjvanrossum
-
-# Config Connector team
-/config-connector/ @ocsig @AlexBulankou @maqiuyujoyce

@@ -1,5 +1,0 @@
-# Please change the values for these variables to match your organization's GCP setup
-export CLOUD_FOUNDATION_ORGANIZATION_ID="111111111111"
-export CLOUD_FOUNDATION_PROJECT_ID="my-project"
-export CLOUD_FOUNDATION_BILLING_ACCOUNT_ID="AAAAAA-111111-222222"
-export CLOUD_FOUNDATION_USER_ACCOUNT="my-name@example.com"
