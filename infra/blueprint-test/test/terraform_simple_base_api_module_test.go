@@ -80,6 +80,7 @@ func TestSimpleTFModule(t *testing.T) {
 	utils.RunStage("init", func() { nt.Init(nil) })
 	defer utils.RunStage("teardown", func() { nt.Teardown(nil) })
 
+	utils.RunStage("plan", func() { nt.Plan(nil) })
 	utils.RunStage("apply", func() { nt.Apply(nil) })
 
 	utils.RunStage("verify", func() {
@@ -98,5 +99,10 @@ func TestSimpleTFModule(t *testing.T) {
 	}
 	if !strings.Contains(sensitiveLogs.String(), sensitiveOP) {
 		t.Errorf("sensitive logs should contain sensitive output")
+	}
+
+	// Custom plan function not defined, plan should be skipped.
+	if !strings.Contains(regularLogs.String(), "skipping plan as no function defined") {
+		t.Errorf("plan should be skipped")
 	}
 }
