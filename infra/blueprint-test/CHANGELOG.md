@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.14.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.2...infra/blueprint-test/v0.14.0) (2024-04-09)
+
+
+### Features
+
+* support plan assertions in blueprint test ([#2258](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2258)) ([bb29bbe](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bb29bbef8137f9e084e3269f62bd174e50121281))
+
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/mod to v0.17.0 ([#2252](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2252)) ([6a2a1e1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6a2a1e1d74b3029e489a106fe93d84cf6a42924e))
+* **deps:** update module sigs.k8s.io/kustomize/kyaml to v0.17.0 ([#2255](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2255)) ([f2e762e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f2e762eeb807b79b381f5a95f790f8c85a54d78e))
+
 ## [0.13.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.1...infra/blueprint-test/v0.13.2) (2024-03-21)
 
 
