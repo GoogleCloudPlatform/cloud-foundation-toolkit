@@ -740,8 +740,8 @@ locals {
       short_name      = "genai-doc-summarization"
       org             = "GoogleCloudPlatform"
       description     = "Summarizes document using OCR and Vertex Generative AI LLM"
-      owners          = ["asrivas", "balajismaniam", "telpirion", "yil532", "nicain"]
-      groups          = ["dee-data-ai", local.jss_common_group]
+      owners          = ["asrivas", "davidcavazos"]
+      groups          = [local.jss_common_group]
       enable_periodic = true
     },
     {
