@@ -60,7 +60,10 @@ func (r *TerraformDocSamplesRestrictedResources) Check(runner tflint.Runner) err
 			return err
 		}
 		for _, b := range content.Blocks {
-			runner.EmitIssue(r, fmt.Sprintf("doc sample restricted resource type: %s", restrictedResource), b.DefRange)
+			err := runner.EmitIssue(r, fmt.Sprintf("doc sample restricted resource type: %s", restrictedResource), b.DefRange)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

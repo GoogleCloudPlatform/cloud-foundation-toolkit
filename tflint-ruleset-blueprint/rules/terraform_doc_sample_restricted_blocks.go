@@ -78,11 +78,14 @@ func (r *TerraformDocSamplesRestrictedBlocks) Check(runner tflint.Runner) error 
 		rBlocks, ok := blocks[rBlockType]
 		if ok {
 			for _, rBlock := range rBlocks {
-				runner.EmitIssue(
+				err := runner.EmitIssue(
 					r,
 					fmt.Sprintf("doc sample restricted block type %s", rBlockType),
 					rBlock.DefRange,
 				)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
