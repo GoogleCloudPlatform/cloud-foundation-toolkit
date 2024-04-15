@@ -1,11 +1,8 @@
 module github.com/cloud-foundation-toolkit/tflint-ruleset-blueprint
 
-go 1.21
+go 1.21.0
 
-require (
-	github.com/hashicorp/hcl/v2 v2.20.0
-	github.com/terraform-linters/tflint-plugin-sdk v0.19.0
-)
+require github.com/terraform-linters/tflint-plugin-sdk v0.18.0
 
 require (
 	github.com/agext/levenshtein v1.2.1 // indirect
@@ -16,6 +13,7 @@ require (
 	github.com/hashicorp/go-hclog v1.6.2 // indirect
 	github.com/hashicorp/go-plugin v1.6.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
+	github.com/hashicorp/hcl/v2 v2.20.0 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
