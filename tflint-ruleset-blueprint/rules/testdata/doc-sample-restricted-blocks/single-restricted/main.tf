@@ -1,7 +1,7 @@
 # https://github.com/terraform-google-modules/terraform-docs-samples/blob/main/bigquery/bigquery_create_view/main.tf
 
 variable "dataset_id" {
-  
+
 }
 
 # [START bigquery_create_view]

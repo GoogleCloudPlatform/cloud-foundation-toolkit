@@ -1,7 +1,7 @@
 default: build
 
 test:
-	go test ./...
+	go test ./... -v
 
 build:
 	go build
