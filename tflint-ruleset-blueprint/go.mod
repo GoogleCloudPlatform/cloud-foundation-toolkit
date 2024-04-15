@@ -1,6 +1,6 @@
 module github.com/cloud-foundation-toolkit/tflint-ruleset-blueprint
 
-go 1.21.0
+go 1.21
 
 require github.com/terraform-linters/tflint-plugin-sdk v0.18.0
 
