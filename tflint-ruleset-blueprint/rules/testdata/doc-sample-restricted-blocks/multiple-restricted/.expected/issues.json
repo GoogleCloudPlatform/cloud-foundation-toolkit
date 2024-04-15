@@ -1,0 +1,70 @@
+[
+ {
+  "Rule": null,
+  "Message": "doc sample restricted block type module",
+  "Range": {
+   "Filename": "main.tf",
+   "Start": {
+    "Line": 22,
+    "Column": 1,
+    "Byte": 669
+   },
+   "End": {
+    "Line": 22,
+    "Column": 18,
+    "Byte": 686
+   }
+  }
+ },
+ {
+  "Rule": null,
+  "Message": "doc sample restricted block type variable",
+  "Range": {
+   "Filename": "variables.tf",
+   "Start": {
+    "Line": 1,
+    "Column": 1,
+    "Byte": 0
+   },
+   "End": {
+    "Line": 1,
+    "Column": 22,
+    "Byte": 21
+   }
+  }
+ },
+ {
+  "Rule": null,
+  "Message": "doc sample restricted block type variable",
+  "Range": {
+   "Filename": "variables.tf",
+   "Start": {
+    "Line": 5,
+    "Column": 1,
+    "Byte": 30
+   },
+   "End": {
+    "Line": 5,
+    "Column": 22,
+    "Byte": 51
+   }
+  }
+ },
+ {
+  "Rule": null,
+  "Message": "doc sample restricted block type variable",
+  "Range": {
+   "Filename": "variables.tf",
+   "Start": {
+    "Line": 9,
+    "Column": 1,
+    "Byte": 60
+   },
+   "End": {
+    "Line": 9,
+    "Column": 16,
+    "Byte": 75
+   }
+  }
+ }
+]

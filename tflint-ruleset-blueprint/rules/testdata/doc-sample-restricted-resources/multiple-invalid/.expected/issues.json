@@ -1,0 +1,36 @@
+[
+ {
+  "Rule": null,
+  "Message": "doc sample restricted resource type: null_resource",
+  "Range": {
+   "Filename": "main.tf",
+   "Start": {
+    "Line": 1,
+    "Column": 1,
+    "Byte": 0
+   },
+   "End": {
+    "Line": 1,
+    "Column": 31,
+    "Byte": 30
+   }
+  }
+ },
+ {
+  "Rule": null,
+  "Message": "doc sample restricted resource type: null_resource",
+  "Range": {
+   "Filename": "main.tf",
+   "Start": {
+    "Line": 5,
+    "Column": 1,
+    "Byte": 39
+   },
+   "End": {
+    "Line": 5,
+    "Column": 31,
+    "Byte": 69
+   }
+  }
+ }
+]

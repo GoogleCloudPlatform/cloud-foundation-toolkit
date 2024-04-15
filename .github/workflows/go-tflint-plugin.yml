@@ -1,0 +1,40 @@
+name: TFLint blueprint ruleset
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'tflint-ruleset-blueprint/**'
+      - '.github/workflows/go-tflint-plugin.yaml.yml'
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'tflint-ruleset-blueprint/**'
+      - '.github/workflows/go-tflint-plugin.yaml.yml'
+
+concurrency:
+  group: '${{github.workflow}}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: ${{ matrix.operating-system }} unit tests
+    runs-on: ${{ matrix.operating-system }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: 'tflint-ruleset-blueprint'
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+    - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+      with:
+        go-version-file: tflint-ruleset-blueprint/go.mod
+        cache-dependency-path: tflint-ruleset-blueprint/go.sum
+    - run: |-
+        make test
