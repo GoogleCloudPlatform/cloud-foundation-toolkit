@@ -255,9 +255,7 @@ By default, tests go through 4 stages above. You can also explicitly run individ
 ## 4.1 Test prerequisites
 In order for the test to execute, certain prerequisite resources and components need to be in place. These can be set up using the TF modules under `test/setup`. Running `terraform apply` in this directory will set up all resources required for the test.
 
-```
-Note: Output values from `test/setup` are automatically loaded as Terraform environment variables and are available to both auto discovered and custom/explicit tests as inputs. This is also illustrated in the [Create the example configuration - Step 4](https://github.com/g-awmalik/cloud-foundation-toolkit/tree/feat/add-bp-test-doc/infra/blueprint-test#3111-create-the-example-configuration) above where the `project_id` variable output by the `test/setup` is consumed as a variable for the example.
-```
+> Note: Output values from `test/setup` are automatically loaded as Terraform environment variables and are available to both auto discovered and custom/explicit tests as inputs. This is also illustrated in the [Create the example configuration - Step 4](https://github.com/g-awmalik/cloud-foundation-toolkit/tree/feat/add-bp-test-doc/infra/blueprint-test#3111-create-the-example-configuration) above where the `project_id` variable output by the `test/setup` is consumed as a variable for the example.
 
 
 ## 4.2 Default and stage specific execution
