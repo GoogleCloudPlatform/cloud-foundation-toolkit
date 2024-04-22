@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.5...infra/module-swapper/v0.4.6) (2024-04-22)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/net from 0.22.0 to 0.23.0 in /infra/module-swapper ([#2276](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2276)) ([a41759b](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/a41759b823364b9602309cbdc797156eb22e7dc2))
+
 ## [0.4.5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.4...infra/module-swapper/v0.4.5) (2024-04-02)
 
 
