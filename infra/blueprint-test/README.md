@@ -154,7 +154,7 @@ Complete code files for the example module can be found [here](https://github.co
 
 ### 3.1.2 Write an integration test
 After creating the example configuration, your example will automatically be tested and no further action is required.
-However, if you need to make custom assertions regarding the resources the blueprint will create, you should create an integration test in Go using the (testing)[https://pkg.go.dev/testing] package. Custom assertions will mostly involve making an API calls to GCP (via gcloud commands) to assert a resource is configured as expected.
+However, if you need to make custom assertions regarding the resources the blueprint will create, you should create an integration test in Go using the [testing](https://pkg.go.dev/testing) package. Custom assertions will mostly involve making an API calls to GCP (via gcloud commands) to assert a resource is configured as expected.
 The entire integration test explained below can be found [here](https://github.com/terraform-google-modules/terraform-google-sql-db/blob/master/test/integration/mysql-public/mysql_public_test.go).
 
 The first step in writing the test is to wire it up with the required packages and methods signatures that the test framework expects as follows:
@@ -196,14 +196,14 @@ func TestMySqlPublicModule(t *testing.T) {
 
 The next step in the process is to write the logic for assertions.
 
-1. In most cases, you will be asserting against values retrieved from the GCP environment. This can be done by using the (gcloud)[https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/blueprint-test/pkg/gcloud/gcloud.go] helper in our test framework, which executes gcloud commands and stores their JSON outputs as. The gcloud helper can be initialized as follows:
+1. In most cases, you will be asserting against values retrieved from the GCP environment. This can be done by using the [gcloud](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/blueprint-test/pkg/gcloud/gcloud.go) helper in our test framework, which executes gcloud commands and stores their JSON outputs as. The gcloud helper can be initialized as follows:
 
 ```go
 // The tft struct can be used to pull output variables of the TF module being invoked by this test
 op := gcloud.Run(t, fmt.Sprintf("sql instances describe %s --project %s", mySqlT.GetStringOutput("name"), mySqlT.GetStringOutput("project_id")))
 ```
 
-2. Once you have retrieved values from GCP, use the (assert)[https://pkg.go.dev/github.com/stretchr/testify/assert] package to perform custom validations with respect to the resources provisioned. Here are some common assertions that can be useful in most test scenarios.
+2. Once you have retrieved values from GCP, use the [assert](https://pkg.go.dev/github.com/stretchr/testify/assert) package to perform custom validations with respect to the resources provisioned. Here are some common assertions that can be useful in most test scenarios.
 
    1. Equal
 
@@ -255,9 +255,8 @@ By default, tests go through 4 stages above. You can also explicitly run individ
 ## 4.1 Test prerequisites
 In order for the test to execute, certain prerequisite resources and components need to be in place. These can be set up using the TF modules under `test/setup`. Running `terraform apply` in this directory will set up all resources required for the test.
 
-```
-Note: Output values from `test/setup` are automatically loaded as Terraform environment variables and are available to both auto discovered and custom/explicit tests as inputs. This is also illustrated in the (Create the example configuration - Step 4)[https://github.com/g-awmalik/cloud-foundation-toolkit/tree/feat/add-bp-test-doc/infra/blueprint-test#3111-create-the-example-configuration] above where the `project_id` variable output by the `test/setup` is consumed as a variable for the example.
-```
+> Note: Output values from `test/setup` are automatically loaded as Terraform environment variables and are available to both auto discovered and custom/explicit tests as inputs. This is also illustrated in the [Create the example configuration - Step 4](https://github.com/g-awmalik/cloud-foundation-toolkit/tree/feat/add-bp-test-doc/infra/blueprint-test#3111-create-the-example-configuration) above where the `project_id` variable output by the `test/setup` is consumed as a variable for the example.
+
 
 ## 4.2 Default and stage specific execution
 1. Cd into the `test/integration` directory

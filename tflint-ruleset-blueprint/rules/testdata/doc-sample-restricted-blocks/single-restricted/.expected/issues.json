@@ -1,0 +1,19 @@
+[
+ {
+  "Rule": null,
+  "Message": "doc sample restricted block type variable",
+  "Range": {
+   "Filename": "main.tf",
+   "Start": {
+    "Line": 3,
+    "Column": 1,
+    "Byte": 118
+   },
+   "End": {
+    "Line": 3,
+    "Column": 22,
+    "Byte": 139
+   }
+  }
+ }
+]
