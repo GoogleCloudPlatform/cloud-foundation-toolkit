@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.4.6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.5...infra/module-swapper/v0.4.6) (2024-04-22)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/net from 0.22.0 to 0.23.0 in /infra/module-swapper ([#2276](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2276)) ([a41759b](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/a41759b823364b9602309cbdc797156eb22e7dc2))
+
+## [0.4.5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.4...infra/module-swapper/v0.4.5) (2024-04-02)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/go-git/go-git/v5 to v5.12.0 ([#2244](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2244)) ([fcdca77](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/fcdca77dcfe63b6e928ce551863df69e2cedc6cd))
+
+## [0.4.4](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.3...infra/module-swapper/v0.4.4) (2024-03-27)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/hashicorp/hcl/v2 to v2.20.1 ([#2234](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2234)) ([d0abcaa](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/d0abcaac87792cbab865f78b2e98b0ce0849f309))
+
+## [0.4.3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.2...infra/module-swapper/v0.4.3) (2024-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/zclconf/go-cty to v1.14.4 ([#2222](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2222)) ([4004d2a](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/4004d2a2ffaae6504279130cb31c42ce2d8dfa99))
+
 ## [0.4.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.1...infra/module-swapper/v0.4.2) (2024-03-07)
 
 

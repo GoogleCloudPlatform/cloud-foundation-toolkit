@@ -144,7 +144,7 @@ locals {
       short_name   = "example-foundation"
       org          = "terraform-google-modules"
       description  = "Shows how the CFT modules can be composed to build a secure cloud foundation"
-      owners       = ["rjerrems", "gtsorbo"]
+      owners       = ["rjerrems", "gtsorbo", "eeaton"]
       homepage_url = "https://cloud.google.com/architecture/security-foundations"
       topics       = join(",", [local.common_topics.e2e, local.common_topics.ops])
       lint_env = {
@@ -252,6 +252,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Bootstraps Terraform usage and related CI/CD in a new Google Cloud organization"
       topics      = join(",", [local.common_topics.ops, local.common_topics.devtools])
+      owners      = ["josephdt12"]
     },
     {
       name        = "terraform-google-cloud-datastore"
@@ -276,7 +277,7 @@ locals {
     {
       name        = "terraform-google-cloud-operations"
       org         = "terraform-google-modules"
-      description = "Manages Google Cloud's operations suite (Cloud Logging and Cloud Monitoring)"
+      description = "Manages Cloud Logging and Cloud Monitoring"
       topics      = local.common_topics.ops
       owners      = ["imrannayer"]
     },
@@ -297,7 +298,7 @@ locals {
       name        = "terraform-google-composer"
       org         = "terraform-google-modules"
       description = "Manages Cloud Composer v1 and v2 along with option to manage networking"
-      topics      = join(",", [local.common_topics.da, local.common_topics.ops, local.common_topics.e2e])
+      topics      = join(",", [local.common_topics.da, local.common_topics.ops])
       owners      = ["imrannayer"]
     },
     {
@@ -740,15 +741,24 @@ locals {
       short_name      = "genai-doc-summarization"
       org             = "GoogleCloudPlatform"
       description     = "Summarizes document using OCR and Vertex Generative AI LLM"
-      owners          = ["asrivas", "balajismaniam", "telpirion", "yil532", "nicain"]
-      groups          = ["dee-data-ai", local.jss_common_group]
+      owners          = ["asrivas", "davidcavazos"]
+      groups          = [local.jss_common_group]
+      enable_periodic = true
+    },
+    {
+      name            = "terraform-genai-knowledge-base"
+      short_name      = "genai-knowledge-base"
+      org             = "GoogleCloudPlatform"
+      description     = "Fine tune an LLM model to answer questions from your documents."
+      owners          = ["davidcavazos"]
+      groups          = [local.jss_common_group]
       enable_periodic = true
     },
     {
       name        = "terraform-google-secured-data-warehouse-onprem-ingest"
       short_name  = "sdw-onprem-ingest"
       org         = "GoogleCloudPlatform"
-      description = "Secured Data Warehouse blueprint variant for ingesting encrypted data from on-prem sources"
+      description = "Deploys a secured data warehouse variant for ingesting encrypted data from on-prem sources"
       owners      = ["lanre-OG"]
       topics      = join(",", [local.common_topics.da, local.common_topics.security, local.common_topics.e2e])
     },
@@ -761,7 +771,7 @@ locals {
     {
       name        = "terraform-google-cloud-spanner"
       org         = "GoogleCloudPlatform"
-      description = "Deploy Spanner"
+      description = "Deploy Spanner instances"
       owners      = ["anaik91", "imrannayer"]
       topics      = local.common_topics.db
     },
@@ -809,27 +819,29 @@ locals {
       short_name  = "backup-dr"
       description = "Deploy Backup and DR appliances"
       owners      = ["umeshkumhar"]
+      topics      = join(",", [local.common_topics.compute, local.common_topics.ops])
     },
     {
       name        = "terraform-google-tags"
       org         = "GoogleCloudPlatform"
-      description = "Create and manage Google Cloud Tags."
+      description = "Create and manage Google Cloud Tags"
       owners      = ["nidhi0710"]
       topics      = join(",", [local.common_topics.security, local.common_topics.ops])
     },
     {
       name        = "terraform-google-dataplex-auto-data-quality"
       org         = "GoogleCloudPlatform"
-      description = "Move data between environments using Dataplex."
+      description = "Move data between environments using Dataplex"
       owners      = ["bradmiro"]
       topics      = local.common_topics.da
     },
     {
-      name        = "terraform-google-enterprise-application"
-      org         = "GoogleCloudPlatform"
-      description = "Deploy an enterprise developer platform on Google Cloud."
-      owners      = ["gtsorbo"]
-      topics      = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      name            = "terraform-google-enterprise-application"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy an enterprise developer platform on Google Cloud"
+      owners          = ["gtsorbo"]
+      topics          = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      enable_periodic = true
     },
     {
       name            = "terraform-genai-rag"
@@ -846,13 +858,14 @@ locals {
     {
       name        = "terraform-google-artifact-registry"
       org         = "GoogleCloudPlatform"
-      description = "Create and manage Google Artifact Registry Repositories"
+      description = "Create and manage Artifact Registry repositories"
       owners      = ["prabhu34"]
+      topics      = join(",", [local.common_topics.containers, local.common_topics.devtools])
     },
     {
       name        = "terraform-google-secure-web-proxy"
       org         = "GoogleCloudPlatform"
-      description = "Create and manage Secure Web Proxy in GCP for secured egress web traffic."
+      description = "Create and manage Secure Web Proxy on GCP for secured egress web traffic"
       owners      = ["maitreya-source"]
       topics      = join(",", [local.common_topics.security, local.common_topics.net])
     },
@@ -867,6 +880,23 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
-    }
+    },
+    {
+      name        = "kms-solutions"
+      org         = "GoogleCloudPlatform"
+      description = "Store Cloud KMS scripts, artifacts, code samples, and more."
+      owners      = ["tdbhacks"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-dataanalytics-eventdriven"
+      short_name  = "dataanalytics-eventdriven"
+      org         = "GoogleCloudPlatform"
+      description = "Uses click-to-deploy to demonstrate how to load data from Cloud Storage to BigQuery using an event-driven load function."
+      groups      = [local.jss_common_group]
+      owners      = ["fellipeamedeiros", "sylvioneto"]
+    },
   ]
 }

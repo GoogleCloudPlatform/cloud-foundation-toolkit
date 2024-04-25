@@ -43,12 +43,15 @@ locals {
     "java-dynamic-point-of-sale"  = "terraform-example-java-dynamic-point-of-sale"
     "ml-image-annotation-gcf"     = "terraform-ml-image-annotation-gcf"
     "genai-doc-summarization"     = "terraform-genai-doc-summarization"
+    "genai-knowledge-base"        = "terraform-genai-knowledge-base"
     "secured-notebook"            = "notebooks-blueprint-security"
     "sdw-onprem-ingest"           = "terraform-google-secured-data-warehouse-onprem-ingest"
     "pubsub-golang-app"           = "terraform-pubsub-integration-golang"
     "pubsub-java-app"             = "terraform-pubsub-integration-java"
     "genai-rag"                   = "terraform-genai-rag"
     "cloud-client-api"            = "terraform-cloud-client-api"
+    "dataanalytics-eventdriven"   = "terraform-dataanalytics-eventdriven"
+    "kms-solutions"               = "kms-solutions"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }

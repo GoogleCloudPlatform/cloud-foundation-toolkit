@@ -14,9 +14,9 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.7.5
+TERRAFORM_VERSION := 1.8.2
 # Updated by Update Tooling Workflow
-CLOUD_SDK_VERSION := 469.0.0
+CLOUD_SDK_VERSION := 473.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.16.0
 BATS_VERSION := 0.4.0
@@ -25,9 +25,9 @@ BATS_ASSERT_VERSION := 2.0.0
 BATS_MOCK_VERSION := 1.0.1
 PACKER_VERSION := 1.4.4
 # Updated by Update Tooling Workflow
-TERRAGRUNT_VERSION := 0.55.18
+TERRAGRUNT_VERSION := 0.57.8
 # Updated by Update Tooling Workflow
-KUSTOMIZE_VERSION := 5.3.0
+KUSTOMIZE_VERSION := 5.4.1
 # Updated by Update Tooling Workflow
 KPT_VERSION := 1.0.0-beta.49
 PROTOC_VERSION := 23.4
@@ -35,27 +35,28 @@ PROTOC_GEN_GO_VERSION := 1.31
 PROTOC_GEN_GO_GRPC_VERSION := 1.3
 PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 1.2.16
+CFT_CLI_VERSION := 1.2.20
 # Updated by Update Tooling Workflow
-KUBECTL_VERSION := 1.28.8
+KUBECTL_VERSION := 1.28.9
 # Updated by Update Tooling Workflow
 TFLINT_VERSION := 0.50.3
 TINKEY_VERSION := 1.7.0
 ALPINE_VERSION := 3.19
 # Updated by Update Tooling Workflow
-MODULE_SWAPPER_VERSION := 0.4.2
+MODULE_SWAPPER_VERSION := 0.4.6
 
 # For developer-tools-krm
-GOLANGCI_VERSION := 1.57.1
+# Updated by Update Tooling Workflow
+GOLANGCI_VERSION := 1.57.2
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
-GATOR_VERSION := 3.14.1
+GATOR_VERSION := 3.14.2
 OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.19.1
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.19.9
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.20.1
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
@@ -64,7 +65,7 @@ DOCKER_IMAGE_DEVELOPER_KRM := cft/developer-tools-krm
 DOCKER_IMAGE_DEVELOPER_LIGHT := cft/developer-tools-light
 DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS := cft/developer-tools-jenkins
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
-DEP_TAG_PREFIX := deprecated-public-image-
+DEP_TAG_PREFIX := infrastructure-public-image-
 
 
 .PHONY: build-image-developer-tools

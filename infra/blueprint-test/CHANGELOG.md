@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.14.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.2...infra/blueprint-test/v0.14.0) (2024-04-09)
+
+
+### Features
+
+* support plan assertions in blueprint test ([#2258](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2258)) ([bb29bbe](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bb29bbef8137f9e084e3269f62bd174e50121281))
+
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/mod to v0.17.0 ([#2252](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2252)) ([6a2a1e1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6a2a1e1d74b3029e489a106fe93d84cf6a42924e))
+* **deps:** update module sigs.k8s.io/kustomize/kyaml to v0.17.0 ([#2255](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2255)) ([f2e762e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f2e762eeb807b79b381f5a95f790f8c85a54d78e))
+
+## [0.13.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.1...infra/blueprint-test/v0.13.2) (2024-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.12 ([#2216](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2216)) ([765f4bb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/765f4bbd33b3d5752f94a471beb3262609ed1e62))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.13 ([#2221](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2221)) ([b0e2940](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b0e2940f4c45f3aa790bcf276d32ece681383c23))
+* **tft:** Correct message in DefaultVerify ([#2213](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2213)) ([2d67c60](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2d67c60903880b2d9dacfdf8b34a53be4a20c6ed))
+
 ## [0.13.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.0...infra/blueprint-test/v0.13.1) (2024-03-14)
 
 

@@ -1,9 +1,0 @@
-apiVersion: sql.cnrm.cloud.google.com/v1beta1
-kind: SQLInstance
-metadata:
-  name: {{ required "instanceName is required!" .Values.database.instanceName }}
-spec:
-  databaseVersion: {{ required "version is required!" .Values.database.version }}
-  region: {{ required "region is required!" .Values.google.region }}
-  settings:
-    tier: {{ required "tier is required!" .Values.database.tier }}

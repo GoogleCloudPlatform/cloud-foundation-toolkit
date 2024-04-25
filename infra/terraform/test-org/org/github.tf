@@ -36,6 +36,7 @@ variable "temp_allow_invalid_owners" {
   default = [
     "dulacp",
     "nidhi0710", # remove once heynidhi@ is added to GCP org
+    "sylvioneto",
   ]
 }
 

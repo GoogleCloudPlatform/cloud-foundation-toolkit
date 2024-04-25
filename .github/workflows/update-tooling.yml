@@ -23,6 +23,7 @@ env:
   KUSTOMIZE_URL: "https://api.github.com/repos/kubernetes-sigs/kustomize/releases"
   TERRAGRUNT_URL: "https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest"
   TFLINT_URL: "https://api.github.com/repos/terraform-linters/tflint/releases/latest"
+  GOLANGCI_URL: "https://api.github.com/repos/golangci/golangci-lint/releases/latest"
 
 jobs:
   update-tools:
@@ -30,14 +31,14 @@ jobs:
     if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
         with:
           ref: master
       - name: Update Tools
         run: |
           PR_UPDATE_BODY=""
           newline=$'\n'
-          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER" "KUSTOMIZE" "TERRAGRUNT" "TFLINT")
+          tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "KUBECTL" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER" "KUSTOMIZE" "TERRAGRUNT" "TFLINT" "GOLANGCI")
 
           for tool in ${tools[@]}
           do
@@ -106,7 +107,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
-        uses: peter-evans/create-pull-request@70a41aba780001da0a30141984ae2a0c95d8704e # v6.0.2
+        uses: peter-evans/create-pull-request@9153d834b60caba6d51c9b9510b087acf9f33f83 # v6.0.4
         with:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
