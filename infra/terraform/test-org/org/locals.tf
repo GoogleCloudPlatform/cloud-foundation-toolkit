@@ -242,6 +242,7 @@ locals {
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
       owners      = ["davenportjw", "shanecglass"]
+      groups      = [local.jss_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
