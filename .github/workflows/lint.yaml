@@ -31,7 +31,7 @@ jobs:
     name: 'lint-infra-terraform'
     runs-on: 'ubuntu-latest'
     steps:
-      - uses: 'actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f' # v4.1.3
+      - uses: 'actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b' # v4.1.4
       - run: docker run --rm -e EXCLUDE_LINT_DIRS -e EXCLUDE_HEADER_CHECK -v ${{ github.workspace }}:/workspace gcr.io/cloud-foundation-cicd/cft/developer-tools:1 /usr/local/bin/test_lint.sh
         env:
           EXCLUDE_LINT_DIRS: '\./cli|\./tflint-ruleset-blueprint|\./infra/build|\./infra/utils|\./infra/blueprint-test|\./infra/concourse|\./infra/modules|\./reports|\./.github|\./docs|\./infra/module-swapper'
