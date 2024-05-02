@@ -25,7 +25,7 @@ func init() {
 	Cmd.AddCommand(initCmd)
 
 	Cmd.PersistentFlags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
-	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, apply, verify, teardown)")
+	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, plan, apply, verify, teardown)")
 	runCmd.Flags().StringToStringVar(&flags.setupVars, "setup-var", map[string]string{}, "Specify outputs from the setup phase (useful with --stage=verify)")
 }
 
