@@ -51,4 +51,4 @@ jobs:
           | grep -v 'test/fixtures/shared' \
           | xargs -n1 dirname \
           | sort -u \
-          | xargs -t -I {} bash -c 'pushd {}; TFENV_TERRAFORM_DEFAULT_VERSION="0.13.7" tenv tf install min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -compact-warnings; terraform validate -compact-warnings; popd'
+          | xargs -t -I {} bash -c 'pushd {}; tenv tf use 0.13.7; TFENV_TERRAFORM_DEFAULT_VERSION=0.13.7 tenv tf use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -compact-warnings; terraform validate -compact-warnings; popd'
