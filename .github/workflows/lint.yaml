@@ -36,10 +36,22 @@ jobs:
         env:
           EXCLUDE_LINT_DIRS: '\./cli|\./tflint-ruleset-blueprint|\./infra/build|\./infra/utils|\./infra/blueprint-test|\./infra/concourse|\./infra/modules|\./reports|\./.github|\./docs|\./infra/module-swapper'
           EXCLUDE_HEADER_CHECK: '.*'
+  lint-min-ver:
+    name: 'lint-infra-terraform-min-ver'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: 'actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b' # v4.1.4
+      - run: docker run --rm -e EXCLUDE_LINT_DIRS -e EXCLUDE_HEADER_CHECK -v ${{ github.workspace }}:/workspace gcr.io/cloud-foundation-cicd/cft/developer-tools:1 /usr/local/bin/test_lint.sh
+        env:
+          EXCLUDE_LINT_DIRS: '\./cli|\./tflint-ruleset-blueprint|\./infra/build|\./infra/utils|\./infra/blueprint-test|\./infra/concourse|\./infra/modules|\./reports|\./.github|\./docs|\./infra/module-swapper'
+          EXCLUDE_HEADER_CHECK: '.*'
       - run: |
           LATEST_VERSION=$(curl --silent https://api.github.com/repos/tofuutils/tenv/releases/latest | jq -r .tag_name)
           curl -O -L "https://github.com/tofuutils/tenv/releases/latest/download/tenv_${LATEST_VERSION}_amd64.deb"
           sudo dpkg -i "tenv_${LATEST_VERSION}_amd64.deb"
+          export TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache
+          RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
+          export TFENV_TERRAFORM_DEFAULT_VERSION=0.13.7 # Default if no version is specified
           find . -regextype posix-egrep -regex ".*/\.terraform" -prune -o -type f -name "*.tf" -print \
           | grep -v 'test/fixtures/shared' \
           | xargs -n1 dirname \
