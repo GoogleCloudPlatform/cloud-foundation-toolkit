@@ -42,9 +42,11 @@ jobs:
     steps:
       - uses: 'actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b' # v4.1.4
       - run: |
-          docker run --rm -v ${{ github.workspace }}:/workspace ghcr.io/tofuutils/tenv:latest \
-          find_files . -name "*.tf" -print \
+          LATEST_VERSION=$(curl --silent https://api.github.com/repos/tofuutils/tenv/releases/latest | jq -r .tag_name)
+          curl -O -L "https://github.com/tofuutils/tenv/releases/latest/download/tenv_${LATEST_VERSION}_amd64.deb"
+          sudo dpkg -i "tenv_${LATEST_VERSION}_amd64.deb"
+          find . -name "*.tf" -print \
           | grep -v 'test/fixtures/shared' \
-          | compat_xargs -n1 dirname \
+          | xargs -n1 dirname \
           | sort -u \
-          | compat_xargs -t -n1 tenv tf use min-required; terraform_validate
+          | xargs -t -I {} bash -c 'pushd {}; tenv tf use min-required; terraform init; terraform validate; popd'
