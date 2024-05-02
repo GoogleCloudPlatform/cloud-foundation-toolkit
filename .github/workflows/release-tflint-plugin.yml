@@ -1,0 +1,39 @@
+name: release-tflint
+
+on:
+  push:
+    tags:
+    - tflint-ruleset-blueprint/v*.*.*
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'tflint-ruleset-blueprint'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+    - name: Set up Go
+      uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+      with:
+        go-version-file: 'tflint-ruleset-blueprint/go.mod'
+    - run: echo "GORELEASER_CURRENT_TAG=${GITHUB_REF#refs/tags/tflint-ruleset-blueprint/}" >> $GITHUB_ENV
+    - run: echo "${{env.GORELEASER_CURRENT_TAG}}"
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v5
+      with:
+        version: latest
+        args: release --clean --skip=validate,publish
+        workdir: tflint-ruleset-blueprint
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: upload
+      run: |
+          gh release upload "tflint-ruleset-blueprint/${{env.GORELEASER_CURRENT_TAG}}" dist/tflint-ruleset-blueprint_*.zip dist/checksums.txt --repo ${{ github.repository }} --clobber
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

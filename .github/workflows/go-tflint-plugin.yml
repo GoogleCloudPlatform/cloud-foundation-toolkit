@@ -6,13 +6,13 @@ on:
       - 'master'
     paths:
       - 'tflint-ruleset-blueprint/**'
-      - '.github/workflows/go-tflint-plugin.yaml.yml'
+      - '.github/workflows/go-tflint-plugin.yml'
   pull_request:
     branches:
       - 'master'
     paths:
       - 'tflint-ruleset-blueprint/**'
-      - '.github/workflows/go-tflint-plugin.yaml.yml'
+      - '.github/workflows/go-tflint-plugin.yml'
 
 concurrency:
   group: '${{github.workflow}}-${{ github.head_ref || github.ref }}'
@@ -38,3 +38,23 @@ jobs:
         cache-dependency-path: tflint-ruleset-blueprint/go.sum
     - run: |-
         make test
+  releaser:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'tflint-ruleset-blueprint'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+    - name: Set up Go
+      uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+      with:
+        go-version-file: 'tflint-ruleset-blueprint/go.mod'
+    - run: echo "GORELEASER_CURRENT_TAG=v0.0.0" >> $GITHUB_ENV # sample tag for testing goreleaser
+    - run: echo "${{env.GORELEASER_CURRENT_TAG}}"
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v5
+      with:
+        version: latest
+        args: release --clean --skip=validate,publish
+        workdir: tflint-ruleset-blueprint
