@@ -36,11 +36,6 @@ jobs:
         env:
           EXCLUDE_LINT_DIRS: '\./cli|\./tflint-ruleset-blueprint|\./infra/build|\./infra/utils|\./infra/blueprint-test|\./infra/concourse|\./infra/modules|\./reports|\./.github|\./docs|\./infra/module-swapper'
           EXCLUDE_HEADER_CHECK: '.*'
-  lint-tf-min:
-    name: 'lint-terraform-min-required'
-    runs-on: 'ubuntu-latest'
-    steps:
-      - uses: 'actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b' # v4.1.4
       - run: |
           LATEST_VERSION=$(curl --silent https://api.github.com/repos/tofuutils/tenv/releases/latest | jq -r .tag_name)
           curl -O -L "https://github.com/tofuutils/tenv/releases/latest/download/tenv_${LATEST_VERSION}_amd64.deb"
