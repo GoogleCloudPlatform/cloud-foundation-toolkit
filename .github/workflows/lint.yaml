@@ -50,8 +50,8 @@ jobs:
           curl -O -L "https://github.com/tofuutils/tenv/releases/latest/download/tenv_${LATEST_VERSION}_amd64.deb"
           sudo dpkg -i "tenv_${LATEST_VERSION}_amd64.deb"
           export TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache
-          RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
-          export TFENV_TERRAFORM_DEFAULT_VERSION=0.13.7 # Default if no version is specified
+          mkdir -p ${TF_PLUGIN_CACHE_DIR}
+          export TFENV_TERRAFORM_DEFAULT_VERSION=0.13.7 # Default if no TF version is found in the configuration
           find . -regextype posix-egrep -regex ".*/\.terraform" -prune -o -type f -name "*.tf" -print \
           | grep -v 'test/fixtures/shared' \
           | xargs -n1 dirname \
