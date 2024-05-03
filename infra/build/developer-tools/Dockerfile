@@ -114,6 +114,9 @@ RUN /build/install_kubectl.sh ${KUBECTL_VERSION}
 ARG MODULE_SWAPPER_VERSION
 RUN /build/install_module-swapper.sh ${MODULE_SWAPPER_VERSION}
 
+ARG TFLINT_BP_PLUGIN
+RUN /build/install_tflint_plugin.sh ${TFLINT_BP_PLUGIN}
+
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
