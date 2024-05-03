@@ -691,28 +691,6 @@ locals {
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e], ["marketing"])
     },
     {
-      name            = "terraform-large-data-sharing-java-webapp"
-      short_name      = "large-data-sharing-java-app"
-      org             = "GoogleCloudPlatform"
-      description     = "Deploys a large data sharing Java web app"
-      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
-      enable_periodic = true
-      lint_env = {
-        ENABLE_BPMETADATA = "1"
-      }
-    },
-    {
-      name            = "terraform-large-data-sharing-golang-webapp"
-      short_name      = "large-data-sharing-go-app"
-      org             = "GoogleCloudPlatform"
-      description     = "Deploys a large data sharing Golang web app"
-      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
-      enable_periodic = true
-      lint_env = {
-        ENABLE_BPMETADATA = "1"
-      }
-    },
-    {
       name            = "terraform-ml-image-annotation-gcf"
       short_name      = "ml-image-annotation-gcf"
       org             = "GoogleCloudPlatform"
