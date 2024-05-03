@@ -27,31 +27,29 @@ locals {
   ]
   # custom mapping of the form name => repo_name used for overriding `terraform-google` prefix
   custom_repo_mapping = {
-    "cloud-foundation-training"   = "cloud-foundation-training",
-    "example-foundation-app"      = "terraform-example-foundation-app",
-    "anthos-samples"              = "anthos-samples"
-    "cloud-deployment-gce"        = "terraform-cloud-deployment-gce",
-    "cloud-deployment-gke"        = "terraform-cloud-deployment-gke",
-    "docs-samples"                = "terraform-docs-samples"
-    "dynamic-python-webapp"       = "terraform-dynamic-python-webapp"
-    "dynamic-javascript-webapp"   = "terraform-dynamic-javascript-webapp"
-    "deploy-java-multizone"       = "terraform-example-deploy-java-multizone"
-    "ecommerce-microservices"     = "terraform-ecommerce-microservices-on-gke"
-    "deploy-java-gke"             = "terraform-example-deploy-java-gke"
-    "large-data-sharing-java-app" = "terraform-large-data-sharing-java-webapp"
-    "large-data-sharing-go-app"   = "terraform-large-data-sharing-golang-webapp"
-    "java-dynamic-point-of-sale"  = "terraform-example-java-dynamic-point-of-sale"
-    "ml-image-annotation-gcf"     = "terraform-ml-image-annotation-gcf"
-    "genai-doc-summarization"     = "terraform-genai-doc-summarization"
-    "genai-knowledge-base"        = "terraform-genai-knowledge-base"
-    "secured-notebook"            = "notebooks-blueprint-security"
-    "sdw-onprem-ingest"           = "terraform-google-secured-data-warehouse-onprem-ingest"
-    "pubsub-golang-app"           = "terraform-pubsub-integration-golang"
-    "pubsub-java-app"             = "terraform-pubsub-integration-java"
-    "genai-rag"                   = "terraform-genai-rag"
-    "cloud-client-api"            = "terraform-cloud-client-api"
-    "dataanalytics-eventdriven"   = "terraform-dataanalytics-eventdriven"
-    "kms-solutions"               = "kms-solutions"
+    "cloud-foundation-training"  = "cloud-foundation-training",
+    "example-foundation-app"     = "terraform-example-foundation-app",
+    "anthos-samples"             = "anthos-samples"
+    "cloud-deployment-gce"       = "terraform-cloud-deployment-gce",
+    "cloud-deployment-gke"       = "terraform-cloud-deployment-gke",
+    "docs-samples"               = "terraform-docs-samples"
+    "dynamic-python-webapp"      = "terraform-dynamic-python-webapp"
+    "dynamic-javascript-webapp"  = "terraform-dynamic-javascript-webapp"
+    "deploy-java-multizone"      = "terraform-example-deploy-java-multizone"
+    "ecommerce-microservices"    = "terraform-ecommerce-microservices-on-gke"
+    "deploy-java-gke"            = "terraform-example-deploy-java-gke"
+    "java-dynamic-point-of-sale" = "terraform-example-java-dynamic-point-of-sale"
+    "ml-image-annotation-gcf"    = "terraform-ml-image-annotation-gcf"
+    "genai-doc-summarization"    = "terraform-genai-doc-summarization"
+    "genai-knowledge-base"       = "terraform-genai-knowledge-base"
+    "secured-notebook"           = "notebooks-blueprint-security"
+    "sdw-onprem-ingest"          = "terraform-google-secured-data-warehouse-onprem-ingest"
+    "pubsub-golang-app"          = "terraform-pubsub-integration-golang"
+    "pubsub-java-app"            = "terraform-pubsub-integration-java"
+    "genai-rag"                  = "terraform-genai-rag"
+    "cloud-client-api"           = "terraform-cloud-client-api"
+    "dataanalytics-eventdriven"  = "terraform-dataanalytics-eventdriven"
+    "kms-solutions"              = "kms-solutions"
   }
   # example foundation has custom test modes
   example_foundation                = { "terraform-example-foundation" = data.terraform_remote_state.org.outputs.ci_repos_folders["example-foundation"] }
