@@ -41,14 +41,15 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: 'actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b' # v4.1.4
-      - name: Restore terraform-cache
-        id: terraform-cache-restore
-        uses: actions/cache/restore@v4
+      - name: Cache lint-infra-terraform-min-required
+        id: cache-lint-infra-terraform-min-required
+        uses: actions/cache@v4
         with:
           path: |
             /tmp/.terraform-cache
             /home/runner/.tenv
-          key: terraform-cache
+          key: terraform-cache-${{ github.run_id }}
+          restore-keys: terraform-cache
       - run: |
           LATEST_VERSION=$(curl --silent https://api.github.com/repos/tofuutils/tenv/releases/latest | jq -r .tag_name)
           curl -O -L "https://github.com/tofuutils/tenv/releases/latest/download/tenv_${LATEST_VERSION}_amd64.deb"
@@ -59,11 +60,3 @@ jobs:
           | grep -v 'testdata' \
           | xargs -n1 dirname | sort -u \
           | xargs -t -I {} bash -c 'cd {}; TFENV_TERRAFORM_DEFAULT_CONSTRAINT=">= 0.13.7" tenv tf use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -backend=false >/dev/null; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform validate'
-      - name: Save terraform-cache
-        id: terraform-cache-save
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            /tmp/.terraform-cache
-            /home/runner/.tenv
-          key: terraform-cache
