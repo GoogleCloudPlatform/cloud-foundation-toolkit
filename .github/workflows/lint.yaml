@@ -55,7 +55,7 @@ jobs:
           mkdir -p /tmp/.terraform-cache
           find . -regextype posix-egrep -regex ".*/\.terraform" -prune -o -type f -name "*.tf" -print \
           | xargs -n1 dirname | sort -u \
-          | xargs -t -I {} bash -c 'pushd {}; TFENV_TERRAFORM_DEFAULT_CONSTRAINT=">= 0.13.7" tenv tf use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -backend=false >/dev/null; terraform validate -compact-warnings; popd'
+          | xargs -t -I {} pushd {} bash -c 'TFENV_TERRAFORM_DEFAULT_CONSTRAINT=">= 0.13.7" tenv tf use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -backend=false >/dev/null; terraform validate -compact-warnings'; popd
       - name: Save terraform-cache
         id: terraform-cache-save
         uses: actions/cache/save@v4
