@@ -50,7 +50,7 @@ jobs:
           restore-keys: cache-developer-tools
       - name: Update developer-tools
         if: steps.cache-developer-tools.outputs.cache-hit != 'true'
-        run: docker pull gcr.io/cloud-foundation-cicd/cft/developer-tools:1 && mkdir -p ${{ github.workspace }}/test/integration/tmp/.developer-tools && docker image save cft/developer-tools:1 --output ${{ github.workspace }}/test/integration/tmp/.developer-tools/developer-tools-1.tar
+        run: docker pull gcr.io/cloud-foundation-cicd/cft/developer-tools:1 && mkdir -p ${{ github.workspace }}/test/integration/tmp/.developer-tools && docker image save gcr.io/cloud-foundation-cicd/cft/developer-tools:1 --output ${{ github.workspace }}/test/integration/tmp/.developer-tools/developer-tools-1.tar
       - name: Use developer-tools
         if: steps.cache-developer-tools.outputs.cache-hit == 'true'
         run: docker image load --input ${{ github.workspace }}/test/integration/tmp/.developer-tools/developer-tools-1.tar
