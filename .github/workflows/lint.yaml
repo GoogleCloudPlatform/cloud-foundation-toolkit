@@ -40,20 +40,6 @@ jobs:
             ${{ github.workspace }}/test/integration/tmp/.terraform
           key: cache-lint-infra-terraform-${{ github.run_id }}
           restore-keys: cache-lint-infra-terraform
-      - name: Restore developer-tools
-        id: cache-developer-tools
-        uses: actions/cache@v4
-        with:
-          path: |
-            /tmp/.developer-tools
-          key: cache-developer-tools-${{ github.run_id }}
-          restore-keys: cache-developer-tools
-      - name: Update developer-tools
-        if: steps.cache-developer-tools.outputs.cache-hit != 'true'
-        run: docker pull gcr.io/cloud-foundation-cicd/cft/developer-tools:1 && mkdir -p /tmp/.developer-tools && docker image save gcr.io/cloud-foundation-cicd/cft/developer-tools:1 --output /tmp/.developer-tools/developer-tools-1.tar
-      - name: Use developer-tools
-        if: steps.cache-developer-tools.outputs.cache-hit == 'true'
-        run: docker image load --input /tmp/.developer-tools/developer-tools-1.tar
       - run: docker run --pull=always --rm -e EXCLUDE_LINT_DIRS -e EXCLUDE_HEADER_CHECK -v ${{ github.workspace }}:/workspace gcr.io/cloud-foundation-cicd/cft/developer-tools:1 /usr/local/bin/test_lint.sh
         env:
           EXCLUDE_LINT_DIRS: '\./cli|\./tflint-ruleset-blueprint|\./infra/build|\./infra/utils|\./infra/blueprint-test|\./infra/concourse|\./infra/modules|\./reports|\./.github|\./docs|\./infra/module-swapper'
