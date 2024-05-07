@@ -1,6 +1,7 @@
 package bptest
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,7 +32,7 @@ func TestValidateAndGetStage(t *testing.T) {
 		{
 			name:   "invalid name",
 			stage:  "foo",
-			errMsg: "invalid stage name foo - one of [\"init\" \"apply\" \"verify\" \"teardown\"] expected",
+			errMsg: fmt.Sprintf("invalid stage name foo - one of %+q expected", stages),
 		},
 		{
 			name:  "empty (all stages)",

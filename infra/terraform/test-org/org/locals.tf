@@ -76,7 +76,7 @@ locals {
       name        = "cloud-foundation-training"
       org         = "terraform-google-modules"
       description = ""
-      owners      = ["marine675", "zefdelgadillo"]
+      owners      = ["marine675"]
     },
     {
       name        = "terraform-google-healthcare"
@@ -242,6 +242,7 @@ locals {
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
       owners      = ["davenportjw", "shanecglass"]
+      groups      = [local.jss_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -573,6 +574,13 @@ locals {
       topics      = join(",", [local.common_topics.serverless, local.common_topics.devtools])
     },
     {
+      name        = "terraform-google-vertex-ai"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy Vertex AI resources"
+      owners      = ["imrannayer"]
+      topics      = join(",", [local.common_topics.compute])
+    },
+    {
       name        = "terraform-google-cloud-armor"
       org         = "GoogleCloudPlatform"
       description = "Deploy Cloud Armor security policy"
@@ -689,28 +697,6 @@ locals {
       description = "Deploy the marketing analytics application, CRMint"
       owners      = ["dulacp"]
       topics      = join(",", [local.common_topics.da, local.common_topics.e2e], ["marketing"])
-    },
-    {
-      name            = "terraform-large-data-sharing-java-webapp"
-      short_name      = "large-data-sharing-java-app"
-      org             = "GoogleCloudPlatform"
-      description     = "Deploys a large data sharing Java web app"
-      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
-      enable_periodic = true
-      lint_env = {
-        ENABLE_BPMETADATA = "1"
-      }
-    },
-    {
-      name            = "terraform-large-data-sharing-golang-webapp"
-      short_name      = "large-data-sharing-go-app"
-      org             = "GoogleCloudPlatform"
-      description     = "Deploys a large data sharing Golang web app"
-      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
-      enable_periodic = true
-      lint_env = {
-        ENABLE_BPMETADATA = "1"
-      }
     },
     {
       name            = "terraform-ml-image-annotation-gcf"

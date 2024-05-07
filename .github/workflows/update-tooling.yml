@@ -31,7 +31,7 @@ jobs:
     if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
 
     steps:
-      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
         with:
           ref: master
       - name: Update Tools
@@ -107,7 +107,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
-        uses: peter-evans/create-pull-request@9153d834b60caba6d51c9b9510b087acf9f33f83 # v6.0.4
+        uses: peter-evans/create-pull-request@6d6857d36972b65feb161a90e484f2984215f83e # v6.0.5
         with:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
