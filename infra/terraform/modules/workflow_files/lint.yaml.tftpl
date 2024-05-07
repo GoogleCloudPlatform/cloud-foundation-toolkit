@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /test/integration/tmp/.terraform
-          key: cache-lint-infra-terraform-${{ github.run_id }}
+          key: cache-lint-infra-terraform-$${{ github.run_id }}
           restore-keys: cache-lint-infra-terraform
       - id: variables
         run: |
