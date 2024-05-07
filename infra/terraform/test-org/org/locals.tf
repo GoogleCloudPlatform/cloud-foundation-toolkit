@@ -573,6 +573,13 @@ locals {
       topics      = join(",", [local.common_topics.serverless, local.common_topics.devtools])
     },
     {
+      name        = "terraform-google-vertex-ai"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy Vertex AI resources"
+      owners      = ["imrannayer"]
+      topics      = join(",", [local.common_topics.compute])
+    },
+    {
       name        = "terraform-google-cloud-armor"
       org         = "GoogleCloudPlatform"
       description = "Deploy Cloud Armor security policy"
