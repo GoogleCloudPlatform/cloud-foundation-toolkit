@@ -76,7 +76,7 @@ locals {
       name        = "cloud-foundation-training"
       org         = "terraform-google-modules"
       description = ""
-      owners      = ["marine675", "zefdelgadillo"]
+      owners      = ["marine675"]
     },
     {
       name        = "terraform-google-healthcare"
@@ -571,6 +571,13 @@ locals {
       description = "Manage Workflows with optional Scheduler or Event Arc triggers"
       owners      = ["anaik91"]
       topics      = join(",", [local.common_topics.serverless, local.common_topics.devtools])
+    },
+    {
+      name        = "terraform-google-vertex-ai"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy Vertex AI resources"
+      owners      = ["imrannayer"]
+      topics      = join(",", [local.common_topics.compute])
     },
     {
       name        = "terraform-google-cloud-armor"
