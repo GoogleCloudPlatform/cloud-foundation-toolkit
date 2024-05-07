@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            /test/integration/tmp/.terraform
+            /home/runner/work/cloud-foundation-toolkit/cloud-foundation-toolkit/test/integration/tmp/.terraform
           key: cache-lint-infra-terraform-${{ github.run_id }}
           restore-keys: cache-lint-infra-terraform
       - run: docker run --rm -e EXCLUDE_LINT_DIRS -e EXCLUDE_HEADER_CHECK -v ${{ github.workspace }}:/workspace gcr.io/cloud-foundation-cicd/cft/developer-tools:1 /usr/local/bin/test_lint.sh
