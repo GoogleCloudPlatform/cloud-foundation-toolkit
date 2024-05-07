@@ -76,7 +76,7 @@ locals {
       name        = "cloud-foundation-training"
       org         = "terraform-google-modules"
       description = ""
-      owners      = ["marine675", "zefdelgadillo"]
+      owners      = ["marine675"]
     },
     {
       name        = "terraform-google-healthcare"
