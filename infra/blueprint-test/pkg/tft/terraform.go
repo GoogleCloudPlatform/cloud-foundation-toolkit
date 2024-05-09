@@ -36,6 +36,7 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
+	"github.com/tidwall/gjson"
 )
 
 const (
@@ -259,7 +260,8 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		tft.setupOutputOverrides[k] = v
 	}
 
-	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
+	tftVersion := gjson.Get(terraform.RunTerraformCommand(tft.t, tft.GetTFOptions(), "version", "-json"), "terraform_version")
+	tft.logger.Logf(tft.t, "Running tests TF configs in %s with version %s", tft.tfDir, tftVersion)
 	return tft
 }
 
