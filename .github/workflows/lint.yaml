@@ -1,4 +1,4 @@
-# Copyright 2023 Google LLC
+# Copyright 2023-2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,6 +32,14 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: 'actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b' # v4.1.4
+      - name: Cache lint-infra-terraform
+        id: cache-lint-infra-terraform
+        uses: 'actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9' # v4.0.2
+        with:
+          path: |
+            ${{ github.workspace }}/test/integration/tmp/.terraform
+          key: cache-lint-infra-terraform-${{ github.run_id }}
+          restore-keys: cache-lint-infra-terraform
       - run: docker run --rm -e EXCLUDE_LINT_DIRS -e EXCLUDE_HEADER_CHECK -v ${{ github.workspace }}:/workspace gcr.io/cloud-foundation-cicd/cft/developer-tools:1 /usr/local/bin/test_lint.sh
         env:
           EXCLUDE_LINT_DIRS: '\./cli|\./tflint-ruleset-blueprint|\./infra/build|\./infra/utils|\./infra/blueprint-test|\./infra/concourse|\./infra/modules|\./reports|\./.github|\./docs|\./infra/module-swapper'
