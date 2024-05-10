@@ -16,7 +16,7 @@
 
 module "cft-manager-project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 14.0"
+  version = "~> 15.0"
 
   name              = "cft-project-manager"
   random_project_id = true
