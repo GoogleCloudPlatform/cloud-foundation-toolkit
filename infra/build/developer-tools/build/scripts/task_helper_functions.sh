@@ -75,6 +75,7 @@ find_files() {
     ".*/.*\.jpeg"
     ".*/.*\.svg"
     ".*/.*\.ico"
+    ".*/.*\.jar"
     ".*/.*\.parquet"
     ".*/.*\.pb"
     ".*/.*\.index"
@@ -236,7 +237,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' \
+    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico|jar|parquet|pb|index)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -247,7 +248,7 @@ check_whitespace() {
   fi
   echo "Checking for missing newline at end of file"
   find_files . -print \
-    | grep -v -E '\.(png|gz|tfvars|mp4|zip|ico|parquet|pb|index)$' \
+    | grep -v -E '\.(png|gz|tfvars|mp4|zip|ico|jar|parquet|pb|index)$' \
     | compat_xargs check_eof_newline
   return $((rc+$?))
 }
