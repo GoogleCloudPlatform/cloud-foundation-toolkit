@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2019-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@ module "projects_cleaner" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
   version = "~> 4.0"
 
-  job_schedule             = "17 * * * *"
-  max_project_age_in_hours = "6"
-  organization_id          = local.org_id
-  project_id               = module.cft-manager-project.project_id
-  region                   = local.region
-  target_excluded_labels   = local.exclude_labels
-  target_folder_id         = local.cleanup_folder
+  job_schedule                = "17 * * * *"
+  max_project_age_in_hours    = "6"
+  organization_id             = local.org_id
+  project_id                  = module.cft-manager-project.project_id
+  region                      = local.region
+  target_excluded_labels      = local.exclude_labels
+  target_folder_id            = local.cleanup_folder
+  clean_up_org_level_tag_keys = true
 }
