@@ -44,7 +44,7 @@ jobs:
           go-version-file: infra/module-swapper/go.mod
           cache-dependency-path: infra/module-swapper/go.sum
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@9d1e0624a798bb64f6c3cea93db47765312263dc # v5.1.0
+        uses: golangci/golangci-lint-action@a4f60bb28d35aeee14e6880718e0c85ff1882e64 # v6.0.1
         with:
           version: latest
           working-directory: 'infra/module-swapper'

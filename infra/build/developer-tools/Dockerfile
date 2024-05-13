@@ -45,6 +45,7 @@ RUN apk upgrade --no-cache && \
     python3-dev \
     musl-dev \
     openssh \
+    openssl \
     python3 \
     py-pip \
     ca-certificates \
