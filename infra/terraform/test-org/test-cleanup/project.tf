@@ -34,6 +34,8 @@ module "cft-manager-project" {
     "storage-api.googleapis.com",
     "serviceusage.googleapis.com",
     "storage-component.googleapis.com",
-    "appengine.googleapis.com"
+    "appengine.googleapis.com",
+    "securitycenter.googleapis.com",
+    "cloudasset.googleapis.com"
   ]
 }
