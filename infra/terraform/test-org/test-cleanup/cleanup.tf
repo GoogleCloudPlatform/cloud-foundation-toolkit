@@ -23,7 +23,7 @@ module "scheduler-app-engine" {
 
 module "projects_cleaner" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 4.0"
+  version = "~> 4.1"
 
   job_schedule                = "17 * * * *"
   max_project_age_in_hours    = "6"
@@ -33,4 +33,10 @@ module "projects_cleaner" {
   target_excluded_labels      = local.exclude_labels
   target_folder_id            = local.cleanup_folder
   clean_up_org_level_tag_keys = true
+
+  clean_up_org_level_cai_feeds = true
+  target_included_feeds        = [".*/feeds/fd-cai-monitoring-.*"]
+
+  clean_up_org_level_scc_notifications = true
+  target_included_scc_notifications    = [".*/notificationConfigs/scc-notify-.*"]
 }
