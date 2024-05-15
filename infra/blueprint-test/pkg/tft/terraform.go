@@ -360,11 +360,28 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 
 // GetStringOutputList returns TF output for a given key as list.
 // It fails test if given key does not output a primitive.
+//
+// Deprecated: Use GetJsonOutput instead.
 func (b *TFBlueprintTest) GetStringOutputList(name string) []string {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
 	return terraform.OutputList(b.t, b.GetTFOptions(), name)
+}
+
+// GetJsonOutput returns all TF output as gjson.Result.
+// It fails test on invalid JSON.
+func (b *TFBlueprintTest) GetJsonOutput() gjson.Result {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
+
+	jsonString := terraform.OutputJson(b.t, b.GetTFOptions(), "")
+	if !gjson.Valid(jsonString) {
+		b.t.Fatalf("Invalid JSON: %s", jsonString)
+	}
+
+	return gjson.Parse(jsonString)
 }
 
 // GetTFSetupOutputListVal returns TF output from setup for a given key as list.
