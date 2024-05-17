@@ -309,7 +309,7 @@ func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 		RetryableTerraformErrors: b.retryableTerraformErrors,
 		NoColor:                  true,
 	})
-	// Remove Default "rovider produced inconsistent result after apply" from RetryableTerraformErrors
+	// Remove Default "Provider produced inconsistent result after apply" from RetryableTerraformErrors
 	// Retrying these errors generally results in confusing already exist errors
 	delete(newOptions.RetryableTerraformErrors, ".*Provider produced inconsistent result after apply.*")
 	if b.maxRetries > 0 {
