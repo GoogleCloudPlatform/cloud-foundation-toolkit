@@ -458,7 +458,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Deploys SAP products"
       topics      = local.common_topics.compute
-      owners      = ["sjswerdlow"]
+      owners      = ["sjswerdlow", "megela"]
     },
     {
       name        = "terraform-google-scheduled-function"
