@@ -543,6 +543,10 @@ locals {
       org             = "terraform-google-modules"
       module          = false
       enable_periodic = true
+      lint_env = {
+        "ENABLE_PARALLEL"     = "1",
+        "TF_PLUGIN_CACHE_DIR" = ""
+      }
     },
     {
       short_name = "migrate"
