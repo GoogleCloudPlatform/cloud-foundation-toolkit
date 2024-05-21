@@ -69,4 +69,4 @@ jobs:
           find . -regextype posix-egrep -regex ".*/\.terraform" -prune -o -type f -name "*.tf" -print \
           | grep -v 'testdata' \
           | xargs -n1 dirname | sort -u \
-          | xargs -t -I {} bash -c 'cd {}; TFENV_TERRAFORM_VERSION=">=0.13.7" /tmp/.tfenv/bin/tfenv use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -backend=false >/dev/null; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform validate'
+          | xargs -t -I {} bash -c 'cd {}; /tmp/.tfenv/bin/tfenv use 0.13.7; /tmp/.tfenv/bin/tfenv use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -backend=false >/dev/null; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform validate'
