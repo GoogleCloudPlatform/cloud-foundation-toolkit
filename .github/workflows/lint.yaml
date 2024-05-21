@@ -56,12 +56,12 @@ jobs:
         id: cache-tfenv
         uses: actions/cache@v4
         with:
-          path: /.tfenv
+          path: .tfenv
           key: tfenv_${{ env.TFENV_VERSION }}
       - name: Download tfenv
         id: download-tfenv
         if: steps.cache-tfenv.outputs.cache-hit != 'true'
-        run: git clone --depth=1 --branch ${{ env.TFENV_VERSION }} https://github.com/tfutils/tfenv.git /.tfenv
+        run: git clone --depth=1 --branch ${{ env.TFENV_VERSION }} https://github.com/tfutils/tfenv.git .tfenv
       - name: Run lint-terraform-min-required
         run: |
           set -eou pipefail
@@ -69,4 +69,4 @@ jobs:
           find . -regextype posix-egrep -regex ".*/\.terraform" -prune -o -type f -name "*.tf" -print \
           | grep -v 'testdata' \
           | xargs -n1 dirname | sort -u \
-          | xargs -t -I {} bash -c 'cd {}; TFENV_TERRAFORM_VERSION="0.13.7" /.tfenv/bin/tfenv use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -backend=false >/dev/null; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform validate'
+          | xargs -t -I {} bash -c 'cd {}; TFENV_TERRAFORM_VERSION="0.13.7" .tfenv/bin/tfenv use min-required; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform init -backend=false >/dev/null; TF_PLUGIN_CACHE_DIR=/tmp/.terraform-cache terraform validate'
