@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.15.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.14.1...infra/blueprint-test/v0.15.0) (2024-05-20)
+
+
+### Features
+
+* **tft:** add GetJsonOutput() ([#2356](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2356)) ([1653110](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1653110c06d0f0802bc7dc51f0d835a721520018))
+* **tft:** log TF version ([#2323](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2323)) ([2a2857c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2a2857c3cbe822a1364f6234776f77bfc14bc2ea))
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/hashicorp/terraform-config-inspect to v0.0.0-20240509232506-4708120f8f30 ([#2344](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2344)) ([899a03c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/899a03ceeef77e4a767bdda09496e39fbbc29f38))
+* **deps:** update module github.com/hashicorp/terraform-json to v0.22.0 ([#2359](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2359)) ([63536b5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/63536b5979de707043ed890fe6d4d43d224480b3))
+* **deps:** update module github.com/hashicorp/terraform-json to v0.22.1 ([#2366](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2366)) ([f9684bb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f9684bbabece53d8744b2fb6fcc80778ff08f358))
+
 ## [0.14.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.14.0...infra/blueprint-test/v0.14.1) (2024-04-30)
 
 
