@@ -36,6 +36,7 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
+	"github.com/tidwall/gjson"
 )
 
 const (
@@ -259,7 +260,8 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		tft.setupOutputOverrides[k] = v
 	}
 
-	tft.logger.Logf(tft.t, "Running tests TF configs in %s", tft.tfDir)
+	tftVersion := gjson.Get(terraform.RunTerraformCommand(tft.t, tft.GetTFOptions(), "version", "-json"), "terraform_version")
+	tft.logger.Logf(tft.t, "Running tests TF configs in %s with version %s", tft.tfDir, tftVersion)
 	return tft
 }
 
@@ -358,11 +360,28 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 
 // GetStringOutputList returns TF output for a given key as list.
 // It fails test if given key does not output a primitive.
+//
+// Deprecated: Use GetJsonOutput instead.
 func (b *TFBlueprintTest) GetStringOutputList(name string) []string {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
 	return terraform.OutputList(b.t, b.GetTFOptions(), name)
+}
+
+// GetJsonOutput returns all TF output as gjson.Result.
+// It fails test on invalid JSON.
+func (b *TFBlueprintTest) GetJsonOutput() gjson.Result {
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
+
+	jsonString := terraform.OutputJson(b.t, b.GetTFOptions(), "")
+	if !gjson.Valid(jsonString) {
+		b.t.Fatalf("Invalid JSON: %s", jsonString)
+	}
+
+	return gjson.Parse(jsonString)
 }
 
 // GetTFSetupOutputListVal returns TF output from setup for a given key as list.
