@@ -61,7 +61,7 @@ jobs:
       - name: Download tfenv
         id: download-tfenv
         if: steps.cache-tfenv.outputs.cache-hit != 'true'
-        run: git clone --depth=1 --branch ${{ env.TFENV_VERSION }} https://github.com/tfutils/tfenv.git ~/.tfenv
+        run: git clone --depth=1 --branch ${{ env.TFENV_VERSION }} https://github.com/tfutils/tfenv.git .tfenv
       - name: Run lint-terraform-min-required
         run: |
           set -eou pipefail
