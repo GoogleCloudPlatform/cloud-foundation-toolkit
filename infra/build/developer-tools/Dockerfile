@@ -156,7 +156,6 @@ ADD ./build/home/.tflint.module.hcl /root/tflint/.tflint.module.hcl
 # Set TF cache dir
 ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
 RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
-RUN touch ${TF_PLUGIN_CACHE_DIR}/.empty
 
 # Add GO_PATH TO PATH
 ENV GO_PATH="/root/go"
