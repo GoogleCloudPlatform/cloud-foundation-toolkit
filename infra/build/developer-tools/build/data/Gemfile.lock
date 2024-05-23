@@ -457,7 +457,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2022.0105)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.5)
+    mini_portile2 (2.8.6)
     minitest (5.19.0)
     mixlib-config (3.0.27)
       tomlrb
@@ -488,7 +488,7 @@ GEM
     net-ssh-gateway (2.0.0)
       net-ssh (>= 4.0.0)
     netrc (0.11.0)
-    nokogiri (1.16.2)
+    nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     nori (2.6.0)
@@ -523,7 +523,8 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     retriable (3.1.2)
-    rexml (3.2.6)
+    rexml (3.2.8)
+      strscan (>= 3.0.9)
     rspec (3.11.0)
       rspec-core (~> 3.11.0)
       rspec-expectations (~> 3.11.0)
@@ -567,6 +568,7 @@ GEM
       unicode-display_width (>= 1.5, < 3.0)
       unicode_utils (~> 1.4)
     strings-ansi (0.2.0)
+    strscan (3.1.0)
     test-kitchen (3.5.0)
       bcrypt_pbkdf (~> 1.0)
       chef-utils (>= 16.4.35)
@@ -741,11 +743,11 @@ PLATFORMS
 DEPENDENCIES
   kitchen-terraform (~> 7.0)
   kubeclient (~> 4.11)
-  nokogiri (~> 1.15)
+  nokogiri (~> 1.16)
   rest-client (~> 2.1)
 
 RUBY VERSION
-   ruby 3.2.2p53
+   ruby 3.3.1p55
 
 BUNDLED WITH
-   2.2.33
+   2.5.10

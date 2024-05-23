@@ -16,6 +16,13 @@
       "component": "infra/module-swapper",
       "pull-request-title-pattern": "chore${scope}: release module-swapper ${version}",
       "bump-minor-pre-major": true
+    },
+    "tflint-ruleset-blueprint": {
+      "release-type": "go",
+      "package-name": "tflint-ruleset-blueprint",
+      "component": "tflint-ruleset-blueprint",
+      "pull-request-title-pattern": "chore${scope}: release tflint-ruleset-blueprint ${version}",
+      "bump-minor-pre-major": true
     }
   }
 }

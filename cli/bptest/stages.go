@@ -2,13 +2,14 @@ package bptest
 
 import "fmt"
 
-var stages = []string{"init", "apply", "verify", "teardown"}
+var stages = []string{"init", "plan", "apply", "verify", "teardown"}
 
 var stagesWithAlias = map[string][]string{
 	stages[0]: {"create"},
-	stages[1]: {"converge"},
-	stages[2]: {},
-	stages[3]: {"destroy"},
+	stages[1]: {},
+	stages[2]: {"converge"},
+	stages[3]: {},
+	stages[4]: {"destroy"},
 }
 
 // validateAndGetStage validates given stage and resolves to stage name if an alias is provided

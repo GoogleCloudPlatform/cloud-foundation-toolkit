@@ -103,5 +103,5 @@ resource "github_team_repository" "ci_teams" {
   }
   repository = each.value.repo
   team_id    = each.value.team
-  permission = "triage"
+  permission = "write"
 }

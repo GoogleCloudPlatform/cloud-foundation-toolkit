@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.15.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.14.1...infra/blueprint-test/v0.15.0) (2024-05-20)
+
+
+### Features
+
+* **tft:** add GetJsonOutput() ([#2356](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2356)) ([1653110](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1653110c06d0f0802bc7dc51f0d835a721520018))
+* **tft:** log TF version ([#2323](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2323)) ([2a2857c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2a2857c3cbe822a1364f6234776f77bfc14bc2ea))
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/hashicorp/terraform-config-inspect to v0.0.0-20240509232506-4708120f8f30 ([#2344](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2344)) ([899a03c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/899a03ceeef77e4a767bdda09496e39fbbc29f38))
+* **deps:** update module github.com/hashicorp/terraform-json to v0.22.0 ([#2359](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2359)) ([63536b5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/63536b5979de707043ed890fe6d4d43d224480b3))
+* **deps:** update module github.com/hashicorp/terraform-json to v0.22.1 ([#2366](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2366)) ([f9684bb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f9684bbabece53d8744b2fb6fcc80778ff08f358))
+
+## [0.14.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.14.0...infra/blueprint-test/v0.14.1) (2024-04-30)
+
+
+### Bug Fixes
+
+* **deps:** bump github.com/hashicorp/go-getter from 1.7.2 to 1.7.4 in /infra/blueprint-test ([#2298](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2298)) ([aefdf42](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/aefdf42631fe029cc3fee30a050a531ea15d9493))
+* **deps:** bump golang.org/x/net from 0.17.0 to 0.23.0 in /infra/blueprint-test ([#2272](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2272)) ([1dd1e00](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1dd1e008953eac31f78d15d5c996e983508deb2a))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.14 ([#2303](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2303)) ([d7bd472](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/d7bd472ca6e5179ce36b273addc03f7104c32cf4))
+* **deps:** update module github.com/hashicorp/terraform-json to v0.21.0 ([#2289](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2289)) ([77e37e6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/77e37e65c4e7b72b97f79ca7fd714e2dc38bf6cc))
+
 ## [0.14.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.13.2...infra/blueprint-test/v0.14.0) (2024-04-09)
 
 

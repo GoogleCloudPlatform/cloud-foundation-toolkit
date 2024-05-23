@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Google LLC
+ * Copyright 2019-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,31 @@
 
 module "scheduler-app-engine" {
   source      = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version     = "~> 14.0"
+  version     = "~> 15.0"
   location_id = local.app_location
   project_id  = module.cft-manager-project.project_id
 }
 
 module "projects_cleaner" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 3.0"
+  version = "~> 4.2"
 
-  job_schedule             = "17 * * * *"
-  max_project_age_in_hours = "6"
-  organization_id          = local.org_id
-  project_id               = module.cft-manager-project.project_id
-  region                   = local.region
-  target_excluded_labels   = local.exclude_labels
-  target_folder_id         = local.cleanup_folder
+  job_schedule                = "17 * * * *"
+  max_project_age_in_hours    = "6"
+  organization_id             = local.org_id
+  project_id                  = module.cft-manager-project.project_id
+  region                      = local.region
+  target_excluded_labels      = local.exclude_labels
+  target_folder_id            = local.cleanup_folder
+  clean_up_org_level_tag_keys = true
+
+  clean_up_org_level_cai_feeds = true
+  target_included_feeds        = [".*/feeds/fd-cai-monitoring-.*"]
+
+  clean_up_org_level_scc_notifications = true
+  target_included_scc_notifications    = [".*/notificationConfigs/scc-notify-.*"]
+
+  clean_up_billing_sinks = true
+  target_billing_sinks   = [".*/sinks/sk-c-logging-.*-billing-.*"]
+  billing_account        = local.billing_account
 }

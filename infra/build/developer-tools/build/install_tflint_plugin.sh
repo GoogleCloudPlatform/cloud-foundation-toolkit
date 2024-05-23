@@ -1,4 +1,5 @@
-# Copyright 2018-2023 Google LLC
+#! /bin/bash
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source 'https://rubygems.org/'
-gem "kitchen-terraform", "~> 7.0"
-gem "kubeclient", "~> 4.11"
-gem "rest-client", "~> 2.1"
-gem 'nokogiri', '~> 1.16'
-ruby '~> 3.3.1'
+set -e
+set -u
+
+mkdir -p /build/install_tflint_plugin
+cd /build/install_tflint_plugin
+
+TFLINT_BP_PLUGIN=$1
+wget -nv "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/releases/download/tflint-ruleset-blueprint%2Fv${TFLINT_BP_PLUGIN}/tflint-ruleset-blueprint_linux_amd64.zip"
+unzip -q tflint-ruleset-blueprint_linux_amd64.zip
+mkdir -p ~/.tflint.d/plugins
+install -o 0 -g 0 -m 0755 tflint-ruleset-blueprint ~/.tflint.d/plugins
+rm -rf /build/install_tflint_plugin

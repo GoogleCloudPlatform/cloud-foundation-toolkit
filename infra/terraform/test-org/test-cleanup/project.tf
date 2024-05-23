@@ -16,7 +16,7 @@
 
 module "cft-manager-project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 14.0"
+  version = "~> 15.0"
 
   name              = "cft-project-manager"
   random_project_id = true
@@ -34,6 +34,8 @@ module "cft-manager-project" {
     "storage-api.googleapis.com",
     "serviceusage.googleapis.com",
     "storage-component.googleapis.com",
-    "appengine.googleapis.com"
+    "appengine.googleapis.com",
+    "securitycenter.googleapis.com",
+    "cloudasset.googleapis.com"
   ]
 }

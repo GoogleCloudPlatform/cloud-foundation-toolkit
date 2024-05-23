@@ -29,9 +29,9 @@ var (
 	templateFiles          embed.FS
 	kitchenCFTStageMapping = map[string]string{
 		"create":   stages[0],
-		"converge": stages[1],
-		"verify":   stages[2],
-		"destroy":  stages[3],
+		"converge": stages[2],
+		"verify":   stages[3],
+		"destroy":  stages[4],
 	}
 )
 
