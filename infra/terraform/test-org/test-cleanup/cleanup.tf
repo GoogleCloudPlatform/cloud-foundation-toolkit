@@ -16,14 +16,14 @@
 
 module "scheduler-app-engine" {
   source      = "terraform-google-modules/project-factory/google//modules/app_engine"
-  version     = "~> 14.0"
+  version     = "~> 15.0"
   location_id = local.app_location
   project_id  = module.cft-manager-project.project_id
 }
 
 module "projects_cleaner" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 4.1"
+  version = "~> 4.2"
 
   job_schedule                = "17 * * * *"
   max_project_age_in_hours    = "6"
@@ -39,4 +39,8 @@ module "projects_cleaner" {
 
   clean_up_org_level_scc_notifications = true
   target_included_scc_notifications    = [".*/notificationConfigs/scc-notify-.*"]
+
+  clean_up_billing_sinks = true
+  target_billing_sinks   = [".*/sinks/sk-c-logging-.*-billing-.*"]
+  billing_account        = local.billing_account
 }
