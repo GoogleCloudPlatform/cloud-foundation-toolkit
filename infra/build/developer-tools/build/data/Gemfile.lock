@@ -743,11 +743,11 @@ PLATFORMS
 DEPENDENCIES
   kitchen-terraform (~> 7.0)
   kubeclient (~> 4.11)
-  nokogiri (~> 1.15)
+  nokogiri (~> 1.16)
   rest-client (~> 2.1)
 
 RUBY VERSION
-   ruby 3.2.2p53
+   ruby 3.3.1p55
 
 BUNDLED WITH
-   2.2.33
+   2.5.10

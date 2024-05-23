@@ -121,7 +121,7 @@ RUN /build/install_tflint_plugin.sh ${TFLINT_BP_PLUGIN}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN gem install bundler:2.4.19 && bundle install --retry=10
+RUN gem install bundler:2.5.10 && bundle install --retry=10
 
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
 RUN /build/install_verify_boilerplate.sh
