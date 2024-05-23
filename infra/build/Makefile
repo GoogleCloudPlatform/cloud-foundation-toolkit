@@ -41,7 +41,7 @@ KUBECTL_VERSION := 1.28.10
 # Updated by Update Tooling Workflow
 TFLINT_VERSION := 0.51.1
 TINKEY_VERSION := 1.7.0
-ALPINE_VERSION := 3.19
+ALPINE_VERSION := 3.20
 # Updated by Update Tooling Workflow
 MODULE_SWAPPER_VERSION := 0.4.6
 TFLINT_BP_PLUGIN := 0.1.0
