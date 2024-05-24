@@ -672,7 +672,7 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 	}
 }
 
-// rLockFn sets a read mutex lock, and returns the corresponding unlock function
+// rLockFn sets a read mutex lock, and returns the corresponding unlock function.
 func (b *TFBlueprintTest) rLockFn() func() {
 	if err := b.tftCacheMutex.RLock(); err != nil {
 		b.t.Fatalf("Could not acquire read lock:%v", err)
