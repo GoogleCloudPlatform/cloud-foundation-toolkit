@@ -58,7 +58,7 @@ resource "google_organization_iam_custom_role" "forseti-enforcer-writer" {
 resource "random_id" "prevent_destroy" {
   count = "${var.prevent_destroy ? 1 : 0}"
   byte_length = 8
-  keepers {
+  keepers = {
     viewer = "${google_organization_iam_custom_role.forseti-enforcer-viewer.role_id}"
     writer = "${google_organization_iam_custom_role.forseti-enforcer-writer.role_id}"
   }
