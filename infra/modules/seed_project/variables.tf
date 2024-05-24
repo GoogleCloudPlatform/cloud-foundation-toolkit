@@ -4,7 +4,7 @@ variable "username" {
 
 variable "owner_emails" {
   description = "A list of identities to add as owners on the project in the member format described here: https://cloud.google.com/iam/docs/overview#iam_policy"
-  type        = "list"
+  type        = list
 }
 
 variable "seed_project_services" {
@@ -22,7 +22,7 @@ variable "seed_project_services" {
     "serviceusage.googleapis.com",
   ]
 
-  type = "list"
+  type = list
 }
 
 variable "seed_project_roles" {
@@ -36,7 +36,7 @@ variable "seed_project_roles" {
     "roles/resourcemanager.projectIamAdmin",
   ]
 
-  type = "list"
+  type = list
 }
 
 variable "org_id" {
