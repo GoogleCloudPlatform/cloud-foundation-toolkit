@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/module-swapper
 
-go 1.21
+go 1.22
 
 require (
 	github.com/chainguard-dev/git-urls v1.0.2

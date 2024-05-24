@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
-go 1.21
+go 1.22
 
 require (
 	cloud.google.com/go/asset v1.19.1
