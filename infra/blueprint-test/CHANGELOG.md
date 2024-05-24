@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.15.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.15.0...infra/blueprint-test/v0.15.1) (2024-05-24)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.46.15 ([#2374](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2374)) ([79e086f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/79e086fd4ed37253c99b385c5a6d07746c82eefa))
+* **deps:** update module sigs.k8s.io/kustomize/kyaml to v0.17.1 ([#2372](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2372)) ([8210438](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/8210438fdb2ec2402b580469f4ebfa82572bca46))
+* **tft:** plumb GetJsonOutput() key ([#2385](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2385)) ([1b04124](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1b041242842549ee0f01c9de1fa0ff55b42793bb))
+
 ## [0.15.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.14.1...infra/blueprint-test/v0.15.0) (2024-05-20)
 
 
