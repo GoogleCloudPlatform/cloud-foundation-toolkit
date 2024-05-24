@@ -1,6 +1,8 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test
 
-go 1.21
+go 1.22
+
+toolchain go1.22.3
 
 require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
