@@ -48,7 +48,7 @@ TFLINT_BP_PLUGIN := 0.1.0
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
-GOLANGCI_VERSION := 1.58.2
+GOLANGCI_VERSION := 1.59.0
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
