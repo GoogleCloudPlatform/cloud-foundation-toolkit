@@ -65,6 +65,10 @@ locals {
       "group:${data.google_secret_manager_secret_version.ba-admin-2.secret_data}",
       "group:${local.billing_admin_group}",
     ],
+    "roles/logging.configWriter" : [
+      "serviceAccount:${local.project_cleaner}",
+      "user:${local.cft_admin}",
+    ],
     "roles/billing.user" : concat([
       "serviceAccount:${local.ci_gsuite_sa}",
     ], jsondecode(data.google_storage_bucket_object_content.ba-users.content))
