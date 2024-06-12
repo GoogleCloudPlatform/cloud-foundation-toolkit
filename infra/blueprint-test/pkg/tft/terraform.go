@@ -369,14 +369,15 @@ func (b *TFBlueprintTest) GetStringOutputList(name string) []string {
 	return terraform.OutputList(b.t, b.GetTFOptions(), name)
 }
 
-// GetJsonOutput returns all TF output as gjson.Result.
+// GetJsonOutput returns TF output for key as gjson.Result.
+// An empty string for key can be used to return all values
 // It fails test on invalid JSON.
-func (b *TFBlueprintTest) GetJsonOutput() gjson.Result {
+func (b *TFBlueprintTest) GetJsonOutput(key string) gjson.Result {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
 
-	jsonString := terraform.OutputJson(b.t, b.GetTFOptions(), "")
+	jsonString := terraform.OutputJson(b.t, b.GetTFOptions(), key)
 	if !gjson.Valid(jsonString) {
 		b.t.Fatalf("Invalid JSON: %s", jsonString)
 	}
@@ -672,7 +673,7 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 	}
 }
 
-// rLockFn sets a read mutex lock, and returns the corresponding unlock function
+// rLockFn sets a read mutex lock, and returns the corresponding unlock function.
 func (b *TFBlueprintTest) rLockFn() func() {
 	if err := b.tftCacheMutex.RLock(); err != nil {
 		b.t.Fatalf("Could not acquire read lock:%v", err)

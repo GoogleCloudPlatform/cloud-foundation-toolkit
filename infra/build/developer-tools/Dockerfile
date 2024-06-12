@@ -121,7 +121,7 @@ RUN /build/install_tflint_plugin.sh ${TFLINT_BP_PLUGIN}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN gem install bundler:2.4.19 && bundle install --retry=10
+RUN gem install bundler:2.5.10 && bundle install --retry=10
 
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
 RUN /build/install_verify_boilerplate.sh
@@ -156,7 +156,6 @@ ADD ./build/home/.tflint.module.hcl /root/tflint/.tflint.module.hcl
 # Set TF cache dir
 ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
 RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
-RUN touch ${TF_PLUGIN_CACHE_DIR}/.empty
 
 # Add GO_PATH TO PATH
 ENV GO_PATH="/root/go"
