@@ -14,7 +14,6 @@ require (
 	github.com/golang/protobuf v1.5.4
 	github.com/gomarkdown/markdown v0.0.0-20240419095408-642f0ee99ae2
 	github.com/google/go-cmp v0.6.0
-	github.com/google/go-github/v60 v60.0.0
 	github.com/google/go-github/v62 v62.0.0
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20240509232506-4708120f8f30
@@ -48,7 +47,6 @@ require (
 	cloud.google.com/go/accesscontextmanager v1.8.7 // indirect
 	cloud.google.com/go/auth v0.5.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
-	cloud.google.com/go/compute v1.27.0 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/iam v1.1.8 // indirect
 	cloud.google.com/go/longrunning v0.5.7 // indirect
@@ -185,7 +183,6 @@ require (
 	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20240528184218-531527333157 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240521202816-d264139d666e // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect
