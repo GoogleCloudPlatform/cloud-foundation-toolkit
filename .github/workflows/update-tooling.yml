@@ -34,6 +34,11 @@ jobs:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           ref: master
+      - uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Update Tools
         run: |
           PR_UPDATE_BODY=""
@@ -109,7 +114,7 @@ jobs:
         if: env.BUMP_IMG == 'true'
         uses: peter-evans/create-pull-request@6d6857d36972b65feb161a90e484f2984215f83e # v6.0.5
         with:
-          token: ${{ secrets.CFT_ROBOT_PAT }}
+          token: ${{ steps.generate-token.outputs.token }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
           committer: "Update Tooling Action <cloud-foundation-bot@google.com>"
           title: "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
