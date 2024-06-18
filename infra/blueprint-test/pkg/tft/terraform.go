@@ -370,7 +370,7 @@ func (b *TFBlueprintTest) GetStringOutputList(name string) []string {
 }
 
 // GetJsonOutput returns TF output for key as gjson.Result.
-// An empty string for key can be used to return all values
+// An empty string for key can be used to return all values.
 // It fails test on invalid JSON.
 func (b *TFBlueprintTest) GetJsonOutput(key string) gjson.Result {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
@@ -417,6 +417,31 @@ func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
 	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
+}
+
+// GetTFSetupJsonOutput returns TF setup output for a given key as gjson.Result.
+// An empty string for key can be used to return all values.
+// It fails test if given key does not output valid JSON or if setupDir is not configured.
+func (b *TFBlueprintTest) GetTFSetupJsonOutput(key string) gjson.Result {
+	if v, ok := b.setupOutputOverrides[key]; ok {
+		if !gjson.Valid(v.(string)) {
+			b.t.Fatalf("Invalid JSON in setup output override: %s", v)
+		}
+		return gjson.Parse(v.(string))
+	}
+	if b.setupDir == "" {
+		b.t.Fatal("Setup path not set")
+	}
+	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
+	rUnlockFn := b.rLockFn()
+	defer rUnlockFn()
+
+	jsonString := terraform.OutputJson(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
+	if !gjson.Valid(jsonString) {
+		b.t.Fatalf("Invalid JSON: %s", jsonString)
+	}
+
+	return gjson.Parse(jsonString)
 }
 
 // loadTFEnvVar adds new env variables prefixed with TF_VAR_ to an existing map of variables.
