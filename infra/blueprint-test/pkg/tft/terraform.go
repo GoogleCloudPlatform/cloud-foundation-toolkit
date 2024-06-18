@@ -425,7 +425,7 @@ func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
 func (b *TFBlueprintTest) GetTFSetupJsonOutput(key string) gjson.Result {
 	if v, ok := b.setupOutputOverrides[key]; ok {
 		if !gjson.Valid(v.(string)) {
-			b.t.Fatalf("Invalid JSON: %s", v)
+			b.t.Fatalf("Invalid JSON in setup output override: %s", v)
 		}
 		return gjson.Parse(v.(string))
 	}
