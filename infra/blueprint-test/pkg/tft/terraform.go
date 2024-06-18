@@ -421,7 +421,7 @@ func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
 
 // GetTFSetupJsonOutput returns TF setup output for a given key as gjson.Result.
 // An empty string for key can be used to return all values.
-// It fails test if given key does not output a primitive, if setupDir is not configured, or invalid JSON.
+// It fails test if given key does not output valid JSON or if setupDir is not configured.
 func (b *TFBlueprintTest) GetTFSetupJsonOutput(key string) gjson.Result {
 	if v, ok := b.setupOutputOverrides[key]; ok {
 		if !gjson.Valid(v.(string)) {
