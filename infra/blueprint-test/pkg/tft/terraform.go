@@ -81,6 +81,7 @@ type TFBlueprintTest struct {
 	teardown                      func(*assert.Assertions)                        // teardown function
 	setupOutputOverrides          map[string]interface{}                          // override outputs from the Setup phase
 	tftCacheMutex                 *filemutex.FileMutex                            // Mutex to protect Terraform plugin cache
+	parallelism                   int                                             // Set the parallelism setting for Terraform
 }
 
 type tftOption func(*TFBlueprintTest)
@@ -170,6 +171,12 @@ func WithSensitiveLogger(logger *logger.Logger) tftOption {
 func WithSetupOutputs(vars map[string]interface{}) tftOption {
 	return func(f *TFBlueprintTest) {
 		f.setupOutputOverrides = vars
+	}
+}
+
+func WithParallelism(p int) tftOption {
+	return func(f *TFBlueprintTest) {
+		f.parallelism = p
 	}
 }
 
@@ -308,6 +315,7 @@ func (b *TFBlueprintTest) GetTFOptions() *terraform.Options {
 		MigrateState:             b.migrateState,
 		RetryableTerraformErrors: b.retryableTerraformErrors,
 		NoColor:                  true,
+		Parallelism:              b.parallelism,
 	})
 	if b.maxRetries > 0 {
 		newOptions.MaxRetries = b.maxRetries
