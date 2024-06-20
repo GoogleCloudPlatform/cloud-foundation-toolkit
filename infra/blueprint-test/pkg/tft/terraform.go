@@ -176,7 +176,7 @@ func WithSetupOutputs(vars map[string]interface{}) tftOption {
 
 func WithParallelism(p int) tftOption {
 	return func(f *TFBlueprintTest) {
-		f.parallelism = vars
+		f.parallelism = p
 	}
 }
 
