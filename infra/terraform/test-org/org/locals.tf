@@ -850,6 +850,13 @@ locals {
       topics      = join(",", [local.common_topics.containers, local.common_topics.devtools])
     },
     {
+     name        = "terraform-google-bigtable"
+     org         = "GoogleCloudPlatform"
+     description = "Create and manage Google Bigtable resources"
+     owners      = ["hariprabhaam"]
+     topics      = local.common_topics.da
+     },
+    {
       name        = "terraform-google-secure-web-proxy"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Secure Web Proxy on GCP for secured egress web traffic"
