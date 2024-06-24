@@ -349,6 +349,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates self-hosted GitHub Actions Runners on Google Cloud"
       topics      = local.common_topics.devtools
+      owners      = ["gtsorbo"]
     },
     {
       name        = "terraform-google-gke-gitlab"
