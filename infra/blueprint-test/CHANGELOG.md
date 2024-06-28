@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.16.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.15.1...infra/blueprint-test/v0.16.0) (2024-06-28)
+
+
+### Features
+
+* **tft:** add GetTFSetupJsonOutput() ([#2423](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2423)) ([1e7bc1b](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1e7bc1b9c06f9da264226d9baba735636a05e82d))
+* **tft:** add WithParallelism() ([#2424](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2424)) ([7167d4e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/7167d4e03b82a65db0bc94a4ad91ef42edb6cb2d))
+
+
+### Bug Fixes
+
+* **deps:** bump github.com/hashicorp/go-getter from 1.7.4 to 1.7.5 in /infra/blueprint-test ([#2434](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2434)) ([6b104e4](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6b104e41844353a18524380786b92947665ec915))
+* **deps:** update dependency go to v1.22.4 ([#2412](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2412)) ([46b82dc](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/46b82dcf73fb1e5d9ea1399c67d08797bffbe0e0))
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to 271db41 ([#2411](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2411)) ([e1eb0d1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e1eb0d173381e72d4e5a00ed09121509a73b59fc))
+* **deps:** update module golang.org/x/mod to v0.18.0 ([#2403](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2403)) ([eaef7c8](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/eaef7c8711097c1b65bcdeb6356f1ee4140f13b8))
+
 ## [0.15.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.15.0...infra/blueprint-test/v0.15.1) (2024-05-24)
 
 
