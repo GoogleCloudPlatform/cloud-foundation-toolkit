@@ -15,7 +15,7 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20240419095408-642f0ee99ae2
 	github.com/google/go-cmp v0.6.0
 	github.com/google/go-github/v62 v62.0.0
-	github.com/hashicorp/hcl/v2 v2.20.1
+	github.com/hashicorp/hcl/v2 v2.21.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20240607080351-271db412dbcb
 	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/log15 v2.16.0+incompatible
@@ -36,14 +36,14 @@ require (
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/oauth2 v0.21.0
 	golang.org/x/text v0.16.0
-	google.golang.org/api v0.184.0
+	google.golang.org/api v0.185.0
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v3 v3.0.1
 	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
-	cloud.google.com/go v0.114.0 // indirect
+	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/accesscontextmanager v1.8.7 // indirect
 	cloud.google.com/go/auth v0.5.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
@@ -183,9 +183,9 @@ require (
 	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
-	google.golang.org/genproto v0.0.0-20240604185151-ef581f913117 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240604185151-ef581f913117 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240604185151-ef581f913117 // indirect
+	google.golang.org/genproto v0.0.0-20240617180043-68d350f18fd4 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240610135401-a8a62080eff3 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240617180043-68d350f18fd4 // indirect
 	google.golang.org/grpc v1.64.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
