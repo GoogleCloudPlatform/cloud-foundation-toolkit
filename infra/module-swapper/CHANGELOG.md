@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.6...infra/module-swapper/v0.4.7) (2024-06-28)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/hashicorp/hcl/v2 to v2.21.0 ([#2435](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2435)) ([83ae0c8](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/83ae0c8f323edd7985a1267529fbb17877803f66))
+
 ## [0.4.6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.5...infra/module-swapper/v0.4.6) (2024-04-22)
 
 
