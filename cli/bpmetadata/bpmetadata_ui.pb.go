@@ -935,6 +935,7 @@ func (x *DisplayOutput) GetVisibility() DisplayOutput_Visibility {
 }
 
 // Alternate default value.
+// This allows authors to define an alternative value for pre identified usecases such as security.
 // Gen: manually-authored.
 type DisplayVariable_AlternateDefault struct {
 	state         protoimpl.MessageState
