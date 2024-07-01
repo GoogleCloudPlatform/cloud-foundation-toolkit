@@ -129,6 +129,7 @@ message DisplayVariable {
   string boolean_group = 20; // @gotags: json:"booleanGroup,omitempty" yaml:"booleanGroup,omitempty"
 
   // Alternate default value.
+  // This allows authors to define an alternative value for pre identified usecases such as security.
   // Gen: manually-authored.
   message AlternateDefault {
     // Type of the alternate default.

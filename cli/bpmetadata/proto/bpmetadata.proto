@@ -469,6 +469,8 @@ message BlueprintVariable {
   google.protobuf.Value default_value = 4; // @gotags: json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"
   bool required = 5; // @gotags: json:"required,omitempty" yaml:"required,omitempty"
   // Incoming connections to this variable.
+  // Connections are outputs from other blueprints that can be potentially
+  // connected to this variable.
   // Gen: manually-authored.
   repeated BlueprintConnection connections = 6; // @gotags: json:"connections,omitempty" yaml:"connections,omitempty"
 }
