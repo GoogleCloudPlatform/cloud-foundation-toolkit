@@ -192,6 +192,21 @@ message BlueprintRequirements {
   // Gen: auto-generated - all services required for the blueprint in test/setup/main.tf
   // as "activate_apis" in the project module.
   repeated string services = 2; // @gotags: json:"services,omitempty" yaml:"services,omitempty"
+
+  // Required provider versions.
+  // Gen: auto-generated from required providers block.
+  repeated ProviderVersion provider_versions = 3; // @gotags: json:"versions,omitempty" yaml:"providerVersions,omitempty"
+}
+
+// ProviderVersion defines the required version for a provider.
+message ProviderVersion {
+  // Provider source of form [hostname]/namespace/name.
+  // Hostname is optional defaulting to Terraform registry.
+  // Gen: auto-generated from required providers block.
+  string source = 1; // @gotags: json:"source,omitempty" yaml:"source,omitempty"
+  // Version constraint string.
+  // Gen: auto-generated from required providers block.
+  string version = 2; // @gotags: json:"version,omitempty" yaml:"version,omitempty"
 }
 
 // BlueprintUI is the top-level structure for holding UI specific metadata.
@@ -453,6 +468,45 @@ message BlueprintVariable {
   string var_type = 3; // @gotags: json:"varType,omitempty" yaml:"varType,omitempty"
   google.protobuf.Value default_value = 4; // @gotags: json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"
   bool required = 5; // @gotags: json:"required,omitempty" yaml:"required,omitempty"
+  // Incoming connections to this variable.
+  // Connections are outputs from other blueprints that can be potentially
+  // connected to this variable.
+  // Gen: manually-authored.
+  repeated BlueprintConnection connections = 6; // @gotags: json:"connections,omitempty" yaml:"connections,omitempty"
+}
+
+// Defines an incoming connection from a blueprint.
+message BlueprintConnection {
+  // Source of the connection.
+  // Gen: manually-authored.
+  ConnectionSource source = 1; // @gotags: json:"source,omitempty" yaml:"source,omitempty"
+  // Connection specifications.
+  // Gen: manually-authored.
+  ConnectionSpec spec = 2; // @gotags: json:"spec,omitempty" yaml:"spec,omitempty"
+}
+
+// Defines the source of a connection.
+message ConnectionSource {
+  // Source of the connection. Defined using the same format as module source
+  // of form [hostname]/namespace/name/provider for registry references and
+  // unprefixed github.com URLs for github references.
+  // Gen: manually-authored.
+  string source = 1; // @gotags: json:"source,omitempty" yaml:"source,omitempty"
+  // Version constraint syntax using the same format as module version
+  // constraints.
+  // Gen: manually-authored.
+  string version = 2; // @gotags: json:"version,omitempty" yaml:"version,omitempty"
+}
+
+// Defines the specifications of a connection.
+message ConnectionSpec {
+  // Output expression identifying output being connected to variable.
+  // This can be the output name or more complex expression like attribuite notation.
+  // Gen: manually-authored.
+  string output_expr = 1; // @gotags: json:"outputExpr,omitempty" yaml:"outputExpr,omitempty"
+  // Optional dot separated attribuite notation to connect to a specific object field of the input variable.
+  // Gen: manually-authored.
+  optional string input_path = 2; // @gotags: json:"inputPath,omitempty" yaml:"inputPath,omitempty"
 }
 
 // BlueprintVariableGroup is manually entered.
@@ -465,6 +519,10 @@ message BlueprintVariableGroup {
 message BlueprintOutput {
   string name = 1; // @gotags: json:"name" yaml:"name"
   string description = 2; // @gotags: json:"description,omitempty" yaml:"description,omitempty"
+  // Serialized type representation of the output value.
+  // Gen: manually-authored but will be automated in the future.
+  optional google.protobuf.Value type = 3; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
+
 }
 
 message BlueprintRoles {
