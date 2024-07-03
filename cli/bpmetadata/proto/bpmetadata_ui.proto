@@ -130,6 +130,7 @@ message DisplayVariable {
 
   // Alternate default value.
   // This allows authors to define an alternative value for pre identified usecases such as security.
+  // If specified, this value can be used instead of the default value in BlueprintVariable.
   // Gen: manually-authored.
   message AlternateDefault {
     // Type of the alternate default.
