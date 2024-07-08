@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package google.cloud.config.bpmetadata;
 
+import "google/protobuf/struct.proto";
 import "bpmetadata_ui_ext.proto";
 
 // TODO: update copybara configuration for go to java package transformation
@@ -126,6 +127,24 @@ message DisplayVariable {
   // Optional.
   // Gen: manually-authored
   string boolean_group = 20; // @gotags: json:"booleanGroup,omitempty" yaml:"booleanGroup,omitempty"
+
+  // Alternate default value.
+  // This allows authors to define an alternative value for pre identified usecases such as security.
+  // If specified, this value can be used instead of the default value in BlueprintVariable.
+  // Gen: manually-authored.
+  message AlternateDefault {
+    // Type of the alternate default.
+    enum AlternateType {
+      // Default
+      ALTERNATE_TYPE_UNSPECIFIED = 0;
+      // A more secure default.
+      ALTERNATE_TYPE_SECURITY = 1;
+    }
+    AlternateType type = 1;  // @gotags: json:"type,omitempty" yaml:"type,omitempty"
+    // Value of the alternate default.
+    google.protobuf.Value value = 2; // @gotags: json:"value,omitempty" yaml:"value,omitempty"
+  }
+  repeated AlternateDefault alt_defaults = 21; // @gotags: json:"altDefaults,omitempty" yaml:"altDefaults,omitempty"
 }
 
 message ValueLabel {
@@ -248,4 +267,14 @@ message DisplayOutput {
   // label to display on the Output action button
   // Gen: manually-authored
   string label = 3; // @gotags: json:"label,omitempty" yaml:"label,omitEmpty"
+
+  // Visibility defines how the output is exposed.
+  // Gen: manually-authored.
+  enum Visibility {
+    // Default
+    VISIBILITY_UNSPECIFIED = 0;
+    // Expose output as root module output.
+    VISIBILITY_ROOT = 1;
+  }
+  Visibility visibility = 4;  // @gotags: json:"visibility,omitempty" yaml:"visibility,omitEmpty"
 }
