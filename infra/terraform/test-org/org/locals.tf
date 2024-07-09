@@ -642,7 +642,7 @@ locals {
       description     = "Deploy a multizone Java application"
       owners          = ["donmccasland"]
       groups          = [local.jss_common_group]
-      enable_periodic = true
+      enable_periodic = false
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
