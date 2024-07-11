@@ -629,7 +629,7 @@ locals {
       description     = "Deploy a dynamic javascript webapp"
       owners          = ["lukeschlangen", "donmccasland"]
       homepage_url    = "avocano.dev"
-      groups          = [local.jss_common_group, "team-egg"]
+      groups          = [local.jss_common_group, "team-egg", "developer-journey-app-approvers"]
       enable_periodic = true
       lint_env = {
         ENABLE_BPMETADATA = "1"
