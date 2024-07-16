@@ -51,6 +51,12 @@ func GenerateSchema() ([]byte, error) {
 	if defExists {
 		vDef.Properties.Set("defaultValue", jsonschema.TrueSchema)
 	}
+	// JSON schema seems to infer google.protobuf.Value as object type
+	// so we use the same workaround as above.
+	oDef, defExists := s.Definitions["BlueprintOutput"]
+	if defExists {
+		oDef.Properties.Set("type", jsonschema.TrueSchema)
+	}
 
 	sData, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {

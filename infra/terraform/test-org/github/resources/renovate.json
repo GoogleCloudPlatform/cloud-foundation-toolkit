@@ -47,6 +47,7 @@
     },
     {
       "matchManagers": ["regex", "gomod"],
+      "matchFileNames": ["!(modules/**)"],
       "groupName": "go modules and/or dev-tools"
     },
     {
