@@ -616,7 +616,7 @@ locals {
       description     = "Deploy a dynamic python webapp"
       owners          = ["glasnt", "donmccasland"]
       homepage_url    = "avocano.dev"
-      groups          = [local.jss_common_group, "torus-dpe"]
+      groups          = [local.jss_common_group, "team-egg"]
       enable_periodic = true
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -627,9 +627,9 @@ locals {
       short_name      = "dynamic-javascript-webapp"
       org             = "GoogleCloudPlatform"
       description     = "Deploy a dynamic javascript webapp"
-      owners          = ["glasnt", "donmccasland"]
+      owners          = ["lukeschlangen", "donmccasland"]
       homepage_url    = "avocano.dev"
-      groups          = [local.jss_common_group, "torus-dpe"]
+      groups          = [local.jss_common_group, "team-egg", "developer-journey-app-approvers"]
       enable_periodic = true
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -767,7 +767,7 @@ locals {
       short_name      = "cloud-deployment-gce"
       org             = "GoogleCloudPlatform"
       description     = "Deploy a change to a live stateful service (Java on GCE)"
-      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      groups          = ["team-egg", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
       enable_periodic = true
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -778,7 +778,7 @@ locals {
       short_name      = "cloud-deployment-gke"
       org             = "GoogleCloudPlatform"
       description     = "Deploy a change to a live stateful service (Go on GKE)"
-      groups          = ["torus-dpe", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
+      groups          = ["team-egg", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
       enable_periodic = true
       lint_env = {
         ENABLE_BPMETADATA = "1"
