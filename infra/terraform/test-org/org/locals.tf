@@ -280,6 +280,7 @@ locals {
       description = "Manages Cloud Logging and Cloud Monitoring"
       topics      = local.common_topics.ops
       owners      = ["imrannayer"]
+      groups      = ["stackdriver-committers"]
     },
     {
       name        = "terraform-google-cloud-router"
