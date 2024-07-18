@@ -32,13 +32,13 @@
     },
     {
       "matchDepTypes": ["require"],
-      "postUpdateOptions": ["gomodTidy"],
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"],
       "groupName": "GO modules"
     },
     {
       "matchPackageNames": ["go"],
       "allowedVersions": "1.22",
-      "postUpdateOptions": ["gomodTidy"]
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     }
   ],
   "regexManagers": [
