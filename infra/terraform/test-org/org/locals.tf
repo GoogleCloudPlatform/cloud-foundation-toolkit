@@ -823,12 +823,11 @@ locals {
       topics      = local.common_topics.da
     },
     {
-      name            = "terraform-google-enterprise-application"
-      org             = "GoogleCloudPlatform"
-      description     = "Deploy an enterprise developer platform on Google Cloud"
-      owners          = ["gtsorbo", "erictune", "yliaog", "sleighton2022", "apeabody"]
-      topics          = join(",", [local.common_topics.e2e, local.common_topics.ops])
-      enable_periodic = true
+      name        = "terraform-google-enterprise-application"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy an enterprise developer platform on Google Cloud"
+      owners      = ["gtsorbo", "erictune", "yliaog", "sleighton2022", "apeabody"]
+      topics      = join(",", [local.common_topics.e2e, local.common_topics.ops])
     },
     {
       name            = "terraform-genai-rag"
