@@ -3,7 +3,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 go 1.22
 
 require (
-	cloud.google.com/go/asset v1.19.3
+	cloud.google.com/go/asset v1.19.4
 	cloud.google.com/go/storage v1.43.0
 	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.16.0
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
@@ -14,7 +14,7 @@ require (
 	github.com/golang/protobuf v1.5.4
 	github.com/gomarkdown/markdown v0.0.0-20240626202925-2eda941fd024
 	github.com/google/go-cmp v0.6.0
-	github.com/google/go-github/v62 v62.0.0
+	github.com/google/go-github/v63 v63.0.0
 	github.com/hashicorp/hcl/v2 v2.21.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20240701073647-9fc3669f7553
 	github.com/iancoleman/strcase v0.3.0
