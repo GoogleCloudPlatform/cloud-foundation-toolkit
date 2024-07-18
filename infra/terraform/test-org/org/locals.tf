@@ -828,7 +828,6 @@ locals {
       description     = "Deploy an enterprise developer platform on Google Cloud"
       owners          = ["gtsorbo", "erictune", "yliaog", "sleighton2022", "apeabody"]
       topics          = join(",", [local.common_topics.e2e, local.common_topics.ops])
-      enable_periodic = true
     },
     {
       name            = "terraform-genai-rag"
