@@ -36,14 +36,14 @@
     },
     {
       "matchManagers": ["gomod"],
-      "postUpdateOptions": ["gomodTidy"]
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     },
     {
       "matchManagers": ["gomod"],
       "matchDatasources": ["golang-version"],
       "rangeStrategy": "replace",
       "allowedVersions": "1.22",
-      "postUpdateOptions": ["gomodTidy"]
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     },
     {
       "matchManagers": ["regex", "gomod"],
