@@ -23,7 +23,7 @@ module "scheduler-app-engine" {
 
 module "projects_cleaner" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 4.2"
+  version = "~> 4.3"
 
   job_schedule                = "17 * * * *"
   max_project_age_in_hours    = "6"
