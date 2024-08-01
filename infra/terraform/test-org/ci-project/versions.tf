@@ -22,10 +22,10 @@ terraform {
       version = "~> 6.0"
     }
     google = {
-      version = ">= 3.39, < 6"
+      version = ">= 5.26, < 6"
     }
     google-beta = {
-      version = ">= 3.39, < 6"
+      version = ">= 5.26, < 6"
     }
   }
 }
