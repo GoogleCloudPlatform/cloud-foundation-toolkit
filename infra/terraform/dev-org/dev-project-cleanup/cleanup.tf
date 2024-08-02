@@ -23,7 +23,7 @@ module "app-engine" {
 
 module "projects_cleanup" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   job_schedule             = "17 * * * *"
   max_project_age_in_hours = "24"
@@ -32,4 +32,5 @@ module "projects_cleanup" {
   region                   = local.region
   target_excluded_labels   = local.exclude_labels
   target_folder_id         = local.cleanup_folder
+  function_docker_registry = "ARTIFACT_REGISTRY"
 }
