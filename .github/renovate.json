@@ -7,6 +7,7 @@
     "helpers:pinGitHubActionDigests"
   ],
   "minimumReleaseAge": "7 days",
+  "ignorePaths": ["tflint-ruleset-blueprint/rules/testdata/**"],
   "labels": ["dependencies"],
   "vulnerabilityAlerts": {
     "labels": ["type:security"],
