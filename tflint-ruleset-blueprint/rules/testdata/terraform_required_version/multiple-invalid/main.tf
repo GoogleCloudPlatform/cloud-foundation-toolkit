@@ -23,11 +23,11 @@ terraform {
 }
 
 terraform {
-  required_version = "=0.13.0"
+  required_version = "1.9.3"
 }
 
 terraform {
-  required_version = "0.13.0"
+  required_version = "1.9.3"
 }
 
 terraform {
@@ -43,5 +43,5 @@ terraform {
 }
 
 terraform {
-  required_version = "~>0.13.0"
+  required_version = "~> 1.9.0"
 }
