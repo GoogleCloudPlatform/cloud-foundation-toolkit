@@ -892,5 +892,11 @@ locals {
       groups      = [local.jss_common_group]
       owners      = ["fellipeamedeiros", "sylvioneto"]
     },
+    {
+      name        = "terraform-google-apphub"
+      org         = "GoogleCloudPlatform"
+      description = "Creates and manages AppHub resources"
+      owners      = ["bharathkkb", "q2w"]
+    },
   ]
 }
