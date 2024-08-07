@@ -73,6 +73,18 @@
         "pageUrl"
       ]
     },
+    "BlueprintConnection": {
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/ConnectionSource"
+        },
+        "spec": {
+          "$ref": "#/$defs/ConnectionSpec"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "BlueprintContent": {
       "properties": {
         "architecture": {
@@ -357,7 +369,8 @@
         },
         "description": {
           "type": "string"
-        }
+        },
+        "type": true
       },
       "additionalProperties": false,
       "type": "object",
@@ -424,6 +437,12 @@
         "services": {
           "items": {
             "type": "string"
+          },
+          "type": "array"
+        },
+        "versions": {
+          "items": {
+            "$ref": "#/$defs/ProviderVersion"
           },
           "type": "array"
         }
@@ -597,6 +616,12 @@
         "defaultValue": true,
         "required": {
           "type": "boolean"
+        },
+        "connections": {
+          "items": {
+            "$ref": "#/$defs/BlueprintConnection"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -645,6 +670,30 @@
         "title"
       ]
     },
+    "ConnectionSource": {
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ConnectionSpec": {
+      "properties": {
+        "outputExpr": {
+          "type": "string"
+        },
+        "inputPath": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "DisplayOutput": {
       "properties": {
         "openInNewTab": {
@@ -655,6 +704,16 @@
         },
         "label": {
           "type": "string"
+        },
+        "visibility": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ]
         }
       },
       "additionalProperties": false,
@@ -745,6 +804,12 @@
         },
         "booleanGroup": {
           "type": "string"
+        },
+        "altDefaults": {
+          "items": {
+            "$ref": "#/$defs/DisplayVariable_AlternateDefault"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -753,6 +818,25 @@
         "name",
         "title"
       ]
+    },
+    "DisplayVariable_AlternateDefault": {
+      "properties": {
+        "type": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ]
+        },
+        "value": {
+          "$ref": "#/$defs/Value"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "GCEDiskSizeExtension": {
       "properties": {
@@ -1059,6 +1143,18 @@
       "required": [
         "roles"
       ]
+    },
+    "ProviderVersion": {
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "ResourceTypeMeta": {
       "properties": {

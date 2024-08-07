@@ -7,6 +7,7 @@
     "helpers:pinGitHubActionDigests"
   ],
   "minimumReleaseAge": "7 days",
+  "ignorePaths": ["tflint-ruleset-blueprint/rules/testdata/**"],
   "labels": ["dependencies"],
   "vulnerabilityAlerts": {
     "labels": ["type:security"],
@@ -32,13 +33,13 @@
     },
     {
       "matchDepTypes": ["require"],
-      "postUpdateOptions": ["gomodTidy"],
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"],
       "groupName": "GO modules"
     },
     {
       "matchPackageNames": ["go"],
       "allowedVersions": "1.22",
-      "postUpdateOptions": ["gomodTidy"]
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     }
   ],
   "regexManagers": [

@@ -1,9 +1,9 @@
-go 1.22
+go 1.22.2
 
 use (
-  ./cli
-  ./infra/blueprint-test
-  ./infra/module-swapper
-  ./infra/utils/fbf
-  ./tflint-ruleset-blueprint
+	./cli
+	./infra/blueprint-test
+	./infra/module-swapper
+	./infra/utils/fbf
+	./tflint-ruleset-blueprint
 )

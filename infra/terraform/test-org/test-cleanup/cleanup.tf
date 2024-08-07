@@ -23,7 +23,7 @@ module "scheduler-app-engine" {
 
 module "projects_cleaner" {
   source  = "terraform-google-modules/scheduled-function/google//modules/project_cleanup"
-  version = "~> 4.2"
+  version = "~> 4.3"
 
   job_schedule                = "17 * * * *"
   max_project_age_in_hours    = "6"
@@ -40,7 +40,8 @@ module "projects_cleaner" {
   clean_up_org_level_scc_notifications = true
   target_included_scc_notifications    = [".*/notificationConfigs/scc-notify-.*"]
 
-  clean_up_billing_sinks = true
-  target_billing_sinks   = [".*/sinks/sk-c-logging-.*-billing-.*"]
-  billing_account        = local.billing_account
+  clean_up_billing_sinks   = true
+  target_billing_sinks     = [".*/sinks/sk-c-logging-.*-billing-.*"]
+  billing_account          = local.billing_account
+  function_docker_registry = "ARTIFACT_REGISTRY"
 }

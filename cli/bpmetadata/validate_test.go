@@ -28,6 +28,11 @@ func TestValidateMetadata(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "valid metadata with connections",
+			path:    "valid-metadata-connections.yaml",
+			wantErr: false,
+		},
+		{
 			name:    "invalid metadata - title missing",
 			path:    "invalid-metadata.yaml",
 			wantErr: true,
