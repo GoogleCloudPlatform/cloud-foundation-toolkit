@@ -29,6 +29,7 @@ const (
 	tfVersionsFileName      = "versions.tf"
 	tfRolesFileName         = "test/setup/iam.tf"
 	tfServicesFileName      = "test/setup/main.tf"
+	tfVersionsFileName      = "test/setup/versions.tf"
 	iconFilePath            = "assets/icon.png"
 	modulesPath             = "modules/"
 	examplesPath            = "examples"
