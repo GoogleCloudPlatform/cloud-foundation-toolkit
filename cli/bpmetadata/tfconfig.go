@@ -53,6 +53,23 @@ var metaSchema = &hcl.BodySchema{
 	},
 }
 
+var requiredProvidersSchema = &hcl.BodySchema{
+	Blocks: []hcl.BlockHeaderSchema{
+		{
+			Type:       "required_providers",
+			LabelNames: []string{"provider"},
+		},
+	},
+	Attributes: []hcl.AttributeSchema{
+		{
+			Name: "source",
+		},
+		{
+			Name: "version",
+		},
+	},
+}
+
 var metaBlockSchema = &hcl.BodySchema{
 	Attributes: []hcl.AttributeSchema{
 		{
@@ -188,6 +205,78 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 	return "", nil
 }
 
+// parseBlueprintProviderVersions gets the blueprint provider_versions from the provided config
+// from the provider_meta block
+func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersions, error) {
+	var v []*ProviderVersions
+	//re := regexp.MustCompile(versionRegEx)
+	//// PartialContent() returns TF content containing blocks and attributes
+	//// based on the provided schema
+	//rootContent, _, rootContentDiags := versionsFile.Body.PartialContent(rootSchema)
+	//diags = append(diags, rootContentDiags...)
+	//err := hasHclErrors(diags)
+	//if err != nil {
+	//return "", err
+	//}
+
+	//// based on the content returned, iterate through blocks and look for
+	//// the terraform block specfically
+	//for _, rootBlock := range rootContent.Blocks {
+	//if rootBlock.Type != "terraform" {
+	//continue
+	//}
+
+	//// do a PartialContent() call again but now for the provider_meta block
+	//// within the terraform block
+	//tfContent, _, tfContentDiags := rootBlock.Body.PartialContent(metaSchema)
+	//diags = append(diags, tfContentDiags...)
+	//err := hasHclErrors(diags)
+	//if err != nil {
+	//return "", err
+	//}
+
+	//for _, tfContentBlock := range tfContent.Blocks {
+	//if tfContentBlock.Type != "provider_meta" {
+	//continue
+	//}
+
+	//// this PartialContent() call with get the module_name attribute
+	//// that contains the version info
+	//metaContent, _, metaContentDiags := tfContentBlock.Body.PartialContent(metaBlockSchema)
+	//diags = append(diags, metaContentDiags...)
+	//err := hasHclErrors(diags)
+	//if err != nil {
+	//return "", err
+	//}
+
+	//versionAttr, defined := metaContent.Attributes["module_name"]
+	//if !defined {
+	//return "", fmt.Errorf("module_name not defined for provider_meta")
+	//}
+
+	//// get the module name from the version attribute and extract the
+	//// version name only
+	//var modName string
+	//diags := gohcl.DecodeExpression(versionAttr.Expr, nil, &modName)
+	//err = hasHclErrors(diags)
+	//if err != nil {
+	//return "", err
+	//}
+
+	//m := re.FindStringSubmatch(modName)
+	//if len(m) > 0 {
+	//return m[len(m)-1], nil
+	//}
+
+	//return "", nil
+	//}
+
+	//break
+	//}
+
+	//return "", nil
+}
+
 // getBlueprintInterfaces gets the variables and outputs associated
 // with the blueprint
 func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
@@ -279,22 +368,23 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	return &BlueprintRequirements{
-		Roles:    r,
-		Services: s,
-	}, nil
-
 	//parse blueprint provider versions
-	providerVersionsFile, diags = p.ParseHCLFile(versionsConfigPath)
-	err := hasHclErrors(diags)
+	versionsFile, diags := p.ParseHCLFile(versionsConfigPath)
+	err = hasHclErrors(diags)
 	if err != nil {
 		return nil, err
 	}
 
-	v, err := parseBlueprintVersion(versionsConfigPath)
+	v, err := parseBlueprintVersion(versionsFile, diags)
 	if err != nil {
 		return nil, err
 	}
+
+	return &BlueprintRequirements{
+		Roles:            r,
+		Services:         s,
+		ProviderVersions: v,
+	}, nil
 }
 
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
