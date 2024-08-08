@@ -19,8 +19,8 @@ set -u
 mkdir -p /build/install_tflint_plugin
 cd /build/install_tflint_plugin
 
-TFLINT_BP_PLUGIN=$1
-wget -nv "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/releases/download/tflint-ruleset-blueprint%2Fv${TFLINT_BP_PLUGIN}/tflint-ruleset-blueprint_linux_amd64.zip"
+TFLINT_BP_PLUGIN_VERSION=$1
+wget -nv "https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/releases/download/tflint-ruleset-blueprint%2Fv${TFLINT_BP_PLUGIN_VERSION}/tflint-ruleset-blueprint_linux_amd64.zip"
 unzip -q tflint-ruleset-blueprint_linux_amd64.zip
 mkdir -p ~/.tflint.d/plugins
 install -o 0 -g 0 -m 0755 tflint-ruleset-blueprint ~/.tflint.d/plugins
