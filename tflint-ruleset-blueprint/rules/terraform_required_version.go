@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/terraform-linters/tflint-plugin-sdk/hclext"
+	"github.com/terraform-linters/tflint-plugin-sdk/logger"
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
@@ -63,19 +64,19 @@ func (r *TerraformRequiredVersion) Check(runner tflint.Runner) error {
 	if config.MinVersion != "" {
 		if _, err := version.NewSemver(config.MinVersion); err != nil {
 			return err
-		} else {
-			minVersion = config.MinVersion
 		}
+		minVersion = config.MinVersion
 	}
 
 	maxVersion := maximumTerraformRequiredVersion
 	if config.MaxVersion != "" {
 		if _, err := version.NewSemver(config.MaxVersion); err != nil {
 			return err
-		} else {
-			maxVersion = config.MaxVersion
 		}
+		maxVersion = config.MaxVersion
 	}
+
+	logger.Info(fmt.Sprintf("Running with min_version: %q max_version: %q", minVersion, maxVersion))
 
 	splitVersion := strings.Split(minVersion, ".")
 	majorVersion, err := strconv.Atoi(splitVersion[0])
