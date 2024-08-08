@@ -267,7 +267,6 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion,
 	}
 
 	return v, nil
-
 }
 
 // getBlueprintInterfaces gets the variables and outputs associated
@@ -368,7 +367,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	v, err := parseBlueprintProviderVersions(versionsFile)
+	v, err := parseBlueprintVersion(versionsFile, diags)
 	if err != nil {
 		return nil, err
 	}
@@ -378,18 +377,6 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		Services:         s,
 		ProviderVersions: v,
 	}, nil
-
-	//parse blueprint provider versions
-	providerVersionsFile, diags = p.ParseHCLFile(versionsConfigPath)
-	err := hasHclErrors(diags)
-	if err != nil {
-		return nil, err
-	}
-
-	v, err := parseBlueprintVersion(versionsConfigPath)
-	if err != nil {
-		return nil, err
-	}
 }
 
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
