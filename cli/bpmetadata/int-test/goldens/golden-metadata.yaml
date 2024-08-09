@@ -249,3 +249,8 @@ spec:
       - cloudresourcemanager.googleapis.com
       - compute.googleapis.com
       - serviceusage.googleapis.com
+    providerVersions:
+      - source: hashicorp/google
+        version: ">= 4.42, < 5.0"
+      - source: hashicorp/random
+        version: ">= 2.1"
