@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -16,10 +17,11 @@ import (
 const (
 	testdataDir    = "testdata"
 	expectedSuffix = ".expected"
-	tfExt          = ".tf"
 	updateEnvVar   = "UPDATE_EXPECTED"
 	issueFile      = "issues.json"
 )
+
+var validExtensions = []string{".tf", ".hcl"}
 
 // ruleTC is a single rule test case.
 type ruleTC struct {
@@ -59,7 +61,7 @@ func configForTest(t *testing.T, subdir string) map[string]string {
 		if d.IsDir() && strings.HasPrefix(d.Name(), ".") {
 			return filepath.SkipDir
 		}
-		if !d.IsDir() && path.Ext(fp) == tfExt {
+		if !d.IsDir() && slices.Contains(validExtensions, path.Ext(fp)) {
 			relPath, err := filepath.Rel(modDir, fp)
 			if err != nil {
 				return err
