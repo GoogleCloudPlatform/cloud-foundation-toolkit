@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.16.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.16.1...infra/blueprint-test/v0.16.2) (2024-08-09)
+
+
+### Bug Fixes
+
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to 6714b46 ([#2488](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2488)) ([ca03f44](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/ca03f449f2ee9c928e702b8520e823cca83d445a))
+* **deps:** update module github.com/tidwall/gjson to v1.17.3 ([#2474](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2474)) ([7fe2b66](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/7fe2b66489a4cf3be5d6451ca3177bfeb5c94249))
+
 ## [0.16.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.16.0...infra/blueprint-test/v0.16.1) (2024-07-23)
 
 
