@@ -207,14 +207,14 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 
 // parseBlueprintProviderVersions gets the blueprint provider_versions from the provided config
 // from the provider_meta block
-func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersions, error) {
-	var v []*provider_versions
+func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion, error) {
+	var v []*ProviderVersion
 
 	// Get the root schema content
 	rootContent, _, diags := versionsFile.Body.PartialContent(rootSchema)
 	err := hasHclErrors(diags)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// based on the content returned, iterate through blocks and look for
@@ -226,7 +226,7 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersions
 
 		// this PartialContent() call with get the required_providers blocks
 		// that contains the provider versions info.
-		requiredProvidersContent, _, requiredProvidersContentDiags := block.Body.PartialContent(requiredProvidersSchema)
+		requiredProvidersContent, _, requiredProvidersContentDiags := rootBlock.Body.PartialContent(requiredProvidersSchema)
 		diags = append(diags, requiredProvidersContentDiags...)
 		err := hasHclErrors(diags)
 		if err != nil {
@@ -235,7 +235,7 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersions
 
 		// Now let's loop through the required_providers block and generate meta data accordingly.
 		for _, providerBlock := range requiredProvidersContent.Blocks {
-			for _, label := range providerBlock.Labels {
+			for _, _ = range providerBlock.Labels {
 				provider := &ProviderVersion{}
 				providerAttributes, _ := providerBlock.Body.JustAttributes()
 
@@ -257,10 +257,8 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersions
 					provider.Version = version
 				}
 
-				v[label] = provider
-
+				v = append(v, provider)
 			}
-
 		}
 	}
 
@@ -366,7 +364,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	v, err := parseBlueprintVersion(versionsFile, diags)
+	v, err := parseBlueprintProviderVersions(versionsFile)
 	if err != nil {
 		return nil, err
 	}
