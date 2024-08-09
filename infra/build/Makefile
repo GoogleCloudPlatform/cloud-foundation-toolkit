@@ -44,7 +44,8 @@ TINKEY_VERSION := 1.7.0
 ALPINE_VERSION := 3.20
 # Updated by Update Tooling Workflow
 MODULE_SWAPPER_VERSION := 0.4.8
-TFLINT_BP_PLUGIN := 0.1.0
+# Updated by Update Tooling Workflow
+TFLINT_BP_PLUGIN_VERSION := 0.1.0
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
@@ -93,7 +94,7 @@ build-image-developer-tools:
 		--build-arg TINKEY_VERSION=${TINKEY_VERSION} \
 		--build-arg ALPINE_VERSION=${ALPINE_VERSION} \
 		--build-arg MODULE_SWAPPER_VERSION=${MODULE_SWAPPER_VERSION} \
-		--build-arg TFLINT_BP_PLUGIN=${TFLINT_BP_PLUGIN} \
+		--build-arg TFLINT_BP_PLUGIN_VERSION=${TFLINT_BP_PLUGIN_VERSION} \
 		-t ${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} "./developer-tools"
 	docker build \
 		--build-arg BASE_IMAGE_VERSION=${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
