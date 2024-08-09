@@ -367,7 +367,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	v, err := parseBlueprintVersion(versionsFile, diags)
+	v, err := parseBlueprintProviderVersions(versionsFile)
 	if err != nil {
 		return nil, err
 	}
