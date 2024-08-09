@@ -17,6 +17,15 @@ func TestTerraformMinimumRequiredVersion(t *testing.T) {
 		{
 			dir: path.Join(terraformRequiredVersionTestDir, "multiple-invalid"),
 		},
+		{
+			dir: path.Join(terraformRequiredVersionTestDir, "multiple-valid-config"),
+		},
+		{
+			dir: path.Join(terraformRequiredVersionTestDir, "multiple-invalid-config"),
+		},
+		{
+			dir: path.Join(terraformRequiredVersionTestDir, "multiple-valid-config-single"),
+		},
 	}
 
 	rule := NewTerraformRequiredVersion()

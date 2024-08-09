@@ -1,0 +1,128 @@
+[
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \">= 1\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 1,
+        "Column": 1
+      },
+      "End": {
+        "Line": 1,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \">= 1.1\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 5,
+        "Column": 1
+      },
+      "End": {
+        "Line": 5,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \">= 1.1.0\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 9,
+        "Column": 1
+      },
+      "End": {
+        "Line": 9,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \">=1.1.0\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 13,
+        "Column": 1
+      },
+      "End": {
+        "Line": 13,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \">= 1.1.0, < 2.0\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 17,
+        "Column": 1
+      },
+      "End": {
+        "Line": 17,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \">=0.13.0\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 21,
+        "Column": 1
+      },
+      "End": {
+        "Line": 21,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \"=0.13.0\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 25,
+        "Column": 1
+      },
+      "End": {
+        "Line": 25,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \"0.13.0\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 29,
+        "Column": 1
+      },
+      "End": {
+        "Line": 29,
+        "Column": 10
+      }
+    }
+  },
+  {
+    "Message": "required_version is not inclusive of the the minimum \"1.6\" and maximum \"1.9\" terraform required_version: \"~>0.13.0\"",
+    "Range": {
+      "Filename": "main.tf",
+      "Start": {
+        "Line": 33,
+        "Column": 1
+      },
+      "End": {
+        "Line": 33,
+        "Column": 10
+      }
+    }
+  }
+]

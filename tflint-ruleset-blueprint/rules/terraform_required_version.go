@@ -8,12 +8,19 @@ import (
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/terraform-linters/tflint-plugin-sdk/hclext"
+	"github.com/terraform-linters/tflint-plugin-sdk/logger"
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
 // TerraformRequiredVersion checks if a module has a terraform required_version within valid range.
 type TerraformRequiredVersion struct {
 	tflint.DefaultRule
+}
+
+// TerraformRequiredVersionConfig is a config of TerraformRequiredVersion
+type TerraformRequiredVersionConfig struct {
+	MinVersion string `hclext:"min_version,optional"`
+	MaxVersion string `hclext:"max_version,optional"`
 }
 
 // NewTerraformRequiredVersion returns a new rule.
@@ -48,7 +55,30 @@ const (
 
 // Checks if a module has a terraform required_version within valid range.
 func (r *TerraformRequiredVersion) Check(runner tflint.Runner) error {
-	splitVersion := strings.Split(minimumTerraformRequiredVersion, ".")
+	config := &TerraformRequiredVersionConfig{}
+	if err := runner.DecodeRuleConfig(r.Name(), config); err != nil {
+		return err
+	}
+
+	minVersion := minimumTerraformRequiredVersion
+	if config.MinVersion != "" {
+		if _, err := version.NewSemver(config.MinVersion); err != nil {
+			return err
+		}
+		minVersion = config.MinVersion
+	}
+
+	maxVersion := maximumTerraformRequiredVersion
+	if config.MaxVersion != "" {
+		if _, err := version.NewSemver(config.MaxVersion); err != nil {
+			return err
+		}
+		maxVersion = config.MaxVersion
+	}
+
+	logger.Info(fmt.Sprintf("Running with min_version: %q max_version: %q", minVersion, maxVersion))
+
+	splitVersion := strings.Split(minVersion, ".")
 	majorVersion, err := strconv.Atoi(splitVersion[0])
 	if err != nil {
 		return err
@@ -66,6 +96,9 @@ func (r *TerraformRequiredVersion) Check(runner tflint.Runner) error {
 			minorVersion - 1,
 		 )
 	} else {
+		if majorVersion == 0 {
+			return fmt.Errorf("Error: minimum version test constraint would be below zero: v%d.%d.999", majorVersion - 1, 999)
+		}
 		terraform_below_minimum_required_version = fmt.Sprintf(
 			"v%d.%d.999",
 			majorVersion - 1,
@@ -78,12 +111,12 @@ func (r *TerraformRequiredVersion) Check(runner tflint.Runner) error {
 		return err
 	}
 
-	minimum_required_version, err := version.NewVersion(minimumTerraformRequiredVersion)
+	minimum_required_version, err := version.NewVersion(minVersion)
 	if err != nil {
 		return err
 	}
 
-	maximum_required_version, err := version.NewVersion(maximumTerraformRequiredVersion)
+	maximum_required_version, err := version.NewVersion(maxVersion)
 	if err != nil {
 		return err
 	}
@@ -126,7 +159,7 @@ func (r *TerraformRequiredVersion) Check(runner tflint.Runner) error {
 		//TODO: add option for repository exemptions
 		if !((constraints.Check(minimum_required_version) || constraints.Check(maximum_required_version)) && !constraints.Check(below_required_version)) {
 			//TODO: use EmitIssueWithFix()
-			err := runner.EmitIssue(r, fmt.Sprintf("required_version is not inclusive of the the minimum %q and maximum %q terraform required_version: %q", minimumTerraformRequiredVersion, maximumTerraformRequiredVersion, constraints.String()), block.DefRange)
+			err := runner.EmitIssue(r, fmt.Sprintf("required_version is not inclusive of the the minimum %q and maximum %q terraform required_version: %q", minVersion, maxVersion, constraints.String()), block.DefRange)
 			if err != nil {
 				return err
 			}
