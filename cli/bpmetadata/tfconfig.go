@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
 
 	hcl "github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
-	"github.com/zclconf/go-cty/cty"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -201,68 +201,35 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 // from the provider_meta block
 func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion, error) {
 	var v []*ProviderVersion
+	var diags hcl.Diagnostics
 
-	// Get the root schema content
-	rootContent, _, diags := versionsFile.Body.PartialContent(rootSchema)
+	//parse out the required providers from the config
+	var hclModule tfconfig.Module
+	hclModule.RequiredProviders = make(map[string]*tfconfig.ProviderRequirement)
+	hclModuleDiag := tfconfig.LoadModuleFromFile(versionsFile, &hclModule)
+	diags = append(diags, hclModuleDiag...)
 	err := hasHclErrors(diags)
 	if err != nil {
 		return nil, err
 	}
 
-	// based on the content returned, iterate through blocks and look for
-	// the terraform block specfically
-	for _, rootBlock := range rootContent.Blocks {
-		if rootBlock.Type != "terraform" {
+	for _, providerData := range hclModule.RequiredProviders {
+		providerVersion := &ProviderVersion{}
+
+		source := providerData.Source
+		if source == "" {
+			fmt.Printf("Not found source in provider settings\n")
 			continue
 		}
-		// this PartialContent() call with get the required_providers blocks
-		// that contains the provider versions info.
-		requiredProvidersContent, _, requiredProvidersContentDiags := rootBlock.Body.PartialContent(requiredProvidersSchema)
-		diags = append(diags, requiredProvidersContentDiags...)
-		err := hasHclErrors(diags)
-		if err != nil {
-			return nil, err
+		providerVersion.Source = source
+
+		version := strings.Join(providerData.VersionConstraints, ", ")
+		if version == "" {
+			fmt.Printf("Not found version in provider settings\n")
+			continue
 		}
-		// Now let's loop through the required_providers block and generate meta data accordingly.
-		for _, providerBlock := range requiredProvidersContent.Blocks {
-			if providerBlock.Type != "required_providers" {
-				continue
-			}
-			providers, _ := providerBlock.Body.JustAttributes()
-
-			// Loop through providers to build provider versions
-			for providerName := range providers {
-				providerVersion := &ProviderVersion{}
-				if providerAttr, ok := providers[providerName]; ok {
-					// Decode the provider attribute
-					var providerValues cty.Value
-					diags := gohcl.DecodeExpression(providerAttr.Expr, nil, &providerValues)
-					if err := hasHclErrors(diags); err != nil {
-						return nil, err
-					}
-
-					// Access the source field
-					source := providerValues.AsValueMap()["source"]
-					if source.IsNull() {
-						fmt.Printf("Not found source in provider settings\n")
-						continue
-					}
-					providerVersion.Source = source.AsString()
-
-					// Access the version field
-					version := providerValues.AsValueMap()["version"]
-					if version.IsNull() {
-						fmt.Printf("Not found version in provider settings\n")
-						continue
-					}
-					providerVersion.Version = version.AsString()
-				} else {
-					fmt.Printf("Provider %s not found\n", providerName)
-					continue
-				}
-				v = append(v, providerVersion)
-			}
-		}
+		providerVersion.Version = version
+		v = append(v, providerVersion)
 	}
 	return v, nil
 }
