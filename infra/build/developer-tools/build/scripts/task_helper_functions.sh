@@ -375,8 +375,11 @@ function check_tflint() {
       fi
       # load default ruleset
       tflintCfg="/root/tflint/.tflint.example.hcl"
+      # load if local repo ruleset
+      if [[ -f "./github/.tflint.repo.hcl" ]]; then
+        tflintCfg="./github/.tflint.repo.hcl"
       # if module, load tighter ruleset
-      if [[ $path == "." || $path == "./modules"* ]];then
+      elif [[ $path == "." || $path == "./modules"* || $path =~ "^[0-9]+-.*" ]]; then
         tflintCfg="/root/tflint/.tflint.module.hcl"
       fi
 
