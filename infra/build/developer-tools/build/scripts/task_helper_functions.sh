@@ -375,12 +375,15 @@ function check_tflint() {
       fi
       # load default ruleset
       tflintCfg="/root/tflint/.tflint.example.hcl"
+      # load if local repo ruleset
+      if [[ -f "/workspace/.github/.tflint.repo.hcl" ]]; then
+        tflintCfg="/workspace/.github/.tflint.repo.hcl"
       # if module, load tighter ruleset
-      if [[ $path == "." || $path == "./modules"* ]];then
+      elif [[ $path == "." || $path == "./modules"* || $path =~ "^[0-9]+-.*" ]]; then
         tflintCfg="/root/tflint/.tflint.module.hcl"
       fi
 
-      cd "${path}" && echo "Working in ${path} ..."
+      cd "${path}" && echo "Working in ${path} using ${tflintCfg}..."
       tflint --config=${tflintCfg} --no-color
       rc=$?
       if [[ "${rc}" -ne 0 ]]; then
