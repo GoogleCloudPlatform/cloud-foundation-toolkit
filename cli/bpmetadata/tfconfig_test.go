@@ -266,3 +266,36 @@ func TestTFRoles(t *testing.T) {
 		})
 	}
 }
+
+func TestTFProviderVersions(t *testing.T) {
+	tests := []struct {
+		name                 string
+		configName           string
+		wantProviderVersions []*ProviderVersion
+	}{
+		{
+			name:       "Simple list of provider versions",
+			configName: "versions-beta.tf",
+			wantProviderVersions: []*ProviderVersion{
+				{
+					Source:  "hashicorp/google",
+					Version: ">= 4.4.0, < 6",
+				},
+				{
+					Source:  "hashicorp/google-beta",
+					Version: ">= 4.4.0, < 6",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := hclparse.NewParser()
+			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
+			got, err := parseBlueprintProviderVersions(content)
+			require.NoError(t, err)
+			assert.Equal(t, got, tt.wantProviderVersions)
+		})
+	}
+}
