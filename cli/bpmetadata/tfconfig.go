@@ -260,12 +260,10 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion,
 					fmt.Printf("Provider %s not found\n", providerName)
 					continue
 				}
-
 				v = append(v, providerVersion)
 			}
 		}
 	}
-
 	return v, nil
 }
 
