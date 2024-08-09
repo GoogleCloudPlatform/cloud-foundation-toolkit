@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	"github.com/zclconf/go-cty/cty"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -56,16 +57,7 @@ var metaSchema = &hcl.BodySchema{
 var requiredProvidersSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{
-			Type:       "required_providers",
-			LabelNames: []string{"provider"},
-		},
-	},
-	Attributes: []hcl.AttributeSchema{
-		{
-			Name: "source",
-		},
-		{
-			Name: "version",
+			Type: "required_providers",
 		},
 	},
 }
@@ -223,7 +215,6 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion,
 		if rootBlock.Type != "terraform" {
 			continue
 		}
-
 		// this PartialContent() call with get the required_providers blocks
 		// that contains the provider versions info.
 		requiredProvidersContent, _, requiredProvidersContentDiags := rootBlock.Body.PartialContent(requiredProvidersSchema)
@@ -232,33 +223,114 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion,
 		if err != nil {
 			return nil, err
 		}
-
 		// Now let's loop through the required_providers block and generate meta data accordingly.
 		for _, providerBlock := range requiredProvidersContent.Blocks {
-			for _, _ = range providerBlock.Labels {
-				provider := &ProviderVersion{}
-				providerAttributes, _ := providerBlock.Body.JustAttributes()
-
-				if sourceAttr, ok := providerAttributes["source"]; ok {
-					var source string
-					diags := gohcl.DecodeExpression(sourceAttr.Expr, nil, &source)
-					if err := hasHclErrors(diags); err != nil {
-						return nil, err
-					}
-					provider.Source = source
-				}
-
-				if versionAttr, ok := providerAttributes["version"]; ok {
-					var version string
-					diags := gohcl.DecodeExpression(versionAttr.Expr, nil, &version)
-					if err := hasHclErrors(diags); err != nil {
-						return nil, err
-					}
-					provider.Version = version
-				}
-
-				v = append(v, provider)
+			if providerBlock.Type != "required_providers" {
+				fmt.Println("Zheng: The value of providerBlock is not RP")
+				continue
 			}
+			providers, _ := providerBlock.Body.JustAttributes()
+
+			// Loop through providers to build provider versions
+			for providerName, _ := range providers {
+				fmt.Printf("Attribute Name: %s\n", providerName)
+				providerVersion := &ProviderVersion{}
+				if providerAttr, ok := providers[providerName]; ok {
+					// Decode the provider attribute which is a map
+					var providerValues cty.Value
+					diags := gohcl.DecodeExpression(providerAttr.Expr, nil, &providerValues)
+					if err := hasHclErrors(diags); err != nil {
+						fmt.Printf("Error decoding attribute %s: %v\n", providerName, err)
+						continue
+					}
+
+					// Access the source field
+					source := providerValues.AsValueMap()["source"]
+					if source.IsNull() {
+						fmt.Printf("Not found source in provider settings\n")
+						continue
+					}
+					providerVersion.Source = source.AsString()
+
+					// Access the version field
+					version := providerValues.AsValueMap()["version"]
+					if version.IsNull() {
+						fmt.Printf("Not found version in provider settings\n")
+						continue
+					}
+					providerVersion.Version = version.AsString()
+				} else {
+					fmt.Printf("Attribute %s not found\n", providerName)
+				}
+
+				//if sourceAttr, ok := attr.["source"]; ok {
+				//var source string
+				//diags := gohcl.DecodeExpression(sourceAttr.Expr, nil, &source)
+				//if err := hasHclErrors(diags); err != nil {
+				//return nil, err
+				//}
+				//provider.Source = source
+				//}
+
+				//if versionAttr, ok := attr["version"]; ok {
+				//var version string
+				//diags := gohcl.DecodeExpression(versionAttr.Expr, nil, &version)
+				//if err := hasHclErrors(diags); err != nil {
+				//return nil, err
+				//}
+				//provider.Version = version
+				//}
+
+				v = append(v, providerVersion)
+			}
+
+			//for k := range iamAttrs {
+			//var iamRoles []string
+			//attrValue, _ := iamAttrs[k].Expr.Value(nil)
+			//if !attrValue.Type().IsTupleType() {
+			//continue
+			//}
+
+			//ie := attrValue.ElementIterator()
+			//for ie.Next() {
+			//_, v := ie.Element()
+			//iamRoles = append(iamRoles, v.AsString())
+			//}
+
+			//containerRoles := &BlueprintRoles{
+			//// TODO: (b/248123274) no good way to associate granularity yet
+			//Level: "Project",
+			//Roles: iamRoles,
+			//}
+
+			//r = append(r, containerRoles)
+			//}
+
+			//for _, _ = range providerBlock.Labels {
+			//provider := &ProviderVersion{}
+			//providerAttributes, _ := providerBlock.Body.JustAttributes()
+			//fmt.Println("Zheng: The value of providerAttributes is:", providerAttributes)
+
+			//if sourceAttr, ok := providerAttributes["source"]; ok {
+			//var source string
+			//diags := gohcl.DecodeExpression(sourceAttr.Expr, nil, &source)
+			//if err := hasHclErrors(diags); err != nil {
+			//return nil, err
+			//}
+			//provider.Source = source
+			//}
+
+			//if versionAttr, ok := providerAttributes["version"]; ok {
+			//var version string
+			//diags := gohcl.DecodeExpression(versionAttr.Expr, nil, &version)
+			//if err := hasHclErrors(diags); err != nil {
+			//return nil, err
+			//}
+			//provider.Version = version
+			//}
+
+			//v = append(v, provider)
+			//}
 		}
 	}
 
