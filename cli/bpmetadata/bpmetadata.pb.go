@@ -747,7 +747,7 @@ type BlueprintRequirements struct {
 	Services []string `protobuf:"bytes,2,rep,name=services,proto3" json:"services,omitempty" yaml:"services,omitempty"` // @gotags: json:"services,omitempty" yaml:"services,omitempty"
 	// Required provider versions.
 	// Gen: auto-generated from required providers block.
-	ProviderVersions []*ProviderVersion `protobuf:"bytes,3,rep,name=provider_versions,json=providerVersions,proto3" json:"versions,omitempty"` // @gotags: json:"versions,omitempty"
+	ProviderVersions []*ProviderVersion `protobuf:"bytes,3,rep,name=provider_versions,json=providerVersions,proto3" json:"providerVersions,omitempty"` // @gotags: json:"providerVersions,omitempty"
 }
 
 func (x *BlueprintRequirements) Reset() {
