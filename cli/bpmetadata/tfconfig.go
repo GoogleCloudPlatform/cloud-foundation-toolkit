@@ -54,14 +54,6 @@ var metaSchema = &hcl.BodySchema{
 	},
 }
 
-var requiredProvidersSchema = &hcl.BodySchema{
-	Blocks: []hcl.BlockHeaderSchema{
-		{
-			Type: "required_providers",
-		},
-	},
-}
-
 var metaBlockSchema = &hcl.BodySchema{
 	Attributes: []hcl.AttributeSchema{
 		{
