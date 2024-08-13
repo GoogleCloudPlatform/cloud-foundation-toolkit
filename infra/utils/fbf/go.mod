@@ -6,7 +6,7 @@ require (
 	github.com/briandowns/spinner v1.23.1
 	github.com/jedib0t/go-pretty/v6 v6.5.9
 	github.com/stretchr/testify v1.9.0
-	google.golang.org/api v0.190.0
+	google.golang.org/api v0.191.0
 )
 
 require (
@@ -35,7 +35,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/crypto v0.25.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
+	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/term v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
