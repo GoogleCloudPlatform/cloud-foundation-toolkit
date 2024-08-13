@@ -12,55 +12,55 @@ import (
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
-// TerraformRequiredVersion checks if a module has a terraform required_version within valid range.
-type TerraformRequiredVersion struct {
+// TerraformRequiredVersionRange checks if a module has a terraform required_version within valid range.
+type TerraformRequiredVersionRange struct {
 	tflint.DefaultRule
 }
 
-// TerraformRequiredVersionConfig is a config of TerraformRequiredVersion
-type TerraformRequiredVersionConfig struct {
+// TerraformRequiredVersionRangeConfig is a config of TerraformRequiredVersionRange
+type TerraformRequiredVersionRangeConfig struct {
 	MinVersion string `hclext:"min_version,optional"`
 	MaxVersion string `hclext:"max_version,optional"`
 }
 
-// NewTerraformRequiredVersion returns a new rule.
-func NewTerraformRequiredVersion() *TerraformRequiredVersion {
-	return &TerraformRequiredVersion{}
+// NewTerraformRequiredVersionRange returns a new rule.
+func NewTerraformRequiredVersionRange() *TerraformRequiredVersionRange {
+	return &TerraformRequiredVersionRange{}
 }
 
 // Name returns the rule name.
-func (r *TerraformRequiredVersion) Name() string {
-	return "terraform_required_version"
+func (r *TerraformRequiredVersionRange) Name() string {
+	return "terraform_required_version_range"
 }
 
 // Enabled returns whether the rule is enabled by default.
-func (r *TerraformRequiredVersion) Enabled() bool {
+func (r *TerraformRequiredVersionRange) Enabled() bool {
 	return false
 }
 
 // Severity returns the rule severity.
-func (r *TerraformRequiredVersion) Severity() tflint.Severity {
+func (r *TerraformRequiredVersionRange) Severity() tflint.Severity {
 	return tflint.ERROR
 }
 
 // Link returns the rule reference link
-func (r *TerraformRequiredVersion) Link() string {
+func (r *TerraformRequiredVersionRange) Link() string {
 	return "https://googlecloudplatform.github.io/samples-style-guide/#language-specific"
 }
 
 const (
-	minimumTerraformRequiredVersion = "1.3"
-	maximumTerraformRequiredVersion = "1.5"
+	minimumTerraformRequiredVersionRange = "1.3"
+	maximumTerraformRequiredVersionRange = "1.5"
 )
 
 // Checks if a module has a terraform required_version within valid range.
-func (r *TerraformRequiredVersion) Check(runner tflint.Runner) error {
-	config := &TerraformRequiredVersionConfig{}
+func (r *TerraformRequiredVersionRange) Check(runner tflint.Runner) error {
+	config := &TerraformRequiredVersionRangeConfig{}
 	if err := runner.DecodeRuleConfig(r.Name(), config); err != nil {
 		return err
 	}
 
-	minVersion := minimumTerraformRequiredVersion
+	minVersion := minimumTerraformRequiredVersionRange
 	if config.MinVersion != "" {
 		if _, err := version.NewSemver(config.MinVersion); err != nil {
 			return err
@@ -68,7 +68,7 @@ func (r *TerraformRequiredVersion) Check(runner tflint.Runner) error {
 		minVersion = config.MinVersion
 	}
 
-	maxVersion := maximumTerraformRequiredVersion
+	maxVersion := maximumTerraformRequiredVersionRange
 	if config.MaxVersion != "" {
 		if _, err := version.NewSemver(config.MaxVersion); err != nil {
 			return err
