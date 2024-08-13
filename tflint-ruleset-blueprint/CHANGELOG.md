@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.0...tflint-ruleset-blueprint/v0.2.1) (2024-08-13)
+
+
+### Bug Fixes
+
+* **tflint:** rename plugin ([#2516](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2516)) ([0cc19e2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0cc19e2068b9b41e594ed0659319ed03a0f7b5b7))
+
 ## [0.2.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.1.0...tflint-ruleset-blueprint/v0.2.0) (2024-08-09)
 
 
