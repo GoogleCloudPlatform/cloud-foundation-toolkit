@@ -127,7 +127,7 @@ func generate(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "\n"))
+		return fmt.Errorf("%s", strings.Join(errors, "\n"))
 	}
 
 	Log.Info("metadata generated successfully")
