@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.1...tflint-ruleset-blueprint/v0.2.2) (2024-08-14)
+
+
+### Bug Fixes
+
+* **tflint-ruleset-blueprint:** increment internal version ([#2518](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2518)) ([1f450a3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/1f450a3ee0bb9c660f04b8ff491a680d9f667ab1))
+
+## [0.2.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.0...tflint-ruleset-blueprint/v0.2.1) (2024-08-13)
+
+
+### Bug Fixes
+
+* **tflint:** rename plugin ([#2516](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2516)) ([0cc19e2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0cc19e2068b9b41e594ed0659319ed03a0f7b5b7))
+
 ## [0.2.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.1.0...tflint-ruleset-blueprint/v0.2.0) (2024-08-09)
 
 
