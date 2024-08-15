@@ -147,14 +147,14 @@ func (r *TerraformRequiredVersionRange) Check(runner tflint.Runner) error {
 	for _, block := range content.Blocks {
 		requiredVersion, exists := block.Body.Attributes["required_version"]
 		if !exists {
-			logger.Info(fmt.Sprintf("required_version does not exist for %s", block.Labels[0]))
+			logger.Info(fmt.Sprintf("terraform block does not contain required_version: %s", block.DefRange))
 			continue
 		}
 
 		var raw_terraform_required_version string
 		diags := gohcl.DecodeExpression(requiredVersion.Expr, nil, &raw_terraform_required_version)
 		if diags.HasErrors() {
-			return fmt.Errorf("failed to decode terraform required_version %q: %v", block.Labels[0], diags.Error())
+			return fmt.Errorf("failed to decode terraform block required_version: %v", diags.Error())
 		}
 
 		constraints, err := version.NewConstraint(raw_terraform_required_version)
@@ -162,7 +162,6 @@ func (r *TerraformRequiredVersionRange) Check(runner tflint.Runner) error {
 			return err
 		}
 
-		//TODO: add option for repository exemptions
 		if !((constraints.Check(minimum_required_version) || constraints.Check(maximum_required_version)) && !constraints.Check(below_required_version)) {
 			//TODO: use EmitIssueWithFix()
 			err := runner.EmitIssue(r, fmt.Sprintf("required_version is not inclusive of the the minimum %q and maximum %q terraform required_version: %q", minVersion, maxVersion, constraints.String()), block.DefRange)
@@ -170,7 +169,6 @@ func (r *TerraformRequiredVersionRange) Check(runner tflint.Runner) error {
 				return err
 			}
 		}
-
 	}
 
 	return nil
