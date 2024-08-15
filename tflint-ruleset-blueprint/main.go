@@ -10,7 +10,7 @@ func main() {
 	plugin.Serve(&plugin.ServeOpts{
 		RuleSet: &tflint.BuiltinRuleSet{
 			Name:    "blueprint",
-			Version: "0.2.2",
+			Version: "0.2.3",
 			Rules: []tflint.Rule{
 				rules.NewTerraformDocSamplesRestrictedBlocks(),
 				rules.NewTerraformDocSamplesRestrictedResources(),

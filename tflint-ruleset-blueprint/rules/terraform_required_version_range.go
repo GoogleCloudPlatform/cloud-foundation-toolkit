@@ -145,8 +145,14 @@ func (r *TerraformRequiredVersionRange) Check(runner tflint.Runner) error {
 	}
 
 	for _, block := range content.Blocks {
+		requiredVersion, exists := block.Body.Attributes["required_version"]
+		if !exists {
+			logger.Info(fmt.Sprintf("required_version does not exist for %s", block.Labels[0]))
+			continue
+		}
+
 		var raw_terraform_required_version string
-		diags := gohcl.DecodeExpression(block.Body.Attributes["required_version"].Expr, nil, &raw_terraform_required_version)
+		diags := gohcl.DecodeExpression(requiredVersion.Expr, nil, &raw_terraform_required_version)
 		if diags.HasErrors() {
 			return fmt.Errorf("failed to decode terraform required_version %q: %v", block.Labels[0], diags.Error())
 		}
