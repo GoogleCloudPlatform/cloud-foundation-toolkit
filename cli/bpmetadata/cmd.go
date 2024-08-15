@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"sigs.k8s.io/yaml"
 )
 
@@ -230,9 +231,10 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	}
 
 	var existingInterfaces *BlueprintInterface
-	*existingInterfaces = *bpMetadataObj.Spec.Interfaces
 	if bpMetadataObj.Spec.Interfaces == nil {
 		bpMetadataObj.Spec.Interfaces = &BlueprintInterface{}
+	} else {
+		existingInterfaces = proto.Clone(bpMetadataObj.Spec.Interfaces).(*BlueprintInterface)
 	}
 
 	// create blueprint interfaces i.e. variables & outputs
