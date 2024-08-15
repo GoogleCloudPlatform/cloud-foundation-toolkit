@@ -229,6 +229,8 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
+	var existingInterfaces *BlueprintInterface
+	*existingInterfaces = *bpMetadataObj.Spec.Interfaces
 	if bpMetadataObj.Spec.Interfaces == nil {
 		bpMetadataObj.Spec.Interfaces = &BlueprintInterface{}
 	}
@@ -238,6 +240,9 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
+
+    // Merge existing connections (if any) into the newly generated interfaces
+    MergeExistingConnections(bpMetadataObj.Spec.Interfaces, existingInterfaces)
 
 	// get blueprint requirements
 	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)
