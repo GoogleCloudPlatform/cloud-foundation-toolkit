@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"sigs.k8s.io/yaml"
 )
 
@@ -229,8 +230,11 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint info: %w", err)
 	}
 
+	var existingInterfaces *BlueprintInterface
 	if bpMetadataObj.Spec.Interfaces == nil {
 		bpMetadataObj.Spec.Interfaces = &BlueprintInterface{}
+	} else {
+		existingInterfaces = proto.Clone(bpMetadataObj.Spec.Interfaces).(*BlueprintInterface)
 	}
 
 	// create blueprint interfaces i.e. variables & outputs
@@ -238,6 +242,9 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	if err != nil {
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
+
+    // Merge existing connections (if any) into the newly generated interfaces
+    mergeExistingConnections(bpMetadataObj.Spec.Interfaces, existingInterfaces)
 
 	// get blueprint requirements
 	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)

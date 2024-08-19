@@ -12,6 +12,7 @@ import (
 
 const (
 	tfTestdataPath = "../testdata/bpmetadata/tf"
+	metadataTestdataPath = "../testdata/bpmetadata/metadata"
 	interfaces     = "sample-module"
 )
 
@@ -263,6 +264,48 @@ func TestTFRoles(t *testing.T) {
 			got, err := parseBlueprintRoles(content)
 			require.NoError(t, err)
 			assert.Equal(t, got, tt.wantRoles)
+		})
+	}
+}
+
+func TestMergeExistingConnections(t *testing.T) {
+	tests := []struct {
+		name                string
+		newInterfacesFile   string
+		existingInterfacesFile string
+	}{
+		{
+			name:                "No existing connections",
+			newInterfacesFile:   "new_interfaces_no_connections_metadata.yaml",
+			existingInterfacesFile: "existing_interfaces_without_connections_metadata.yaml",
+		},
+		{
+			name:                "One existing connection is preserved",
+			newInterfacesFile:   "new_interfaces_no_connections_metadata.yaml",
+			existingInterfacesFile: "existing_interfaces_with_one_connection_metadata.yaml",
+		},
+		{
+			name:                "Multiple existing connections are preserved",
+			newInterfacesFile:   "new_interfaces_no_connections_metadata.yaml",
+			existingInterfacesFile: "existing_interfaces_with_some_connections_metadata.yaml",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Load new interfaces from file
+			newInterfaces, err := UnmarshalMetadata(metadataTestdataPath, tt.newInterfacesFile)
+			require.NoError(t, err)
+
+			// Load existing interfaces from file
+			existingInterfaces, err := UnmarshalMetadata(metadataTestdataPath, tt.existingInterfacesFile)
+			require.NoError(t, err)
+
+			// Perform the merge
+			mergeExistingConnections(newInterfaces.Spec.Interfaces, existingInterfaces.Spec.Interfaces)
+
+			// Assert that the merged interfaces match the existing ones
+			assert.Equal(t, existingInterfaces.Spec.Interfaces, newInterfaces.Spec.Interfaces)
 		})
 	}
 }
