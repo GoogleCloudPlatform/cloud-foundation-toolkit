@@ -398,7 +398,7 @@ func hasTfconfigErrors(diags tfconfig.Diagnostics) error {
 
 // MergeExistingConnections merges existing connections from an old BlueprintInterface into a new one,
 // preserving manually authored connections.
-func MergeExistingConnections(newInterfaces, existingInterfaces *BlueprintInterface) {
+func mergeExistingConnections(newInterfaces, existingInterfaces *BlueprintInterface) {
     if existingInterfaces == nil {
         return // Nothing to merge if existingInterfaces is nil
     }
