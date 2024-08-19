@@ -302,7 +302,7 @@ func TestMergeExistingConnections(t *testing.T) {
 			require.NoError(t, err)
 
 			// Perform the merge
-			MergeExistingConnections(newInterfaces.Spec.Interfaces, existingInterfaces.Spec.Interfaces)
+			mergeExistingConnections(newInterfaces.Spec.Interfaces, existingInterfaces.Spec.Interfaces)
 
 			// Assert that the merged interfaces match the existing ones
 			assert.Equal(t, existingInterfaces.Spec.Interfaces, newInterfaces.Spec.Interfaces)
