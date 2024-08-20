@@ -36,7 +36,7 @@ require (
 	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
 	golang.org/x/oauth2 v0.22.0
 	golang.org/x/text v0.17.0
-	google.golang.org/api v0.191.0
+	google.golang.org/api v0.192.0
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v3 v3.0.1
 	sigs.k8s.io/yaml v1.4.0
@@ -45,7 +45,7 @@ require (
 require (
 	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/accesscontextmanager v1.8.11 // indirect
-	cloud.google.com/go/auth v0.8.0 // indirect
+	cloud.google.com/go/auth v0.8.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.3 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	cloud.google.com/go/iam v1.1.12 // indirect
