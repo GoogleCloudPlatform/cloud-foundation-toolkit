@@ -375,6 +375,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages multiple IAM roles for resources on Google Cloud"
       topics      = local.common_topics.security
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-jenkins"
