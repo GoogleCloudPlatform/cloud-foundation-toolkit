@@ -879,7 +879,7 @@ locals {
       name        = "kms-solutions"
       org         = "GoogleCloudPlatform"
       description = "Store Cloud KMS scripts, artifacts, code samples, and more."
-      owners      = ["tdbhacks"]
+      owners      = ["tdbhacks", "erlanderlo"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
