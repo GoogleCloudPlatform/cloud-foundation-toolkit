@@ -91,6 +91,9 @@ locals {
       description = "Deploys apps to Cloud Run, along with option to map custom domain"
       owners      = ["prabhu34", "anamer", "gtsorbo"]
       topics      = "cloudrun,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-secured-data-warehouse"
@@ -294,6 +297,9 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates one or more Cloud Storage buckets and assigns basic permissions on them to arbitrary users"
       topics      = local.common_topics.storage
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-composer"
@@ -422,6 +428,9 @@ locals {
       description = "Creates a fully functional Google Memorystore (redis) instance"
       topics      = local.common_topics.db
       owners      = ["imrannayer"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name              = "terraform-google-module-template"
@@ -486,6 +495,9 @@ locals {
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
       owners      = ["isaurabhuttam", "imrannayer"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-startup-scripts"
