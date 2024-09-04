@@ -210,14 +210,14 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion,
 
 		source := providerData.Source
 		if source == "" {
-			fmt.Printf("Not found source in provider settings\n")
+			Log.Info("Not found source in provider settings\n")
 			continue
 		}
 		providerVersion.Source = source
 
 		version := strings.Join(providerData.VersionConstraints, ", ")
 		if version == "" {
-			fmt.Printf("Not found version in provider settings\n")
+			Log.Info("Not found version in provider settings\n")
 			continue
 		}
 		providerVersion.Version = version
@@ -450,15 +450,15 @@ func hasTfconfigErrors(diags tfconfig.Diagnostics) error {
 // MergeExistingConnections merges existing connections from an old BlueprintInterface into a new one,
 // preserving manually authored connections.
 func mergeExistingConnections(newInterfaces, existingInterfaces *BlueprintInterface) {
-    if existingInterfaces == nil {
-        return // Nothing to merge if existingInterfaces is nil
-    }
+	if existingInterfaces == nil {
+		return // Nothing to merge if existingInterfaces is nil
+	}
 
-    for i, variable := range newInterfaces.Variables {
-        for _, existingVariable := range existingInterfaces.Variables {
-            if variable.Name == existingVariable.Name && existingVariable.Connections != nil {
-                newInterfaces.Variables[i].Connections = existingVariable.Connections
-            }
-        }
-    }
+	for i, variable := range newInterfaces.Variables {
+		for _, existingVariable := range existingInterfaces.Variables {
+			if variable.Name == existingVariable.Name && existingVariable.Connections != nil {
+				newInterfaces.Variables[i].Connections = existingVariable.Connections
+			}
+		}
+	}
 }
