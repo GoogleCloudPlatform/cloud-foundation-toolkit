@@ -71,8 +71,7 @@ func (QuotaResourceType) EnumDescriptor() ([]byte, []int) {
 	return file_bpmetadata_proto_rawDescGZIP(), []int{0}
 }
 
-// SoftwareGroupType is a string enum representing the different types of
-// software groups.
+// SoftwareGroupType is a string enum representing the different types of software groups.
 type SoftwareGroupType int32
 
 const (
@@ -124,13 +123,11 @@ func (SoftwareGroupType) EnumDescriptor() ([]byte, []int) {
 // BlueprintMetadata defines the overall structure for blueprint metadata.
 // The cli command i.e. `cft blueprint metadata` attempts at auto-generating
 // metadata if the blueprint is structured based on the TF blueprint template
-// i.e.
-// https://github.com/terraform-google-modules/terraform-google-module-template
+// i.e. https://github.com/terraform-google-modules/terraform-google-module-template
 // All fields within BlueprintMetadata and its children are denoted as:
 // - Gen: auto-generated - <data source>
 // - Gen: manually-authored
-// - Gen: partial (contains nested messages that can include both auto-generated
-// and manually authored)
+// - Gen: partial (contains nested messages that can include both auto-generated and manually authored)
 type BlueprintMetadata struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -292,13 +289,13 @@ type BlueprintMetadataSpec struct {
 	// related documentation, diagrams, examples etc.
 	// Gen: partial
 	Content *BlueprintContent `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty" yaml:"content,omitempty"` // @gotags: json:"content,omitempty" yaml:"content,omitempty"
-	// BlueprintInterface defines the input and output variables for the
-	// blueprint. Gen: partial
+	// BlueprintInterface defines the input and output variables for the blueprint.
+	// Gen: partial
 	Interfaces *BlueprintInterface `protobuf:"bytes,3,opt,name=interfaces,proto3" json:"interfaces,omitempty" yaml:"interfaces,omitempty"` // @gotags: json:"interfaces,omitempty" yaml:"interfaces,omitempty"
-	// BlueprintRequirements defines the roles required and the associated
-	// services that need to be enabled to provision blueprint resources. Gen:
-	// auto-generated
-	Requirements *BlueprintRequirements `protobuf:"bytes,4,opt,name=requirements,proto3" json:"requirements,omitempty"` // @gotags: json:"requirements,omitempty"
+	// BlueprintRequirements defines the roles required and the associated services
+	// that need to be enabled to provision blueprint resources.
+	// Gen: auto-generated
+	Requirements *BlueprintRequirements `protobuf:"bytes,4,opt,name=requirements,proto3" json:"requirements,omitempty" yaml:"requirements,omitempty"` // @gotags: json:"requirements,omitempty" yaml:"requirements,omitempty"
 	// BlueprintUI defines the user interface for the blueprint.
 	// Gen: partial
 	Ui *BlueprintUI `protobuf:"bytes,5,opt,name=ui,proto3" json:"ui,omitempty" yaml:"ui,omitempty"` // @gotags: json:"ui,omitempty" yaml:"ui,omitempty"
@@ -395,7 +392,7 @@ type BlueprintInfo struct {
 	Version string `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty" yaml:"version,omitempty"` // @gotags: json:"version,omitempty" yaml:"version,omitempty"
 	// Actuation tool e.g. Terraform and its required version.
 	// Gen: auto-generated
-	ActuationTool *BlueprintActuationTool `protobuf:"bytes,4,opt,name=actuation_tool,json=actuationTool,proto3" json:"actuationTool,omitempty"` // @gotags: json:"actuationTool,omitempty"
+	ActuationTool *BlueprintActuationTool `protobuf:"bytes,4,opt,name=actuation_tool,json=actuationTool,proto3" json:"actuationTool,omitempty" yaml:"actuationTool,omitempty"` // @gotags: json:"actuationTool,omitempty" yaml:"actuationTool,omitempty"
 	// Various types of descriptions associated with the blueprint.
 	// Gen: auto-generated
 	Description *BlueprintDescription `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty" yaml:"description,omitempty"` // @gotags: json:"description,omitempty" yaml:"description,omitempty"
@@ -405,32 +402,32 @@ type BlueprintInfo struct {
 	Icon string `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty" yaml:"icon,omitempty"` // @gotags: json:"icon,omitempty" yaml:"icon,omitempty"
 	// The time estimate for configuring and deploying the blueprint.
 	// Gen: auto-generated
-	DeploymentDuration *BlueprintTimeEstimate `protobuf:"bytes,7,opt,name=deployment_duration,json=deploymentDuration,proto3" json:"deploymentDuration,omitempty"` // @gotags: json:"deploymentDuration,omitempty"
+	DeploymentDuration *BlueprintTimeEstimate `protobuf:"bytes,7,opt,name=deployment_duration,json=deploymentDuration,proto3" json:"deploymentDuration,omitempty" yaml:"deploymentDuration,omitempty"` // @gotags: json:"deploymentDuration,omitempty" yaml:"deploymentDuration,omitempty"
 	// The cost estimate for the blueprint based on preconfigured variables.
 	// Gen: auto-generated
-	CostEstimate *BlueprintCostEstimate `protobuf:"bytes,8,opt,name=cost_estimate,json=costEstimate,proto3" json:"costEstimate,omitempty"` // @gotags: json:"costEstimate,omitempty"
+	CostEstimate *BlueprintCostEstimate `protobuf:"bytes,8,opt,name=cost_estimate,json=costEstimate,proto3" json:"costEstimate,omitempty" yaml:"costEstimate,omitempty"` // @gotags: json:"costEstimate,omitempty" yaml:"costEstimate,omitempty"
 	// A list of GCP cloud products used in the blueprint.
 	// Gen: manually-authored
-	CloudProducts []*BlueprintCloudProduct `protobuf:"bytes,9,rep,name=cloud_products,json=cloudProducts,proto3" json:"cloudProducts,omitempty"` // @gotags: json:"cloudProducts,omitempty"
-	// A configuration of fixed and dynamic GCP quotas that apply to the
-	// blueprint. Gen: manually-authored
-	QuotaDetails []*BlueprintQuotaDetail `protobuf:"bytes,10,rep,name=quota_details,json=quotaDetails,proto3" json:"quotaDetails,omitempty"` // @gotags: json:"quotaDetails,omitempty"
+	CloudProducts []*BlueprintCloudProduct `protobuf:"bytes,9,rep,name=cloud_products,json=cloudProducts,proto3" json:"cloudProducts,omitempty" yaml:"cloudProducts,omitempty"` // @gotags: json:"cloudProducts,omitempty" yaml:"cloudProducts,omitempty"
+	// A configuration of fixed and dynamic GCP quotas that apply to the blueprint.
+	// Gen: manually-authored
+	QuotaDetails []*BlueprintQuotaDetail `protobuf:"bytes,10,rep,name=quota_details,json=quotaDetails,proto3" json:"quotaDetails,omitempty" yaml:"quotaDetails,omitempty"` // @gotags: json:"quotaDetails,omitempty" yaml:"quotaDetails,omitempty"
 	// Details on the author producing the blueprint.
 	// Gen: manually-authored
 	Author *BlueprintAuthor `protobuf:"bytes,11,opt,name=author,proto3" json:"author,omitempty" yaml:"author,omitempty"` // @gotags: json:"author,omitempty" yaml:"author,omitempty"
 	// Details on software installed as part of the blueprint.
 	// Gen: manually-authored
-	SoftwareGroups []*BlueprintSoftwareGroup `protobuf:"bytes,12,rep,name=software_groups,json=softwareGroups,proto3" json:"softwareGroups,omitempty"` // @gotags: json:"softwareGroups,omitempty"
+	SoftwareGroups []*BlueprintSoftwareGroup `protobuf:"bytes,12,rep,name=software_groups,json=softwareGroups,proto3" json:"softwareGroups,omitempty" yaml:"softwareGroups,omitempty"` // @gotags: json:"softwareGroups,omitempty" yaml:"softwareGroups,omitempty"
 	// Support offered, if any for the blueprint.
 	// Gen: manually-authored
 	SupportInfo *BlueprintSupport `protobuf:"bytes,13,opt,name=support_info,json=supportInfo,proto3" json:"supportInfo,omitempty" yaml:"supportInfo,omitempty"` // @gotags: json:"supportInfo,omitempty" yaml:"supportInfo,omitempty"
 	// A list of GCP org policies to be checked for successful deployment.
 	// Gen: manually-authored
-	OrgPolicyChecks []*BlueprintOrgPolicyCheck `protobuf:"bytes,14,rep,name=org_policy_checks,json=orgPolicyChecks,proto3" json:"orgPolicyChecks,omitempty"` // @gotags: json:"orgPolicyChecks,omitempty"
-	// Specifies if the blueprint supports single or multiple deployments per GCP
-	// project. If set to true, the blueprint can not be deployed more than once
-	// in the same GCP project. Gen: manually-authored
-	SingleDeployment bool `protobuf:"varint,15,opt,name=single_deployment,json=singleDeployment,proto3" json:"singleDeployment,omitempty"` // @gotags: json:"singleDeployment,omitempty"
+	OrgPolicyChecks []*BlueprintOrgPolicyCheck `protobuf:"bytes,14,rep,name=org_policy_checks,json=orgPolicyChecks,proto3" json:"orgPolicyChecks,omitempty" yaml:"orgPolicyChecks,omitempty"` // @gotags: json:"orgPolicyChecks,omitempty" yaml:"orgPolicyChecks,omitempty"
+	// Specifies if the blueprint supports single or multiple deployments per GCP project.
+	// If set to true, the blueprint can not be deployed more than once in the same GCP project.
+	// Gen: manually-authored
+	SingleDeployment bool `protobuf:"varint,15,opt,name=single_deployment,json=singleDeployment,proto3" json:"singleDeployment,omitempty" yaml:"singleDeployment,omitempty"` // @gotags: json:"singleDeployment,omitempty" yaml:"singleDeployment,omitempty"
 }
 
 func (x *BlueprintInfo) Reset() {
@@ -578,17 +575,15 @@ type BlueprintContent struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Gen: auto-generated
-	Architecture *BlueprintArchitecture `protobuf:"bytes,1,opt,name=architecture,proto3" json:"architecture,omitempty"` // @gotags: json:"architecture,omitempty"
+	Architecture *BlueprintArchitecture `protobuf:"bytes,1,opt,name=architecture,proto3" json:"architecture,omitempty" yaml:"architecture,omitempty"` // @gotags: json:"architecture,omitempty" yaml:"architecture,omitempty"
 	// Gen: manually-authored
 	Diagrams []*BlueprintDiagram `protobuf:"bytes,2,rep,name=diagrams,proto3" json:"diagrams,omitempty" yaml:"diagrams,omitempty"` // @gotags: json:"diagrams,omitempty" yaml:"diagrams,omitempty"
-	// Gen: auto-generated - the list content following the "## Documentation"
-	// tag. E.g.
+	// Gen: auto-generated - the list content following the "## Documentation" tag. E.g.
 	// ## Documentation
-	// - [Hosting a Static
-	// Website](https://cloud.google.com/storage/docs/hosting-static-website)
-	Documentation []*BlueprintListContent `protobuf:"bytes,3,rep,name=documentation,proto3" json:"documentation,omitempty"` // @gotags: json:"documentation,omitempty"
+	// - [Hosting a Static Website](https://cloud.google.com/storage/docs/hosting-static-website)
+	Documentation []*BlueprintListContent `protobuf:"bytes,3,rep,name=documentation,proto3" json:"documentation,omitempty" yaml:"documentation,omitempty"` // @gotags: json:"documentation,omitempty" yaml:"documentation,omitempty"
 	// Gen: auto-generated - blueprints under the modules/ folder.
-	SubBlueprints []*BlueprintMiscContent `protobuf:"bytes,4,rep,name=sub_blueprints,json=subBlueprints,proto3" json:"subBlueprints,omitempty"` // @gotags: json:"subBlueprints,omitempty"
+	SubBlueprints []*BlueprintMiscContent `protobuf:"bytes,4,rep,name=sub_blueprints,json=subBlueprints,proto3" json:"subBlueprints,omitempty" yaml:"subBlueprints,omitempty"` // @gotags: json:"subBlueprints,omitempty" yaml:"subBlueprints,omitempty"
 	// Gen: auto-generated - examples under the examples/ folder.
 	Examples []*BlueprintMiscContent `protobuf:"bytes,5,rep,name=examples,proto3" json:"examples,omitempty" yaml:"examples,omitempty"` // @gotags: json:"examples,omitempty" yaml:"examples,omitempty"
 }
@@ -669,7 +664,7 @@ type BlueprintInterface struct {
 	// Gen: auto-generated - all defined variables for the blueprint
 	Variables []*BlueprintVariable `protobuf:"bytes,1,rep,name=variables,proto3" json:"variables,omitempty" yaml:"variables,omitempty"` // @gotags: json:"variables,omitempty" yaml:"variables,omitempty"
 	// Gen: manually-authored
-	VariableGroups []*BlueprintVariableGroup `protobuf:"bytes,2,rep,name=variable_groups,json=variableGroups,proto3" json:"variableGroups,omitempty"` // @gotags: json:"variableGroups,omitempty"
+	VariableGroups []*BlueprintVariableGroup `protobuf:"bytes,2,rep,name=variable_groups,json=variableGroups,proto3" json:"variableGroups,omitempty" yaml:"variableGroups,omitempty"` // @gotags: json:"variableGroups,omitempty" yaml:"variableGroups,omitempty"
 	// Gen: auto-generated - all defined outputs for the blueprint
 	Outputs []*BlueprintOutput `protobuf:"bytes,3,rep,name=outputs,proto3" json:"outputs,omitempty" yaml:"outputs,omitempty"` // @gotags: json:"outputs,omitempty" yaml:"outputs,omitempty"
 }
@@ -734,20 +729,21 @@ type BlueprintRequirements struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Gen: auto-generated - all roles required for the blueprint in
+	// Gen: auto-generated - all roles required for the blueprint in test/setup/iam.tf
+	// as the "int_required_roles" local. E.g.
 	//
-	//	test/setup/iam.tf as the "int_required_roles" local. E.g. locals {
+	//	locals {
 	//	  int_required_roles = [
 	//	    "roles/compute.admin",
 	//	  ]
 	//	}
 	Roles []*BlueprintRoles `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty" yaml:"roles,omitempty"` // @gotags: json:"roles,omitempty" yaml:"roles,omitempty"
-	// Gen: auto-generated - all services required for the blueprint in
-	// test/setup/main.tf as "activate_apis" in the project module.
+	// Gen: auto-generated - all services required for the blueprint in test/setup/main.tf
+	// as "activate_apis" in the project module.
 	Services []string `protobuf:"bytes,2,rep,name=services,proto3" json:"services,omitempty" yaml:"services,omitempty"` // @gotags: json:"services,omitempty" yaml:"services,omitempty"
 	// Required provider versions.
 	// Gen: auto-generated from required providers block.
-	ProviderVersions []*ProviderVersion `protobuf:"bytes,3,rep,name=provider_versions,json=providerVersions,proto3" json:"providerVersions,omitempty"` // @gotags: json:"providerVersions,omitempty"
+	ProviderVersions []*ProviderVersion `protobuf:"bytes,3,rep,name=provider_versions,json=providerVersions,proto3" json:"provider_versions,omitempty"` // @gotags:
 }
 
 func (x *BlueprintRequirements) Reset() {
@@ -875,8 +871,8 @@ type BlueprintUI struct {
 	// Gen: partial
 	Input *BlueprintUIInput `protobuf:"bytes,1,opt,name=input,proto3" json:"input,omitempty" yaml:"input,omitempty"` // @gotags: json:"input,omitempty" yaml:"input,omitempty"
 	// The top-level section for listing runtime (or blueprint output) information
-	// i.e. the console URL for the VM or a button to ssh into the VM etc based
-	// on. Gen: manually-authored
+	// i.e. the console URL for the VM or a button to ssh into the VM etc based on.
+	// Gen: manually-authored
 	Runtime *BlueprintUIOutput `protobuf:"bytes,2,opt,name=runtime,proto3" json:"runtime,omitempty" yaml:"runtime,omitempty"` // @gotags: json:"runtime,omitempty" yaml:"runtime,omitempty"
 }
 
@@ -995,8 +991,7 @@ func (x *BlueprintRepoDetail) GetDir() string {
 	return ""
 }
 
-// BlueprintActuationTool defines the actuation tool used to provision the
-// blueprint.
+// BlueprintActuationTool defines the actuation tool used to provision the blueprint.
 type BlueprintActuationTool struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1080,7 +1075,7 @@ type BlueprintDescription struct {
 	EulaUrls []string `protobuf:"bytes,5,rep,name=eula_urls,json=eulaUrls,proto3" json:"eulaUrls,omitempty" yaml:"eulaUrls,omitempty"` // @gotags: json:"eulaUrls,omitempty" yaml:"eulaUrls,omitempty"
 	// Gen: auto-generated - Markdown after "### Architecture"
 	// Deprecated. Use BlueprintContent.Architecture instead.
-	Architecture []string `protobuf:"bytes,6,rep,name=architecture,proto3" json:"architecture,omitempty"` // @gotags: json:"architecture,omitempty"
+	Architecture []string `protobuf:"bytes,6,rep,name=architecture,proto3" json:"architecture,omitempty" yaml:"architecture,omitempty"` // @gotags: json:"architecture,omitempty" yaml:"architecture,omitempty"
 }
 
 func (x *BlueprintDescription) Reset() {
@@ -1163,14 +1158,12 @@ type BlueprintTimeEstimate struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Gen: auto-generated - Set using the content defined under "###
-	// DeploymentTime" E.g.
+	// Gen: auto-generated - Set using the content defined under "### DeploymentTime" E.g.
 	// ### DeploymentTime
 	// - Configuration: X secs
 	// - Deployment: Y secs
-	ConfigurationSecs int64 `protobuf:"varint,1,opt,name=configuration_secs,json=configurationSecs,proto3" json:"configurationSecs,omitempty"` // @gotags: json:"configurationSecs,omitempty"
-	// yaml:"configurationSecs,omitempty"
-	DeploymentSecs int64 `protobuf:"varint,2,opt,name=deployment_secs,json=deploymentSecs,proto3" json:"deploymentSecs,omitempty"` // @gotags: json:"deploymentSecs,omitempty"
+	ConfigurationSecs int64 `protobuf:"varint,1,opt,name=configuration_secs,json=configurationSecs,proto3" json:"configurationSecs,omitempty" yaml:"configurationSecs,omitempty"` // @gotags: json:"configurationSecs,omitempty" yaml:"configurationSecs,omitempty"
+	DeploymentSecs    int64 `protobuf:"varint,2,opt,name=deployment_secs,json=deploymentSecs,proto3" json:"deploymentSecs,omitempty" yaml:"deploymentSecs,omitempty"`          // @gotags: json:"deploymentSecs,omitempty" yaml:"deploymentSecs,omitempty"
 }
 
 func (x *BlueprintTimeEstimate) Reset() {
@@ -1225,8 +1218,8 @@ type BlueprintCostEstimate struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Gen: auto-generated - Set using the content defined under "### Cost" as a
-	// link with a description E.g.
+	// Gen: auto-generated - Set using the content defined under "### Cost" as a link
+	// with a description E.g.
 	// ### Cost
 	// [$20.00](https://cloud.google.com/products/calculator?hl=en_US&_ga=2.1665458.-226505189.1675191136#id=02fb0c45-cc29-4567-8cc6-f72ac9024add)
 	Description string `protobuf:"bytes,1,opt,name=description,proto3" json:"description" yaml:"description"` // @gotags: json:"description" yaml:"description"
@@ -1285,8 +1278,9 @@ type BlueprintCloudProduct struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// A top-level (e.g. "Compute Engine") or secondary (e.g. "Binary
-	// Authorization") product used in the blueprint. Gen: manually-authored
+	// A top-level (e.g. "Compute Engine") or secondary (e.g. "Binary Authorization")
+	// product used in the blueprint.
+	// Gen: manually-authored
 	ProductId string `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"productId,omitempty" yaml:"productId,omitempty"` // @gotags: json:"productId,omitempty" yaml:"productId,omitempty"
 	// Url for the product.
 	// Gen: manually-authored
@@ -1374,7 +1368,7 @@ type BlueprintOrgPolicyCheck struct {
 	// If not set, it is assumed any version of this org policy
 	// prevents successful deployment of this solution.
 	// Gen: manually-authored
-	RequiredValues []string `protobuf:"bytes,2,rep,name=required_values,json=requiredValues,proto3" json:"requiredValues,omitempty"` // @gotags: json:"requiredValues,omitempty"
+	RequiredValues []string `protobuf:"bytes,2,rep,name=required_values,json=requiredValues,proto3" json:"requiredValues,omitempty" yaml:"requiredValues,omitempty"` // @gotags: json:"requiredValues,omitempty" yaml:"requiredValues,omitempty"
 }
 
 func (x *BlueprintOrgPolicyCheck) Reset() {
@@ -1433,7 +1427,7 @@ type BlueprintQuotaDetail struct {
 	// with the corresponding resource and quota type. In its absence, the quota
 	// detail is assumed to be fixed.
 	// Gen: manually-authored
-	DynamicVariable string `protobuf:"bytes,1,opt,name=dynamic_variable,json=dynamicVariable,proto3" json:"dynamicVariable,omitempty"` // @gotags: json:"dynamicVariable,omitempty"
+	DynamicVariable string `protobuf:"bytes,1,opt,name=dynamic_variable,json=dynamicVariable,proto3" json:"dynamicVariable,omitempty" yaml:"dynamicVariable,omitempty"` // @gotags: json:"dynamicVariable,omitempty" yaml:"dynamicVariable,omitempty"
 	// ResourceType is the type of resource the quota will be applied to i.e.
 	// GCE Instance or Disk etc.
 	// Gen: manually-authored
@@ -1730,7 +1724,7 @@ type BlueprintSupport struct {
 	Entity string `protobuf:"bytes,3,opt,name=entity,proto3" json:"entity,omitempty" yaml:"entity,omitempty"` // @gotags: json:"entity,omitempty" yaml:"entity,omitempty"
 	// Whether to show the customer's support ID.
 	// Gen: manually-authored
-	ShowSupportId bool `protobuf:"varint,4,opt,name=show_support_id,json=showSupportId,proto3" json:"showSupportId,omitempty"` // @gotags: json:"showSupportId,omitempty"
+	ShowSupportId bool `protobuf:"varint,4,opt,name=show_support_id,json=showSupportId,proto3" json:"showSupportId,omitempty" yaml:"showSupportId,omitempty"` // @gotags: json:"showSupportId,omitempty" yaml:"showSupportId,omitempty"
 }
 
 func (x *BlueprintSupport) Reset() {
@@ -1798,8 +1792,7 @@ type BlueprintArchitecture struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Gen: auto-generated - the URL & list content following the "##
-	// Architecture" tag e.g.
+	// Gen: auto-generated - the URL & list content following the "## Architecture" tag e.g.
 	// ## Architecture
 	// ![Blueprint Architecture](assets/architecture.png)
 	// 1. Step no. 1
@@ -2037,9 +2030,8 @@ type BlueprintVariable struct {
 	Name         string          `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" yaml:"name,omitempty"`                                     // @gotags: json:"name,omitempty" yaml:"name,omitempty"
 	Description  string          `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty" yaml:"description,omitempty"`                       // @gotags: json:"description,omitempty" yaml:"description,omitempty"
 	VarType      string          `protobuf:"bytes,3,opt,name=var_type,json=varType,proto3" json:"varType,omitempty" yaml:"varType,omitempty"`                // @gotags: json:"varType,omitempty" yaml:"varType,omitempty"
-	DefaultValue *structpb.Value `protobuf:"bytes,4,opt,name=default_value,json=defaultValue,proto3" json:"defaultValue,omitempty"` // @gotags: json:"defaultValue,omitempty"
-	// yaml:"defaultValue,omitempty"
-	Required bool `protobuf:"varint,5,opt,name=required,proto3" json:"required,omitempty" yaml:"required,omitempty"` // @gotags: json:"required,omitempty" yaml:"required,omitempty"
+	DefaultValue *structpb.Value `protobuf:"bytes,4,opt,name=default_value,json=defaultValue,proto3" json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"` // @gotags: json:"defaultValue,omitempty" yaml:"defaultValue,omitempty"
+	Required     bool            `protobuf:"varint,5,opt,name=required,proto3" json:"required,omitempty" yaml:"required,omitempty"`                            // @gotags: json:"required,omitempty" yaml:"required,omitempty"
 	// Incoming connections to this variable.
 	// Connections are outputs from other blueprints that can be potentially
 	// connected to this variable.
@@ -2251,11 +2243,11 @@ type ConnectionSpec struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Output expression identifying output being connected to variable.
-	// This can be the output name or more complex expression like attribuite
-	// notation. Gen: manually-authored.
+	// This can be the output name or more complex expression like attribuite notation.
+	// Gen: manually-authored.
 	OutputExpr string `protobuf:"bytes,1,opt,name=output_expr,json=outputExpr,proto3" json:"outputExpr,omitempty" yaml:"outputExpr,omitempty"` // @gotags: json:"outputExpr,omitempty" yaml:"outputExpr,omitempty"
-	// Optional dot separated attribuite notation to connect to a specific object
-	// field of the input variable. Gen: manually-authored.
+	// Optional dot separated attribuite notation to connect to a specific object field of the input variable.
+	// Gen: manually-authored.
 	InputPath *string `protobuf:"bytes,2,opt,name=input_path,json=inputPath,proto3,oneof" json:"inputPath,omitempty" yaml:"inputPath,omitempty"` // @gotags: json:"inputPath,omitempty" yaml:"inputPath,omitempty"
 }
 
@@ -2495,9 +2487,9 @@ var file_bpmetadata_proto_rawDesc = []byte{
 	0x0a, 0x10, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x12, 0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64,
 	0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61,
-	0x74, 0x61, 0x1a, 0x13, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x75,
-	0x69, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x2e,
+	0x74, 0x61, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x75, 0x66, 0x2f, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x1a, 0x13, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x5f, 0x75, 0x69, 0x2e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xe1, 0x01, 0x0a, 0x11, 0x42, 0x6c, 0x75, 0x65, 0x70, 0x72,
 	0x69, 0x6e, 0x74, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x1f, 0x0a, 0x0b, 0x61,
 	0x70, 0x69, 0x5f, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,

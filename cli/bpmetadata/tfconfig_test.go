@@ -340,3 +340,29 @@ func TestMergeExistingConnections(t *testing.T) {
 		})
 	}
 }
+
+func TestTFIncompleteProviderVersions(t *testing.T) {
+	tests := []struct {
+		name       string
+		configName string
+	}{
+		{
+			name:       "Empty list of provider versions",
+			configName: "provider-versions-empty.tf",
+		},
+		{
+			name:       "Missing ProviderVersion field",
+			configName: "provider-versions-bad.tf",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := hclparse.NewParser()
+			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
+			got, err := parseBlueprintProviderVersions(content)
+			require.NoError(t, err)
+			assert.Nil(t, got)
+		})
+	}
+}

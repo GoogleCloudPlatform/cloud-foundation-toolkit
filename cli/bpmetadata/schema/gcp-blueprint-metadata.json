@@ -440,7 +440,7 @@
           },
           "type": "array"
         },
-        "providerVersions": {
+        "provider_versions": {
           "items": {
             "$ref": "#/$defs/ProviderVersion"
           },
