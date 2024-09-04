@@ -591,6 +591,13 @@ locals {
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
     },
     {
+      name        = "terraform-google-pam"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy Privileged Access Manage"
+      owners      = ["imrannayer", "mgaur10"]
+      topics      = local.common_topics.security
+    },
+    {
       name        = "terraform-google-netapp-volumes"
       org         = "GoogleCloudPlatform"
       description = "Deploy NetApp Storage Volumes"
