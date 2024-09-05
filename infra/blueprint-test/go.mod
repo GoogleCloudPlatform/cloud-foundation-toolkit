@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test
 
-go 1.22.0
+go 1.22
 
 toolchain go1.22.7
 
