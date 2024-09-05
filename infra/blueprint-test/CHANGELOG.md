@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.16.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.16.1...infra/blueprint-test/v0.16.2) (2024-09-05)
+
+
+### Bug Fixes
+
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to 6714b46 ([#2488](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2488)) ([ca03f44](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/ca03f449f2ee9c928e702b8520e823cca83d445a))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.47.1 ([#2578](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2578)) ([490d63b](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/490d63bf25395f71ad571cb7ade136663cafebef))
+* **deps:** update module github.com/tidwall/gjson to v1.17.3 ([#2474](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2474)) ([7fe2b66](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/7fe2b66489a4cf3be5d6451ca3177bfeb5c94249))
+* **deps:** update module golang.org/x/mod to v0.20.0 ([#2512](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2512)) ([13973f0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/13973f0a4aade9b6a1bb24210a9a0d7038416cae))
+* **deps:** update module golang.org/x/mod to v0.21.0 ([#2574](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2574)) ([e288615](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e288615361472de1940ca092388439864749cba1))
+
 ## [0.16.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.16.0...infra/blueprint-test/v0.16.1) (2024-07-23)
 
 
