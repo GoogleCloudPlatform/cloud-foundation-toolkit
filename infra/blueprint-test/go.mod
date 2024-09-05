@@ -7,7 +7,7 @@ toolchain go1.22.7
 require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
 	github.com/alexflint/go-filemutex v1.3.0
-	github.com/gruntwork-io/terratest v0.47.0
+	github.com/gruntwork-io/terratest v0.47.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20240801114854-6714b46f5fe4
 	github.com/hashicorp/terraform-json v0.22.1
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
@@ -52,7 +52,7 @@ require (
 	github.com/gruntwork-io/go-commons v0.17.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-getter v1.7.5 // indirect
+	github.com/hashicorp/go-getter v1.7.6 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
