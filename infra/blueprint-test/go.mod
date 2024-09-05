@@ -1,8 +1,8 @@
 module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test
 
-go 1.22
+go 1.22.0
 
-toolchain go1.22.6
+toolchain go1.22.7
 
 require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
@@ -15,7 +15,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/tidwall/gjson v1.17.3
 	github.com/tidwall/sjson v1.2.5
-	golang.org/x/mod v0.20.0
+	golang.org/x/mod v0.21.0
 	sigs.k8s.io/kustomize/kyaml v0.17.2
 )
 
