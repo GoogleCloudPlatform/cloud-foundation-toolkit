@@ -203,22 +203,18 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion,
 	}
 
 	for _, providerData := range hclModule.RequiredProviders {
-		providerVersion := &ProviderVersion{}
-
-		source := providerData.Source
-		if source == "" {
+		if providerData.Source == "" {
 			Log.Info("Not found source in provider settings\n")
 			continue
 		}
-		providerVersion.Source = source
-
-		version := strings.Join(providerData.VersionConstraints, ", ")
-		if version == "" {
+		if len(providerData.VersionConstraints) == 0 {
 			Log.Info("Not found version in provider settings\n")
 			continue
 		}
-		providerVersion.Version = version
-		v = append(v, providerVersion)
+		v = append(v, &ProviderVersion{
+			Source:  providerData.Source,
+			Version: strings.Join(providerData.VersionConstraints, ", "),
+		})
 	}
 	return v, nil
 }
