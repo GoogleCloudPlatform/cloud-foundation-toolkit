@@ -310,30 +310,33 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	if versionsConfigPath != "" {
-		//parse blueprint provider versions
-		versionsFile, diags := p.ParseHCLFile(versionsConfigPath)
-		err = hasHclErrors(diags)
-		if err != nil {
-			return nil, err
-		}
+	versionCfgFileExists, _ := fileExists(versionsConfigPath)
 
-		v, err := parseBlueprintProviderVersions(versionsFile)
-		if err != nil {
-			return nil, err
-		}
-
-		return &BlueprintRequirements{
-			Roles:            r,
-			Services:         s,
-			ProviderVersions: v,
-		}, nil
-	} else {
+	if !versionCfgFileExists {
 		return &BlueprintRequirements{
 			Roles:    r,
 			Services: s,
 		}, nil
 	}
+
+	//parse blueprint provider versions
+	versionsFile, diags := p.ParseHCLFile(versionsConfigPath)
+	err = hasHclErrors(diags)
+	if err != nil {
+		return nil, err
+	}
+
+	v, err := parseBlueprintProviderVersions(versionsFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &BlueprintRequirements{
+		Roles:            r,
+		Services:         s,
+		ProviderVersions: v,
+	}, nil
+
 }
 
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
