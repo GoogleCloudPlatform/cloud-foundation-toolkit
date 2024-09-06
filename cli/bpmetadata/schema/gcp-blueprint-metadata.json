@@ -552,15 +552,6 @@
         },
         "runtime": {
           "$ref": "#/$defs/BlueprintUIOutput"
-        },
-        "display_title": {
-          "type": "string"
-        },
-        "display_subtitle": {
-          "type": "string"
-        },
-        "display_description": {
-          "type": "string"
         }
       },
       "additionalProperties": false,

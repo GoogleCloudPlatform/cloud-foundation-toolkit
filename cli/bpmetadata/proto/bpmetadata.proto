@@ -220,18 +220,6 @@ message BlueprintUI {
   // i.e. the console URL for the VM or a button to ssh into the VM etc based on.
   // Gen: manually-authored
   BlueprintUIOutput runtime = 2; // @gotags: json:"runtime,omitempty" yaml:"runtime,omitempty"
-
-  // The title for displaying on UI. This is used when blueprint is used as building block on UI.
-  // Gen: manually-authored
-  string display_title = 3;
-
-  // The subtitle for displaying on UI. This is used when blueprint is used as building block on UI.
-  // Gen: manually-authored
-  string display_subtitle = 4;
-
-  // The description for displaying on UI. This is used when blueprint is used as building block on UI.
-  // Gen: manually-authored
-  string display_description = 5;
 }
 
 message BlueprintRepoDetail {
