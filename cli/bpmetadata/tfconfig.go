@@ -190,7 +190,7 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 }
 
 // parseBlueprintProviderVersions gets the blueprint provider_versions from the provided config
-// from the provider_meta block
+// from the required_providers block.
 func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion, error) {
 	var v []*ProviderVersion
 	var diags hcl.Diagnostics
