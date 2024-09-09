@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
 
 	hcl "github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
@@ -188,6 +189,36 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 	return "", nil
 }
 
+// parseBlueprintProviderVersions gets the blueprint provider_versions from the provided config
+// from the required_providers block.
+func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion, error) {
+	var v []*ProviderVersion
+	// parse out the required providers from the config
+	var hclModule tfconfig.Module
+	hclModule.RequiredProviders = make(map[string]*tfconfig.ProviderRequirement)
+	diags := tfconfig.LoadModuleFromFile(versionsFile, &hclModule)
+	err := hasHclErrors(diags)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, providerData := range hclModule.RequiredProviders {
+		if providerData.Source == "" {
+			Log.Info("Not found source in provider settings\n")
+			continue
+		}
+		if len(providerData.VersionConstraints) == 0 {
+			Log.Info("Not found version in provider settings\n")
+			continue
+		}
+		v = append(v, &ProviderVersion{
+			Source:  providerData.Source,
+			Version: strings.Join(providerData.VersionConstraints, ", "),
+		})
+	}
+	return v, nil
+}
+
 // getBlueprintInterfaces gets the variables and outputs associated
 // with the blueprint
 func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
@@ -253,7 +284,7 @@ func getBlueprintOutput(modOut *tfconfig.Output) *BlueprintOutput {
 
 // getBlueprintRequirements gets the services and roles associated
 // with the blueprint
-func getBlueprintRequirements(rolesConfigPath, servicesConfigPath string) (*BlueprintRequirements, error) {
+func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfigPath string) (*BlueprintRequirements, error) {
 	//parse blueprint roles
 	p := hclparse.NewParser()
 	rolesFile, diags := p.ParseHCLFile(rolesConfigPath)
@@ -279,10 +310,33 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath string) (*Blue
 		return nil, err
 	}
 
+	versionCfgFileExists, _ := fileExists(versionsConfigPath)
+
+	if !versionCfgFileExists {
+		return &BlueprintRequirements{
+			Roles:    r,
+			Services: s,
+		}, nil
+	}
+
+	//parse blueprint provider versions
+	versionsFile, diags := p.ParseHCLFile(versionsConfigPath)
+	err = hasHclErrors(diags)
+	if err != nil {
+		return nil, err
+	}
+
+	v, err := parseBlueprintProviderVersions(versionsFile)
+	if err != nil {
+		return nil, err
+	}
+
 	return &BlueprintRequirements{
-		Roles:    r,
-		Services: s,
+		Roles:            r,
+		Services:         s,
+		ProviderVersions: v,
 	}, nil
+
 }
 
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
@@ -399,15 +453,15 @@ func hasTfconfigErrors(diags tfconfig.Diagnostics) error {
 // MergeExistingConnections merges existing connections from an old BlueprintInterface into a new one,
 // preserving manually authored connections.
 func mergeExistingConnections(newInterfaces, existingInterfaces *BlueprintInterface) {
-    if existingInterfaces == nil {
-        return // Nothing to merge if existingInterfaces is nil
-    }
+	if existingInterfaces == nil {
+		return // Nothing to merge if existingInterfaces is nil
+	}
 
-    for i, variable := range newInterfaces.Variables {
-        for _, existingVariable := range existingInterfaces.Variables {
-            if variable.Name == existingVariable.Name && existingVariable.Connections != nil {
-                newInterfaces.Variables[i].Connections = existingVariable.Connections
-            }
-        }
-    }
+	for i, variable := range newInterfaces.Variables {
+		for _, existingVariable := range existingInterfaces.Variables {
+			if variable.Name == existingVariable.Name && existingVariable.Connections != nil {
+				newInterfaces.Variables[i].Connections = existingVariable.Connections
+			}
+		}
+	}
 }

@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	tfTestdataPath = "../testdata/bpmetadata/tf"
+	tfTestdataPath       = "../testdata/bpmetadata/tf"
 	metadataTestdataPath = "../testdata/bpmetadata/metadata"
-	interfaces     = "sample-module"
+	interfaces           = "sample-module"
 )
 
 func TestTFInterfaces(t *testing.T) {
@@ -268,25 +268,58 @@ func TestTFRoles(t *testing.T) {
 	}
 }
 
+func TestTFProviderVersions(t *testing.T) {
+	tests := []struct {
+		name                 string
+		configName           string
+		wantProviderVersions []*ProviderVersion
+	}{
+		{
+			name:       "Simple list of provider versions",
+			configName: "versions-beta.tf",
+			wantProviderVersions: []*ProviderVersion{
+				{
+					Source:  "hashicorp/google",
+					Version: ">= 4.4.0, < 7",
+				},
+				{
+					Source:  "hashicorp/google-beta",
+					Version: ">= 4.4.0, < 7",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := hclparse.NewParser()
+			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
+			got, err := parseBlueprintProviderVersions(content)
+			require.NoError(t, err)
+			assert.Equal(t, got, tt.wantProviderVersions)
+		})
+	}
+}
+
 func TestMergeExistingConnections(t *testing.T) {
 	tests := []struct {
-		name                string
-		newInterfacesFile   string
+		name                   string
+		newInterfacesFile      string
 		existingInterfacesFile string
 	}{
 		{
-			name:                "No existing connections",
-			newInterfacesFile:   "new_interfaces_no_connections_metadata.yaml",
+			name:                   "No existing connections",
+			newInterfacesFile:      "new_interfaces_no_connections_metadata.yaml",
 			existingInterfacesFile: "existing_interfaces_without_connections_metadata.yaml",
 		},
 		{
-			name:                "One existing connection is preserved",
-			newInterfacesFile:   "new_interfaces_no_connections_metadata.yaml",
+			name:                   "One existing connection is preserved",
+			newInterfacesFile:      "new_interfaces_no_connections_metadata.yaml",
 			existingInterfacesFile: "existing_interfaces_with_one_connection_metadata.yaml",
 		},
 		{
-			name:                "Multiple existing connections are preserved",
-			newInterfacesFile:   "new_interfaces_no_connections_metadata.yaml",
+			name:                   "Multiple existing connections are preserved",
+			newInterfacesFile:      "new_interfaces_no_connections_metadata.yaml",
 			existingInterfacesFile: "existing_interfaces_with_some_connections_metadata.yaml",
 		},
 	}
@@ -306,6 +339,32 @@ func TestMergeExistingConnections(t *testing.T) {
 
 			// Assert that the merged interfaces match the existing ones
 			assert.Equal(t, existingInterfaces.Spec.Interfaces, newInterfaces.Spec.Interfaces)
+		})
+	}
+}
+
+func TestTFIncompleteProviderVersions(t *testing.T) {
+	tests := []struct {
+		name       string
+		configName string
+	}{
+		{
+			name:       "Empty list of provider versions",
+			configName: "provider-versions-empty.tf",
+		},
+		{
+			name:       "Missing ProviderVersion field",
+			configName: "provider-versions-bad.tf",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := hclparse.NewParser()
+			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
+			got, err := parseBlueprintProviderVersions(content)
+			require.NoError(t, err)
+			assert.Nil(t, got)
 		})
 	}
 }

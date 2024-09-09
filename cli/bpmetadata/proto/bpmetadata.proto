@@ -195,7 +195,7 @@ message BlueprintRequirements {
 
   // Required provider versions.
   // Gen: auto-generated from required providers block.
-  repeated ProviderVersion provider_versions = 3; // @gotags: json:"versions,omitempty" yaml:"providerVersions,omitempty"
+  repeated ProviderVersion provider_versions = 3; // @gotags: json:"providerVersions,omitempty" yaml:"providerVersions,omitempty"
 }
 
 // ProviderVersion defines the required version for a provider.
