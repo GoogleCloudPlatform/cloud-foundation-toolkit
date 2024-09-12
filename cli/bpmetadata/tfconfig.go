@@ -54,6 +54,15 @@ var metaSchema = &hcl.BodySchema{
 	},
 }
 
+var variableSchema = &hcl.BodySchema{
+	Blocks: []hcl.BlockHeaderSchema{
+		{
+			Type:       "variable",
+			LabelNames: []string{"name"},
+		},
+	},
+}
+
 var metaBlockSchema = &hcl.BodySchema{
 	Attributes: []hcl.AttributeSchema{
 		{
@@ -229,19 +238,44 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		return nil, err
 	}
 
-	var variables []*BlueprintVariable
-	for _, val := range mod.Variables {
-		v := getBlueprintVariable(val)
-		variables = append(variables, v)
+	//var variables []*BlueprintVariable
+	//for _, val := range mod.Variables {
+	//v := getBlueprintVariable(val)
+	//variables = append(variables, v)
+	//}
+
+	p := hclparse.NewParser()
+	variableFile, diags := p.ParseHCLFile(configPath)
+	if diags.HasErrors() {
+		Log.Exitf("Failed to parse HCL: %v", diags)
 	}
+	variableContent, _, diags := variableFile.Body.PartialContent(variableSchema)
+	if diags.HasErrors() {
+		Log.Exitf("Failed to parse variable content: %v", diags)
+	}
+	var variableOrderKeys []string
+	var variables []string
+	for _, block := range variableContent.Blocks {
+		// We only care about variable blocks.
+		if block.Type != "variable" {
+			continue
+		}
+		// We expect a single label which is the variable name.
+		if len(block.Labels) != 1 {
+			Log.Infof("Variable block has no name: %v", block)
+		}
+		variableOrderKeys = append(variableOrderKeys, block.Labels[0])
+		variables = append(variables, getBlueprintVariable(block))
+
+	}
+	Log.Infof("Found variables in order: %v", variableOrderKeys)
 
 	// Sort variables
-	sort.SliceStable(variables, func(i, j int) bool { return variables[i].Name < variables[j].Name })
+	sort.SliceStable(variables, func(i, j int) bool { return variableOrderKeys[i] < variableOrderKeys[j] })
 
 	var outputs []*BlueprintOutput
 	for _, val := range mod.Outputs {
 		o := getBlueprintOutput(val)
-
 		outputs = append(outputs, o)
 	}
 
