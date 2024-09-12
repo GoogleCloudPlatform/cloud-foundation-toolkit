@@ -23,7 +23,8 @@
       "extends": [":semanticCommitTypeAll(chore)", ":rebaseStalePrs"]
     },
     {
-      "matchPackageNames": ["google", "google-beta"],
+      "matchManagers": ["terraform"],
+      "matchDepNames": ["google", "google-beta"],
       "groupName": "terraform google provider",
       "rangeStrategy": "widen"
     },
