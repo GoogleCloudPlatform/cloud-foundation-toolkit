@@ -238,40 +238,40 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		return nil, err
 	}
 
-	//var variables []*BlueprintVariable
-	//for _, val := range mod.Variables {
-	//v := getBlueprintVariable(val)
-	//variables = append(variables, v)
-	//}
+	var variables []*BlueprintVariable
+	for _, val := range mod.Variables {
+		v := getBlueprintVariable(val)
+		variables = append(variables, v)
+	}
 
 	p := hclparse.NewParser()
-	variableFile, diags := p.ParseHCLFile(configPath)
-	if diags.HasErrors() {
-		Log.Exitf("Failed to parse HCL: %v", diags)
+	variableFile, hclDiags := p.ParseHCLFile(filepath.Join(configPath, "variables.tf"))
+	if hclDiags.HasErrors() {
+		Log.Info("Failed to parse HCL: ", "diags: ", hclDiags)
 	}
-	variableContent, _, diags := variableFile.Body.PartialContent(variableSchema)
-	if diags.HasErrors() {
-		Log.Exitf("Failed to parse variable content: %v", diags)
+	variableContent, _, hclDiags := variableFile.Body.PartialContent(variableSchema)
+	if hclDiags.HasErrors() {
+		Log.Info("Failed to parse variable content: %v", hclDiags)
 	}
-	var variableOrderKeys []string
-	var variables []string
-	for _, block := range variableContent.Blocks {
+	variableOrderKeys := make(map[string]int)
+	for i, block := range variableContent.Blocks {
 		// We only care about variable blocks.
 		if block.Type != "variable" {
 			continue
 		}
 		// We expect a single label which is the variable name.
 		if len(block.Labels) != 1 {
-			Log.Infof("Variable block has no name: %v", block)
+			Log.Info("Variable block has no name: %v", block)
 		}
-		variableOrderKeys = append(variableOrderKeys, block.Labels[0])
-		variables = append(variables, getBlueprintVariable(block))
+		variableOrderKeys[block.Labels[0]] = i
 
 	}
-	Log.Infof("Found variables in order: %v", variableOrderKeys)
+	Log.Info("Found variables in order: ", "variableOrderKeys: ", variableOrderKeys)
 
 	// Sort variables
-	sort.SliceStable(variables, func(i, j int) bool { return variableOrderKeys[i] < variableOrderKeys[j] })
+	sort.SliceStable(variables, func(i, j int) bool {
+		return variableOrderKeys[variables[i].Name] < variableOrderKeys[variables[j].Name]
+	})
 
 	var outputs []*BlueprintOutput
 	for _, val := range mod.Outputs {
