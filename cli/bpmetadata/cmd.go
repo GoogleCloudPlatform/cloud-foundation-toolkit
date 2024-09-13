@@ -2,27 +2,35 @@ package bpmetadata
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/parser"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
 	"github.com/itchyny/json2yaml"
+	testingiface "github.com/mitchellh/go-testing-interface"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 	"sigs.k8s.io/yaml"
 )
 
 var mdFlags struct {
-	path     string
-	nested   bool
-	force    bool
-	display  bool
-	validate bool
-	quiet    bool
+	path          string
+	nested        bool
+	force         bool
+	display       bool
+	validate      bool
+	quiet         bool
+	genOutputType bool
 }
 
 const (
@@ -49,6 +57,7 @@ func init() {
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
 	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
 	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Run in quiet mode suppressing all prompts.")
+	Cmd.Flags().BoolVarP(&mdFlags.genOutputType, "generate-output-type", "g", false, "Automatically generate type field for outputs.")
 }
 
 var Cmd = &cobra.Command{
@@ -148,6 +157,21 @@ func generateMetadataForBpPath(bpPath string) error {
 		return fmt.Errorf("error creating metadata for blueprint at path: %s. Details: %w", bpPath, err)
 	}
 
+	// If the flag is set, extract output types
+	if mdFlags.genOutputType {
+		outputTypes, err := extractOutputTypesFromState(bpPath)
+		if err != nil {
+			return fmt.Errorf("error extracting output types for blueprint at path: %s. Details: %w", bpPath, err)
+		}
+
+		// Update the bpMetadata with the extracted output types
+		for i, output := range bpMetaObj.Spec.Interfaces.Outputs {
+			if outputType, ok := outputTypes[output.Name]; ok {
+				bpMetaObj.Spec.Interfaces.Outputs[i].Type = outputType
+			}
+		}
+	}
+
 	// write core metadata to disk
 	err = WriteMetadata(bpMetaObj, bpPath, metadataFileName)
 	if err != nil {
@@ -178,6 +202,43 @@ func generateMetadataForBpPath(bpPath string) error {
 	}
 
 	return nil
+}
+
+// Extract output types from terraform.tfstate
+func extractOutputTypesFromState(bpPath string) (map[string]*structpb.Value, error) {
+	outputTypes := make(map[string]*structpb.Value)
+
+	// Construct the path to the test/setup directory
+	tfDir := filepath.Join(bpPath)
+
+	// testing.T chekcs verbose flag to determine it's mode. Add this line as a flags initializer
+	// so the program doesn't panic.
+	flag.Parse()
+	runtimeT := testingiface.RuntimeT{}
+
+	root := tft.NewTFBlueprintTest(
+		&runtimeT,
+		tft.WithTFDir(tfDir), // Setup test at the blueprint path
+	)
+
+	root.DefineVerify(func(assert *assert.Assertions) {
+		stateFilePath := path.Join(bpPath, "terraform.tfstate")
+		stateData, err := os.ReadFile(stateFilePath)
+		if err != nil {
+			assert.FailNowf("Failed to read terraform.tfstate", "Error reading state file: %v", err)
+		}
+
+		// Parse the state file and extract output types
+		parsedOutputTypes, err := parser.ParseOutputTypesFromState(stateData)
+		if err != nil {
+			assert.FailNowf("Failed to parse output types", "Error parsing output types: %v", err)
+		}
+		outputTypes = parsedOutputTypes
+	})
+
+	root.Test() // This will run terraform init and apply, then the DefineVerify function, and finally destroy
+
+	return outputTypes, nil
 }
 
 func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*BlueprintMetadata, error) {
@@ -243,8 +304,8 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
 
-    // Merge existing connections (if any) into the newly generated interfaces
-    mergeExistingConnections(bpMetadataObj.Spec.Interfaces, existingInterfaces)
+	// Merge existing connections (if any) into the newly generated interfaces
+	mergeExistingConnections(bpMetadataObj.Spec.Interfaces, existingInterfaces)
 
 	// get blueprint requirements
 	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)
