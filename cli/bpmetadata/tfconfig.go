@@ -244,6 +244,30 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		variables = append(variables, v)
 	}
 
+	// Get the varible orders from tf file.
+	variableOrders := getBlueprintVariableOrders(configPath)
+
+	// Sort variables by the user inport order.
+	sort.SliceStable(variables, func(i, j int) bool {
+		return variableOrders[variables[i].Name] < variableOrders[variables[j].Name]
+	})
+
+	var outputs []*BlueprintOutput
+	for _, val := range mod.Outputs {
+		o := getBlueprintOutput(val)
+		outputs = append(outputs, o)
+	}
+
+	// Sort outputs
+	sort.SliceStable(outputs, func(i, j int) bool { return outputs[i].Name < outputs[j].Name })
+
+	return &BlueprintInterface{
+		Variables: variables,
+		Outputs:   outputs,
+	}, nil
+}
+
+func getBlueprintVariableOrders(configPath string) map[string]int {
 	p := hclparse.NewParser()
 	variableFile, hclDiags := p.ParseHCLFile(filepath.Join(configPath, "variables.tf"))
 	if hclDiags.HasErrors() {
@@ -268,25 +292,7 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 
 	}
 	Log.Info("Found variables in order: ", "variableOrderKeys: ", variableOrderKeys)
-
-	// Sort variables
-	sort.SliceStable(variables, func(i, j int) bool {
-		return variableOrderKeys[variables[i].Name] < variableOrderKeys[variables[j].Name]
-	})
-
-	var outputs []*BlueprintOutput
-	for _, val := range mod.Outputs {
-		o := getBlueprintOutput(val)
-		outputs = append(outputs, o)
-	}
-
-	// Sort outputs
-	sort.SliceStable(outputs, func(i, j int) bool { return outputs[i].Name < outputs[j].Name })
-
-	return &BlueprintInterface{
-		Variables: variables,
-		Outputs:   outputs,
-	}, nil
+	return variableOrderKeys
 }
 
 // build variable
