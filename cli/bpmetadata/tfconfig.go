@@ -262,6 +262,7 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		// We expect a single label which is the variable name.
 		if len(block.Labels) != 1 {
 			Log.Info("Variable block has no name: %v", block)
+			continue
 		}
 		variableOrderKeys[block.Labels[0]] = i
 
