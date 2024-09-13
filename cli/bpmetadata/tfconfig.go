@@ -271,11 +271,11 @@ func getBlueprintVariableOrders(configPath string) map[string]int {
 	p := hclparse.NewParser()
 	variableFile, hclDiags := p.ParseHCLFile(filepath.Join(configPath, "variables.tf"))
 	if hclDiags.HasErrors() {
-		Log.Info("Failed to parse HCL: ", "diags: ", hclDiags)
+		Log.Error("Failed to parse HCL: ", "diags: ", hclDiags)
 	}
 	variableContent, _, hclDiags := variableFile.Body.PartialContent(variableSchema)
 	if hclDiags.HasErrors() {
-		Log.Info("Failed to parse variable content: %v", hclDiags)
+		Log.Error("Failed to parse variable content: %v", hclDiags)
 	}
 	variableOrderKeys := make(map[string]int)
 	for i, block := range variableContent.Blocks {
