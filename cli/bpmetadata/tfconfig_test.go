@@ -368,3 +368,28 @@ func TestTFIncompleteProviderVersions(t *testing.T) {
 		})
 	}
 }
+
+func TestTFVariableSortOrder(t *testing.T) {
+	tests := []struct {
+		name         string
+		configPath   string
+		expectOrders map[string]int
+	}{
+		{
+			name:       "Variable order should match tf input",
+			configPath: "sample-module",
+			expectOrders: map[string]int{
+				"description": 1,
+				"project_id":  0,
+				"regional":    2,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getBlueprintVariableOrders(path.Join(tfTestdataPath, tt.configPath))
+			assert.Equal(t, got, tt.expectOrders)
+		})
+	}
+}
