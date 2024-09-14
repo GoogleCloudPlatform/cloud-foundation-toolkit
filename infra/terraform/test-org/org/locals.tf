@@ -593,7 +593,7 @@ locals {
     {
       name        = "terraform-google-pam"
       org         = "GoogleCloudPlatform"
-      description = "Deploy Privileged Access Manage"
+      description = "Deploy Privileged Access Manager"
       owners      = ["imrannayer", "mgaur10"]
       topics      = local.common_topics.security
     },
