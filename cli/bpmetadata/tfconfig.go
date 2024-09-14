@@ -216,6 +216,8 @@ func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion,
 			Version: strings.Join(providerData.VersionConstraints, ", "),
 		})
 	}
+	// Sort provider_versions
+	sort.SliceStable(v, func(i, j int) bool { return v[i].Source < v[j].Source })
 	return v, nil
 }
 
