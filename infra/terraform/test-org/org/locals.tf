@@ -381,6 +381,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages multiple IAM roles for resources on Google Cloud"
       topics      = local.common_topics.security
+      owners      = ["imrannayer"]
     },
     {
       name        = "terraform-google-jenkins"
@@ -600,6 +601,13 @@ locals {
       description = "Deploy Cloud Armor security policy"
       owners      = ["imrannayer"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.net])
+    },
+    {
+      name        = "terraform-google-pam"
+      org         = "GoogleCloudPlatform"
+      description = "Deploy Privileged Access Manager"
+      owners      = ["imrannayer", "mgaur10"]
+      topics      = local.common_topics.security
     },
     {
       name        = "terraform-google-netapp-volumes"
