@@ -247,12 +247,16 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 	}
 
 	// Get the varible orders from tf file.
-	variableOrders := getBlueprintVariableOrders(configPath)
-
-	// Sort variables by the user inport order.
-	sort.SliceStable(variables, func(i, j int) bool {
-		return variableOrders[variables[i].Name] < variableOrders[variables[j].Name]
-	})
+	variableOrders, sortErr := getBlueprintVariableOrders(configPath)
+	if sortErr != nil {
+		Log.Info("Failed to get variables orders. Fallback to sort by variable names.", sortErr)
+		sort.SliceStable(variables, func(i, j int) bool { return variables[i].Name < variables[j].Name })
+	} else {
+		Log.Info("Sort variables by the original input order.")
+		sort.SliceStable(variables, func(i, j int) bool {
+			return variableOrders[variables[i].Name] < variableOrders[variables[j].Name]
+		})
+	}
 
 	var outputs []*BlueprintOutput
 	for _, val := range mod.Outputs {
@@ -269,15 +273,17 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 	}, nil
 }
 
-func getBlueprintVariableOrders(configPath string) map[string]int {
+func getBlueprintVariableOrders(configPath string) (map[string]int, error) {
 	p := hclparse.NewParser()
 	variableFile, hclDiags := p.ParseHCLFile(filepath.Join(configPath, "variables.tf"))
+	err := hasHclErrors(hclDiags)
 	if hclDiags.HasErrors() {
-		Log.Error("Failed to parse HCL: ", "diags: ", hclDiags)
+		return nil, err
 	}
 	variableContent, _, hclDiags := variableFile.Body.PartialContent(variableSchema)
+	err = hasHclErrors(hclDiags)
 	if hclDiags.HasErrors() {
-		Log.Error("Failed to parse variable content: %v", hclDiags)
+		return nil, err
 	}
 	variableOrderKeys := make(map[string]int)
 	for i, block := range variableContent.Blocks {
@@ -293,8 +299,7 @@ func getBlueprintVariableOrders(configPath string) map[string]int {
 		variableOrderKeys[block.Labels[0]] = i
 
 	}
-	Log.Info("Found variables in order: ", "variableOrderKeys: ", variableOrderKeys)
-	return variableOrderKeys
+	return variableOrderKeys, nil
 }
 
 // build variable
