@@ -139,6 +139,8 @@ message DisplayVariable {
       ALTERNATE_TYPE_UNSPECIFIED = 0;
       // A more secure default.
       ALTERNATE_TYPE_SECURITY = 1;
+      // A default specifically needed for Design center.
+      ALTERNATE_TYPE_DC = 2;
     }
     AlternateType type = 1;  // @gotags: json:"type,omitempty" yaml:"type,omitempty"
     // Value of the alternate default.
