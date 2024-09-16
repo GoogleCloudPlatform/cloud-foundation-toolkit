@@ -374,6 +374,7 @@ func TestTFVariableSortOrder(t *testing.T) {
 		name         string
 		configPath   string
 		expectOrders map[string]int
+		expectError  bool
 	}{
 		{
 			name:       "Variable order should match tf input",
@@ -383,14 +384,32 @@ func TestTFVariableSortOrder(t *testing.T) {
 				"project_id":  0,
 				"regional":    2,
 			},
+			expectError: false,
+		},
+		{
+			name:         "Empty vairable name should create nil order",
+			configPath:   "empty-module",
+			expectOrders: map[string]int{},
+			expectError:  true,
+		},
+		{
+			name:         "No vairable name should create nil order",
+			configPath:   "invalid-module",
+			expectOrders: map[string]int{},
+			expectError:  true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := getBlueprintVariableOrders(path.Join(tfTestdataPath, tt.configPath))
-			require.NoError(t, err)
-			assert.Equal(t, got, tt.expectOrders)
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Nil(t, got)
+			} else {
+				require.NoError(t, err)
+				assert.Equal(t, got, tt.expectOrders)
+			}
 		})
 	}
 }
