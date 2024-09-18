@@ -21,6 +21,6 @@
 set -eu
 curdir=$(pwd)
 cd "${1}"
-terraform init -backend=false >/dev/null
-terraform validate
+flock -x /workspace/.terraform.lock -c "terraform init -backend=false >/dev/null"
+flock -s /workspace/.terraform.lock -c "terraform validate"
 cd "$curdir"
