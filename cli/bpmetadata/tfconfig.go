@@ -54,6 +54,15 @@ var metaSchema = &hcl.BodySchema{
 	},
 }
 
+var variableSchema = &hcl.BodySchema{
+	Blocks: []hcl.BlockHeaderSchema{
+		{
+			Type:       "variable",
+			LabelNames: []string{"name"},
+		},
+	},
+}
+
 var metaBlockSchema = &hcl.BodySchema{
 	Attributes: []hcl.AttributeSchema{
 		{
@@ -237,13 +246,21 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		variables = append(variables, v)
 	}
 
-	// Sort variables
-	sort.SliceStable(variables, func(i, j int) bool { return variables[i].Name < variables[j].Name })
+	// Get the varible orders from tf file.
+	variableOrders, sortErr := getBlueprintVariableOrders(configPath)
+	if sortErr != nil {
+		Log.Info("Failed to get variables orders. Fallback to sort by variable names.", sortErr)
+		sort.SliceStable(variables, func(i, j int) bool { return variables[i].Name < variables[j].Name })
+	} else {
+		Log.Info("Sort variables by the original input order.")
+		sort.SliceStable(variables, func(i, j int) bool {
+			return variableOrders[variables[i].Name] < variableOrders[variables[j].Name]
+		})
+	}
 
 	var outputs []*BlueprintOutput
 	for _, val := range mod.Outputs {
 		o := getBlueprintOutput(val)
-
 		outputs = append(outputs, o)
 	}
 
@@ -254,6 +271,35 @@ func getBlueprintInterfaces(configPath string) (*BlueprintInterface, error) {
 		Variables: variables,
 		Outputs:   outputs,
 	}, nil
+}
+
+func getBlueprintVariableOrders(configPath string) (map[string]int, error) {
+	p := hclparse.NewParser()
+	variableFile, hclDiags := p.ParseHCLFile(filepath.Join(configPath, "variables.tf"))
+	err := hasHclErrors(hclDiags)
+	if hclDiags.HasErrors() {
+		return nil, err
+	}
+	variableContent, _, hclDiags := variableFile.Body.PartialContent(variableSchema)
+	err = hasHclErrors(hclDiags)
+	if hclDiags.HasErrors() {
+		return nil, err
+	}
+	variableOrderKeys := make(map[string]int)
+	for i, block := range variableContent.Blocks {
+		// We only care about variable blocks.
+		if block.Type != "variable" {
+			continue
+		}
+		// We expect a single label which is the variable name.
+		if len(block.Labels) != 1 || len(block.Labels[0]) == 0 {
+			Log.Info("zheng: called here.")
+			return nil, fmt.Errorf("Vaiable block has no name.")
+		}
+
+		variableOrderKeys[block.Labels[0]] = i
+	}
+	return variableOrderKeys, nil
 }
 
 // build variable
