@@ -293,7 +293,6 @@ func getBlueprintVariableOrders(configPath string) (map[string]int, error) {
 		}
 		// We expect a single label which is the variable name.
 		if len(block.Labels) != 1 || len(block.Labels[0]) == 0 {
-			Log.Info("zheng: called here.")
 			return nil, fmt.Errorf("Vaiable block has no name.")
 		}
 
