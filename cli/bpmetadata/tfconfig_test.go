@@ -387,13 +387,13 @@ func TestTFVariableSortOrder(t *testing.T) {
 			expectError: false,
 		},
 		{
-			name:         "Empty vairable name should create nil order",
+			name:         "Empty variable name should create nil order",
 			configPath:   "empty-module",
 			expectOrders: map[string]int{},
 			expectError:  true,
 		},
 		{
-			name:         "No vairable name should create nil order",
+			name:         "No variable name should create nil order",
 			configPath:   "invalid-module",
 			expectOrders: map[string]int{},
 			expectError:  true,
