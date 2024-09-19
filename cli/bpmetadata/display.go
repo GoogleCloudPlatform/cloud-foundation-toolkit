@@ -34,3 +34,24 @@ func createTitleFromName(name string) string {
 
 	return strings.Join(titleSplit, " ")
 }
+
+// mergeExistingAltDefaults merges existing alt_defaults from an old BlueprintUIInput into a new one,
+// preserving manually authored alt_defaults.
+func mergeExistingAltDefaults(newInput, existingInput *BlueprintUIInput) {
+	if existingInput == nil {
+		return // Nothing to merge if existingInput is nil
+	}
+
+	for i, variable := range newInput.Variables {
+		for _, existingVariable := range existingInput.Variables {
+			if variable.Name == existingVariable.Name && existingVariable.AltDefaults != nil {
+				newInput.Variables[i].AltDefaults = existingVariable.AltDefaults
+			}
+		}
+	}
+}
+
+func mergeExistingDisplayData(newInput, existingInput *BlueprintUIInput) {
+	mergeExistingAltDefaults(newInput, existingInput)
+	// Add more merging functions for other fields if needed
+}

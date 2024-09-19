@@ -243,8 +243,8 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 		return nil, fmt.Errorf("error creating blueprint interfaces: %w", err)
 	}
 
-    // Merge existing connections (if any) into the newly generated interfaces
-    mergeExistingConnections(bpMetadataObj.Spec.Interfaces, existingInterfaces)
+	// Merge existing connections (if any) into the newly generated interfaces
+	mergeExistingConnections(bpMetadataObj.Spec.Interfaces, existingInterfaces)
 
 	// get blueprint requirements
 	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)
@@ -290,6 +290,16 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 		bpDisp.Spec.Ui = &BlueprintUI{}
 		bpDisp.Spec.Ui.Input = &BlueprintUIInput{}
 	}
+
+	var existingInput *BlueprintUIInput
+	if bpDisp.Spec.Ui.Input == nil {
+		bpDisp.Spec.Ui.Input = &BlueprintUIInput{}
+	} else {
+		existingInput = proto.Clone(bpCore.Spec.Ui.Input).(*BlueprintUIInput)
+	}
+
+	// Merge existing data (if any) into the newly generated UI Input
+	mergeExistingDisplayData(bpDisp.Spec.Ui.Input, existingInput)
 
 	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
 	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
