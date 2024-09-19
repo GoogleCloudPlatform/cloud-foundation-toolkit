@@ -37,7 +37,7 @@ PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
 CFT_CLI_VERSION := 1.5.1
 # Updated by Update Tooling Workflow
-KUBECTL_VERSION := 1.29.9
+KUBECTL_VERSION := 1.29.8
 # Updated by Update Tooling Workflow
 TFLINT_VERSION := 0.53.0
 TINKEY_VERSION := 1.7.0
