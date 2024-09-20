@@ -92,6 +92,11 @@ func getModuleNameRegistry(dir string) (string, string, error) {
 	return moduleName, org, nil
 }
 
+func getMultiLevelModule(path string) string {
+	absPathSlice := strings.Split(path, "/")
+	return strings.Join(absPathSlice[2:len(absPathSlice)], "/")
+}
+
 // findSubModules generates slice of LocalTerraformModule for submodules
 func findSubModules(path, rootModuleFQN string) []LocalTerraformModule {
 	var subModules = make([]LocalTerraformModule, 0)
@@ -110,7 +115,7 @@ func findSubModules(path, rootModuleFQN string) []LocalTerraformModule {
 	}
 	for _, f := range files {
 		if f.IsDir() {
-			subModules = append(subModules, LocalTerraformModule{f.Name(), filepath.Join(absPath, f.Name()), fmt.Sprintf("%s//modules/%s", rootModuleFQN, f.Name())})
+			subModules = append(subModules, LocalTerraformModule{f.Name(), filepath.Join(absPath, f.Name()), fmt.Sprintf("%s//%s/%s", rootModuleFQN, getMultiLevelModule(path), f.Name())})
 		}
 	}
 	return subModules

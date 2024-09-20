@@ -55,6 +55,7 @@ func Test_getTFFiles(t *testing.T) {
 	}{
 		{"simple", args{"testdata/example-module-simple"}, []string{"testdata/example-module-simple/examples/example-one/main.tf", "testdata/example-module-simple/examples/main.tf"}},
 		{"simple-single-submodule", args{"testdata/example-module-with-submodules/modules/bar-module"}, []string{"testdata/example-module-with-submodules/modules/bar-module/main.tf"}},
+		{"simple-multi-level-submodules", args{"testdata/example-with-steps-submodules/0-bootstrap/modules/bar-module"}, []string{"testdata/example-with-steps-submodules/0-bootstrap/modules/bar-module/main.tf"}},
 		{"simple-single-submodule-empty", args{"testdata/example-module-with-submodules/docs"}, []string{}},
 	}
 	for _, tt := range tests {
@@ -82,6 +83,11 @@ func Test_findSubModules(t *testing.T) {
 				{"bar-module", filepath.Join(getAbsPathHelper("testdata/example-module-with-submodules/modules"), "bar-module"), "terraform-google-modules/example-module-with-submodules/google//modules/bar-module"},
 				{"foo-module", filepath.Join(getAbsPathHelper("testdata/example-module-with-submodules/modules"), "foo-module"), "terraform-google-modules/example-module-with-submodules/google//modules/foo-module"},
 			}},
+		{"multilevel-with-submodules", args{"testdata/example-with-steps-submodules/0-bootstrap/modules", "terraform-google-modules/example-with-steps-submodules/google"},
+			[]LocalTerraformModule{
+				{"bar-module", filepath.Join(getAbsPathHelper("testdata/example-with-steps-submodules/0-bootstrap/modules"), "bar-module"), "terraform-google-modules/example-with-steps-submodules/google//0-bootstrap/modules/bar-module"},
+				{"foo-module", filepath.Join(getAbsPathHelper("testdata/example-with-steps-submodules/0-bootstrap/modules"), "foo-module"), "terraform-google-modules/example-with-steps-submodules/google//0-bootstrap/modules/foo-module"},
+			}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -89,6 +95,17 @@ func Test_findSubModules(t *testing.T) {
 				t.Errorf("findSubModules() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func Test_getMultiLevelModule(t *testing.T) {
+	want := "0-bootstrap/modules/"
+	if got := getMultiLevelModule("testdata/example-with-steps-submodules/0-bootstrap/modules/"); got != want {
+		t.Errorf("getMultiLevelModule() got = %s want: %s", got, want)
+	}
+	want = "modules/"
+	if got := getMultiLevelModule("testdata/example-module-with-submodules/modules/"); got != want {
+		t.Errorf("getMultiLevelModule() got = %s want: %s", got, want)
 	}
 }
 
@@ -116,6 +133,12 @@ func Test_processFile(t *testing.T) {
 			modules:           testModules("example-module-with-submodules"),
 			exampleRemotePath: "example-module-with-submodules/examples/example-two/main.tf",
 			exampleLocalPath:  "example-module-with-submodules/examples/example-two/main.tf.local",
+		},
+		{
+			name:              "example-with-steps-submodules",
+			modules:           testModules("example-with-steps-submodules"),
+			exampleRemotePath: "example-with-steps-submodules/examples/example-one/main.tf",
+			exampleLocalPath:  "example-with-steps-submodules/examples/example-one/main.tf.local",
 		},
 	}
 	for _, tt := range tests {
@@ -160,7 +183,11 @@ const testDataDir = "testdata"
 
 func testModules(m string) []LocalTerraformModule {
 	root := LocalTerraformModule{m, getAbsPathHelper(path.Join(testDataDir, m)), path.Join(moduleRegistryPrefix, m, moduleRegistrySuffix)}
-	return append(findSubModules(path.Join(testDataDir, m, "modules"), path.Join(moduleRegistryPrefix, m, moduleRegistrySuffix)), root)
+	modulesPath := "modules"
+	if m == "example-with-steps-submodules" {
+		modulesPath = "0-bootstrap/modules"
+	}
+	return append(findSubModules(path.Join(testDataDir, m, modulesPath), path.Join(moduleRegistryPrefix, m, moduleRegistrySuffix)), root)
 }
 
 func getTempDir() string {
