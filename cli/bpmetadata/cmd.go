@@ -291,6 +291,10 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 		bpDisp.Spec.Ui.Input = &BlueprintUIInput{}
 	}
 
+	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
+	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
+	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, bpDisp.Spec.Ui.Input)
+
 	var existingInput *BlueprintUIInput
 	if bpDisp.Spec.Ui.Input == nil {
 		bpDisp.Spec.Ui.Input = &BlueprintUIInput{}
@@ -300,10 +304,6 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 
 	// Merge existing data (if any) into the newly generated UI Input
 	mergeExistingDisplayData(bpDisp.Spec.Ui.Input, existingInput)
-
-	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
-	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
-	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, bpDisp.Spec.Ui.Input)
 
 	return bpDisp, nil
 }
