@@ -94,7 +94,7 @@ func getModuleNameRegistry(dir string) (string, string, error) {
 
 func getMultiLevelModule(path string) string {
 	absPathSlice := strings.Split(path, "/")
-	return strings.Join(absPathSlice[2:len(absPathSlice)], "/")
+	return strings.Join(absPathSlice[2:], "/")
 }
 
 // findSubModules generates slice of LocalTerraformModule for submodules
