@@ -36,10 +36,11 @@ provider "kubernetes" {
 
 module "prow-int-sa-wi" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 29.0"
+  version    = "~> 33.0"
   name       = "int-test-sa"
   namespace  = local.test_ns
   project_id = local.prow_project_id
+  roles      = ["roles/artifactregistry.reader"]
 }
 
 resource "kubernetes_config_map" "test-constants" {
