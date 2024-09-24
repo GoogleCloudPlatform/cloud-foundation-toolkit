@@ -62,7 +62,8 @@ RUN apk upgrade --no-cache && \
     py3-pygithub \
     py3-requests \
     ruby-dev \
-    go
+    go \
+    kubectl
 
 # Add all build scripts
 ADD ./build/*.sh /build/
@@ -108,9 +109,6 @@ RUN /build/install_kpt.sh ${KPT_VERSION}
 
 ARG CFT_CLI_VERSION
 RUN /build/install_cft_cli.sh ${CFT_CLI_VERSION}
-
-ARG KUBECTL_VERSION
-RUN /build/install_kubectl.sh ${KUBECTL_VERSION}
 
 ARG MODULE_SWAPPER_VERSION
 RUN /build/install_module-swapper.sh ${MODULE_SWAPPER_VERSION}
