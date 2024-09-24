@@ -40,7 +40,6 @@ module "prow-int-sa-wi" {
   name       = "int-test-sa"
   namespace  = local.test_ns
   project_id = local.prow_project_id
-  roles      = ["roles/artifactregistry.reader"]
 }
 
 resource "kubernetes_config_map" "test-constants" {
