@@ -18,7 +18,7 @@
 # setup_trap_handler() and used by maketemp()
 finish() {
   if [[ -n "${DELETE_AT_EXIT:-}" ]]; then
-    rm -rf "${DELETE_AT_EXIT}"
+    rm -rf "$DELETE_AT_EXIT"
   fi
 }
 
@@ -27,7 +27,9 @@ finish() {
 # for use with maketemp() to automatically clean up temporary files, especially
 # those used to store credentials.
 setup_trap_handler() {
-  readonly DELETE_AT_EXIT="$(mktemp -d)"
+  if [[ -z "${DELETE_AT_EXIT+x}" ]]; then
+    readonly DELETE_AT_EXIT="$(mktemp -d)"
+  fi
   trap finish EXIT
 }
 
@@ -152,8 +154,8 @@ function lint_docker() {
 
 # This function creates TF_PLUGIN_CACHE_DIR if TF_PLUGIN_CACHE_DIR envvar is set
 function init_tf_plugin_cache() {
-  if [[ ! -z "${TF_PLUGIN_CACHE_DIR}" ]]; then
-    mkdir -p ${TF_PLUGIN_CACHE_DIR}
+  if [[ -n "$TF_PLUGIN_CACHE_DIR" ]]; then
+    mkdir -p "$TF_PLUGIN_CACHE_DIR"
   fi
 }
 
@@ -191,7 +193,7 @@ function check_terraform() {
     | grep -v 'test/fixtures/shared' \
     | compat_xargs -n1 dirname \
     | sort -u \
-    | parallel --keep-order --retries 3 --joblog /tmp/lint_log terraform_validate
+    | parallel --will-cite --keep-order --retries 3 --joblog /tmp/lint_log terraform_validate
     cat /tmp/lint_log
   else
     find_files . -name "*.tf" -print \
@@ -237,7 +239,7 @@ check_whitespace() {
   local rc
   echo "Checking for trailing whitespace"
   find_files . -print \
-    | grep -v -E '\.(pyc|png|gz|tfvars|mp4|zip|ico|jar|parquet|pb|index)$' \
+    | grep -v -E '\.(pyc|png|gz|swp|tfvars|mp4|zip|ico|jar|parquet|pb|index)$' \
     | compat_xargs grep -H -n '[[:blank:]]$'
   rc=$?
   if [[ ${rc} -eq 0 ]]; then
@@ -519,9 +521,9 @@ function fix_headers() {
   YEAR=$(date +'%Y')
   if [ $# -eq 0 ]
   then
-    find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -y $YEAR
+    find_files . for_header_check -type f -print0 | compat_xargs -0 addlicense -y "$YEAR"
   else
-    addlicense -y $YEAR "$@"
+    addlicense -y "$YEAR" "$@"
   fi
 }
 
