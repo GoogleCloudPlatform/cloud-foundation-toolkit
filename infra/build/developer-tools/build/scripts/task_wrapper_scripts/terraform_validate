@@ -19,5 +19,8 @@
 # files to validate.  This directory is assumed to be a root module.
 
 set -eu
-flock -x /workspace/.terraform.lock -c "terraform init -compact-warnings -chdir=$1 -backend=false >/dev/null"
-flock -s /workspace/.terraform.lock -c "terraform -chdir=$1  validate"
+curdir=$(pwd)
+cd "${1}"
+flock -x /workspace/.terraform.lock -c "terraform init -backend=false >/dev/null"
+flock -s /workspace/.terraform.lock -c "terraform validate"
+cd "$curdir"
