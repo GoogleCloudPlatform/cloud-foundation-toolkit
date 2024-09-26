@@ -16,7 +16,7 @@
 
 module "folders-root" {
   source  = "terraform-google-modules/folders/google"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   parent = "organizations/${local.org_id}"
 
@@ -30,7 +30,7 @@ module "folders-root" {
 
 module "folders-ci" {
   source  = "terraform-google-modules/folders/google"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   parent = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
 
@@ -41,7 +41,7 @@ module "folders-ci" {
 
 module "bpt_ci_folder" {
   source  = "terraform-google-modules/folders/google"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   parent    = "folders/${replace(local.folders["ci-projects"], "folders/", "")}"
   names     = ["ci-bpt"]
