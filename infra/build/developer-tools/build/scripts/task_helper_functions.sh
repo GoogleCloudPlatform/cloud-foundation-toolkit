@@ -193,7 +193,7 @@ function check_terraform() {
     | grep -v 'test/fixtures/shared' \
     | compat_xargs -n1 dirname \
     | sort -u \
-    | parallel --will-cite --keep-order --retries 3 --joblog /tmp/lint_log terraform_validate
+    | parallel --keep-order --retries 3 --joblog /tmp/lint_log terraform_validate
     cat /tmp/lint_log
   else
     find_files . -name "*.tf" -print \
