@@ -80,7 +80,7 @@ func TestParseOutputTypesFromState_WithComplexTypes(t *testing.T) {
         }
       ]
     },
-    "list": {
+    "list_output": {
       "value": [
         "foo",
         "bar"
@@ -93,7 +93,7 @@ func TestParseOutputTypesFromState_WithComplexTypes(t *testing.T) {
         ]
       ]
     },
-    "map": {
+    "map_output": {
       "value": {
         "foo": "bar",
         "number": 42
@@ -119,11 +119,11 @@ func TestParseOutputTypesFromState_WithComplexTypes(t *testing.T) {
 				"number": structpb.NewStringValue("number"),
 			}}),
 		}}),
-		"list": structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{
+		"list_output": structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{
 			structpb.NewStringValue("tuple"),
 			structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{structpb.NewStringValue("string"), structpb.NewStringValue("string")}}),
 		}}),
-		"map": structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{
+		"map_output": structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{
 			structpb.NewStringValue("object"),
 			structpb.NewStructValue(&structpb.Struct{Fields: map[string]*structpb.Value{
 				"foo":    structpb.NewStringValue("string"),
