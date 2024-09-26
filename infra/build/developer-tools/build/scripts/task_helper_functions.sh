@@ -28,7 +28,8 @@ finish() {
 # those used to store credentials.
 setup_trap_handler() {
   if [[ -z "${DELETE_AT_EXIT+x}" ]]; then
-    readonly DELETE_AT_EXIT="$(mktemp -d)"
+    DELETE_AT_EXIT="$(mktemp -d)"
+    readonly DELETE_AT_EXIT
   fi
   trap finish EXIT
 }
