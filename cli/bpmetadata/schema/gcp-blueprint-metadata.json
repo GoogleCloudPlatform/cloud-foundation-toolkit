@@ -829,6 +829,16 @@
         },
         "variableValue": {
           "type": "string"
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ]
         }
       },
       "additionalProperties": false,

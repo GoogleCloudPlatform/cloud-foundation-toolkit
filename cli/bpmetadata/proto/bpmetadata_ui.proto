@@ -159,6 +159,8 @@ message DisplayVariableToggle {
   string variable_value = 2; // @gotags: json:"variableValue,omitempty" yaml:"variableValue,omitempty"
 
   // The type of the variable used to toggle the display of another variable.
+  ToggleType type = 3; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
+
   enum ToggleType {
     // Default
     DISPLAY_VARIABLE_TOGGLE_TYPE_UNSPECIFIED = 0;
