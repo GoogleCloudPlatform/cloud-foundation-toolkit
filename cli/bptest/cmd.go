@@ -145,3 +145,25 @@ var initCmd = &cobra.Command{
 		return initTest(initTestName)
 	},
 }
+
+var lintCmd = &cobra.Command{
+	Use:   "lint",
+	Short: "Lint Blueprint connect references and versions",
+	Long:  "Lint Blueprint connect references and versions",
+	Args:  cobra.NoArgs,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Run the existing lint tests
+		fmt.Println("Running lint tests...")
+
+		// Run TFLint with the rulesets
+		tflintCmd := exec.Command("tflint", "--config=./.tflint.hcl")
+
+		// Capture the output of the TFLint command
+		output, err := tflintCmd.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("TFLint failed: %v\n%s", err, output)
+		}
+		fmt.Println(string(output))
+		return nil
+	},
+}
