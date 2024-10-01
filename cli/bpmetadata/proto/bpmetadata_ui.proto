@@ -168,7 +168,7 @@ message DisplayVariableToggle {
     DISPLAY_VARIABLE_TOGGLE_TYPE_BOOLEAN = 1;
     // String
     DISPLAY_VARIABLE_TOGGLE_TYPE_STRING = 2;
-  }  
+  }
 }
 
 message ValueLabel {
