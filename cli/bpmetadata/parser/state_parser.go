@@ -12,37 +12,11 @@ import (
 )
 
 func ParseOutputTypesFromState(stateData []byte) (map[string]*structpb.Value, error) {
-	// Unmarshal the state data into a map[string]interface{} first
-	var rawState map[string]interface{}
-	err := json.Unmarshal(stateData, &rawState)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal state data: %w", err)
-	}
-
-	// Check if "format_version" key exists
-	if _, ok := rawState["format_version"]; !ok {
-		// If not present, add it with a default value
-		rawState["format_version"] = "1.0"
-	}
-
-	// Create a "values" field with "outputs" inside
-	rawState["values"] = map[string]interface{}{
-		"outputs": rawState["outputs"],
-	}
-
-	// Remove the top-level "outputs" field
-	delete(rawState, "outputs")
-
-	// Now marshal the updated map back to JSON
-	updatedStateData, err := json.MarshalIndent(rawState, "", "  ")
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal updated state data: %w", err)
-	}
 
 	var state tfjson.State
 
-	// Unmarshal the updated JSON into tfjson.State
-	err = json.Unmarshal(updatedStateData, &state)
+	// Unmarshal the state data into tfjson.State
+	err := json.Unmarshal(stateData, &state)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal state data: %w", err)
 	}

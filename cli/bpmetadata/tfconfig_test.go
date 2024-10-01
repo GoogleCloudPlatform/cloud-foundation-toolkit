@@ -484,7 +484,7 @@ func TestUpdateOutputTypes(t *testing.T) {
 			require.NoError(t, err)
 
 			// Override with a function that reads a hard-coded tfstate file.
-			tfStateFile = func(_ string) ([]byte, error) {
+			tfState = func(_ string) ([]byte, error) {
 				if tt.expectError {
 					return nil, fmt.Errorf("simulated error generating state file")
 				}

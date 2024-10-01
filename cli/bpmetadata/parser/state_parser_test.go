@@ -11,25 +11,24 @@ func TestParseOutputTypesFromState_WithSimpleTypes(t *testing.T) {
 	t.Parallel()
 	stateData := []byte(`
 {
-  "version": 4,
-  "terraform_version": "0.12.0",
-  "serial": 8,
-  "lineage": "491fd8f4-81b5-9890-520c-8a173c36e483",
-  "outputs": {
-    "boolean_output": {
-      "value": true,
-      "type": "bool"
-    },
-    "number_output": {
-      "value": 42,
-      "type": "number"
-    },
-    "string_output": {
-      "value": "foo",
-      "type": "string"
+  "format_version": "1.0",
+  "terraform_version": "1.2.0",
+  "values": {
+    "outputs": {
+      "boolean_output": {
+        "type": "bool",
+        "value": true
+      },
+      "number_output": {
+        "type": "number",
+        "value": 42
+      },
+      "string_output": {
+        "type": "string",
+        "value": "foo"
+      }
     }
-  },
-  "resources": []
+  }
 }
 `)
 	want := map[string]*structpb.Value{
@@ -51,63 +50,62 @@ func TestParseOutputTypesFromState_WithComplexTypes(t *testing.T) {
 	t.Parallel()
 	stateData := []byte(`
 {
-  "version": 4,
-  "terraform_version": "0.12.0",
-  "serial": 8,
-  "lineage": "491fd8f4-81b5-9890-520c-8a173c36e483",
-  "outputs": {
-    "interpolated_deep": {
-      "value": {
-        "foo": "bar",
-        "map": {
-          "bar": "baz",
-          "id": "424881806176056736"
-        },
-        "number": 42
-      },
-      "type": [
-        "object",
-        {
-          "foo": "string",
-          "map": [
-            "object",
-            {
-              "bar": "string",
-              "id": "string"
-            }
-          ],
-          "number": "number"
+  "format_version": "1.0",
+  "terraform_version": "1.2.0",
+  "values": {
+    "outputs": {
+      "interpolated_deep": {
+        "type": [
+          "object",
+          {
+            "foo": "string",
+            "map": [
+              "object",
+              {
+                "bar": "string",
+                "id": "string"
+              }
+            ],
+            "number": "number"
+          }
+        ],
+        "value": {
+          "foo": "bar",
+          "map": {
+            "bar": "baz",
+            "id": "424881806176056736"
+          },
+          "number": 42
         }
-      ]
-    },
-    "list_output": {
-      "value": [
-        "foo",
-        "bar"
-      ],
-      "type": [
-        "tuple",
-        [
-          "string",
-          "string"
+      },
+      "list_output": {
+        "type": [
+          "tuple",
+          [
+            "string",
+            "string"
+          ]
+        ],
+        "value": [
+          "foo",
+          "bar"
         ]
-      ]
-    },
-    "map_output": {
-      "value": {
-        "foo": "bar",
-        "number": 42
       },
-      "type": [
-        "object",
-        {
-          "foo": "string",
-          "number": "number"
+      "map_output": {
+        "type": [
+          "object",
+          {
+            "foo": "string",
+            "number": "number"
+          }
+        ],
+        "value": {
+          "foo": "bar",
+          "number": 42
         }
-      ]
+      }
     }
-  },
-  "resources": []
+  }
 }
 `)
 	want := map[string]*structpb.Value{
@@ -145,16 +143,15 @@ func TestParseOutputTypesFromState_WithoutTypes(t *testing.T) {
 	t.Parallel()
 	stateData := []byte(`
 {
-  "version": 4,
-  "terraform_version": "0.12.0",
-  "serial": 8,
-  "lineage": "491fd8f4-81b5-9890-520c-8a173c36e483",
-  "outputs": {
-    "no_type_output": {
-      "value": "some_value"
+  "format_version": "1.0",
+  "terraform_version": "1.2.0",
+  "values": {
+    "outputs": {
+      "no_type_output": {
+        "value": "some_value"
+      }
     }
-  },
-  "resources": []
+  }
 }
 `)
 	want := map[string]*structpb.Value{

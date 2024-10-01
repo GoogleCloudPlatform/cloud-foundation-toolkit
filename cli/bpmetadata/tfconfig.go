@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/parser"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+	"github.com/gruntwork-io/terratest/modules/terraform"
 	hcl "github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
@@ -86,7 +86,7 @@ var moduleSchema = &hcl.BodySchema{
 }
 
 // Create alias for generateTFStateFile so we can mock it in unit test.
-var tfStateFile = generateTFStateFile
+var tfState = generateTFState
 
 // getBlueprintVersion gets both the required core version and the
 // version of the blueprint
@@ -526,7 +526,7 @@ func mergeExistingConnections(newInterfaces, existingInterfaces *BlueprintInterf
 // and updates the output types in the provided BlueprintInterface.
 func updateOutputTypes(bpPath string, bpInterfaces *BlueprintInterface) error {
 	// Generate the terraform.tfstate file
-	stateData, err := tfStateFile(bpPath)
+	stateData, err := tfState(bpPath)
 	if err != nil {
 		return fmt.Errorf("error generating terraform.tfstate file: %w", err)
 	}
@@ -546,8 +546,8 @@ func updateOutputTypes(bpPath string, bpInterfaces *BlueprintInterface) error {
 	return nil
 }
 
-// generateTFStateFile generates the terraform.tfstate file by running terraform init and apply.
-func generateTFStateFile(bpPath string) ([]byte, error) {
+// generateTFState generates the terraform.tfstate by running terraform init and apply, and terraform show to capture the state.
+func generateTFState(bpPath string) ([]byte, error) {
 	var stateData []byte
 	// Construct the path to the test/setup directory
 	tfDir := filepath.Join(bpPath)
@@ -563,13 +563,12 @@ func generateTFStateFile(bpPath string) ([]byte, error) {
 	)
 
 	root.DefineVerify(func(assert *assert.Assertions) {
-		stateFilePath := path.Join(bpPath, "terraform.tfstate")
-		stateDataFromFile, err := os.ReadFile(stateFilePath)
+		stateStr, err := terraform.ShowE(&runtimeT, root.GetTFOptions())
 		if err != nil {
-			assert.FailNowf("Failed to read terraform.tfstate", "Error reading state file: %v", err)
+			assert.FailNowf("Failed to generate terraform.tfstate", "Error calling `terraform show`: %v", err)
 		}
 
-		stateData = stateDataFromFile
+		stateData = []byte(stateStr)
 	})
 
 	root.Test() // This will run terraform init and apply, and then destroy
