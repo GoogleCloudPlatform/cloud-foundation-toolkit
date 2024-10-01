@@ -147,6 +147,28 @@ message DisplayVariable {
     google.protobuf.Value value = 2; // @gotags: json:"value,omitempty" yaml:"value,omitempty"
   }
   repeated AlternateDefault alt_defaults = 21; // @gotags: json:"altDefaults,omitempty" yaml:"altDefaults,omitempty"
+
+  DisplayVariableToggle toggle_using_variable = 22; // @gotags: json:"toggleUsingVariable,omitempty" yaml:"toggleUsingVariable,omitempty"
+}
+
+message DisplayVariableToggle {
+  // The name of the variable used to toggle the display of another variable.
+  string variable_name = 1; // @gotags: json:"variableName,omitempty" yaml:"variableName,omitempty"
+
+  // The value of the variable used to toggle the display of another variable.
+  string variable_value = 2; // @gotags: json:"variableValue,omitempty" yaml:"variableValue,omitempty"
+
+  // The type of the variable used to toggle the display of another variable.
+  ToggleType type = 3; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
+
+  enum ToggleType {
+    // Default
+    DISPLAY_VARIABLE_TOGGLE_TYPE_UNSPECIFIED = 0;
+    // Boolean
+    DISPLAY_VARIABLE_TOGGLE_TYPE_BOOLEAN = 1;
+    // String
+    DISPLAY_VARIABLE_TOGGLE_TYPE_STRING = 2;
+  }
 }
 
 message ValueLabel {
