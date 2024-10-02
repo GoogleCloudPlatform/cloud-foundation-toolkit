@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -155,15 +156,22 @@ var lintCmd = &cobra.Command{
 		// Run the existing lint tests
 		fmt.Println("Running lint tests...")
 
-		// Run TFLint with the rulesets
-		tflintCmd := exec.Command("tflint", "--config=./.tflint.hcl")
-
-		// Capture the output of the TFLint command
-		output, err := tflintCmd.CombinedOutput()
+		// Walk the directory to find all metadata.yaml files
+		err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if info.IsDir() || info.Name() != "metadata.yaml" {
+				return nil
+			}
+			return validateMetadataFile(path)
+		})
 		if err != nil {
-			return fmt.Errorf("TFLint failed: %v\n%s", err, output)
+			return fmt.Errorf("error walking through metadata files: %v", err)
 		}
-		fmt.Println(string(output))
+
+		fmt.Println("All metadata lint tests passed.")
 		return nil
+
 	},
 }
