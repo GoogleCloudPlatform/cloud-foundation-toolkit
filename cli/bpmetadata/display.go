@@ -50,8 +50,3 @@ func mergeExistingAltDefaults(newInput, existingInput *BlueprintUIInput) {
 		}
 	}
 }
-
-func mergeExistingDisplayData(newInput, existingInput *BlueprintUIInput) {
-	mergeExistingAltDefaults(newInput, existingInput)
-	// Add more merging functions for other fields if needed
-}
