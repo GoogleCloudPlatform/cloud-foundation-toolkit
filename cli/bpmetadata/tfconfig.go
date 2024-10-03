@@ -1,6 +1,7 @@
 package bpmetadata
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -8,10 +9,15 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/parser"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
+	"github.com/gruntwork-io/terratest/modules/terraform"
 	hcl "github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
+	testingiface "github.com/mitchellh/go-testing-interface"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -78,6 +84,9 @@ var moduleSchema = &hcl.BodySchema{
 		},
 	},
 }
+
+// Create alias for generateTFStateFile so we can mock it in unit test.
+var tfState = generateTFState
 
 // getBlueprintVersion gets both the required core version and the
 // version of the blueprint
@@ -511,4 +520,58 @@ func mergeExistingConnections(newInterfaces, existingInterfaces *BlueprintInterf
 			}
 		}
 	}
+}
+
+// UpdateOutputTypes generates the terraform.tfstate file, extracts output types from it,
+// and updates the output types in the provided BlueprintInterface.
+func updateOutputTypes(bpPath string, bpInterfaces *BlueprintInterface) error {
+	// Generate the terraform.tfstate file
+	stateData, err := tfState(bpPath)
+	if err != nil {
+		return fmt.Errorf("error generating terraform.tfstate file: %w", err)
+	}
+
+	// Parse the state file and extract output types
+	outputTypes, err := parser.ParseOutputTypesFromState(stateData)
+	if err != nil {
+		return fmt.Errorf("error parsing output types: %w", err)
+	}
+
+	// Update the output types in the BlueprintInterface
+	for i, output := range bpInterfaces.Outputs {
+		if outputType, ok := outputTypes[output.Name]; ok {
+			bpInterfaces.Outputs[i].Type = outputType
+		}
+	}
+	return nil
+}
+
+// generateTFState generates the terraform.tfstate by running terraform init and apply, and terraform show to capture the state.
+func generateTFState(bpPath string) ([]byte, error) {
+	var stateData []byte
+	// Construct the path to the test/setup directory
+	tfDir := filepath.Join(bpPath)
+
+	// testing.T checks verbose flag to determine its mode. Add this line as a flags initializer
+	// so the program doesn't panic
+	flag.Parse()
+	runtimeT := testingiface.RuntimeT{}
+
+	root := tft.NewTFBlueprintTest(
+		&runtimeT,
+		tft.WithTFDir(tfDir), // Setup test at the blueprint path,
+	)
+
+	root.DefineVerify(func(assert *assert.Assertions) {
+		stateStr, err := terraform.ShowE(&runtimeT, root.GetTFOptions())
+		if err != nil {
+			assert.FailNowf("Failed to generate terraform.tfstate", "Error calling `terraform show`: %v", err)
+		}
+
+		stateData = []byte(stateStr)
+	})
+
+	root.Test() // This will run terraform init and apply, and then destroy
+
+	return stateData, nil
 }

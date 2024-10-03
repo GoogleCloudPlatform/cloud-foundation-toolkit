@@ -21,7 +21,7 @@ resource "google_folder" "ci_bq_external_data_folder" {
 
 module "ci_bq_external_data_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 14.0"
+  version = "~> 17.0"
 
   name            = "ci-bq-external-data-project"
   project_id      = "ci-bq-external-data-project"

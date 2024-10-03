@@ -17,12 +17,13 @@ import (
 )
 
 var mdFlags struct {
-	path     string
-	nested   bool
-	force    bool
-	display  bool
-	validate bool
-	quiet    bool
+	path          string
+	nested        bool
+	force         bool
+	display       bool
+	validate      bool
+	quiet         bool
+	genOutputType bool
 }
 
 const (
@@ -49,6 +50,7 @@ func init() {
 	Cmd.Flags().BoolVar(&mdFlags.nested, "nested", true, "Flag for generating metadata for nested blueprint, if any.")
 	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
 	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Run in quiet mode suppressing all prompts.")
+	Cmd.Flags().BoolVarP(&mdFlags.genOutputType, "generate-output-type", "g", false, "Automatically generate type field for outputs.")
 }
 
 var Cmd = &cobra.Command{
@@ -146,6 +148,14 @@ func generateMetadataForBpPath(bpPath string) error {
 	bpMetaObj, err := CreateBlueprintMetadata(bpPath, bpObj)
 	if err != nil {
 		return fmt.Errorf("error creating metadata for blueprint at path: %s. Details: %w", bpPath, err)
+	}
+
+	// If the flag is set, update output types
+	if mdFlags.genOutputType {
+		err = updateOutputTypes(bpPath, bpMetaObj.Spec.Interfaces)
+		if err != nil {
+			return fmt.Errorf("error updating output types: %w", err)
+		}
 	}
 
 	// write core metadata to disk
