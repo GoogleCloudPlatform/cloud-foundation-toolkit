@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 func TestUIInputFromVariables(t *testing.T) {
@@ -125,6 +126,99 @@ func TestCreateTitleFromName(t *testing.T) {
 			if got != tt.wantTitle {
 				t.Errorf("createTitleFromName() = %v, want %v", got, tt.wantTitle)
 			}
+		})
+	}
+}
+
+func TestMergeExistingAltDefaults(t *testing.T) {
+	tests := []struct {
+		name          string
+		newInput      *BlueprintUIInput
+		existingInput *BlueprintUIInput
+		expectInput   *BlueprintUIInput
+	}{
+		{
+			name: "Merge alt default into UI input",
+			newInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{
+					"test_var_1": {
+						Name: "test_var_1",
+					},
+				},
+			},
+			existingInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{
+					"test_var_1": {
+						Name: "test_var_1",
+						AltDefaults: []*DisplayVariable_AlternateDefault{
+							{
+								Type:  0,
+								Value: structpb.NewStringValue("alt_default_value"),
+							},
+						},
+					},
+				},
+			},
+			expectInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{
+					"test_var_1": {
+						Name: "test_var_1",
+						AltDefaults: []*DisplayVariable_AlternateDefault{
+							{
+								Type:  0,
+								Value: structpb.NewStringValue("alt_default_value"),
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "No existing input",
+			newInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{
+					"test_var_1": {
+						Name: "test_var_1",
+					},
+				},
+			},
+			existingInput: nil,
+			expectInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{
+					"test_var_1": {
+						Name: "test_var_1",
+					},
+				},
+			},
+		},
+		{
+			name: "Empty new input",
+			newInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{},
+			},
+			existingInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{
+					"test_var_1": {
+						Name: "test_var_1",
+						AltDefaults: []*DisplayVariable_AlternateDefault{
+							{
+								Type:  0,
+								Value: structpb.NewStringValue("alt_default_value"),
+							},
+						},
+					},
+				},
+			},
+			expectInput: &BlueprintUIInput{
+				Variables: map[string]*DisplayVariable{},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mergeExistingAltDefaults(tt.newInput, tt.existingInput)
+			assert.Equal(t, tt.newInput, tt.expectInput)
 		})
 	}
 }
