@@ -1,13 +1,16 @@
 package bpmetadata
 
 import (
+	"fmt"
+	"os"
 	"path"
+	"slices"
 	"testing"
 
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/exp/slices"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -409,6 +412,102 @@ func TestTFVariableSortOrder(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				assert.Equal(t, got, tt.expectOrders)
+			}
+		})
+	}
+}
+
+func TestUpdateOutputTypes(t *testing.T) {
+	tests := []struct {
+		name            string
+		bpPath          string
+		interfacesFile  string
+		stateFile       string
+		expectedOutputs []*BlueprintOutput
+		expectError     bool
+	}{
+		{
+			name:           "Update output types from state",
+			bpPath:         "sample-module",
+			interfacesFile: "interfaces_without_types_metadata.yaml",
+			stateFile:      "terraform.tfstate",
+			expectedOutputs: []*BlueprintOutput{
+				{
+					Name:        "cluster_id",
+					Description: "Cluster ID",
+					Type:        structpb.NewStringValue("string"),
+				},
+				{
+					Name:        "endpoint",
+					Description: "Cluster endpoint",
+					Type: &structpb.Value{
+						Kind: &structpb.Value_ListValue{
+							ListValue: &structpb.ListValue{
+								Values: []*structpb.Value{
+									{
+										Kind: &structpb.Value_StringValue{
+											StringValue: "object",
+										},
+									},
+									{
+										Kind: &structpb.Value_StructValue{
+											StructValue: &structpb.Struct{
+												Fields: map[string]*structpb.Value{
+													"host": {
+														Kind: &structpb.Value_StringValue{
+															StringValue: "string",
+														},
+													},
+													"port": {
+														Kind: &structpb.Value_StringValue{
+															StringValue: "number",
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Load interfaces from file
+			bpInterfaces, err := UnmarshalMetadata(metadataTestdataPath, tt.interfacesFile)
+			require.NoError(t, err)
+
+			// Override with a function that reads a hard-coded tfstate file.
+			tfState = func(_ string) ([]byte, error) {
+				if tt.expectError {
+					return nil, fmt.Errorf("simulated error generating state file")
+				}
+				// Copy the test state file to the bpPath
+				stateFilePath := path.Join(tfTestdataPath, tt.bpPath, tt.stateFile)
+				stateData, err := os.ReadFile(stateFilePath)
+				if err != nil {
+					return nil, fmt.Errorf("error reading state file: %w", err)
+				}
+				return stateData, nil
+			}
+
+			// Update output types
+			err = updateOutputTypes(path.Join(tfTestdataPath, tt.bpPath), bpInterfaces.Spec.Interfaces)
+
+			if tt.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				// Assert that the output types are updated correctly
+				expectedOutputsStr := fmt.Sprintf("%v", tt.expectedOutputs)
+				actualOutputsStr := fmt.Sprintf("%v", bpInterfaces.Spec.Interfaces.Outputs)
+				assert.Equal(t, expectedOutputsStr, actualOutputsStr)
 			}
 		})
 	}

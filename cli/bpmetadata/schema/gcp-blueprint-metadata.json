@@ -810,6 +810,9 @@
             "$ref": "#/$defs/DisplayVariable_AlternateDefault"
           },
           "type": "array"
+        },
+        "toggleUsingVariable": {
+          "$ref": "#/$defs/DisplayVariableToggle"
         }
       },
       "additionalProperties": false,
@@ -818,6 +821,28 @@
         "name",
         "title"
       ]
+    },
+    "DisplayVariableToggle": {
+      "properties": {
+        "variableName": {
+          "type": "string"
+        },
+        "variableValue": {
+          "type": "string"
+        },
+        "type": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "DisplayVariable_AlternateDefault": {
       "properties": {
