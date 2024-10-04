@@ -149,8 +149,8 @@ var initCmd = &cobra.Command{
 
 var lintCmd = &cobra.Command{
 	Use:   "lint",
-	Short: "Lint Blueprint connect references and versions",
-	Long:  "Lint Blueprint connect references and versions",
+	Short: "Lint metadata.yaml file.",
+	Long:  "Lint metadata.yaml file according to requirements in go/blueprints-adc.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Run the existing lint tests
@@ -164,7 +164,7 @@ var lintCmd = &cobra.Command{
 			if info.IsDir() || info.Name() != "metadata.yaml" {
 				return nil
 			}
-			return validateMetadataFile(path)
+			return metadataLint(path)
 		})
 		if err != nil {
 			return fmt.Errorf("error walking through metadata files: %v", err)

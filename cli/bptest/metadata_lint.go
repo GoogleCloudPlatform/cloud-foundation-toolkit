@@ -32,9 +32,17 @@ type BlueprintMetadata struct {
 	} `yaml:"spec"`
 }
 
-// validateMetadataFile validates a metadata.yaml file by checking blueprint references and versions
-func validateMetadataFile(metadataPath string) error {
-	fmt.Printf("Validating: %s\n", metadataPath)
+func metadataLint(metadataPath string) error {
+	fmt.Printf("Start Linting metadata file: %s\n", metadataPath)
+	if err := lintConnectionSourceAndVersion(metadataPath); err != nil {
+		return err
+	}
+	fmt.Printf("Lint test all pass for metadata.yaml file: %s\n", metadataPath)
+	return nil
+}
+
+func lintConnectionSourceAndVersion(metadataPath string) error {
+	fmt.Printf("Linting: %s\n", metadataPath)
 
 	// Read the metadata file
 	content, err := ioutil.ReadFile(metadataPath)
@@ -66,8 +74,6 @@ func validateMetadataFile(metadataPath string) error {
 	return nil
 }
 
-var httpGetFunc = http.Get
-
 // validateBlueprintSource checks if the blueprint source exists
 func validateBlueprintSource(source string) error {
 	// Regex to validate source format
@@ -77,7 +83,7 @@ func validateBlueprintSource(source string) error {
 	}
 
 	// Check if the blueprint source exists.
-	resp, err := httpGetFunc(fmt.Sprintf("https://github.com/%s", source))
+	resp, err := http.Get(fmt.Sprintf("https://github.com/%s", source))
 	if err != nil || resp.StatusCode != 200 {
 		return fmt.Errorf("Blueprint source not found: %s", source)
 	}
@@ -101,7 +107,7 @@ func validateBlueprintVersion(version string, source string) error {
 		url := fmt.Sprintf("https://github.com/%s/releases/tag/%s", source, exactVersion)
 
 		// Make an HTTP request to check if the version exists
-		resp, err := httpGetFunc(url)
+		resp, err := http.Get(url)
 		if err != nil || resp.StatusCode != 200 {
 			return fmt.Errorf("Blueprint version not found: %s", exactVersion)
 		}
