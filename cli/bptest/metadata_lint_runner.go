@@ -2,6 +2,9 @@ package bptest
 
 import (
 	"fmt"
+	"google.golang.org/protobuf/encoding/protojson"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -67,4 +70,42 @@ func findMetadataFile() string {
 	}
 
 	return ""
+}
+
+// ParseMetadataFile reads a YAML file, converts it to JSON, and unmarshals it into a proto message.
+func ParseMetadataFile(filePath string) (*BlueprintMetadata, error) {
+	// Read the YAML file
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read metadata file: %w", err)
+	}
+
+	// Unmarshal YAML into a map (intermediate structure)
+	var yamlData map[string]interface{}
+	if err := yaml.Unmarshal(data, &yamlData); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal YAML: %w", err)
+	}
+
+	// Convert the YAML map to JSON
+	jsonData, err := yamlToJSON(yamlData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert YAML to JSON: %w", err)
+	}
+
+	// Unmarshal JSON into the proto message
+	var blueprintMetadata BlueprintMetadata
+	if err := protojson.Unmarshal(jsonData, &blueprintMetadata); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal JSON into proto: %w", err)
+	}
+
+	return &blueprintMetadata, nil
+}
+
+// yamlToJSON is a helper function that converts a YAML map to JSON.
+func yamlToJSON(yamlData map[string]interface{}) ([]byte, error) {
+	jsonData, err := protojson.Marshal(yamlData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal to JSON: %w", err)
+	}
+	return jsonData, nil
 }
