@@ -38,7 +38,7 @@ locals {
   }
   jss_common_group = "jump-start-solutions-admins"
 
-  adc_common_group = "abhiwa"
+  adc_common_group = "q2w"
 
   common_topics = {
     hcls       = "healthcare-life-sciences",
