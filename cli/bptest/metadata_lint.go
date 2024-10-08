@@ -6,7 +6,6 @@ type LintRule interface {
 	Enabled() bool           // Indicates if the rule is enabled by default
 	Link() string            // A reference link for the rule
 	Check(LintContext) error // Main entrypoint for rule validation
-	MustEmbedDefaultRule()   // Embeds default behavior (if needed)
 }
 
 // LintContext holds the metadata and other contextual information for a rule.
