@@ -38,6 +38,8 @@ locals {
   }
   jss_common_group = "jump-start-solutions-admins"
 
+  adc_common_group = "abhiwa"
+
   common_topics = {
     hcls       = "healthcare-life-sciences",
     e2e        = "end-to-end"
@@ -91,6 +93,7 @@ locals {
       description = "Deploys apps to Cloud Run, along with option to map custom domain"
       owners      = ["prabhu34", "anamer", "gtsorbo"]
       topics      = "cloudrun,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
+      groups      = [local.adc_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -225,6 +228,7 @@ locals {
       name        = "terraform-google-secret-manager"
       org         = "GoogleCloudPlatform"
       description = "Creates one or more Google Secret Manager secrets and manages basic permissions for them"
+      groups      = [local.adc_common_group]
       topics      = "gcp,kms,pubsub,terraform-module,${local.common_topics.security}"
     },
     {
@@ -297,6 +301,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates one or more Cloud Storage buckets and assigns basic permissions on them to arbitrary users"
       topics      = local.common_topics.storage
+      groups      = [local.adc_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -407,6 +412,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a global HTTP load balancer for Compute Engine by using forwarding rules"
       topics      = local.common_topics.net
+      groups      = [local.adc_common_group]
       owners      = ["imrannayer"]
     },
     {
@@ -429,6 +435,7 @@ locals {
       description = "Creates a fully functional Google Memorystore (redis) instance"
       topics      = local.common_topics.db
       owners      = ["imrannayer"]
+      groups      = [local.adc_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -482,6 +489,7 @@ locals {
       name        = "terraform-google-service-accounts"
       org         = "terraform-google-modules"
       description = "Creates one or more service accounts and grants them basic roles"
+      groups      = [local.adc_common_group]
       topics      = local.common_topics.security
     },
     {
@@ -496,6 +504,7 @@ locals {
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
       owners      = ["isaurabhuttam", "imrannayer"]
+      groups      = [local.adc_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -522,6 +531,7 @@ locals {
       name        = "terraform-google-vm"
       org         = "terraform-google-modules"
       description = "Provisions VMs in Google Cloud"
+      groups      = [local.adc_common_group]
       topics      = local.common_topics.compute
     },
     {
