@@ -153,6 +153,7 @@ var lintCmd = &cobra.Command{
 	Long:  "Lint metadata.yaml file according to requirements in go/blueprints-adc.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// TODO: To run all the registrated lint rules
 		// Run the existing lint tests
 		fmt.Println("Running lint tests...")
 
