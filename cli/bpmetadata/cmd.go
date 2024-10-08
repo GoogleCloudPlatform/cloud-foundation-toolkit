@@ -259,7 +259,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	// get blueprint requirements
 	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)
 	svcsCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfServicesFileName)
-	versionsCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfVersionsFileName)
+	versionsCfgPath := path.Join(bpPath, tfVersionsFileName)
 	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath, versionsCfgPath)
 	if err != nil {
 		Log.Info("skipping blueprint requirements since roles and/or services configurations were not found as per https://tinyurl.com/tf-iam and https://tinyurl.com/tf-services")
@@ -304,6 +304,10 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
 	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
 	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, bpDisp.Spec.Ui.Input)
+
+	existingInput := proto.Clone(bpCore.Spec.Ui.Input).(*BlueprintUIInput)
+	// Merge existing data (if any) into the newly generated UI Input
+	mergeExistingAltDefaults(bpDisp.Spec.Ui.Input, existingInput)
 
 	return bpDisp, nil
 }
