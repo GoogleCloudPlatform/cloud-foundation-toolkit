@@ -1,4 +1,4 @@
-# interfaces_without_types_metadata.yaml
+# interfaces_without_output_types_metadata.yaml
 apiVersion: blueprints.cloud.google.com/v1alpha1
 kind: BlueprintMetadata
 metadata:
