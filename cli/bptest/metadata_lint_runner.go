@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// RunMetadataLintCommand is the function that will run the lint checks.
+// RunMetadataLintCommand is the entry function that will run the metadata.yml lint checks.
 func RunMetadataLintCommand(cmd *cobra.Command, args []string) {
 	metadataFile := findMetadataFile()
 	if metadataFile == "" {

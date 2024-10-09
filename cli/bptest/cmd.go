@@ -153,26 +153,6 @@ var lintCmd = &cobra.Command{
 	Long:  "Lint metadata.yaml file according to requirements in go/blueprints-adc.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// TODO: To run all the registrated lint rules
-		// Run the existing lint tests
-		fmt.Println("Running lint tests...")
-
-		// Walk the directory to find all metadata.yaml files
-		err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if info.IsDir() || info.Name() != "metadata.yaml" {
-				return nil
-			}
-			return metadataLint(path)
-		})
-		if err != nil {
-			return fmt.Errorf("error walking through metadata files: %v", err)
-		}
-
-		fmt.Println("All metadata lint tests passed.")
-		return nil
-
+		return RunMetadataLintCommand()
 	},
 }
