@@ -500,8 +500,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
-      owners      = ["isaurabhuttam", "imrannayer"]
-      owners      = local.adc_common_admins
+      owners      = concat(["isaurabhuttam", "imrannayer"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
