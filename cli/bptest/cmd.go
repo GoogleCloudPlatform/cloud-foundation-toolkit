@@ -23,6 +23,7 @@ func init() {
 	Cmd.AddCommand(runCmd)
 	Cmd.AddCommand(convertCmd)
 	Cmd.AddCommand(initCmd)
+	Cmd.AddCommand(lintCmd)
 
 	Cmd.PersistentFlags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
 	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, plan, apply, verify, teardown)")
