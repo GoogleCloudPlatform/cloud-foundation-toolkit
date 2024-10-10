@@ -2,7 +2,7 @@ package bptest
 
 import (
 	"fmt"
-	"regexp"
+	"github.com/hashicorp/go-version"
 )
 
 // BlueprintVersionRule checks if the blueprint connection version is valid.
@@ -22,13 +22,15 @@ func (r *BlueprintVersionRule) Link() string {
 
 // Check validates the version format and ensures it exists.
 func (r *BlueprintVersionRule) Check(ctx LintContext) error {
-	for _, conn := range ctx.Metadata.Spec.Interfaces.Variables {
-		if conn.Version != "" {
-			ver, err := version.NewConstraint(conn.Version)
-			if err != nil {
-				return fmt.Errorf("invalid version: %w", err)
+	for _, variable := range ctx.Metadata.Spec.Interfaces.Variables {
+		for _, conn := range variable.Connections {
+			if conn.Source.Version != "" {
+				_, err := version.NewConstraint(conn.Source.Version)
+				if err != nil {
+					return fmt.Errorf("invalid version: %w", err)
+				}
+				return nil
 			}
-			return nil
 		}
 	}
 	return nil

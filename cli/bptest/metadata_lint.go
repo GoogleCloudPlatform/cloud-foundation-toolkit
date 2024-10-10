@@ -1,39 +1,114 @@
 package bptest
 
-// LintRule defines the common interface for all metadata lint rules.
-type LintRule interface {
-	Name() string            // Unique name of the rule
-	Enabled() bool           // Indicates if the rule is enabled by default
-	Link() string            // A reference link for the rule
-	Check(LintContext) error // Main entrypoint for rule validation
-}
+import (
+	"fmt"
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
+	"google.golang.org/protobuf/encoding/protojson"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"sigs.k8s.io/yaml"
+)
 
-// LintContext holds the metadata and other contextual information for a rule.
-type LintContext struct {
-	Metadata *BlueprintMetadata // Parsed metadata for the blueprint
-	FilePath string             // Path of the metadata file being checked
-}
-
-// LintRunner is responsible for running all registered lint rules.
-type LintRunner struct {
-	Rules []LintRule // Collection of all registered lint rules
-}
-
-// RegisterRule adds a new rule to the runner.
-func (r *LintRunner) RegisterRule(rule LintRule) {
-	r.Rules = append(r.Rules, rule)
-}
-
-// Run runs all the registered rules on the provided context.
-func (r *LintRunner) Run(ctx LintContext) []error {
-	var errs []error
-	for _, rule := range r.Rules {
-		if rule.Enabled() {
-			err := rule.Check(ctx)
-			if err != nil {
-				errs = append(errs, err)
-			}
-		}
+// RunMetadataLintCommand is the entry function that will run the metadata.yml lint checks.
+func RunMetadataLintCommand() {
+	metadataFile := findMetadataFile()
+	if metadataFile == "" {
+		fmt.Println("Error: metadata.yaml file not found")
+		os.Exit(1)
 	}
-	return errs
+
+	metadata, err := ParseMetadataFile(metadataFile)
+	if err != nil {
+		fmt.Printf("Error parsing metadata file: %v\n", err)
+		os.Exit(1)
+	}
+
+	ctx := LintContext{
+		Metadata: metadata,
+		FilePath: metadataFile,
+	}
+
+	runner := &LintRunner{}
+	runner.RegisterRule(&BlueprintVersionRule{})
+
+	// Run lint checks
+	errs := runner.Run(ctx)
+	if len(errs) > 0 {
+		fmt.Println("Linting failed with the following errors:")
+		for _, err := range errs {
+			fmt.Println("- ", err)
+		}
+		os.Exit(1)
+	} else {
+		fmt.Println("All lint checks passed!")
+	}
+}
+
+// findMetadataFile searches for 'metadata.yaml' in the current directory or parent directories.
+func findMetadataFile() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Printf("Error getting current directory: %v\n", err)
+		os.Exit(1)
+	}
+
+	for {
+		metadataFilePath := dir + "/metadata.yaml"
+		if _, err := os.Stat(metadataFilePath); err == nil {
+			return metadataFilePath
+		}
+
+		parentDir := filepath.Dir(dir)
+		if parentDir == dir {
+			break
+		}
+		dir = parentDir
+	}
+
+	return ""
+}
+
+// ParseMetadataFile reads a YAML file, converts it to JSON, and unmarshals it into a proto message.
+func ParseMetadataFile(filePath string) (*bpmetadata.BlueprintMetadata, error) {
+	// Read the YAML file
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read metadata file: %w", err)
+	}
+
+	// Unmarshal YAML into a map (intermediate structure)
+	var yamlData map[string]interface{}
+	if err := yaml.Unmarshal(data, &yamlData); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal YAML: %w", err)
+	}
+
+	// Convert YAML to Protobuf
+	blueprintMetadata, err := ConvertYAMLToProto(yamlData)
+	if err != nil {
+		fmt.Printf("Error converting YAML to Proto: %v\n", err)
+		return nil, err
+	}
+
+	return blueprintMetadata, nil
+}
+
+// Function to convert YAML to Protobuf
+func ConvertYAMLToProto(yamlData map[string]interface{}) (*bpmetadata.BlueprintMetadata, error) {
+	yamlBytes, err := yaml.Marshal(yamlData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal YAML: %v", err)
+	}
+
+	jsonBytes, err := yaml.YAMLToJSON(yamlBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert YAML to JSON: %v", err)
+	}
+
+	var protoMessage bpmetadata.BlueprintMetadata
+	if err := protojson.Unmarshal(jsonBytes, &protoMessage); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal JSON to Proto: %v", err)
+	}
+
+	return &protoMessage, nil
 }

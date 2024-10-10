@@ -1,0 +1,73 @@
+package bptest
+
+import (
+	"fmt"
+	"path"
+	"testing"
+
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
+	"github.com/stretchr/testify/assert"
+)
+
+// TestBlueprintVersionRule tests the version validation rule.
+func TestBlueprintVersionRule(t *testing.T) {
+	tests := []struct {
+		name         string
+		version      string
+		expectErr    bool
+		errorMessage string
+	}{
+		{
+			name:      "Valid version - 1.2.3",
+			version:   "1.2.3",
+			expectErr: false,
+		},
+		{
+			name:      "Valid version - v1.0.0",
+			version:   "v1.0.0",
+			expectErr: false,
+		},
+		{
+			name:      "Valid version - ~1.0.0",
+			version:   "~1.0.0",
+			expectErr: false,
+		},
+		{
+			name:         "Invalid version - random string",
+			version:      "invalid_version",
+			expectErr:    true,
+			errorMessage: "invalid version format: invalid_version",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			metadata := &BlueprintMetadata{
+				Spec: BlueprintMetadataSpec{
+					Interfaces: BlueprintInterface{
+						Variables: []BlueprintVariable{
+							{
+								Name:    "example_var",
+								Version: tt.version,
+							},
+						},
+					},
+				},
+			}
+
+			ctx := LintContext{
+				Metadata: metadata,
+			}
+
+			rule := &BlueprintVersionRule{}
+			err := rule.Check(ctx)
+
+			if tt.expectErr {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errorMessage)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}

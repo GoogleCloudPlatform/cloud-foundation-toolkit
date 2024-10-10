@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -153,6 +152,7 @@ var lintCmd = &cobra.Command{
 	Long:  "Lint metadata.yaml file according to requirements in go/blueprints-adc.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return RunMetadataLintCommand()
+		RunMetadataLintCommand()
+		return nil
 	},
 }
