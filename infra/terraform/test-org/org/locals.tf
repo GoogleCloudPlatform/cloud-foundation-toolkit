@@ -38,6 +38,8 @@ locals {
   }
   jss_common_group = "jump-start-solutions-admins"
 
+  adc_common_admins = ["q2w"]
+
   common_topics = {
     hcls       = "healthcare-life-sciences",
     e2e        = "end-to-end"
@@ -89,7 +91,7 @@ locals {
       name        = "terraform-google-cloud-run"
       org         = "GoogleCloudPlatform"
       description = "Deploys apps to Cloud Run, along with option to map custom domain"
-      owners      = ["prabhu34", "anamer", "gtsorbo"]
+      owners      = concat(["prabhu34", "anamer", "gtsorbo"], local.adc_common_admins)
       topics      = "cloudrun,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -225,6 +227,7 @@ locals {
       name        = "terraform-google-secret-manager"
       org         = "GoogleCloudPlatform"
       description = "Creates one or more Google Secret Manager secrets and manages basic permissions for them"
+      owners      = local.adc_common_admins
       topics      = "gcp,kms,pubsub,terraform-module,${local.common_topics.security}"
     },
     {
@@ -297,6 +300,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates one or more Cloud Storage buckets and assigns basic permissions on them to arbitrary users"
       topics      = local.common_topics.storage
+      owners      = local.adc_common_admins
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -407,7 +411,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a global HTTP load balancer for Compute Engine by using forwarding rules"
       topics      = local.common_topics.net
-      owners      = ["imrannayer"]
+      owners      = concat(["imrannayer"], local.adc_common_admins)
     },
     {
       name        = "terraform-google-lb-internal"
@@ -428,7 +432,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a fully functional Google Memorystore (redis) instance"
       topics      = local.common_topics.db
-      owners      = ["imrannayer"]
+      owners      = concat(["imrannayer"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -482,6 +486,7 @@ locals {
       name        = "terraform-google-service-accounts"
       org         = "terraform-google-modules"
       description = "Creates one or more service accounts and grants them basic roles"
+      owners      = local.adc_common_admins
       topics      = local.common_topics.security
     },
     {
@@ -495,7 +500,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates a Cloud SQL database instance"
       topics      = local.common_topics.db
-      owners      = ["isaurabhuttam", "imrannayer"]
+      owners      = concat(["isaurabhuttam", "imrannayer"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -522,6 +527,7 @@ locals {
       name        = "terraform-google-vm"
       org         = "terraform-google-modules"
       description = "Provisions VMs in Google Cloud"
+      owners      = local.adc_common_admins
       topics      = local.common_topics.compute
     },
     {
