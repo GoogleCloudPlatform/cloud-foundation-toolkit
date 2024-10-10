@@ -16,13 +16,23 @@ func TestBlueprintVersionRule(t *testing.T) {
 		errorMessage string
 	}{
 		{
-			name:      "Valid version - 1.2.3",
-			version:   "1.2.3",
+			name:      "Valid version - expect version",
+			version:   "=1.2.3",
 			expectErr: false,
 		},
 		{
-			name:      "Valid version - v1.0.0",
-			version:   "v1.0.0",
+			name:      "Valid version - pessimistic constraint",
+			version:   "~> 6.0",
+			expectErr: false,
+		},
+		{
+			name:      "Valid version - minimal version",
+			version:   ">= 0.13.7",
+			expectErr: false,
+		},
+		{
+			name:      "Valid version - range interval",
+			version:   ">= 0.13.7, < 2.0.0",
 			expectErr: false,
 		},
 		{
