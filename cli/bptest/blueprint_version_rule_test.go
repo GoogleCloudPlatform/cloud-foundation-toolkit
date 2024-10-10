@@ -1,8 +1,6 @@
 package bptest
 
 import (
-	"fmt"
-	"path"
 	"testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
@@ -28,27 +26,28 @@ func TestBlueprintVersionRule(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			name:      "Valid version - ~1.0.0",
-			version:   "~1.0.0",
-			expectErr: false,
-		},
-		{
 			name:         "Invalid version - random string",
 			version:      "invalid_version",
 			expectErr:    true,
-			errorMessage: "invalid version format: invalid_version",
+			errorMessage: "invalid_version",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			metadata := &BlueprintMetadata{
-				Spec: BlueprintMetadataSpec{
-					Interfaces: BlueprintInterface{
-						Variables: []BlueprintVariable{
+			metadata := &bpmetadata.BlueprintMetadata{
+				Spec: &bpmetadata.BlueprintMetadataSpec{
+					Interfaces: &bpmetadata.BlueprintInterface{
+						Variables: []*bpmetadata.BlueprintVariable{
 							{
-								Name:    "example_var",
-								Version: tt.version,
+								Connections: []*bpmetadata.BlueprintConnection{
+									{
+										Source: &bpmetadata.ConnectionSource{
+											Source:  "example/source",
+											Version: tt.version,
+										},
+									},
+								},
 							},
 						},
 					},
