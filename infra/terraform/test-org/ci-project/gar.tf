@@ -1,6 +1,6 @@
 module "artifact_registry" {
   source  = "GoogleCloudPlatform/artifact-registry/google"
-  version = "~> 0.2"
+  version = "~> 0.3"
 
   location      = "us"
   project_id    = local.project_id
