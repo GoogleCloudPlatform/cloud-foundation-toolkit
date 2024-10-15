@@ -535,6 +535,9 @@ func mergeExistingOutputTypes(newInterfaces, existingInterfaces *BlueprintInterf
 	}
 
 	for i, output := range newInterfaces.Outputs {
+		if output.Type != nil {
+			continue
+		}
 		if existingOutput, ok := existingOutputs[output.Name]; ok && existingOutput.Type != nil {
 			newInterfaces.Outputs[i].Type = existingOutput.Type
 		}

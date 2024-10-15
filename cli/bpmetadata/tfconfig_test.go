@@ -351,21 +351,31 @@ func TestMergeExistingOutputTypes(t *testing.T) {
 		name                   string
 		newInterfacesFile      string
 		existingInterfacesFile string
+		expectedInterfacesFile string
 	}{
 		{
 			name:                   "No existing types",
 			newInterfacesFile:      "interfaces_without_output_types_metadata.yaml",
 			existingInterfacesFile: "interfaces_without_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_without_output_types_metadata.yaml",
 		},
 		{
 			name:                   "One complex existing type is preserved",
 			newInterfacesFile:      "interfaces_without_output_types_metadata.yaml",
 			existingInterfacesFile: "interfaces_with_partial_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_with_partial_output_types_metadata.yaml",
 		},
 		{
 			name:                   "All existing types (both simple and complex) are preserved",
 			newInterfacesFile:      "interfaces_without_output_types_metadata.yaml",
 			existingInterfacesFile: "interfaces_with_full_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_with_full_output_types_metadata.yaml",
+		},
+		{
+			name:                   "Previous types are not overwriting newly generated types",
+			newInterfacesFile:      "interfaces_with_new_output_types_metadata.yaml",
+			existingInterfacesFile: "interfaces_with_partial_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_with_new_output_types_metadata.yaml",
 		},
 	}
 
@@ -382,8 +392,12 @@ func TestMergeExistingOutputTypes(t *testing.T) {
 			// Perform the merge
 			mergeExistingOutputTypes(newInterfaces.Spec.Interfaces, existingInterfaces.Spec.Interfaces)
 
+			// Load expected interfaces from file
+			expectedInterfaces, err := UnmarshalMetadata(metadataTestdataPath, tt.expectedInterfacesFile)
+			require.NoError(t, err)
+
 			// Assert that the merged interfaces match the expected outcome
-			assert.Equal(t, existingInterfaces.Spec.Interfaces, newInterfaces.Spec.Interfaces)
+			assert.Equal(t, expectedInterfaces.Spec.Interfaces, newInterfaces.Spec.Interfaces)
 		})
 	}
 }
