@@ -527,7 +527,7 @@ locals {
       name        = "terraform-google-vm"
       org         = "terraform-google-modules"
       description = "Provisions VMs in Google Cloud"
-      owners      = local.adc_common_admins
+      owners      = concat(["erlanderlo"], local.adc_common_admins)
       topics      = local.common_topics.compute
     },
     {
