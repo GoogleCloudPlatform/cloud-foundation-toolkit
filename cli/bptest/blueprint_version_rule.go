@@ -16,10 +16,6 @@ func (r *BlueprintVersionRule) Enabled() bool {
 	return true
 }
 
-func (r *BlueprintVersionRule) Link() string {
-	return "https://example.com/blueprint-version-guidelines"
-}
-
 func (r *BlueprintVersionRule) Check(ctx LintContext) error {
 	// Check if Spec or Interfaces is nil to avoid null pointer dereference
 	if ctx.Metadata == nil || ctx.Metadata.Spec == nil || ctx.Metadata.Spec.Interfaces == nil {

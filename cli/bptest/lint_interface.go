@@ -8,7 +8,6 @@ import (
 type LintRule interface {
 	Name() string            // Unique name of the rule
 	Enabled() bool           // Indicates if the rule is enabled by default
-	Link() string            // A reference link for the rule
 	Check(LintContext) error // Main entrypoint for rule validation
 }
 
