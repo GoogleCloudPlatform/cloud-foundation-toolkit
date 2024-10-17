@@ -9,7 +9,7 @@ import (
 type BlueprintVersionRule struct{}
 
 func (r *BlueprintVersionRule) Name() string {
-	return "blueprint_version_rule"
+	return "blueprint_connection_source_version_rule"
 }
 
 func (r *BlueprintVersionRule) Enabled() bool {
