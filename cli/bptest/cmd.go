@@ -149,8 +149,8 @@ var initCmd = &cobra.Command{
 
 var lintCmd = &cobra.Command{
 	Use:   "lint",
-	Short: "Lint metadata.yaml file.",
-	Long:  "Lint metadata.yaml file according to requirements in go/blueprints-adc.",
+	Short: "Lints the metadata.yaml file.",
+	Long:  "Lints TF blueprint file.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		RunLintCommand()
