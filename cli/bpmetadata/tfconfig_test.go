@@ -346,6 +346,62 @@ func TestMergeExistingConnections(t *testing.T) {
 	}
 }
 
+func TestMergeExistingOutputTypes(t *testing.T) {
+	tests := []struct {
+		name                   string
+		newInterfacesFile      string
+		existingInterfacesFile string
+		expectedInterfacesFile string
+	}{
+		{
+			name:                   "No existing types",
+			newInterfacesFile:      "interfaces_without_output_types_metadata.yaml",
+			existingInterfacesFile: "interfaces_without_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_without_output_types_metadata.yaml",
+		},
+		{
+			name:                   "One complex existing type is preserved",
+			newInterfacesFile:      "interfaces_without_output_types_metadata.yaml",
+			existingInterfacesFile: "interfaces_with_partial_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_with_partial_output_types_metadata.yaml",
+		},
+		{
+			name:                   "All existing types (both simple and complex) are preserved",
+			newInterfacesFile:      "interfaces_without_output_types_metadata.yaml",
+			existingInterfacesFile: "interfaces_with_full_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_with_full_output_types_metadata.yaml",
+		},
+		{
+			name:                   "Previous types are not overwriting newly generated types",
+			newInterfacesFile:      "interfaces_with_new_output_types_metadata.yaml",
+			existingInterfacesFile: "interfaces_with_partial_output_types_metadata.yaml",
+			expectedInterfacesFile: "interfaces_with_new_output_types_metadata.yaml",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Load new interfaces from file
+			newInterfaces, err := UnmarshalMetadata(metadataTestdataPath, tt.newInterfacesFile)
+			require.NoError(t, err)
+
+			// Load existing interfaces from file
+			existingInterfaces, err := UnmarshalMetadata(metadataTestdataPath, tt.existingInterfacesFile)
+			require.NoError(t, err)
+
+			// Perform the merge
+			mergeExistingOutputTypes(newInterfaces.Spec.Interfaces, existingInterfaces.Spec.Interfaces)
+
+			// Load expected interfaces from file
+			expectedInterfaces, err := UnmarshalMetadata(metadataTestdataPath, tt.expectedInterfacesFile)
+			require.NoError(t, err)
+
+			// Assert that the merged interfaces match the expected outcome
+			assert.Equal(t, expectedInterfaces.Spec.Interfaces, newInterfaces.Spec.Interfaces)
+		})
+	}
+}
+
 func TestTFIncompleteProviderVersions(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -429,7 +485,7 @@ func TestUpdateOutputTypes(t *testing.T) {
 		{
 			name:           "Update output types from state",
 			bpPath:         "sample-module",
-			interfacesFile: "interfaces_without_types_metadata.yaml",
+			interfacesFile: "interfaces_without_output_types_metadata.yaml",
 			stateFile:      "terraform.tfstate",
 			expectedOutputs: []*BlueprintOutput{
 				{

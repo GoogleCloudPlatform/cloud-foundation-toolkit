@@ -256,6 +256,9 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	// Merge existing connections (if any) into the newly generated interfaces
 	mergeExistingConnections(bpMetadataObj.Spec.Interfaces, existingInterfaces)
 
+	// Merge existing output types (if any) into the newly generated interfaces
+	mergeExistingOutputTypes(bpMetadataObj.Spec.Interfaces, existingInterfaces)
+
 	// get blueprint requirements
 	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)
 	svcsCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfServicesFileName)

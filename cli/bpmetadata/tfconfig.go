@@ -522,6 +522,28 @@ func mergeExistingConnections(newInterfaces, existingInterfaces *BlueprintInterf
 	}
 }
 
+// mergeExistingOutputTypes merges existing output types from an old BlueprintInterface into a new one,
+// preserving manually authored types.
+func mergeExistingOutputTypes(newInterfaces, existingInterfaces *BlueprintInterface) {
+	if existingInterfaces == nil {
+		return // Nothing to merge if existingInterfaces is nil
+	}
+
+	existingOutputs := make(map[string]*BlueprintOutput)
+	for _, output := range existingInterfaces.Outputs {
+		existingOutputs[output.Name] = output
+	}
+
+	for i, output := range newInterfaces.Outputs {
+		if output.Type != nil {
+			continue
+		}
+		if existingOutput, ok := existingOutputs[output.Name]; ok && existingOutput.Type != nil {
+			newInterfaces.Outputs[i].Type = existingOutput.Type
+		}
+	}
+}
+
 // UpdateOutputTypes generates the terraform.tfstate file, extracts output types from it,
 // and updates the output types in the provided BlueprintInterface.
 func updateOutputTypes(bpPath string, bpInterfaces *BlueprintInterface) error {
