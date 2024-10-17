@@ -149,7 +149,7 @@ var initCmd = &cobra.Command{
 
 var lintCmd = &cobra.Command{
 	Use:   "lint",
-	Short: "Lints the metadata.yaml file.",
+	Short: "Lints blueprint",
 	Long:  "Lints TF blueprint file.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
