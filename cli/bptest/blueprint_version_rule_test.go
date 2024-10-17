@@ -16,6 +16,11 @@ func TestBlueprintVersionRule(t *testing.T) {
 		errorMessage string
 	}{
 		{
+			name:      "Valid version - no equal sign expect version",
+			version:   "1.2.3",
+			expectErr: false,
+		},
+		{
 			name:      "Valid version - expect version",
 			version:   "=1.2.3",
 			expectErr: false,
