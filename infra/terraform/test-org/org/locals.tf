@@ -832,7 +832,7 @@ locals {
       org         = "GoogleCloudPlatform"
       short_name  = "backup-dr"
       description = "Deploy Backup and DR appliances"
-      owners      = ["umeshkumhar"]
+      owners      = ["umeshkumhar", "ankushpareddy"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.ops])
     },
     {
