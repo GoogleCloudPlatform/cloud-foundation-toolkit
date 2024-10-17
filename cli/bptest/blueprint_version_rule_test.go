@@ -69,12 +69,12 @@ func TestBlueprintVersionRule(t *testing.T) {
 				},
 			}
 
-			ctx := LintContext{
-				Metadata: metadata,
+			ctx := lintContext{
+				metadata: metadata,
 			}
 
 			rule := &BlueprintVersionRule{}
-			err := rule.Check(ctx)
+			err := rule.check(ctx)
 
 			if tt.expectErr {
 				assert.Error(t, err)

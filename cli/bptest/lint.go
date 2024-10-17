@@ -24,12 +24,12 @@ func RunLintCommand() {
 		os.Exit(1)
 	}
 
-	ctx := LintContext{
-		Metadata: metadata,
-		FilePath: metadataFile,
+	ctx := lintContext{
+		metadata: metadata,
+		filePath: metadataFile,
 	}
 
-	runner := &LintRunner{}
+	runner := &lintRunner{}
 	runner.RegisterRule(&BlueprintVersionRule{})
 
 	// Run lint checks

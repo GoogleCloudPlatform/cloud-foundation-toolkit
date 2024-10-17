@@ -8,22 +8,22 @@ import (
 // BlueprintVersionRule checks if the blueprint connection version is valid.
 type BlueprintVersionRule struct{}
 
-func (r *BlueprintVersionRule) Name() string {
+func (r *BlueprintVersionRule) name() string {
 	return "blueprint_connection_source_version_rule"
 }
 
-func (r *BlueprintVersionRule) Enabled() bool {
+func (r *BlueprintVersionRule) enabled() bool {
 	return true
 }
 
-func (r *BlueprintVersionRule) Check(ctx LintContext) error {
+func (r *BlueprintVersionRule) check(ctx lintContext) error {
 	// Check if Spec or Interfaces is nil to avoid null pointer dereference
-	if ctx.Metadata == nil || ctx.Metadata.Spec == nil || ctx.Metadata.Spec.Interfaces == nil {
+	if ctx.metadata == nil || ctx.metadata.Spec == nil || ctx.metadata.Spec.Interfaces == nil {
 		fmt.Println("metadata, spec, or interfaces are nil")
 		return nil
 	}
 
-	for _, variable := range ctx.Metadata.Spec.Interfaces.Variables {
+	for _, variable := range ctx.metadata.Spec.Interfaces.Variables {
 		if variable == nil {
 			continue // Skip if variable is nil
 		}
