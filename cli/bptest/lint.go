@@ -10,8 +10,8 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-// RunMetadataLintCommand is the entry function that will run the metadata.yml lint checks.
-func RunMetadataLintCommand() {
+// RunLintCommand is the entry function that will run the metadata.yml lint checks.
+func RunLintCommand() {
 	metadataFile := findMetadataFile()
 	if metadataFile == "" {
 		fmt.Println("Error: metadata.yaml file not found")

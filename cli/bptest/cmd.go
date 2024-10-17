@@ -153,7 +153,7 @@ var lintCmd = &cobra.Command{
 	Long:  "Lint metadata.yaml file according to requirements in go/blueprints-adc.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		RunMetadataLintCommand()
+		RunLintCommand()
 		return nil
 	},
 }
