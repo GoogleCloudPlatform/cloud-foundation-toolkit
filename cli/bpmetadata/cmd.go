@@ -308,7 +308,12 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
 	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, bpDisp.Spec.Ui.Input)
 
-	existingInput := proto.Clone(bpCore.Spec.Ui.Input).(*BlueprintUIInput)
+	existingInput := func() *BlueprintUIInput {
+		if bpCore.Spec.Ui != nil && bpCore.Spec.Ui.Input != nil {
+			return proto.Clone(bpCore.Spec.Ui.Input).(*BlueprintUIInput)
+		}
+		return &BlueprintUIInput{}
+	}()
 	// Merge existing data (if any) into the newly generated UI Input
 	mergeExistingAltDefaults(bpDisp.Spec.Ui.Input, existingInput)
 
