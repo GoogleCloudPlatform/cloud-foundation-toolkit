@@ -23,6 +23,7 @@ func init() {
 	Cmd.AddCommand(runCmd)
 	Cmd.AddCommand(convertCmd)
 	Cmd.AddCommand(initCmd)
+	Cmd.AddCommand(lintCmd)
 
 	Cmd.PersistentFlags().StringVar(&flags.testDir, "test-dir", "", "Path to directory containing integration tests (default is computed by scanning current working directory)")
 	runCmd.Flags().StringVar(&flags.testStage, "stage", "", "Test stage to execute (default is running all stages in order - init, plan, apply, verify, teardown)")
@@ -143,5 +144,16 @@ var initCmd = &cobra.Command{
 			initTestName = args[0]
 		}
 		return initTest(initTestName)
+	},
+}
+
+var lintCmd = &cobra.Command{
+	Use:   "lint",
+	Short: "Lints blueprint",
+	Long:  "Lints TF blueprint",
+	Args:  cobra.NoArgs,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		RunLintCommand()
+		return nil
 	},
 }
