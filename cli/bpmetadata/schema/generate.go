@@ -57,6 +57,10 @@ func GenerateSchema() ([]byte, error) {
 	if defExists {
 		oDef.Properties.Set("type", jsonschema.TrueSchema)
 	}
+	altDefaultDef, defExists := s.Definitions["DisplayVariable_AlternateDefault"]
+	if defExists {
+		altDefaultDef.Properties.Set("value", jsonschema.TrueSchema)
+	}
 
 	sData, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
