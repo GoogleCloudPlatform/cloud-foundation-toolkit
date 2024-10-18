@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestBlueprintVersionRule tests the version validation rule.
-func TestBlueprintVersionRule(t *testing.T) {
+func TestBlueprintConnectionSourceVersionRule(t *testing.T) {
 	tests := []struct {
 		name         string
 		version      string
@@ -73,7 +72,7 @@ func TestBlueprintVersionRule(t *testing.T) {
 				metadata: metadata,
 			}
 
-			rule := &BlueprintVersionRule{}
+			rule := &BlueprintConnectionSourceVersionRule{}
 			err := rule.check(ctx)
 
 			if tt.expectErr {

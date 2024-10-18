@@ -150,7 +150,7 @@ var initCmd = &cobra.Command{
 var lintCmd = &cobra.Command{
 	Use:   "lint",
 	Short: "Lints blueprint",
-	Long:  "Lints TF blueprint file.",
+	Long:  "Lints TF blueprint",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		RunLintCommand()

@@ -5,18 +5,17 @@ import (
 	"github.com/hashicorp/go-version"
 )
 
-// BlueprintVersionRule checks if the blueprint connection version is valid.
-type BlueprintVersionRule struct{}
+type BlueprintConnectionSourceVersionRule struct{}
 
-func (r *BlueprintVersionRule) name() string {
+func (r *BlueprintConnectionSourceVersionRule) name() string {
 	return "blueprint_connection_source_version_rule"
 }
 
-func (r *BlueprintVersionRule) enabled() bool {
+func (r *BlueprintConnectionSourceVersionRule) enabled() bool {
 	return true
 }
 
-func (r *BlueprintVersionRule) check(ctx lintContext) error {
+func (r *BlueprintConnectionSourceVersionRule) check(ctx lintContext) error {
 	// Check if Spec or Interfaces is nil to avoid null pointer dereference
 	if ctx.metadata == nil || ctx.metadata.Spec == nil || ctx.metadata.Spec.Interfaces == nil {
 		fmt.Println("metadata, spec, or interfaces are nil")

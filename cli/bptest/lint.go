@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+const metadataFile = "metadata.yaml"
+
 // RunLintCommand is the entry function that will run the metadata.yml lint checks.
 func RunLintCommand() {
 	dir, err := os.Getwd()
@@ -15,8 +17,8 @@ func RunLintCommand() {
 	}
 
 	// Parse medata.yaml to proto
-	metadata, err := bpmetadata.UnmarshalMetadata(dir, "/metadata.yaml")
-	metadataFile := dir + "/metadata.yaml"
+	metadata, err := bpmetadata.UnmarshalMetadata(dir, "/"+metadataFile)
+	metadataFile := dir + "/" + metadataFile
 
 	if err != nil {
 		fmt.Printf("Error parsing metadata file: %v\n", err)
@@ -29,7 +31,7 @@ func RunLintCommand() {
 	}
 
 	runner := &lintRunner{}
-	runner.RegisterRule(&BlueprintVersionRule{})
+	runner.RegisterRule(&BlueprintConnectionSourceVersionRule{})
 
 	// Run lint checks
 	errs := runner.Run(ctx)
