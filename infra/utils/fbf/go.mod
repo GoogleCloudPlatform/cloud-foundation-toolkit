@@ -6,7 +6,7 @@ require (
 	github.com/briandowns/spinner v1.23.1
 	github.com/jedib0t/go-pretty/v6 v6.6.0
 	github.com/stretchr/testify v1.9.0
-	google.golang.org/api v0.200.0
+	google.golang.org/api v0.201.0
 )
 
 require (
