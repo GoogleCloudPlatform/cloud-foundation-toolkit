@@ -856,9 +856,7 @@
             }
           ]
         },
-        "value": {
-          "$ref": "#/$defs/Value"
-        }
+        "value": true
       },
       "additionalProperties": false,
       "type": "object"
