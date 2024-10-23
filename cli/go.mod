@@ -2,7 +2,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
 go 1.22.0
 
-toolchain go1.22.7
+toolchain go1.22.8
 
 require (
 	cloud.google.com/go/asset v1.20.2
@@ -46,7 +46,10 @@ require (
 	sigs.k8s.io/yaml v1.4.0
 )
 
-require github.com/jedib0t/go-pretty/v6 v6.6.0
+require (
+	github.com/hashicorp/go-version v1.6.0
+	github.com/jedib0t/go-pretty/v6 v6.6.0
+)
 
 require (
 	cel.dev/expr v0.16.1 // indirect
@@ -131,7 +134,6 @@ require (
 	github.com/hashicorp/go-getter v1.7.6 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
-	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
