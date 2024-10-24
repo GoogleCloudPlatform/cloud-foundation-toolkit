@@ -1,7 +1,9 @@
 package bptest
 
 import (
+	"fmt"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
+	"os"
 )
 
 // lintRule defines the common interface for all metadata lint rules.
@@ -30,6 +32,11 @@ func (r *lintRunner) RegisterRule(rule lintRule) {
 // Run runs all the registered rules on the provided context.
 func (r *lintRunner) Run(ctx lintContext) []error {
 	var errs []error
+	if os.Getenv("BLUEPRINT_LINT_DISABLE") == "1" {
+		fmt.Println("BLUEPRINT_LINT_DISABLE is set to 1. Skipping lint checks.")
+		return errs
+	}
+
 	for _, rule := range r.rules {
 		if rule.enabled() {
 			err := rule.check(ctx)
