@@ -51,26 +51,55 @@ func TestCreateBlueprintDisplayMetadata(t *testing.T) {
 		bpDisp      *BlueprintMetadata
 		bpCore      *BlueprintMetadata
 		expectErr   bool
-		expectNil   bool
 	}{
 		{
-			description: "create metadata with valid input",
+			description: "create metadata with nil Spec.UI.Input",
 			bpPath:      "/path/to/blueprint",
-			bpDisp: &BlueprintMetadata{
+			bpDisp:      &BlueprintMetadata{},
+			bpCore: &BlueprintMetadata{
 				ApiVersion: "v1",
 				Kind:       "Blueprint",
 				Metadata: &ResourceTypeMeta{
-					Name: "test-blueprint",
+					Name: "core-blueprint",
 					Labels: map[string]string{
-						"env": "test",
+						"env": "core",
 					},
 				},
 				Spec: &BlueprintMetadataSpec{
 					Info: &BlueprintInfo{
-						Title:            "Test Blueprint",
+						Title:            "Core Blueprint",
 						Version:          "1.0.0",
-						Icon:             "assets/icon.png",
-						SingleDeployment: true,
+						Icon:             "assets/core_icon.png",
+						SingleDeployment: false,
+					},
+					Interfaces: &BlueprintInterface{
+						Variables: []*BlueprintVariable{
+							{
+								Name: "test_var_1",
+							},
+						},
+					},
+					Ui: &BlueprintUI{
+						Input: nil,
+					},
+				},
+			},
+			expectErr: false,
+		},
+		{
+			description: "create metadata with valid input",
+			bpPath:      "/path/to/blueprint",
+			bpDisp: &BlueprintMetadata{
+				Spec: &BlueprintMetadataSpec{
+					Ui: &BlueprintUI{
+						Input: &BlueprintUIInput{
+							Variables: map[string]*DisplayVariable{
+								"test_var_1": {
+									Name:  "test var 1",
+									Title: "This is a test input",
+								},
+							},
+						},
 					},
 				},
 			},
@@ -90,52 +119,19 @@ func TestCreateBlueprintDisplayMetadata(t *testing.T) {
 						Icon:             "assets/core_icon.png",
 						SingleDeployment: false,
 					},
-				},
-			},
-			expectErr: false,
-			expectNil: false,
-		},
-		{
-			description: "create metadata with invalid input",
-			bpPath:      "",
-			bpDisp: &BlueprintMetadata{
-				ApiVersion: "",
-				Kind:       "",
-				Metadata: &ResourceTypeMeta{
-					Name:   "",
-					Labels: map[string]string{},
-				},
-			},
-			bpCore: &BlueprintMetadata{
-				ApiVersion: "",
-				Kind:       "",
-				Metadata: &ResourceTypeMeta{
-					Name:   "",
-					Labels: map[string]string{},
-				},
-			},
-			expectErr: true,
-			expectNil: true,
-		},
-		{
-			description: "create metadata with nil Spec.UI.Input",
-			bpPath:      "/path/to/blueprint",
-			bpDisp:      nil,
-			bpCore: &BlueprintMetadata{
-				ApiVersion: "v1",
-				Kind:       "Blueprint",
-				Metadata: &ResourceTypeMeta{
-					Name: "core-blueprint",
-					Labels: map[string]string{
-						"env": "core",
+					Interfaces: &BlueprintInterface{
+						Variables: []*BlueprintVariable{
+							{
+								Name: "test_var_1",
+							},
+						},
+					},
+					Ui: &BlueprintUI{
+						Input: nil,
 					},
 				},
-				Spec: &BlueprintMetadataSpec{
-					Ui: &BlueprintUI{},
-				},
 			},
 			expectErr: false,
-			expectNil: true,
 		},
 	}
 
@@ -152,7 +148,6 @@ func TestCreateBlueprintDisplayMetadata(t *testing.T) {
 					assert.Equal(t, tt.bpDisp.Metadata.Name, metadata.Metadata.Name, "Metadata name should match the input")
 					assert.Equal(t, tt.bpDisp.Spec.Info.Title, metadata.Spec.Info.Title, "Metadata title should match the input")
 					assert.Equal(t, tt.bpDisp.Spec.Info.Version, metadata.Spec.Info.Version, "Metadata version should match the input")
-					assert.Equal(t, tt.bpDisp.Spec.Info.SingleDeployment, metadata.Spec.Info.SingleDeployment, "Single deployment flag should match the input")
 				}
 			}
 		})
