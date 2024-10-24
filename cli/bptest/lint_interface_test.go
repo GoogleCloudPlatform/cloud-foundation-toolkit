@@ -78,20 +78,3 @@ func TestLintRunner(t *testing.T) {
 		assert.Empty(t, errs, "No errors should be returned when BLUEPRINT_LINT_DISABLE is set")
 	})
 }
-
-//func TestRunLint(t *testing.T) {
-//t.Run("skip lint when BLUEPRINT_LINT_DISABLE is set", func(t *testing.T) {
-//os.Setenv("BLUEPRINT_LINT_DISABLE", "1")
-//defer os.Unsetenv("BLUEPRINT_LINT_DISABLE")
-
-//err := Run()
-//assert.NoError(t, err, "Lint should be skipped without error")
-//})
-
-//t.Run("run lint when BLUEPRINT_LINT_DISABLE is not set", func(t *testing.T) {
-//os.Unsetenv("BLUEPRINT_LINT_DISABLE")
-
-//err := Run()
-//assert.NoError(t, err, "Lint should run without error")
-//})
-//}
