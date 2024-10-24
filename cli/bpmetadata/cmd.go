@@ -304,10 +304,6 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 		bpDisp.Spec.Ui.Input = &BlueprintUIInput{}
 	}
 
-	if bpDisp.Spec.Ui.Input == nil {
-		bpDisp.Spec.Ui.Input = &BlueprintUIInput{}
-	}
-
 	bpDisp.Spec.Info.Title = bpCore.Spec.Info.Title
 	bpDisp.Spec.Info.Source = bpCore.Spec.Info.Source
 	buildUIInputFromVariables(bpCore.Spec.Interfaces.Variables, bpDisp.Spec.Ui.Input)
