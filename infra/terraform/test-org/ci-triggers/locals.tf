@@ -30,8 +30,6 @@ locals {
     "cloud-foundation-training"  = "cloud-foundation-training",
     "example-foundation-app"     = "terraform-example-foundation-app",
     "anthos-samples"             = "anthos-samples"
-    "cloud-deployment-gce"       = "terraform-cloud-deployment-gce",
-    "cloud-deployment-gke"       = "terraform-cloud-deployment-gke",
     "docs-samples"               = "terraform-docs-samples"
     "dynamic-python-webapp"      = "terraform-dynamic-python-webapp"
     "dynamic-javascript-webapp"  = "terraform-dynamic-javascript-webapp"
