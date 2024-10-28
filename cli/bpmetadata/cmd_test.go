@@ -30,15 +30,12 @@ func TestCmdExecution(t *testing.T) {
 			cmd := &cobra.Command{Use: "cft"}
 			cmd.SetArgs(tt.args)
 
-			execCmd := func() error {
-				_, err := cmd.ExecuteC()
-				return err
-			}
+			_, err := cmd.ExecuteC()
 
 			if tt.expectErr {
-				assert.Error(t, execCmd(), "Command should return an error")
+				assert.Error(t, err, "Command should return an error")
 			} else {
-				assert.NoError(t, execCmd(), "Command should execute without error")
+				assert.NoError(t, err, "Command should execute without error")
 			}
 		})
 	}
@@ -53,7 +50,7 @@ func TestCreateBlueprintDisplayMetadata(t *testing.T) {
 		expectErr   bool
 	}{
 		{
-			description: "create metadata with nil Spec.UI.Input",
+			description: "create metadata with nil display metadata Spec.UI.Input",
 			bpPath:      "/path/to/blueprint",
 			bpDisp:      &BlueprintMetadata{},
 			bpCore: &BlueprintMetadata{
