@@ -9,29 +9,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type MockLintRule struct {
+const BlueprintLintDisableEnv = "BLUEPRINT_LINT_DISABLE"
+
+type mockLintRule struct {
 	Name    string
 	Enabled bool
 	Err     error
 }
 
-func (m *MockLintRule) name() string {
+func (m *mockLintRule) name() string {
 	return m.Name
 }
 
-func (m *MockLintRule) enabled() bool {
+func (m *mockLintRule) enabled() bool {
 	return m.Enabled
 }
 
-func (m *MockLintRule) check(ctx lintContext) error {
+func (m *mockLintRule) check(ctx lintContext) error {
 	return m.Err
 }
 
 func TestLintRunner(t *testing.T) {
 	t.Run("register and run rules with lintRunner", func(t *testing.T) {
-		mockRule1 := &MockLintRule{Name: "MockRule1", Enabled: true, Err: nil}
-		mockRule2 := &MockLintRule{Name: "MockRule2", Enabled: true, Err: errors.New("lint error")}
-		mockRule3 := &MockLintRule{Name: "MockRule3", Enabled: false, Err: nil}
+		mockRule1 := &mockLintRule{Name: "MockRule1", Enabled: true, Err: nil}
+		mockRule2 := &mockLintRule{Name: "MockRule2", Enabled: true, Err: errors.New("lint error")}
+		mockRule3 := &mockLintRule{Name: "MockRule3", Enabled: false, Err: nil}
 
 		runner := lintRunner{}
 		runner.RegisterRule(mockRule1)
@@ -59,11 +61,11 @@ func TestLintRunner(t *testing.T) {
 		assert.Empty(t, errs, "No errors should be returned when no rules are registered")
 	})
 	t.Run("skip lint rules when BLUEPRINT_LINT_DISABLE is set", func(t *testing.T) {
-		os.Setenv("BLUEPRINT_LINT_DISABLE", "1")
-		defer os.Unsetenv("BLUEPRINT_LINT_DISABLE")
+		os.Setenv(BlueprintLintDisableEnv, "1")
+		defer os.Unsetenv(BlueprintLintDisableEnv)
 
-		mockRule1 := &MockLintRule{Name: "MockRule1", Enabled: true, Err: errors.New("lint error")}
-		mockRule2 := &MockLintRule{Name: "MockRule2", Enabled: true, Err: errors.New("another lint error")}
+		mockRule1 := &mockLintRule{Name: "MockRule1", Enabled: true, Err: errors.New("lint error")}
+		mockRule2 := &mockLintRule{Name: "MockRule2", Enabled: true, Err: errors.New("another lint error")}
 
 		runner := lintRunner{}
 		runner.RegisterRule(mockRule1)
