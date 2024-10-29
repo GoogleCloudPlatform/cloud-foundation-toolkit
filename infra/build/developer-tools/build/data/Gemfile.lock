@@ -523,8 +523,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     retriable (3.1.2)
-    rexml (3.3.6)
-      strscan
+    rexml (3.3.9)
     rspec (3.11.0)
       rspec-core (~> 3.11.0)
       rspec-expectations (~> 3.11.0)
@@ -568,7 +567,6 @@ GEM
       unicode-display_width (>= 1.5, < 3.0)
       unicode_utils (~> 1.4)
     strings-ansi (0.2.0)
-    strscan (3.1.0)
     test-kitchen (3.5.0)
       bcrypt_pbkdf (~> 1.0)
       chef-utils (>= 16.4.35)
