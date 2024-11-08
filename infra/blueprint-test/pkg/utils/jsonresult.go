@@ -18,6 +18,7 @@ package utils
 
 import (
 	"os"
+	"regexp"
 
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/tidwall/gjson"
@@ -42,4 +43,19 @@ func ParseJSONResult(t testing.TB, j string) gjson.Result {
 		t.Fatalf("Error parsing output, invalid json: %s", j)
 	}
 	return gjson.Parse(j)
+}
+
+// Kubectl transient errors
+var (
+	KubectlTransientErrors = []string{
+		"E022[23] .* the server is currently unable to handle the request",
+	}
+)
+
+// Filter transient errors from kubectl output
+func ParseKubectlJSONResult(t testing.TB, str string) gjson.Result {
+	for _, error := range KubectlTransientErrors {
+		str = regexp.MustCompile(error).ReplaceAllString(str, "")
+	}
+	return ParseJSONResult(t, str)
 }
