@@ -35,6 +35,8 @@ module "project" {
   folder_id         = var.folder_id
   billing_account   = var.billing_account
 
+  default_service_account  = "DEPRIVILEGE"
+
   activate_apis = [
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
