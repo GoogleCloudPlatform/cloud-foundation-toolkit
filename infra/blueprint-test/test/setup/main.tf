@@ -21,13 +21,15 @@ locals {
     "roles/iam.serviceAccountUser",
     "roles/vpcaccess.admin",
     "roles/serviceusage.serviceUsageAdmin",
-    "roles/container.admin"
+    "roles/container.admin",
+    "roles/cloudasset.viewer",
+    "roles/serviceusage.serviceUsageConsumer"
   ]
 }
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 14.0"
+  version = "~> 17.0"
 
   name              = "ci-bptest"
   random_project_id = "true"
@@ -36,13 +38,15 @@ module "project" {
   billing_account   = var.billing_account
 
   default_service_account  = "DEPRIVILEGE"
+  deletion_policy          = "DELETE"
 
   activate_apis = [
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "serviceusage.googleapis.com",
     "vpcaccess.googleapis.com",
-    "container.googleapis.com"
+    "container.googleapis.com",
+    "cloudasset.googleapis.com"
   ]
 }
 
@@ -66,6 +70,6 @@ resource "google_service_account_key" "key" {
 
 module "kubernetes-engine_example_simple_autopilot_public" {
   source  = "terraform-google-modules/kubernetes-engine/google//examples/simple_autopilot_public"
-  version                     = "~> 30.0"
+  version                     = "~> 34.0"
   project_id                  = module.project.project_id
 }
