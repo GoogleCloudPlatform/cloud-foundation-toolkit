@@ -115,10 +115,7 @@ build-image-developer-tools:
 
 .PHONY: release-image-developer-tools
 release-image-developer-tools:
-	if [[ -z "${GITHUB_SHA}" ]]; then
-	  echo "ERROR: Missing GITHUB_SHA for the release"
-		exit 1
-	fi
+	test -n "$(GITHUB_SHA)" # $$GITHUB_SHA
 
 	docker tag ${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
   ${REGISTRY_URL}/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}
