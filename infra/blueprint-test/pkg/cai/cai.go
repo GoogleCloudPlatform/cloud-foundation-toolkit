@@ -28,9 +28,9 @@ import (
 )
 
 type CmdCfg struct {
-	sleep     int      // minutes to sleep prior to CAI retreval. default: 2
-	assetType string   // asset type to retrieve. default: all
-	args      []string // arguments to pass to call
+	sleep      int      // minutes to sleep prior to CAI retreval. default: 2
+	assetTypes []string // asset types to retrieve. empty: all
+	args       []string // arguments to pass to call
 }
 
 type cmdOption func(*CmdCfg)
@@ -38,17 +38,17 @@ type cmdOption func(*CmdCfg)
 // newCmdConfig sets defaults and options
 func newCmdConfig(opts ...cmdOption) (*CmdCfg) {
 	caiOpts := &CmdCfg{
-		sleep:     2,
-		assetType: "",
-		args:      nil,
+		sleep:      2,
+		assetTypes: nil,
+		args:       nil,
 	}
 
 	for _, opt := range opts {
 		opt(caiOpts)
 	}
 
-	if caiOpts.assetType != "" {
-		caiOpts.args = []string{"--asset-types", caiOpts.assetType}
+	if caiOpts.assetTypes != nil {
+		caiOpts.args = []string{"--asset-types", strings.Join(caiOpts.assetTypes, ",")}
 	}
 	caiOpts.args = append(caiOpts.args, "--content-type", "resource")
 
@@ -62,10 +62,10 @@ func WithSleep(sleep int) cmdOption {
 	}
 }
 
-// Set asset type
-func WithAssetType(assetType string) cmdOption {
+// Set asset types
+func WithAssetTypes(assetTypes []string) cmdOption {
 	return func(f *CmdCfg) {
-		f.assetType = assetType
+		f.assetTypes = assetTypes
 	}
 }
 
