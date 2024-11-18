@@ -412,6 +412,9 @@ locals {
       description = "Creates a global HTTP load balancer for Compute Engine by using forwarding rules"
       topics      = local.common_topics.net
       owners      = concat(["imrannayer"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-lb-internal"
@@ -488,6 +491,9 @@ locals {
       description = "Creates one or more service accounts and grants them basic roles"
       owners      = local.adc_common_admins
       topics      = local.common_topics.security
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-slo"
@@ -529,6 +535,9 @@ locals {
       description = "Provisions VMs in Google Cloud"
       owners      = concat(["erlanderlo"], local.adc_common_admins)
       topics      = local.common_topics.compute
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-vpc-service-controls"
