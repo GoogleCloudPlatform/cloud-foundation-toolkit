@@ -133,3 +133,30 @@ func TestJSONEq(t *testing.T) {
 		})
 	}
 }
+
+func TestJSONEqs(t *testing.T) {
+	tests := []struct {
+		name    string
+		data    string
+		eqPaths []string
+		opts    []goldenFileOption
+		want    string
+	}{
+		{
+			name:    "simple",
+			data:    "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"},\"fizz\":\"pop\"}",
+			eqPaths: []string{"foo","baz"},
+			want:    "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"}}",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert := assert.New(t)
+			os.Setenv(gfUpdateEnvVar, "true")
+			defer os.Unsetenv(gfUpdateEnvVar)
+			got := NewOrUpdate(t, tt.data, tt.opts...)
+			defer os.Remove(got.GetName())
+			got.JSONEqs(assert, utils.ParseJSONResult(t, tt.want), tt.eqPaths)
+		})
+	}
+}
