@@ -158,8 +158,8 @@ func (g *GoldenFile) JSONEq(a *assert.Assertions, got gjson.Result, jsonPath str
 	a.Equal(gfData, gotData, fmt.Sprintf("expected %s to match fixture %s", jsonPath, gfData))
 }
 
-// JSONEqs asserts that json content in jsonPaths for got and goldenfile are the same
-func (g *GoldenFile) JSONEqs(a *assert.Assertions, got gjson.Result, jsonPaths []string) {
+// JSONPathEqs asserts that json content in jsonPaths for got and goldenfile are the same
+func (g *GoldenFile) JSONPathEqs(a *assert.Assertions, got gjson.Result, jsonPaths []string) {
 	var wg sync.WaitGroup
 	wg.Add(len(jsonPaths))
 	for _, path := range jsonPaths {

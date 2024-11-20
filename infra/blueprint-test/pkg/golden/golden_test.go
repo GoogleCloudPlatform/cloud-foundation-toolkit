@@ -156,7 +156,9 @@ func TestJSONEqs(t *testing.T) {
 			defer os.Unsetenv(gfUpdateEnvVar)
 			got := NewOrUpdate(t, tt.data, tt.opts...)
 			defer os.Remove(got.GetName())
-			got.JSONEqs(assert, utils.ParseJSONResult(t, tt.want), tt.eqPaths)
+			got.JSONPathEqs(assert, utils.ParseJSONResult(t, tt.data), tt.eqPaths)
+			multipathQuery := fmt.Sprintf("{%s}", strings.Join(tt.eqPaths, ","))
+			assert.JSONEq(tt.want, got.GetJSON().Get(multipathQuery).String())
 		})
 	}
 }
