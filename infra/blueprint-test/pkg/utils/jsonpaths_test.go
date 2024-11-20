@@ -52,7 +52,7 @@ import (
 	 for _, tt := range tests {
 		 t.Run(tt.name, func(t *testing.T) {
 			 assert := assert.New(t)
-			 assert.Equal(tt.paths, GetJSONPaths(t, tt.json))
+			 assert.Equal(tt.paths, GetJSONPaths(tt.json))
 		 })
 	 }
  }
@@ -86,7 +86,7 @@ import (
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
-			assert.Equal(tt.paths, GetTerminalJSONPaths(t, tt.json))
+			assert.Equal(tt.paths, GetTerminalJSONPaths(tt.json))
 		})
 	}
 }
