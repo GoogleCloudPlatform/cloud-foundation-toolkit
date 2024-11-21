@@ -25,7 +25,7 @@ BATS_ASSERT_VERSION := 2.0.0
 BATS_MOCK_VERSION := 1.0.1
 PACKER_VERSION := 1.4.4
 # Updated by Update Tooling Workflow
-TERRAGRUNT_VERSION := 0.68.7
+TERRAGRUNT_VERSION := 0.68.14
 # Updated by Update Tooling Workflow
 KUSTOMIZE_VERSION := 5.5.0
 # Updated by Update Tooling Workflow
@@ -37,7 +37,7 @@ PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
 CFT_CLI_VERSION := 1.5.6
 # Updated by Update Tooling Workflow
-TFLINT_VERSION := 0.53.0
+TFLINT_VERSION := 0.54.0
 TINKEY_VERSION := 1.7.0
 ALPINE_VERSION := 3.20
 # Updated by Update Tooling Workflow
@@ -47,7 +47,7 @@ TFLINT_BP_PLUGIN_VERSION := 0.2.5
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
-GOLANGCI_VERSION := 1.61.0
+GOLANGCI_VERSION := 1.62.0
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
@@ -56,7 +56,7 @@ OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.20.2
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.22.17
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.22.18
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
