@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.17.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.16.3...infra/blueprint-test/v0.17.0) (2024-11-21)
+
+
+### Features
+
+* **blueprint-test:** add cai helper ([#2689](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2689)) ([054d1b0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/054d1b0efdee6bd145f2469ffa0ccbd1e8436aa6))
+* **blueprint-test:** add GetJSONPaths ([#2705](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2705)) ([53eeec7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/53eeec7a5bf6296d6b7eb5883dbb5743c32a259a))
+* **blueprint-test:** add JSONPathEqs() ([#2706](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2706)) ([3065ac7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3065ac7350c19e53ae082d6953407c5dd406e8c1))
+* **blueprint-test:** add ParseKubectlJSONResult ([#2688](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2688)) ([c46b613](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/c46b6131159f8d482d10c403a185c1084f84806a))
+
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/mod to v0.22.0 ([#2682](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2682)) ([3777591](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/3777591e661570f421d7e1d9feb374ad9c25d8f7))
+
 ## [0.16.3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.16.2...infra/blueprint-test/v0.16.3) (2024-10-30)
 
 

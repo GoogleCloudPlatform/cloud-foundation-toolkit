@@ -25,6 +25,8 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/stretchr/testify/assert"
+
+	gotest "github.com/mitchellh/go-testing-interface"
 )
 
 const testProjectID = "foo"
@@ -130,6 +132,46 @@ func TestJSONEq(t *testing.T) {
 			defer os.Remove(got.GetName())
 			got.JSONEq(assert, utils.ParseJSONResult(t, tt.data), tt.eqPath)
 			assert.JSONEq(tt.want, got.GetJSON().Get(tt.eqPath).String())
+		})
+	}
+}
+
+func TestJSONEqs(t *testing.T) {
+	tests := []struct {
+		name     string
+		data     string
+		eqPaths  []string
+		opts     []goldenFileOption
+		want     string
+		hasError bool
+	}{
+		{
+			name:     "simple",
+			data:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"},\"fizz\":\"pop\"}",
+			eqPaths:  []string{"foo","baz"},
+			want:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"}}",
+			hasError: false,
+		},
+		{
+			name:     "false",
+			data:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"},\"fizz\":\"pop\"}",
+			eqPaths:  []string{"foo","baz"},
+			want:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz1\"}}",
+			hasError: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			innerT := &gotest.RuntimeT{}
+			innerAssert := assert.New(innerT)
+			os.Setenv(gfUpdateEnvVar, "true")
+			defer os.Unsetenv(gfUpdateEnvVar)
+			got := NewOrUpdate(t, tt.data, tt.opts...)
+			defer os.Remove(got.GetName())
+			got.JSONPathEqs(innerAssert, utils.ParseJSONResult(t, tt.want), tt.eqPaths)
+
+			assert := assert.New(t)
+			assert.True(innerT.Failed() == tt.hasError)
 		})
 	}
 }
