@@ -258,6 +258,32 @@ func TestTFRoles(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:       "simple list of roles in order for multiple level",
+			configName: "iam-multi-level.tf",
+			wantRoles: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+						"roles/compute.networkAdmin",
+						"roles/iam.serviceAccountAdmin",
+						"roles/resourcemanager.projectIamAdmin",
+						"roles/storage.admin",
+						"roles/workflows.admin",
+						"roles/cloudscheduler.admin",
+						"roles/iam.serviceAccountUser",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/owner",
+						"roles/storage.admin",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
