@@ -6,7 +6,7 @@ toolchain go1.22.9
 
 require (
 	github.com/hashicorp/go-version v1.7.0
-	github.com/hashicorp/hcl/v2 v2.22.0
+	github.com/hashicorp/hcl/v2 v2.23.0
 	github.com/terraform-linters/tflint-plugin-sdk v0.21.0
 )
 
