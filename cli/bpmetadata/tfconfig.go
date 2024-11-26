@@ -441,7 +441,30 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
 		break
 	}
 
+	sortBlueprintRoles(r)
 	return r, nil
+}
+
+// Sort blueprint roles.
+func sortBlueprintRoles(r []*BlueprintRoles) {
+	sort.SliceStable(r, func(i, j int) bool {
+		// 1. Sort by Level
+		if r[i].Level != r[j].Level {
+			return r[i].Level < r[j].Level
+		}
+
+		// 2. Sort by the len of roles
+		if len(r[i].Roles) != len(r[j].Roles) {
+			return len(r[i].Roles) < len(r[j].Roles)
+		}
+
+		// 3. Sort by the first role (if available)
+		if len(r[i].Roles) > 0 && len(r[j].Roles) > 0 {
+			return r[i].Roles[0] < r[j].Roles[0]
+		}
+
+		return false
+	})
 }
 
 // parseBlueprintServices gets the gcp api services required for the blueprint
