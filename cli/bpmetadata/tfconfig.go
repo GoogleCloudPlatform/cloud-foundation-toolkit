@@ -449,24 +449,20 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
 func sortBlueprintRoles(r []*BlueprintRoles) {
 	sort.SliceStable(r, func(i, j int) bool {
 		// 1. Sort by Level
-		if r[i].Level < r[j].Level {
-			return true
-		}
-		if r[i].Level > r[j].Level {
-			return false
+		if r[i].Level != r[j].Level {
+			return r[i].Level < r[j].Level
 		}
 
-		// 2. If Levels are equal, sort by the first role (if available)
+		// 2. Sort by the len of roles
+		if len(r[i].Roles) != len(r[j].Roles) {
+			return len(r[i].Roles) < len(r[j].Roles)
+		}
+
+		// 3. Sort by the first role (if available)
 		if len(r[i].Roles) > 0 && len(r[j].Roles) > 0 {
-			if r[i].Roles[0] < r[j].Roles[0] {
-				return true
-			}
-			if r[i].Roles[0] > r[j].Roles[0] {
-				return false
-			}
+			return r[i].Roles[0] < r[j].Roles[0]
 		}
 
-		// 3. If Levels and first roles are equal, maintain original order
 		return false
 	})
 }
