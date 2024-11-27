@@ -22,19 +22,20 @@ import (
 	"os"
 	"path"
 	"strings"
-	"sync"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
 	gfDir          = "testdata"
 	gfPerms        = 0755
 	gfUpdateEnvVar = "UPDATE_GOLDEN"
+	gGoroutinesMax = 24
 )
 
 type GoldenFile struct {
@@ -160,13 +161,17 @@ func (g *GoldenFile) JSONEq(a *assert.Assertions, got gjson.Result, jsonPath str
 
 // JSONPathEqs asserts that json content in jsonPaths for got and goldenfile are the same
 func (g *GoldenFile) JSONPathEqs(a *assert.Assertions, got gjson.Result, jsonPaths []string) {
-	var wg sync.WaitGroup
-	wg.Add(len(jsonPaths))
-	for _, path := range jsonPaths {
-		go func(a *assert.Assertions, got gjson.Result, path string) {
-			defer wg.Done()
-			g.JSONEq(a, got, path)
-		}(a, got, path)
+	syncGroup := new(errgroup.Group)
+	syncGroup.SetLimit(gGoroutinesMax)
+	g.t.Logf("Checking %d JSON paths with max %d goroutines", len(jsonPaths), gGoroutinesMax)
+	for _, jsonPath := range jsonPaths {
+		jsonPath := jsonPath
+		syncGroup.Go(func() error {
+			g.JSONEq(a, got, jsonPath)
+			return nil
+		})
 	}
-	wg.Wait()
+	if err := syncGroup.Wait(); err != nil {
+		g.t.Fatal(err)
+	}
 }
