@@ -258,6 +258,32 @@ func TestTFRoles(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:       "simple list of roles in order for multiple level",
+			configName: "iam-multi-level.tf",
+			wantRoles: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/owner",
+						"roles/storage.admin",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+						"roles/compute.networkAdmin",
+						"roles/iam.serviceAccountAdmin",
+						"roles/resourcemanager.projectIamAdmin",
+						"roles/storage.admin",
+						"roles/workflows.admin",
+						"roles/cloudscheduler.admin",
+						"roles/iam.serviceAccountUser",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -267,6 +293,117 @@ func TestTFRoles(t *testing.T) {
 			got, err := parseBlueprintRoles(content)
 			require.NoError(t, err)
 			assert.Equal(t, got, tt.wantRoles)
+		})
+	}
+}
+
+func TestSortBlueprintRoles(t *testing.T) {
+	tests := []struct {
+		name string
+		in   []*BlueprintRoles
+		want []*BlueprintRoles
+	}{
+		{
+			name: "sort by level",
+			in: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+					},
+				},
+				{
+					Level: "Folder",
+					Roles: []string{
+						"roles/storage.admin",
+					},
+				},
+			},
+			want: []*BlueprintRoles{
+				{
+					Level: "Folder",
+					Roles: []string{
+						"roles/storage.admin",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+					},
+				},
+			},
+		},
+		{
+			name: "sort by length of roles",
+			in: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/storage.admin",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+						"roles/owner",
+					},
+				},
+			},
+			want: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/storage.admin",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+						"roles/owner",
+					},
+				},
+			},
+		},
+		{
+			name: "sort by first role",
+			in: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/storage.admin",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+					},
+				},
+			},
+			want: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/cloudsql.admin",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/storage.admin",
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sortBlueprintRoles(tt.in)
+			assert.Equal(t, tt.in, tt.want)
 		})
 	}
 }
