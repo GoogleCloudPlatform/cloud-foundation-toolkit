@@ -799,28 +799,6 @@ locals {
       topics      = local.common_topics.db
     },
     {
-      name            = "terraform-cloud-deployment-gce"
-      short_name      = "cloud-deployment-gce"
-      org             = "GoogleCloudPlatform"
-      description     = "Deploy a change to a live stateful service (Java on GCE)"
-      groups          = ["team-egg", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
-      enable_periodic = true
-      lint_env = {
-        ENABLE_BPMETADATA = "1"
-      }
-    },
-    {
-      name            = "terraform-cloud-deployment-gke"
-      short_name      = "cloud-deployment-gke"
-      org             = "GoogleCloudPlatform"
-      description     = "Deploy a change to a live stateful service (Go on GKE)"
-      groups          = ["team-egg", "dee-platform-ops", "dee-data-ai", local.jss_common_group]
-      enable_periodic = true
-      lint_env = {
-        ENABLE_BPMETADATA = "1"
-      }
-    },
-    {
       name            = "terraform-pubsub-integration-golang"
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-golang-app"
