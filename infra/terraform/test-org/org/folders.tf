@@ -36,7 +36,8 @@ module "folders-ci" {
 
   names = [for module in [for repo in local.repos : try(repo.short_name, trimprefix(repo.name, "terraform-google-"))] : "ci-${module}"]
 
-  set_roles = false
+  set_roles           = false
+  deletion_protection = false
 }
 
 module "bpt_ci_folder" {
