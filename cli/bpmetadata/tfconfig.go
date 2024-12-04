@@ -340,23 +340,13 @@ func getBlueprintOutput(modOut *tfconfig.Output) *BlueprintOutput {
 
 // getBlueprintRequirements gets the services and roles associated
 // with the blueprint
-func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfigPath string) (*BlueprintRequirements, error) {
+func getBlueprintRequirements(roles []*BlueprintRoles, servicesConfigPath, versionsConfigPath string) (*BlueprintRequirements, error) {
 	//parse blueprint roles
 	p := hclparse.NewParser()
-	rolesFile, diags := p.ParseHCLFile(rolesConfigPath)
-	err := hasHclErrors(diags)
-	if err != nil {
-		return nil, err
-	}
-
-	r, err := parseBlueprintRoles(rolesFile)
-	if err != nil {
-		return nil, err
-	}
 
 	//parse blueprint services
 	servicesFile, diags := p.ParseHCLFile(servicesConfigPath)
-	err = hasHclErrors(diags)
+	err := hasHclErrors(diags)
 	if err != nil {
 		return nil, err
 	}
@@ -370,7 +360,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 
 	if !versionCfgFileExists {
 		return &BlueprintRequirements{
-			Roles:    r,
+			Roles:    roles,
 			Services: s,
 		}, nil
 	}
@@ -388,7 +378,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 	}
 
 	return &BlueprintRequirements{
-		Roles:            r,
+		Roles:            roles,
 		Services:         s,
 		ProviderVersions: v,
 	}, nil
