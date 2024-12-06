@@ -13,7 +13,9 @@
     "labels": ["type:security"],
     "minimumReleaseAge": "0 days"
   },
-  "constraints": {"go": "1.22"},
+  "constraints": {
+    "go": "1.23"
+  },
   "packageRules": [
     {
       "matchFileNames": ["*", "modules/**"],
@@ -42,7 +44,7 @@
       "matchManagers": ["gomod"],
       "matchDatasources": ["golang-version"],
       "rangeStrategy": "replace",
-      "allowedVersions": "1.22",
+      "allowedVersions": "1.23",
       "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     },
     {
