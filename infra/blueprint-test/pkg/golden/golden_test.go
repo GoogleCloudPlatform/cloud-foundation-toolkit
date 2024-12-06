@@ -118,6 +118,12 @@ func TestJSONEq(t *testing.T) {
 			eqPath: "baz",
 			want:   "{\"qux\":\"REPLACED\",\"quux\":\"NEW\"}",
 		},
+		{
+			name:   "diff_whitespace",
+			data:   "{\"list\":[\n  \"SYSTEM_COMPONENTS\",\n              \"POD\",\n              \"DAEMONSET\",\n              \"DEPLOYMENT\",\n              \"STATEFULSET\",\n              \"STORAGE\",\n              \"HPA\",\n              \"CADVISOR\",\n              \"KUBELET\"\n            ]}",
+			eqPath: "list",
+			want:   "[\n        \"SYSTEM_COMPONENTS\",\n        \"POD\",\n        \"DAEMONSET\",\n        \"DEPLOYMENT\",\n        \"STATEFULSET\",\n        \"STORAGE\",\n        \"HPA\",\n        \"CADVISOR\",\n        \"KUBELET\"\n      ]",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

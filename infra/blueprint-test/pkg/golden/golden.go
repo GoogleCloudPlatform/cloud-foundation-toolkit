@@ -154,9 +154,10 @@ func (g *GoldenFile) GetJSON() gjson.Result {
 // JSONEq asserts that json content in jsonPath for got and goldenfile is the same
 func (g *GoldenFile) JSONEq(a *assert.Assertions, got gjson.Result, jsonPath string) {
 	gf := g.GetJSON()
-	gotData := g.ApplySanitizers(got.Get(jsonPath).String())
-	gfData := gf.Get(jsonPath).String()
-	a.Equal(gfData, gotData, fmt.Sprintf("expected %s to match fixture %s", jsonPath, gfData))
+	getPath := fmt.Sprintf("%s|@tostr", jsonPath)
+	gotData := g.ApplySanitizers(got.Get(getPath).String())
+	gfData := gf.Get(getPath).String()
+	a.JSONEq(gfData, gotData, fmt.Sprintf("expected %s to match fixture %s", jsonPath, gfData))
 }
 
 // JSONPathEqs asserts that json content in jsonPaths for got and goldenfile are the same
