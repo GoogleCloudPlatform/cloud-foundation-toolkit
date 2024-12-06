@@ -14,7 +14,7 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/sjson v1.2.5
 	golang.org/x/mod v0.22.0
-	golang.org/x/sync v0.4.0
+	golang.org/x/sync v0.10.0
 	sigs.k8s.io/kustomize/kyaml v0.18.1
 )
 
