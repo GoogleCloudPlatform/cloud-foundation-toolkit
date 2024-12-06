@@ -60,6 +60,10 @@ rule "terraform_typed_variables" {
   enabled = true
 }
 
+plugin "blueprint" {
+  enabled = true
+}
+
 rule "terraform_required_version_range" {
   enabled = true
 }
