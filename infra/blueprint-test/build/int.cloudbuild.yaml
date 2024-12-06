@@ -31,7 +31,7 @@ steps:
   dir: 'infra/blueprint-test'
 substitutions:
   _DOCKER_IMAGE_DEVELOPER_TOOLS: 'cft/developer-tools-krm'
-  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '1.22'
+  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '1.23'
 options:
   env:
     - 'TF_VAR_org_id=$_ORG_ID'
