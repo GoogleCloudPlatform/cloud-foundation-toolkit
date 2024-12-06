@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.17.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.0...infra/blueprint-test/v0.17.1) (2024-12-06)
+
+
+### Bug Fixes
+
+* **blueprint-test:** add goroutines max ([#2711](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2711)) ([97891bf](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/97891bf2fe45aaa09b8ff8bf4fc9b4210270a989))
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to c404f82 ([#2729](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2729)) ([dbedb97](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/dbedb97fc05238bc0ee39cb89f872fe8334ba160))
+* **deps:** update module github.com/stretchr/testify to v1.10.0 ([#2712](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2712)) ([a86225a](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/a86225a69c6afb8e0c03ef81f753c4f36f3f067b))
+* **deps:** update module golang.org/x/sync to v0.10.0 ([#2734](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2734)) ([00f6c05](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/00f6c05674b8316d29b3d1aee11ad3d12748b6aa))
+* JSONEq() handle json doc whitespace ([#2719](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2719)) ([0315e56](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0315e563b2efb9bcb01361e2dff99921da53d866))
+
 ## [0.17.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.16.3...infra/blueprint-test/v0.17.0) (2024-11-21)
 
 
