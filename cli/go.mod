@@ -5,9 +5,9 @@ go 1.22.0
 toolchain go1.22.9
 
 require (
-	cloud.google.com/go/asset v1.20.2
-	cloud.google.com/go/storage v1.45.0
-	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.16.2
+	cloud.google.com/go/asset v1.20.3
+	cloud.google.com/go/storage v1.47.0
+	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.17.0
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
 	github.com/briandowns/spinner v1.23.1
 	github.com/fatih/color v1.18.0
@@ -16,39 +16,39 @@ require (
 	github.com/golang/protobuf v1.5.4
 	github.com/gomarkdown/markdown v0.0.0-20240930133441-72d49d9543d8
 	github.com/google/go-cmp v0.6.0
-	github.com/google/go-github/v66 v66.0.0
+	github.com/google/go-github/v67 v67.0.0
 	github.com/gruntwork-io/terratest v0.47.2
-	github.com/hashicorp/hcl/v2 v2.22.0
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20240801114854-6714b46f5fe4
-	github.com/hashicorp/terraform-json v0.22.1
+	github.com/hashicorp/hcl/v2 v2.23.0
+	github.com/hashicorp/terraform-config-inspect c404f8227ea6
+	github.com/hashicorp/terraform-json v0.23.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/log15 v2.16.0+incompatible
 	github.com/invopop/jsonschema v0.12.0
 	github.com/itchyny/json2yaml v0.1.4
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/manifoldco/promptui v0.9.0
-	github.com/migueleliasweb/go-github-mock v1.0.1
+	github.com/migueleliasweb/go-github-mock v1.1.0
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
-	github.com/open-policy-agent/opa v0.69.0
+	github.com/open-policy-agent/opa v0.70.0
 	github.com/otiai10/copy v1.14.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/xeipuuv/gojsonschema v1.2.0
-	github.com/zclconf/go-cty v1.15.0
+	github.com/zclconf/go-cty v1.15.1
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
-	golang.org/x/oauth2 v0.23.0
-	golang.org/x/text v0.19.0
-	google.golang.org/api v0.201.0
-	google.golang.org/protobuf v1.35.1
+	golang.org/x/oauth2 v0.24.0
+	golang.org/x/text v0.20.0
+	google.golang.org/api v0.209.0
+	google.golang.org/protobuf v1.35.2
 	gopkg.in/yaml.v3 v3.0.1
 	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
-	github.com/hashicorp/go-version v1.6.0
-	github.com/jedib0t/go-pretty/v6 v6.6.0
+	github.com/hashicorp/go-version v1.7.0
+	github.com/jedib0t/go-pretty/v6 v6.6.3
 )
 
 require (
