@@ -16,7 +16,9 @@
   },
   "separateMajorMinor": false,
   "additionalBranchPrefix": "{{parentDir}}-",
-  "constraints": {"go": "1.22"},
+  "constraints": {
+    "go": "1.23"
+  },
   "packageRules": [
     {
       "matchFileNames": [".github/**"],
@@ -40,7 +42,7 @@
     },
     {
       "matchPackageNames": ["go"],
-      "allowedVersions": "1.22",
+      "allowedVersions": "1.23",
       "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     }
   ],
