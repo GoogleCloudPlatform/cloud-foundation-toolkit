@@ -8,7 +8,7 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/hashicorp/hcl/v2 v2.23.0
 	github.com/pmezard/go-difflib v1.0.0
-	github.com/zclconf/go-cty v1.15.0
+	github.com/zclconf/go-cty v1.15.1
 )
 
 require (
