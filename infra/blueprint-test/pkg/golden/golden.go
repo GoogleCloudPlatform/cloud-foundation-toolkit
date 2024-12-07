@@ -148,16 +148,15 @@ func (g *GoldenFile) GetSanitizedJSON(s gjson.Result) gjson.Result {
 
 // GetJSON returns goldenfile as parsed json
 func (g *GoldenFile) GetJSON() gjson.Result {
-	return utils.LoadJSON(g.t, g.GetName())
+	return utils.LoadJSON(g.t, g.GetName()).Get("@ugly")
 }
 
 // JSONEq asserts that json content in jsonPath for got and goldenfile is the same
 func (g *GoldenFile) JSONEq(a *assert.Assertions, got gjson.Result, jsonPath string) {
 	gf := g.GetJSON()
-	getPath := fmt.Sprintf("%s|@tostr", jsonPath)
-	gotData := g.ApplySanitizers(got.Get(getPath).String())
-	gfData := gf.Get(getPath).String()
-	a.JSONEq(gfData, gotData, fmt.Sprintf("expected %s to match fixture %s", jsonPath, gfData))
+	gotData := g.ApplySanitizers(got.Get(jsonPath).String())
+	gfData := gf.Get(jsonPath).String()
+	a.Equalf(gfData, gotData, "For path %q expected %q to match fixture %q", jsonPath, gotData, gfData)
 }
 
 // JSONPathEqs asserts that json content in jsonPaths for got and goldenfile are the same
