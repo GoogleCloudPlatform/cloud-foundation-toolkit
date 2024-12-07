@@ -42,7 +42,7 @@ func ParseJSONResult(t testing.TB, j string) gjson.Result {
 	if !gjson.Valid(j) {
 		t.Fatalf("Error parsing output, invalid json: %s", j)
 	}
-	return gjson.Parse(j)
+	return gjson.Parse(j).Get("@ugly")
 }
 
 // Kubectl transient errors
