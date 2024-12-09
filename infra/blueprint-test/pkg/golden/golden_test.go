@@ -87,6 +87,12 @@ func TestJSONEq(t *testing.T) {
 			want:   "{\"qux\":\"quz\"}",
 		},
 		{
+			name:   "empty path",
+			data:   "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"}}",
+			eqPath: "cookie",
+			want:   "",
+		},
+		{
 			name:   "sanitize quz",
 			data:   "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"}}",
 			opts:   []goldenFileOption{WithSanitizer(StringSanitizer("quz", "REPLACED"))},
@@ -122,7 +128,7 @@ func TestJSONEq(t *testing.T) {
 			name:   "diff_whitespace",
 			data:   "{\"list\":[\n  \"SYSTEM_COMPONENTS\",\n              \"POD\",\n              \"DAEMONSET\",\n              \"DEPLOYMENT\",\n              \"STATEFULSET\",\n              \"STORAGE\",\n              \"HPA\",\n              \"CADVISOR\",\n              \"KUBELET\"\n            ]}",
 			eqPath: "list",
-			want:   "[\n        \"SYSTEM_COMPONENTS\",\n        \"POD\",\n        \"DAEMONSET\",\n        \"DEPLOYMENT\",\n        \"STATEFULSET\",\n        \"STORAGE\",\n        \"HPA\",\n        \"CADVISOR\",\n        \"KUBELET\"\n      ]",
+			want:   "[\"SYSTEM_COMPONENTS\",\"POD\",\"DAEMONSET\",\"DEPLOYMENT\",\"STATEFULSET\",\"STORAGE\",\"HPA\",\"CADVISOR\",\"KUBELET\"]",
 		},
 	}
 	for _, tt := range tests {
@@ -137,7 +143,7 @@ func TestJSONEq(t *testing.T) {
 			got := NewOrUpdate(t, tt.data, tt.opts...)
 			defer os.Remove(got.GetName())
 			got.JSONEq(assert, utils.ParseJSONResult(t, tt.data), tt.eqPath)
-			assert.JSONEq(tt.want, got.GetJSON().Get(tt.eqPath).String())
+			assert.Equal(tt.want, got.GetJSON().Get(tt.eqPath).Get("@ugly").String())
 		})
 	}
 }
@@ -156,6 +162,20 @@ func TestJSONEqs(t *testing.T) {
 			data:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"},\"fizz\":\"pop\"}",
 			eqPaths:  []string{"foo","baz"},
 			want:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"}}",
+			hasError: false,
+		},
+		{
+			name:     "simple space diff",
+			data:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"},\"fizz\":\"pop\"}",
+			eqPaths:  []string{"foo","baz"},
+			want:     "{          \"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"}}",
+			hasError: false,
+		},
+		{
+			name:     "simple order diff",
+			data:     "{\"foo\":\"bar\",\"baz\":{\"qux\":\"quz\"},\"fizz\":\"pop\"}",
+			eqPaths:  []string{"foo","baz"},
+			want:     "{\"baz\":{\"qux\":\"quz\"},\"foo\":\"bar\",\"foo\":\"bar\"}",
 			hasError: false,
 		},
 		{
