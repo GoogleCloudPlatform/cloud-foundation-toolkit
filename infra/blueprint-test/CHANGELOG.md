@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.1...infra/blueprint-test/v0.17.2) (2024-12-09)
+
+
+### Bug Fixes
+
+* JSONEq() whitespace backwards compatible ([#2737](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2737)) ([97fe43b](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/97fe43bea25762ce6c690cf2853f3faffeaf19de))
+
 ## [0.17.1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.0...infra/blueprint-test/v0.17.1) (2024-12-06)
 
 
