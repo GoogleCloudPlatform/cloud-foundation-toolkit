@@ -176,3 +176,8 @@ func (g *GoldenFile) JSONPathEqs(a *assert.Assertions, got gjson.Result, jsonPat
 		g.t.Fatal(err)
 	}
 }
+
+// JSONTerminalPathEqs asserts that json content in goldenfile terminal paths for got and goldenfile are the same
+func (g *GoldenFile) JSONTerminalPathEqs(a *assert.Assertions, got gjson.Result) {
+	g.JSONPathEqs(a, got, utils.GetTerminalJSONPaths(g.GetJSON()))
+}
