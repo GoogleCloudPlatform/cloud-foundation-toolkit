@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.10](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.9...infra/module-swapper/v0.4.10) (2024-12-11)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/crypto from 0.21.0 to 0.31.0 in /infra/module-swapper ([#2749](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2749)) ([5544152](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/55441521069ad7e2d7f5c4541a64f4f0ded32630))
+
 ## [0.4.9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.8...infra/module-swapper/v0.4.9) (2024-09-13)
 
 
