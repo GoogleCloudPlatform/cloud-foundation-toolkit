@@ -81,3 +81,22 @@ func TestRunf(t *testing.T) {
 		})
 	}
 }
+
+func TestRun(t *testing.T) {
+	tests := []struct {
+		name            string
+		cmd             string
+	}{
+		{
+			name:            "Run with quotes",
+			cmd:             "organizations list --filter=\"DISPLAY_NAME!=google.com AND lifecycleState=ACTIVE\"",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			op := Runf(t, tt.cmd)
+			assert := assert.New(t)
+			assert.NotEmpty(op.String())
+		})
+	}
+}
