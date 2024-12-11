@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.2...infra/blueprint-test/v0.17.3) (2024-12-11)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.48.0 ([#2744](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2744)) ([92291c4](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/92291c4dbe97af64e0f4830aff1b00fca8ffa60a))
+* **gcloud:** support Run cmd with quotes ([#2748](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2748)) ([561befd](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/561befd0995cb2478319892cdbe7229b5b599021))
+
 ## [0.17.2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.1...infra/blueprint-test/v0.17.2) (2024-12-09)
 
 
