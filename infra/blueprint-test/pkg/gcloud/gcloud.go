@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Google LLC
+ * Copyright 2021-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/shell"
+	"github.com/mattn/go-shellwords"
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/tidwall/gjson"
 )
@@ -93,7 +94,10 @@ func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error) {
 		t.Fatal(err)
 	}
 	// split command into args
-	args := strings.Fields(cmd)
+	args, err := shellwords.Parse(cmd)
+	if err != nil {
+		t.Fatal(err)
+	}
 	gcloudCmd := shell.Command{
 		Command: "gcloud",
 		Args:    append(args, gOpts.commonArgs...),

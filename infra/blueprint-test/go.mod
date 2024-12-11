@@ -8,6 +8,7 @@ require (
 	github.com/gruntwork-io/terratest v0.48.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20241129133400-c404f8227ea6
 	github.com/hashicorp/terraform-json v0.23.0
+	github.com/mattn/go-shellwords v1.0.12
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
 	github.com/otiai10/copy v1.14.0
 	github.com/stretchr/testify v1.10.0
