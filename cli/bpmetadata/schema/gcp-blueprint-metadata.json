@@ -811,9 +811,10 @@
           },
           "type": "array"
         },
-        "toggleUsingVariable": {
+        "toggleUsingVariables": {
           "$ref": "#/$defs/DisplayVariableToggle"
-        }
+        },
+        "type": "array"
       },
       "additionalProperties": false,
       "type": "object",
