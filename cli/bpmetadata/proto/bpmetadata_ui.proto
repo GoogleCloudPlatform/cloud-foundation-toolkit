@@ -169,7 +169,7 @@ message DisplayVariableToggle {
     // String
     DISPLAY_VARIABLE_TOGGLE_TYPE_STRING = 2;
     // Integer
-    DISPLAY_VARIABLE_TOGGLE_TYPE_INTEGER = 2;
+    DISPLAY_VARIABLE_TOGGLE_TYPE_INTEGER = 3;
   }
 }
 
