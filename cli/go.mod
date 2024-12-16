@@ -7,7 +7,7 @@ toolchain go1.23.4
 require (
 	cloud.google.com/go/asset v1.20.3
 	cloud.google.com/go/storage v1.48.0
-	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.17.1
+	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.17.2
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
 	github.com/briandowns/spinner v1.23.1
 	github.com/fatih/color v1.18.0
