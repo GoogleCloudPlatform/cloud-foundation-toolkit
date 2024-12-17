@@ -148,7 +148,7 @@ message DisplayVariable {
   }
   repeated AlternateDefault alt_defaults = 21; // @gotags: json:"altDefaults,omitempty" yaml:"altDefaults,omitempty"
 
-  DisplayVariableToggle toggle_using_variable = 22; // @gotags: json:"toggleUsingVariable,omitempty" yaml:"toggleUsingVariable,omitempty"
+  repeated DisplayVariableToggle toggle_using_variables = 22; // @gotags: json:"toggleUsingVariables,omitempty" yaml:"toggleUsingVariables,omitempty"
 }
 
 message DisplayVariableToggle {
@@ -156,7 +156,7 @@ message DisplayVariableToggle {
   string variable_name = 1; // @gotags: json:"variableName,omitempty" yaml:"variableName,omitempty"
 
   // The value of the variable used to toggle the display of another variable.
-  string variable_value = 2; // @gotags: json:"variableValue,omitempty" yaml:"variableValue,omitempty"
+  repeated string variable_values = 2; // @gotags: json:"variableValues,omitempty" yaml:"variableValue,omitempty"
 
   // The type of the variable used to toggle the display of another variable.
   ToggleType type = 3; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
@@ -168,6 +168,8 @@ message DisplayVariableToggle {
     DISPLAY_VARIABLE_TOGGLE_TYPE_BOOLEAN = 1;
     // String
     DISPLAY_VARIABLE_TOGGLE_TYPE_STRING = 2;
+    // Integer
+    DISPLAY_VARIABLE_TOGGLE_TYPE_INTEGER = 3;
   }
 }
 

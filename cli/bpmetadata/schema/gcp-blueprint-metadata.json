@@ -811,8 +811,11 @@
           },
           "type": "array"
         },
-        "toggleUsingVariable": {
-          "$ref": "#/$defs/DisplayVariableToggle"
+        "toggleUsingVariables": {
+          "items": {
+            "$ref": "#/$defs/DisplayVariableToggle"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -827,8 +830,11 @@
         "variableName": {
           "type": "string"
         },
-        "variableValue": {
-          "type": "string"
+        "variableValues": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         },
         "type": {
           "oneOf": [
