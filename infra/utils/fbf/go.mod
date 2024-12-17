@@ -6,13 +6,13 @@ require (
 	github.com/briandowns/spinner v1.23.1
 	github.com/jedib0t/go-pretty/v6 v6.6.5
 	github.com/stretchr/testify v1.10.0
-	google.golang.org/api v0.211.0
+	google.golang.org/api v0.212.0
 )
 
 require (
-	cloud.google.com/go/auth v0.12.1 // indirect
+	cloud.google.com/go/auth v0.13.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.6 // indirect
-	cloud.google.com/go/compute/metadata v0.5.2 // indirect
+	cloud.google.com/go/compute/metadata v0.6.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
