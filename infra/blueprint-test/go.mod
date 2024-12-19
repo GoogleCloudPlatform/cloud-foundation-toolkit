@@ -5,7 +5,7 @@ go 1.22.7
 require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
 	github.com/alexflint/go-filemutex v1.3.0
-	github.com/gruntwork-io/terratest v0.48.0
+	github.com/gruntwork-io/terratest v0.48.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20241129133400-c404f8227ea6
 	github.com/hashicorp/terraform-json v0.24.0
 	github.com/mattn/go-shellwords v1.0.12
