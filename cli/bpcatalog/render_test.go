@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-github/v67/github"
+	"github.com/google/go-github/v68/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,20 +21,20 @@ const (
 func TestRender(t *testing.T) {
 	testRepoData := repos{
 		{
-			Name:            github.String("terraform-google-bar"),
+			Name:            github.Ptr("terraform-google-bar"),
 			CreatedAt:       &github.Timestamp{Time: time.Date(2021, 1, 3, 4, 3, 0, 0, time.UTC)},
-			StargazersCount: github.Int(5),
-			Description:     github.String("lorem ipsom"),
+			StargazersCount: github.Ptr(5),
+			Description:     github.Ptr("lorem ipsom"),
 		},
 		{
-			Name:            github.String("terraform-google-foo"),
+			Name:            github.Ptr("terraform-google-foo"),
 			CreatedAt:       &github.Timestamp{Time: time.Date(2022, 11, 3, 4, 3, 0, 0, time.UTC)},
-			StargazersCount: github.Int(10),
+			StargazersCount: github.Ptr(10),
 		},
 		{
-			Name:            github.String("terraform-foo"),
+			Name:            github.Ptr("terraform-foo"),
 			CreatedAt:       &github.Timestamp{Time: time.Date(2022, 11, 3, 4, 3, 0, 0, time.UTC)},
-			StargazersCount: github.Int(10),
+			StargazersCount: github.Ptr(10),
 			Topics:          []string{"unrelated", e2eLabel, "containers"},
 		},
 	}
@@ -213,22 +213,22 @@ func TestReposToDisplayMeta(t *testing.T) {
 			name: "simple",
 			input: repos{
 				{
-					Name:            github.String("terraform-google-bar"),
+					Name:            github.Ptr("terraform-google-bar"),
 					CreatedAt:       &github.Timestamp{Time: time.Date(2021, 1, 3, 4, 3, 0, 0, time.UTC)},
-					StargazersCount: github.Int(5),
-					Description:     github.String("lorem ipsom"),
+					StargazersCount: github.Ptr(5),
+					Description:     github.Ptr("lorem ipsom"),
 					Topics:          []string{"containers"},
 				},
 				{
-					Name:            github.String("terraform-foo"),
+					Name:            github.Ptr("terraform-foo"),
 					CreatedAt:       &github.Timestamp{Time: time.Date(2022, 11, 3, 4, 3, 0, 0, time.UTC)},
-					StargazersCount: github.Int(10),
+					StargazersCount: github.Ptr(10),
 					Topics:          []string{"unrelated", e2eLabel, "containers"},
 				},
 				{
-					Name:            github.String("foo"),
+					Name:            github.Ptr("foo"),
 					CreatedAt:       &github.Timestamp{Time: time.Date(2022, 11, 3, 4, 3, 0, 0, time.UTC)},
-					StargazersCount: github.Int(10),
+					StargazersCount: github.Ptr(10),
 				},
 			},
 			want: []displayMeta{
