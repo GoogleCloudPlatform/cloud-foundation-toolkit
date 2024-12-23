@@ -13,7 +13,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/gammazero/workerpool v1.1.3
 	github.com/go-git/go-git/v5 v5.12.0
-	github.com/golang/protobuf v1.5.4
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62
 	github.com/google/go-cmp v0.6.0
 	github.com/google/go-github/v67 v67.0.0
