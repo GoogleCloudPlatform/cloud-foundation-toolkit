@@ -28,8 +28,8 @@ import (
 
 	"github.com/GoogleCloudPlatform/config-validator/pkg/api/validator"
 	"github.com/GoogleCloudPlatform/config-validator/pkg/gcv"
-	_struct "github.com/golang/protobuf/ptypes/struct"
 	"github.com/pkg/errors"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // ScoringConfig holds settings for generating a score
@@ -104,7 +104,7 @@ type RichViolation struct {
 	Category             string // category of violation
 	Resource             string
 	Message              string
-	Metadata             *_struct.Value   `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Metadata             *structpb.Value  `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
 	asset                *validator.Asset `json:"-"`
 }
 
