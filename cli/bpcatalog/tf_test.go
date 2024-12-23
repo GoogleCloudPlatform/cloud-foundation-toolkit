@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-github/v67/github"
+	"github.com/google/go-github/v68/github"
 	"github.com/migueleliasweb/go-github-mock/src/mock"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,15 +22,15 @@ func TestFetchSortedTFRepos(t *testing.T) {
 			name: "simple sort created",
 			repos: []github.Repository{
 				{
-					Name:      github.String("terraform-google-bar"),
+					Name:      github.Ptr("terraform-google-bar"),
 					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 3)},
 				},
 				{
-					Name:      github.String("terraform-google-foo"),
+					Name:      github.Ptr("terraform-google-foo"),
 					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
 				},
 				{
-					Name:      github.String("foo"),
+					Name:      github.Ptr("foo"),
 					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
 				},
 			},
@@ -44,15 +44,15 @@ func TestFetchSortedTFRepos(t *testing.T) {
 			name: "simple sort name",
 			repos: []github.Repository{
 				{
-					Name:      github.String("terraform-google-bar"),
+					Name:      github.Ptr("terraform-google-bar"),
 					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 3)},
 				},
 				{
-					Name:      github.String("terraform-google-foo"),
+					Name:      github.Ptr("terraform-google-foo"),
 					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
 				},
 				{
-					Name:      github.String("foo"),
+					Name:      github.Ptr("foo"),
 					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
 				},
 			},
@@ -66,24 +66,24 @@ func TestFetchSortedTFRepos(t *testing.T) {
 			name: "simple sort stars",
 			repos: []github.Repository{
 				{
-					Name:            github.String("terraform-google-bar"),
+					Name:            github.Ptr("terraform-google-bar"),
 					CreatedAt:       &github.Timestamp{Time: mockT.Add(time.Hour * 3)},
-					StargazersCount: github.Int(5),
+					StargazersCount: github.Ptr(5),
 				},
 				{
-					Name:            github.String("terraform-google-foo"),
+					Name:            github.Ptr("terraform-google-foo"),
 					CreatedAt:       &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
-					StargazersCount: github.Int(10),
+					StargazersCount: github.Ptr(10),
 				},
 				{
-					Name:            github.String("foo"),
+					Name:            github.Ptr("foo"),
 					CreatedAt:       &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
-					StargazersCount: github.Int(12),
+					StargazersCount: github.Ptr(12),
 				},
 				{
-					Name:      github.String("archived"),
+					Name:      github.Ptr("archived"),
 					CreatedAt: &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
-					Archived:  github.Bool(true),
+					Archived:  github.Ptr(true),
 				},
 			},
 			want: []string{
@@ -96,19 +96,19 @@ func TestFetchSortedTFRepos(t *testing.T) {
 			name: "invalid",
 			repos: []github.Repository{
 				{
-					Name:            github.String("terraform-google-bar"),
+					Name:            github.Ptr("terraform-google-bar"),
 					CreatedAt:       &github.Timestamp{Time: mockT.Add(time.Hour * 3)},
-					StargazersCount: github.Int(5),
+					StargazersCount: github.Ptr(5),
 				},
 				{
-					Name:            github.String("terraform-google-foo"),
+					Name:            github.Ptr("terraform-google-foo"),
 					CreatedAt:       &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
-					StargazersCount: github.Int(10),
+					StargazersCount: github.Ptr(10),
 				},
 				{
-					Name:            github.String("foo"),
+					Name:            github.Ptr("foo"),
 					CreatedAt:       &github.Timestamp{Time: mockT.Add(time.Hour * 2)},
-					StargazersCount: github.Int(12),
+					StargazersCount: github.Ptr(12),
 				},
 			},
 			wantErr: true,
