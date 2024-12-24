@@ -118,7 +118,7 @@ locals {
       name        = "terraform-google-kubernetes-engine"
       org         = "terraform-google-modules"
       description = "Configures opinionated GKE clusters"
-      owners      = ["ericyz", "gtsorbo"]
+      owners      = ["apeabody", "ericyz", "gtsorbo"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
     },
     {
