@@ -16,10 +16,10 @@
 
 output "forseti-rt-enforcer-viewer-role-id" {
   description = "The forseti real time enforcer viewer Role ID."
-  value       = "${google_organization_iam_custom_role.forseti-enforcer-viewer.role_id}"
+  value       = google_organization_iam_custom_role.forseti-enforcer-viewer.role_id
 }
 
 output "forseti-rt-enforcer-writer-role-id" {
   description = "The forseti real time enforcer writer Role ID."
-  value       = "${google_organization_iam_custom_role.forseti-enforcer-writer.role_id}"
+  value       = google_organization_iam_custom_role.forseti-enforcer-writer.role_id
 }

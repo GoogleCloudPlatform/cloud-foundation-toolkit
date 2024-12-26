@@ -37,8 +37,8 @@ module "project" {
   folder_id         = var.folder_id
   billing_account   = var.billing_account
 
-  default_service_account  = "DEPRIVILEGE"
-  deletion_policy          = "DELETE"
+  default_service_account = "DEPRIVILEGE"
+  deletion_policy         = "DELETE"
 
   activate_apis = [
     "cloudresourcemanager.googleapis.com",
@@ -69,7 +69,7 @@ resource "google_service_account_key" "key" {
 }
 
 module "kubernetes-engine_example_simple_autopilot_public" {
-  source  = "terraform-google-modules/kubernetes-engine/google//examples/simple_autopilot_public"
-  version                     = "~> 34.0"
-  project_id                  = module.project.project_id
+  source     = "terraform-google-modules/kubernetes-engine/google//examples/simple_autopilot_public"
+  version    = "~> 34.0"
+  project_id = module.project.project_id
 }

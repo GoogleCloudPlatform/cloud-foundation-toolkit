@@ -15,13 +15,13 @@
  */
 
 locals {
-  role_id_suffix = "${var.suffix == "" ? "" : "_${var.suffix}"}"
+  role_id_suffix = var.suffix == "" ? "" : "_${var.suffix}"
 }
 
 resource "google_organization_iam_custom_role" "forseti-enforcer-viewer" {
-  org_id  = "${var.org_id}"
-  role_id = "forseti.enforcerViewer${local.role_id_suffix}"
-  title   = "Forseti real time enforcer viewer"
+  org_id      = var.org_id
+  role_id     = "forseti.enforcerViewer${local.role_id_suffix}"
+  title       = "Forseti real time enforcer viewer"
   description = "Read-only access to check for policy violations with the Forseti real time enforcer."
   permissions = [
     "storage.buckets.get",
@@ -35,7 +35,7 @@ resource "google_organization_iam_custom_role" "forseti-enforcer-viewer" {
 }
 
 resource "google_organization_iam_custom_role" "forseti-enforcer-writer" {
-  org_id      = "${var.org_id}"
+  org_id      = var.org_id
   role_id     = "forseti.enforcerWriter${local.role_id_suffix}"
   title       = "Forseti real time enforcer writer"
   description = "Write access to remediate policy violations with the Forseti real time enforcer."
@@ -56,7 +56,7 @@ resource "google_organization_iam_custom_role" "forseti-enforcer-writer" {
 //
 // [3116]: https://github.com/hashicorp/terraform/issues/3116
 resource "random_id" "prevent_destroy" {
-  count = "${var.prevent_destroy ? 1 : 0}"
+  count       = var.prevent_destroy ? 1 : 0
   byte_length = 8
   keepers = {
     viewer = "${google_organization_iam_custom_role.forseti-enforcer-viewer.role_id}"
