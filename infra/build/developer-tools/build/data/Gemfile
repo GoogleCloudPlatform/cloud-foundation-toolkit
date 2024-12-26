@@ -17,4 +17,4 @@ gem "kitchen-terraform", "~> 7.0"
 gem "kubeclient", "~> 4.11"
 gem "rest-client", "~> 2.1"
 gem 'nokogiri', '~> 1.16'
-ruby '~> 3.3.1'
+ruby '~> 3.4.0'
