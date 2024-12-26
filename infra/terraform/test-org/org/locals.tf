@@ -470,7 +470,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
-      owners      = ["imrannayer"]
+      owners      = ["imrannayer", "huang-g", "michaelpri10", "mishridaga", "mukund-ananthu", "paradoxst", "lahuang4", "ktinubu"]
     },
     {
       name        = "terraform-google-sap"
