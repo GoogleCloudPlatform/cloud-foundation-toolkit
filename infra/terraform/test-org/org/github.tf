@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Google LLC
+ * Copyright 2023-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ provider "github" {}
 locals {
   owners = distinct(
     flatten(
-      [for repo, val in local.repos : [for owner in val.owners : lower(owner)] if try(val.owners != null, false)]
+      [for repo, val in local.repos : [for owner in concat(val.admins, val.maintainers) : lower(owner)] if try(val.admins != null || val.maintainers != null, false)]
     )
   )
 

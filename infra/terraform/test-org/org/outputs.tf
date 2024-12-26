@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2023 Google LLC
+ * Copyright 2019-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ output "modules" {
 
   precondition {
     condition     = length(setsubtract(local.invalid_owners, var.temp_allow_invalid_owners)) == 0
-    error_message = "Provided Repo Owners are not currently members of GCP or TGM Orgs: ${join(", ", local.invalid_owners)}. You can bypass this error by setting these members in temp_allow_invalid_owners var when running plan/apply."
+    error_message = "Provided Repo Owners are not currently members of GCP or TGM Orgs: ${join(", ", setsubtract(local.invalid_owners, var.temp_allow_invalid_owners))}. You can bypass this error by setting `-var='temp_allow_invalid_owners=[\"${join("\",\"", local.invalid_owners)}\"]'` when running plan/apply."
   }
 
 }
