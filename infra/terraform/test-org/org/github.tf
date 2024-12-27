@@ -16,16 +16,11 @@
 provider "github" {}
 
 locals {
-  owners = distinct(
-    flatten(
-      [for repo, val in local.repos : [for owner in concat(val.admins, val.maintainers) : lower(owner)] if try(val.admins != null || val.maintainers != null, false)]
-    )
+  owners = flatten(
+    [for repo, val in local.repos : [for owner in setunion(lookup(val, "admins", []), lookup(val, "maintainers", [])) : lower(owner)]]
   )
 
-  org_members = setunion(
-    [for login in data.github_organization.tgm.users[*].login : lower(login)],
-    [for login in data.github_organization.gcp.users[*].login : lower(login)]
-  )
+  org_members = [for login in setunion(data.github_organization.tgm.users[*].login, data.github_organization.gcp.users[*].login) : lower(login)]
 
   invalid_owners = setsubtract(local.owners, local.org_members)
 }
