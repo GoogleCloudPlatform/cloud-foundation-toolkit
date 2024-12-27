@@ -17,10 +17,10 @@ provider "github" {}
 
 locals {
   owners = flatten(
-    [for repo, val in local.repos : [for owner in setunion(lookup(val, "admins", []), lookup(val, "maintainers", [])) : lower(owner)]]
+    [for repo, val in local.repos : [for owner in setunion(lookup(val, "admins", []), lookup(val, "maintainers", [])) : owner]]
   )
 
-  org_members = [for login in setunion(data.github_organization.tgm.users[*].login, data.github_organization.gcp.users[*].login) : lower(login)]
+  org_members = [for login in setunion(data.github_organization.tgm.users[*].login, data.github_organization.gcp.users[*].login) : login]
 
   invalid_owners = setsubtract(local.owners, local.org_members)
 }

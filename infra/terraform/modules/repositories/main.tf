@@ -97,11 +97,6 @@ resource "github_repository_collaborator" "admins" {
   permission = "maintain"
 }
 
-moved {
-  from = github_repository_collaborator.owners
-  to   = github_repository_collaborator.maintainers
-}
-
 resource "github_repository_collaborator" "maintainers" {
   for_each = {
     for v in local.maintainers : "${v.repo}/${v.maintainer}" => v

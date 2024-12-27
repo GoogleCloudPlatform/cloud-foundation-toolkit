@@ -62,8 +62,8 @@ locals {
  *  short_name        = "string" (optional for modules, if not prefixed with 'terraform-google-')
  *  org               = "terraform-google-modules" or "GoogleCloudPlatform" (required)
  *  description       = "string" (required)
- *  maintainers       = "list(string)" ["user1", "user2"] (optional)
- *  admins            = "list(string)" ["user1", "user2"] (optional)
+ *  maintainers       = "list(string)" ["user1", "user2", "CASE SENSATIVE"] (optional)
+ *  admins            = "list(string)" ["user1", "user2", "CASE SENSATIVE"] (optional)
  *  groups            = "list(string)" ["group1", "group1"] (optional)
  *  homepage_url      = "string" (optional, overrides default)
  *  module            = BOOL (optional, default is true which includes GH repo configuration)
@@ -139,7 +139,7 @@ locals {
       short_name  = "java-dynamic-point-of-sale"
       org         = "GoogleCloudPlatform"
       description = "Deploys a dynamic Java webapp into a Google Kubernetes Engine cluster."
-      maintainers = ["shabirmean", "Mukamik"]
+      maintainers = ["Shabirmean", "Mukamik"]
       groups      = ["dee-platform-ops", local.jss_common_group]
       lint_env = {
         "EXCLUDE_HEADER_CHECK" = "\\./infra/sql-schema"
@@ -665,7 +665,7 @@ locals {
       short_name      = "dynamic-javascript-webapp"
       org             = "GoogleCloudPlatform"
       description     = "Deploy a dynamic javascript webapp"
-      maintainers     = ["lukeschlangen", "donmccasland"]
+      maintainers     = ["LukeSchlangen", "donmccasland"]
       homepage_url    = "avocano.dev"
       groups          = [local.jss_common_group, "team-egg", "developer-journey-app-approvers"]
       enable_periodic = true
@@ -804,7 +804,7 @@ locals {
       name            = "terraform-pubsub-integration-golang"
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-golang-app"
-      maintainers     = ["shabirmean", "Mukamik"]
+      maintainers     = ["Shabirmean", "Mukamik"]
       groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
     },
@@ -812,7 +812,7 @@ locals {
       name            = "terraform-pubsub-integration-java"
       org             = "GoogleCloudPlatform"
       short_name      = "pubsub-java-app"
-      maintainers     = ["shabirmean", "Mukamik"]
+      maintainers     = ["Shabirmean", "Mukamik"]
       groups          = ["dee-platform-ops", local.jss_common_group]
       enable_periodic = true
     },
@@ -911,7 +911,8 @@ locals {
       name        = "terraform-google-apphub"
       org         = "GoogleCloudPlatform"
       description = "Creates and manages AppHub resources"
-      maintainers = ["bharathkkb", "q2w"]
+      maintainers = ["q2w"]
+      admins      = ["bharathkkb"]
     },
   ]
 }
