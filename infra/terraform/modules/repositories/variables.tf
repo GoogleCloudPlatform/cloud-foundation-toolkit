@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2022-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ variable "repos_map" {
     short_name   = optional(string)
     org          = string
     description  = optional(string)
-    owners       = optional(list(string), [])
+    admins       = optional(list(string), [])
+    maintainers  = optional(list(string), [])
     homepage_url = optional(string, null)
     module       = optional(bool, true)
     topics       = optional(string)
