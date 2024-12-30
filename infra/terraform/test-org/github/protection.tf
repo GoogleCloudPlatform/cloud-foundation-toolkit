@@ -54,6 +54,7 @@ import {
 module "branch_protection_tgm" {
   source    = "../../modules/branch_protection"
   repo_list = { for k, v in module.repos_tgm.repos : k => v if k != "terraform-example-foundation" }
+  repos_map = local.tgm_modules_map
   admin     = data.github_team.cft-admins.node_id
   providers = { github = github }
 }
@@ -61,6 +62,7 @@ module "branch_protection_tgm" {
 module "branch_protection_gcp" {
   source    = "../../modules/branch_protection"
   repo_list = module.repos_gcp.repos
+  repos_map = local.gcp_modules_map
   admin     = data.github_team.blueprint-solutions.node_id
   providers = { github = github.gcp }
 }
