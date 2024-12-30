@@ -103,7 +103,7 @@ resource "github_repository_collaborator" "maintainers" {
   }
   repository = each.value.repo
   username   = each.value.maintainer
-  permission = "write"
+  permission = "push"
 }
 
 resource "github_team_repository" "groups" {
@@ -112,7 +112,7 @@ resource "github_team_repository" "groups" {
   }
   repository = each.value.repo
   team_id    = each.value.group
-  permission = "write"
+  permission = "push"
 }
 
 resource "github_team_repository" "ci_teams" {
@@ -121,5 +121,5 @@ resource "github_team_repository" "ci_teams" {
   }
   repository = each.value.repo
   team_id    = each.value.team
-  permission = "write"
+  permission = "push"
 }
