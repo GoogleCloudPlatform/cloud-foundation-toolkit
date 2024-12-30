@@ -460,12 +460,18 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages Google Cloud organization policies"
       topics      = local.common_topics.security
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-project-factory"
       org         = "terraform-google-modules"
       description = "Creates an opinionated Google Cloud project by using Shared VPC, IAM, and Google Cloud APIs"
       topics      = local.common_topics.ops
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-pubsub"
