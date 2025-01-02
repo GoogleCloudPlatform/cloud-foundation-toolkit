@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.4](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.3...infra/blueprint-test/v0.17.4) (2025-01-02)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/gruntwork-io/terratest to v0.48.1 ([#2764](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2764)) ([982c73e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/982c73e9a357a84b2912e0b09b3d4f4cb17aae6a))
+* **deps:** Update module golang.org/x/net to v0.33.0 ([#2784](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2784)) ([b2655aa](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b2655aa9f00800808cf0b9612ccf7f35fbec49c8))
+
 ## [0.17.3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.2...infra/blueprint-test/v0.17.3) (2024-12-11)
 
 
