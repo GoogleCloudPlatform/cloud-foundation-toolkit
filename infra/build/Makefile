@@ -47,7 +47,7 @@ TFLINT_BP_PLUGIN_VERSION := 0.2.7
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
-GOLANGCI_VERSION := 1.63.3
+GOLANGCI_VERSION := 1.63.4
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
@@ -56,7 +56,7 @@ OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.20.2
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.23.4
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.23.5
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
