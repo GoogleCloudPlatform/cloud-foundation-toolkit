@@ -3,7 +3,7 @@ name: Flaky Build Finder Tests
 on:
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'infra/utils/fbf/**'
       - '.github/workflows/go-fbf-test.yml'

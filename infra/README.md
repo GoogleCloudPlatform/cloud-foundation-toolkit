@@ -192,7 +192,7 @@ From the UI, download the [Fly CLI](https://concourse-ci.org/fly.html).
 
 [cicd-folder]: https://console.cloud.google.com/iam-admin/iam?organizationId=826592752744&orgonly=true&project=&folder=853002531658
 [phoogle-org]: https://console.cloud.google.com/iam-admin/iam?organizationId=826592752744&orgonly=true&project=
-[billing-user]: https://github.com/terraform-google-modules/terraform-google-project-factory/blob/master/docs/TROUBLESHOOTING.md#missing-rolesbillinguser-role
+[billing-user]: https://github.com/terraform-google-modules/terraform-google-project-factory/blob/main/docs/TROUBLESHOOTING.md#missing-rolesbillinguser-role
 
 #### Managing Concourse
 

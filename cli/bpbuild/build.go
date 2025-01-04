@@ -17,7 +17,7 @@ const (
 
 // getCBBuildsWithFilter returns a list of cloudbuild builds in projectID with a given filter.
 // Additional client side filters can be specified via cFilters.
-// TODO(bharathkkb): move https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/master/infra/utils/fbf into CLI
+// TODO(bharathkkb): move https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/tree/main/infra/utils/fbf into CLI
 func getCBBuildsWithFilter(projectID string, filter string, cFilters []clientBuildFilter) ([]*cloudbuild.Build, error) {
 	ctx := context.Background()
 	cloudbuildService, err := cloudbuild.NewService(ctx)
