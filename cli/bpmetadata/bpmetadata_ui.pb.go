@@ -531,7 +531,7 @@ type DisplayVariableToggle struct {
 	// The name of the variable used to toggle the display of another variable.
 	VariableName string `protobuf:"bytes,1,opt,name=variable_name,json=variableName,proto3" json:"variableName,omitempty" yaml:"variableName,omitempty"` // @gotags: json:"variableName,omitempty" yaml:"variableName,omitempty"
 	// The value of the variable used to toggle the display of another variable.
-	VariableValues []string `protobuf:"bytes,2,rep,name=variable_values,json=variableValues,proto3" json:"variableValues,omitempty" yaml:"variableValue,omitempty"` // @gotags: json:"variableValues,omitempty" yaml:"variableValue,omitempty"
+	VariableValues []string `protobuf:"bytes,2,rep,name=variable_values,json=variableValues,proto3" json:"variableValues,omitempty" yaml:"variableValues,omitempty"` // @gotags: json:"variableValues,omitempty" yaml:"variableValues,omitempty"
 	// The type of the variable used to toggle the display of another variable.
 	Type DisplayVariableToggle_ToggleType `protobuf:"varint,3,opt,name=type,proto3,enum=google.cloud.config.bpmetadata.DisplayVariableToggle_ToggleType" json:"type,omitempty" yaml:"type,omitempty"` // @gotags: json:"type,omitempty" yaml:"type,omitempty"
 }
