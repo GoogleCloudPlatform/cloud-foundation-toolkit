@@ -90,7 +90,7 @@ resource "google_cloudbuild_trigger" "tf_validator_main_integration_tests" {
     tf13 = "0.13.7"
   }
   name        = "tf-validator-main-integration-tests-${each.key}"
-  description = "Main/release branch integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -118,7 +118,7 @@ resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests" {
     tf13 = "0.13.7"
   }
   name        = "tf-validator-pull-integration-tests-${each.key}"
-  description = "Pull request integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Pull request integration tests for terraform-validator with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -143,7 +143,7 @@ resource "google_cloudbuild_trigger" "tf_validator_pull_integration_tests" {
 
 resource "google_cloudbuild_trigger" "tf_validator_pull_unit_tests" {
   name        = "tf-validator-pull-unit-tests"
-  description = "Pull request unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Pull request unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -167,7 +167,7 @@ resource "google_cloudbuild_trigger" "tf_validator_pull_unit_tests" {
 
 resource "google_cloudbuild_trigger" "tf_validator_main_unit_tests" {
   name        = "tf-validator-main-unit-tests"
-  description = "Main/release branch unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch unit tests for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -190,7 +190,7 @@ resource "google_cloudbuild_trigger" "tf_validator_main_unit_tests" {
 
 resource "google_cloudbuild_trigger" "tf_validator_pull_license_check" {
   name        = "tf-validator-pull-license-check"
-  description = "Pull request license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Pull request license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -208,7 +208,7 @@ resource "google_cloudbuild_trigger" "tf_validator_pull_license_check" {
 
 resource "google_cloudbuild_trigger" "tf_validator_main_license_check" {
   name        = "tf-validator-main-license-check"
-  description = "Main/release branch license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch license check for terraform-validator. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -229,7 +229,7 @@ resource "google_cloudbuild_trigger" "tgc_main_integration_tests" {
     tf13 = "0.13.7"
   }
   name        = "tgc-main-integration-tests-${each.key}"
-  description = "Main/release branch integration tests for terraform-google-conversion with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch integration tests for terraform-google-conversion with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -257,7 +257,7 @@ resource "google_cloudbuild_trigger" "tgc_pull_integration_tests" {
     tf13 = "0.13.7"
   }
   name        = "tgc-pull-integration-tests-${each.key}"
-  description = "Pull request integration tests for terraform-google-conversion with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Pull request integration tests for terraform-google-conversion with terraform ${each.value}. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -282,7 +282,7 @@ resource "google_cloudbuild_trigger" "tgc_pull_integration_tests" {
 
 resource "google_cloudbuild_trigger" "tgc_pull_unit_tests" {
   name        = "tgc-pull-unit-tests"
-  description = "Pull request unit tests for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Pull request unit tests for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -306,7 +306,7 @@ resource "google_cloudbuild_trigger" "tgc_pull_unit_tests" {
 
 resource "google_cloudbuild_trigger" "tgc_main_unit_tests" {
   name        = "tgc-main-unit-tests"
-  description = "Main/release branch unit tests for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch unit tests for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -329,7 +329,7 @@ resource "google_cloudbuild_trigger" "tgc_main_unit_tests" {
 
 resource "google_cloudbuild_trigger" "tgc_pull_license_check" {
   name        = "tgc-pull-license-check"
-  description = "Pull request license check for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Pull request license check for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id
@@ -347,7 +347,7 @@ resource "google_cloudbuild_trigger" "tgc_pull_license_check" {
 
 resource "google_cloudbuild_trigger" "tgc_main_license_check" {
   name        = "tgc-main-license-check"
-  description = "Main/release branch license check for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/terraform/test-org/tf-validator/project.tf"
+  description = "Main/release branch license check for terraform-google-conversion. Managed by Terraform https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/terraform/test-org/tf-validator/project.tf"
 
   provider = google-beta
   project  = local.project_id

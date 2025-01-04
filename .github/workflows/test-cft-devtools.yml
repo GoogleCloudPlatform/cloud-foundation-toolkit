@@ -2,7 +2,7 @@ name: Test devtools image build
 on:
   pull_request:
     branches:
-      - "master"
+      - "main"
     paths:
       - "infra/build/**"
       - ".github/workflows/test-cft-devtools.yml"

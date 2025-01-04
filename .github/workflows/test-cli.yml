@@ -3,13 +3,13 @@ name: CFT CLI Tests
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'cli/**'
       - '.github/workflows/test-cli.yml'
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'cli/**'
       - '.github/workflows/test-cli.yml'

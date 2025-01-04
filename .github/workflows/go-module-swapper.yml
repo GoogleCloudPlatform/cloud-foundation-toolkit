@@ -3,7 +3,7 @@ name: Module Swapper Tests
 on:
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'infra/module-swapper/**'
       - '.github/workflows/go-module-swapper.yml'

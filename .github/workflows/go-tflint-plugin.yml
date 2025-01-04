@@ -3,13 +3,13 @@ name: TFLint blueprint ruleset
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'tflint-ruleset-blueprint/**'
       - '.github/workflows/go-tflint-plugin.yml'
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'tflint-ruleset-blueprint/**'
       - '.github/workflows/go-tflint-plugin.yml'
