@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2023 Google LLC
+ * Copyright 2022-2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,20 @@
  */
 
 locals {
-  owners = flatten([
+  admins = flatten([
     for repo, val in var.repos_map : [
-      for owner in val.owners : {
+      for admin in val.admins : {
         "repo" : repo
-        "owner" : owner
+        "admin" : admin
+      }
+    ]
+  ])
+
+  maintainers = flatten([
+    for repo, val in var.repos_map : [
+      for maintainer in val.maintainers : {
+        "repo" : repo
+        "maintainer" : maintainer
       }
     ]
   ])
@@ -79,13 +88,22 @@ resource "github_repository_collaborator" "cftbot" {
   permission = "admin"
 }
 
-resource "github_repository_collaborator" "owners" {
+resource "github_repository_collaborator" "admins" {
   for_each = {
-    for v in local.owners : "${v.repo}/${v.owner}" => v
+    for v in local.admins : "${v.repo}/${v.admin}" => v
   }
   repository = each.value.repo
-  username   = each.value.owner
-  permission = "admin"
+  username   = each.value.admin
+  permission = "maintain"
+}
+
+resource "github_repository_collaborator" "maintainers" {
+  for_each = {
+    for v in local.maintainers : "${v.repo}/${v.maintainer}" => v
+  }
+  repository = each.value.repo
+  username   = each.value.maintainer
+  permission = "push"
 }
 
 resource "github_team_repository" "groups" {
@@ -94,7 +112,7 @@ resource "github_team_repository" "groups" {
   }
   repository = each.value.repo
   team_id    = each.value.group
-  permission = "admin"
+  permission = "push"
 }
 
 resource "github_team_repository" "ci_teams" {
@@ -103,5 +121,5 @@ resource "github_team_repository" "ci_teams" {
   }
   repository = each.value.repo
   team_id    = each.value.team
-  permission = "write"
+  permission = "push"
 }

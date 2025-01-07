@@ -2,7 +2,7 @@ name: Release new CLI versions
 on:
   push:
     branches:
-      - "master"
+      - "main"
     paths:
       - "cli/Makefile"
       - ".github/workflows/release-cli.yml"

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.4.12](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.11...infra/module-swapper/v0.4.12) (2025-01-06)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/zclconf/go-cty to v1.16.0 ([#2792](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2792)) ([d3a8b67](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/d3a8b678d209ff91127c4e30e3a005bd3baee985))
+
+## [0.4.11](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.10...infra/module-swapper/v0.4.11) (2025-01-02)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/go-git/go-git/v5 to v5.13.0 ([#2780](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2780)) ([31484dd](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/31484dd81a823b52465147d651fe4bfff46e9889))
+* **deps:** update module github.com/go-git/go-git/v5 to v5.13.1 ([#2783](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2783)) ([36ae5ad](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/36ae5adac7e3d57f21ba6ae7c59af58b7f7f2329))
+
 ## [0.4.10](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.9...infra/module-swapper/v0.4.10) (2024-12-11)
 
 

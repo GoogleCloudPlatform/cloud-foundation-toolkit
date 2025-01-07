@@ -100,7 +100,7 @@ RUN /build/install_shellcheck.sh && \
     /build/install_tinkey.sh ${TINKEY_VERSION}
 
 # Optimized to independently cache layers for commonly updated tools:
-# https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/.github/workflows/update-tooling.yml
+# https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/.github/workflows/update-tooling.yml
 ARG TERRAFORM_VERSION
 RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
 

@@ -2,7 +2,7 @@ name: lint
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - ".github/workflows/go-lint.yaml"
       - "cli/**"

@@ -192,7 +192,7 @@ func TestMySqlPublicModule(t *testing.T) {
 
 The next step in the process is to write the logic for assertions.
 
-1. In most cases, you will be asserting against values retrieved from the GCP environment. This can be done by using the [gcloud](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/master/infra/blueprint-test/pkg/gcloud/gcloud.go) helper in our test framework, which executes gcloud commands and stores their JSON outputs as. The gcloud helper can be initialized as follows:
+1. In most cases, you will be asserting against values retrieved from the GCP environment. This can be done by using the [gcloud](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/blob/main/infra/blueprint-test/pkg/gcloud/gcloud.go) helper in our test framework, which executes gcloud commands and stores their JSON outputs as. The gcloud helper can be initialized as follows:
 
 ```go
 // The tft struct can be used to pull output variables of the TF module being invoked by this test

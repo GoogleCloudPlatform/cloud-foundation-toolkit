@@ -278,7 +278,7 @@ function replace_doc_generator {
   if [ -n "${old_script_path}" ]; then
     rm -rf "${old_script_path}"
     cd "$(dirname "${old_script_path}")" || exit
-    wget https://raw.githubusercontent.com/terraform-google-modules/terraform-google-project-factory/master/helpers/terraform_{docs,validate} &>/dev/null
+    wget https://raw.githubusercontent.com/terraform-google-modules/terraform-google-project-factory/main/helpers/terraform_{docs,validate} &>/dev/null
     rc=$?
     if [ $rc -ne 0 ]; then
       echo "Error: Doc Generator scripts have not been downloaded properly, please check/re-download them manually."
@@ -454,7 +454,7 @@ function generate_modules() {
 # requires a secret with PAT called gh-pat-token and cloud build SA with roles/secretmanager.secretAccessor
 function post_lint_status_pr_comment() {
   export GITHUB_PAT_TOKEN=$(gcloud secrets versions access latest --secret="gh-pat-token")
-  final_message=$(/usr/local/bin/test_lint.sh --markdown --contrib-guide=../blob/master/CONTRIBUTING.md)
+  final_message=$(/usr/local/bin/test_lint.sh --markdown --contrib-guide=../blob/main/CONTRIBUTING.md)
   if [ -z "$final_message" ]; then
   final_message="Thanks for the PR! 🚀<br/>✅ Lint checks have passed."
   fi

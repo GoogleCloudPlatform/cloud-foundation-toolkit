@@ -7,7 +7,7 @@ on:
     types: [released]
   push:
     branches:
-      - "master"
+      - "main"
 
 env:
   TERRAFORM_URL: "https://api.github.com/repos/hashicorp/terraform/releases/latest"
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          ref: master
+          ref: main
       - name: Update Tools
         run: |
           PR_UPDATE_BODY=""
@@ -106,7 +106,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "chore: Update Tools to ${{env.NEW_IMG_VERSION}}"
       - name: Create Pull Request
         if: env.BUMP_IMG == 'true'
-        uses: peter-evans/create-pull-request@5e914681df9dc83aa4e4905692ca88beb2f9e91f # v7.0.5
+        uses: peter-evans/create-pull-request@67ccf781d68cd99b580ae25a5c18a1cc84ffff1f # v7.0.6
         with:
           token: ${{ secrets.CFT_ROBOT_PAT }}
           commit-message: Update tools to ${{env.NEW_IMG_VERSION}}
@@ -118,4 +118,4 @@ jobs:
           labels: automated pr
           reviewers: bharathkkb, apeabody
           branch: create-pull-request/patch-tools-version
-          base: master
+          base: main

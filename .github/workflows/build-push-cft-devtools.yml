@@ -2,7 +2,7 @@ name: Build and push new dev tools image
 on:
   push:
     branches:
-      - "master"
+      - "main"
     paths:
       - "infra/build/**"
       - ".github/workflows/build-push-cft-devtools.yml"
