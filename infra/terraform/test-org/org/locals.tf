@@ -925,7 +925,6 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Creates a regional HTTP load balancer using forwarding rules"
       maintainers = ["q2w", "qz267"]
-      admins      = ["blueprint-solutions"]
     },
   ]
 }
