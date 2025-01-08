@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2024 Google LLC
+ * Copyright 2019-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,13 +101,16 @@ output "ci_media_cdn_vod_project_id" {
 }
 
 output "modules" {
-  value = [for value in local.repos : value if try(value.module, true)]
+  value = [for value in local.repos : merge(value,
+    try({ maintainers = sort(setintersection(local.org_members, value.maintainers)) }, {}),
+    try({ admins = sort(setintersection(local.org_members, value.admins)) }, {})
+    ) if try(value.module, true)
+  ]
+}
 
-  precondition {
-    condition     = length(setsubtract(local.invalid_owners, var.temp_allow_invalid_owners)) == 0
-    error_message = "Provided Repo Owners are not currently members of GCP or TGM Orgs: ${join(", ", setsubtract(local.invalid_owners, var.temp_allow_invalid_owners))}. You can bypass this error by setting `-var='temp_allow_invalid_owners=[\"${join("\",\"", local.invalid_owners)}\"]'` when running plan/apply."
-  }
-
+output "removed_members" {
+  value       = setsubtract(local.repo_members, local.org_members)
+  description = "Members not part of GCP or TGM orgs (removed from config)"
 }
 
 output "bpt_folder" {
