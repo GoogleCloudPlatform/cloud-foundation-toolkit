@@ -47,6 +47,13 @@ resource "google_cloudbuild_trigger" "int_trigger" {
 
   filename      = "build/int.cloudbuild.yaml"
   ignored_files = ["**/*.md", ".gitignore", ".github/**", "**/metadata.yaml", "**/metadata.display.yaml", "assets/**", "infra/assets/**"]
+
+  lifecycle {
+    precondition {
+      condition     = each.value.folder_id != ""
+      error_message = "The folder_id must not be empty for ${each.key}"
+    }
+  }
 }
 
 # pull_request triggers do not support run trigger, so we have a shadow periodic trigger
