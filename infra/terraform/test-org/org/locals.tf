@@ -925,6 +925,9 @@ locals {
       description = "Creates a regional HTTP load balancer using forwarding rules"
       maintainers = ["qz267"]
       admins      = ["q2w"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
   ]
 }
