@@ -918,6 +918,9 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Creates and manages AppHub resources"
       maintainers = ["q2w"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-regional-lb-http"
