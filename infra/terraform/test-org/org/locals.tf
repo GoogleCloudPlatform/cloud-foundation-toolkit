@@ -918,13 +918,16 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Creates and manages AppHub resources"
       maintainers = ["q2w"]
-      admins      = ["bharathkkb"]
     },
     {
       name        = "terraform-google-regional-lb-http"
       org         = "GoogleCloudPlatform"
       description = "Creates a regional HTTP load balancer using forwarding rules"
-      maintainers = ["q2w", "qz267"]
+      maintainers = ["qz267"]
+      admins      = ["q2w"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
   ]
 }
