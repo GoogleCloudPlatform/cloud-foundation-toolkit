@@ -924,7 +924,8 @@ locals {
       name        = "terraform-google-regional-lb-http"
       org         = "GoogleCloudPlatform"
       description = "Creates a regional HTTP load balancer using forwarding rules"
-      maintainers = ["q2w", "qz267"]
+      maintainers = ["qz267"]
+      admins      = ["q2w", "bharathkkb"]
     },
   ]
 }
