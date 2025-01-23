@@ -2,6 +2,8 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/utils/fbf
 
 go 1.22
 
+toolchain go1.23.4
+
 require (
 	github.com/briandowns/spinner v1.23.1
 	github.com/jedib0t/go-pretty/v6 v6.6.5
