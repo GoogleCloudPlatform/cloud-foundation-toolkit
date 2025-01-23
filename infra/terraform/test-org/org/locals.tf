@@ -479,6 +479,9 @@ locals {
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
       maintainers = ["imrannayer"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-sap"
