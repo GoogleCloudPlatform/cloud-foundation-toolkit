@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2022-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,12 @@ import (
 	"github.com/mitchellh/go-testing-interface"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
-	"golang.org/x/sync/errgroup"
 )
 
 const (
 	gfDir          = "testdata"
 	gfPerms        = 0755
 	gfUpdateEnvVar = "UPDATE_GOLDEN"
-	gGoroutinesMax = 24
 )
 
 type GoldenFile struct {
@@ -162,17 +160,8 @@ func (g *GoldenFile) JSONEq(a *assert.Assertions, got gjson.Result, jsonPath str
 
 // JSONPathEqs asserts that json content in jsonPaths for got and goldenfile are the same
 func (g *GoldenFile) JSONPathEqs(a *assert.Assertions, got gjson.Result, jsonPaths []string) {
-	syncGroup := new(errgroup.Group)
-	syncGroup.SetLimit(gGoroutinesMax)
-	g.t.Logf("Checking %d JSON paths with max %d goroutines", len(jsonPaths), gGoroutinesMax)
-	for _, jsonPath := range jsonPaths {
-		jsonPath := jsonPath
-		syncGroup.Go(func() error {
-			g.JSONEq(a, got, jsonPath)
-			return nil
-		})
-	}
-	if err := syncGroup.Wait(); err != nil {
-		g.t.Fatal(err)
+	for i, jsonPath := range jsonPaths {
+		g.t.Logf("Checking (%d of %d) JSON paths: %s", i, len(jsonPaths), jsonPath)
+		g.JSONEq(a, got, jsonPath)
 	}
 }
