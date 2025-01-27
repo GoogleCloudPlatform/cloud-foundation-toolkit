@@ -356,6 +356,7 @@ function check_metadata() {
     echo "Success!"
   else
     echo "Warning! Unable to validate metadata."
+    return 1
   fi
 }
 
