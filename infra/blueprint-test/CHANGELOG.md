@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.4...infra/blueprint-test/v0.17.5) (2025-01-27)
+
+
+### Bug Fixes
+
+* **bpt-golden:** drop parallel for resource consumption ([#2826](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2826)) ([e23c35e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e23c35e5e59777b350a9d9eba72f9d3b58cecb54))
+* **deps:** update module github.com/otiai10/copy to v1.14.1 ([#2791](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2791)) ([0db58df](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0db58df985c48644bcc9a783d4a63449b0806cce))
+* **deps:** update module sigs.k8s.io/kustomize/kyaml to v0.19.0 ([#2807](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2807)) ([247e2a2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/247e2a2c8970b2f1d97df6ddd357801531e444e8))
+
 ## [0.17.4](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.3...infra/blueprint-test/v0.17.4) (2025-01-02)
 
 
