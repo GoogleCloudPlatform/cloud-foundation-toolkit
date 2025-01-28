@@ -803,11 +803,13 @@ locals {
       topics      = join(",", [local.common_topics.ops, local.common_topics.security, local.common_topics.devtools])
     },
     {
-      name        = "terraform-google-cloud-spanner"
-      org         = "GoogleCloudPlatform"
-      description = "Deploy Spanner instances"
-      maintainers = ["anaik91", "imrannayer"]
-      topics      = local.common_topics.db
+      name            = "terraform-google-cloud-spanner"
+      org             = "GoogleCloudPlatform"
+      description     = "Deploy Spanner instances"
+      maintainers     = ["anaik91", "imrannayer", "rahul2393"]
+      topics          = local.common_topics.db
+      groups          = [local.jss_common_group]
+      enable_periodic = true
     },
     {
       name            = "terraform-pubsub-integration-golang"
