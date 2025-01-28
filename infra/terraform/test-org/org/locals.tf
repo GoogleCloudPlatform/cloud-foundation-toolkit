@@ -808,7 +808,7 @@ locals {
       description     = "Deploy Spanner instances"
       maintainers     = ["anaik91", "imrannayer", "rahul2393"]
       topics          = local.common_topics.db
-      groups          = ["cloud-spanner-client-libraries-dev", local.jss_common_group]
+      groups          = [local.jss_common_group]
       enable_periodic = true
     },
     {
