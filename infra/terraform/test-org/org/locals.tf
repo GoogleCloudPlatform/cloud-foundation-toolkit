@@ -479,6 +479,7 @@ locals {
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
       maintainers = ["imrannayer"]
+      groups      = ["api-pubsub-and-pubsublite"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
