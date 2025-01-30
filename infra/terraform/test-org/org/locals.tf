@@ -478,7 +478,8 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
-      maintainers = ["imrannayer", "github-api-pubsub"]
+      maintainers = ["imrannayer"]
+      groups      = ["github-api-pubsub"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
