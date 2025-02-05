@@ -460,6 +460,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages Google Cloud organization policies"
       topics      = local.common_topics.security
+      maintainers = ["nehalk-tf"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
