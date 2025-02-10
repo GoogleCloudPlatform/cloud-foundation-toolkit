@@ -34,7 +34,7 @@ jobs:
           workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
           service_account: '${{ secrets.GCP_WIF_SA_EMAIL }}'
 
-      - uses: google-github-actions/setup-gcloud@6189d56e4096ee891640bb02ac264be376592d6a # v2.1.2
+      - uses: google-github-actions/setup-gcloud@77e7a554d41e2ee56fc945c52dfd3f33d12def9a # v2.1.4
         with:
           version: "410.0.0"
 
