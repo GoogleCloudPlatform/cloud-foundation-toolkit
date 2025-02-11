@@ -2,7 +2,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/utils/fbf
 
 go 1.22
 
-toolchain go1.23.5
+toolchain go1.23.6
 
 require (
 	github.com/briandowns/spinner v1.23.2
