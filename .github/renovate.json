@@ -36,12 +36,22 @@
       "enabled": false
     },
     {
-      "matchDepTypes": ["require"],
-      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"],
-      "groupName": "GO modules"
+      "matchManagers": [
+        "gomod"
+      ],
+      "postUpdateOptions": [
+        "gomodTidy",
+        "gomodUpdateImportPaths"
+      ]
     },
     {
-      "matchPackageNames": ["go"],
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchDatasources": [
+        "golang-version"
+      ],
+      "rangeStrategy": "replace",
       "allowedVersions": "1.23",
       "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     }
