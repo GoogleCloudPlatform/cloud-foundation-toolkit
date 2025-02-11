@@ -30,12 +30,12 @@ resource "github_branch_protection" "default" {
 
   required_status_checks {
     strict = true
-    contexts = [
+    contexts = setunion([
       "cla/google",
       "${each.key}-int-trigger (cloud-foundation-cicd)",
       "lint",
       "conventionalcommits.org"
-    ]
+    ], lookup(var.repos_map[each.key], "add_checks", []))
   }
 
   enforce_admins = false

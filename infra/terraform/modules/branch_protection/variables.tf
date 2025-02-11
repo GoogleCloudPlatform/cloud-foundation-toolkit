@@ -31,6 +31,7 @@ variable "repos_map" {
     admins      = optional(list(string), [])
     maintainers = optional(list(string), [])
     groups      = optional(list(string), [])
+    add_checks  = optional(list(string), [])
   }))
 }
 
