@@ -1,5 +1,5 @@
 /**
- * Copyright 2021-2024 Google LLC
+ * Copyright 2021-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ locals {
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 17.0"
+  version = "~> 18.0"
 
   name              = "ci-bptest"
   random_project_id = "true"
@@ -70,6 +70,6 @@ resource "google_service_account_key" "key" {
 
 module "kubernetes-engine_example_simple_autopilot_public" {
   source  = "terraform-google-modules/kubernetes-engine/google//examples/simple_autopilot_public"
-  version                     = "~> 34.0"
+  version                     = "~> 36.0"
   project_id                  = module.project.project_id
 }
