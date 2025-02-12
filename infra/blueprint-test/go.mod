@@ -5,8 +5,8 @@ go 1.23.0
 require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
 	github.com/alexflint/go-filemutex v1.3.0
-	github.com/gruntwork-io/terratest v0.48.1
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20241129133400-c404f8227ea6
+	github.com/gruntwork-io/terratest v0.48.2
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20250203082807-efaa306e97b4
 	github.com/hashicorp/terraform-json v0.24.0
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
@@ -14,8 +14,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/sjson v1.2.5
-	golang.org/x/mod v0.22.0
-	golang.org/x/sync v0.10.0
+	golang.org/x/mod v0.23.0
 	sigs.k8s.io/kustomize/kyaml v0.19.0
 )
 
@@ -121,11 +120,12 @@ require (
 	github.com/xlab/treeprint v1.2.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	github.com/zclconf/go-cty v1.15.1 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	golang.org/x/tools v0.26.0 // indirect
