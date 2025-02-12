@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2024 Google LLC
+ * Copyright 2019-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ locals {
  *  lint_env          = "map(string)" (optional)
  *  disable_lint_yaml = BOOL (optional, default is true)
  *  enable_periodic   = BOOL (optional, if enabled runs a daily periodic test. Defaults to false )
+ *  add_checks        = "list(string)" ["check name"] (optional)
  *
  */
 
@@ -159,6 +160,7 @@ locals {
         "ENABLE_PARALLEL"   = "0",
         "DISABLE_TFLINT"    = "1"
       }
+      add_checks = ["terraform-example-foundation-int-trigger-default (cloud-foundation-cicd)"]
     },
     {
       name            = "terraform-google-log-analysis"
@@ -855,8 +857,15 @@ locals {
       name        = "terraform-google-enterprise-application"
       org         = "GoogleCloudPlatform"
       description = "Deploy an enterprise developer platform on Google Cloud"
-      maintainers = ["gtsorbo", "erictune", "yliaog", "sleighton2022", "apeabody"]
+      maintainers = ["yliaog", "sleighton2022"]
+      admins      = ["apeabody"]
       topics      = join(",", [local.common_topics.e2e, local.common_topics.ops])
+      add_checks = [
+        "terraform-google-enterprise-application-single-int-trigger (cloud-foundation-cicd)",
+        "terraform-google-enterprise-application-hpc-int-trigger (cloud-foundation-cicd)",
+        "golangci (test/integration)",
+        "lint-terraform-min"
+      ]
     },
     {
       name            = "terraform-genai-rag"
