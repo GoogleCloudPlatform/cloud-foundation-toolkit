@@ -1,9 +1,0 @@
-go 1.23.0
-
-use (
-	./cli
-	./infra/blueprint-test
-	./infra/module-swapper
-	./infra/utils/fbf
-	./tflint-ruleset-blueprint
-)
