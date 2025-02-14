@@ -23,7 +23,7 @@ require (
 	github.com/hashicorp/terraform-json v0.24.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/log15 v2.16.0+incompatible
-	github.com/invopop/jsonschema v0.12.0
+	github.com/invopop/jsonschema v0.13.0
 	github.com/itchyny/json2yaml v0.1.4
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.6.5
