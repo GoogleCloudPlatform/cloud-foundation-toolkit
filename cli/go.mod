@@ -5,7 +5,7 @@ go 1.23
 toolchain go1.23.6
 
 require (
-	cloud.google.com/go/asset v1.20.3
+	cloud.google.com/go/asset v1.20.4
 	cloud.google.com/go/storage v1.49.0
 	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.17.3
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
