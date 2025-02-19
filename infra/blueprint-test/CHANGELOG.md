@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.5...infra/blueprint-test/v0.17.6) (2025-02-19)
+
+
+### Bug Fixes
+
+* **deps:** update go modules ([#2833](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2833)) ([f705168](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f705168bfa7ae3e8c204d6aec49ae3c6896f6b06))
+* **deps:** update go modules ([#2844](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2844)) ([d662418](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/d66241835b28e0684bc2e3e1f916b8afaedb6835))
+
 ## [0.17.5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.4...infra/blueprint-test/v0.17.5) (2025-01-27)
 
 
