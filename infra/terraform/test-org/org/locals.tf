@@ -814,6 +814,9 @@ locals {
       topics          = local.common_topics.db
       groups          = [local.jss_common_group]
       enable_periodic = true
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-pubsub-integration-golang"
