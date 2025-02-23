@@ -16,5 +16,5 @@ source 'https://rubygems.org/'
 gem "kitchen-terraform", "~> 7.0"
 gem "kubeclient", "~> 4.11"
 gem "rest-client", "~> 2.1"
-gem 'nokogiri', '~> 1.16'
+gem 'nokogiri', '~> 1.18'
 ruby '~> 3.3.1'
