@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.14](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.13...infra/module-swapper/v0.4.14) (2025-02-24)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/google/go-cmp to v0.7.0 ([#2895](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2895)) ([a025e95](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/a025e950b4741086d43a6ba87430aa462f09bc0d))
+
 ## [0.4.13](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.12...infra/module-swapper/v0.4.13) (2025-01-23)
 
 
