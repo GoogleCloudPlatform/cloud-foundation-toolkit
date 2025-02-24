@@ -6,7 +6,7 @@ toolchain go1.23.6
 
 require (
 	cloud.google.com/go/asset v1.20.4
-	cloud.google.com/go/storage v1.49.0
+	cloud.google.com/go/storage v1.50.0
 	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.17.3
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
 	github.com/briandowns/spinner v1.23.2
@@ -14,8 +14,8 @@ require (
 	github.com/gammazero/workerpool v1.1.3
 	github.com/go-git/go-git/v5 v5.13.2
 	github.com/gomarkdown/markdown v0.0.0-20250207164621-7a1f277a159e
-	github.com/google/go-cmp v0.6.0
-	github.com/google/go-github/v69 v69.0.0
+	github.com/google/go-cmp v0.7.0
+	github.com/google/go-github/v69 v69.2.0
 	github.com/gruntwork-io/terratest v0.48.2
 	github.com/hashicorp/go-version v1.7.0
 	github.com/hashicorp/hcl/v2 v2.23.0
