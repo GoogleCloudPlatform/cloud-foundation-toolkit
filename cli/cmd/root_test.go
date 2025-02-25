@@ -32,7 +32,8 @@ func ExecuteCommandC(root *cobra.Command, args ...string) (c *cobra.Command, out
 }
 
 func setOutput(rootCommand *cobra.Command, buf *bytes.Buffer) {
-	rootCommand.SetOutput(buf)
+	rootCommand.SetErr(buf)
+	rootCommand.SetOut(buf)
 	for _, command := range rootCommand.Commands() {
 		setOutput(command, buf)
 	}
