@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.8...tflint-ruleset-blueprint/v0.2.9) (2025-02-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency go to v1.23.6 ([#2840](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2840)) ([c5951a5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/c5951a51eb6c19c732fb65485b8076ddb7e5ffac))
+
 ## [0.2.8](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.7...tflint-ruleset-blueprint/v0.2.8) (2025-01-23)
 
 
