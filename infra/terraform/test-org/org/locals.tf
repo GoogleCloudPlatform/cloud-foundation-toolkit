@@ -335,7 +335,7 @@ locals {
       topics      = local.common_topics.da
       lint_env = {
         ENABLE_BPMETADATA = "1"
-      }      
+      }
     },
     {
       name        = "terraform-google-datalab"
