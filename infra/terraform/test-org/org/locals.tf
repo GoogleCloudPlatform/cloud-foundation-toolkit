@@ -123,6 +123,9 @@ locals {
       maintainers = ["ericyz"]
       admins      = ["apeabody"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-ecommerce-microservices-on-gke"
