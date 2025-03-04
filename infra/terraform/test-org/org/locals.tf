@@ -495,7 +495,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Deploys SAP products"
       topics      = local.common_topics.compute
-      maintainers = ["sjswerdlow", "megelatim"]
+      maintainers = ["sjswerdlow", "megelatim", "dfellmeth-google"]
     },
     {
       name        = "terraform-google-scheduled-function"
