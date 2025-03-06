@@ -38,7 +38,7 @@ locals {
   }
   jss_common_group = "jump-start-solutions-admins"
 
-  adc_common_admins = ["q2w"]
+  adc_common_admins = ["q2w", "ayushmjain"]
 
   common_topics = {
     hcls       = "healthcare-life-sciences",
@@ -251,7 +251,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
-      maintainers = ["davenportjw", "shanecglass"]
+      maintainers = concat(["davenportjw", "shanecglass"], local.adc_common_admins)
       groups      = [local.jss_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
