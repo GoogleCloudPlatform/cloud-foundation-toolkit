@@ -484,7 +484,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates Pub/Sub topic and subscriptions associated with the topic"
       topics      = local.common_topics.da
-      maintainers = ["imrannayer"]
+      maintainers = concat(["imrannayer"], local.adc_common_admins)
       groups      = ["api-pubsub-and-pubsublite"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -813,7 +813,7 @@ locals {
       name            = "terraform-google-cloud-spanner"
       org             = "GoogleCloudPlatform"
       description     = "Deploy Spanner instances"
-      maintainers     = ["anaik91", "imrannayer", "rahul2393"]
+      maintainers     = concat(["anaik91", "imrannayer", "rahul2393"], local.adc_common_admins)
       topics          = local.common_topics.db
       groups          = [local.jss_common_group]
       enable_periodic = true
@@ -896,7 +896,7 @@ locals {
       name        = "terraform-google-bigtable"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Google Bigtable resources"
-      maintainers = ["hariprabhaam"]
+      maintainers = concat(["hariprabhaam"], local.adc_common_admins)
       topics      = local.common_topics.da
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -951,7 +951,7 @@ locals {
       name        = "terraform-google-regional-lb-http"
       org         = "GoogleCloudPlatform"
       description = "Creates a regional HTTP load balancer using forwarding rules"
-      maintainers = ["qz267"]
+      maintainers = concat(["qz267"], local.adc_common_admins)
       admins      = ["q2w"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
