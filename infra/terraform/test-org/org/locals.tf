@@ -333,6 +333,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Handles opinionated Dataflow job configuration and deployments"
       topics      = local.common_topics.da
+      maintainers = local.adc_common_admins
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
