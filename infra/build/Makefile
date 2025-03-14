@@ -1,4 +1,4 @@
-# Copyright 2019-2024 Google LLC
+# Copyright 2019-2025 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.11.2
+TERRAFORM_VERSION := 1.10.5
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 514.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
