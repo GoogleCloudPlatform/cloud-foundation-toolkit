@@ -14,9 +14,9 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.10.5
+TERRAFORM_VERSION := 1.11.2
 # Updated by Update Tooling Workflow
-CLOUD_SDK_VERSION := 512.0.0
+CLOUD_SDK_VERSION := 514.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
 TERRAFORM_DOCS_VERSION := 0.16.0
 BATS_VERSION := 0.4.0
@@ -25,7 +25,7 @@ BATS_ASSERT_VERSION := 2.0.0
 BATS_MOCK_VERSION := 1.0.1
 PACKER_VERSION := 1.4.4
 # Updated by Update Tooling Workflow
-TERRAGRUNT_VERSION := 0.73.14
+TERRAGRUNT_VERSION := 0.75.9
 # Updated by Update Tooling Workflow
 KUSTOMIZE_VERSION := 5.6.0
 # Updated by Update Tooling Workflow
@@ -47,7 +47,7 @@ TFLINT_BP_PLUGIN_VERSION := 0.2.9
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
-GOLANGCI_VERSION := 1.64.5
+GOLANGCI_VERSION := 1.64.7
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
@@ -56,7 +56,7 @@ OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.20.3
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.23.9
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.23.10
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
