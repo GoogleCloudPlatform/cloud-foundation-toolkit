@@ -13,7 +13,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/gammazero/workerpool v1.1.3
 	github.com/go-git/go-git/v5 v5.14.0
-	github.com/gomarkdown/markdown v0.0.0-20250207164621-7a1f277a159e
+	github.com/gomarkdown/markdown v0.0.0-20250311123330-531bef5e742b
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-github/v69 v69.2.0
 	github.com/gruntwork-io/terratest v0.48.2
