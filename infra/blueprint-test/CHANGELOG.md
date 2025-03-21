@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.6...infra/blueprint-test/v0.17.7) (2025-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/mod to v0.24.0 ([#2907](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2907)) ([01e21dc](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/01e21dc0db6cdd817f06e815cc39f39eb4fd33bd))
+
 ## [0.17.6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.5...infra/blueprint-test/v0.17.6) (2025-02-19)
 
 
