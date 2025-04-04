@@ -958,5 +958,15 @@ locals {
         ENABLE_BPMETADATA = "1"
       }
     },
+    {
+      name        = "terraform-google-firestore"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Firestore resources"
+      maintainers = concat(["Gautam04"], local.adc_common_admins)
+      topics      = local.common_topics.da
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
   ]
 }
