@@ -251,7 +251,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates opinionated BigQuery datasets and tables"
       topics      = local.common_topics.da
-      maintainers = concat(["davenportjw", "shanecglass"], local.adc_common_admins)
+      maintainers = concat(["davenportjw", "bradmiro"], local.adc_common_admins)
       groups      = [local.jss_common_group]
       lint_env = {
         ENABLE_BPMETADATA = "1"
