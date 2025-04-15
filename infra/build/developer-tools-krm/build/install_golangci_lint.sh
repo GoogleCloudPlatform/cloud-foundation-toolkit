@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright 2022-2025 Google LLC
+# Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,5 +20,5 @@ cd /build
 
 GOLANGCI_VERSION=$1
 
-go install github.com/golangci/golangci-lint/cmd/golangci-lint/v2@v$GOLANGCI_VERSION
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v$GOLANGCI_VERSION
 ln -s $(go env GOPATH)/bin/golangci-lint /usr/local/bin/
