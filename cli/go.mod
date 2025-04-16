@@ -15,7 +15,7 @@ require (
 	github.com/go-git/go-git/v5 v5.14.0
 	github.com/gomarkdown/markdown v0.0.0-20250311123330-531bef5e742b
 	github.com/google/go-cmp v0.7.0
-	github.com/google/go-github/v69 v69.2.0
+	github.com/google/go-github/v71 v71.0.0
 	github.com/gruntwork-io/terratest v0.48.2
 	github.com/hashicorp/go-version v1.7.0
 	github.com/hashicorp/hcl/v2 v2.23.0
