@@ -2,7 +2,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
 go 1.23.0
 
-toolchain go1.23.6
+toolchain go1.23.8
 
 require (
 	cloud.google.com/go/asset v1.20.4
