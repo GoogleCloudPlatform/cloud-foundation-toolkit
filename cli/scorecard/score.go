@@ -116,7 +116,7 @@ var availableCategories = map[string]string{
 }
 
 func (config *ScoringConfig) getConstraintForViolation(violation *RichViolation) (*constraintViolations, error) {
-	key := violation.Violation.GetConstraint()
+	key := violation.GetConstraint()
 	cv, found := config.constraints[key]
 	if !found {
 		constraint := key
@@ -135,7 +135,7 @@ func (config *ScoringConfig) getConstraintForViolation(violation *RichViolation)
 
 		category, found := config.categories[categoryKey]
 		if !found {
-			return nil, fmt.Errorf("Unknown constraint category %v for constraint %v", categoryKey, key)
+			return nil, fmt.Errorf("unknown constraint category %v for constraint %v", categoryKey, key)
 		}
 		category.constraints = append(category.constraints, cv)
 	}
@@ -192,7 +192,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 						}
 					}
 					richViolations = append(richViolations, v)
-					Log.Debug("Violation metadata", "metadata", v.Violation.GetMetadata())
+					Log.Debug("violation metadata", "metadata", v.GetMetadata())
 				}
 			}
 		}
@@ -223,7 +223,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 					if len(v.asset.Ancestors) > 0 {
 						parent = v.asset.Ancestors[0]
 					}
-					record := []string{category.Name, getConstraintShortName(v.Violation.Constraint), v.Resource, v.Message, parent}
+					record := []string{category.Name, getConstraintShortName(v.Constraint), v.Resource, v.Message, parent}
 					for _, field := range outputMetadataFields {
 						metadata := v.Metadata.GetStructValue().Fields["details"].GetStructValue().Fields[field]
 						value, _ := stringViaJSON(metadata)
@@ -235,7 +235,7 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 					}
 
 					w.Flush()
-					Log.Debug("Violation metadata", "metadata", v.Violation.GetMetadata())
+					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 				}
 			}
 		}
@@ -279,13 +279,13 @@ func writeResults(config *ScoringConfig, dest io.Writer, outputFormat string, ou
 					if err != nil {
 						return err
 					}
-					Log.Debug("Violation metadata", "metadata", v.Violation.GetMetadata())
+					Log.Debug("Violation metadata", "metadata", v.GetMetadata())
 				}
 			}
 		}
 		return nil
 	}
-	return fmt.Errorf("Unsupported output format %v", outputFormat)
+	return fmt.Errorf("unsupported output format %v", outputFormat)
 }
 
 // findViolations gets violations for the inventory and attaches them

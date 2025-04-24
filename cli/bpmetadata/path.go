@@ -27,7 +27,7 @@ func fileExists(path string) (bool, error) {
 	}
 
 	if info.IsDir() {
-		return false, fmt.Errorf("provided path is a directory, need a valid file path.")
+		return false, fmt.Errorf("provided path is a directory, need a valid file path")
 	}
 
 	return true, nil

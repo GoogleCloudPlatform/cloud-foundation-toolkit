@@ -61,8 +61,12 @@ func TestLintRunner(t *testing.T) {
 		assert.Empty(t, errs, "No errors should be returned when no rules are registered")
 	})
 	t.Run("skip lint rules when BLUEPRINT_LINT_DISABLE is set", func(t *testing.T) {
-		os.Setenv(BlueprintLintDisableEnv, "1")
-		defer os.Unsetenv(BlueprintLintDisableEnv)
+		err := os.Setenv(BlueprintLintDisableEnv, "1")
+		assert.NoError(t, err)
+		defer func() {
+			err := os.Unsetenv(BlueprintLintDisableEnv)
+			assert.NoError(t, err)
+		}()
 
 		mockRule1 := &mockLintRule{Name: "MockRule1", Enabled: true, Err: errors.New("lint error")}
 		mockRule2 := &mockLintRule{Name: "MockRule2", Enabled: true, Err: errors.New("another lint error")}
