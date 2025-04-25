@@ -80,7 +80,7 @@ var Cmd = &cobra.Command{
 			(flags.bucketName != "" && flags.stdin) ||
 			(flags.bucketName != "" && flags.dirPath != "") ||
 			(flags.dirPath != "" && flags.stdin) {
-			return fmt.Errorf("One and only one of bucket, dir-path, or stdin should be set")
+			return fmt.Errorf("one and only one of bucket, dir-path, or stdin should be set")
 		}
 
 		return nil
@@ -99,7 +99,7 @@ var Cmd = &cobra.Command{
 				(targetProjectID != "" && flags.targetFolderID != "") ||
 				(targetProjectID != "" && flags.targetOrgID != "") ||
 				(flags.targetFolderID != "" && flags.targetOrgID != "") {
-				return fmt.Errorf("When using --refresh and --bucket, one and only one of target-project, target-folder, or target-org should be set")
+				return fmt.Errorf("when using --refresh and --bucket, one and only one of target-project, target-folder, or target-org should be set")
 			}
 		}
 		inventory, err := NewInventory(flags.bucketName, flags.dirPath, flags.stdin, flags.refresh, WorkerSize(flags.workers),

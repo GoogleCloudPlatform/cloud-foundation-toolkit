@@ -61,7 +61,11 @@ func getDataFromBucket(bucketName string) ([]*validator.Asset, error) {
 			fmt.Println("WARNING: Unable to read inventory file :", objectName, err)
 			continue
 		}
-		defer reader.Close()
+		defer func() {
+			if err := reader.Close(); err != nil {
+				panic(err)
+			}
+		}()
 		assets, err := getDataFromReader(reader)
 		if err != nil {
 			return nil, err
@@ -70,7 +74,7 @@ func getDataFromBucket(bucketName string) ([]*validator.Asset, error) {
 		pbAssets = append(pbAssets, assets...)
 	}
 	if len(pbAssets) == 0 {
-		return nil, fmt.Errorf("No inventory found")
+		return nil, fmt.Errorf("no inventory found")
 	}
 	return pbAssets, nil
 }
@@ -83,7 +87,11 @@ func getDataFromFile(caiDirName string) ([]*validator.Asset, error) {
 			fmt.Println("WARNING: Unable to read inventory file :", objectName, err)
 			continue
 		}
-		defer reader.Close()
+		defer func() {
+			if err := reader.Close(); err != nil {
+				panic(err)
+			}
+		}()
 		assets, err := getDataFromReader(reader)
 		if err != nil {
 			return nil, err
@@ -92,7 +100,7 @@ func getDataFromFile(caiDirName string) ([]*validator.Asset, error) {
 		pbAssets = append(pbAssets, assets...)
 	}
 	if len(pbAssets) == 0 {
-		return nil, fmt.Errorf("No inventory found")
+		return nil, fmt.Errorf("no inventory found")
 	}
 	return pbAssets, nil
 }

@@ -250,7 +250,10 @@ func createFilesInTmpDir(t *testing.T, files []string) (string, func()) {
 	assert := assert.New(t)
 	tempDir, err := os.MkdirTemp("", "bpt-")
 	assert.NoError(err)
-	cleanup := func() { os.RemoveAll(tempDir) }
+	cleanup := func() {
+		err := os.RemoveAll(tempDir)
+		assert.NoError(err)
+	}
 
 	//create files in tmpdir
 	for _, f := range files {

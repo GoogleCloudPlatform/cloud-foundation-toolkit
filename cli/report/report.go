@@ -121,7 +121,11 @@ func printReports(results interface{}, reportOutputPath string, format string, f
 					contentSlice := content.([]interface{})
 					f, _ := os.Create(filepath.Join(reportOutputPath, reportFileName))
 
-					defer f.Close()
+					defer func() {
+						if err := f.Close(); err != nil {
+							panic(err)
+						}
+					}()
 					w := csv.NewWriter(f)
 					if len(contentSlice) > 0 {
 						firstRow := contentSlice[0]

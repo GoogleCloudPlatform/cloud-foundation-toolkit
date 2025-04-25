@@ -72,9 +72,13 @@ func writeTmpFile(t *testing.T, data string) (string, func()) {
 	assert := assert.New(t)
 	f, err := os.CreateTemp("", "*.go")
 	assert.NoError(err)
-	cleanup := func() { os.Remove(f.Name()) }
+	cleanup := func() {
+		err := os.Remove(f.Name())
+		assert.NoError(err)
+	}
 	_, err = f.Write([]byte(data))
 	assert.NoError(err)
-	f.Close()
+	err = f.Close()
+	assert.NoError(err)
 	return f.Name(), cleanup
 }

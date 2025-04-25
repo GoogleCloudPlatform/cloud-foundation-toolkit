@@ -37,7 +37,11 @@ func ReadFilesAndConcat(dir string) (results []interface{}, err error) {
 		if err != nil {
 			return nil, err
 		}
-		defer f.Close()
+		defer func() {
+			if err := f.Close(); err != nil {
+				panic(err)
+			}
+		}()
 		s := bufio.NewScanner(f)
 		buf := make([]byte, maxCapacity)
 		s.Buffer(buf, maxCapacity)
