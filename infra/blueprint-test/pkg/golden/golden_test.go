@@ -54,7 +54,8 @@ func TestUpdate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			assert := assert.New(t)
 			if !tt.skipUpdate {
-				os.Setenv(gfUpdateEnvVar, "true")
+				err := os.Setenv(gfUpdateEnvVar, "true")
+				assert.NoError(err)
 				defer os.Unsetenv(gfUpdateEnvVar)
 			}
 
@@ -190,7 +191,8 @@ func TestJSONEqs(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			innerT := &gotest.RuntimeT{}
 			innerAssert := assert.New(innerT)
-			os.Setenv(gfUpdateEnvVar, "true")
+			err := os.Setenv(gfUpdateEnvVar, "true")
+			innerAssert.NoError(err)
 			defer os.Unsetenv(gfUpdateEnvVar)
 			got := NewOrUpdate(t, tt.data, tt.opts...)
 			defer os.Remove(got.GetName())
