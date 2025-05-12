@@ -8,10 +8,16 @@
     "helpers:pinGitHubActionDigests"
   ],
   "minimumReleaseAge": "7 days",
-  "ignorePaths": ["tflint-ruleset-blueprint/rules/testdata/**"],
-  "labels": ["dependencies"],
+  "ignorePaths": [
+    "tflint-ruleset-blueprint/rules/testdata/**"
+  ],
+  "labels": [
+    "dependencies"
+  ],
   "vulnerabilityAlerts": {
-    "labels": ["type:security"],
+    "labels": [
+      "type:security"
+    ],
     "minimumReleaseAge": null
   },
   "separateMajorMinor": false,
@@ -21,18 +27,32 @@
   },
   "packageRules": [
     {
-      "matchFileNames": [".github/**"],
-      "extends": [":semanticCommitTypeAll(chore)", ":rebaseStalePrs"]
+      "matchFileNames": [
+        ".github/**"
+      ],
+      "extends": [
+        ":semanticCommitTypeAll(chore)",
+        ":rebaseStalePrs"
+      ]
     },
     {
-      "matchManagers": ["terraform"],
-      "matchDepNames": ["google", "google-beta"],
+      "matchManagers": [
+        "terraform"
+      ],
+      "matchDepNames": [
+        "google",
+        "google-beta"
+      ],
       "groupName": "terraform google provider",
       "rangeStrategy": "widen"
     },
     {
-      "matchManagers": ["terraform"],
-      "matchDepTypes": ["module"],
+      "matchManagers": [
+        "terraform"
+      ],
+      "matchDepTypes": [
+        "module"
+      ],
       "enabled": false
     },
     {
@@ -53,20 +73,29 @@
       ],
       "rangeStrategy": "replace",
       "allowedVersions": "1.23",
-      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
+      "postUpdateOptions": [
+        "gomodTidy",
+        "gomodUpdateImportPaths"
+      ]
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)Makefile$"],
-      "matchStrings": ["ALPINE_VERSION := (?<currentValue>.*?)\\n"],
+      "managerFilePatterns": [
+        "/(^|/)Makefile$/"
+      ],
+      "matchStrings": [
+        "ALPINE_VERSION := (?<currentValue>.*?)\\n"
+      ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "alpine"
     },
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)Makefile$"],
+      "managerFilePatterns": [
+        "/(^|/)Makefile$/"
+      ],
       "matchStrings": [
         "DOCKER_TAG_VERSION_DEVELOPER_TOOLS := (?<currentValue>.*?)\\n"
       ],
@@ -76,7 +105,9 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)build/(int|lint)\\.cloudbuild\\.yaml$"],
+      "managerFilePatterns": [
+        "/(^|/)build/(int|lint)\\.cloudbuild\\.yaml$/"
+      ],
       "matchStrings": [
         "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '(?<currentValue>.*?)'\\n"
       ],
@@ -86,8 +117,12 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)Makefile$"],
-      "matchStrings": ["GOLANGCI_VERSION := (?<currentValue>.*?)\\n"],
+      "managerFilePatterns": [
+        "/(^|/)Makefile$/"
+      ],
+      "matchStrings": [
+        "GOLANGCI_VERSION := (?<currentValue>.*?)\\n"
+      ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "golangci/golangci-lint",
       "extractVersionTemplate": "^v?(?<version>.*)$"
