@@ -926,7 +926,7 @@ locals {
       name        = "kms-solutions"
       org         = "GoogleCloudPlatform"
       description = "Store Cloud KMS scripts, artifacts, code samples, and more."
-      maintainers = ["tdbhacks", "erlanderlo", "g-swap", "nb-goog"]
+      maintainers = ["tdbhacks", "erlanderlo", "g-swap", "nb-goog", "brandonluong-lgtm"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
