@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.12.0
+TERRAFORM_VERSION := 1.10.5
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 522.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
@@ -47,7 +47,7 @@ TFLINT_BP_PLUGIN_VERSION := 0.2.9
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
-GOLANGCI_VERSION := 2.1.6
+GOLANGCI_VERSION := 1.64.8
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
