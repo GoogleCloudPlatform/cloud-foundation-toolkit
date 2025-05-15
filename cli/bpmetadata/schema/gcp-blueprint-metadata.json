@@ -816,6 +816,12 @@
             "$ref": "#/$defs/DisplayVariableToggle"
           },
           "type": "array"
+        },
+        "properties": {
+          "additionalProperties": {
+            "$ref": "#/$defs/DisplayVariable"
+          },
+          "type": "object"
         }
       },
       "additionalProperties": false,
