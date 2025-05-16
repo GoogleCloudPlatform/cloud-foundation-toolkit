@@ -15,7 +15,7 @@ require (
 	github.com/go-git/go-git/v5 v5.16.0
 	github.com/gomarkdown/markdown v0.0.0-20250311123330-531bef5e742b
 	github.com/google/go-cmp v0.7.0
-	github.com/google/go-github/v71 v71.0.0
+	github.com/google/go-github/v72 v72.0.0
 	github.com/gruntwork-io/terratest v0.49.0
 	github.com/hashicorp/go-version v1.7.0
 	github.com/hashicorp/hcl/v2 v2.23.0
@@ -116,6 +116,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/cel-go v0.12.6 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
+	github.com/google/go-github/v71 v71.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
