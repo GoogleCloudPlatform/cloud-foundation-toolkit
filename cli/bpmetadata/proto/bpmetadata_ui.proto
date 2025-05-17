@@ -149,6 +149,11 @@ message DisplayVariable {
   repeated AlternateDefault alt_defaults = 21; // @gotags: json:"altDefaults,omitempty" yaml:"altDefaults,omitempty"
 
   repeated DisplayVariableToggle toggle_using_variables = 22; // @gotags: json:"toggleUsingVariables,omitempty" yaml:"toggleUsingVariables,omitempty"
+
+  // properties is a map defining all the fields of the input variable.
+  // Gen: Manually-authored
+  map<string, DisplayVariable> properties = 23;
+
 }
 
 message DisplayVariableToggle {
