@@ -1,6 +1,7 @@
 package adcbpmetadata
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -12,6 +13,8 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"google.golang.org/protobuf/encoding/prototext"
+	"google.golang.org/protobuf/proto"
 )
 
 
@@ -57,11 +60,92 @@ func generate(cmd *cobra.Command, args []string) error {
 		currBpPath = path.Join(wdPath, flags.rootModulePath)
 	}
 
+
+
+ // 1. validate module
 	err=ValidateRootModuleForADC(currBpPath)
 	if(err!=nil){
 		return err
 	}
+
+	// 2. validate metadata.yaml
+	missingFile:=checkFilePresence(currBpPath, []string{"metadata.yaml"})
+	if len(missingFile) == 0 {
+		err=validateMetadataYamlForADC(currBpPath)
+		if err!=nil{
+			return err;
+		}
+	}
 	return nil
+}
+
+func validateMetadataYamlForADC(currBpPath string) error{
+// 1. valdate metadata.yaml against schema
+	err:=bpmetadata.ValidateMetadata(currBpPath, "");
+	if err!=nil{
+		return fmt.Errorf("failed to validate metadata file against schema.")
+	}
+
+// 2. validate metadata.yaml for required fields and properties
+ // validate fields from metadata.yaml
+ // validate connection, roles, apis, output type, defaults
+
+		bpObj, err :=  bpmetadata.UnmarshalMetadata(currBpPath, "metadata.yaml")
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+
+		//2.1 Return Error if connection metadata is missing
+		Log.Info("bpObj.Spec.Interfaces.Variables"+prototext.Format(bpObj))
+
+
+
+
+ if !proto.Equal(bpObj, &bpmetadata.BlueprintMetadata{})&&
+ !proto.Equal(bpObj.Spec, &bpmetadata.BlueprintMetadataSpec{}){
+
+
+			if bpObj.Spec.Requirements!=nil&&
+			!proto.Equal(bpObj.Spec.Requirements, &bpmetadata.BlueprintRequirements{}){
+
+					if len(bpObj.Spec.Requirements.Services)>0{
+						return fmt.Errorf("services are missing in metadata.yaml")
+					}
+
+					if len(bpObj.Spec.Requirements.Roles)>0{
+						return fmt.Errorf("roles are missing in metadata.yaml")
+					}
+
+					if len(bpObj.Spec.Requirements.ProviderVersions)>0{
+						return fmt.Errorf("providers version are missing in metadata.yaml")
+					}
+			}else {
+				return fmt.Errorf("requirements section is missing from metadata.yaml")
+			}
+
+
+			var connectionMetadataExists bool
+			if !proto.Equal(bpObj.Spec.Interfaces, &bpmetadata.BlueprintInterface{}){
+				for _ , variable :=range(bpObj.Spec.Interfaces.Variables){
+					if len(variable.Connections)>0{
+						connectionMetadataExists=true
+						break;
+					}
+				}
+			}else{
+				//TODO:what to do if there is no interfaces
+				return fmt.Errorf("interfaces section is missing from metadata.yaml")
+			}
+
+			if !connectionMetadataExists{
+				return fmt.Errorf("connection data is missing from metadata.yaml.")
+			}
+
+ }else{
+	return fmt.Errorf("specs section is missing from metadata.yaml")
+ }
+
+return nil
 }
 
 
