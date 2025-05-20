@@ -11,7 +11,13 @@ import (
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
+
+
+var flags struct {
+	rootModulePath          string
+}
 
 type markdownHeading struct{
 	headLevel int
@@ -22,7 +28,8 @@ type markdownHeading struct{
 }
 
 func init() {
-
+	viper.AutomaticEnv()
+	Cmd.Flags().StringVarP(&flags.rootModulePath, "path", "p", ".", "Path to the blueprint for generating metadata.")
 }
 
 
@@ -40,13 +47,15 @@ var Cmd = &cobra.Command{
 
 // The top-level command function that generates metadata based on the provided flags
 func generate(cmd *cobra.Command, args []string) error {
-	cmd.Println("adc valdatbfkho;h;ogjlr");
 	wdPath, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("error getting working dir: %w", err)
 	}
 
 	currBpPath := wdPath
+	if !path.IsAbs(flags.rootModulePath) {
+		currBpPath = path.Join(wdPath, flags.rootModulePath)
+	}
 
 	err=ValidateRootModuleForADC(currBpPath)
 	if(err!=nil){
