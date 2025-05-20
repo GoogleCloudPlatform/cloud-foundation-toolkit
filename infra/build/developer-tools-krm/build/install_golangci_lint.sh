@@ -20,5 +20,5 @@ cd /build
 
 GOLANGCI_VERSION=$1
 
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@v$GOLANGCI_VERSION
+go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v$GOLANGCI_VERSION
 ln -s $(go env GOPATH)/bin/golangci-lint /usr/local/bin/
