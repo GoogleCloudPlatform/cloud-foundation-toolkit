@@ -61,14 +61,6 @@ func generate(cmd *cobra.Command, args []string) error {
 	if(err!=nil){
 		return err
 	}
-
-	// check if module path has readme.md
-_, err = os.Stat(path.Join(currBpPath, "README.md"))
-	// log info if a sub-module doesn't have a readme.md and continue
-	if err != nil {
-		return fmt.Errorf("root module doesn't have readme file")
-	}
-
 	return nil
 }
 
@@ -77,6 +69,7 @@ _, err = os.Stat(path.Join(currBpPath, "README.md"))
 func ValidateRootModuleForADC(bpPath string) error{
 
 	// files root module must have TODO: Add description describing need of each file
+	// TODO: ADC doesn't require readme file but metadata generation code require it : we can add one readme
 	requiredFilesForRoot:=[]string {"README.md", "main.tf", "versions.tf"}
 	missingFiles:=checkFilePresence(bpPath, requiredFilesForRoot)
 
