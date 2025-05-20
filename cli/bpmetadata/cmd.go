@@ -332,7 +332,7 @@ return nil
 func missingHeadings(content []byte, markdownHeadings []markdownHeading)[]markdownHeading{
 	missingHeadings:=[]markdownHeading{}
 	for _, heading:= range markdownHeadings{
-		_, err := getMdContent(content, heading.headLevel, heading.headOrder, heading.headTitle, heading.content)
+		_, err := GetMdContent(content, heading.headLevel, heading.headOrder, heading.headTitle, heading.content)
 		if err != nil {
 			missingHeadings=append(missingHeadings, heading)
 		}
@@ -540,7 +540,7 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 }
 
 func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte) error {
-	title, err := getMdContent(readmeContent, 1, 1, "", false)
+	title, err := GetMdContent(readmeContent, 1, 1, "", false)
 	if err != nil {
 		return fmt.Errorf("title tag missing in markdown, err: %w", err)
 	}
@@ -569,23 +569,23 @@ func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte
 
 	// create descriptions
 	i.Description = &BlueprintDescription{}
-	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
+	tagline, err := GetMdContent(readmeContent, -1, -1, "Tagline", true)
 	if err == nil {
 		i.Description.Tagline = tagline.literal
 	}
 
-	detailed, err := getMdContent(readmeContent, -1, -1, "Detailed", true)
+	detailed, err := GetMdContent(readmeContent, -1, -1, "Detailed", true)
 	if err == nil {
 		i.Description.Detailed = detailed.literal
 	}
 
-	preDeploy, err := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
+	preDeploy, err := GetMdContent(readmeContent, -1, -1, "PreDeploy", true)
 	if err == nil {
 		i.Description.PreDeploy = preDeploy.literal
 	}
 
 	var archListToSet []string
-	architecture, err := getMdContent(readmeContent, -1, -1, "Architecture", true)
+	architecture, err := GetMdContent(readmeContent, -1, -1, "Architecture", true)
 	if err == nil {
 		for _, li := range architecture.listItems {
 			archListToSet = append(archListToSet, li.text)
@@ -628,7 +628,7 @@ func (i *BlueprintInterface) create(bpPath string) error {
 
 func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent []byte) {
 	var docListToSet []*BlueprintListContent
-	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
+	documentation, err := GetMdContent(readmeContent, -1, -1, "Documentation", true)
 	if err == nil {
 		for _, li := range documentation.listItems {
 			doc := &BlueprintListContent{
