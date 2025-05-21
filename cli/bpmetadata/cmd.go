@@ -122,7 +122,7 @@ func generate(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		err = generateMetadataForBpPath(modPath)
+		err = GenerateMetadataForBpPath(modPath)
 		if err != nil {
 			e := fmt.Sprintf("path: %s\n %s", modPath, err.Error())
 			errors = append(errors, e)
@@ -137,7 +137,7 @@ func generate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func generateMetadataForBpPath(bpPath string) error {
+func GenerateMetadataForBpPath(bpPath string) error {
 	//try to read existing metadata.yaml
 	bpObj, err := UnmarshalMetadata(bpPath, metadataFileName)
 	if err != nil && !errors.Is(err, os.ErrNotExist) && !mdFlags.force {

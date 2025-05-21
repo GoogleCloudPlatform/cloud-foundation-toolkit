@@ -59,7 +59,13 @@ func generate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// 2. validate metadata.yaml
+	// 2. generate metadata
+  err= bpmetadata.GenerateMetadataForBpPath(currBpPath)
+	if err!=nil{
+		return err
+	}
+
+	// 3. validate metadata.yaml, this will be keeping manual edits
 	missingFile := checkFilePresence(currBpPath, []string{"metadata.yaml"})
 	if len(missingFile) == 0 {
 		err = validateMetadataYamlForADC(currBpPath)
@@ -92,6 +98,13 @@ func validateMetadataYamlForADC(currBpPath string) error {
 	if !proto.Equal(bpObj, &bpmetadata.BlueprintMetadata{}) &&
 		!proto.Equal(bpObj.Spec, &bpmetadata.BlueprintMetadataSpec{}) {
 
+		if bpObj.Spec.Info == nil||
+				proto.Equal(bpObj.Spec.Info, &bpmetadata.BlueprintInfo{}) ||
+				bpObj.Spec.Info.Version == ""{
+					return fmt.Errorf("metadata file version is missing")
+				}
+
+
 		if bpObj.Spec.Requirements != nil &&
 			!proto.Equal(bpObj.Spec.Requirements, &bpmetadata.BlueprintRequirements{}) {
 
@@ -117,16 +130,22 @@ func validateMetadataYamlForADC(currBpPath string) error {
 					connectionMetadataExists = true
 					break
 				}
+
 			}
+			if !connectionMetadataExists {
+				 Log.Warn("connection data is missing from metadata.yaml")
+			}
+
+			for _, output := range bpObj.Spec.Interfaces.Outputs {
+				if output.Type ==nil {
+					return fmt.Errorf("output: "+output.Name+" is missing type information")
+				}
+			}
+
 		} else {
 			//TODO:what to do if there is no interfaces
 			return fmt.Errorf("interfaces section is missing from metadata.yaml")
 		}
-
-		if !connectionMetadataExists {
-			return fmt.Errorf("connection data is missing from metadata.yaml")
-		}
-
 	} else {
 		return fmt.Errorf("specs section is missing from metadata.yaml")
 	}
@@ -149,7 +168,7 @@ func ValidateRootModuleForADC(bpPath string) error {
 	missingGoodToHaveFiles := checkFilePresence(bpPath, goodToHaveFiles)
 
 	if len(missingGoodToHaveFiles) > 0 {
-		Log.Warn("It is good to have these files also for generating metadata: [" + strings.Join(missingGoodToHaveFiles, ", ") + "]\n")
+		Log.Warn("These files also required for generating metadata: [" + strings.Join(missingGoodToHaveFiles, ", ") + "]\n")
 	}
 
 	otherFiles := []string{"assets/icon.png", "modules/", "examples"}
