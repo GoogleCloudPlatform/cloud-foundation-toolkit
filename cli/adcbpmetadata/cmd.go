@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -75,7 +74,7 @@ func validateMetadataYamlForADC(currBpPath string) error {
 	// 1. valdate metadata.yaml against schema
 	err := bpmetadata.ValidateMetadata(currBpPath, "")
 	if err != nil {
-		return fmt.Errorf("failed to validate metadata file against schema.")
+		return fmt.Errorf("failed to validate metadata file against schema")
 	}
 
 	// 2. validate metadata.yaml for required fields and properties
@@ -88,7 +87,7 @@ func validateMetadataYamlForADC(currBpPath string) error {
 	}
 
 	//2.1 Return Error if connection metadata is missing
-	Log.Info("bpObj.Spec.Interfaces.Variables" + prototext.Format(bpObj))
+	// Log.Info("bpObj.Spec.Interfaces.Variables" + prototext.Format(bpObj))
 
 	if !proto.Equal(bpObj, &bpmetadata.BlueprintMetadata{}) &&
 		!proto.Equal(bpObj.Spec, &bpmetadata.BlueprintMetadataSpec{}) {
@@ -125,7 +124,7 @@ func validateMetadataYamlForADC(currBpPath string) error {
 		}
 
 		if !connectionMetadataExists {
-			return fmt.Errorf("connection data is missing from metadata.yaml.")
+			return fmt.Errorf("connection data is missing from metadata.yaml")
 		}
 
 	} else {

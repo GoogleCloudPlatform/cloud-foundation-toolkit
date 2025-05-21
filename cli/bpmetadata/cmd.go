@@ -72,7 +72,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 	// validate metadata if there is an argument passed into the command
 	if mdFlags.validate {
-		if err := validateMetadata(mdFlags.path, wdPath); err != nil {
+		if err := ValidateMetadata(mdFlags.path, wdPath); err != nil {
 			return err
 		}
 
