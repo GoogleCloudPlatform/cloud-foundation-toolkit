@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2024 Google LLC
+ * Copyright 2022-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,12 @@ variable "repo_list" {
 variable "repos_map" {
   description = "Map of Repos"
   type = map(object({
-    name        = string
-    org         = string
-    admins      = optional(list(string), [])
-    maintainers = optional(list(string), [])
-    groups      = optional(list(string), [])
-    add_checks  = optional(list(string), [])
+    name         = string
+    org          = string
+    admins       = optional(list(string), [])
+    admin_groups = optional(list(string), [])
+    maintainers  = optional(list(string), [])
+    groups       = optional(list(string), [])
+    add_checks   = optional(list(string), [])
   }))
-}
-
-variable "admin" {
-  description = "GitHub Admin"
-  type        = string
 }

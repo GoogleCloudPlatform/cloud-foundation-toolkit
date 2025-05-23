@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2024 Google LLC
+ * Copyright 2022-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ variable "repos_map" {
     org          = string
     description  = optional(string)
     admins       = optional(list(string), [])
+    admin_groups = optional(list(string), [])
     maintainers  = optional(list(string), [])
     homepage_url = optional(string, null)
     module       = optional(bool, true)
@@ -38,4 +39,9 @@ variable "ci_teams" {
   description = "Repo collaborator teams for approved CI"
   type        = list(string)
   default     = []
+}
+
+variable "super_admin" {
+  description = "GitHub Super Admin Group"
+  type        = string
 }

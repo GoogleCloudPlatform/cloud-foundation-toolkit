@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2024 Google LLC
+ * Copyright 2022-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 
 locals {
-  tgm_modules_map = { for value in local.modules : value.name => value if value.org == "terraform-google-modules" }
-  gcp_modules_map = { for value in local.modules : value.name => value if value.org == "GoogleCloudPlatform" }
+  tgm_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.cft-admins.node_id] }) if value.org == "terraform-google-modules" }
+  gcp_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.blueprint-solutions.node_id] }) if value.org == "GoogleCloudPlatform" }
 }
 
 data "github_team" "cft-admins" {
@@ -30,17 +30,19 @@ data "github_team" "blueprint-solutions" {
 }
 
 module "repos_tgm" {
-  source    = "../../modules/repositories"
-  repos_map = local.tgm_modules_map
-  ci_teams  = ["blueprint-contributors"]
-  providers = { github = github }
+  source      = "../../modules/repositories"
+  repos_map   = local.tgm_modules_map
+  ci_teams    = ["blueprint-contributors"]
+  super_admin = data.github_team.cft-admins.node_id
+  providers   = { github = github }
 }
 
 module "repos_gcp" {
-  source    = "../../modules/repositories"
-  repos_map = local.gcp_modules_map
-  ci_teams  = ["blueprint-contributors"]
-  providers = { github = github.gcp }
+  source      = "../../modules/repositories"
+  repos_map   = local.gcp_modules_map
+  ci_teams    = ["blueprint-contributors"]
+  super_admin = data.github_team.blueprint-solutions.node_id
+  providers   = { github = github.gcp }
 }
 
 // All new repos are created in advance in the GCP org
@@ -55,7 +57,6 @@ module "branch_protection_tgm" {
   source    = "../../modules/branch_protection"
   repo_list = { for k, v in module.repos_tgm.repos : k => v if k != "terraform-example-foundation" }
   repos_map = local.tgm_modules_map
-  admin     = data.github_team.cft-admins.node_id
   providers = { github = github }
 }
 
@@ -63,7 +64,6 @@ module "branch_protection_gcp" {
   source    = "../../modules/branch_protection"
   repo_list = module.repos_gcp.repos
   repos_map = local.gcp_modules_map
-  admin     = data.github_team.blueprint-solutions.node_id
   providers = { github = github.gcp }
 }
 
