@@ -124,14 +124,6 @@ resource "github_team_repository" "admin_groups" {
   permission = "maintain"
 }
 
-# manually applied to repo
-# resource "github_team_repository" "super_admin" {
-#   for_each   = var.repos_map
-#   repository = each.key
-#   team_id    = var.super_admin
-#   permission = "admin"
-# }
-
 resource "github_team_repository" "groups" {
   for_each = {
     for v in local.groups : "${v.repo}/${v.group}" => v
