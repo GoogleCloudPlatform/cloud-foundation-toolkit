@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.6...infra/blueprint-test/v0.17.7) (2025-05-23)
+
+
+### Bug Fixes
+
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to d2d12f9 ([#2942](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2942)) ([bab4b3f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bab4b3fe4d471fb8f0f71ba79be4ec7903d77122))
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to f4c50e6 ([#3011](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3011)) ([4111a20](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/4111a201955486fc007c8914b856d9d7d4b79ed3))
+* **deps:** update module golang.org/x/mod to v0.24.0 ([#2907](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2907)) ([01e21dc](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/01e21dc0db6cdd817f06e815cc39f39eb4fd33bd))
+
 ## [0.17.6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.5...infra/blueprint-test/v0.17.6) (2025-02-19)
 
 
