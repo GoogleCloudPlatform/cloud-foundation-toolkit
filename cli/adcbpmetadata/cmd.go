@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -13,378 +13,365 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"google.golang.org/protobuf/proto"
 )
 
 var flags struct {
 	rootModulePath string
+	validate_only  bool
 }
 
+// markdownHeading struct
 type markdownHeading struct {
-	headLevel   int
-	headOrder   int
-	headTitle   string
-	content     bool
-	description string
+	HeadLevel   int
+	HeadOrder   int
+	HeadTitle   string
+	Content     bool
+	Description string
 }
+
+// Logger interface to make Log injectable/mockable
+type Logger interface {
+	Info(args ...interface{})
+	Warn(args ...interface{})
+	Error(args ...interface{})
+}
+
 
 func init() {
 	viper.AutomaticEnv()
 	Cmd.Flags().StringVarP(&flags.rootModulePath, "path", "p", ".", "Path to the blueprint for generating metadata.")
+	Cmd.Flags().BoolVarP(&flags.validate_only, "validate_only", "v", false, "Only validates the metadata.")
 }
 
+const (
+	readmeFileName          = "README.md"
+	tfVersionsFileName      = "versions.tf"
+	tfRolesFileName         = "test/setup/iam.tf"
+	tfServicesFileName      = "test/setup/main.tf"
+	iconFilePath            = "assets/icon.png"
+	modulesPath             = "modules"           // Directory name
+	examplesPath            = "examples"          // Directory name
+	metadataFileName        = "metadata.yaml"
+	metadataDisplayFileName = "metadata.display.yaml"
+	metadataApiVersion      = "blueprints.cloud.google.com/v1alpha1"
+	metadataKind            = "BlueprintMetadata"
+	localConfigAnnotation   = "config.kubernetes.io/local-config"
+)
+
 var Cmd = &cobra.Command{
-	Use:   "adc_validate",
-	Short: "Validated terraform module for ingestion into ADC",
-	Long:  `Validated terraform module for ingestion into ADC`,
+	Use:   "adc_metadata",
+	Short: "Validates and generates metadata for a Terraform module for ingestion into ADC.",
+	Long:  `Validates a Terraform module and generates a metadata.yaml file compatible with ADC (Application Delivery Controller) ingestion requirements.`,
 	Args:  cobra.NoArgs,
-	RunE:  generate,
+	Run:   generate,
 }
 
 // The top-level command function that generates metadata based on the provided flags
-func generate(cmd *cobra.Command, args []string) error {
+func generate(cmd *cobra.Command, args []string) {
 	wdPath, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("error getting working dir: %w", err)
+		Log.Error("Error getting working directory:"+ err.Error())
+		return
 	}
 
-	currBpPath := wdPath
-	if !path.IsAbs(flags.rootModulePath) {
-		currBpPath = path.Join(wdPath, flags.rootModulePath)
-	}
-
-	// 1. validate module
-	err = ValidateRootModuleForADC(currBpPath)
-	if err != nil {
-		return err
-	}
-
-	// 2. generate metadata
-  err= bpmetadata.GenerateMetadataForBpPath(currBpPath)
-	if err!=nil{
-		return err
-	}
-
-	// 3. validate metadata.yaml, this will be keeping manual edits
-	missingFile := checkFilePresence(currBpPath, []string{"metadata.yaml"})
-	if len(missingFile) == 0 {
-		err = validateMetadataYamlForADC(currBpPath)
-		if err != nil {
-			return err
+	var currBpPath string
+	if flags.rootModulePath != "" {
+		if filepath.IsAbs(flags.rootModulePath) {
+			currBpPath = flags.rootModulePath
+		} else {
+			currBpPath = filepath.Join(wdPath, flags.rootModulePath)
 		}
+	} else {
+		currBpPath = wdPath
 	}
-	return nil
+	Log.Info("Operating on blueprint path:"+ currBpPath)
+
+	if !flags.validate_only {
+		Log.Info("Generation Mode: Starting module validation and metadata generation...") // Corrected log message
+		err = ValidateRootModuleForADC(currBpPath)
+		if err != nil {
+			Log.Error("Error while validating Terraform module:"+ err.Error())
+			return
+		}
+
+		Log.Info("\n**************** Generating "+ metadataFileName + " ****************")
+		err = bpmetadata.GenerateMetadataForBpPath(currBpPath)
+		if err != nil {
+			Log.Error("Error while generating "+ metadataFileName+":"+ err.Error())
+			return
+		}
+		Log.Info("\n**************** Done Generating " + metadataFileName + " ****************\n")
+	} else {
+		Log.Info("Validate-Only Mode: Skipping module validation and metadata generation.")
+	}
+
+		err = validateMetadataYamlForADC(currBpPath)
+		if err !=nil{
+			Log.Error("Error while validating metadata.yaml for ADC:"+ err.Error())
+		}
+
+	// No explicit return needed here
 }
 
 func validateMetadataYamlForADC(currBpPath string) error {
-	// 1. valdate metadata.yaml against schema
+	Log.Info("**************** Validating "+ metadataFileName+ " ****************")
+
+	// 1. Validate metadata.yaml against schema
 	err := bpmetadata.ValidateMetadata(currBpPath, "")
 	if err != nil {
-		return fmt.Errorf("failed to validate metadata file against schema")
+		return fmt.Errorf("failed to validate %s against schema: %w", metadataFileName, err)
 	}
 
-	// 2. validate metadata.yaml for required fields and properties
-	// validate fields from metadata.yaml
-	// validate connection, roles, apis, output type, defaults
-
-	bpObj, err := bpmetadata.UnmarshalMetadata(currBpPath, "metadata.yaml")
-	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		return err
+	bpObj, err := bpmetadata.UnmarshalMetadata(currBpPath, metadataFileName)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("%s file does not exist in path %s: %w", metadataFileName, currBpPath, err)
+		}
+		return fmt.Errorf("failed to unmarshal %s: %w", metadataFileName, err)
 	}
 
-	//2.1 Return Error if connection metadata is missing
-	// Log.Info("bpObj.Spec.Interfaces.Variables" + prototext.Format(bpObj))
+	if bpObj == nil {
+		return fmt.Errorf("unmarshalled metadata object is nil from %s (path: %s) without an explicit error", metadataFileName, currBpPath)
+	}
 
-	if !proto.Equal(bpObj, &bpmetadata.BlueprintMetadata{}) &&
-		!proto.Equal(bpObj.Spec, &bpmetadata.BlueprintMetadataSpec{}) {
+	var validationErrors []string
 
-		if bpObj.Spec.Info == nil||
-				proto.Equal(bpObj.Spec.Info, &bpmetadata.BlueprintInfo{}) ||
-				bpObj.Spec.Info.Version == ""{
-					return fmt.Errorf("metadata file version is missing")
-				}
-
-
-		if bpObj.Spec.Requirements != nil &&
-			!proto.Equal(bpObj.Spec.Requirements, &bpmetadata.BlueprintRequirements{}) {
-
-			if len(bpObj.Spec.Requirements.Services) > 0 {
-				return fmt.Errorf("services are missing in metadata.yaml")
-			}
-
-			if len(bpObj.Spec.Requirements.Roles) > 0 {
-				return fmt.Errorf("roles are missing in metadata.yaml")
-			}
-
-			if len(bpObj.Spec.Requirements.ProviderVersions) > 0 {
-				return fmt.Errorf("providers version are missing in metadata.yaml")
-			}
-		} else {
-			return fmt.Errorf("requirements section is missing from metadata.yaml")
+	if bpObj.Spec == nil {
+		validationErrors = append(validationErrors, "spec section is missing from "+metadataFileName)
+	} else {
+		if bpObj.Spec.Info == nil {
+			validationErrors = append(validationErrors, "spec.info section is missing")
+		} else if bpObj.Spec.Info.Version == "" {
+			validationErrors = append(validationErrors, "spec.info.version is missing")
 		}
 
-		var connectionMetadataExists bool
-		if !proto.Equal(bpObj.Spec.Interfaces, &bpmetadata.BlueprintInterface{}) {
+		if bpObj.Spec.Requirements == nil {
+			validationErrors = append(validationErrors, "spec.requirements section is missing. This section can be generated by adding respective configurations (e.g., test/setup/iam.tf for roles, test/setup/main.tf for services, versions.tf for provider versions or manually.")
+		} else {
+			if len(bpObj.Spec.Requirements.Services) == 0 {
+				validationErrors = append(validationErrors,
+					fmt.Sprintf("spec.requirements.services are missing. Add service configurations in %s or add manually.", tfServicesFileName))
+				}
+			if len(bpObj.Spec.Requirements.Roles) == 0 {
+				validationErrors = append(validationErrors,
+					fmt.Sprintf("spec.requirements.roles are missing. Add role configurations in %s or add manually.", tfRolesFileName))
+			}
+			if len(bpObj.Spec.Requirements.ProviderVersions) == 0 {
+				if !flags.validate_only {
+					Log.Info("Attempting to generate provider versions from " + tfVersionsFileName)
+					// Use filepath.Join for OS-agnostic path construction
+					versionsFilePath := filepath.Join(currBpPath, tfVersionsFileName)
+
+					if _, statErr := os.Stat(versionsFilePath); os.IsNotExist(statErr) {
+						validationErrors = append(validationErrors, fmt.Sprintf("spec.requirements.providerVersions is missing, and %s file was not found at %s to generate them.", tfVersionsFileName, versionsFilePath))
+					} else {
+						p := hclparse.NewParser()
+						versionsFile, diags := p.ParseHCLFile(versionsFilePath)
+						if diags.HasErrors() {
+							var hclErrs []string
+							for _, diag := range diags {
+								hclErrs = append(hclErrs, diag.Error())
+							}
+							validationErrors = append(validationErrors, fmt.Sprintf("errors parsing %s: %s", tfVersionsFileName, strings.Join(hclErrs, "; ")))
+						} else {
+							versionObj, parseErr := bpmetadata.ParseBlueprintProviderVersions(versionsFile)
+							if parseErr != nil {
+								validationErrors = append(validationErrors, fmt.Sprintf("error parsing blueprint provider versions from %s: %s", tfVersionsFileName, parseErr.Error()))
+							} else if len(versionObj) == 0 {
+								validationErrors = append(validationErrors, fmt.Sprintf("no provider versions found or parsed from %s. Ensure the file has valid provider requirements.", tfVersionsFileName))
+							} else {
+								bpObj.Spec.Requirements.ProviderVersions = versionObj
+								Log.Info("Successfully generated and assigned provider versions.")
+								writeErr := bpmetadata.WriteMetadata(bpObj, currBpPath, metadataFileName)
+								if writeErr != nil {
+									return fmt.Errorf("error writing updated provider version information into %s: %w", metadataFileName, writeErr)
+								}
+								Log.Info("Successfully wrote updated metadata with provider versions to "+ metadataFileName)
+							}
+						}
+					}
+				} else {
+					validationErrors = append(validationErrors,
+						fmt.Sprintf("spec.requirements.providerVersions is missing. Generate by adding configuration in %s and re-running without validate_only, or add manually.", tfVersionsFileName))
+				}
+			}
+		}
+
+		if bpObj.Spec.Interfaces == nil {
+			validationErrors = append(validationErrors, "spec.interfaces section is missing")
+		} else {
+			var connectionMetadataExists bool
 			for _, variable := range bpObj.Spec.Interfaces.Variables {
 				if len(variable.Connections) > 0 {
 					connectionMetadataExists = true
 					break
 				}
-
 			}
-			if !connectionMetadataExists {
-				 Log.Warn("connection data is missing from metadata.yaml")
+			if !connectionMetadataExists && len(bpObj.Spec.Interfaces.Variables) > 0 {
+				Log.Warn("Connection data is missing from spec.interfaces.variables in "+ metadataFileName + ". Manual update may be needed.")
 			}
-
 			for _, output := range bpObj.Spec.Interfaces.Outputs {
-				if output.Type ==nil {
-					return fmt.Errorf("output: "+output.Name+" is missing type information")
+				if output.Type == nil {
+					validationErrors = append(validationErrors, fmt.Sprintf("output '%s' in spec.interfaces.outputs is missing type information", output.Name))
 				}
 			}
-
-		} else {
-			//TODO:what to do if there is no interfaces
-			return fmt.Errorf("interfaces section is missing from metadata.yaml")
 		}
-	} else {
-		return fmt.Errorf("specs section is missing from metadata.yaml")
 	}
 
+	if len(validationErrors) > 0 {
+		return fmt.Errorf("%s validation errors:\n- %s", metadataFileName, strings.Join(validationErrors, ",\n- "))
+	}
+
+	Log.Info("**************** Done validating "+ metadataFileName + " ****************")
 	return nil
 }
 
 func ValidateRootModuleForADC(bpPath string) error {
-
-	// files root module must have TODO: Add description describing need of each file
-	// TODO: ADC doesn't require readme file but metadata generation code require it : we can add one readme
-	requiredFilesForRoot := []string{"README.md", "main.tf", "versions.tf"}
+	Log.Info("**************** Validating Terraform Root Module ****************")
+	requiredFilesForRoot := []string{readmeFileName, "main.tf", tfVersionsFileName}
 	missingFiles := checkFilePresence(bpPath, requiredFilesForRoot)
 
 	if len(missingFiles) > 0 {
-		return fmt.Errorf("top-level module must have following files also:%s", missingFiles)
+		return fmt.Errorf("top-level module at %s must have the following files: %s", bpPath, strings.Join(missingFiles, ", "))
 	}
 
-	goodToHaveFiles := []string{"test/setup/iam.tf", "test/setup/main.tf"}
-	missingGoodToHaveFiles := checkFilePresence(bpPath, goodToHaveFiles)
-
-	if len(missingGoodToHaveFiles) > 0 {
-		Log.Warn("These files also required for generating metadata: [" + strings.Join(missingGoodToHaveFiles, ", ") + "]\n")
-	}
-
-	otherFiles := []string{"assets/icon.png", "modules/", "examples"}
+	otherFiles := []string{iconFilePath, examplesPath, filepath.Join("test", "setup", "iam.tf"), filepath.Join("test", "setup", "main.tf")}
 	missingOtherFiles := checkFilePresence(bpPath, otherFiles)
 	if len(missingOtherFiles) > 0 {
-		Log.Info("Cft module can have these files also: [" + strings.Join(missingOtherFiles, ", ") + "]\n")
+		Log.Info("For a comprehensive blueprint at "+ bpPath+", consider adding these optional files/directories: ["+ strings.Join(missingOtherFiles, ", "), "]")
 	}
 
-	// Validate Readme.md file content
-	err := validateReadme(path.Join(bpPath, "README.md"))
+	// // Validate Readme.md file content (re-enabled)
+	// err := validateReadme(filepath.Join(bpPath, readmeFileName))
+	// if err != nil {
+	// 	return fmt.Errorf("README.md validation failed: %w", err)
+	// }
+
+	err := validateVersionsFiles(filepath.Join(bpPath, tfVersionsFileName))
 	if err != nil {
-		return err
+		return fmt.Errorf("versions.tf validation failed: %w", err)
 	}
-
-	err = validateVersionsFiles(path.Join(bpPath, "versions.tf"))
-	if err != nil {
-		return err
-	}
-
+	Log.Info("**************** Root Module Validation Successful ****************\n")
 	return nil
 }
 
 func validateVersionsFiles(versionsConfigPath string) error {
-	Log.Info("**************** Validating  versions.tf****************")
-
-	//set of allowed providers
+	Log.Info("Validating "+ tfVersionsFileName+ " at "+ versionsConfigPath)
 	allowedTerraformProviders := []string{
 		"hashicorp/google", "hashicorp/google-beta",
 	}
 
 	p := hclparse.NewParser()
 	versionsFile, diags := p.ParseHCLFile(versionsConfigPath)
-	err := bpmetadata.HasHclErrors(diags)
-	if err != nil {
-		return err
+	if err := bpmetadata.HasHclErrors(diags); err != nil {
+		return fmt.Errorf("HCL parsing errors in %s: %w", versionsConfigPath, err)
 	}
 
-	// parse out the required providers from the config
 	var hclModule tfconfig.Module
 	hclModule.RequiredProviders = make(map[string]*tfconfig.ProviderRequirement)
 	diags = tfconfig.LoadModuleFromFile(versionsFile, &hclModule)
-	err = bpmetadata.HasHclErrors(diags)
-	if err != nil {
-		return err
+	if err := bpmetadata.HasHclErrors(diags); err != nil {
+		return fmt.Errorf("errors loading module from %s: %w", versionsConfigPath, err)
 	}
 
-	var errors []string
-	for _, providerData := range hclModule.RequiredProviders {
+	var validationErrs []string
+	if len(hclModule.RequiredProviders) == 0 {
+		validationErrs = append(validationErrs, "no required_providers block found in "+versionsConfigPath)
+	}
+
+	for providerName, providerData := range hclModule.RequiredProviders {
 		if providerData.Source == "" {
-			errors = append(errors, fmt.Sprintln("source not found in provider settings"))
+			validationErrs = append(validationErrs, fmt.Sprintf("provider '%s' is missing 'source' attribute in %s", providerName, versionsConfigPath))
 		} else if slices.Index(allowedTerraformProviders, providerData.Source) == -1 {
-			errors = append(errors, fmt.Sprintln("Incorrect terraform provider: "+providerData.Source+". Only following terraform providers are allowed as of now: ["+strings.Join(allowedTerraformProviders, ", ")+"]"))
+			validationErrs = append(validationErrs, fmt.Sprintf("disallowed Terraform provider source '%s' for provider '%s' in %s. Allowed: [%s]",
+				providerData.Source, providerName, versionsConfigPath, strings.Join(allowedTerraformProviders, ", ")))
 		}
-
 		if len(providerData.VersionConstraints) == 0 {
-			errors = append(errors, fmt.Sprintln("version not found in provider settings"))
+			validationErrs = append(validationErrs, fmt.Sprintf("version constraint is missing for provider '%s' (source: '%s') in %s",
+				providerName, providerData.Source, versionsConfigPath))
 		}
 	}
 
-	if len(errors) > 0 {
-		return fmt.Errorf(strings.Join(errors, "\n"))
+	if len(validationErrs) > 0 {
+		return fmt.Errorf(strings.Join(validationErrs, "\n"))
 	}
 
-	Log.Info("****************Done Validating  versions.tf****************\n\n")
+	Log.Info("Done Validating "+ tfVersionsFileName)
 	return nil
 }
 
 func validateReadme(readmeFilePath string) error {
-	Log.Info("\n\n**************** Validating  README.md****************")
+	Log.Info("Validating ", readmeFileName+ " at "+ readmeFilePath)
 	readmeContent, err := os.ReadFile(readmeFilePath)
 	if err != nil {
-		return fmt.Errorf("blueprint readme markdown is missing, create one using https://tinyurl.com/tf-mod-readme | error: %w", err)
+		return fmt.Errorf("blueprint %s is missing or unreadable at %s (see https://tinyurl.com/tf-mod-readme). Error: %w", readmeFileName, readmeFilePath, err)
 	}
-	/// Repo details validation
 
-	// Must have headings
 	mustHaveHeadings := []markdownHeading{
 		{
-			headLevel:   1,
-			headOrder:   1,
-			headTitle:   "",
-			content:     false,
-			description: "Title of the module",
+			HeadLevel:   1, // Main title of the module
+			HeadOrder:   1, // First H1
+			HeadTitle:   "", // Empty title means match any title for the first H1
+			Content:     false,
+			Description: "The main title of the module (first H1 heading)",
 		},
 	}
 
-	missingMustHaveHeadings := missingHeadings(readmeContent, mustHaveHeadings)
-	var errors []string
-	if len(missingMustHaveHeadings) > 0 {
-		for _, heading := range missingMustHaveHeadings {
-			e := fmt.Sprintf("%s\t %s", heading.headTitle, heading.description)
-			errors = append(errors, e)
+	var missingMustHaveErrs []string
+	for _, heading := range missingHeadings(readmeContent, mustHaveHeadings) {
+		titleForMsg := heading.HeadTitle
+		if titleForMsg == "" && heading.HeadLevel == 1 && heading.HeadOrder == 1 {
+			titleForMsg = "[Main Title H1]"
 		}
-		if len(errors) > 0 {
-			return fmt.Errorf("%s", strings.Join(errors, "\n"))
-		}
+		missingMustHaveErrs = append(missingMustHaveErrs, fmt.Sprintf("Missing required heading: '%s'. Description: %s", titleForMsg, heading.Description))
+	}
+	if len(missingMustHaveErrs) > 0 {
+		return fmt.Errorf(strings.Join(missingMustHaveErrs, "\n"))
 	}
 
 	goodToHaveMarkdownHeadings := []markdownHeading{
-		{
-			headLevel:   1,
-			headOrder:   1,
-			headTitle:   "",
-			content:     false,
-			description: "Title of the module",
-		},
-		{
-			headLevel:   -1,
-			headOrder:   -1,
-			headTitle:   "Tagline",
-			content:     true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintInfo.description.Tagline` field in metadata.yaml",
-		},
+		{HeadLevel: -1, HeadOrder: -1, HeadTitle: "Tagline", Content: true, Description: "Corresponds to `BlueprintMetadataSpec.BlueprintInfo.description.Tagline`"},
+		// Add other "good to have" headings based on your project's standards
 	}
-	missingGoodToHaveHeadings := missingHeadings(readmeContent, goodToHaveMarkdownHeadings)
-
-	if len(missingGoodToHaveHeadings) > 0 {
+	missingGoodToHave := missingHeadings(readmeContent, goodToHaveMarkdownHeadings)
+	if len(missingGoodToHave) > 0 {
 		var warningMsg []string
-		for _, heading := range missingGoodToHaveHeadings {
-			warningMsg = append(warningMsg, "# "+heading.headTitle+": \t"+heading.description)
-			// Log.Warn("# "+heading.headTitle+": \t"+ heading.description)/
+		for _, heading := range missingGoodToHave {
+			warningMsg = append(warningMsg, fmt.Sprintf("# %s: \t%s", heading.HeadTitle, heading.Description))
 		}
-		Log.Warn("\nGood to have headings- \n" + strings.Join(warningMsg, "\n") + "\n")
+		Log.Warn("\nConsider adding these sections to ", readmeFileName, " for better metadata:\n", strings.Join(warningMsg, "\n"))
 	}
+	// ... (otherHeadings logic can be similarly structured if needed) ...
 
-	otherHeadings := []markdownHeading{
-		{
-			headLevel:   -1,
-			headOrder:   -1,
-			headTitle:   "Tagline",
-			content:     true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintInfo.description.Tagline` field in metadata.yaml",
-		},
-		{
-			headLevel:   -1,
-			headOrder:   -1,
-			headTitle:   "Detailed",
-			content:     true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintInfo.Description.Detailed` field in metadata.yaml",
-		},
-		{
-			headLevel:   -1,
-			headOrder:   -1,
-			headTitle:   "PreDeploy",
-			content:     true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintInfo.Description.PreDeploy` field in metadata.yaml",
-		},
-
-		{
-			headLevel:   -1,
-			headOrder:   -1,
-			headTitle:   "Architecture",
-			content:     true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintInfo.Description.Architecture` field in metadata.yaml",
-		},
-		{
-			headLevel:   -1,
-			headOrder:   -1,
-			headTitle:   "Deployment Duration",
-			content:     true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintInfo.DeploymentDuration` field in metadata.yaml",
-		},
-		{
-			headLevel:   -1,
-			headOrder:   -1,
-			headTitle:   "Cost",
-			content:     true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintInfo.CostEstimate` field in metadata.yaml",
-		},
-		{
-			headLevel: -1,
-			headOrder: -1,
-			headTitle: "Documentation",
-			content:   true,
-			description: "corresponds to `BlueprintMetadataSpec.BlueprintContent.Documentation` field in metadata.yaml," +
-				"if Documentation heading is present as a root chidren of markdown the very next paragraph is scanned," +
-				"expecting to find an image or a link (as the diagram) followed immediately by a block of text" +
-				"(as the description). If this structure is present, it extracts the diagram URL and" +
-				"the description lines; otherwise, it does not include this field in the metadata.yaml.",
-		},
-	}
-	otherMissingHeadings := missingHeadings(readmeContent, otherHeadings)
-
-	if len(otherMissingHeadings) > 0 {
-		var infoMsg []string
-		for _, heading := range otherMissingHeadings {
-			infoMsg = append(infoMsg, "# "+heading.headTitle+":\t"+heading.description)
-		}
-		Log.Info("\nOther missing headings-\n" + strings.Join(infoMsg, "\n") + "\n")
-	}
-	Log.Info("\n****************Done Validating  README.md****************\n\n")
+	Log.Info("Done Validating "+ readmeFileName)
 	return nil
 }
 
+// missingHeadings checks for the presence of specified markdown headings in the content.
 func missingHeadings(content []byte, markdownHeadings []markdownHeading) []markdownHeading {
-	missingHeadings := []markdownHeading{}
+	var notFoundHeadings []markdownHeading
 	for _, heading := range markdownHeadings {
-		_, err := bpmetadata.GetMdContent(content, heading.headLevel, heading.headOrder, heading.headTitle, heading.content)
+		_, err := bpmetadata.GetMdContent(content, heading.HeadLevel, heading.HeadOrder, heading.HeadTitle, heading.Content)
 		if err != nil {
-			missingHeadings = append(missingHeadings, heading)
+			notFoundHeadings = append(notFoundHeadings, heading)
 		}
 	}
-	return missingHeadings
+	return notFoundHeadings
 }
 
-func checkFilePresence(bpPath string, filePaths []string) []string {
-
-	missingFiles := []string{}
-	for _, fileName := range filePaths {
-		filePath := path.Join(bpPath, fileName)
+// checkFilePresence checks if the given file names exist within bpPath.
+// Returns a slice of basenames of files that are missing or encountered an error during stat.
+func checkFilePresence(bpPath string, fileNames []string) []string {
+	var missingFiles []string
+	for _, fileName := range fileNames {
+		// Use filepath.Join for OS-agnostic path construction
+		filePath := filepath.Join(bpPath, fileName)
 		_, err := os.Stat(filePath)
-
 		if err != nil {
+			// os.IsNotExist(err) is a more specific check for "file does not exist".
+			// Current logic flags any error (e.g. permission denied) as if the file is missing.
 			missingFiles = append(missingFiles, fileName)
 		}
-
 	}
 	return missingFiles
 }

@@ -74,7 +74,7 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 		return fmt.Errorf("metdata validation failed for: %s", m)
 	}
 
-	Log.Info("metadata is valid", "path", m)
+	Log.Info("metadata format is valid", "path", m)
 	return nil
 }
 

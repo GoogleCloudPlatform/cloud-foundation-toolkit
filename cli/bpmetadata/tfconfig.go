@@ -207,9 +207,9 @@ func parseBlueprintVersion(versionsFile *hcl.File, diags hcl.Diagnostics) (strin
 	return "", nil
 }
 
-// parseBlueprintProviderVersions gets the blueprint provider_versions from the provided config
+// ParseBlueprintProviderVersions gets the blueprint provider_versions from the provided config
 // from the required_providers block.
-func parseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion, error) {
+func ParseBlueprintProviderVersions(versionsFile *hcl.File) ([]*ProviderVersion, error) {
 	var v []*ProviderVersion
 	// parse out the required providers from the config
 	var hclModule tfconfig.Module
@@ -382,7 +382,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	v, err := parseBlueprintProviderVersions(versionsFile)
+	v, err := ParseBlueprintProviderVersions(versionsFile)
 	if err != nil {
 		return nil, err
 	}
