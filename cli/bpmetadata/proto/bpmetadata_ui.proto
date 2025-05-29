@@ -148,11 +148,13 @@ message DisplayVariable {
   }
   repeated AlternateDefault alt_defaults = 21; // @gotags: json:"altDefaults,omitempty" yaml:"altDefaults,omitempty"
 
-  repeated DisplayVariableToggle toggle_using_variables = 22; // @gotags: json:"toggleUsingVariables,omitempty" yaml:"toggleUsingVariables,omitempty"
+  DisplayVariableToggle toggle_using_variable = 22;  // @gotags: json:"toggleUsingVariable,omitempty" yaml:"toggleUsingVariable,omitempty"
+
+  repeated DisplayVariableToggle toggle_using_variables = 23; // @gotags: json:"toggleUsingVariables,omitempty" yaml:"toggleUsingVariables,omitempty"
 
   // properties is a map defining all the fields of the input variable.
   // Gen: Manually-authored
-  map<string, DisplayVariable> properties = 23;
+  map<string, DisplayVariable> properties = 24;
 
 }
 
@@ -161,10 +163,13 @@ message DisplayVariableToggle {
   string variable_name = 1; // @gotags: json:"variableName,omitempty" yaml:"variableName,omitempty"
 
   // The value of the variable used to toggle the display of another variable.
-  repeated string variable_values = 2; // @gotags: json:"variableValues,omitempty" yaml:"variableValue,omitempty"
+  repeated string variable_value = 2; // @gotags: json:"variableValue,omitempty" yaml:"variableValue,omitempty"
 
   // The type of the variable used to toggle the display of another variable.
   ToggleType type = 3; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
+
+  // The value of the variable used to toggle the display of another variable.
+  repeated string variable_values = 4;  // @gotags: json:"variableValues,omitempty" yaml:"variableValues,omitempty"
 
   enum ToggleType {
     // Default
