@@ -122,7 +122,7 @@ func generate(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		err = generateMetadataForBpPath(modPath)
+		err = GenerateMetadataForBpPath(modPath)
 		if err != nil {
 			e := fmt.Sprintf("path: %s\n %s", modPath, err.Error())
 			errors = append(errors, e)
@@ -326,7 +326,7 @@ func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte
 		return fmt.Errorf("title tag missing in markdown, err: %w", err)
 	}
 
-	i.Title = title.literal
+	i.Title = title.Literal
 	rootPath := r.Source.RepoRootPath
 	if rootPath == "" {
 		rootPath = r.Source.BlueprintRootPath
@@ -352,17 +352,17 @@ func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte
 	i.Description = &BlueprintDescription{}
 	tagline, err := GetMdContent(readmeContent, -1, -1, "Tagline", true)
 	if err == nil {
-		i.Description.Tagline = tagline.literal
+		i.Description.Tagline = tagline.Literal
 	}
 
 	detailed, err := GetMdContent(readmeContent, -1, -1, "Detailed", true)
 	if err == nil {
-		i.Description.Detailed = detailed.literal
+		i.Description.Detailed = detailed.Literal
 	}
 
 	preDeploy, err := GetMdContent(readmeContent, -1, -1, "PreDeploy", true)
 	if err == nil {
-		i.Description.PreDeploy = preDeploy.literal
+		i.Description.PreDeploy = preDeploy.Literal
 	}
 
 	var archListToSet []string
