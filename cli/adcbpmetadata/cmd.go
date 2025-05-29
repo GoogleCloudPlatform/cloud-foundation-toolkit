@@ -20,15 +20,6 @@ var flags struct {
 	validate_only  bool
 }
 
-// markdownHeading struct
-type markdownHeading struct {
-	HeadLevel   int
-	HeadOrder   int
-	HeadTitle   string
-	Content     bool
-	Description string
-}
-
 // Logger interface to make Log injectable/mockable
 type Logger interface {
 	Info(args ...interface{})
@@ -88,7 +79,7 @@ func generate(cmd *cobra.Command, args []string) {
 
 	if !flags.validate_only {
 		Log.Info("Generation Mode: Starting module validation and metadata generation...") // Corrected log message
-		err = ValidateRootModuleForADC(currBpPath)
+		err = ValidateRootModuleForADC(currBpPath, true)
 		if err != nil {
 			Log.Error("Error while validating Terraform module:"+ err.Error())
 			return
@@ -107,7 +98,7 @@ func generate(cmd *cobra.Command, args []string) {
 
 		err = validateMetadataYamlForADC(currBpPath)
 		if err !=nil{
-			Log.Error("Error while validating metadata.yaml for ADC:"+ err.Error())
+			Log.Error("Error: "+ err.Error())
 		}
 
 	// No explicit return needed here
@@ -117,6 +108,7 @@ func validateMetadataYamlForADC(currBpPath string) error {
 	Log.Info("**************** Validating "+ metadataFileName+ " ****************")
 
 	// 1. Validate metadata.yaml against schema
+	fmt.Println("Validating metadata file against schema")
 	err := bpmetadata.ValidateMetadata(currBpPath, "")
 	if err != nil {
 		return fmt.Errorf("failed to validate %s against schema: %w", metadataFileName, err)
@@ -165,6 +157,7 @@ func validateMetadataYamlForADC(currBpPath string) error {
 					if _, statErr := os.Stat(versionsFilePath); os.IsNotExist(statErr) {
 						validationErrors = append(validationErrors, fmt.Sprintf("spec.requirements.providerVersions is missing, and %s file was not found at %s to generate them.", tfVersionsFileName, versionsFilePath))
 					} else {
+						// TODO: We can add a fallback where we can pickup versions from main.tf also and verify the vesion if ADC supports that
 						p := hclparse.NewParser()
 						versionsFile, diags := p.ParseHCLFile(versionsFilePath)
 						if diags.HasErrors() {
@@ -226,28 +219,78 @@ func validateMetadataYamlForADC(currBpPath string) error {
 	return nil
 }
 
-func ValidateRootModuleForADC(bpPath string) error {
+// ValidateRootModuleForADC validates the root Terraform module for ADC requirements.
+// If generateMetadata is true, it may also create or update the README.md file.
+func ValidateRootModuleForADC(bpPath string, generateMetadata bool) error {
 	Log.Info("**************** Validating Terraform Root Module ****************")
-	requiredFilesForRoot := []string{readmeFileName, "main.tf", tfVersionsFileName}
-	missingFiles := checkFilePresence(bpPath, requiredFilesForRoot)
 
-	if len(missingFiles) > 0 {
-		return fmt.Errorf("top-level module at %s must have the following files: %s", bpPath, strings.Join(missingFiles, ", "))
+	readmeFilePath := filepath.Join(bpPath, readmeFileName)
+	missingReadme := checkFilePresence(bpPath, []string{readmeFileName})
+
+	if generateMetadata {
+		// Create or update readme only when mode is generate
+		defaultTitle := "Add your title here"
+		if len(missingReadme) == 0 { // README.md exists
+			readmeContentByte, err := extractReadmeData(readmeFilePath)
+			if err != nil {
+				return fmt.Errorf("failed to read existing README.md at %s: %w", readmeFilePath, err)
+			}
+
+			_, err = bpmetadata.GetMdContent(readmeContentByte, 1, 1, "", false)
+			var titlePrependTemplate string
+			if err != nil {
+				// If err is not nil then an H1 Title is not present in the existing readme.
+				Log.Info("README.md file is missing an H1 title, prepending a placeholder title.")
+				// Define a temporary template to prepend the title to existing data.
+				titlePrependTemplate = `
+# {{.Title}}
+{{.Data}}
+					`
+					pageDataForPrepend := PageData{
+						Title: defaultTitle,
+						Data:  string(readmeContentByte),
+					}
+					// Call createReadme with the custom template for prepending.
+					err = createReadme(bpPath, pageDataForPrepend, titlePrependTemplate)
+					if err !=nil {
+						return err
+					}
+			}
+		} else {
+			Log.Info("README.md is missing, creating a new one with a placeholder title and skeleton structure.")
+			// Create PageData with only the default title; .Data will be empty.
+			// The global mdTemplate will be used, which doesn't use .Data but uses .Title.
+			pageDataForNewReadme := PageData{Title: defaultTitle}
+			err := createReadme(bpPath, pageDataForNewReadme, "") // Pass empty template string to use mdTemplate
+			if err !=nil {
+				return err
+			}
+		}
+	} else {
+		Log.Info("Validate-Only Mode: Validating existing README.md.")
+		// If README is missing in validate-only mode, validateReadme will return an error.
+		err := validateReadme(readmeFilePath)
+		if err != nil {
+			return fmt.Errorf("README.md validation failed: %w", err)
+		}
 	}
 
+	// Validate presence of other required files like main.tf, versions.tf
+	requiredFilesForRoot := []string{"main.tf", tfVersionsFileName}
+	missingRequiredFiles := checkFilePresence(bpPath, requiredFilesForRoot)
+	if len(missingRequiredFiles) > 0 {
+		return fmt.Errorf("top-level module at %s must have the following files: %s", bpPath, strings.Join(missingRequiredFiles, ", "))
+	}
+
+	// Check for other optional but recommended files
 	otherFiles := []string{iconFilePath, examplesPath, filepath.Join("test", "setup", "iam.tf"), filepath.Join("test", "setup", "main.tf")}
 	missingOtherFiles := checkFilePresence(bpPath, otherFiles)
 	if len(missingOtherFiles) > 0 {
-		Log.Info("For a comprehensive blueprint at "+ bpPath+", consider adding these optional files/directories: ["+ strings.Join(missingOtherFiles, ", "), "]")
+		Log.Info("For a comprehensive blueprint at ", bpPath, ", consider adding these optional files/directories: [", strings.Join(missingOtherFiles, ", "), "]")
 	}
 
-	// // Validate Readme.md file content (re-enabled)
-	// err := validateReadme(filepath.Join(bpPath, readmeFileName))
-	// if err != nil {
-	// 	return fmt.Errorf("README.md validation failed: %w", err)
-	// }
-
-	err := validateVersionsFiles(filepath.Join(bpPath, tfVersionsFileName))
+	// Validate versions.tf content
+	err := validateVersionsFiles(filepath.Join(bpPath, tfVersionsFileName)) // Assuming validateVersionsFiles is defined elsewhere
 	if err != nil {
 		return fmt.Errorf("versions.tf validation failed: %w", err)
 	}
@@ -298,65 +341,6 @@ func validateVersionsFiles(versionsConfigPath string) error {
 
 	Log.Info("Done Validating "+ tfVersionsFileName)
 	return nil
-}
-
-func validateReadme(readmeFilePath string) error {
-	Log.Info("Validating ", readmeFileName+ " at "+ readmeFilePath)
-	readmeContent, err := os.ReadFile(readmeFilePath)
-	if err != nil {
-		return fmt.Errorf("blueprint %s is missing or unreadable at %s (see https://tinyurl.com/tf-mod-readme). Error: %w", readmeFileName, readmeFilePath, err)
-	}
-
-	mustHaveHeadings := []markdownHeading{
-		{
-			HeadLevel:   1, // Main title of the module
-			HeadOrder:   1, // First H1
-			HeadTitle:   "", // Empty title means match any title for the first H1
-			Content:     false,
-			Description: "The main title of the module (first H1 heading)",
-		},
-	}
-
-	var missingMustHaveErrs []string
-	for _, heading := range missingHeadings(readmeContent, mustHaveHeadings) {
-		titleForMsg := heading.HeadTitle
-		if titleForMsg == "" && heading.HeadLevel == 1 && heading.HeadOrder == 1 {
-			titleForMsg = "[Main Title H1]"
-		}
-		missingMustHaveErrs = append(missingMustHaveErrs, fmt.Sprintf("Missing required heading: '%s'. Description: %s", titleForMsg, heading.Description))
-	}
-	if len(missingMustHaveErrs) > 0 {
-		return fmt.Errorf(strings.Join(missingMustHaveErrs, "\n"))
-	}
-
-	goodToHaveMarkdownHeadings := []markdownHeading{
-		{HeadLevel: -1, HeadOrder: -1, HeadTitle: "Tagline", Content: true, Description: "Corresponds to `BlueprintMetadataSpec.BlueprintInfo.description.Tagline`"},
-		// Add other "good to have" headings based on your project's standards
-	}
-	missingGoodToHave := missingHeadings(readmeContent, goodToHaveMarkdownHeadings)
-	if len(missingGoodToHave) > 0 {
-		var warningMsg []string
-		for _, heading := range missingGoodToHave {
-			warningMsg = append(warningMsg, fmt.Sprintf("# %s: \t%s", heading.HeadTitle, heading.Description))
-		}
-		Log.Warn("\nConsider adding these sections to ", readmeFileName, " for better metadata:\n", strings.Join(warningMsg, "\n"))
-	}
-	// ... (otherHeadings logic can be similarly structured if needed) ...
-
-	Log.Info("Done Validating "+ readmeFileName)
-	return nil
-}
-
-// missingHeadings checks for the presence of specified markdown headings in the content.
-func missingHeadings(content []byte, markdownHeadings []markdownHeading) []markdownHeading {
-	var notFoundHeadings []markdownHeading
-	for _, heading := range markdownHeadings {
-		_, err := bpmetadata.GetMdContent(content, heading.HeadLevel, heading.HeadOrder, heading.HeadTitle, heading.Content)
-		if err != nil {
-			notFoundHeadings = append(notFoundHeadings, heading)
-		}
-	}
-	return notFoundHeadings
 }
 
 // checkFilePresence checks if the given file names exist within bpPath.
