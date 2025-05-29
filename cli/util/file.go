@@ -28,7 +28,7 @@ func WalkTerraformDirs(topLevelPath string) ([]string, error) {
 	var tfDirs []string
 	err := filepath.Walk(topLevelPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
-			return fmt.Errorf("failure in accessing the path %q: %w\n", path, err)
+			return fmt.Errorf("failure in accessing the path %q: %w", path, err)
 		}
 		if info.IsDir() && (strings.HasPrefix(info.Name(), tfInternalDirPrefix) || skipDiscoverDirs[info.Name()]) {
 			return filepath.SkipDir
@@ -42,7 +42,7 @@ func WalkTerraformDirs(topLevelPath string) ([]string, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error walking the path %q: %w\n", topLevelPath, err)
+		return nil, fmt.Errorf("error walking the path %q: %w", topLevelPath, err)
 	}
 
 	return tfDirs, nil
@@ -87,7 +87,7 @@ func FindFilesWithPattern(dir string, pattern string, skipPaths []string) ([]str
 	})
 
 	if err != nil {
-		fmt.Printf("error accessing the path: %q. error: %v\n", dir, err)
+		fmt.Printf("error accessing the path: %q. error: %v", dir, err)
 		return nil, err
 	}
 

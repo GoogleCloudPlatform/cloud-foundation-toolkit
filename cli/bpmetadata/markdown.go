@@ -79,7 +79,7 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 		case *ast.List:
 			if getContent && (headOrder == orderCtr || foundHead) {
 				var mdListItems []mdListItem
-				for _, c := range sectionType.Container.Children {
+				for _, c := range sectionType.Children {
 					var listItem mdListItem
 					// each item is a list with data and metadata about the list item
 					itemConfigs := ast.GetFirstChild(c).AsContainer().Children

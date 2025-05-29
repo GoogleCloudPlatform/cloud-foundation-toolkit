@@ -22,14 +22,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
           go-version-file: cli/go.mod
           cache-dependency-path: cli/go.sum
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@71f986410dfbc7added4569d411d040a91dc6935' # v2.1.8
+        uses: 'google-github-actions/auth@ba79af03959ebeac9769e648f473a284504d9193' # v2.1.10
         with:
           workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
           service_account: '${{ secrets.GCP_WIF_SA_EMAIL }}'
@@ -55,7 +55,7 @@ jobs:
           chmod +x bin/*
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: bin
           path: cli/bin
