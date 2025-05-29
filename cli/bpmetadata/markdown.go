@@ -11,7 +11,7 @@ import (
 )
 
 type mdContent struct {
-	literal   string
+	Literal   string
 	url       string
 	listItems []mdListItem
 }
@@ -55,7 +55,7 @@ func GetMdContent(content []byte, headLevel int, headOrder int, headTitle string
 
 			if !getContent && (headOrder == orderCtr || foundHead) {
 				return &mdContent{
-					literal: string(currLeaf.Literal),
+					Literal: string(currLeaf.Literal),
 				}, nil
 			}
 
@@ -66,13 +66,13 @@ func GetMdContent(content []byte, headLevel int, headOrder int, headTitle string
 				lNode, isLink := l.(*ast.Link)
 				if isLink {
 					return &mdContent{
-						literal: string(ast.GetFirstChild(lNode).AsLeaf().Literal),
+						Literal: string(ast.GetFirstChild(lNode).AsLeaf().Literal),
 						url:     string(lNode.Destination),
 					}, nil
 				}
 
 				return &mdContent{
-					literal: string(currLeaf.Literal),
+					Literal: string(currLeaf.Literal),
 				}, nil
 			}
 
@@ -122,7 +122,7 @@ func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEsti
 		return nil, err
 	}
 
-	matches := reTimeEstimate.FindAllStringSubmatch(durationDetails.literal, -1)
+	matches := reTimeEstimate.FindAllStringSubmatch(durationDetails.Literal, -1)
 	if len(matches) == 0 {
 		return nil, fmt.Errorf("unable to find deployment duration")
 	}
@@ -158,7 +158,7 @@ func getCostEstimate(content []byte, headTitle string) (*BlueprintCostEstimate, 
 	}
 
 	return &BlueprintCostEstimate{
-		Description: costDetails.literal,
+		Description: costDetails.Literal,
 		Url:         costDetails.url,
 	}, nil
 }
