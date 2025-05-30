@@ -23,7 +23,7 @@
   "separateMajorMinor": false,
   "additionalBranchPrefix": "{{parentDir}}-",
   "constraints": {
-    "go": "1.23"
+    "go": "1.24"
   },
   "packageRules": [
     {
@@ -72,7 +72,7 @@
         "golang-version"
       ],
       "rangeStrategy": "replace",
-      "allowedVersions": "1.23",
+      "allowedVersions": "1.24",
       "postUpdateOptions": [
         "gomodTidy",
         "gomodUpdateImportPaths"
