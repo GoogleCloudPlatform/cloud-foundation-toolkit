@@ -163,7 +163,7 @@ message DisplayVariableToggle {
   string variable_name = 1; // @gotags: json:"variableName,omitempty" yaml:"variableName,omitempty"
 
   // The value of the variable used to toggle the display of another variable.
-  repeated string variable_value = 2; // @gotags: json:"variableValue,omitempty" yaml:"variableValue,omitempty"
+  string variable_value = 2; // @gotags: json:"variableValue,omitempty" yaml:"variableValue,omitempty"
 
   // The type of the variable used to toggle the display of another variable.
   ToggleType type = 3; // @gotags: json:"type,omitempty" yaml:"type,omitempty"
