@@ -92,7 +92,10 @@ func initBq(t testing.TB) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	file.Close()
+	err = file.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 // RunCmd executes a bq command and fails test if there are any errors.
