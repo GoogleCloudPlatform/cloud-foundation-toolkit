@@ -32,10 +32,18 @@ spec:
         object_type:
           name: object_type
           title: Object type
+          properties:
+            field1:
+              name: field1
+              title: Field1
+            field2:
+              name: field2
+              title: Field2
           altDefaults:
             - type: ALTERNATE_TYPE_DC
               value:
-                key: value
+                field1: value1
+                field2: value2
         list_type:
           name: list_type
           title: List type

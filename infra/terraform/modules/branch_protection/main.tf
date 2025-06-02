@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2024 Google LLC
+ * Copyright 2022-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ resource "github_branch_protection" "default" {
     required_approving_review_count = 1
     require_code_owner_reviews      = true
     pull_request_bypassers = setunion(
-      [var.admin],
+      lookup(var.repos_map[each.key], "admin_groups", []),
       formatlist("/%s", lookup(var.repos_map[each.key], "admins", []))
     )
   }
@@ -42,7 +42,7 @@ resource "github_branch_protection" "default" {
 
   restrict_pushes {
     push_allowances = setunion(
-      [var.admin],
+      lookup(var.repos_map[each.key], "admin_groups", []),
       formatlist("/%s", setunion(lookup(var.repos_map[each.key], "admins", []), lookup(var.repos_map[each.key], "maintainers", []))),
       formatlist("${var.repos_map[each.key].org}/%s", lookup(var.repos_map[each.key], "groups", []))
     )

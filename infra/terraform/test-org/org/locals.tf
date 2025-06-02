@@ -123,6 +123,9 @@ locals {
       maintainers = ["ericyz"]
       admins      = ["apeabody"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-ecommerce-microservices-on-gke"
@@ -926,7 +929,7 @@ locals {
       name        = "kms-solutions"
       org         = "GoogleCloudPlatform"
       description = "Store Cloud KMS scripts, artifacts, code samples, and more."
-      maintainers = ["tdbhacks", "erlanderlo", "g-swap", "nb-goog"]
+      maintainers = ["tdbhacks", "erlanderlo", "g-swap", "nb-goog", "brandonluong-lgtm"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
