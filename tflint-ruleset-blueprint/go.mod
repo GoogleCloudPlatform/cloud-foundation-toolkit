@@ -2,7 +2,7 @@ module github.com/cloud-foundation-toolkit/tflint-ruleset-blueprint
 
 go 1.23.0
 
-toolchain go1.23.9
+toolchain go1.24.3
 
 require (
 	github.com/hashicorp/go-version v1.7.0
