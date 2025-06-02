@@ -41,7 +41,7 @@ TFLINT_VERSION := 0.58.0
 TINKEY_VERSION := 1.7.0
 ALPINE_VERSION := 3.22
 # Updated by Update Tooling Workflow
-MODULE_SWAPPER_VERSION := 0.4.14
+MODULE_SWAPPER_VERSION := 0.4.15
 # Updated by Update Tooling Workflow
 TFLINT_BP_PLUGIN_VERSION := 0.2.9
 
