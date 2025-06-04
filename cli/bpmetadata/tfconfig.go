@@ -24,6 +24,7 @@ import (
 
 const (
 	versionRegEx   = "/v([0-9]+[.0-9]*)$"
+	modulePattern  = `(?:^|/)modules/([^/]+)`
 	perModuleRoles = "per_module_roles"
 	rootModuleName = "root"
 )
@@ -343,7 +344,7 @@ func getBlueprintOutput(modOut *tfconfig.Output) *BlueprintOutput {
 
 // getBlueprintRequirements gets the services and roles associated
 // with the blueprint
-func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfigPath string) (*BlueprintRequirements, error) {
+func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfigPath string, perModuleRequirements bool, moduleName string) (*BlueprintRequirements, error) {
 	// TODO:zheng
 	//  - read locals from both rolesConfigPath and servicesConfigPath,
 	//  - get the moduel name we are dealing with
@@ -357,7 +358,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	r, err := parseBlueprintRolesDefault(rolesFile)
+	r, err := parseBlueprintRoles(rolesFile, perModuleRequirements, moduleName)
 	if err != nil {
 		return nil, err
 	}
@@ -403,9 +404,9 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 
 }
 
-func parseBlueprintRolesDefault(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
-	return parseBlueprintRoles(rolesFile, false, rootModuleName)
-}
+//func parseBlueprintRolesDefault(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
+	//return parseBlueprintRoles(rolesFile, false, rootModuleName)
+//}
 
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
 func parseBlueprintRoles(rolesFile *hcl.File, perModuleMode bool, moduleName string) ([]*BlueprintRoles, error) {
@@ -693,4 +694,18 @@ func extractModuleLocalList(file *hcl.File, localKey, moduleName string) ([]stri
   }
 
   return list, nil
+}
+
+// Parse module name from the bpPath
+func parseBpModuleName(bpPath string, blueprintRoot string) string {
+	relPath, err := filepath.Rel(blueprintRoot, bpPath)
+	if err != nil {
+		return rootModuleName
+	}
+
+	matches := regexp.MustCompile(modulePattern).FindStringSubmatch(relPath)
+	if len(matches) == 2 {
+		return matches[1]
+	}
+	return rootModuleName
 }
