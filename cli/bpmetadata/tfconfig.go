@@ -667,35 +667,6 @@ func generateTFState(bpPath string) ([]byte, error) {
 }
 
 // Helper function to extract the local per module configs
-//func extractModuleLocalList(file *hcl.File, localKey, moduleName string) ([]string, error) {
-  //content, _, diags := file.Body.PartialContent(&hcl.BodySchema{
-    //Attributes: []hcl.AttributeSchema{
-      //{Name: "locals", Required: true},
-    //},
-  //})
-  //if err := hasHclErrors(diags); err != nil {
-    //return nil, err
-  //}
-
-  //localsAttr := content.Attributes["locals"]
-  //var locals map[string]map[string][]string
-  //if err := gohcl.DecodeExpression(localsAttr.Expr, nil, &locals); err != nil {
-    //return nil, fmt.Errorf("unable to decode locals: %w", err)
-  //}
-
-  //moduleMap, ok := locals[localKey]
-  //if !ok {
-    //return nil, fmt.Errorf("locals.%s not found", localKey)
-  //}
-
-  //list, ok := moduleMap[moduleName]
-  //if !ok {
-    //return nil, fmt.Errorf("module %s not found in locals.%s", moduleName, localKey)
-  //}
-
-  //return list, nil
-//}
-
 func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
 	var result []string
 	content, _, diags := file.Body.PartialContent(&hcl.BodySchema{
