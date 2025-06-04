@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -407,6 +408,46 @@ func TestSortBlueprintRoles(t *testing.T) {
 		})
 	}
 }
+
+func TestParseBlueprintRoles_PerModuleMode_HappyPath(t *testing.T) {
+	const hclContent = `
+locals {
+  per_module_roles = {
+    root = [
+      "roles/run.admin",
+    ],
+    run = [
+      "roles/run.invoker",
+      "roles/logging.logWriter"
+    ],
+    api_gateway = [
+      "roles/apigateway.viewer"
+    ]
+  }
+}
+`
+	parser := hclparse.NewParser()
+	hclFile, diags := parser.ParseHCL([]byte(hclContent), "roles.tf")
+	if diags.HasErrors() {
+		t.Fatalf("Failed to parse test HCL content: %v", diags)
+	}
+
+	roles, err := parseBlueprintRoles(hclFile, true, "run")
+	if err != nil {
+		t.Fatalf("parseBlueprintRoles failed: %v", err)
+	}
+
+	if len(roles) != 1 {
+		t.Fatalf("Expected 1 BlueprintRoles, got %d", len(roles))
+	}
+
+	expected := []string{"roles/logging.logWriter", "roles/run.admin", "roles/run.invoker"}
+	actual := roles[0].Roles
+	if diff := cmp.Diff(expected, actual); diff != "" {
+		t.Errorf("Mismatch in parsed roles (-want +got):\n%s", diff)
+	}
+}
+
 
 func TestTFProviderVersions(t *testing.T) {
 	tests := []struct {
