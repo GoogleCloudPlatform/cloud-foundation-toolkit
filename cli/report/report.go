@@ -25,8 +25,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/open-policy-agent/opa/loader"
-	"github.com/open-policy-agent/opa/rego"
+	"github.com/open-policy-agent/opa/v1/loader"
+	"github.com/open-policy-agent/opa/v1/rego"
 )
 
 // GenerateReports takes raw CAI exports from <dirPath> directory,
