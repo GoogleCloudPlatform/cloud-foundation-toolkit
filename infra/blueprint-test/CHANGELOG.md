@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.17.7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.6...infra/blueprint-test/v0.17.7) (2025-06-04)
+
+
+### Bug Fixes
+
+* **deps:** update github.com/googlecontainertools/kpt-functions-sdk/go/api digest to 9af8fef ([#3037](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3037)) ([4d2dcbd](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/4d2dcbd0f01d5c71b82375b1402e61d681196467))
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to d2d12f9 ([#2942](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2942)) ([bab4b3f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bab4b3fe4d471fb8f0f71ba79be4ec7903d77122))
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to f4c50e6 ([#3011](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3011)) ([4111a20](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/4111a201955486fc007c8914b856d9d7d4b79ed3))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.49.0 ([#2993](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2993)) ([df37fd5](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/df37fd5ab59ea27db3925666d257f6d9c0d5b59b))
+* **deps:** update module github.com/hashicorp/terraform-json to v0.25.0 ([#3009](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3009)) ([b3b83d1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b3b83d1ef6d8139a04be21602434d28f2034c192))
+* **deps:** update module golang.org/x/mod to v0.24.0 ([#2907](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2907)) ([01e21dc](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/01e21dc0db6cdd817f06e815cc39f39eb4fd33bd))
+* some initial go linting ([#2975](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2975)) ([beff30e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/beff30e56af5301ec32b0fc645840dfc22c2fe2a))
+
 ## [0.17.6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.5...infra/blueprint-test/v0.17.6) (2025-02-19)
 
 
