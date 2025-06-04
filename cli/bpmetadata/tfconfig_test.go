@@ -448,6 +448,67 @@ locals {
 	}
 }
 
+func TestExtractModuleLocalList(t *testing.T) {
+	const hclContent = `
+locals {
+  per_module_roles = {
+    root = [
+      "roles/run.admin",
+    ],
+    run = [
+      "roles/run.invoker",
+      "roles/logging.logWriter"
+    ],
+    api_gateway = [
+      "roles/apigateway.viewer"
+    ]
+  }
+}
+`
+	parser := hclparse.NewParser()
+	hclFile, diags := parser.ParseHCL([]byte(hclContent), "iam.tf")
+	if diags.HasErrors() {
+		t.Fatalf("failed to parse HCL: %v", diags)
+	}
+
+	roles, err := extractModuleLocalList(hclFile, "per_module_roles", "run")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	expected := []string{"roles/run.invoker", "roles/logging.logWriter"}
+	if len(roles) != len(expected) {
+		t.Errorf("got %d roles, want %d", len(roles), len(expected))
+	}
+	for i, r := range roles {
+		if r != expected[i] {
+			t.Errorf("role[%d] = %q, want %q", i, r, expected[i])
+		}
+	}
+}
+
+func TestParseBpModuleName(t *testing.T) {
+	tests := []struct {
+		bpPath        string
+		blueprintRoot string
+		expected      string
+	}{
+		{"/workspace/my-bp", "/workspace/my-bp", "root"},
+		{"/workspace/my-bp/modules/run", "/workspace/my-bp", "run"},
+		{"/workspace/my-bp/modules/api_gateway", "/workspace/my-bp", "api_gateway"},
+		{"/workspace/my-bp/modules/nested/foo", "/workspace/my-bp", "nested"},
+		{"/workspace/my-bp/notmodules/foo", "/workspace/my-bp", "root"},
+	}
+
+	for _, test := range tests {
+		result := parseBpModuleName(test.bpPath, test.blueprintRoot)
+		if result != test.expected {
+			t.Errorf("parseBpModuleName(%q, %q) = %q; want %q", test.bpPath, test.blueprintRoot, result, test.expected)
+		}
+	}
+}
+
+
 
 func TestTFProviderVersions(t *testing.T) {
 	tests := []struct {
