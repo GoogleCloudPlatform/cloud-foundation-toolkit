@@ -17,13 +17,14 @@ import (
 )
 
 var mdFlags struct {
-	path          string
-	nested        bool
-	force         bool
-	display       bool
-	validate      bool
-	quiet         bool
-	genOutputType bool
+	path                  string
+	nested                bool
+	force                 bool
+	display               bool
+	validate              bool
+	quiet                 bool
+	genOutputType         bool
+	perModuleRequirements bool
 }
 
 const (
@@ -51,6 +52,7 @@ func init() {
 	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
 	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Run in quiet mode suppressing all prompts.")
 	Cmd.Flags().BoolVarP(&mdFlags.genOutputType, "generate-output-type", "g", false, "Automatically generate type field for outputs.")
+	Cmd.Flags().BoolVarP(&mdFlags.perModuleRequirements, "per-module-requirements", "m", false, "Generate per module requirements for root and sub modules.")
 }
 
 var Cmd = &cobra.Command{

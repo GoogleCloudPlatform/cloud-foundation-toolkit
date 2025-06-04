@@ -290,7 +290,7 @@ func TestTFRoles(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p := hclparse.NewParser()
 			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
-			got, err := parseBlueprintRoles(content)
+			got, err := parseBlueprintRolesDefault(content)
 			require.NoError(t, err)
 			assert.Equal(t, got, tt.wantRoles)
 		})
