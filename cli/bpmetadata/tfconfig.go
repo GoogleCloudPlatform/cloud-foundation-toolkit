@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"slices"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/parser"
@@ -22,7 +23,10 @@ import (
 )
 
 const (
-	versionRegEx = "/v([0-9]+[.0-9]*)$"
+	versionRegEx   = "/v([0-9]+[.0-9]*)$"
+	modulePattern  = `(?:^|/)modules/([^/]+)`
+	perModuleRoles = "per_module_roles"
+	rootModuleName = "root"
 )
 
 type blueprintVersion struct {
@@ -340,16 +344,21 @@ func getBlueprintOutput(modOut *tfconfig.Output) *BlueprintOutput {
 
 // getBlueprintRequirements gets the services and roles associated
 // with the blueprint
-func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfigPath string) (*BlueprintRequirements, error) {
-	//parse blueprint roles
+func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfigPath string, perModuleRequirements bool, moduleName string) (*BlueprintRequirements, error) {
+	// TODO:zheng
+	//  - read locals from both rolesConfigPath and servicesConfigPath,
+	//  - get the moduel name we are dealing with
+	//  - query the per moduel config and return related stuffs.
 	p := hclparse.NewParser()
+
+	//parse blueprint roles
 	rolesFile, diags := p.ParseHCLFile(rolesConfigPath)
 	err := hasHclErrors(diags)
 	if err != nil {
 		return nil, err
 	}
 
-	r, err := parseBlueprintRoles(rolesFile)
+	r, err := parseBlueprintRoles(rolesFile, perModuleRequirements, moduleName)
 	if err != nil {
 		return nil, err
 	}
@@ -395,8 +404,12 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 
 }
 
+//func parseBlueprintRolesDefault(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
+	//return parseBlueprintRoles(rolesFile, false, rootModuleName)
+//}
+
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
-func parseBlueprintRoles(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
+func parseBlueprintRoles(rolesFile *hcl.File, perModuleMode bool, moduleName string) ([]*BlueprintRoles, error) {
 	var r []*BlueprintRoles
 	iamContent, _, diags := rolesFile.Body.PartialContent(rootSchema)
 	err := hasHclErrors(diags)
@@ -415,28 +428,60 @@ func parseBlueprintRoles(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
 			return nil, err
 		}
 
-		for k := range iamAttrs {
+		// Special branch for perModuleMode
+		if perModuleMode {
+			attr, ok := iamAttrs[perModuleRoles]
+			if !ok {
+				return nil, nil
+			}
+
+			attrVal, _ := attr.Expr.Value(nil)
+			roleMap := attrVal.AsValueMap()
+
+			mergedRoles := map[string]struct{}{}
+
+			for _, key := range []string{rootModuleName, moduleName} {
+				if val, ok := roleMap[key]; ok && val.Type().IsTupleType() {
+					for _, roleVal := range val.AsValueSlice() {
+						mergedRoles[roleVal.AsString()] = struct{}{}
+					}
+				}
+			}
+
 			var iamRoles []string
-			attrValue, _ := iamAttrs[k].Expr.Value(nil)
-			if !attrValue.Type().IsTupleType() {
-				continue
+			for role := range mergedRoles {
+				iamRoles = append(iamRoles, role)
 			}
+			slices.Sort(iamRoles)
 
-			ie := attrValue.ElementIterator()
-			for ie.Next() {
-				_, v := ie.Element()
-				iamRoles = append(iamRoles, v.AsString())
-			}
-
-			containerRoles := &BlueprintRoles{
-				// TODO: (b/248123274) no good way to associate granularity yet
+			r = append(r, &BlueprintRoles{
 				Level: "Project",
 				Roles: iamRoles,
+			})
+			break
+		} else {
+			for k := range iamAttrs {
+				var iamRoles []string
+				attrValue, _ := iamAttrs[k].Expr.Value(nil)
+				if !attrValue.Type().IsTupleType() {
+					continue
+				}
+
+				ie := attrValue.ElementIterator()
+				for ie.Next() {
+					_, v := ie.Element()
+					iamRoles = append(iamRoles, v.AsString())
+				}
+
+				containerRoles := &BlueprintRoles{
+					// TODO: (b/248123274) no good way to associate granularity yet
+					Level: "Project",
+					Roles: iamRoles,
+				}
+
+				r = append(r, containerRoles)
 			}
-
-			r = append(r, containerRoles)
 		}
-
 		// because we're only interested in the top-level locals block
 		break
 	}
@@ -619,4 +664,18 @@ func generateTFState(bpPath string) ([]byte, error) {
 	root.Test() // This will run terraform init and apply, and then destroy
 
 	return stateData, nil
+}
+
+// Parse module name from the bpPath
+func parseBpModuleName(bpPath string, blueprintRoot string) string {
+	relPath, err := filepath.Rel(blueprintRoot, bpPath)
+	if err != nil {
+		return rootModuleName
+	}
+
+	matches := regexp.MustCompile(modulePattern).FindStringSubmatch(relPath)
+	if len(matches) == 2 {
+		return matches[1]
+	}
+	return rootModuleName
 }
