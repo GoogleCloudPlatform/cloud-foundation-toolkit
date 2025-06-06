@@ -424,6 +424,68 @@ locals {
       "roles/apigateway.viewer"
     ]
   }
+
+  int_required_roles = [
+    "roles/run.admin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/artifactregistry.admin",
+    "roles/iam.serviceAccountUser",
+    "roles/serviceusage.serviceUsageViewer",
+    "roles/cloudkms.admin",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/compute.viewer"
+  ]
+
+  folder_required_roles = [
+    "roles/resourcemanager.folderAdmin",
+    "roles/resourcemanager.projectCreator",
+    "roles/resourcemanager.projectDeleter"
+  ]
+
+  org_required_roles = [
+    "roles/accesscontextmanager.policyAdmin",
+    "roles/orgpolicy.policyAdmin"
+  ]
+}
+
+resource "google_service_account" "int_test" {
+  project      = module.project.project_id
+  account_id   = "ci-account"
+  display_name = "ci-account"
+}
+
+resource "google_organization_iam_member" "org_member" {
+  count = length(local.org_required_roles)
+
+  org_id = var.org_id
+  role   = local.org_required_roles[count.index]
+  member = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_folder_iam_member" "folder_member" {
+  count = length(local.folder_required_roles)
+
+  folder = "folders/${var.folder_id}"
+  role   = local.folder_required_roles[count.index]
+  member = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_project_iam_member" "int_test" {
+  count = length(local.int_required_roles)
+
+  project = module.project.project_id
+  role    = local.int_required_roles[count.index]
+  member  = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_billing_account_iam_member" "int_billing_admin" {
+  billing_account_id = var.billing_account
+  role               = "roles/billing.user"
+  member             = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_service_account_key" "int_test" {
+  service_account_id = google_service_account.int_test.id
 }
 `
 	parser := hclparse.NewParser()
