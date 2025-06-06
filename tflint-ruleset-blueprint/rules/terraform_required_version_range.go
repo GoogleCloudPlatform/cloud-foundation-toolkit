@@ -97,7 +97,7 @@ func (r *TerraformRequiredVersionRange) Check(runner tflint.Runner) error {
 		 )
 	} else {
 		if majorVersion == 0 {
-			return fmt.Errorf("Error: minimum version test constraint would be below zero: v%d.%d.999", majorVersion - 1, 999)
+			return fmt.Errorf("error: minimum version test constraint would be below zero: v%d.%d.999", majorVersion - 1, 999)
 		}
 		terraform_below_minimum_required_version = fmt.Sprintf(
 			"v%d.%d.999",

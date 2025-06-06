@@ -284,7 +284,7 @@ func getTFFiles(path string) []string {
 		return nil
 	})
 	if err != nil {
-		log.Printf("Error walking files: %v", err)
+		log.Printf("error walking files: %v", err)
 	}
 	return files
 

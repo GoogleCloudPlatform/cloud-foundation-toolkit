@@ -120,6 +120,7 @@ WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
 RUN gem install bundler:2.5.10 && bundle install --retry=10
+RUN rm /usr/lib/ruby/gems/3.4.0/specifications/default/delegate-0.4.0.gemspec
 
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
 RUN /build/install_verify_boilerplate.sh
@@ -171,7 +172,8 @@ RUN terraform --version && \
     addlicense -help && \
     cft version && \
     protoc --version && \
-    go version
+    go version && \
+    kitchen version
 
 # Cleanup intermediate build artifacts
 RUN rm -rf /build

@@ -3,7 +3,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-t
 go 1.23.0
 
 require (
-	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20230427202446-3255accc518d
+	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20250603063834-9af8fef0fca3
 	github.com/alexflint/go-filemutex v1.3.0
 	github.com/gruntwork-io/terratest v0.49.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20250515145901-f4c50e64fd6d
@@ -14,7 +14,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/sjson v1.2.5
-	golang.org/x/mod v0.24.0
+	golang.org/x/mod v0.25.0
 	sigs.k8s.io/kustomize/kyaml v0.19.0
 )
 

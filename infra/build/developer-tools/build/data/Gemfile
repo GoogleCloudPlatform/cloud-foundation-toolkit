@@ -1,4 +1,4 @@
-# Copyright 2018-2023 Google LLC
+# Copyright 2018-2025 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,4 +17,5 @@ gem "kitchen-terraform", "~> 7.0"
 gem "kubeclient", "~> 4.11"
 gem "rest-client", "~> 2.1"
 gem 'nokogiri', '~> 1.18'
+gem 'csv'
 ruby '~> 3.4.4'
