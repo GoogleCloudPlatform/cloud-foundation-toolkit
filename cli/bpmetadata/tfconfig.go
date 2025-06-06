@@ -666,37 +666,6 @@ func generateTFState(bpPath string) ([]byte, error) {
 	return stateData, nil
 }
 
-// Helper function to extract the local per module configs
-func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
-	var result []string
-	content, _, diags := file.Body.PartialContent(&hcl.BodySchema{
-		Blocks: []hcl.BlockHeaderSchema{
-			{Type: "locals"},
-		},
-	})
-	if diags.HasErrors() {
-		return nil, diags
-	}
-
-	for _, block := range content.Blocks {
-		attrs, diags := block.Body.JustAttributes()
-		if diags.HasErrors() {
-			return nil, diags
-		}
-		if attr, ok := attrs[localKey]; ok {
-			val, _ := attr.Expr.Value(nil)
-			if val.Type().IsObjectType() {
-				if subVal := val.AsValueMap()[moduleName]; subVal.Type().IsTupleType() {
-					for _, item := range subVal.AsValueSlice() {
-						result = append(result, item.AsString())
-					}
-				}
-			}
-		}
-	}
-	return result, nil
-}
-
 // Parse module name from the bpPath
 func parseBpModuleName(bpPath string, blueprintRoot string) string {
 	relPath, err := filepath.Rel(blueprintRoot, bpPath)
