@@ -227,7 +227,7 @@ func TestTFServices(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p := hclparse.NewParser()
 			content, _ := p.ParseHCLFile(path.Join(tfTestdataPath, tt.configName))
-			got, err := parseBlueprintServices(content)
+			got, err := parseBlueprintServices(content, false, "")
 			require.NoError(t, err)
 			assert.Equal(t, got, tt.wantServices)
 		})
@@ -503,8 +503,128 @@ resource "google_service_account_key" "int_test" {
 		t.Fatalf("Expected 1 BlueprintRoles, got %d", len(roles))
 	}
 
-	expected := []string{"roles/logging.logWriter", "roles/run.admin", "roles/run.invoker"}
+	expected := []string{
+		"roles/run.admin",
+		"roles/run.invoker",
+		"roles/logging.logWriter",
+	}
 	actual := roles[0].Roles
+	if diff := cmp.Diff(expected, actual); diff != "" {
+		t.Errorf("Mismatch in parsed roles (-want +got):\n%s", diff)
+	}
+}
+
+func TestParseBlueprintServices_PerModuleServices_HappyPath(t *testing.T) {
+	const hclContent = `
+locals {
+  per_module_roles = {
+    root = [
+      "roles/run.admin",
+    ],
+    run = [
+      "roles/run.invoker",
+      "roles/logging.logWriter"
+    ],
+    api_gateway = [
+      "roles/apigateway.viewer"
+    ]
+  }
+
+  per_module_services = {
+    root = [
+      "service_root",
+    ],
+    run = [
+      "service_run",
+    ],
+    api_gateway = [
+      "service_gateway"
+    ]
+  }
+
+  int_required_roles = [
+    "roles/run.admin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/artifactregistry.admin",
+    "roles/iam.serviceAccountUser",
+    "roles/serviceusage.serviceUsageViewer",
+    "roles/cloudkms.admin",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/compute.viewer"
+  ]
+
+  folder_required_roles = [
+    "roles/resourcemanager.folderAdmin",
+    "roles/resourcemanager.projectCreator",
+    "roles/resourcemanager.projectDeleter"
+  ]
+
+  org_required_roles = [
+    "roles/accesscontextmanager.policyAdmin",
+    "roles/orgpolicy.policyAdmin"
+  ]
+}
+
+resource "google_service_account" "int_test" {
+  project      = module.project.project_id
+  account_id   = "ci-account"
+  display_name = "ci-account"
+}
+
+resource "google_organization_iam_member" "org_member" {
+  count = length(local.org_required_roles)
+
+  org_id = var.org_id
+  role   = local.org_required_roles[count.index]
+  member = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_folder_iam_member" "folder_member" {
+  count = length(local.folder_required_roles)
+
+  folder = "folders/${var.folder_id}"
+  role   = local.folder_required_roles[count.index]
+  member = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_project_iam_member" "int_test" {
+  count = length(local.int_required_roles)
+
+  project = module.project.project_id
+  role    = local.int_required_roles[count.index]
+  member  = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_billing_account_iam_member" "int_billing_admin" {
+  billing_account_id = var.billing_account
+  role               = "roles/billing.user"
+  member             = "serviceAccount:${google_service_account.int_test.email}"
+}
+
+resource "google_service_account_key" "int_test" {
+  service_account_id = google_service_account.int_test.id
+}
+`
+	parser := hclparse.NewParser()
+	hclFile, diags := parser.ParseHCL([]byte(hclContent), "roles.tf")
+	if diags.HasErrors() {
+		t.Fatalf("Failed to parse test HCL content: %v", diags)
+	}
+
+	services, err := parseBlueprintServices(hclFile, true, "run")
+	if err != nil {
+		t.Fatalf("parseBlueprintRoles failed: %v", err)
+	}
+
+	if len(services) != 2 {
+		t.Fatalf("Expected 2 BlueprintService, got %d", len(services))
+	}
+
+	expected := []string{
+		"service_root",
+		"service_run",
+	}
+	actual := services
 	if diff := cmp.Diff(expected, actual); diff != "" {
 		t.Errorf("Mismatch in parsed roles (-want +got):\n%s", diff)
 	}
@@ -531,7 +651,44 @@ func TestParseBpModuleName(t *testing.T) {
 	}
 }
 
+func TestExtractModuleLocalList(t *testing.T) {
+	parser := hclparse.NewParser()
+	file, diags := parser.ParseHCL([]byte(`
+		locals {
+		  per_module_roles = {
+		    root = ["roles/run.admin"]
+		    run = [
+		      "roles/run.invoker",
+		      "roles/logging.logWriter",
+		    ]
+		  }
+		}`), "test.tf")
+	if diags.HasErrors() {
+		t.Fatalf("failed to parse HCL: %v", diags)
+	}
 
+	roles, err := extractModuleLocalList(file, "per_module_roles", "run")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	expected := []string{"roles/run.invoker", "roles/logging.logWriter"}
+	if len(roles) != len(expected) {
+		t.Errorf("got %d roles, want %d", len(roles), len(expected))
+	}
+	for _, want := range expected {
+		found := false
+		for _, r := range roles {
+			if r == want {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("missing role %q", want)
+		}
+	}
+}
 
 func TestTFProviderVersions(t *testing.T) {
 	tests := []struct {
