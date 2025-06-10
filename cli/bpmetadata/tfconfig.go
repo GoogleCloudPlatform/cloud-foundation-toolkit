@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
-	"slices"
+	//"slices"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/parser"
@@ -26,6 +26,7 @@ const (
 	versionRegEx   = "/v([0-9]+[.0-9]*)$"
 	modulePattern  = `(?:^|/)modules/([^/]+)`
 	perModuleRoles = "per_module_roles"
+	perModuleServices = "per_module_services"
 	rootModuleName = "root"
 )
 
@@ -345,10 +346,6 @@ func getBlueprintOutput(modOut *tfconfig.Output) *BlueprintOutput {
 // getBlueprintRequirements gets the services and roles associated
 // with the blueprint
 func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfigPath string, perModuleRequirements bool, moduleName string) (*BlueprintRequirements, error) {
-	// TODO:zheng
-	//  - read locals from both rolesConfigPath and servicesConfigPath,
-	//  - get the moduel name we are dealing with
-	//  - query the per moduel config and return related stuffs.
 	p := hclparse.NewParser()
 
 	//parse blueprint roles
@@ -370,7 +367,7 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 		return nil, err
 	}
 
-	s, err := parseBlueprintServices(servicesFile)
+	s, err := parseBlueprintServices(servicesFile, perModuleRequirements, moduleName)
 	if err != nil {
 		return nil, err
 	}
@@ -404,88 +401,65 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 
 }
 
-//func parseBlueprintRolesDefault(rolesFile *hcl.File) ([]*BlueprintRoles, error) {
-	//return parseBlueprintRoles(rolesFile, false, rootModuleName)
-//}
-
 // parseBlueprintRoles gets the roles required for the blueprint to be provisioned
 func parseBlueprintRoles(rolesFile *hcl.File, perModuleMode bool, moduleName string) ([]*BlueprintRoles, error) {
 	var r []*BlueprintRoles
-	iamContent, _, diags := rolesFile.Body.PartialContent(rootSchema)
-	err := hasHclErrors(diags)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, block := range iamContent.Blocks {
-		if block.Type != "locals" {
-			continue
+	if perModuleMode {
+		rootRoles, err := extractModuleLocalList(rolesFile, "per_module_roles", rootModuleName)
+		if err != nil {
+			return nil, err
 		}
-
-		iamAttrs, diags := block.Body.JustAttributes()
-		err := hasHclErrors(diags)
+		moduleRoles, err := extractModuleLocalList(rolesFile, "per_module_roles", moduleName)
 		if err != nil {
 			return nil, err
 		}
 
-		// Special branch for perModuleMode
-		if perModuleMode {
-			attr, ok := iamAttrs[perModuleRoles]
-			if !ok {
-				return nil, nil
-			}
+		seen := map[string]struct{}{}
+		for _, role := range append(rootRoles, moduleRoles...) {
+			seen[role] = struct{}{}
+		}
+		var combined []string
+		for role := range seen {
+			combined = append(combined, role)
+		}
 
-			attrVal, _ := attr.Expr.Value(nil)
-			roleMap := attrVal.AsValueMap()
+		r = append(r, &BlueprintRoles{
+			Level: "Project",
+			Roles: combined,
+		})
 
-			mergedRoles := map[string]struct{}{}
+		sortBlueprintRoles(r)
+		return r, nil
+	}
 
-			for _, key := range []string{rootModuleName, moduleName} {
-				if val, ok := roleMap[key]; ok && val.Type().IsTupleType() {
-					for _, roleVal := range val.AsValueSlice() {
-						mergedRoles[roleVal.AsString()] = struct{}{}
-					}
-				}
-			}
+	content, _, diags := rolesFile.Body.PartialContent(&hcl.BodySchema{
+		Blocks: []hcl.BlockHeaderSchema{{Type: "locals"}},
+	})
+	if diags.HasErrors() {
+		return nil, diags
+	}
 
+	for _, block := range content.Blocks {
+		attrs, diags := block.Body.JustAttributes()
+		if diags.HasErrors() {
+			return nil, diags
+		}
+		for k := range attrs {
 			var iamRoles []string
-			for role := range mergedRoles {
-				iamRoles = append(iamRoles, role)
+			attrValue, _ := attrs[k].Expr.Value(nil)
+			if !attrValue.Type().IsTupleType() {
+				continue
 			}
-			slices.Sort(iamRoles)
-
+			for _, v := range attrValue.AsValueSlice() {
+				iamRoles = append(iamRoles, v.AsString())
+			}
 			r = append(r, &BlueprintRoles{
 				Level: "Project",
 				Roles: iamRoles,
 			})
-			break
-		} else {
-			for k := range iamAttrs {
-				var iamRoles []string
-				attrValue, _ := iamAttrs[k].Expr.Value(nil)
-				if !attrValue.Type().IsTupleType() {
-					continue
-				}
-
-				ie := attrValue.ElementIterator()
-				for ie.Next() {
-					_, v := ie.Element()
-					iamRoles = append(iamRoles, v.AsString())
-				}
-
-				containerRoles := &BlueprintRoles{
-					// TODO: (b/248123274) no good way to associate granularity yet
-					Level: "Project",
-					Roles: iamRoles,
-				}
-
-				r = append(r, containerRoles)
-			}
 		}
-		// because we're only interested in the top-level locals block
 		break
 	}
-
 	sortBlueprintRoles(r)
 	return r, nil
 }
@@ -514,7 +488,28 @@ func sortBlueprintRoles(r []*BlueprintRoles) {
 
 // parseBlueprintServices gets the gcp api services required for the blueprint
 // to be provisioned
-func parseBlueprintServices(servicesFile *hcl.File) ([]string, error) {
+func parseBlueprintServices(servicesFile *hcl.File, perModuleMode bool, moduleName string) ([]string, error) {
+	if perModuleMode {
+		rootServices, err := extractModuleLocalList(servicesFile, perModuleServices, rootModuleName)
+		if err != nil {
+			return nil, err
+		}
+		moduleServices, err := extractModuleLocalList(servicesFile, perModuleServices, moduleName)
+		if err != nil {
+			return nil, err
+		}
+
+		seen := map[string]struct{}{}
+		for _, svc := range append(rootServices, moduleServices...) {
+			seen[svc] = struct{}{}
+		}
+		var combined []string
+		for svc := range seen {
+			combined = append(combined, svc)
+		}
+		sort.Strings(combined)
+		return combined, nil
+	}
 	var s []string
 	servicesContent, _, diags := servicesFile.Body.PartialContent(rootSchema)
 	err := hasHclErrors(diags)
@@ -678,4 +673,42 @@ func parseBpModuleName(bpPath string, blueprintRoot string) string {
 		return matches[1]
 	}
 	return rootModuleName
+}
+
+//func extractModuleServiceList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
+	//return extractModuleLocalList(file, localKey, moduleName)
+//}
+
+//func extractModuleRoleList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
+	//return extractModuleLocalList(file, localKey, moduleName)
+//}
+
+func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
+	var result []string
+	content, _, diags := file.Body.PartialContent(&hcl.BodySchema{
+		Blocks: []hcl.BlockHeaderSchema{
+			{Type: "locals"},
+		},
+	})
+	if diags.HasErrors() {
+		return nil, diags
+	}
+
+	for _, block := range content.Blocks {
+		attrs, diags := block.Body.JustAttributes()
+		if diags.HasErrors() {
+			return nil, diags
+		}
+		if attr, ok := attrs[localKey]; ok {
+			val, _ := attr.Expr.Value(nil)
+			if val.Type().IsObjectType() {
+				if subVal := val.AsValueMap()[moduleName]; subVal.Type().IsTupleType() {
+					for _, item := range subVal.AsValueSlice() {
+						result = append(result, item.AsString())
+					}
+				}
+			}
+		}
+	}
+	return result, nil
 }
