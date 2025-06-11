@@ -425,8 +425,7 @@ locals {
     ]
   }
 
-  int_required_roles = [
-    "roles/run.admin",
+  int_required_roles = sort(concat([
     "roles/iam.serviceAccountAdmin",
     "roles/artifactregistry.admin",
     "roles/iam.serviceAccountUser",
@@ -434,7 +433,7 @@ locals {
     "roles/cloudkms.admin",
     "roles/resourcemanager.projectIamAdmin",
     "roles/compute.viewer"
-  ]
+  ], flatten(values(per_module_roles))))
 
   folder_required_roles = [
     "roles/resourcemanager.folderAdmin",
@@ -542,8 +541,7 @@ locals {
     ]
   }
 
-  int_required_roles = [
-    "roles/run.admin",
+  int_required_roles = sort(concat([
     "roles/iam.serviceAccountAdmin",
     "roles/artifactregistry.admin",
     "roles/iam.serviceAccountUser",
@@ -551,7 +549,7 @@ locals {
     "roles/cloudkms.admin",
     "roles/resourcemanager.projectIamAdmin",
     "roles/compute.viewer"
-  ]
+  ], flatten(values(per_module_roles))))
 
   folder_required_roles = [
     "roles/resourcemanager.folderAdmin",

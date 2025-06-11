@@ -675,14 +675,6 @@ func parseBpModuleName(bpPath string, blueprintRoot string) string {
 	return rootModuleName
 }
 
-//func extractModuleServiceList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
-	//return extractModuleLocalList(file, localKey, moduleName)
-//}
-
-//func extractModuleRoleList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
-	//return extractModuleLocalList(file, localKey, moduleName)
-//}
-
 func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
 	var result []string
 	content, _, diags := file.Body.PartialContent(&hcl.BodySchema{
