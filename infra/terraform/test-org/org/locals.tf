@@ -723,7 +723,7 @@ locals {
       name        = "terraform-google-alloy-db"
       org         = "GoogleCloudPlatform"
       description = "Creates an Alloy DB instance"
-      maintainers = ["anaik91", "imrannayer"]
+      maintainers = concat(["anaik91", "imrannayer"], local.adc_common_admins)
       topics      = local.common_topics.db
       lint_env = {
         ENABLE_BPMETADATA = "1"
