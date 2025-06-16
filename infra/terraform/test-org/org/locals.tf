@@ -725,6 +725,9 @@ locals {
       description = "Creates an Alloy DB instance"
       maintainers = ["anaik91", "imrannayer"]
       topics      = local.common_topics.db
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-cloud-ids"
