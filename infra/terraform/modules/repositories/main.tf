@@ -1,5 +1,5 @@
 /**
- * Copyright 2022-2024 Google LLC
+ * Copyright 2022-2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,15 @@ locals {
         "repo" : repo
         "admin" : admin
       }
+    ]
+  ])
+
+  admin_groups = flatten([
+    for repo, val in var.repos_map : [
+      for admin_group in val.admin_groups : {
+        "repo" : repo
+        "admin_group" : admin_group
+      } if admin_group != var.super_admin
     ]
   ])
 
@@ -104,6 +113,15 @@ resource "github_repository_collaborator" "maintainers" {
   repository = each.value.repo
   username   = each.value.maintainer
   permission = "push"
+}
+
+resource "github_team_repository" "admin_groups" {
+  for_each = {
+    for v in local.admin_groups : "${v.repo}/${v.admin_group}" => v
+  }
+  repository = each.value.repo
+  team_id    = each.value.admin_group
+  permission = "maintain"
 }
 
 resource "github_team_repository" "groups" {

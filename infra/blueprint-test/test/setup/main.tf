@@ -69,7 +69,6 @@ resource "google_service_account_key" "key" {
 }
 
 module "kubernetes-engine_example_simple_autopilot_public" {
-  source  = "terraform-google-modules/kubernetes-engine/google//examples/simple_autopilot_public"
-  version                     = "~> 36.0"
-  project_id                  = module.project.project_id
+  source     = "github.com/terraform-google-modules/terraform-google-kubernetes-engine.git//examples/simple_autopilot_public"
+  project_id = module.project.project_id
 }

@@ -93,7 +93,7 @@ locals {
       name        = "terraform-google-cloud-run"
       org         = "GoogleCloudPlatform"
       description = "Deploys apps to Cloud Run, along with option to map custom domain"
-      maintainers = concat(["prabhu34", "anamer", "gtsorbo"], local.adc_common_admins)
+      maintainers = concat(["prabhu34", "anamer"], local.adc_common_admins)
       topics      = "cloudrun,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -123,6 +123,9 @@ locals {
       maintainers = ["ericyz"]
       admins      = ["apeabody"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-ecommerce-microservices-on-gke"
@@ -152,7 +155,7 @@ locals {
       short_name   = "example-foundation"
       org          = "terraform-google-modules"
       description  = "Shows how the CFT modules can be composed to build a secure cloud foundation"
-      maintainers  = ["rjerrems", "gtsorbo", "eeaton", "sleighton2022"]
+      maintainers  = ["rjerrems", "eeaton", "sleighton2022"]
       homepage_url = "https://cloud.google.com/architecture/security-foundations"
       topics       = join(",", [local.common_topics.e2e, local.common_topics.ops])
       lint_env = {
@@ -197,7 +200,6 @@ locals {
       name            = "terraform-google-secure-cicd"
       org             = "GoogleCloudPlatform"
       description     = "Builds a secure CI/CD pipeline on Google Cloud"
-      maintainers     = ["gtsorbo"]
       topics          = join(",", [local.common_topics.security, local.common_topics.devtools, local.common_topics.e2e])
       enable_periodic = true
       groups          = [local.jss_common_group]
@@ -224,7 +226,6 @@ locals {
       name        = "terraform-google-network-forensics"
       org         = "GoogleCloudPlatform"
       description = "Deploys Zeek on Google Cloud"
-      maintainers = ["gtsorbo"]
       topics      = local.common_topics.net
     },
     {
@@ -368,7 +369,6 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates self-hosted GitHub Actions Runners on Google Cloud"
       topics      = local.common_topics.devtools
-      maintainers = ["gtsorbo"]
     },
     {
       name        = "terraform-google-gke-gitlab"
@@ -612,7 +612,6 @@ locals {
       name        = "terraform-google-waap"
       org         = "GoogleCloudPlatform"
       description = "Deploys the WAAP solution on Google Cloud"
-      maintainers = ["gtsorbo"]
       topics      = local.common_topics.ops
     },
     {
@@ -654,14 +653,14 @@ locals {
       name        = "terraform-google-cloud-deploy"
       org         = "GoogleCloudPlatform"
       description = "Create Cloud Deploy pipelines and targets"
-      maintainers = ["gtsorbo", "niranjankl"]
+      maintainers = ["niranjankl"]
       topics      = join(",", [local.common_topics.devtools])
     },
     {
       name        = "terraform-google-cloud-functions"
       org         = "GoogleCloudPlatform"
       description = "Deploys Cloud Functions (Gen 2)"
-      maintainers = ["prabhu34", "gtsorbo"]
+      maintainers = ["prabhu34"]
       topics      = "cloudfunctions,functions,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
     },
     {
@@ -706,7 +705,6 @@ locals {
       name        = "terraform-google-itar-architectures"
       org         = "GoogleCloudPlatform"
       description = "Includes use cases for deploying ITAR-aligned architectures on Google Cloud"
-      maintainers = ["gtsorbo"]
       topics      = join(",", [local.common_topics.compute], ["compliance"])
     },
     {
@@ -725,14 +723,17 @@ locals {
       name        = "terraform-google-alloy-db"
       org         = "GoogleCloudPlatform"
       description = "Creates an Alloy DB instance"
-      maintainers = ["anaik91", "imrannayer"]
+      maintainers = concat(["anaik91", "imrannayer", "jahnavi2k"], local.adc_common_admins)
       topics      = local.common_topics.db
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-cloud-ids"
       org         = "GoogleCloudPlatform"
       description = "Deploys a Cloud IDS instance and associated resources."
-      maintainers = ["gtsorbo", "mgaur10"]
+      maintainers = ["mgaur10"]
       topics      = join(",", [local.common_topics.security, local.common_topics.net])
     },
     {
@@ -775,7 +776,7 @@ locals {
       short_name  = "secured-notebook"
       org         = "GoogleCloudPlatform"
       description = "Opinionated setup for securely using AI Platform Notebooks."
-      maintainers = ["gtsorbo", "erlanderlo"]
+      maintainers = ["erlanderlo"]
       topics      = join(",", [local.common_topics.da, local.common_topics.security])
     },
     {
@@ -783,7 +784,7 @@ locals {
       short_name      = "genai-doc-summarization"
       org             = "GoogleCloudPlatform"
       description     = "Summarizes document using OCR and Vertex Generative AI LLM"
-      maintainers     = ["asrivas", "davidcavazos"]
+      maintainers     = ["davidcavazos"]
       groups          = [local.jss_common_group]
       enable_periodic = true
     },
@@ -926,7 +927,7 @@ locals {
       name        = "kms-solutions"
       org         = "GoogleCloudPlatform"
       description = "Store Cloud KMS scripts, artifacts, code samples, and more."
-      maintainers = ["tdbhacks", "erlanderlo", "g-swap", "nb-goog"]
+      maintainers = ["tdbhacks", "erlanderlo", "g-swap", "nb-goog", "brandonluong-lgtm"]
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
