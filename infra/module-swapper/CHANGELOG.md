@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.16](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.15...infra/module-swapper/v0.4.16) (2025-06-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency go to v1.24.3 ([#3026](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3026)) ([5abb3fa](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5abb3fa67ee63df719819df110439bdec109b484))
+* **deps:** update dependency go to v1.24.4 ([#3053](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3053)) ([464df3c](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/464df3cadcaff5e095153e6211c4ce5c88b9dff4))
+* **deps:** update module github.com/go-git/go-git/v5 to v5.16.1 ([#3049](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3049)) ([c5cfa98](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/c5cfa98d67d4a70087f275860b61191d5c0c03bc))
+* **deps:** update module github.com/go-git/go-git/v5 to v5.16.2 ([#3050](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3050)) ([55dbc03](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/55dbc032ddfa3ec95d7b62508bfd21d61dc05654))
+* some initial go linting ([#2975](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2975)) ([beff30e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/beff30e56af5301ec32b0fc645840dfc22c2fe2a))
+
 ## [0.4.15](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.14...infra/module-swapper/v0.4.15) (2025-05-31)
 
 
