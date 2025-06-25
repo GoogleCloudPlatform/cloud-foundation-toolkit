@@ -405,17 +405,13 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 func parseBlueprintRoles(rolesFile *hcl.File, perModuleMode bool, moduleName string) ([]*BlueprintRoles, error) {
 	var r []*BlueprintRoles
 	if perModuleMode {
-		rootRoles, err := extractModuleLocalList(rolesFile, "per_module_roles", rootModuleName)
-		if err != nil {
-			return nil, err
-		}
 		moduleRoles, err := extractModuleLocalList(rolesFile, "per_module_roles", moduleName)
 		if err != nil {
 			return nil, err
 		}
 
 		seen := map[string]struct{}{}
-		for _, role := range append(rootRoles, moduleRoles...) {
+		for _, role := range moduleRoles {
 			seen[role] = struct{}{}
 		}
 		var combined []string
@@ -490,17 +486,13 @@ func sortBlueprintRoles(r []*BlueprintRoles) {
 // to be provisioned
 func parseBlueprintServices(servicesFile *hcl.File, perModuleMode bool, moduleName string) ([]string, error) {
 	if perModuleMode {
-		rootServices, err := extractModuleLocalList(servicesFile, perModuleServices, rootModuleName)
-		if err != nil {
-			return nil, err
-		}
 		moduleServices, err := extractModuleLocalList(servicesFile, perModuleServices, moduleName)
 		if err != nil {
 			return nil, err
 		}
 
 		seen := map[string]struct{}{}
-		for _, svc := range append(rootServices, moduleServices...) {
+		for _, svc := range moduleServices {
 			seen[svc] = struct{}{}
 		}
 		var combined []string

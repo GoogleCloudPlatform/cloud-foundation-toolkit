@@ -503,7 +503,6 @@ resource "google_service_account_key" "int_test" {
 	}
 
 	expected := []string{
-		"roles/run.admin",
 		"roles/run.invoker",
 		"roles/logging.logWriter",
 	}
@@ -614,12 +613,11 @@ resource "google_service_account_key" "int_test" {
 		t.Fatalf("parseBlueprintRoles failed: %v", err)
 	}
 
-	if len(services) != 2 {
-		t.Fatalf("Expected 2 BlueprintService, got %d", len(services))
+	if len(services) != 1 {
+		t.Fatalf("Expected 1 BlueprintService, got %d", len(services))
 	}
 
 	expected := []string{
-		"service_root",
 		"service_run",
 	}
 	actual := services
