@@ -11,7 +11,7 @@ import (
 )
 
 type mdContent struct {
-	literal   string
+	Literal   string
 	url       string
 	listItems []mdListItem
 }
@@ -29,7 +29,7 @@ var reTimeEstimate = regexp.MustCompile(`(Configuration|Deployment):\s([0-9]+)\s
 // 2: get paragraph content immediately following a heading by (level and/or order) OR by title
 // 3: get list item content immediately following a heading by (level and/or order) OR by title
 // A -1 value to headLevel/headOrder enforces the content to be matchd by headTitle
-func getMdContent(content []byte, headLevel int, headOrder int, headTitle string, getContent bool) (*mdContent, error) {
+func GetMdContent(content []byte, headLevel int, headOrder int, headTitle string, getContent bool) (*mdContent, error) {
 	mdDocument := markdown.Parse(content, nil)
 	orderCtr := 0
 	mdSections := mdDocument.GetChildren()
@@ -55,7 +55,7 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 
 			if !getContent && (headOrder == orderCtr || foundHead) {
 				return &mdContent{
-					literal: string(currLeaf.Literal),
+					Literal: string(currLeaf.Literal),
 				}, nil
 			}
 
@@ -66,13 +66,13 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 				lNode, isLink := l.(*ast.Link)
 				if isLink {
 					return &mdContent{
-						literal: string(ast.GetFirstChild(lNode).AsLeaf().Literal),
+						Literal: string(ast.GetFirstChild(lNode).AsLeaf().Literal),
 						url:     string(lNode.Destination),
 					}, nil
 				}
 
 				return &mdContent{
-					literal: string(currLeaf.Literal),
+					Literal: string(currLeaf.Literal),
 				}, nil
 			}
 
@@ -117,12 +117,12 @@ func getMdContent(content []byte, headLevel int, headOrder int, headTitle string
 // getDeploymentDuration creates the deployment and configuration time
 // estimates for the blueprint from README.md
 func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEstimate, error) {
-	durationDetails, err := getMdContent(content, -1, -1, headTitle, true)
+	durationDetails, err := GetMdContent(content, -1, -1, headTitle, true)
 	if err != nil {
 		return nil, err
 	}
 
-	matches := reTimeEstimate.FindAllStringSubmatch(durationDetails.literal, -1)
+	matches := reTimeEstimate.FindAllStringSubmatch(durationDetails.Literal, -1)
 	if len(matches) == 0 {
 		return nil, fmt.Errorf("unable to find deployment duration")
 	}
@@ -152,13 +152,13 @@ func getDeploymentDuration(content []byte, headTitle string) (*BlueprintTimeEsti
 // getCostEstimate creates the cost estimates from the cost calculator
 // links provided in README.md
 func getCostEstimate(content []byte, headTitle string) (*BlueprintCostEstimate, error) {
-	costDetails, err := getMdContent(content, -1, -1, headTitle, true)
+	costDetails, err := GetMdContent(content, -1, -1, headTitle, true)
 	if err != nil {
 		return nil, err
 	}
 
 	return &BlueprintCostEstimate{
-		Description: costDetails.literal,
+		Description: costDetails.Literal,
 		Url:         costDetails.url,
 	}, nil
 }

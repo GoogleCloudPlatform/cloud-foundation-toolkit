@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/adcbpmetadata"
+
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpbuild"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpcatalog"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata"
@@ -9,6 +11,7 @@ import (
 )
 
 func init() {
+	blueprintCmd.AddCommand(adcbpmetadata.Cmd)
 	blueprintCmd.AddCommand(bpmetadata.Cmd)
 	blueprintCmd.AddCommand(bpbuild.Cmd)
 	blueprintCmd.AddCommand(bptest.Cmd)

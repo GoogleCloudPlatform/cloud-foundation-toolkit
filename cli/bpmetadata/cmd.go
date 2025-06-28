@@ -72,7 +72,7 @@ func generate(cmd *cobra.Command, args []string) error {
 
 	// validate metadata if there is an argument passed into the command
 	if mdFlags.validate {
-		if err := validateMetadata(mdFlags.path, wdPath); err != nil {
+		if err := ValidateMetadata(mdFlags.path, wdPath); err != nil {
 			return err
 		}
 
@@ -122,7 +122,7 @@ func generate(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		err = generateMetadataForBpPath(modPath)
+		err = GenerateMetadataForBpPath(modPath)
 		if err != nil {
 			e := fmt.Sprintf("path: %s\n %s", modPath, err.Error())
 			errors = append(errors, e)
@@ -137,7 +137,7 @@ func generate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func generateMetadataForBpPath(bpPath string) error {
+func GenerateMetadataForBpPath(bpPath string) error {
 	//try to read existing metadata.yaml
 	bpObj, err := UnmarshalMetadata(bpPath, metadataFileName)
 	if err != nil && !errors.Is(err, os.ErrNotExist) && !mdFlags.force {
@@ -321,12 +321,12 @@ func CreateBlueprintDisplayMetadata(bpPath string, bpDisp, bpCore *BlueprintMeta
 }
 
 func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte) error {
-	title, err := getMdContent(readmeContent, 1, 1, "", false)
+	title, err := GetMdContent(readmeContent, 1, 1, "", false)
 	if err != nil {
 		return fmt.Errorf("title tag missing in markdown, err: %w", err)
 	}
 
-	i.Title = title.literal
+	i.Title = title.Literal
 	rootPath := r.Source.RepoRootPath
 	if rootPath == "" {
 		rootPath = r.Source.BlueprintRootPath
@@ -350,23 +350,23 @@ func (i *BlueprintInfo) create(bpPath string, r repoDetail, readmeContent []byte
 
 	// create descriptions
 	i.Description = &BlueprintDescription{}
-	tagline, err := getMdContent(readmeContent, -1, -1, "Tagline", true)
+	tagline, err := GetMdContent(readmeContent, -1, -1, "Tagline", true)
 	if err == nil {
-		i.Description.Tagline = tagline.literal
+		i.Description.Tagline = tagline.Literal
 	}
 
-	detailed, err := getMdContent(readmeContent, -1, -1, "Detailed", true)
+	detailed, err := GetMdContent(readmeContent, -1, -1, "Detailed", true)
 	if err == nil {
-		i.Description.Detailed = detailed.literal
+		i.Description.Detailed = detailed.Literal
 	}
 
-	preDeploy, err := getMdContent(readmeContent, -1, -1, "PreDeploy", true)
+	preDeploy, err := GetMdContent(readmeContent, -1, -1, "PreDeploy", true)
 	if err == nil {
-		i.Description.PreDeploy = preDeploy.literal
+		i.Description.PreDeploy = preDeploy.Literal
 	}
 
 	var archListToSet []string
-	architecture, err := getMdContent(readmeContent, -1, -1, "Architecture", true)
+	architecture, err := GetMdContent(readmeContent, -1, -1, "Architecture", true)
 	if err == nil {
 		for _, li := range architecture.listItems {
 			archListToSet = append(archListToSet, li.text)
@@ -409,7 +409,7 @@ func (i *BlueprintInterface) create(bpPath string) error {
 
 func (c *BlueprintContent) create(bpPath string, rootPath string, readmeContent []byte) {
 	var docListToSet []*BlueprintListContent
-	documentation, err := getMdContent(readmeContent, -1, -1, "Documentation", true)
+	documentation, err := GetMdContent(readmeContent, -1, -1, "Documentation", true)
 	if err == nil {
 		for _, li := range documentation.listItems {
 			doc := &BlueprintListContent{

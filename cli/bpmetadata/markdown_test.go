@@ -169,7 +169,7 @@ func TestProcessMarkdownContent(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			content, err := os.ReadFile(path.Join(mdTestdataPath, tt.fileName))
 			require.NoError(t, err)
-			got, _ := getMdContent(content, tt.level, tt.order, tt.title, tt.getContent)
+			got, _ := GetMdContent(content, tt.level, tt.order, tt.title, tt.getContent)
 			assert.Equal(t, tt.want, got)
 		})
 	}

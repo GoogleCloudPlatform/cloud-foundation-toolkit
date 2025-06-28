@@ -121,9 +121,9 @@ func getRepoDetailsFromRootBp(bpPath string) repoDetail {
 
 func parseRepoNameFromMd(readme []byte) string {
 	n := ""
-	title, err := getMdContent(readme, 1, 1, "", false)
+	title, err := GetMdContent(readme, 1, 1, "", false)
 	if err == nil {
-		n = strcase.ToKebab(title.literal)
+		n = strcase.ToKebab(title.Literal)
 	}
 
 	return n

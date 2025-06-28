@@ -17,7 +17,7 @@ var s []byte
 // validateMetadata validates the metadata files for the provided
 // blueprint path. This validation occurs for top-level blueprint
 // metadata and blueprints in the modules/ folder, if present
-func validateMetadata(bpPath, wdPath string) error {
+func ValidateMetadata(bpPath, wdPath string) error {
 	// load schema from the binary
 	schemaLoader := gojsonschema.NewStringLoader(string(s))
 
@@ -74,7 +74,7 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 		return fmt.Errorf("metdata validation failed for: %s", m)
 	}
 
-	Log.Info("metadata is valid", "path", m)
+	Log.Info("metadata format is valid", "path", m)
 	return nil
 }
 
