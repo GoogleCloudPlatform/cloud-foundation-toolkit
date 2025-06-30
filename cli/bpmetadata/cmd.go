@@ -17,13 +17,14 @@ import (
 )
 
 var mdFlags struct {
-	path          string
-	nested        bool
-	force         bool
-	display       bool
-	validate      bool
-	quiet         bool
-	genOutputType bool
+	path                  string
+	nested                bool
+	force                 bool
+	display               bool
+	validate              bool
+	quiet                 bool
+	genOutputType         bool
+	perModuleRequirements bool
 }
 
 const (
@@ -51,6 +52,7 @@ func init() {
 	Cmd.Flags().BoolVarP(&mdFlags.validate, "validate", "v", false, "Validate metadata against the schema definition.")
 	Cmd.Flags().BoolVarP(&mdFlags.quiet, "quiet", "q", false, "Run in quiet mode suppressing all prompts.")
 	Cmd.Flags().BoolVarP(&mdFlags.genOutputType, "generate-output-type", "g", false, "Automatically generate type field for outputs.")
+	Cmd.Flags().BoolVarP(&mdFlags.perModuleRequirements, "per-module-requirements", "m", false, "Generate per module requirements for root and sub modules.")
 }
 
 var Cmd = &cobra.Command{
@@ -263,7 +265,8 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	rolesCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfRolesFileName)
 	svcsCfgPath := path.Join(repoDetails.Source.BlueprintRootPath, tfServicesFileName)
 	versionsCfgPath := path.Join(bpPath, tfVersionsFileName)
-	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath, versionsCfgPath)
+	moduleName := parseBpModuleName(bpPath, repoDetails.Source.BlueprintRootPath)
+	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath, versionsCfgPath, mdFlags.perModuleRequirements, moduleName)
 	if err != nil {
 		Log.Info("skipping blueprint requirements since roles and/or services configurations were not found as per https://tinyurl.com/tf-iam and https://tinyurl.com/tf-services")
 	} else {
