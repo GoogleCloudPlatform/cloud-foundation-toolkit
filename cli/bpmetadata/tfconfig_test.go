@@ -672,18 +672,7 @@ func TestExtractModuleLocalList(t *testing.T) {
 	if len(roles) != len(expected) {
 		t.Errorf("got %d roles, want %d", len(roles), len(expected))
 	}
-	for _, want := range expected {
-		found := false
-		for _, r := range roles {
-			if r == want {
-				found = true
-				break
-			}
-		}
-		if !found {
-			t.Errorf("missing role %q", want)
-		}
-	}
+	assert.ElementsMatch(t, expected, roles, "The actual roles do not match the expected roles.")
 }
 
 func TestTFProviderVersions(t *testing.T) {
