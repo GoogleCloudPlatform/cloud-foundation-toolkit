@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
-	//"slices"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/bpmetadata/parser"
@@ -683,13 +682,17 @@ func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) 
 		if diags.HasErrors() {
 			return nil, diags
 		}
-		if attr, ok := attrs[localKey]; ok {
-			val, _ := attr.Expr.Value(nil)
-			if val.Type().IsObjectType() {
-				if subVal := val.AsValueMap()[moduleName]; subVal.Type().IsTupleType() {
-					for _, item := range subVal.AsValueSlice() {
-						result = append(result, item.AsString())
-					}
+
+		attr, ok := attrs[localKey]
+
+		if !ok {
+			continue
+		}
+		val, _ := attr.Expr.Value(nil)
+		if val.Type().IsObjectType() {
+			if subVal := val.AsValueMap()[moduleName]; subVal.Type().IsTupleType() {
+				for _, item := range subVal.AsValueSlice() {
+					result = append(result, item.AsString())
 				}
 			}
 		}
