@@ -688,12 +688,18 @@ func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) 
 		if !ok {
 			continue
 		}
-		val, _ := attr.Expr.Value(nil)
-		if val.Type().IsObjectType() {
-			if subVal := val.AsValueMap()[moduleName]; subVal.Type().IsTupleType() {
-				for _, item := range subVal.AsValueSlice() {
-					result = append(result, item.AsString())
-				}
+
+		val, diags := attr.Expr.Value(nil)
+		if diags.HasErrors() {
+			return nil, diags
+		}
+
+		if !val.Type().IsObjectType() {
+			continue
+		}
+		if subVal := val.AsValueMap()[moduleName]; subVal.Type().IsTupleType() {
+			for _, item := range subVal.AsValueSlice() {
+				result = append(result, item.AsString())
 			}
 		}
 	}
