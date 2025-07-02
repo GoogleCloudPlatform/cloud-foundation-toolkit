@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.8](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.7...infra/blueprint-test/v0.17.8) (2025-07-02)
+
+
+### Bug Fixes
+
+* **deps:** update github.com/googlecontainertools/kpt-functions-sdk/go/api digest to afe329c ([#3054](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3054)) ([6d58717](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6d5871727fec9e39a92951b087b47e6a7d8fcfe9))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.50.0 ([#3059](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3059)) ([b087ea7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b087ea7e9c37021de5e4359b40bee75c7e7164c4))
+* **deps:** update module golang.org/x/mod to v0.25.0 ([#3043](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3043)) ([b1b969f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b1b969fc0c4b6301e1587d3bbf13ecc58748a813))
+
 ## [0.17.7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.6...infra/blueprint-test/v0.17.7) (2025-06-04)
 
 
