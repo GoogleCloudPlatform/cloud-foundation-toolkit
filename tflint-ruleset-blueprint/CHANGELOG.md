@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.10](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.9...tflint-ruleset-blueprint/v0.2.10) (2025-07-07)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/net from 0.34.0 to 0.36.0 in /tflint-ruleset-blueprint in the go_modules group across 1 directory ([#2919](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2919)) ([441eea0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/441eea07eae9f85426250c097f5654e4696df1b7))
+* **deps:** update dependency go to v1.23.8 ([#2926](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2926)) ([10bb54f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/10bb54f833d7bc3ddfbfbbd72a2366bf01d698e3))
+* **deps:** update dependency go to v1.23.9 ([#2980](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2980)) ([f3497a1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f3497a1fb58be2b72f2aa917346771701f577f26))
+* **deps:** update dependency go to v1.24.3 ([#3029](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3029)) ([664b061](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/664b0618fd7991a125fdae44b4b1171e29f51172))
+* **deps:** update dependency go to v1.24.4 ([#3056](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3056)) ([8789972](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/878997205b8ef6ae0bd17c58f71341d1d66b0de0))
+* some initial go linting ([#2975](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/2975)) ([beff30e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/beff30e56af5301ec32b0fc645840dfc22c2fe2a))
+
 ## [0.2.9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.8...tflint-ruleset-blueprint/v0.2.9) (2025-02-25)
 
 
