@@ -637,6 +637,8 @@ func TestParseBpModuleName(t *testing.T) {
 		{"/workspace/my-bp/modules/api_gateway", "/workspace/my-bp", "api_gateway"},
 		{"/workspace/my-bp/modules/nested/foo", "/workspace/my-bp", "nested"},
 		{"/workspace/my-bp/notmodules/foo", "/workspace/my-bp", "root"},
+		{"/workspace/my-bp/modules/v2", "/workspace/my-bp", "dash"},
+		{"/workspace/my-bp/modules/dash-module", "/workspace/my-bp", "dash-module"},
 	}
 
 	for _, test := range tests {
