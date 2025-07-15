@@ -18,7 +18,7 @@ require (
 	github.com/google/go-github/v73 v73.0.0
 	github.com/gruntwork-io/terratest v0.50.0
 	github.com/hashicorp/go-version v1.7.0
-	github.com/hashicorp/hcl/v2 v2.23.0
+	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20250515145901-f4c50e64fd6d
 	github.com/hashicorp/terraform-json v0.25.0
 	github.com/iancoleman/strcase v0.3.0
