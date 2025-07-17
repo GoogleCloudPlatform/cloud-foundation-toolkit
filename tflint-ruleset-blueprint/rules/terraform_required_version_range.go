@@ -162,7 +162,7 @@ func (r *TerraformRequiredVersionRange) Check(runner tflint.Runner) error {
 			return err
 		}
 
-		if !((constraints.Check(minimum_required_version) || constraints.Check(maximum_required_version)) && !constraints.Check(below_required_version)) {
+		if (!constraints.Check(minimum_required_version) && !constraints.Check(maximum_required_version)) || constraints.Check(below_required_version) {
 			//TODO: use EmitIssueWithFix()
 			err := runner.EmitIssue(r, fmt.Sprintf("required_version is not inclusive of the the minimum %q and maximum %q terraform required_version: %q", minVersion, maxVersion, constraints.String()), block.DefRange)
 			if err != nil {
