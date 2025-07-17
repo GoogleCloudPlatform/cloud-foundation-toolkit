@@ -93,7 +93,11 @@ func getTFOutputMap(t *testing.T, tf string) map[string]interface{} {
 	t.Helper()
 
 	tfDir := newTestDir(t, "", tf)
-	defer os.RemoveAll(tfDir)
+	t.Cleanup(func() {
+		if err := os.RemoveAll(tfDir); err != nil {
+			t.Logf("Error removing temp dir %s: %v", tfDir, err)
+		}
+	})
 
 	// apply tf and get outputs
 	tOpts := &terraform.Options{TerraformDir: tfDir, Logger: logger.Discard}
@@ -187,9 +191,17 @@ func TestSetupOverrideString(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			emptyDir := newTestDir(t, "empty*", "")
+			t.Cleanup(func() {
+				if err := os.RemoveAll(emptyDir); err != nil {
+					t.Logf("Error removing temp dir %s: %v", emptyDir, err)
+				}
+			})
 			setupDir := newTestDir(t, "setup-*", tt.tfOutputs)
-			defer os.RemoveAll(emptyDir)
-			defer os.RemoveAll(setupDir)
+			t.Cleanup(func() {
+				if err := os.RemoveAll(setupDir); err != nil {
+					t.Logf("Error removing temp dir %s: %v", setupDir, err)
+				}
+			})
 			b := NewTFBlueprintTest(&testingiface.RuntimeT{},
 				WithSetupOutputs(tt.overrides),
 				WithTFDir(emptyDir),
@@ -242,9 +254,17 @@ func TestSetupOverrideList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			emptyDir := newTestDir(t, "empty*", "")
+			t.Cleanup(func() {
+				if err := os.RemoveAll(emptyDir); err != nil {
+					t.Logf("Error removing temp dir %s: %v", emptyDir, err)
+				}
+			})
 			setupDir := newTestDir(t, "setup-*", tt.tfOutputs)
-			defer os.RemoveAll(emptyDir)
-			defer os.RemoveAll(setupDir)
+			t.Cleanup(func() {
+				if err := os.RemoveAll(setupDir); err != nil {
+					t.Logf("Error removing temp dir %s: %v", setupDir, err)
+				}
+			})
 			b := NewTFBlueprintTest(&testingiface.RuntimeT{},
 				WithSetupOutputs(tt.overrides),
 				WithTFDir(emptyDir),
@@ -266,7 +286,11 @@ func TestSetupOverrideList(t *testing.T) {
 func TestSetupOverrideFromEnv(t *testing.T) {
 	t.Setenv("CFT_SETUP_my-key", "my-value")
 	emptyDir := newTestDir(t, "empty*", "")
-	defer os.RemoveAll(emptyDir)
+	t.Cleanup(func() {
+		if err := os.RemoveAll(emptyDir); err != nil {
+			t.Errorf("Error removing temp dir %s: %v", emptyDir, err)
+		}
+	})
 	b := NewTFBlueprintTest(&testingiface.RuntimeT{},
 		WithTFDir(emptyDir))
 	got := b.GetTFSetupStringOutput("my-key")

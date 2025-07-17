@@ -39,7 +39,9 @@ func TestAssertSuccess(t *testing.T) {
 			label: "success",
 			serverFunc: func(t *testing.T) *httptest.Server {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					fmt.Fprint(w, "Hello World")
+					if _, err := fmt.Fprint(w, "Hello World"); err != nil {
+						t.Fatal(err)
+					}
 				}))
 			},
 			requestFunc: func(t *testing.T, s *httptest.Server) *http.Request {
@@ -151,7 +153,9 @@ func TestAssertResponse(t *testing.T) {
 			label: "success",
 			serverFunc: func(t *testing.T) *httptest.Server {
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					fmt.Fprint(w, "Hello World")
+					if _, err := fmt.Fprint(w, "Hello World"); err != nil {
+						t.Fatal(err)
+					}
 				}))
 			},
 			requestFunc: func(t *testing.T, s *httptest.Server) *http.Request {
@@ -231,7 +235,7 @@ func TestAssertResponse(t *testing.T) {
 		{
 			label: "response error",
 			serverFunc: func(t *testing.T) *httptest.Server {
-				var n int = 0
+				var n = 0
 				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					n++
 					http.Error(w, fmt.Sprintf("Not Available #%d", n), http.StatusServiceUnavailable)
@@ -335,7 +339,9 @@ func TestAssertResponse_contains(t *testing.T) {
 	}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello World")
+		if _, err := fmt.Fprint(w, "Hello World"); err != nil {
+			t.Fatal(err)
+		}
 	}))
 	defer server.Close()
 

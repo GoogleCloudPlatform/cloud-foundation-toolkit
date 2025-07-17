@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"log"
+	"os"
+)
 
 // WriteTmpFile writes data to a temp file and returns the path.
 func WriteTmpFile(data string) (string, error) {
@@ -8,7 +11,11 @@ func WriteTmpFile(data string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Printf("error closing temp file %s: %v", f.Name(), err)
+		}
+	}()
 	_, err = f.Write([]byte(data))
 	if err != nil {
 		return "", err
@@ -22,7 +29,11 @@ func WriteTmpFileWithExtension(data string, extension string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Printf("error closing temp file %s: %v", f.Name(), err)
+		}
+	}()
 	_, err = f.Write([]byte(data))
 	if err != nil {
 		return "", err

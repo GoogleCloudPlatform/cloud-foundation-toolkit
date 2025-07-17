@@ -143,7 +143,11 @@ func (ah *AssertHTTP) httpResponse(t testing.TB, r *http.Request, wantCode int, 
 		if err != nil {
 			return false, err
 		}
-		defer got.Body.Close()
+		defer func() {
+			if err := got.Body.Close(); err != nil {
+				t.Error(err.Error())
+			}
+		}()
 
 		// Determine if the request is successful, and if the response indicates
 		// we should attempt a retry.
