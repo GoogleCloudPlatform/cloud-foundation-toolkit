@@ -74,7 +74,9 @@ func GetBuildDir(b testing.TB) (string, func()) {
 		b.Fatalf("unable to get absolute path for %s :%v", buildDir, err)
 	}
 	rmBuildDir := func() {
-		os.RemoveAll(buildDir)
+		if err := os.RemoveAll(buildDir); err != nil {
+			b.Errorf("error removing build dir %s: %v", buildDir, err)
+		}
 	}
 	return abs, rmBuildDir
 }

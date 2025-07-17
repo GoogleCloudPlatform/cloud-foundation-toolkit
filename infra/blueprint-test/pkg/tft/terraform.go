@@ -479,7 +479,7 @@ func extractFromEnv(prefix string) map[string]interface{} {
 
 // ShouldSkip checks if a test should be skipped
 func (b *TFBlueprintTest) ShouldSkip() bool {
-	return b.BlueprintTestConfig.Spec.Skip
+	return b.Spec.Skip
 }
 
 // shouldRunTerraformVet checks if terraform vet should be executed
@@ -657,7 +657,7 @@ const (
 // Test runs init, apply, verify, teardown in order for the blueprint.
 func (b *TFBlueprintTest) Test() {
 	if b.ShouldSkip() {
-		b.logger.Logf(b.t, "Skipping test due to config %s", b.BlueprintTestConfig.Path)
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
 		b.t.SkipNow()
 		return
 	}
@@ -676,7 +676,7 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 		b.t.Fatalf("n should be 2 or greater but got: %d", n)
 	}
 	if b.ShouldSkip() {
-		b.logger.Logf(b.t, "Skipping test due to config %s", b.BlueprintTestConfig.Path)
+		b.logger.Logf(b.t, "Skipping test due to config %s", b.Path)
 		b.t.SkipNow()
 		return
 	}

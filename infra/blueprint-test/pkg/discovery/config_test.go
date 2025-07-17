@@ -49,7 +49,9 @@ spec:
 			if tt.testCfg != "" {
 				testCfgPath = setupTestCfg(t, tt.testCfg)
 			}
-			defer os.RemoveAll(testCfgPath)
+			t.Cleanup(func() {
+				assert.NoError(os.RemoveAll(testCfgPath))
+			})
 			bpTestCfg, err := GetTestConfig(testCfgPath)
 			if tt.errMsg != "" {
 				assert.NotNil(err)

@@ -56,13 +56,17 @@ func TestUpdate(t *testing.T) {
 			if !tt.skipUpdate {
 				err := os.Setenv(gfUpdateEnvVar, "true")
 				assert.NoError(err)
-				defer os.Unsetenv(gfUpdateEnvVar)
+				t.Cleanup(func() {
+					assert.NoError(os.Unsetenv(gfUpdateEnvVar))
+				})
 			}
 
 			got := NewOrUpdate(t, tt.data)
 
 			if !tt.skipUpdate {
-				defer os.Remove(got.GetName())
+				t.Cleanup(func() {
+					assert.NoError(os.Remove(got.GetName()))
+				})
 			}
 			j, err := os.ReadFile(got.GetName())
 			assert.NoError(err)
@@ -139,10 +143,14 @@ func TestJSONEq(t *testing.T) {
 				gcloud.Runf(t, "config set project %s", testProjectID)
 				defer gcloud.Run(t, "config unset project")
 			}
-			os.Setenv(gfUpdateEnvVar, "true")
-			defer os.Unsetenv(gfUpdateEnvVar)
+			assert.NoError(os.Setenv(gfUpdateEnvVar, "true"))
+			t.Cleanup(func() {
+				assert.NoError(os.Unsetenv(gfUpdateEnvVar))
+			})
 			got := NewOrUpdate(t, tt.data, tt.opts...)
-			defer os.Remove(got.GetName())
+			t.Cleanup(func() {
+				assert.NoError(os.Remove(got.GetName()))
+			})
 			got.JSONEq(assert, utils.ParseJSONResult(t, tt.data), tt.eqPath)
 			assert.Equal(tt.want, got.GetJSON().Get(tt.eqPath).Get("@ugly").String())
 		})
@@ -193,9 +201,13 @@ func TestJSONEqs(t *testing.T) {
 			innerAssert := assert.New(innerT)
 			err := os.Setenv(gfUpdateEnvVar, "true")
 			innerAssert.NoError(err)
-			defer os.Unsetenv(gfUpdateEnvVar)
+			t.Cleanup(func() {
+				innerAssert.NoError(os.Unsetenv(gfUpdateEnvVar))
+			})
 			got := NewOrUpdate(t, tt.data, tt.opts...)
-			defer os.Remove(got.GetName())
+			t.Cleanup(func() {
+				innerAssert.NoError(os.Remove(got.GetName()))
+			})
 			got.JSONPathEqs(innerAssert, utils.ParseJSONResult(t, tt.want), tt.eqPaths)
 
 			assert := assert.New(t)
