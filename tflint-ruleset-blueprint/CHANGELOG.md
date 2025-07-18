@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.11](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.10...tflint-ruleset-blueprint/v0.2.11) (2025-07-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency go to v1.24.5 ([#3098](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3098)) ([840798e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/840798eb60af289f4934703fb20898e8d751a035))
+* **deps:** update module github.com/hashicorp/hcl/v2 to v2.24.0 ([#3092](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3092)) ([fc3f0b6](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/fc3f0b6fbf269db649bb9b7c0c67d5fcdc735bb6))
+
 ## [0.2.10](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.9...tflint-ruleset-blueprint/v0.2.10) (2025-07-07)
 
 
