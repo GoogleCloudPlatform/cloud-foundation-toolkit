@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.17.8](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.7...infra/blueprint-test/v0.17.8) (2025-07-18)
+
+
+### Bug Fixes
+
+* **deps:** bump golang.org/x/oauth2 from 0.24.0 to 0.27.0 ([694d33e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/694d33ef0da85e11c52d267ddc10984103555b8c))
+* **deps:** update github.com/googlecontainertools/kpt-functions-sdk/go/api digest to 9bfead3 ([#3083](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3083)) ([b169833](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b169833ce6844cdeeee6eeb877b3255b78ac2f0c))
+* **deps:** update github.com/googlecontainertools/kpt-functions-sdk/go/api digest to afe329c ([#3054](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3054)) ([6d58717](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6d5871727fec9e39a92951b087b47e6a7d8fcfe9))
+* **deps:** update module github.com/gruntwork-io/terratest to v0.50.0 ([#3059](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3059)) ([b087ea7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b087ea7e9c37021de5e4359b40bee75c7e7164c4))
+* **deps:** update module golang.org/x/mod to v0.25.0 ([#3043](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3043)) ([b1b969f](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b1b969fc0c4b6301e1587d3bbf13ecc58748a813))
+* **deps:** update module golang.org/x/mod to v0.26.0 ([#3101](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3101)) ([0e44ab3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0e44ab3e3e1e22db382aeeb46798db10f862f73f))
+* **deps:** update module sigs.k8s.io/kustomize/kyaml to v0.20.0 ([#3076](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3076)) ([8276374](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/82763741cd908e5501f91052e0d8ce87c6fdc081))
+* lint ([#3103](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3103)) ([0d93609](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0d936096a68eae8dc5623c1179035466bdd7c462))
+
 ## [0.17.7](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.6...infra/blueprint-test/v0.17.7) (2025-06-04)
 
 
