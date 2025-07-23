@@ -15,8 +15,8 @@
  */
 
 locals {
-  tgm_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.cft-admins.node_id] }) if value.org == "terraform-google-modules" }
-  gcp_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.blueprint-solutions.node_id] }) if value.org == "GoogleCloudPlatform" }
+  tgm_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.cft-admins.node_id, data.github_team.tgm-adc-admins.node_id] }) if value.org == "terraform-google-modules" }
+  gcp_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.blueprint-solutions.node_id, data.github_team.gcp-adc-admins.node_id] }) if value.org == "GoogleCloudPlatform" }
 }
 
 data "github_team" "cft-admins" {
@@ -26,6 +26,16 @@ data "github_team" "cft-admins" {
 
 data "github_team" "blueprint-solutions" {
   slug     = "blueprint-solutions"
+  provider = github.gcp
+}
+
+data "github_team" "tgm-adc-admins" {
+  slug     = "adc-blueprint-admins"
+  provider = github
+}
+
+data "github_team" "gcp-adc-admins" {
+  slug     = "adc-blueprint-admins"
   provider = github.gcp
 }
 
