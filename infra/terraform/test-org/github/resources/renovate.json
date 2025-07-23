@@ -49,7 +49,7 @@
     },
     {
       "matchManagers": ["regex", "gomod"],
-      "matchFileNames": ["!(modules/**)"],
+      "matchFileNames": ["test/integration/**", "build/**", "Makefile"],
       "groupName": "go modules and/or dev-tools"
     },
     {
