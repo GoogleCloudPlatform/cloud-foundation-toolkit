@@ -94,7 +94,7 @@ resource "github_repository_collaborator" "cftbot" {
   for_each   = github_repository.repo
   repository = each.value.name
   username   = "cloud-foundation-bot"
-  permission = "read"
+  permission = "pull"
 }
 
 resource "github_repository_collaborator" "admins" {
