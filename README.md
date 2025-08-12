@@ -1,4 +1,4 @@
-# Cloud Foundation Toolkit Project
+# Welcome to the Cloud Foundation Toolkit, a collection of best practices and tools for Google Cloud!`
 
 ## Overview
 
