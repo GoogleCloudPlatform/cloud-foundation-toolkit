@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.8...infra/blueprint-test/v0.17.9) (2025-08-15)
+
+
+### Bug Fixes
+
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to e8a84ee ([#3131](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3131)) ([f754099](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f7540994f8108935eaa0916b3098b7d2dbde5487))
+
 ## [0.17.8](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.7...infra/blueprint-test/v0.17.8) (2025-07-18)
 
 

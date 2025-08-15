@@ -1,5 +1,5 @@
 {
-  "infra/blueprint-test": "0.17.8",
+  "infra/blueprint-test": "0.17.9",
   "infra/module-swapper": "0.4.17",
   "tflint-ruleset-blueprint": "0.2.11"
 }
