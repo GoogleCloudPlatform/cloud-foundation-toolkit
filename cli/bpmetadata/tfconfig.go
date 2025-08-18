@@ -22,11 +22,11 @@ import (
 )
 
 const (
-	versionRegEx   = "/v([0-9]+[.0-9]*)$"
-	modulePattern  = `(?:^|/)modules/([^/]+)`
-	perModuleRoles = "per_module_roles"
+	versionRegEx      = "/v([0-9]+[.0-9]*)$"
+	modulePattern     = `(?:^|/)modules/([^/]+)`
+	perModuleRoles    = "per_module_roles"
 	perModuleServices = "per_module_services"
-	rootModuleName = "root"
+	rootModuleName    = "root"
 )
 
 type blueprintVersion struct {
@@ -528,7 +528,7 @@ func parseBlueprintServices(servicesFile *hcl.File, perModuleMode bool, moduleNa
 		diags = gohcl.DecodeExpression(apisAttr.Expr, nil, &s)
 		err = hasHclErrors(diags)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error decoding activate_apis: %w", err)
 		}
 
 		// because we're only interested in the top-level modules block
