@@ -110,22 +110,6 @@ module "stale_yml_gcp" {
   providers = { github = github.gcp }
 }
 
-module "conventional-commit-lint_yaml_tgm" {
-  source    = "../../modules/repo_file"
-  repo_list = module.repos_tgm.repos
-  filename  = ".github/conventional-commit-lint.yaml"
-  content   = file("${path.module}/resources/conventional-commit-lint.yaml")
-  providers = { github = github }
-}
-
-module "conventional-commit-lint_yaml_gcp" {
-  source    = "../../modules/repo_file"
-  repo_list = module.repos_gcp.repos
-  filename  = ".github/conventional-commit-lint.yaml"
-  content   = file("${path.module}/resources/conventional-commit-lint.yaml")
-  providers = { github = github.gcp }
-}
-
 module "trusted-contribution_yml_tgm" {
   source    = "../../modules/repo_file"
   repo_list = module.repos_tgm.repos

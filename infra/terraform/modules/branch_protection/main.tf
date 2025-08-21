@@ -34,7 +34,7 @@ resource "github_branch_protection" "default" {
       "cla/google",
       "${substr(each.key, 0, 50)}-int-trigger (cloud-foundation-cicd)",
       "lint",
-      "conventionalcommits.org"
+      "commitlint"
     ], lookup(var.repos_map[each.key], "add_checks", []))
   }
 
