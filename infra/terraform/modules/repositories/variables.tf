@@ -21,17 +21,17 @@
 variable "repos_map" {
   description = "Map of Repos"
   type = map(object({
-    name         = string
-    short_name   = optional(string)
-    org          = string
-    description  = optional(string)
-    admins       = optional(list(string), [])
-    admin_groups = optional(list(string), [])
-    maintainers  = optional(list(string), [])
-    homepage_url = optional(string, null)
-    module       = optional(bool, true)
-    topics       = optional(string)
-    groups       = optional(list(string), [])
+    name            = string
+    short_name      = optional(string)
+    org             = string
+    description     = optional(string)
+    admins          = optional(list(string), [])
+    admin_group_ids = optional(list(string), [])
+    maintainers     = optional(list(string), [])
+    homepage_url    = optional(string, null)
+    module          = optional(bool, true)
+    topics          = optional(string)
+    groups          = optional(list(string), [])
   }))
 }
 
@@ -39,9 +39,4 @@ variable "ci_teams" {
   description = "Repo collaborator teams for approved CI"
   type        = list(string)
   default     = []
-}
-
-variable "super_admin" {
-  description = "GitHub Super Admin Group"
-  type        = string
 }
