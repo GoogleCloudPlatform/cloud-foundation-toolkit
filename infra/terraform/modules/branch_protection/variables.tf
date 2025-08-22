@@ -26,12 +26,12 @@ variable "repo_list" {
 variable "repos_map" {
   description = "Map of Repos"
   type = map(object({
-    name         = string
-    org          = string
-    admins       = optional(list(string), [])
-    admin_groups = optional(list(string), [])
-    maintainers  = optional(list(string), [])
-    groups       = optional(list(string), [])
-    add_checks   = optional(list(string), [])
+    name                 = string
+    org                  = string
+    admins               = optional(list(string), [])
+    admin_group_node_ids = optional(list(string), [])
+    maintainers          = optional(list(string), [])
+    groups               = optional(list(string), [])
+    add_checks           = optional(list(string), [])
   }))
 }
