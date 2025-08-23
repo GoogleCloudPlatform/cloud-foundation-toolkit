@@ -23,5 +23,5 @@ provider "google" {
 resource "google_access_context_manager_access_policy" "access_policy" {
   provider = google.override
   parent   = "organizations/${local.org_id}"
-  title    = "default policy"
+  title    = "Organization access level policy"
 }
