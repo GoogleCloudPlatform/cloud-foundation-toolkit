@@ -1097,6 +1097,36 @@
         "clusterCreationVariable"
       ]
     },
+    "GkeKubernetesServiceAccountExtension": {
+      "properties": {
+        "gkeClusterProperty": {
+          "type": "string"
+        },
+        "gkeNamespaceProperty": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "GkeNamespaceExtension": {
+      "properties": {
+        "gkeClusterProperty": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "GkeStorageClassExtension": {
+      "properties": {
+        "gkeClusterProperty": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "GooglePropertyExtension": {
       "properties": {
         "type": {
@@ -1162,6 +1192,15 @@
         },
         "gkeCluster": {
           "$ref": "#/$defs/GKEClusterExtension"
+        },
+        "gkeNamespace": {
+          "$ref": "#/$defs/GkeNamespaceExtension"
+        },
+        "gkeStorageClass": {
+          "$ref": "#/$defs/GkeStorageClassExtension"
+        },
+        "gkeKubernetesServiceAccount": {
+          "$ref": "#/$defs/GkeKubernetesServiceAccountExtension"
         }
       },
       "additionalProperties": false,
