@@ -236,9 +236,9 @@ type GooglePropertyExtension struct {
 	GceDiskType                 *GCEDiskTypeExtension                 `protobuf:"bytes,17,opt,name=gce_disk_type,json=gceDiskType,proto3" json:"gceDiskType,omitempty" yaml:"gceDiskType,omitempty"`                                                   // @gotags: json:"gceDiskType,omitempty" yaml:"gceDiskType,omitempty"
 	GceLocation                 *GCELocationExtension                 `protobuf:"bytes,18,opt,name=gce_location,json=gceLocation,proto3" json:"gceLocation,omitempty" yaml:"gceLocation,omitempty"`                                                     // @gotags: json:"gceLocation,omitempty" yaml:"gceLocation,omitempty"
 	GkeCluster                  *GKEClusterExtension                  `protobuf:"bytes,19,opt,name=gke_cluster,json=gkeCluster,proto3" json:"gkeCluster,omitempty" yaml:"gkeCluster,omitempty"`                                                        // @gotags: json:"gkeCluster,omitempty" yaml:"gkeCluster,omitempty"
-	GkeNamespace                *GkeNamespaceExtension                `protobuf:"bytes,20,opt,name=gke_namespace,json=gkeNamespace,proto3" json:"gkeNamespace,omitempty" yaml:"gkeNamespace,omitempty"`                                                  // @gotags: json:"gkeNamespace,omitempty" yaml:"gkeNamespace,omitempty"
-	GkeStorageClass             *GkeStorageClassExtension             `protobuf:"bytes,21,opt,name=gke_storage_class,json=gkeStorageClass,proto3" json:"gkeStorageClass,omitempty" yaml:"gkeStorageClass,omitempty"`                                       // @gotags: json:"gkeStorageClass,omitempty" yaml:"gkeStorageClass,omitempty"
-	GkeKubernetesServiceAccount *GkeKubernetesServiceAccountExtension `protobuf:"bytes,22,opt,name=gke_kubernetes_service_account,json=gkeKubernetesServiceAccount,proto3" json:"gkeKubernetesServiceAccount,omitempty" yaml:"gkeK8sServiceAccount,omitempty"` // @gotags: json:"gkeKubernetesServiceAccount,omitempty" yaml:"gkeK8sServiceAccount,omitempty"
+	GkeNamespace                *GKENamespaceExtension                `protobuf:"bytes,20,opt,name=gke_namespace,json=gkeNamespace,proto3" json:"gkeNamespace,omitempty" yaml:"gkeNamespace,omitempty"`                                                  // @gotags: json:"gkeNamespace,omitempty" yaml:"gkeNamespace,omitempty"
+	GkeStorageClass             *GKEStorageClassExtension             `protobuf:"bytes,21,opt,name=gke_storage_class,json=gkeStorageClass,proto3" json:"gkeStorageClass,omitempty" yaml:"gkeStorageClass,omitempty"`                                       // @gotags: json:"gkeStorageClass,omitempty" yaml:"gkeStorageClass,omitempty"
+	GkeKubernetesServiceAccount *GKEKubernetesServiceAccountExtension `protobuf:"bytes,22,opt,name=gke_kubernetes_service_account,json=gkeKubernetesServiceAccount,proto3" json:"gkeKubernetesServiceAccount,omitempty" yaml:"gkeK8sServiceAccount,omitempty"` // @gotags: json:"gkeKubernetesServiceAccount,omitempty" yaml:"gkeK8sServiceAccount,omitempty"
 }
 
 func (x *GooglePropertyExtension) Reset() {
@@ -406,21 +406,21 @@ func (x *GooglePropertyExtension) GetGkeCluster() *GKEClusterExtension {
 	return nil
 }
 
-func (x *GooglePropertyExtension) GetGkeNamespace() *GkeNamespaceExtension {
+func (x *GooglePropertyExtension) GetGkeNamespace() *GKENamespaceExtension {
 	if x != nil {
 		return x.GkeNamespace
 	}
 	return nil
 }
 
-func (x *GooglePropertyExtension) GetGkeStorageClass() *GkeStorageClassExtension {
+func (x *GooglePropertyExtension) GetGkeStorageClass() *GKEStorageClassExtension {
 	if x != nil {
 		return x.GkeStorageClass
 	}
 	return nil
 }
 
-func (x *GooglePropertyExtension) GetGkeKubernetesServiceAccount() *GkeKubernetesServiceAccountExtension {
+func (x *GooglePropertyExtension) GetGkeKubernetesServiceAccount() *GKEKubernetesServiceAccountExtension {
 	if x != nil {
 		return x.GkeKubernetesServiceAccount
 	}
@@ -1278,7 +1278,7 @@ func (x *GKEClusterExtension) GetClusterCreationVariable() string {
 	return ""
 }
 
-type GkeNamespaceExtension struct {
+type GKENamespaceExtension struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1288,8 +1288,8 @@ type GkeNamespaceExtension struct {
 	GkeClusterProperty string `protobuf:"bytes,1,opt,name=gke_cluster_property,json=gkeClusterProperty,proto3" json:"gkeClusterProperty,omitempty" yaml:"gkeClusterProperty,omitempty"` // @gotags: json:"gkeClusterProperty,omitempty" yaml:"gkeClusterProperty,omitempty"
 }
 
-func (x *GkeNamespaceExtension) Reset() {
-	*x = GkeNamespaceExtension{}
+func (x *GKENamespaceExtension) Reset() {
+	*x = GKENamespaceExtension{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_bpmetadata_ui_ext_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1297,13 +1297,13 @@ func (x *GkeNamespaceExtension) Reset() {
 	}
 }
 
-func (x *GkeNamespaceExtension) String() string {
+func (x *GKENamespaceExtension) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GkeNamespaceExtension) ProtoMessage() {}
+func (*GKENamespaceExtension) ProtoMessage() {}
 
-func (x *GkeNamespaceExtension) ProtoReflect() protoreflect.Message {
+func (x *GKENamespaceExtension) ProtoReflect() protoreflect.Message {
 	mi := &file_bpmetadata_ui_ext_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1315,19 +1315,19 @@ func (x *GkeNamespaceExtension) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GkeNamespaceExtension.ProtoReflect.Descriptor instead.
-func (*GkeNamespaceExtension) Descriptor() ([]byte, []int) {
+// Deprecated: Use GKENamespaceExtension.ProtoReflect.Descriptor instead.
+func (*GKENamespaceExtension) Descriptor() ([]byte, []int) {
 	return file_bpmetadata_ui_ext_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *GkeNamespaceExtension) GetGkeClusterProperty() string {
+func (x *GKENamespaceExtension) GetGkeClusterProperty() string {
 	if x != nil {
 		return x.GkeClusterProperty
 	}
 	return ""
 }
 
-type GkeStorageClassExtension struct {
+type GKEStorageClassExtension struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1337,8 +1337,8 @@ type GkeStorageClassExtension struct {
 	GkeClusterProperty string `protobuf:"bytes,1,opt,name=gke_cluster_property,json=gkeClusterProperty,proto3" json:"gkeClusterProperty,omitempty" yaml:"gkeClusterProperty,omitempty"` // @gotags: json:"gkeClusterProperty,omitempty" yaml:"gkeClusterProperty,omitempty"
 }
 
-func (x *GkeStorageClassExtension) Reset() {
-	*x = GkeStorageClassExtension{}
+func (x *GKEStorageClassExtension) Reset() {
+	*x = GKEStorageClassExtension{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_bpmetadata_ui_ext_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1346,13 +1346,13 @@ func (x *GkeStorageClassExtension) Reset() {
 	}
 }
 
-func (x *GkeStorageClassExtension) String() string {
+func (x *GKEStorageClassExtension) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GkeStorageClassExtension) ProtoMessage() {}
+func (*GKEStorageClassExtension) ProtoMessage() {}
 
-func (x *GkeStorageClassExtension) ProtoReflect() protoreflect.Message {
+func (x *GKEStorageClassExtension) ProtoReflect() protoreflect.Message {
 	mi := &file_bpmetadata_ui_ext_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1364,19 +1364,19 @@ func (x *GkeStorageClassExtension) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GkeStorageClassExtension.ProtoReflect.Descriptor instead.
-func (*GkeStorageClassExtension) Descriptor() ([]byte, []int) {
+// Deprecated: Use GKEStorageClassExtension.ProtoReflect.Descriptor instead.
+func (*GKEStorageClassExtension) Descriptor() ([]byte, []int) {
 	return file_bpmetadata_ui_ext_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *GkeStorageClassExtension) GetGkeClusterProperty() string {
+func (x *GKEStorageClassExtension) GetGkeClusterProperty() string {
 	if x != nil {
 		return x.GkeClusterProperty
 	}
 	return ""
 }
 
-type GkeKubernetesServiceAccountExtension struct {
+type GKEKubernetesServiceAccountExtension struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1388,8 +1388,8 @@ type GkeKubernetesServiceAccountExtension struct {
 	GkeNamespaceProperty string `protobuf:"bytes,2,opt,name=gke_namespace_property,json=gkeNamespaceProperty,proto3" json:"gkeNamespaceProperty,omitempty" yaml:"gkeNamespaceProperty,omitempty"` // @gotags: json:"gkeNamespaceProperty,omitempty" yaml:"gkeNamespaceProperty,omitempty"
 }
 
-func (x *GkeKubernetesServiceAccountExtension) Reset() {
-	*x = GkeKubernetesServiceAccountExtension{}
+func (x *GKEKubernetesServiceAccountExtension) Reset() {
+	*x = GKEKubernetesServiceAccountExtension{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_bpmetadata_ui_ext_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1397,13 +1397,13 @@ func (x *GkeKubernetesServiceAccountExtension) Reset() {
 	}
 }
 
-func (x *GkeKubernetesServiceAccountExtension) String() string {
+func (x *GKEKubernetesServiceAccountExtension) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GkeKubernetesServiceAccountExtension) ProtoMessage() {}
+func (*GKEKubernetesServiceAccountExtension) ProtoMessage() {}
 
-func (x *GkeKubernetesServiceAccountExtension) ProtoReflect() protoreflect.Message {
+func (x *GKEKubernetesServiceAccountExtension) ProtoReflect() protoreflect.Message {
 	mi := &file_bpmetadata_ui_ext_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1415,19 +1415,19 @@ func (x *GkeKubernetesServiceAccountExtension) ProtoReflect() protoreflect.Messa
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GkeKubernetesServiceAccountExtension.ProtoReflect.Descriptor instead.
-func (*GkeKubernetesServiceAccountExtension) Descriptor() ([]byte, []int) {
+// Deprecated: Use GKEKubernetesServiceAccountExtension.ProtoReflect.Descriptor instead.
+func (*GKEKubernetesServiceAccountExtension) Descriptor() ([]byte, []int) {
 	return file_bpmetadata_ui_ext_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *GkeKubernetesServiceAccountExtension) GetGkeClusterProperty() string {
+func (x *GKEKubernetesServiceAccountExtension) GetGkeClusterProperty() string {
 	if x != nil {
 		return x.GkeClusterProperty
 	}
 	return ""
 }
 
-func (x *GkeKubernetesServiceAccountExtension) GetGkeNamespaceProperty() string {
+func (x *GKEKubernetesServiceAccountExtension) GetGkeNamespaceProperty() string {
 	if x != nil {
 		return x.GkeNamespaceProperty
 	}
@@ -1550,13 +1550,13 @@ var file_bpmetadata_ui_ext_proto_rawDesc = []byte{
 	0x74, 0x65, 0x72, 0x12, 0x5a, 0x0a, 0x0d, 0x67, 0x6b, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x73,
 	0x70, 0x61, 0x63, 0x65, 0x18, 0x14, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x35, 0x2e, 0x67, 0x6f, 0x6f,
 	0x67, 0x6c, 0x65, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x2e, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x47, 0x6b, 0x65, 0x4e,
+	0x2e, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x47, 0x4b, 0x45, 0x4e,
 	0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x73, 0x69, 0x6f,
 	0x6e, 0x52, 0x0c, 0x67, 0x6b, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x12,
 	0x64, 0x0a, 0x11, 0x67, 0x6b, 0x65, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x5f, 0x63,
 	0x6c, 0x61, 0x73, 0x73, 0x18, 0x15, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x38, 0x2e, 0x67, 0x6f, 0x6f,
 	0x67, 0x6c, 0x65, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67,
-	0x2e, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x47, 0x6b, 0x65, 0x53,
+	0x2e, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x47, 0x4b, 0x45, 0x53,
 	0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78, 0x74, 0x65, 0x6e,
 	0x73, 0x69, 0x6f, 0x6e, 0x52, 0x0f, 0x67, 0x6b, 0x65, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65,
 	0x43, 0x6c, 0x61, 0x73, 0x73, 0x12, 0x89, 0x01, 0x0a, 0x1e, 0x67, 0x6b, 0x65, 0x5f, 0x6b, 0x75,
@@ -1564,7 +1564,7 @@ var file_bpmetadata_ui_ext_proto_rawDesc = []byte{
 	0x5f, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x16, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x44,
 	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x63, 0x6c, 0x6f, 0x75, 0x64, 0x2e, 0x63, 0x6f,
 	0x6e, 0x66, 0x69, 0x67, 0x2e, 0x62, 0x70, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
-	0x47, 0x6b, 0x65, 0x4b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x53, 0x65, 0x72,
+	0x47, 0x4b, 0x45, 0x4b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x53, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e,
 	0x73, 0x69, 0x6f, 0x6e, 0x52, 0x1b, 0x67, 0x6b, 0x65, 0x4b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65,
 	0x74, 0x65, 0x73, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e,
@@ -1666,17 +1666,17 @@ var file_bpmetadata_ui_ext_proto_rawDesc = []byte{
 	0x65, 0x72, 0x5f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x76, 0x61, 0x72, 0x69,
 	0x61, 0x62, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x17, 0x63, 0x6c, 0x75, 0x73,
 	0x74, 0x65, 0x72, 0x43, 0x72, 0x65, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x56, 0x61, 0x72, 0x69, 0x61,
-	0x62, 0x6c, 0x65, 0x22, 0x49, 0x0a, 0x15, 0x47, 0x6b, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x70,
+	0x62, 0x6c, 0x65, 0x22, 0x49, 0x0a, 0x15, 0x47, 0x4b, 0x45, 0x4e, 0x61, 0x6d, 0x65, 0x73, 0x70,
 	0x61, 0x63, 0x65, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x30, 0x0a, 0x14,
 	0x67, 0x6b, 0x65, 0x5f, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x5f, 0x70, 0x72, 0x6f, 0x70,
 	0x65, 0x72, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x12, 0x67, 0x6b, 0x65, 0x43,
 	0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x79, 0x22, 0x4c,
-	0x0a, 0x18, 0x47, 0x6b, 0x65, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x43, 0x6c, 0x61, 0x73,
+	0x0a, 0x18, 0x47, 0x4b, 0x45, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x43, 0x6c, 0x61, 0x73,
 	0x73, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x30, 0x0a, 0x14, 0x67, 0x6b,
 	0x65, 0x5f, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x5f, 0x70, 0x72, 0x6f, 0x70, 0x65, 0x72,
 	0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x12, 0x67, 0x6b, 0x65, 0x43, 0x6c, 0x75,
 	0x73, 0x74, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x79, 0x22, 0x8e, 0x01, 0x0a,
-	0x24, 0x47, 0x6b, 0x65, 0x4b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x53, 0x65,
+	0x24, 0x47, 0x4b, 0x45, 0x4b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x53, 0x65,
 	0x72, 0x76, 0x69, 0x63, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x45, 0x78, 0x74, 0x65,
 	0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x30, 0x0a, 0x14, 0x67, 0x6b, 0x65, 0x5f, 0x63, 0x6c, 0x75,
 	0x73, 0x74, 0x65, 0x72, 0x5f, 0x70, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x79, 0x18, 0x01, 0x20,
@@ -1770,9 +1770,9 @@ var file_bpmetadata_ui_ext_proto_goTypes = []interface{}{
 	(*GCEGenericResourceExtension)(nil),          // 15: google.cloud.config.bpmetadata.GCEGenericResourceExtension
 	(*IAMServiceAccountExtension)(nil),           // 16: google.cloud.config.bpmetadata.IAMServiceAccountExtension
 	(*GKEClusterExtension)(nil),                  // 17: google.cloud.config.bpmetadata.GKEClusterExtension
-	(*GkeNamespaceExtension)(nil),                // 18: google.cloud.config.bpmetadata.GkeNamespaceExtension
-	(*GkeStorageClassExtension)(nil),             // 19: google.cloud.config.bpmetadata.GkeStorageClassExtension
-	(*GkeKubernetesServiceAccountExtension)(nil), // 20: google.cloud.config.bpmetadata.GkeKubernetesServiceAccountExtension
+	(*GKENamespaceExtension)(nil),                // 18: google.cloud.config.bpmetadata.GKENamespaceExtension
+	(*GKEStorageClassExtension)(nil),             // 19: google.cloud.config.bpmetadata.GKEStorageClassExtension
+	(*GKEKubernetesServiceAccountExtension)(nil), // 20: google.cloud.config.bpmetadata.GKEKubernetesServiceAccountExtension
 }
 var file_bpmetadata_ui_ext_proto_depIdxs = []int32{
 	0,  // 0: google.cloud.config.bpmetadata.GooglePropertyExtension.type:type_name -> google.cloud.config.bpmetadata.ExtensionType
@@ -1793,9 +1793,9 @@ var file_bpmetadata_ui_ext_proto_depIdxs = []int32{
 	7,  // 15: google.cloud.config.bpmetadata.GooglePropertyExtension.gce_disk_type:type_name -> google.cloud.config.bpmetadata.GCEDiskTypeExtension
 	3,  // 16: google.cloud.config.bpmetadata.GooglePropertyExtension.gce_location:type_name -> google.cloud.config.bpmetadata.GCELocationExtension
 	17, // 17: google.cloud.config.bpmetadata.GooglePropertyExtension.gke_cluster:type_name -> google.cloud.config.bpmetadata.GKEClusterExtension
-	18, // 18: google.cloud.config.bpmetadata.GooglePropertyExtension.gke_namespace:type_name -> google.cloud.config.bpmetadata.GkeNamespaceExtension
-	19, // 19: google.cloud.config.bpmetadata.GooglePropertyExtension.gke_storage_class:type_name -> google.cloud.config.bpmetadata.GkeStorageClassExtension
-	20, // 20: google.cloud.config.bpmetadata.GooglePropertyExtension.gke_kubernetes_service_account:type_name -> google.cloud.config.bpmetadata.GkeKubernetesServiceAccountExtension
+	18, // 18: google.cloud.config.bpmetadata.GooglePropertyExtension.gke_namespace:type_name -> google.cloud.config.bpmetadata.GKENamespaceExtension
+	19, // 19: google.cloud.config.bpmetadata.GooglePropertyExtension.gke_storage_class:type_name -> google.cloud.config.bpmetadata.GKEStorageClassExtension
+	20, // 20: google.cloud.config.bpmetadata.GooglePropertyExtension.gke_kubernetes_service_account:type_name -> google.cloud.config.bpmetadata.GKEKubernetesServiceAccountExtension
 	1,  // 21: google.cloud.config.bpmetadata.GCEExternalIPExtension.type:type_name -> google.cloud.config.bpmetadata.ExternalIPType
 	22, // [22:22] is the sub-list for method output_type
 	22, // [22:22] is the sub-list for method input_type
@@ -2003,7 +2003,7 @@ func file_bpmetadata_ui_ext_proto_init() {
 			}
 		}
 		file_bpmetadata_ui_ext_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GkeNamespaceExtension); i {
+			switch v := v.(*GKENamespaceExtension); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2015,7 +2015,7 @@ func file_bpmetadata_ui_ext_proto_init() {
 			}
 		}
 		file_bpmetadata_ui_ext_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GkeStorageClassExtension); i {
+			switch v := v.(*GKEStorageClassExtension); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2027,7 +2027,7 @@ func file_bpmetadata_ui_ext_proto_init() {
 			}
 		}
 		file_bpmetadata_ui_ext_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GkeKubernetesServiceAccountExtension); i {
+			switch v := v.(*GKEKubernetesServiceAccountExtension); i {
 			case 0:
 				return &v.state
 			case 1:
