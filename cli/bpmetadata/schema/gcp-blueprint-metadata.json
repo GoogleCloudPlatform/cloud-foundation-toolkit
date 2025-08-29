@@ -1099,10 +1099,10 @@
     },
     "GKEKubernetesServiceAccountExtension": {
       "properties": {
-        "gkeClusterProperty": {
+        "gkeClusterVariable": {
           "type": "string"
         },
-        "gkeNamespaceProperty": {
+        "gkeNamespaceVariable": {
           "type": "string"
         }
       },
@@ -1111,7 +1111,7 @@
     },
     "GKENamespaceExtension": {
       "properties": {
-        "gkeClusterProperty": {
+        "gkeClusterVariable": {
           "type": "string"
         }
       },
@@ -1120,7 +1120,7 @@
     },
     "GKEStorageClassExtension": {
       "properties": {
-        "gkeClusterProperty": {
+        "gkeClusterVariable": {
           "type": "string"
         }
       },

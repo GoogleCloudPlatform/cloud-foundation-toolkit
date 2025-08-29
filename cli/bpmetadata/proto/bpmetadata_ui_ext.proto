@@ -229,21 +229,21 @@ message GKEClusterExtension {
 }
 
 message GKENamespaceExtension {
-  // The name of the property that defines the GKE cluster.
+  // The name of the variable that defines the GKE cluster.
   // This is used to fetch the list of existing namespaces.
-  string gke_cluster_property = 1; // @gotags: json:"gkeClusterProperty,omitempty" yaml:"gkeClusterProperty,omitempty"
+  string gke_cluster_variable = 1; // @gotags: json:"gkeClusterVariable,omitempty" yaml:"gkeClusterVariable,omitempty"
 }
 
 message GKEStorageClassExtension {
-  // The name of the property that defines the GKE cluster.
+  // The name of the variable that defines the GKE cluster.
   // This is used to fetch the list of available StorageClasses.
-  string gke_cluster_property = 1; // @gotags: json:"gkeClusterProperty,omitempty" yaml:"gkeClusterProperty,omitempty"
+  string gke_cluster_variable = 1; // @gotags: json:"gkeClusterVariable,omitempty" yaml:"gkeClusterVariable,omitempty"
 }
 
 message GKEKubernetesServiceAccountExtension {
-  // The name of the property that defines the GKE cluster.
-  string gke_cluster_property = 1; // @gotags: json:"gkeClusterProperty,omitempty" yaml:"gkeClusterProperty,omitempty"
-  // The name of the property that defines the GKE namespace.
+  // The name of the variable that defines the GKE cluster.
+  string gke_cluster_variable = 1; // @gotags: json:"gkeClusterVariable,omitempty" yaml:"gkeClusterVariable,omitempty"
+  // The name of the variable that defines the GKE namespace.
   // This is used to fetch the list of available K8s Service Accounts.
-  string gke_namespace_property = 2; // @gotags: json:"gkeNamespaceProperty,omitempty" yaml:"gkeNamespaceProperty,omitempty"
+  string gke_namespace_variable = 2; // @gotags: json:"gkeNamespaceVariable,omitempty" yaml:"gkeNamespaceVariable,omitempty"
 }
