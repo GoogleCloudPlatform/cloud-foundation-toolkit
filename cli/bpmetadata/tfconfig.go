@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -404,23 +405,17 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 func parseBlueprintRoles(rolesFile *hcl.File, perModuleMode bool, moduleName string) ([]*BlueprintRoles, error) {
 	var r []*BlueprintRoles
 	if perModuleMode {
-		moduleRoles, err := extractModuleLocalList(rolesFile, "per_module_roles", moduleName)
+		moduleRoles, err := extractModuleLocalList(rolesFile, perModuleRoles, moduleName)
 		if err != nil {
 			return nil, err
 		}
-
-		seen := map[string]struct{}{}
-		for _, role := range moduleRoles {
-			seen[role] = struct{}{}
-		}
-		var combined []string
-		for role := range seen {
-			combined = append(combined, role)
-		}
+		// Sort the roles, then remove consecutive duplicates.
+		// Outputting them sorted isn't required but does keep things tidy.
+		moduleRoles = slices.Compact(slices.Sort(moduleRoles))
 
 		r = append(r, &BlueprintRoles{
 			Level: "Project",
-			Roles: combined,
+			Roles: moduleRoles,
 		})
 
 		sortBlueprintRoles(r)
@@ -490,16 +485,9 @@ func parseBlueprintServices(servicesFile *hcl.File, perModuleMode bool, moduleNa
 			return nil, err
 		}
 
-		seen := map[string]struct{}{}
-		for _, svc := range moduleServices {
-			seen[svc] = struct{}{}
-		}
-		var combined []string
-		for svc := range seen {
-			combined = append(combined, svc)
-		}
-		sort.Strings(combined)
-		return combined, nil
+		// Sort the services, then remove consecutive duplicates.
+		// Outputting them sorted isn't required but does keep things tidy.
+		return slices.Compact(slices.Sort(moduleServices)), nil
 	}
 	var s []string
 	servicesContent, _, diags := servicesFile.Body.PartialContent(rootSchema)
