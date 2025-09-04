@@ -40,7 +40,7 @@ require (
 	github.com/zclconf/go-cty v1.16.4
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/text v0.28.0
-	google.golang.org/api v0.247.0
+	google.golang.org/api v0.248.0
 	google.golang.org/protobuf v1.36.8
 	gopkg.in/yaml.v3 v3.0.1
 	sigs.k8s.io/yaml v1.6.0
