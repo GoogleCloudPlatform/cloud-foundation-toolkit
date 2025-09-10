@@ -72,11 +72,11 @@ message DisplayVariable {
 
   // Minimum value for numeric types.
   // Gen: manually-authored
-  float min = 11; // @gotags: json:"min,omitempty" yaml:"min,omitempty"
+  optional float min = 11; // @gotags: json:"min,omitempty" yaml:"min,omitempty"
 
   // Max value for numeric types.
   // Gen: manually-authored
-  float max = 12; // @gotags: json:"max,omitempty" yaml:"max,omitempty"
+  optional float max = 12; // @gotags: json:"max,omitempty" yaml:"max,omitempty"
 
   // The name of a section to which this variable belongs.
   // variables belong to the root section if this field is
