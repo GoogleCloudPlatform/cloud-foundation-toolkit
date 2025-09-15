@@ -6,7 +6,7 @@ require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20250702115044-9bfead305c54
 	github.com/alexflint/go-filemutex v1.3.0
 	github.com/gruntwork-io/terratest v0.50.0
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20250731202709-e8a84eebd3e7
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20250828155816-225c06ed5fd9
 	github.com/hashicorp/terraform-json v0.26.0
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
