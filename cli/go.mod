@@ -2,7 +2,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
 go 1.23.8
 
-toolchain go1.24.6
+toolchain go1.24.7
 
 require (
 	cloud.google.com/go/asset v1.21.1
@@ -15,12 +15,12 @@ require (
 	github.com/go-git/go-git/v5 v5.16.2
 	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a
 	github.com/google/go-cmp v0.7.0
-	github.com/google/go-github/v73 v73.0.0
+	github.com/google/go-github/v74 v74.0.0
 	github.com/gruntwork-io/terratest v0.50.0
 	github.com/hashicorp/go-version v1.7.0
 	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20250822072239-d9a8f4395430
-	github.com/hashicorp/terraform-json v0.25.0
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20250828155816-225c06ed5fd9
+	github.com/hashicorp/terraform-json v0.26.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/log15 v2.16.0+incompatible
 	github.com/invopop/jsonschema v0.13.0
@@ -35,15 +35,15 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/xeipuuv/gojsonschema v1.2.0
-	github.com/zclconf/go-cty v1.16.3
+	github.com/zclconf/go-cty v1.16.4
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/text v0.28.0
 	google.golang.org/api v0.247.0
-	google.golang.org/protobuf v1.36.7
+	google.golang.org/protobuf v1.36.8
 	gopkg.in/yaml.v3 v3.0.1
-	sigs.k8s.io/yaml v1.5.0
+	sigs.k8s.io/yaml v1.6.0
 )
 
 require (
@@ -181,7 +181,7 @@ require (
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
 	github.com/tmccombs/hcl2json v0.6.4 // indirect
-	github.com/ulikunitz/xz v0.5.11 // indirect
+	github.com/ulikunitz/xz v0.5.14 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.28 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect

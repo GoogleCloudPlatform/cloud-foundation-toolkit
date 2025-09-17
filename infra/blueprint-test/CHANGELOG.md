@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.17.9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.8...infra/blueprint-test/v0.17.9) (2025-09-04)
+
+
+### Bug Fixes
+
+* **deps:** bump the go_modules group across 2 directories with 1 update ([#3160](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3160)) ([27f38c2](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/27f38c2ebd9d0cb637cad40c9c6194ec3f875f05))
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to e8a84ee ([#3131](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3131)) ([f754099](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f7540994f8108935eaa0916b3098b7d2dbde5487))
+* **deps:** update module github.com/hashicorp/terraform-json to v0.26.0 ([#3170](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3170)) ([c70eb96](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/c70eb96c727881bab42f41fe6ce3aaf9fa832f58))
+* **deps:** update module github.com/stretchr/testify to v1.11.0 ([#3172](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3172)) ([bdf28b1](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/bdf28b1328e1bd8d453ef68cac498d0b10aa08e5))
+* **deps:** update module golang.org/x/mod to v0.27.0 ([#3162](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3162)) ([abcf06b](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/abcf06bfccd15cfbc4f0ced5b0407b67882d0f6a))
+* **deps:** update module sigs.k8s.io/kustomize/kyaml to v0.20.1 ([#3118](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3118)) ([0ebb5eb](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/0ebb5eb50655ce105f0f3f0c3dcc9a12d9615260))
+
 ## [0.17.8](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.7...infra/blueprint-test/v0.17.8) (2025-07-18)
 
 

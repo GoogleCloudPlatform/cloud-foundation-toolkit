@@ -460,6 +460,9 @@ locals {
       description = "Sets up a new VPC network on Google Cloud"
       topics      = local.common_topics.net
       maintainers = ["imrannayer"]
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name        = "terraform-google-org-policy"

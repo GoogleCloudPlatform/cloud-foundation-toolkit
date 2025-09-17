@@ -319,7 +319,7 @@ function generate_docs() {
     echo "ENABLE_BPMETADATA not set to 1. Skipping metadata generation."
     return 0
   fi
-  generate_metadata "${1-default}"
+  generate_metadata "$@"
 }
 
 function generate_metadata() {
@@ -331,7 +331,7 @@ function generate_metadata() {
   elif [ "${arg}" = "display" ]; then
     cft blueprint metadata -d
   else
-    eval "cft blueprint metadata $arg"
+    eval "cft blueprint metadata $@"
   fi
 
   if [ $? -ne 0 ]; then
