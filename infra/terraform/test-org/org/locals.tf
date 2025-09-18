@@ -94,6 +94,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys apps to Cloud Run, along with option to map custom domain"
       maintainers = concat(["prabhu34", "anamer"], local.adc_common_admins)
+      groups      = ["cloud-run-control-plane", local.jss_common_group]
       topics      = "cloudrun,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
       lint_env = {
         ENABLE_BPMETADATA = "1"
