@@ -975,7 +975,6 @@ locals {
     },
     {
       name        = "terraform-google-enterprise-genai"
-      short_name  = "enterprise-genai"
       org         = "GoogleCloudPlatform"
       description = "Create a secure ML environment on Vertex AI"
       maintainers = ["sleighton2022"]
