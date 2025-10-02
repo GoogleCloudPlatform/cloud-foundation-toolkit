@@ -977,13 +977,12 @@ locals {
       name        = "terraform-google-enterprise-genai"
       org         = "GoogleCloudPlatform"
       description = "Create a secure ML environment on Vertex AI"
-      maintainers = ["sleighton2022"]
+      admins      = ["sleighton2022"]
       lint_env = {
         "EXCLUDE_LINT_DIRS" = "\\./examples/machine-learning-pipeline|\\./docs/assets/terraform|\\./5-app-infra/projects/service-catalog/ml_business_unit/shared|\\./5-app-infra/projects/artifact-publish/ml_business_unit/shared"
         "ENABLE_PARALLEL"   = "0",
         "DISABLE_TFLINT"    = "1"
       }
-      add_checks = ["terraform-google-enterprise-genai-int-trigger (cloud-foundation-cicd)"]
     },
   ]
 }
