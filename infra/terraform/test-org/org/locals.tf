@@ -94,6 +94,7 @@ locals {
       org         = "GoogleCloudPlatform"
       description = "Deploys apps to Cloud Run, along with option to map custom domain"
       maintainers = concat(["prabhu34", "anamer"], local.adc_common_admins)
+      groups      = ["cloud-run-control-plane", local.jss_common_group]
       topics      = "cloudrun,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
       lint_env = {
         ENABLE_BPMETADATA = "1"
@@ -971,6 +972,18 @@ locals {
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
+    },
+    {
+      name        = "terraform-google-enterprise-genai"
+      org         = "GoogleCloudPlatform"
+      description = "Create a secure ML environment on Vertex AI"
+      maintainers = ["sleighton2022"]
+      lint_env = {
+        "EXCLUDE_LINT_DIRS" = "\\./examples/machine-learning-pipeline|\\./docs/assets/terraform|\\./5-app-infra/projects/service-catalog/ml_business_unit/shared|\\./5-app-infra/projects/artifact-publish/ml_business_unit/shared"
+        "ENABLE_PARALLEL"   = "0",
+        "DISABLE_TFLINT"    = "1"
+      }
+      add_checks = ["terraform-google-enterprise-genai-int-trigger (cloud-foundation-cicd)"]
     },
   ]
 }
