@@ -63,7 +63,7 @@ func findModulesUnderTest(tfDir string) (stringSet, error) {
 		maps.Insert(seen, maps.All(pathsToVisit))
 
 		for _, refs := range moduleRefs {
-			for ref, _ := range refs {
+			for ref := range refs {
 				if isModuleUnderTest(ref) {
 					name, err := localModuleName(ref)
 					if err != nil {
@@ -81,7 +81,7 @@ func findModulesUnderTest(tfDir string) (stringSet, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("Exceeded %v iterations when searching for referenced modules starting from %q, pathsToVisit is currently %v", maxIters, tfDir, pathsToVisit)
+	return nil, fmt.Errorf("exceeded %v iterations when searching for referenced modules starting from %q, pathsToVisit is currently %v", maxIters, tfDir, pathsToVisit)
 }
 
 // localModuleName takes a local module source string (e.g. ../../modules/my_module)
@@ -99,7 +99,7 @@ func localModuleName(moduleRef string) (string, error) {
 	if len(matches) < 2 {
 		// modulesDirRegexp couldn't find a match even though this function is supposed to
 		// be called with local module references only.
-		return "", fmt.Errorf("Couldn't extract module name from source %q using regexp %v", moduleRef, modulesDirRegexp)
+		return "", fmt.Errorf("couldn't extract module name from source %q using regexp %v", moduleRef, modulesDirRegexp)
 	}
 	return matches[1], nil
 }
@@ -128,7 +128,7 @@ type stringSet = map[string]struct{}
 func nextPathsToVisit(moduleRefs map[string]stringSet) stringSet {
 	nextPaths := make(stringSet)
 	for modulePath, refs := range moduleRefs {
-		for ref, _ := range refs {
+		for ref := range refs {
 			if isLocalModule(ref) && !isModuleUnderTest(ref) {
 				nextPaths[filepath.Clean(filepath.Join(modulePath, ref))] = struct{}{}
 			}
@@ -141,7 +141,7 @@ func nextPathsToVisit(moduleRefs map[string]stringSet) stringSet {
 // that is not in "seen".
 func stripAlreadySeen(modulePaths stringSet, seen stringSet) stringSet {
 	newPaths := make(stringSet)
-	for path, _ := range modulePaths {
+	for path := range modulePaths {
 		if _, ok := seen[path]; !ok {
 			newPaths[path] = struct{}{}
 		}
