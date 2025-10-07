@@ -154,7 +154,7 @@ func stripAlreadySeen(modulePaths stringSet, seen stringSet) stringSet {
 // from the module at that path.
 func findAllReferencedModules(modulePaths stringSet) (map[string]stringSet, error) {
 	moduleRefs := make(map[string]stringSet)
-	for path, _ := range modulePaths {
+	for path := range modulePaths {
 		modules, err := findReferencedModules(path)
 		if err != nil {
 			return nil, err

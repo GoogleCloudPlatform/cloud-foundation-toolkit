@@ -275,7 +275,12 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.setupOutputOverrides[k] = v
 		}
 		if _, hasProjectID := outputs[setupProjectMapOutputName]; hasProjectID && len(modulesUnderTest) == 0 {
-			tft.logger.Logf(tft.t, `*** No local modules were transitively referenced from %q (did you forget to run module-swapper?) and no default project_id output var is available. A later "failed to find project_id" error is likely. ***`, tft.tfDir)
+			tft.logger.Logf(tft.t, `
+***
+  No local modules were transitively referenced from %q
+	(did you forget to run module-swapper?) and no default project_id output var is available.
+	A later ""project_id" is not set" error is likely.
+***`, tft.tfDir)
 		}
 
 		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(outputs))
@@ -531,7 +536,7 @@ func resolveProjectAndKey(outputs map[string]interface{}, modulesUnderTest strin
 		return overrides, nil
 	}
 	loneModuleName := ""
-	for module, _ := range modulesUnderTest {
+	for module := range modulesUnderTest {
 		loneModuleName = module
 		break
 	}
