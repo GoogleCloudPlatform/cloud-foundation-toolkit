@@ -22,10 +22,11 @@ import (
 )
 
 const (
-	versionRegEx      = "/v([0-9]+[.0-9]*)$"
-	modulePattern     = `(?:^|/)modules/([^/]+)`
-	perModuleRoles    = "per_module_roles"
+	versionRegEx   = "/v([0-9]+[.0-9]*)$"
+	modulePattern  = `(?:^|/)modules/([^/]+)`
+	perModuleRoles = "per_module_roles"
 	perModuleServices = "per_module_services"
+	rootModuleName = "root"
 )
 
 type blueprintVersion struct {
@@ -655,14 +656,14 @@ func generateTFState(bpPath string) ([]byte, error) {
 func parseBpModuleName(bpPath string, blueprintRoot string) string {
 	relPath, err := filepath.Rel(blueprintRoot, bpPath)
 	if err != nil {
-		return tft.RootModuleName
+		return rootModuleName
 	}
 
 	matches := regexp.MustCompile(modulePattern).FindStringSubmatch(relPath)
 	if len(matches) == 2 {
 		return matches[1]
 	}
-	return tft.RootModuleName
+	return rootModuleName
 }
 
 func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
