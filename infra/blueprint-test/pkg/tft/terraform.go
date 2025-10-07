@@ -20,9 +20,11 @@ package tft
 import (
 	b64 "encoding/base64"
 	"fmt"
+	"maps"
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 	gotest "testing"
 	"time"
@@ -41,6 +43,11 @@ import (
 
 const (
 	setupKeyOutputName    = "sa_key"
+	setupKeyMapOutputName = "sa_keys_per_module"
+
+	setupProjectOutputName    = "project_id"
+	setupProjectMapOutputName = "project_ids_per_module"
+
 	tftCacheMutexFilename = "bpt-tft-cache.lock"
 	planFilename          = "plan.tfplan"
 )
@@ -244,9 +251,33 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		gcloud.ActivateCredsAndEnvVars(tft.t, tft.saKey)
 	}
 	// load TFEnvVars from setup outputs
+	if tft.setupOutputOverrides == nil {
+		tft.setupOutputOverrides = make(map[string]interface{})
+	}
 	if tft.setupDir != "" {
 		tft.logger.Logf(tft.t, "Loading env vars from setup %s", tft.setupDir)
 		outputs := tft.getOutputs(tft.sensitiveOutputs(tft.setupDir))
+
+		modulesUnderTest, err := findModulesUnderTest(tft.tfDir)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// Pick a specific project_id and sa_key from project_ids_per_module and sa_keys_per_module
+		// if available.
+		overrides, err := resolveProjectAndKey(outputs, modulesUnderTest)
+		if err != nil {
+			t.Fatalf("Problem looking up overrides for project_id and sa_key from setup outputs: %v", err)
+		}
+		for k, v := range overrides {
+			tft.logger.Logf(tft.t, "Overriding var %q from per-module isolation settings", k)
+			outputs[k] = v
+			tft.setupOutputOverrides[k] = v
+		}
+		if _, hasProjectID := outputs[setupProjectMapOutputName]; hasProjectID && len(modulesUnderTest) == 0 {
+			tft.logger.Logf(tft.t, `*** No local modules were transitively referenced from %q (did you forget to run module-swapper?) and no default project_id output var is available. A later "failed to find project_id" error is likely. ***`, tft.tfDir)
+		}
+
 		loadTFEnvVar(tft.tfEnvVars, tft.getTFOutputsAsInputs(outputs))
 		if credsEnc, exists := tft.tfEnvVars[fmt.Sprintf("TF_VAR_%s", setupKeyOutputName)]; tft.saKey == "" && exists {
 			if credDec, err := b64.StdEncoding.DecodeString(credsEnc); err == nil {
@@ -260,9 +291,6 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 	}
 	// Load env vars to supplement/override setup
 	tft.logger.Logf(tft.t, "Loading setup from environment")
-	if tft.setupOutputOverrides == nil {
-		tft.setupOutputOverrides = make(map[string]interface{})
-	}
 	for k, v := range extractFromEnv("CFT_SETUP_") {
 		tft.setupOutputOverrides[k] = v
 	}
@@ -450,6 +478,80 @@ func (b *TFBlueprintTest) GetTFSetupJsonOutput(key string) gjson.Result {
 	}
 
 	return gjson.Parse(jsonString)
+}
+
+// fetchRelevantFromOutputs looks in the given map of terraform outputs for
+// outputs[key][subkey]. It returns:
+//
+//	key_present, item_if_present, error
+//
+// where it is considered OK for `key` to be missing from `outputs`, resulting
+// a return value of:
+//
+//	false, "", nil
+//
+// But it is considered an error if `subkey` is missing from `outputs[key]` or
+// if outputs[key][subkey] is not a string.
+func fetchRelevantFromOutputs(outputs map[string]interface{}, key string, subkey string) (bool, string, error) {
+	val, found := outputs[key]
+	if !found {
+		return false, "", nil
+	}
+
+	subMap, ok := val.(map[string]interface{})
+	if !ok {
+		return false, "", fmt.Errorf("wrong data type for %q, expected map[string]interface, got %T", key, val)
+	}
+
+	relevantItem, ok := subMap[subkey]
+	if !ok {
+		return false, "", fmt.Errorf("could not find key %q in map %q, which had keys %v", subkey, key, slices.Collect(maps.Keys(subMap)))
+	}
+	relevantItemStr, ok := relevantItem.(string)
+	if !ok {
+		return false, "", fmt.Errorf("value for key %q in map %q, had type %T, expected string", subkey, key, relevantItem)
+	}
+	return true, relevantItemStr, nil
+}
+
+// resolveProjectAndKey picks a specific project ID and service account key
+// to use, given the full map of the test setup outputs and a set of modules
+// under test referenced by the current tfDir.
+//
+// The test setup outputs are taken in as an argument and are not modified.
+// Instead, a map of overriding outputs is returned.
+//
+// If the modulesUnderTest argument contains only one module, then
+// project_ids_per_module and sa_keys_per_module are resolved to the
+// relevant project ID and key and the relevant ones are returned in the overrides map.
+func resolveProjectAndKey(outputs map[string]interface{}, modulesUnderTest stringSet) (map[string]interface{}, error) {
+	overrides := make(map[string]interface{})
+
+	if len(modulesUnderTest) != 1 {
+		return overrides, nil
+	}
+	loneModuleName := ""
+	for module, _ := range modulesUnderTest {
+		loneModuleName = module
+		break
+	}
+
+	foundProjectIDMap, relevantProjectID, err := fetchRelevantFromOutputs(outputs, setupProjectMapOutputName, loneModuleName)
+	if err != nil {
+		return nil, err
+	}
+	if foundProjectIDMap {
+		overrides[setupProjectOutputName] = relevantProjectID
+	}
+
+	foundKeyMap, relevantKey, err := fetchRelevantFromOutputs(outputs, setupKeyMapOutputName, loneModuleName)
+	if err != nil {
+		return nil, err
+	}
+	if foundKeyMap {
+		overrides[setupKeyOutputName] = relevantKey
+	}
+	return overrides, nil
 }
 
 // loadTFEnvVar adds new env variables prefixed with TF_VAR_ to an existing map of variables.
