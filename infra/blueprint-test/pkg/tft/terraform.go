@@ -278,8 +278,8 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 			tft.logger.Logf(tft.t, `
 ***
   No local modules were transitively referenced from %q
-	(did you forget to run module-swapper?) and no default project_id output var is available.
-	A later ""project_id" is not set" error is likely.
+  (did you forget to run module-swapper?) and no default project_id output var is available.
+  A later ""project_id" is not set" error is likely.
 ***`, tft.tfDir)
 		}
 
