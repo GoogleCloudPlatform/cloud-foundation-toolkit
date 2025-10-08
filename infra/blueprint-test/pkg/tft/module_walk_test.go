@@ -19,6 +19,8 @@ func toSet(args ...string) stringSet {
 func TestFindModulesUnderTest(t *testing.T) {
 	// Monkey patch findReferencedModules() in module_walk.go
 	// to skip parsing real Terraform modules.
+	findOrig := findReferencedModules
+	defer func() { findReferencedModules = findOrig }()
 	findReferencedModules = func(tfDir string) (stringSet, error) {
 		switch tfDir {
 
