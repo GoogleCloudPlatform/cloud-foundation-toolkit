@@ -356,8 +356,8 @@ locals {
       name        = "terraform-google-folders"
       org         = "terraform-google-modules"
       description = "Creates several Google Cloud folders under the same parent"
-      topics      = local.common_topics.devtools
       maintainers = ["imrannayer"]
+      topics      = local.common_topics.devtools
     },
     {
       name        = "terraform-google-gcloud"
@@ -407,8 +407,8 @@ locals {
       name        = "terraform-google-kms"
       org         = "terraform-google-modules"
       description = "Allows managing a keyring, zero or more keys in the keyring, and IAM role bindings on individual keys"
-      topics      = local.common_topics.security
       maintainers = ["imrannayer"]
+      topics      = local.common_topics.security
     },
     {
       name        = "terraform-google-lb"
