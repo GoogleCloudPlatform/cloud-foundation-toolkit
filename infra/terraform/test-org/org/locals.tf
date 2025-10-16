@@ -357,6 +357,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates several Google Cloud folders under the same parent"
       topics      = local.common_topics.devtools
+      maintainers = ["imrannayer"]
     },
     {
       name        = "terraform-google-gcloud"
@@ -407,6 +408,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Allows managing a keyring, zero or more keys in the keyring, and IAM role bindings on individual keys"
       topics      = local.common_topics.security
+      maintainers = ["imrannayer"]
     },
     {
       name        = "terraform-google-lb"
@@ -479,6 +481,7 @@ locals {
       name        = "terraform-google-project-factory"
       org         = "terraform-google-modules"
       description = "Creates an opinionated Google Cloud project by using Shared VPC, IAM, and Google Cloud APIs"
+      maintainers = ["imrannayer"]
       topics      = local.common_topics.ops
       lint_env = {
         ENABLE_BPMETADATA = "1"
