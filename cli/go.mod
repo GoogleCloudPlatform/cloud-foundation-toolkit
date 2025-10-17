@@ -38,7 +38,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/zclconf/go-cty v1.16.4
-	golang.org/x/oauth2 v0.31.0
+	golang.org/x/oauth2 v0.32.0
 	golang.org/x/text v0.30.0
 	google.golang.org/api v0.252.0
 	google.golang.org/protobuf v1.36.10
