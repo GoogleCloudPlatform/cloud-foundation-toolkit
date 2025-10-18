@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.18.0](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.9...infra/blueprint-test/v0.18.0) (2025-10-18)
+
+
+### Features
+
+* Support for dispatching to isolated projects/service accounts ([#3201](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3201)) ([6a4fa54](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/6a4fa54c5b11f01453b6842ed4949d30f091812c))
+
+
+### Bug Fixes
+
+* **deps:** update github.com/hashicorp/terraform-config-inspect digest to 225c06e ([#3188](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3188)) ([2b78998](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/2b789981d472066da324fad5a455b8a38eff7d24))
+* **deps:** update module golang.org/x/mod to v0.28.0 ([#3196](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3196)) ([e3fb473](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/e3fb473798dfee329d75a75fea6ae6085018d36e))
+* **deps:** update module golang.org/x/mod to v0.29.0 ([#3215](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3215)) ([652d232](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/652d232113b3ac65190652b3d1e4eff9776ac6fa))
+
 ## [0.17.9](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/blueprint-test/v0.17.8...infra/blueprint-test/v0.17.9) (2025-09-04)
 
 
