@@ -268,7 +268,7 @@ func CreateBlueprintMetadata(bpPath string, bpMetadataObj *BlueprintMetadata) (*
 	moduleName := parseBpModuleName(bpPath, repoDetails.Source.BlueprintRootPath)
 	requirements, err := getBlueprintRequirements(rolesCfgPath, svcsCfgPath, versionsCfgPath, mdFlags.perModuleRequirements, moduleName)
 	if err != nil {
-		Log.Info("skipping blueprint requirements since roles and/or services configurations were not found as per https://tinyurl.com/tf-iam and https://tinyurl.com/tf-services")
+		Log.Info("skipping blueprint requirements since roles and/or services configurations were not found as per https://tinyurl.com/tf-iam and https://tinyurl.com/tf-services", "error:", err)
 	} else {
 		bpMetadataObj.Spec.Requirements = requirements
 	}
