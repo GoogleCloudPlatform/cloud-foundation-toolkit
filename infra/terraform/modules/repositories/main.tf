@@ -24,12 +24,12 @@ locals {
     ]
   ])
 
-  admin_groups = flatten([
+  admin_group_ids = flatten([
     for repo, val in var.repos_map : [
-      for admin_group in val.admin_groups : {
+      for admin_group_id in val.admin_group_ids : {
         "repo" : repo
-        "admin_group" : admin_group
-      } if admin_group != var.super_admin
+        "admin_group_id" : admin_group_id
+      }
     ]
   ])
 
@@ -117,10 +117,10 @@ resource "github_repository_collaborator" "maintainers" {
 
 resource "github_team_repository" "admin_groups" {
   for_each = {
-    for v in local.admin_groups : "${v.repo}/${v.admin_group}" => v
+    for v in local.admin_group_ids : "${v.repo}/${v.admin_group_id}" => v
   }
   repository = each.value.repo
-  team_id    = each.value.admin_group
+  team_id    = each.value.admin_group_id
   permission = "maintain"
 }
 

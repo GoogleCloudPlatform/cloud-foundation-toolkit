@@ -503,8 +503,8 @@ resource "google_service_account_key" "int_test" {
 	}
 
 	expected := []string{
-		"roles/run.invoker",
 		"roles/logging.logWriter",
+		"roles/run.invoker",
 	}
 	actual := roles[0].Roles
 	if diff := cmp.Diff(expected, actual); diff != "" {
@@ -533,7 +533,9 @@ locals {
       "service_root",
     ],
     run = [
-      "service_run",
+	  // Note: the services are deliberately out of order at this point.
+      "service_run_2",
+	  "service_run_1",
     ],
     api_gateway = [
       "service_gateway"
@@ -610,19 +612,17 @@ resource "google_service_account_key" "int_test" {
 
 	services, err := parseBlueprintServices(hclFile, true, "run")
 	if err != nil {
-		t.Fatalf("parseBlueprintRoles failed: %v", err)
+		t.Fatalf("parseBlueprintServices failed: %v", err)
 	}
 
-	if len(services) != 1 {
-		t.Fatalf("Expected 1 BlueprintService, got %d", len(services))
-	}
-
+	// Note that we expect the outputs in sorted order.
 	expected := []string{
-		"service_run",
+		"service_run_1",
+		"service_run_2",
 	}
 	actual := services
 	if diff := cmp.Diff(expected, actual); diff != "" {
-		t.Errorf("Mismatch in parsed roles (-want +got):\n%s", diff)
+		t.Errorf("Mismatch in parsed services (-want +got):\n%s", diff)
 	}
 }
 

@@ -15,8 +15,8 @@
  */
 
 locals {
-  tgm_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.cft-admins.node_id, data.github_team.tgm-adc-admins.id] }) if value.org == "terraform-google-modules" }
-  gcp_modules_map = { for value in local.modules : value.name => merge(value, { admin_groups = [data.github_team.blueprint-solutions.node_id, data.github_team.gcp-adc-admins.id] }) if value.org == "GoogleCloudPlatform" }
+  tgm_modules_map = { for value in local.modules : value.name => merge(value, { admin_group_node_ids = [data.github_team.cft-admins.node_id, data.github_team.tgm-adc-admins.node_id] }, { admin_group_ids = [data.github_team.tgm-adc-admins.id] }) if value.org == "terraform-google-modules" }
+  gcp_modules_map = { for value in local.modules : value.name => merge(value, { admin_group_node_ids = [data.github_team.blueprint-solutions.node_id, data.github_team.gcp-adc-admins.node_id] }, { admin_group_ids = [data.github_team.gcp-adc-admins.id] }) if value.org == "GoogleCloudPlatform" }
 }
 
 data "github_team" "cft-admins" {
@@ -40,19 +40,17 @@ data "github_team" "gcp-adc-admins" {
 }
 
 module "repos_tgm" {
-  source      = "../../modules/repositories"
-  repos_map   = local.tgm_modules_map
-  ci_teams    = ["blueprint-contributors"]
-  super_admin = data.github_team.cft-admins.node_id
-  providers   = { github = github }
+  source    = "../../modules/repositories"
+  repos_map = local.tgm_modules_map
+  ci_teams  = ["blueprint-contributors"]
+  providers = { github = github }
 }
 
 module "repos_gcp" {
-  source      = "../../modules/repositories"
-  repos_map   = local.gcp_modules_map
-  ci_teams    = ["blueprint-contributors"]
-  super_admin = data.github_team.blueprint-solutions.node_id
-  providers   = { github = github.gcp }
+  source    = "../../modules/repositories"
+  repos_map = local.gcp_modules_map
+  ci_teams  = ["blueprint-contributors"]
+  providers = { github = github.gcp }
 }
 
 // All new repos are created in advance in the GCP org
@@ -107,22 +105,6 @@ module "stale_yml_gcp" {
   repo_list = module.repos_gcp.repos
   filename  = ".github/workflows/stale.yml"
   content   = file("${path.module}/resources/stale.yml")
-  providers = { github = github.gcp }
-}
-
-module "conventional-commit-lint_yaml_tgm" {
-  source    = "../../modules/repo_file"
-  repo_list = module.repos_tgm.repos
-  filename  = ".github/conventional-commit-lint.yaml"
-  content   = file("${path.module}/resources/conventional-commit-lint.yaml")
-  providers = { github = github }
-}
-
-module "conventional-commit-lint_yaml_gcp" {
-  source    = "../../modules/repo_file"
-  repo_list = module.repos_gcp.repos
-  filename  = ".github/conventional-commit-lint.yaml"
-  content   = file("${path.module}/resources/conventional-commit-lint.yaml")
   providers = { github = github.gcp }
 }
 

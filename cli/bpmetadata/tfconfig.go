@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -404,23 +405,13 @@ func getBlueprintRequirements(rolesConfigPath, servicesConfigPath, versionsConfi
 func parseBlueprintRoles(rolesFile *hcl.File, perModuleMode bool, moduleName string) ([]*BlueprintRoles, error) {
 	var r []*BlueprintRoles
 	if perModuleMode {
-		moduleRoles, err := extractModuleLocalList(rolesFile, "per_module_roles", moduleName)
+		moduleRoles, err := extractModuleLocalList(rolesFile, perModuleRoles, moduleName)
 		if err != nil {
 			return nil, err
 		}
-
-		seen := map[string]struct{}{}
-		for _, role := range moduleRoles {
-			seen[role] = struct{}{}
-		}
-		var combined []string
-		for role := range seen {
-			combined = append(combined, role)
-		}
-
 		r = append(r, &BlueprintRoles{
 			Level: "Project",
-			Roles: combined,
+			Roles: moduleRoles,
 		})
 
 		sortBlueprintRoles(r)
@@ -489,17 +480,7 @@ func parseBlueprintServices(servicesFile *hcl.File, perModuleMode bool, moduleNa
 		if err != nil {
 			return nil, err
 		}
-
-		seen := map[string]struct{}{}
-		for _, svc := range moduleServices {
-			seen[svc] = struct{}{}
-		}
-		var combined []string
-		for svc := range seen {
-			combined = append(combined, svc)
-		}
-		sort.Strings(combined)
-		return combined, nil
+		return moduleServices, nil
 	}
 	var s []string
 	servicesContent, _, diags := servicesFile.Body.PartialContent(rootSchema)
@@ -534,7 +515,6 @@ func parseBlueprintServices(servicesFile *hcl.File, perModuleMode bool, moduleNa
 		// because we're only interested in the top-level modules block
 		break
 	}
-
 	return s, nil
 }
 
@@ -666,6 +646,8 @@ func parseBpModuleName(bpPath string, blueprintRoot string) string {
 	return rootModuleName
 }
 
+// extractModuleLocalList collects all values stored in locals.<localKey>.<anything>
+// and returns the results in a slice. The results are sorted and deduplicated.
 func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) ([]string, error) {
 	var result []string
 	content, _, diags := file.Body.PartialContent(&hcl.BodySchema{
@@ -703,5 +685,8 @@ func extractModuleLocalList(file *hcl.File, localKey string, moduleName string) 
 			}
 		}
 	}
-	return result, nil
+	// Sort the items and remove consecutive duplicates.
+	// Outputting them sorted makes the results consistent from run to run.
+	slices.Sort(result)
+	return slices.Compact(result), nil
 }

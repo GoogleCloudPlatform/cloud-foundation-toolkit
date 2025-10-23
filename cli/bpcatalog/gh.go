@@ -7,7 +7,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/google/go-github/v73/github"
+	"github.com/google/go-github/v76/github"
 	"golang.org/x/oauth2"
 )
 

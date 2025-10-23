@@ -41,6 +41,9 @@ enum ExtensionType {
 
   // GKE related.
   ET_GKE_CLUSTER = 20;
+  ET_GKE_NAMESPACE = 23;
+  ET_GKE_STORAGE_CLASS = 24;
+  ET_GKE_KUBERNETES_SERVICE_ACCOUNT = 25;
 }
 
 // An extension for variables defined as part of DisplayVariable. The
@@ -76,6 +79,9 @@ message GooglePropertyExtension {
   GCEDiskTypeExtension       gce_disk_type = 17; // @gotags: json:"gceDiskType,omitempty" yaml:"gceDiskType,omitempty"
   GCELocationExtension       gce_location = 18; // @gotags: json:"gceLocation,omitempty" yaml:"gceLocation,omitempty"
   GKEClusterExtension        gke_cluster = 19; // @gotags: json:"gkeCluster,omitempty" yaml:"gkeCluster,omitempty"
+  GKENamespaceExtension      gke_namespace = 20; // @gotags: json:"gkeNamespace,omitempty" yaml:"gkeNamespace,omitempty"
+  GKEStorageClassExtension   gke_storage_class = 21; // @gotags: json:"gkeStorageClass,omitempty" yaml:"gkeStorageClass,omitempty"
+  GKEKubernetesServiceAccountExtension gke_kubernetes_service_account = 22;  // @gotags: json:"gkeKubernetesServiceAccount,omitempty" yaml:"gkeK8sServiceAccount,omitempty"
 }
 
 // GCELocationExtension specifies a location extension for a Google Compute Engine (GCE) resource.
@@ -220,4 +226,24 @@ message GKEClusterExtension {
   string location_variable = 1; // @gotags: json:"locationVariable" yaml:"locationVariable"
   // Variable that will indicate if we are creating a cluster or using an existing one.
   string cluster_creation_variable = 2; // @gotags: json:"clusterCreationVariable" yaml:"clusterCreationVariable"
+}
+
+message GKENamespaceExtension {
+  // The name of the variable that defines the GKE cluster.
+  // This is used to fetch the list of existing namespaces.
+  string gke_cluster_variable = 1; // @gotags: json:"gkeClusterVariable,omitempty" yaml:"gkeClusterVariable,omitempty"
+}
+
+message GKEStorageClassExtension {
+  // The name of the variable that defines the GKE cluster.
+  // This is used to fetch the list of available StorageClasses.
+  string gke_cluster_variable = 1; // @gotags: json:"gkeClusterVariable,omitempty" yaml:"gkeClusterVariable,omitempty"
+}
+
+message GKEKubernetesServiceAccountExtension {
+  // The name of the variable that defines the GKE cluster.
+  string gke_cluster_variable = 1; // @gotags: json:"gkeClusterVariable,omitempty" yaml:"gkeClusterVariable,omitempty"
+  // The name of the variable that defines the GKE namespace.
+  // This is used to fetch the list of available K8s Service Accounts.
+  string gke_namespace_variable = 2; // @gotags: json:"gkeNamespaceVariable,omitempty" yaml:"gkeNamespaceVariable,omitempty"
 }

@@ -23,7 +23,7 @@ resource "github_branch_protection" "default" {
     required_approving_review_count = 1
     require_code_owner_reviews      = true
     pull_request_bypassers = setunion(
-      lookup(var.repos_map[each.key], "admin_groups", []),
+      lookup(var.repos_map[each.key], "admin_group_node_ids", []),
       formatlist("/%s", lookup(var.repos_map[each.key], "admins", []))
     )
   }
@@ -34,7 +34,7 @@ resource "github_branch_protection" "default" {
       "cla/google",
       "${substr(each.key, 0, 50)}-int-trigger (cloud-foundation-cicd)",
       "lint",
-      "conventionalcommits.org"
+      "commitlint"
     ], lookup(var.repos_map[each.key], "add_checks", []))
   }
 
@@ -42,7 +42,7 @@ resource "github_branch_protection" "default" {
 
   restrict_pushes {
     push_allowances = setunion(
-      lookup(var.repos_map[each.key], "admin_groups", []),
+      lookup(var.repos_map[each.key], "admin_group_node_ids", []),
       formatlist("/%s", setunion(lookup(var.repos_map[each.key], "admins", []), lookup(var.repos_map[each.key], "maintainers", []))),
       formatlist("${var.repos_map[each.key].org}/%s", lookup(var.repos_map[each.key], "groups", []))
     )
