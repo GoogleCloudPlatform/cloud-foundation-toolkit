@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.12](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.11...tflint-ruleset-blueprint/v0.2.12) (2025-10-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency go to v1.24.6 ([#3153](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3153)) ([38e3605](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/38e3605d5e3961cdf5b890d83acea984327db5b0))
+* **deps:** update module github.com/terraform-linters/tflint-plugin-sdk to v0.23.0 ([#3229](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3229)) ([7bcd6c4](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/7bcd6c4e1a894b82d282f16478a880939e269005))
+
 ## [0.2.11](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.10...tflint-ruleset-blueprint/v0.2.11) (2025-07-21)
 
 
