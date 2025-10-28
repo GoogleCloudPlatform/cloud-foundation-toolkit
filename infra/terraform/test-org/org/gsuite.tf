@@ -50,7 +50,7 @@ resource "google_folder" "ci_gsuite_sa_folder" {
 
 module "ci_gsuite_sa_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 17.0"
+  version = "~> 18.0"
 
   name            = "ci-gsuite-sa-project"
   project_id      = "ci-gsuite-sa-project"
