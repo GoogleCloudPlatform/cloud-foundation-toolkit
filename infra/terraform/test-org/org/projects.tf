@@ -16,7 +16,7 @@
 
 module "ci_media_cdn_vod_project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 17.0"
+  version = "~> 18.0"
 
   name            = "ci-media-cdn-vod-project"
   project_id      = "ci-media-cdn-vod-project"
