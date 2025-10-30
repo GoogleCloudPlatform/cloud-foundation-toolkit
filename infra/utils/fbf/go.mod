@@ -6,7 +6,7 @@ toolchain go1.24.9
 
 require (
 	github.com/briandowns/spinner v1.23.2
-	github.com/jedib0t/go-pretty/v6 v6.6.8
+	github.com/jedib0t/go-pretty/v6 v6.6.9
 	github.com/stretchr/testify v1.11.1
 	google.golang.org/api v0.254.0
 )
