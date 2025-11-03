@@ -299,7 +299,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Manages a Cloud Router on Google Cloud"
       topics      = local.common_topics.net
-      maintainers = ["imrannayer"]
+      maintainers = concat(["imrannayer"], local.adc_common_admins)
     },
     {
       name        = "terraform-google-cloud-storage"
