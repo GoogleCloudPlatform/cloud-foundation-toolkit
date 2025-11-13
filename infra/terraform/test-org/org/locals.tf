@@ -851,7 +851,7 @@ locals {
       org         = "GoogleCloudPlatform"
       short_name  = "backup-dr"
       description = "Deploy Backup and DR appliances"
-      maintainers = ["umeshkumhar"]
+      maintainers = ["pallavi-boyapati", "umeshkumhar"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.ops])
     },
     {
