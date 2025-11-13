@@ -76,4 +76,4 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           TITLE: ${{ github.event.pull_request.title }}
-        run: 'echo $TITLE | npx commitlint --verbose'
+        run: 'echo "$TITLE" | npx commitlint --verbose'
