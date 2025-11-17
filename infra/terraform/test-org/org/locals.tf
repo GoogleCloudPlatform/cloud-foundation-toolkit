@@ -669,6 +669,9 @@ locals {
       description = "Deploys Cloud Functions (Gen 2)"
       maintainers = ["prabhu34"]
       topics      = "cloudfunctions,functions,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
     },
     {
       name            = "terraform-dynamic-python-webapp"
