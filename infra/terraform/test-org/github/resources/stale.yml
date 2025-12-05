@@ -20,6 +20,11 @@ on:
   schedule:
   - cron: "0 23 * * *"
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   stale:
     if: github.repository_owner == 'GoogleCloudPlatform' || github.repository_owner == 'terraform-google-modules'
@@ -32,3 +37,4 @@ jobs:
         stale-pr-message: 'This PR is stale because it has been open 60 days with no activity. Remove stale label or comment or this will be closed in 7 days'
         exempt-issue-labels: 'triaged'
         exempt-pr-labels: 'dependencies,autorelease: pending'
+        operations-per-run: 100
