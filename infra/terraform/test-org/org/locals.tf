@@ -990,5 +990,15 @@ locals {
         "DISABLE_TFLINT"    = "1"
       }
     },
+    {
+      name        = "terraform-google-cloud-filestore"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Filestore resources"
+      maintainers = concat(["adisi05"], local.adc_common_admins)
+      topics      = local.common_topics.storage
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
   ]
 }
