@@ -462,7 +462,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Sets up a new VPC network on Google Cloud"
       topics      = local.common_topics.net
-      maintainers = ["imrannayer"]
+      maintainers = concat(["imrannayer"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
