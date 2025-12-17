@@ -39,7 +39,7 @@ CFT_CLI_VERSION := 1.5.22
 # Updated by Update Tooling Workflow
 TFLINT_VERSION := 0.59.1
 TINKEY_VERSION := 1.7.0
-ALPINE_VERSION := 3.22
+ALPINE_VERSION := 3.23
 # Updated by Update Tooling Workflow
 MODULE_SWAPPER_VERSION := 0.4.17
 # Updated by Update Tooling Workflow
