@@ -28,7 +28,7 @@ require (
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.7.7
 	github.com/manifoldco/promptui v0.9.0
-	github.com/migueleliasweb/go-github-mock v1.4.0
+	github.com/migueleliasweb/go-github-mock v1.5.0
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
 	github.com/open-policy-agent/opa v1.6.0
 	github.com/otiai10/copy v1.14.1
