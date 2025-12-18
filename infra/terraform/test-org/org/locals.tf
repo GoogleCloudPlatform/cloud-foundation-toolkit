@@ -86,7 +86,7 @@ locals {
       name        = "terraform-google-healthcare"
       org         = "terraform-google-modules"
       description = "Handles opinionated Google Cloud Healthcare datasets and stores"
-      maintainers = ["kbaillie"]
+      maintainers = ["vaibhavba-google"]
       topics      = local.common_topics.hcls
     },
     {
