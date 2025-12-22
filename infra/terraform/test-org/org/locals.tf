@@ -632,7 +632,7 @@ locals {
       name        = "terraform-google-vertex-ai"
       org         = "GoogleCloudPlatform"
       description = "Deploy Vertex AI resources"
-      maintainers = ["imrannayer"]
+      maintainers = concat(["imrannayer"], local.adc_common_admins)
       topics      = join(",", [local.common_topics.compute])
     },
     {
