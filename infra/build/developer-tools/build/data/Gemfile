@@ -18,4 +18,4 @@ gem "kubeclient", "~> 4.11"
 gem "rest-client", "~> 2.1"
 gem 'nokogiri', '~> 1.18'
 gem 'csv'
-ruby '~> 3.4.4'
+ruby '~> 4.0.0'
