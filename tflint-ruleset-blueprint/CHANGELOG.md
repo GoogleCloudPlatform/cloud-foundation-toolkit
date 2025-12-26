@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.13](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.12...tflint-ruleset-blueprint/v0.2.13) (2025-12-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency go to v1.24.11 ([#3282](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3282)) ([d6bf7dc](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/d6bf7dc6676d0df2fe1a5d0f8d957c675aaa8e86))
+* **deps:** update module github.com/hashicorp/go-version to v1.8.0 ([#3309](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3309)) ([ee38f6e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/ee38f6e20bed3bad993ee523cdde989212954f8d))
+
 ## [0.2.12](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.11...tflint-ruleset-blueprint/v0.2.12) (2025-10-24)
 
 
