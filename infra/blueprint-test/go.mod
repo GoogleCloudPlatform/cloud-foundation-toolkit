@@ -8,7 +8,7 @@ require (
 	github.com/GoogleContainerTools/kpt-functions-sdk/go/api v0.0.0-20250702115044-9bfead305c54
 	github.com/alexflint/go-filemutex v1.3.0
 	github.com/google/go-cmp v0.7.0
-	github.com/gruntwork-io/terratest v0.52.0
+	github.com/gruntwork-io/terratest v0.54.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20250828155816-225c06ed5fd9
 	github.com/hashicorp/terraform-json v0.27.2
 	github.com/mattn/go-shellwords v1.0.12
@@ -122,7 +122,7 @@ require (
 	github.com/zclconf/go-cty v1.16.4 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.44.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
