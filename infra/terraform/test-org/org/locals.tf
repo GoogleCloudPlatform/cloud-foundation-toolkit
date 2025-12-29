@@ -121,7 +121,7 @@ locals {
       name        = "terraform-google-kubernetes-engine"
       org         = "terraform-google-modules"
       description = "Configures opinionated GKE clusters"
-      maintainers = ["ericyz"]
+      maintainers = concat(["ericyz"], local.adc_common_admins)
       admins      = ["apeabody"]
       topics      = join(",", [local.common_topics.compute, local.common_topics.containers])
       lint_env = {
@@ -277,7 +277,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates and manages Cloud DNS public or private zones and their records"
       topics      = local.common_topics.net
-      maintainers = ["imrannayer"]
+      maintainers = concat(["imrannayer"], local.adc_common_admins)
     },
     {
       name        = "terraform-google-cloud-nat"
