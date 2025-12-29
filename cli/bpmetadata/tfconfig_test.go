@@ -689,11 +689,11 @@ func TestTFProviderVersions(t *testing.T) {
 			wantProviderVersions: []*ProviderVersion{
 				{
 					Source:  "hashicorp/google",
-					Version: ">= 4.4.0, < 7",
+					Version: ">= 4.4.0, < 8",
 				},
 				{
 					Source:  "hashicorp/google-beta",
-					Version: ">= 4.4.0, < 7",
+					Version: ">= 4.4.0, < 8",
 				},
 			},
 		},

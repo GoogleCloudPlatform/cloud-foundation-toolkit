@@ -86,7 +86,7 @@ locals {
       name        = "terraform-google-healthcare"
       org         = "terraform-google-modules"
       description = "Handles opinionated Google Cloud Healthcare datasets and stores"
-      maintainers = ["yeweidaniel"]
+      maintainers = ["vaibhavba-google"]
       topics      = local.common_topics.hcls
     },
     {
@@ -462,7 +462,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Sets up a new VPC network on Google Cloud"
       topics      = local.common_topics.net
-      maintainers = ["imrannayer"]
+      maintainers = concat(["imrannayer"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -632,7 +632,7 @@ locals {
       name        = "terraform-google-vertex-ai"
       org         = "GoogleCloudPlatform"
       description = "Deploy Vertex AI resources"
-      maintainers = ["imrannayer"]
+      maintainers = concat(["imrannayer"], local.adc_common_admins)
       topics      = join(",", [local.common_topics.compute])
     },
     {
@@ -988,6 +988,16 @@ locals {
         "EXCLUDE_LINT_DIRS" = "\\./examples/machine-learning-pipeline|\\./docs/assets/terraform|\\./5-app-infra/projects/service-catalog/ml_business_unit/shared|\\./5-app-infra/projects/artifact-publish/ml_business_unit/shared"
         "ENABLE_PARALLEL"   = "0",
         "DISABLE_TFLINT"    = "1"
+      }
+    },
+    {
+      name        = "terraform-google-cloud-filestore"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Filestore resources"
+      maintainers = concat(["adisi05"], local.adc_common_admins)
+      topics      = local.common_topics.storage
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
       }
     },
   ]

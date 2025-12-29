@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright 2019 Google LLC
+# Copyright 2019-2025 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ ln -s /lib /lib64
 gcloud config set core/disable_usage_reporting true
 gcloud config set component_manager/disable_update_check true
 gcloud config set survey/disable_prompts true
-gcloud config set enable_feature_flags false
 # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
 # https://cloud.google.com/docs/terraform/policy-validation/quickstart
 gcloud components install alpha beta terraform-tools gke-gcloud-auth-plugin --quiet

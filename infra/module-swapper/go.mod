@@ -2,11 +2,11 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/module-swap
 
 go 1.23.0
 
-toolchain go1.24.9
+toolchain go1.24.11
 
 require (
 	github.com/chainguard-dev/git-urls v1.0.2
-	github.com/go-git/go-git/v5 v5.16.3
+	github.com/go-git/go-git/v5 v5.16.4
 	github.com/google/go-cmp v0.7.0
 	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/pmezard/go-difflib v1.0.0
