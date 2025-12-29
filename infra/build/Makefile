@@ -14,7 +14,7 @@
 
 SHELL := /usr/bin/env bash # Make will use bash instead of sh
 # Updated by Update Tooling Workflow
-TERRAFORM_VERSION := 1.14.3
+TERRAFORM_VERSION := null
 # Updated by Update Tooling Workflow
 CLOUD_SDK_VERSION := 550.0.0
 GSUITE_PROVIDER_VERSION := 0.1.22
@@ -25,38 +25,38 @@ BATS_ASSERT_VERSION := 2.0.0
 BATS_MOCK_VERSION := 1.0.1
 PACKER_VERSION := 1.4.4
 # Updated by Update Tooling Workflow
-TERRAGRUNT_VERSION := 0.96.1
+TERRAGRUNT_VERSION := null
 # Updated by Update Tooling Workflow
-KUSTOMIZE_VERSION := 5.8.0
+KUSTOMIZE_VERSION := 
 # Updated by Update Tooling Workflow
-KPT_VERSION := 1.0.0-beta.59
+KPT_VERSION := 
 PROTOC_VERSION := 23.4
 PROTOC_GEN_GO_VERSION := 1.31
 PROTOC_GEN_GO_GRPC_VERSION := 1.3
 PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 1.5.22
+CFT_CLI_VERSION := 
 # Updated by Update Tooling Workflow
-TFLINT_VERSION := 0.60.0
+TFLINT_VERSION := null
 TINKEY_VERSION := 1.7.0
 ALPINE_VERSION := 3.23
 # Updated by Update Tooling Workflow
-MODULE_SWAPPER_VERSION := 0.4.18
+MODULE_SWAPPER_VERSION := 
 # Updated by Update Tooling Workflow
-TFLINT_BP_PLUGIN_VERSION := 0.2.12
+TFLINT_BP_PLUGIN_VERSION := 
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
-GOLANGCI_VERSION := 2.7.2
+GOLANGCI_VERSION := null
 ASMCLI_VERSION := 1.15
 KIND_VERSION := 0.18.0
 # Updated by Update Tooling Workflow
-GATOR_VERSION := 3.17.2
+GATOR_VERSION := 
 OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
-GCRANE_VERSION := 0.20.7
+GCRANE_VERSION := null
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.26.0
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.26.1
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
