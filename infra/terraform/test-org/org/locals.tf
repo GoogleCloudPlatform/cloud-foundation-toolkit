@@ -16,7 +16,7 @@
 
 locals {
   org_id              = "943740911108"
-  old_billing_account = "01D904-DAF6EC-F34EF7"
+  old_billing_account = "0189FA-E139FD-136A58"
   billing_account     = "0138EF-C93849-98B0B5"
   lr_billing_account  = "01108A-537F1E-A5BFFC"
   cft_ci_group        = "cft-ci-robots@test.blueprints.joonix.net"
@@ -954,7 +954,7 @@ locals {
       name        = "terraform-google-apphub"
       org         = "GoogleCloudPlatform"
       description = "Creates and manages AppHub resources"
-      maintainers = ["q2w"]
+      maintainers = concat(["q2w"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
