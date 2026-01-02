@@ -90,8 +90,12 @@ func findReports(paths []string) (results interface{}, err error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(rs) == 0 || len(rs[0].Expressions) == 0 {
+		// Return an empty map to prevent panics in calling functions.
+		return make(map[string]interface{}), nil
+	}
 	results = rs[0].Expressions[0].Value
-	return results, err
+	return results, nil
 }
 
 func generateReportData(rawAssetFileName string, queryPath string, outputPath string) (results interface{}, err error) {
