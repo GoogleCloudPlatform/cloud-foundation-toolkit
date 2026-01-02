@@ -94,8 +94,7 @@ func findReports(paths []string) (results interface{}, err error) {
 		// Return an empty map to prevent panics in calling functions.
 		return make(map[string]interface{}), nil
 	}
-	results = rs[0].Expressions[0].Value
-	return results, nil
+	return rs[0].Expressions[0].Value, nil
 }
 
 func generateReportData(rawAssetFileName string, queryPath string, outputPath string) (results interface{}, err error) {
