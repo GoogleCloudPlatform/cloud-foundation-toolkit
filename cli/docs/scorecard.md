@@ -24,12 +24,12 @@ This tutorial will walk you through setting up Scorecard for a single project.
     ```
 4. Create a GCS bucket for storing CAI data:
     ```
-    gsutil mb gs://$CAI_BUCKET_NAME
+    gcloud storage buckets create gs://$CAI_BUCKET_NAME
     ```
 5. Optionally, create a public GCS bucket to trigger a violation:
     ```
-    gsutil mb gs://$PUBLIC_BUCKET_NAME
-    gsutil iam ch allUsers:objectViewer gs://$PUBLIC_BUCKET_NAME
+    gcloud storage buckets create gs://$PUBLIC_BUCKET_NAME
+    gcloud storage buckets add-iam-policy-binding gs://$PUBLIC_BUCKET_NAME --member=allUsers --role=roles/storage.objectViewer
     ```
 6. Optionally, export the CAI data to GCS:
     ```
@@ -91,8 +91,8 @@ You can also run CFT Scorecard against locally downloaded CAI data:
 
 ```
 mkdir cai-dir
-gsutil cp gs://$CAI_BUCKET_NAME/resource_inventory.json ./cai-dir/
-gsutil cp gs://$CAI_BUCKET_NAME/iam_inventory.json ./cai-dir/
+gcloud storage cp gs://$CAI_BUCKET_NAME/resource_inventory.json ./cai-dir/
+gcloud storage cp gs://$CAI_BUCKET_NAME/iam_inventory.json ./cai-dir/
 ./cft scorecard --policy-path ./policy-library \
   --dir-path ./cai-dir
 ```

@@ -38,4 +38,4 @@ gcloud components install alpha beta terraform-tools gke-gcloud-auth-plugin --qu
 rm -rf /usr/local/google-cloud-sdk/.install/.backup
 
 gcloud --version
-gsutil version -l
+gcloud -v
