@@ -69,7 +69,7 @@ func convertAndGenerateTempAssetFile(caiPath string, outputPath string, fileMidN
 
 func findReports(paths []string) (results interface{}, err error) {
 	// Load resources from json and rego files
-	resources, err := loader.NewFileLoader().Filtered(paths, nil)
+	resources, err := loader.NewFileLoader().All(paths)
 	if err != nil {
 		return nil, err
 	}
