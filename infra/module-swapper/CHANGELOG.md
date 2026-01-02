@@ -9,15 +9,6 @@
 * **deps:** update dependency go to v1.24.11 ([#3273](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3273)) ([44f8190](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/44f8190b089ba59b846eaf286c7206fe41280286))
 * **deps:** update module github.com/go-git/go-git/v5 to v5.16.4 ([#3286](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3286)) ([b50e158](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b50e1580f462620233478f41eb7878f4ec016890))
 
-## [0.4.19](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.18...infra/module-swapper/v0.4.19) (2026-01-02)
-
-
-### Bug Fixes
-
-* **deps:** bump golang.org/x/crypto from 0.38.0 to 0.45.0 in /infra/module-swapper in the go_modules group across 1 directory ([#3270](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3270)) ([fca1e44](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/fca1e442b6961b22ed3d70b70cd195b638d37ff5))
-* **deps:** update dependency go to v1.24.11 ([#3273](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3273)) ([44f8190](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/44f8190b089ba59b846eaf286c7206fe41280286))
-* **deps:** update module github.com/go-git/go-git/v5 to v5.16.4 ([#3286](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3286)) ([b50e158](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/b50e1580f462620233478f41eb7878f4ec016890))
-
 ## [0.4.18](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.17...infra/module-swapper/v0.4.18) (2025-10-24)
 
 
