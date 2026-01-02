@@ -69,7 +69,7 @@ func convertAndGenerateTempAssetFile(caiPath string, outputPath string, fileMidN
 
 func findReports(paths []string) (results interface{}, err error) {
 	// Load resources from json and rego files
-	resources, err := loader.All(paths)
+	resources, err := loader.NewFileLoader().All(paths)
 	if err != nil {
 		return nil, err
 	}
@@ -90,8 +90,11 @@ func findReports(paths []string) (results interface{}, err error) {
 	if err != nil {
 		return nil, err
 	}
-	results = rs[0].Expressions[0].Value
-	return results, err
+	if len(rs) == 0 || len(rs[0].Expressions) == 0 {
+		// Return an empty map to prevent panics in calling functions.
+		return make(map[string]interface{}), nil
+	}
+	return rs[0].Expressions[0].Value, nil
 }
 
 func generateReportData(rawAssetFileName string, queryPath string, outputPath string) (results interface{}, err error) {
