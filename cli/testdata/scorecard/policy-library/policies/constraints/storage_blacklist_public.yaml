@@ -20,8 +20,7 @@ metadata:
     description: Prevent public users from having access to resources via IAM
     bundles.validator.forsetisecurity.org/scorecard-v1: security
 spec:
-  severity: high
   match:
-    target: ["organization/*"]
-    exclude: [] # optional, default is no exclusions
+    ancestries: ["organizations/**"]
+    excludedAncestries: [] # optional, default is no exclusions
   parameters: {}

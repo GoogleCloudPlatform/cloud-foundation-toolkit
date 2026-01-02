@@ -17,10 +17,8 @@ kind: GCPVPCSCEnsureServicesConstraintV1
 metadata:
   name: vpc-sc-ensure-services
 spec:
-  severity: high
   match:
-    gcp:
-      target: ["organization/*"]
+    ancestries: ["organizations/*"]
   parameters:
       required_services:
         - compute.googleapis.com

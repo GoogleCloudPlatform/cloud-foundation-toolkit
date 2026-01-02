@@ -17,8 +17,6 @@ kind: GCPOrgPolicySkipDefaultNetworkConstraintV1
 metadata:
   name: org-policy-skip-default-network
 spec:
-  severity: high
   match:
-    gcp:
-      target: ["organization/*"]
+    ancestries: ["organizations/*"]
   parameters: {}
