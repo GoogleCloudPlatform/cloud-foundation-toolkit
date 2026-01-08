@@ -38,7 +38,7 @@ locals {
   }
   jss_common_group = "jump-start-solutions-admins"
 
-  adc_common_admins = ["q2w", "ayushmjain"]
+  adc_common_admins = ["q2w", "ayushmjain", "krprabhat-eng"]
 
   common_topics = {
     hcls       = "healthcare-life-sciences",
