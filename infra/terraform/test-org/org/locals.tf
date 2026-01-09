@@ -240,6 +240,7 @@ locals {
       name        = "terraform-google-address"
       org         = "terraform-google-modules"
       description = "Manages Google Cloud IP addresses"
+      maintainers = local.adc_common_admins
       topics      = local.common_topics.net
     },
     {
@@ -284,7 +285,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates and configures Cloud NAT"
       topics      = local.common_topics.net
-      maintainers = ["imrannayer"]
+      maintainers = setunion(["imrannayer"], local.adc_common_admins)
     },
     {
       name        = "terraform-google-cloud-operations"
@@ -407,7 +408,7 @@ locals {
       name        = "terraform-google-kms"
       org         = "terraform-google-modules"
       description = "Allows managing a keyring, zero or more keys in the keyring, and IAM role bindings on individual keys"
-      maintainers = ["imrannayer"]
+      maintainers = setunion(["imrannayer"], local.adc_common_admins)
       topics      = local.common_topics.security
     },
     {
@@ -625,7 +626,7 @@ locals {
       name        = "terraform-google-cloud-workflows"
       org         = "GoogleCloudPlatform"
       description = "Manage Workflows with optional Scheduler or Event Arc triggers"
-      maintainers = ["anaik91"]
+      maintainers = setunion(["anaik91"], local.adc_common_admins)
       topics      = join(",", [local.common_topics.serverless, local.common_topics.devtools])
     },
     {
@@ -667,7 +668,7 @@ locals {
       name        = "terraform-google-cloud-functions"
       org         = "GoogleCloudPlatform"
       description = "Deploys Cloud Functions (Gen 2)"
-      maintainers = ["prabhu34"]
+      maintainers = setunion(["prabhu34"], local.adc_common_admins)
       topics      = "cloudfunctions,functions,google-cloud-platform,terraform-modules,${local.common_topics.serverless}"
       lint_env = {
         ENABLE_BPMETADATA = "1"
