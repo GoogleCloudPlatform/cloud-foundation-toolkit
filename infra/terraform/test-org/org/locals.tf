@@ -432,7 +432,7 @@ locals {
       org         = "terraform-google-modules"
       description = "Creates an internal load balancer for Compute Engine by using forwarding rules"
       topics      = local.common_topics.net
-       maintainers = concat(["imrannayer"], local.adc_common_admins)
+      maintainers = setunion(["imrannayer"], local.adc_common_admins)
     },
     {
       name        = "terraform-google-log-export"
