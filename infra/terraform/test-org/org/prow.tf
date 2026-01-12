@@ -36,7 +36,7 @@ provider "kubernetes" {
 
 module "prow-int-sa-wi" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "~> 40.0"
+  version    = "~> 43.0"
   name       = "int-test-sa"
   namespace  = local.test_ns
   project_id = local.prow_project_id
