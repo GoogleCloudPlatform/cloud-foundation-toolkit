@@ -24,8 +24,8 @@ cloud.google.com/go/orgpolicy v1.15.1 h1:0hq12wxNwcfUMojr5j3EjWECSInIuyYDhkAWXTo
 cloud.google.com/go/orgpolicy v1.15.1/go.mod h1:bpvi9YIyU7wCW9WiXL/ZKT7pd2Ovegyr2xENIeRX5q0=
 cloud.google.com/go/osconfig v1.15.1 h1:QQzK5njfsfO2rdOWYVDyLQktqSq9gKf2ohRYeKUuA10=
 cloud.google.com/go/osconfig v1.15.1/go.mod h1:NegylQQl0+5m+I+4Ey/g3HGeQxKkncQ1q+Il4DZ8PME=
-cloud.google.com/go/storage v1.58.0 h1:PflFXlmFJjG/nBeR9B7pKddLQWaFaRWx4uUi/LyNxxo=
-cloud.google.com/go/storage v1.58.0/go.mod h1:cMWbtM+anpC74gn6qjLh+exqYcfmB9Hqe5z6adx+CLI=
+cloud.google.com/go/storage v1.59.0 h1:9p3yDzEN9Vet4JnbN90FECIw6n4FCXcKBK1scxtQnw8=
+cloud.google.com/go/storage v1.59.0/go.mod h1:cMWbtM+anpC74gn6qjLh+exqYcfmB9Hqe5z6adx+CLI=
 cloud.google.com/go/trace v1.11.6 h1:2O2zjPzqPYAHrn3OKl029qlqG6W8ZdYaOWRyr8NgMT4=
 cloud.google.com/go/trace v1.11.6/go.mod h1:GA855OeDEBiBMzcckLPE2kDunIpC72N+Pq8WFieFjnI=
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
