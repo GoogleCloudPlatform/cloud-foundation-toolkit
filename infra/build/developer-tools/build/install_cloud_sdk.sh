@@ -31,7 +31,6 @@ ln -s /lib /lib64
 gcloud config set core/disable_usage_reporting true
 gcloud config set component_manager/disable_update_check true
 gcloud config set survey/disable_prompts true
-gcloud auth login
 # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
 # https://cloud.google.com/docs/terraform/policy-validation/quickstart
 gcloud components install alpha beta terraform-tools gke-gcloud-auth-plugin --quiet

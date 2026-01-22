@@ -21,7 +21,7 @@ cd /build/install_tinkey
 
 TINKEY_VERSION=$1
 
-gcloud storage cp "gs://tinkey/tinkey-${TINKEY_VERSION}.tar.gz" .
+curl -L -O https://storage.googleapis.com/tinkey/tinkey-${TINKEY_VERSION}.tar.gz
 tar -xzf "tinkey-${TINKEY_VERSION}.tar.gz"
 
 install -o 0 -g 0 -m 0755 tinkey_deploy.jar /usr/bin/
