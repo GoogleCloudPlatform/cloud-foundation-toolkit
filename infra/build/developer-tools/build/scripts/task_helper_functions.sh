@@ -532,7 +532,7 @@ function fix_headers() {
 # Given SERVICE_ACCOUNT_JSON with the JSON string of a service account key,
 # initialize the SA credentials for use with:
 # 1: terraform
-# 2: gcloud (passes SA creds implicitly to gsutil and bq-script)
+# 2: gcloud (passes SA creds implicitly bq-script)
 # 3: Kitchen and inspec
 #
 # Add service acocunt support for additional tools as needed, preferring the
@@ -563,7 +563,7 @@ init_credentials() {
   # https://github.com/inspec/inspec-gcp#create-credentials-file-via
   export GOOGLE_APPLICATION_CREDENTIALS="${tmpfile}"
 
-  # Login to GCP for using bq-script and gsutil
+  # Login to GCP for using bq-script
   gcloud auth activate-service-account --key-file="${GOOGLE_APPLICATION_CREDENTIALS}"
 }
 

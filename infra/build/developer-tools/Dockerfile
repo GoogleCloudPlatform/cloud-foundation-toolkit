@@ -68,7 +68,7 @@ RUN apk upgrade --no-cache && \
 # Add all build scripts
 ADD ./build/*.sh /build/
 
-# Add cloud sdk first, gsutil required by some installers
+# Add cloud sdk first
 ARG CLOUD_SDK_VERSION
 RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 
