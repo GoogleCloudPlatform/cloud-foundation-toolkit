@@ -1001,5 +1001,14 @@ locals {
         ENABLE_BPMETADATA = "1"
       }
     },
+    {
+      name        = "terraform-google-cloud-scheduler"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Scheduler resources"
+      maintainers = concat(["Saranya3"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
   ]
 }
