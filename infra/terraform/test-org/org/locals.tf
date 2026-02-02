@@ -1005,7 +1005,34 @@ locals {
       name        = "terraform-google-cloud-scheduler"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Google Cloud Scheduler resources"
-      maintainers = concat(["Saranya3"], local.adc_common_admins)
+      maintainers = concat(["saranya3"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-compute-firewall"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Compute Firewall resources"
+      maintainers = concat(["umm-e-kulsum"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-document-ai"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Document AI resources"
+      maintainers = concat(["ayushi001"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-cloud-composer"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Composer resources"
+      maintainers = concat(["aakritic001"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
