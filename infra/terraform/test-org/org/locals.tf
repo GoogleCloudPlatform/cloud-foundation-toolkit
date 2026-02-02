@@ -1011,6 +1011,15 @@ locals {
       }
     },
     {
+      name        = "terraform-google-cloud-tasks"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Tasks resources"
+      maintainers = concat(["saranya3"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
       name        = "terraform-google-compute-firewall"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Google Compute Firewall resources"
