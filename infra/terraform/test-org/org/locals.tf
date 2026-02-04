@@ -1020,15 +1020,6 @@ locals {
       }
     },
     {
-      name        = "terraform-google-compute-firewall"
-      org         = "GoogleCloudPlatform"
-      description = "Create and manage Google Compute Firewall resources"
-      maintainers = setunion(["umm-e-kulsum"], local.adc_common_admins)
-      lint_env = {
-        ENABLE_BPMETADATA = "1"
-      }
-    },
-    {
       name        = "terraform-google-document-ai"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Google Document AI resources"
