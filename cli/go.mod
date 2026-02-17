@@ -15,7 +15,7 @@ require (
 	github.com/go-git/go-git/v5 v5.16.4
 	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a
 	github.com/google/go-cmp v0.7.0
-	github.com/google/go-github/v80 v80.0.0
+	github.com/google/go-github/v81 v81.0.0
 	github.com/gruntwork-io/terratest v0.50.0
 	github.com/hashicorp/go-version v1.8.0
 	github.com/hashicorp/hcl/v2 v2.24.0
@@ -30,7 +30,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/migueleliasweb/go-github-mock v1.5.0
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
-	github.com/open-policy-agent/opa v1.12.1
+	github.com/open-policy-agent/opa v1.12.2
 	github.com/otiai10/copy v1.14.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.10.2
