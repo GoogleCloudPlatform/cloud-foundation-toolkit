@@ -49,6 +49,7 @@ jobs:
           fi
       - run: docker run --rm %{if lint_env != null }%{ for key, value in lint_env ~}-e ${key} %{ endfor ~}%{ endif }-v $${{ github.workspace }}:/workspace ${STEPS_VARIABLES_OUTPUTS_DEV_TOOLS} module-swapper%{if lint_env != null }
         env:
+          STEPS_VARIABLES_OUTPUTS_DEV_TOOLS: $${{ steps.variables.outputs.dev-tools }}
 %{ for key, value in lint_env ~}
           ${key}: ${value}
 %{ endfor ~}%{ endif }
