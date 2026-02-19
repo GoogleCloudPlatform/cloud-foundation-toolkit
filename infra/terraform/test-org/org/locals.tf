@@ -919,7 +919,7 @@ locals {
       name        = "terraform-google-secure-web-proxy"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Secure Web Proxy on GCP for secured egress web traffic"
-      maintainers = ["maitreya-source"]
+      maintainers = setunion(["maitreya-source"], local.adc_common_admins)
       topics      = join(",", [local.common_topics.security, local.common_topics.net])
     },
     {
