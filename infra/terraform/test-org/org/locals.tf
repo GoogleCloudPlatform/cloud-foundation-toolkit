@@ -1001,5 +1001,41 @@ locals {
         ENABLE_BPMETADATA = "1"
       }
     },
+    {
+      name        = "terraform-google-cloud-scheduler"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Scheduler resources"
+      maintainers = setunion(["saranya3"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-cloud-tasks"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Tasks resources"
+      maintainers = setunion(["saranya3"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-document-ai"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Document AI resources"
+      maintainers = setunion(["ayushi001"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-cloud-composer"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Composer resources"
+      maintainers = setunion(["aakritic001"], local.adc_common_admins)
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
   ]
 }
