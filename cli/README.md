@@ -2,10 +2,6 @@
 
 ## Usage
 
-The CFT CLI includes a few components, including:
-- [CFT Scorecard](./docs/scorecard.md)
-- [CFT Scorecard Reports](./docs/scorecard.md#reporting)
-
 Follow cft --help instructions
 
 Google Cloud Foundation Toolkit CLI
