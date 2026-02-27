@@ -560,7 +560,7 @@ locals {
       name        = "terraform-google-vm"
       org         = "terraform-google-modules"
       description = "Provisions VMs in Google Cloud"
-      maintainers = concat(["erlanderlo"], local.adc_common_admins)
+      maintainers = concat(["erlanderlo", "vandnagarggoogle"], local.adc_common_admins)
       topics      = local.common_topics.compute
       lint_env = {
         ENABLE_BPMETADATA = "1"
