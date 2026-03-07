@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-GOLANGCI_VERSION := 2.8.0
+GOLANGCI_VERSION := 2.10.1
 
 .PHONY: docker_go_lint
 docker_go_lint:
