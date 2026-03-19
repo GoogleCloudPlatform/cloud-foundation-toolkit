@@ -1037,5 +1037,15 @@ locals {
         ENABLE_BPMETADATA = "1"
       }
     },
+    {
+      name        = "terraform-google-firebase"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Firebase resources"
+      maintainers = concat(["TrCaM", "rainshen49"], local.adc_common_admins)
+      topics      = local.common_topics.e2e
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
   ]
 }
