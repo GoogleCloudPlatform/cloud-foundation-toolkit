@@ -1041,7 +1041,7 @@ locals {
       name        = "terraform-google-certificate-authority-service"
       org         = "GoogleCloudPlatform"
       description = "Create and manage CAS"
-      maintainers = setunion(["viojha96","vandnagarggoogle"], local.adc_common_admins)
+      maintainers = setunion(["viojha96", "vandnagarggoogle"], local.adc_common_admins)
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
