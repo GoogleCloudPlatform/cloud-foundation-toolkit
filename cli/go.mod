@@ -12,7 +12,7 @@ require (
 	github.com/briandowns/spinner v1.23.2
 	github.com/fatih/color v1.18.0
 	github.com/gammazero/workerpool v1.1.3
-	github.com/go-git/go-git/v5 v5.16.5
+	github.com/go-git/go-git/v5 v5.17.1
 	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-github/v81 v81.0.0
@@ -78,7 +78,7 @@ require (
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
-	github.com/cloudflare/circl v1.6.1 // indirect
+	github.com/cloudflare/circl v1.6.3 // indirect
 	github.com/cncf/xds/go v0.0.0-20251022180443-0feb69152e9f // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -93,7 +93,7 @@ require (
 	github.com/gammazero/deque v0.2.0 // indirect
 	github.com/go-errors/errors v1.5.0 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
-	github.com/go-git/go-billy/v5 v5.6.2 // indirect
+	github.com/go-git/go-billy/v5 v5.8.0 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
