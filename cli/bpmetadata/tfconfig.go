@@ -463,9 +463,11 @@ func sortBlueprintRoles(r []*BlueprintRoles) {
 			return len(r[i].Roles) < len(r[j].Roles)
 		}
 
-		// 3. Sort by the first role (if available)
-		if len(r[i].Roles) > 0 && len(r[j].Roles) > 0 {
-			return r[i].Roles[0] < r[j].Roles[0]
+		// 3. Sort by each role in the list
+		for k := 0; k < len(r[i].Roles); k++ {
+			if r[i].Roles[k] != r[j].Roles[k] {
+				return r[i].Roles[k] < r[j].Roles[k]
+			}
 		}
 
 		return false
