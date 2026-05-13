@@ -4,5 +4,5 @@ metadata:
   name: pubsub-topic
 pipeline:
   mutators:
-    - image: gcr.io/kpt-fn/apply-setters:v0.1
+    - image: ghcr.io/kptdev/krm-functions-catalog/apply-setters:v0.1
       configPath: setters.yaml
