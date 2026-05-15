@@ -73,7 +73,7 @@
         "golang-version"
       ],
       "rangeStrategy": "replace",
-      "allowedVersions": "<= 1.24",
+      "allowedVersions": "< 1.25",
       "postUpdateOptions": [
         "gomodTidy",
         "gomodUpdateImportPaths"
