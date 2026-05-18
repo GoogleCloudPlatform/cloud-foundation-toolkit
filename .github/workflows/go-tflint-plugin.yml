@@ -56,7 +56,7 @@ jobs:
     - run: echo "GORELEASER_CURRENT_TAG=v0.0.0" >> $GITHUB_ENV # sample tag for testing goreleaser
     - run: echo "${{env.GORELEASER_CURRENT_TAG}}"
     - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29 # v7.0.0
+      uses: goreleaser/goreleaser-action@1a80836c5c9d9e5755a25cb59ec6f45a3b5f41a8 # v7.2.1
       with:
         version: latest
         args: release --clean --skip=validate,publish
