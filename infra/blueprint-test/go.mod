@@ -9,7 +9,7 @@ require (
 	github.com/alexflint/go-filemutex v1.3.0
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.54.0
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20250828155816-225c06ed5fd9
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20260224005459-813a97530220
 	github.com/hashicorp/terraform-json v0.27.2
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
