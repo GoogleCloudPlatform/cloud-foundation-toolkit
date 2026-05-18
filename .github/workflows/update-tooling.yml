@@ -24,6 +24,10 @@ env:
   TFLINT_URL: "https://api.github.com/repos/terraform-linters/tflint/releases/latest"
   GOLANGCI_URL: "https://api.github.com/repos/golangci/golangci-lint/releases/latest"
 
+permissions:
+  contents: write       # peter-evans/create-pull-request pushes a branch
+  pull-requests: write  # peter-evans/create-pull-request opens the PR
+
 jobs:
   update-tools:
     runs-on: ubuntu-latest
