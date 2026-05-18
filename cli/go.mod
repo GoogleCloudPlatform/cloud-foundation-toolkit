@@ -5,7 +5,7 @@ go 1.24.6
 toolchain go1.24.13
 
 require (
-	cloud.google.com/go/asset v1.22.0
+	cloud.google.com/go/asset v1.22.1
 	cloud.google.com/go/storage v1.60.0
 	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.17.3
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
@@ -57,7 +57,7 @@ require (
 	cloud.google.com/go/longrunning v0.8.0 // indirect
 	cloud.google.com/go/monitoring v1.24.3 // indirect
 	cloud.google.com/go/orgpolicy v1.15.1 // indirect
-	cloud.google.com/go/osconfig v1.15.1 // indirect
+	cloud.google.com/go/osconfig v1.16.0 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.30.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.55.0 // indirect
