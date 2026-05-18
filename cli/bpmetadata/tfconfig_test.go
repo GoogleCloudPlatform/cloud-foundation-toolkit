@@ -399,6 +399,45 @@ func TestSortBlueprintRoles(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "sort by roles list content (real world)",
+			in: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/compute.admin",
+						"roles/container.admin",
+						"roles/storage.admin",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/compute.admin",
+						"roles/container.admin",
+						"roles/iam.serviceAccountUser",
+					},
+				},
+			},
+			want: []*BlueprintRoles{
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/compute.admin",
+						"roles/container.admin",
+						"roles/iam.serviceAccountUser",
+					},
+				},
+				{
+					Level: "Project",
+					Roles: []string{
+						"roles/compute.admin",
+						"roles/container.admin",
+						"roles/storage.admin",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
