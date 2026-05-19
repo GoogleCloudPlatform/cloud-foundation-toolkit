@@ -2,7 +2,7 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/module-swap
 
 go 1.24.0
 
-toolchain go1.24.11
+toolchain go1.24.13
 
 require (
 	github.com/chainguard-dev/git-urls v1.0.2
