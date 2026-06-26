@@ -1,3 +1,4 @@
+# check=skip=InvalidDefaultArgInFrom
 # Copyright 2021-2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,15 +25,15 @@ RUN apk update && apk add --no-cache \
         go
 
 # Install cloud SDK
-ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
+ENV PATH=/usr/local/google-cloud-sdk/bin:$PATH
 ARG CLOUD_SDK_VERSION
-ENV CLOUD_SDK_VERSION ${CLOUD_SDK_VERSION}
+ENV CLOUD_SDK_VERSION=${CLOUD_SDK_VERSION}
 ADD developer-tools/build/install_cloud_sdk.sh /build/
 RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 
 # Required to download and install Terraform
 ARG TERRAFORM_VERSION
-ENV TERRAFORM_VERSION ${TERRAFORM_VERSION}
+ENV TERRAFORM_VERSION=${TERRAFORM_VERSION}
 ADD developer-tools/build/install_terraform.sh /build/
 RUN /build/install_terraform.sh ${TERRAFORM_VERSION}
 

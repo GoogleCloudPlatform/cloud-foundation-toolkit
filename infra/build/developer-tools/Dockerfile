@@ -1,3 +1,4 @@
+# check=skip=InvalidDefaultArgInFrom
 # Copyright 2019-2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,13 +18,13 @@ FROM alpine:$ALPINE_VERSION
 
 # Required to override base path
 ARG KITCHEN_TEST_BASE_PATH="test/integration"
-ENV KITCHEN_TEST_BASE_PATH ${KITCHEN_TEST_BASE_PATH}
+ENV KITCHEN_TEST_BASE_PATH=${KITCHEN_TEST_BASE_PATH}
 
 # $WORKSPACE is intended for assets that persist across multiple build steps in a pipeline.
 # It's also where the project git repository is located.
 # https://cloud.google.com/cloud-build/docs/build-config
 ENV WORKSPACE="/workspace"
-ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
+ENV PATH=/usr/local/google-cloud-sdk/bin:$PATH
 
 # Install Distro Dependencies
 # diffutils contains the full version of diff needed for the -exclude argument.
@@ -72,7 +73,8 @@ ADD ./build/*.sh /build/
 ARG CLOUD_SDK_VERSION
 RUN /build/install_cloud_sdk.sh ${CLOUD_SDK_VERSION}
 
-# Optimized to minimize layers
+ARG SHELLCHECK_VERSION
+ARG HADOLINT_VERSION
 ARG GSUITE_PROVIDER_VERSION
 ARG TERRAFORM_DOCS_VERSION
 ARG BATS_VERSION
@@ -87,8 +89,8 @@ ARG PROTOC_GEN_GO_GRPC_VERSION
 ARG PROTOC_GEN_GO_INJECT_TAG
 ARG TFLINT_VERSION
 ARG TINKEY_VERSION
-RUN /build/install_shellcheck.sh && \
-    /build/install_hadolint.sh && \
+RUN /build/install_shellcheck.sh ${SHELLCHECK_VERSION} && \
+    /build/install_hadolint.sh ${HADOLINT_VERSION} && \
     /build/install_addlicense.sh && \
     /build/install_gsuite_terraform_provider.sh ${GSUITE_PROVIDER_VERSION} && \
     /build/install_terraform_docs.sh ${TERRAFORM_DOCS_VERSION} && \
@@ -119,8 +121,8 @@ RUN /build/install_tflint_plugin.sh ${TFLINT_BP_PLUGIN_VERSION}
 WORKDIR /opt/kitchen
 ADD ./build/data/Gemfile .
 ADD ./build/data/Gemfile.lock .
-RUN gem install bundler:2.5.10 && bundle install --retry=10
-RUN rm /usr/lib/ruby/gems/3.4.0/specifications/default/delegate-0.4.0.gemspec
+RUN gem install bundler:2.6.5 && bundle install --retry=10
+RUN rm -f /usr/lib/ruby/gems/*/specifications/default/delegate-*.gemspec
 
 COPY ./build/verify_boilerplate/ /build/verify_boilerplate/
 RUN /build/install_verify_boilerplate.sh
@@ -153,7 +155,7 @@ ADD ./build/home/.tflint.example.hcl /root/tflint/.tflint.example.hcl
 ADD ./build/home/.tflint.module.hcl /root/tflint/.tflint.module.hcl
 
 # Set TF cache dir
-ENV TF_PLUGIN_CACHE_DIR /workspace/test/integration/tmp/.terraform
+ENV TF_PLUGIN_CACHE_DIR=/workspace/test/integration/tmp/.terraform
 RUN mkdir -p ${TF_PLUGIN_CACHE_DIR}
 
 # Add GO_PATH TO PATH

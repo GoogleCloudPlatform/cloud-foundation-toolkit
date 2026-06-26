@@ -1,3 +1,4 @@
+# check=skip=InvalidDefaultArgInFrom
 # Copyright 2019 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +17,7 @@ FROM cft/developer-tools:$BASE_IMAGE_VERSION
 
 # Required to download and install Packer
 ARG PACKER_VERSION
-ENV PACKER_VERSION ${PACKER_VERSION}
+ENV PACKER_VERSION=${PACKER_VERSION}
 
 ADD ./build/install_packer.sh /build/
 RUN /build/install_packer.sh ${PACKER_VERSION}
