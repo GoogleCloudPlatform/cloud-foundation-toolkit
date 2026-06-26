@@ -24,9 +24,9 @@ BATS_SUPPORT_VERSION=$2
 BATS_ASSERT_VERSION=$3
 BATS_MOCK_VERSION=$4
 
-wget -nv "https://github.com/sstephenson/bats/archive/v${BATS_VERSION}.zip"
+wget -nv "https://github.com/bats-core/bats-core/archive/v${BATS_VERSION}.zip"
 unzip -q "v${BATS_VERSION}.zip"
-cd "bats-${BATS_VERSION}"
+cd "bats-core-${BATS_VERSION}"
 ./install.sh /usr/local
 
 wget -nv "https://github.com/ztombol/bats-support/archive/v${BATS_SUPPORT_VERSION}.zip"
