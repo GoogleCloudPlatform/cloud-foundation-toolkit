@@ -1,4 +1,4 @@
-# Copyright 2023-2025 Google LLC
+# Copyright 2023-2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@ on:
     - cron: '0 5,17 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: periodic-reporter-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   report:
     if: github.repository_owner == 'GoogleCloudPlatform' || github.repository_owner == 'terraform-google-modules'
@@ -31,9 +35,10 @@ jobs:
       issues: 'write'
 
     runs-on: 'ubuntu-latest'
+    timeout-minutes: 30
 
     steps:
-      - uses: 'actions/github-script@v8'
+      - uses: 'actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3' # v9.0.0
         with:
           script: |-
                   // label for all issues opened by reporter
