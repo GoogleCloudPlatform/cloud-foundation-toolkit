@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/google/go-github/v81/github"
+	"github.com/google/go-github/v83/github"
 )
 
 // sortOption defines the set of sort options for catalog.
