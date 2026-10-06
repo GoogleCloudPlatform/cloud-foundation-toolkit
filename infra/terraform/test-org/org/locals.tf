@@ -171,7 +171,6 @@ locals {
       name            = "terraform-google-log-analysis"
       org             = "GoogleCloudPlatform"
       description     = "Stores and analyzes log data"
-      maintainers     = ["ryotat7"]
       topics          = local.common_topics.da
       groups          = [local.jss_common_group]
       enable_periodic = true
