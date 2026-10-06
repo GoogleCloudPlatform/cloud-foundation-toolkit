@@ -171,7 +171,6 @@ locals {
       name            = "terraform-google-log-analysis"
       org             = "GoogleCloudPlatform"
       description     = "Stores and analyzes log data"
-      maintainers     = ["ryotat7"]
       topics          = local.common_topics.da
       groups          = [local.jss_common_group]
       enable_periodic = true
@@ -202,6 +201,7 @@ locals {
       name            = "terraform-google-secure-cicd"
       org             = "GoogleCloudPlatform"
       description     = "Builds a secure CI/CD pipeline on Google Cloud"
+      maintainers     = ["sleighton2022"]
       topics          = join(",", [local.common_topics.security, local.common_topics.devtools, local.common_topics.e2e])
       enable_periodic = true
       groups          = [local.jss_common_group]
