@@ -1052,7 +1052,8 @@ locals {
       name        = "terraform-google-certificate-authority-service"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Google Cloud Certificate Authority Service resources"
-      maintainers = local.adc_common_admins
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.security
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -1061,7 +1062,8 @@ locals {
       name        = "terraform-google-agent-gateway"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Agent Gateway resources"
-      maintainers = local.adc_common_admins
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.devtools
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -1070,7 +1072,8 @@ locals {
       name        = "terraform-google-agent-registry"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Agent Registry resources"
-      maintainers = local.adc_common_admins
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.devtools
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -1079,7 +1082,8 @@ locals {
       name        = "terraform-google-iam-connectors-service"
       org         = "GoogleCloudPlatform"
       description = "Create and manage IAM Connectors Service resources"
-      maintainers = local.adc_common_admins
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.security
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -1088,7 +1092,8 @@ locals {
       name        = "terraform-google-iap-policy"
       org         = "GoogleCloudPlatform"
       description = "Create and manage IAP policies"
-      maintainers = local.adc_common_admins
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.security
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
@@ -1097,7 +1102,8 @@ locals {
       name        = "terraform-google-network-security-authz"
       org         = "GoogleCloudPlatform"
       description = "Create and manage Network Security authorization resources"
-      maintainers = local.adc_common_admins
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = join(",", [local.common_topics.net, local.common_topics.security])
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }
