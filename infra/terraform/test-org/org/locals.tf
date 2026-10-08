@@ -1048,5 +1048,59 @@ locals {
         ENABLE_BPMETADATA = "1"
       }
     },
+    {
+      name        = "terraform-google-certificate-authority-service"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Certificate Authority Service resources"
+      maintainers = local.adc_common_admins
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-agent-gateway"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Agent Gateway resources"
+      maintainers = local.adc_common_admins
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-agent-registry"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Agent Registry resources"
+      maintainers = local.adc_common_admins
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-iam-connectors-service"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage IAM Connectors Service resources"
+      maintainers = local.adc_common_admins
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-iap-policy"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage IAP policies"
+      maintainers = local.adc_common_admins
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-network-security-authz"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Network Security authorization resources"
+      maintainers = local.adc_common_admins
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
   ]
 }
