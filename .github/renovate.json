@@ -61,6 +61,12 @@
       "enabled": false
     },
     {
+      "matchPackageNames": [
+        "cft/developer-tools"
+      ],
+      "minimumReleaseAge": null
+    },
+    {
       "matchManagers": [
         "gomod"
       ],
