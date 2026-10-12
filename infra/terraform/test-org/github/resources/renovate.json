@@ -11,19 +11,24 @@
   "labels": ["dependencies"],
   "vulnerabilityAlerts": {
     "labels": ["type:security"],
-    "minimumReleaseAge": "0 days"
+    "minimumReleaseAge": null
   },
   "constraints": {
-    "go": "< 1.25"
+    "go": "< 1.27",
+    "%goMod": "< 1.27"
+  },
+  "constraintsVersioning": {
+    "go": "npm",
+    "%goMod": "npm"
   },
   "packageRules": [
     {
-      "matchFileNames": ["*", "modules/**"],
+      "matchFileNames": ["*"],
       "commitMessagePrefix": "fix(deps):"
     },
     {
-      "matchFileNames": ["*", "modules/**"],
-      "matchUpdateTypes": "major",
+      "matchFileNames": ["*"],
+      "matchUpdateTypes": ["major"],
       "commitMessagePrefix": "fix(deps)!:"
     },
     {
@@ -45,11 +50,11 @@
       "matchManagers": ["gomod"],
       "matchDatasources": ["golang-version"],
       "rangeStrategy": "replace",
-      "allowedVersions": "< 1.25",
+      "allowedVersions": "< 1.27",
       "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     },
     {
-      "matchManagers": ["regex", "gomod"],
+      "matchManagers": ["custom.regex", "gomod"],
       "matchFileNames": ["test/integration/**", "build/**", "Makefile"],
       "groupName": "go modules and/or dev-tools"
     },
@@ -61,9 +66,10 @@
       "commitMessagePrefix": "feat(deps):"
     }
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["(^|/)Makefile$"],
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)Makefile$/"],
       "matchStrings": [
         "DOCKER_TAG_VERSION_DEVELOPER_TOOLS := (?<currentValue>.*?)\\n"
       ],
@@ -72,7 +78,8 @@
       "depNameTemplate": "cft/developer-tools"
     },
     {
-      "fileMatch": ["(^|/)build/(int|lint)\\.cloudbuild\\.yaml$"],
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)build/(int|lint)\\.cloudbuild\\.yaml$/"],
       "matchStrings": [
         "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '(?<currentValue>.*?)'\\n"
       ],
