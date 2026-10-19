@@ -54,6 +54,10 @@
       "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
     },
     {
+      "matchManagers": ["custom.regex"],
+      "minimumReleaseAge": null
+    },
+    {
       "matchManagers": ["custom.regex", "gomod"],
       "matchFileNames": ["test/integration/**", "build/**", "Makefile"],
       "groupName": "go modules and/or dev-tools"

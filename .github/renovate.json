@@ -83,6 +83,12 @@
         "gomodTidy",
         "gomodUpdateImportPaths"
       ]
+    },
+    {
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "minimumReleaseAge": null
     }
   ],
   "customManagers": [
