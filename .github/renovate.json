@@ -88,6 +88,9 @@
       "matchManagers": [
         "custom.regex"
       ],
+      "matchDepNames": [
+        "cft/developer-tools"
+      ],
       "minimumReleaseAge": null
     }
   ],
