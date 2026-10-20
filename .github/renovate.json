@@ -83,6 +83,15 @@
         "gomodTidy",
         "gomodUpdateImportPaths"
       ]
+    },
+    {
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchDepNames": [
+        "cft/developer-tools"
+      ],
+      "minimumReleaseAge": null
     }
   ],
   "customManagers": [
