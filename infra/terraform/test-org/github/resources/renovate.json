@@ -42,6 +42,10 @@
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
+      "matchPackageNames": ["cft/developer-tools"],
+      "minimumReleaseAge": null
+    },
+    {
       "matchManagers": ["gomod"],
       "constraintsFiltering": "strict",
       "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
