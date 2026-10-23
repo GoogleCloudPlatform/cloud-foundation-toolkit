@@ -167,8 +167,9 @@ func generateMetadataForBpPath(bpPath string) error {
 	}
 
 	// continue with creating display metadata if the flag is set,
-	// else let the command exit
-	if !mdFlags.display {
+	// or if display metadata already exists on disk
+	_, dispStatErr := os.Stat(path.Join(bpPath, metadataDisplayFileName))
+	if !mdFlags.display && errors.Is(dispStatErr, os.ErrNotExist) {
 		return nil
 	}
 
