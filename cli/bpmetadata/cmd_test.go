@@ -158,6 +158,10 @@ func TestGenerateMetadataForBpPathExistingDisplay(t *testing.T) {
 	defer func() { mdFlags.display = oldDisplay }()
 	mdFlags.display = false
 
+	oldQuiet := mdFlags.quiet
+	defer func() { mdFlags.quiet = oldQuiet }()
+	mdFlags.quiet = true
+
 	tmpDir := t.TempDir()
 
 	// Create README.md
@@ -181,7 +185,7 @@ variable "new_var" {
 
 	// Create metadata.display.yaml with existing_var having a custom title
 	initialDisplayYaml := []byte(`apiVersion: blueprints.cloud.google.com/v1alpha1
-kind: Blueprint
+kind: BlueprintMetadata
 metadata:
   name: test-module-display
 spec:
@@ -223,6 +227,10 @@ func TestGenerateMetadataForBpPathNoDisplayWhenFlagFalse(t *testing.T) {
 	oldDisplay := mdFlags.display
 	defer func() { mdFlags.display = oldDisplay }()
 	mdFlags.display = false
+
+	oldQuiet := mdFlags.quiet
+	defer func() { mdFlags.quiet = oldQuiet }()
+	mdFlags.quiet = true
 
 	tmpDir := t.TempDir()
 
