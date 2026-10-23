@@ -2,9 +2,11 @@ package bpmetadata
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli/util"
 	"github.com/xeipuuv/gojsonschema"
@@ -74,7 +76,58 @@ func validateMetadataYaml(m string, schema gojsonschema.JSONLoader) error {
 		return fmt.Errorf("metdata validation failed for: %s", m)
 	}
 
+	if path.Base(m) == metadataDisplayFileName {
+		if err := validateDisplayMetadataCompleteness(m); err != nil {
+			Log.Error("display metadata completeness validation failed", "err", err)
+			return err
+		}
+	}
+
 	Log.Info("metadata is valid", "path", m)
+	return nil
+}
+
+// validateDisplayMetadataCompleteness verifies that all variables defined in metadata.yaml
+// have a corresponding entry in metadata.display.yaml when metadata.yaml exists in the same directory.
+func validateDisplayMetadataCompleteness(dispPath string) error {
+	dir := path.Dir(dispPath)
+	coreMetaPath := path.Join(dir, metadataFileName)
+	if _, err := os.Stat(coreMetaPath); errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+
+	coreMeta, err := UnmarshalMetadata(dir, metadataFileName)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal %s for display metadata validation: %w", coreMetaPath, err)
+	}
+
+	dispMeta, err := UnmarshalMetadata(dir, metadataDisplayFileName)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal %s: %w", dispPath, err)
+	}
+
+	if coreMeta.Spec == nil || coreMeta.Spec.Interfaces == nil || len(coreMeta.Spec.Interfaces.Variables) == 0 {
+		return nil
+	}
+
+	dispVars := make(map[string]bool)
+	if dispMeta.Spec != nil && dispMeta.Spec.Ui != nil && dispMeta.Spec.Ui.Input != nil && dispMeta.Spec.Ui.Input.Variables != nil {
+		for vName := range dispMeta.Spec.Ui.Input.Variables {
+			dispVars[vName] = true
+		}
+	}
+
+	var missing []string
+	for _, v := range coreMeta.Spec.Interfaces.Variables {
+		if !dispVars[v.Name] {
+			missing = append(missing, v.Name)
+		}
+	}
+
+	if len(missing) > 0 {
+		return fmt.Errorf("metadata.display.yaml at %s is missing variable(s) defined in metadata.yaml: %s", dispPath, strings.Join(missing, ", "))
+	}
+
 	return nil
 }
 
