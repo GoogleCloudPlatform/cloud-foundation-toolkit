@@ -23,7 +23,7 @@
     "minimumReleaseAge": null,
     "additionalBranchPrefix": "",
     "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} security deps{{else}}root security deps{{/if}}",
-    "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
+    "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
   },
   "separateMajorMinor": false,
   "additionalBranchPrefix": "{{#if parentDir}}{{parentDir}}-{{/if}}",
@@ -101,7 +101,7 @@
       ],
       "additionalBranchPrefix": "",
       "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
-      "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-deps{{else}}root-deps{{/if}}"
     },
     {
       "matchManagers": [
@@ -109,7 +109,7 @@
       ],
       "additionalBranchPrefix": "",
       "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
-      "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-deps{{else}}root-deps{{/if}}"
     },
     {
       "matchManagers": [

@@ -13,7 +13,7 @@
     "labels": ["type:security"],
     "minimumReleaseAge": null,
     "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} security deps{{else}}root security deps{{/if}}",
-    "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
+    "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
   },
   "constraints": {
     "go": "< 1.27",
@@ -73,7 +73,7 @@
         "ci"
       ],
       "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
-      "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-deps{{else}}root-deps{{/if}}"
     },
     {
       "matchCategories": [
@@ -86,13 +86,15 @@
         "kubernetes"
       ],
       "matchFileNames": ["**/test/**"],
-      "groupName": "go modules and/or dev-tools"
+      "groupName": "go modules and/or dev-tools",
+      "groupSlug": "go-modules-andor-dev-tools"
     },
     {
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["cft/developer-tools"],
       "minimumReleaseAge": null,
-      "groupName": "go modules and/or dev-tools"
+      "groupName": "go modules and/or dev-tools",
+      "groupSlug": "go-modules-andor-dev-tools"
     },
     {
       "matchManagers": ["terraform"],
