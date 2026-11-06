@@ -35,14 +35,10 @@
       "matchFileNames": [
         "**/examples/**",
         "**/test/**",
-        "**/helpers/**",
-        "**/scripts/**",
-        "**/tools/**",
-        "**/docs/**",
         ".github/**",
         "infra/**",
-        "**/build/**",
-        "**/Makefile"
+        "build/**",
+        "Makefile"
       ],
       "commitMessagePrefix": "chore(deps):"
     },
