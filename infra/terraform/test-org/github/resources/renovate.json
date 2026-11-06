@@ -33,19 +33,18 @@
     },
     {
       "matchFileNames": [
-        "examples/**",
-        "test/**",
-        "helpers/**",
-        "scripts/**",
-        "tools/**",
-        "docs/**",
+        "**/examples/**",
+        "**/test/**",
+        "**/helpers/**",
+        "**/scripts/**",
+        "**/tools/**",
+        "**/docs/**",
         ".github/**",
         "infra/**",
-        "build/**",
-        "Makefile"
+        "**/build/**",
+        "**/Makefile"
       ],
-      "commitMessagePrefix": "chore(deps):",
-      "separateMajorMinor": false
+      "commitMessagePrefix": "chore(deps):"
     },
     {
       "matchManagers": ["terraform"],
@@ -66,11 +65,12 @@
     },
     {
       "matchCategories": ["golang", "python", "js", "docker"],
-      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}"
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
+      "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-deps{{else}}root-deps{{/if}}"
     },
     {
       "matchCategories": ["golang", "python", "js", "docker"],
-      "matchFileNames": ["test/integration/**"],
+      "matchFileNames": ["**/test/**"],
       "groupName": "go modules and/or dev-tools"
     },
     {
