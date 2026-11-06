@@ -11,7 +11,9 @@
   "labels": ["dependencies"],
   "vulnerabilityAlerts": {
     "labels": ["type:security"],
-    "minimumReleaseAge": null
+    "minimumReleaseAge": null,
+    "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} security deps{{else}}root security deps{{/if}}",
+    "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
   },
   "constraints": {
     "go": "< 1.27",
@@ -66,7 +68,8 @@
         "js",
         "docker",
         "java",
-        "kubernetes"
+        "kubernetes",
+        "ci"
       ],
       "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
       "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-deps{{else}}root-deps{{/if}}"

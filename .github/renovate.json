@@ -19,7 +19,10 @@
     "labels": [
       "type:security"
     ],
-    "minimumReleaseAge": null
+    "minimumReleaseAge": null,
+    "additionalBranchPrefix": "",
+    "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} security deps{{else}}root security deps{{/if}}",
+    "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
   },
   "separateMajorMinor": false,
   "additionalBranchPrefix": "{{#if parentDir}}{{parentDir}}-{{/if}}",
@@ -37,6 +40,8 @@
         ".github/**",
         ".pre-commit-config.yaml"
       ],
+      "additionalBranchPrefix": "",
+      "groupName": "ci deps",
       "extends": [
         ":semanticCommitTypeAll(chore)",
         ":rebaseStalePrs"
@@ -91,6 +96,14 @@
         "ruby",
         "java",
         "kubernetes"
+      ],
+      "additionalBranchPrefix": "",
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
+      "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+    },
+    {
+      "matchManagers": [
+        "custom.regex"
       ],
       "additionalBranchPrefix": "",
       "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
