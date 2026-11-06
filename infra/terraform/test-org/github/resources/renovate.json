@@ -66,7 +66,7 @@
     },
     {
       "matchCategories": ["golang", "python", "js", "docker"],
-      "groupName": "{{{packageFileDir}}} deps"
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}"
     },
     {
       "matchCategories": ["golang", "python", "js", "docker"],
