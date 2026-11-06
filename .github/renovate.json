@@ -83,6 +83,20 @@
       "allowedVersions": "< 1.27"
     },
     {
+      "matchCategories": [
+        "golang",
+        "python",
+        "js",
+        "docker",
+        "ruby",
+        "java",
+        "kubernetes"
+      ],
+      "additionalBranchPrefix": "",
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
+      "groupSlug": "{{#if packageFileDir}}{{{packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+    },
+    {
       "matchManagers": [
         "custom.regex"
       ],
@@ -119,10 +133,10 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/(^|/)build/(int|lint)\\.cloudbuild\\.yaml$/"
+        "/(^|/)build/.*\\.cloudbuild\\.ya?ml$/"
       ],
       "matchStrings": [
-        "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '(?<currentValue>.*?)'\\n"
+        "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: ['\"]?(?<currentValue>[^'\"\\s]+)['\"]?\\s*\\n"
       ],
       "datasourceTemplate": "docker",
       "registryUrlTemplate": "https://gcr.io/cloud-foundation-cicd",
