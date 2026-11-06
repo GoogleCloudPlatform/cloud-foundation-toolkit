@@ -67,6 +67,7 @@
         "python",
         "js",
         "docker",
+        "ruby",
         "java",
         "kubernetes",
         "ci"
@@ -80,6 +81,7 @@
         "python",
         "js",
         "docker",
+        "ruby",
         "java",
         "kubernetes"
       ],
@@ -113,7 +115,7 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/(^|/)build/.*\\.cloudbuild\\.ya?ml$/"],
+      "managerFilePatterns": ["/(^|/)build/.*\\.cloudbuild(\\.[^/]+)?\\.ya?ml$/"],
       "matchStrings": [
         "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: ['\"]?(?<currentValue>[^'\"\\s]+)['\"]?\\s*\\n"
       ],

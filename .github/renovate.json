@@ -10,6 +10,7 @@
   ],
   "minimumReleaseAge": "7 days",
   "ignorePaths": [
+    "cli/testdata/**",
     "tflint-ruleset-blueprint/rules/testdata/**"
   ],
   "labels": [
@@ -55,6 +56,7 @@
         "google",
         "google-beta"
       ],
+      "additionalBranchPrefix": "",
       "groupName": "terraform google provider",
       "rangeStrategy": "widen"
     },
@@ -146,7 +148,7 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/(^|/)build/.*\\.cloudbuild\\.ya?ml$/"
+        "/(^|/)build/.*\\.cloudbuild(\\.[^/]+)?\\.ya?ml$/"
       ],
       "matchStrings": [
         "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: ['\"]?(?<currentValue>[^'\"\\s]+)['\"]?\\s*\\n"
