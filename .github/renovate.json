@@ -5,7 +5,8 @@
     "config:recommended",
     ":semanticCommits",
     ":preserveSemverRanges",
-    "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    ":enablePreCommit"
   ],
   "minimumReleaseAge": "7 days",
   "ignorePaths": [
@@ -21,7 +22,7 @@
     "minimumReleaseAge": null
   },
   "separateMajorMinor": false,
-  "additionalBranchPrefix": "{{parentDir}}-",
+  "additionalBranchPrefix": "{{#if parentDir}}{{parentDir}}-{{/if}}",
   "constraints": {
     "go": "< 1.27",
     "%goMod": "< 1.27"
@@ -33,7 +34,8 @@
   "packageRules": [
     {
       "matchFileNames": [
-        ".github/**"
+        ".github/**",
+        ".pre-commit-config.yaml"
       ],
       "extends": [
         ":semanticCommitTypeAll(chore)",
@@ -78,11 +80,7 @@
         "golang-version"
       ],
       "rangeStrategy": "replace",
-      "allowedVersions": "< 1.27",
-      "postUpdateOptions": [
-        "gomodTidy",
-        "gomodUpdateImportPaths"
-      ]
+      "allowedVersions": "< 1.27"
     },
     {
       "matchManagers": [
