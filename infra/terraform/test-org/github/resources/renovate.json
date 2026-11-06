@@ -32,8 +32,20 @@
       "commitMessagePrefix": "fix(deps)!:"
     },
     {
-      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "build/**", "Makefile"],
-      "commitMessagePrefix": "chore(deps):"
+      "matchFileNames": [
+        "examples/**",
+        "test/**",
+        "helpers/**",
+        "scripts/**",
+        "tools/**",
+        "docs/**",
+        ".github/**",
+        "infra/**",
+        "build/**",
+        "Makefile"
+      ],
+      "commitMessagePrefix": "chore(deps):",
+      "separateMajorMinor": false
     },
     {
       "matchManagers": ["terraform"],
@@ -50,17 +62,21 @@
       "matchManagers": ["gomod"],
       "matchDatasources": ["golang-version"],
       "rangeStrategy": "replace",
-      "allowedVersions": "< 1.27",
-      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
+      "allowedVersions": "< 1.27"
+    },
+    {
+      "matchCategories": ["golang", "python", "js", "docker"],
+      "groupName": "{{{packageFileDir}}} deps"
+    },
+    {
+      "matchCategories": ["golang", "python", "js", "docker"],
+      "matchFileNames": ["test/integration/**"],
+      "groupName": "go modules and/or dev-tools"
     },
     {
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["cft/developer-tools"],
-      "minimumReleaseAge": null
-    },
-    {
-      "matchManagers": ["custom.regex", "gomod"],
-      "matchFileNames": ["test/integration/**", "build/**", "Makefile"],
+      "minimumReleaseAge": null,
       "groupName": "go modules and/or dev-tools"
     },
     {
