@@ -5,10 +5,12 @@
     "config:recommended",
     ":semanticCommits",
     ":preserveSemverRanges",
-    "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    ":enablePreCommit"
   ],
   "minimumReleaseAge": "7 days",
   "ignorePaths": [
+    "cli/testdata/**",
     "tflint-ruleset-blueprint/rules/testdata/**"
   ],
   "labels": [
@@ -18,10 +20,13 @@
     "labels": [
       "type:security"
     ],
-    "minimumReleaseAge": null
+    "minimumReleaseAge": null,
+    "additionalBranchPrefix": "",
+    "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} security deps{{else}}root security deps{{/if}}",
+    "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
   },
   "separateMajorMinor": false,
-  "additionalBranchPrefix": "{{parentDir}}-",
+  "additionalBranchPrefix": "{{#if parentDir}}{{parentDir}}-{{/if}}",
   "constraints": {
     "go": "< 1.27",
     "%goMod": "< 1.27"
@@ -33,8 +38,11 @@
   "packageRules": [
     {
       "matchFileNames": [
-        ".github/**"
+        ".github/**",
+        ".pre-commit-config.yaml"
       ],
+      "additionalBranchPrefix": "",
+      "groupName": "ci deps",
       "extends": [
         ":semanticCommitTypeAll(chore)",
         ":rebaseStalePrs"
@@ -48,6 +56,7 @@
         "google",
         "google-beta"
       ],
+      "additionalBranchPrefix": "",
       "groupName": "terraform google provider",
       "rangeStrategy": "widen"
     },
@@ -78,11 +87,29 @@
         "golang-version"
       ],
       "rangeStrategy": "replace",
-      "allowedVersions": "< 1.27",
-      "postUpdateOptions": [
-        "gomodTidy",
-        "gomodUpdateImportPaths"
-      ]
+      "allowedVersions": "< 1.27"
+    },
+    {
+      "matchCategories": [
+        "golang",
+        "python",
+        "js",
+        "docker",
+        "ruby",
+        "java",
+        "kubernetes"
+      ],
+      "additionalBranchPrefix": "",
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
+      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+    },
+    {
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "additionalBranchPrefix": "",
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
+      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-deps{{else}}root-deps{{/if}}"
     },
     {
       "matchManagers": [
@@ -121,10 +148,10 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/(^|/)build/(int|lint)\\.cloudbuild\\.yaml$/"
+        "/(^|/)build/.*\\.cloudbuild(\\.[^/]+)?\\.ya?ml$/"
       ],
       "matchStrings": [
-        "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '(?<currentValue>.*?)'\\n"
+        "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: ['\"]?(?<currentValue>[^'\"\\s]+)['\"]?\\s*\\n"
       ],
       "datasourceTemplate": "docker",
       "registryUrlTemplate": "https://gcr.io/cloud-foundation-cicd",
