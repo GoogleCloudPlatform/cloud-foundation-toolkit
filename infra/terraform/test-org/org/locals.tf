@@ -38,7 +38,7 @@ locals {
   }
   jss_common_group = "jump-start-solutions-admins"
 
-  adc_common_admins = ["q2w", "ayushmjain", "krprabhat-eng"]
+  adc_common_admins = ["q2w", "ayushmjain", "krprabhat-eng", "njlisi"]
 
   common_topics = {
     hcls       = "healthcare-life-sciences",
@@ -171,7 +171,6 @@ locals {
       name            = "terraform-google-log-analysis"
       org             = "GoogleCloudPlatform"
       description     = "Stores and analyzes log data"
-      maintainers     = ["ryotat7"]
       topics          = local.common_topics.da
       groups          = [local.jss_common_group]
       enable_periodic = true
@@ -1045,6 +1044,66 @@ locals {
       description = "Create and manage Google Firebase resources"
       maintainers = setunion(["TrCaM", "rainshen49"], local.adc_common_admins)
       topics      = local.common_topics.e2e
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-certificate-authority-service"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Google Cloud Certificate Authority Service resources"
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.security
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-agent-gateway"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Agent Gateway resources"
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.devtools
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-agent-registry"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Agent Registry resources"
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.devtools
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-iam-connectors-service"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage IAM Connectors Service resources"
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.security
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-iap-policy"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage IAP policies"
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = local.common_topics.security
+      lint_env = {
+        ENABLE_BPMETADATA = "1"
+      }
+    },
+    {
+      name        = "terraform-google-network-security-authz"
+      org         = "GoogleCloudPlatform"
+      description = "Create and manage Network Security authorization resources"
+      maintainers = concat(["Daisyprakash"], local.adc_common_admins)
+      topics      = join(",", [local.common_topics.net, local.common_topics.security])
       lint_env = {
         ENABLE_BPMETADATA = "1"
       }

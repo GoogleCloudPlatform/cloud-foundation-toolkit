@@ -23,7 +23,7 @@ jobs:
       with:
         go-version-file: 'tflint-ruleset-blueprint/go.mod'
     - run: echo "GORELEASER_CURRENT_TAG=${GITHUB_REF#refs/tags/tflint-ruleset-blueprint/}" >> $GITHUB_ENV
-    - run: echo "${{env.GORELEASER_CURRENT_TAG}}"
+    - run: echo "$GORELEASER_CURRENT_TAG"
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
       with:
@@ -34,6 +34,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: upload
       run: |
-          gh release upload "tflint-ruleset-blueprint/${{env.GORELEASER_CURRENT_TAG}}" dist/tflint-ruleset-blueprint_*.zip dist/checksums.txt --repo ${{ github.repository }} --clobber
+          gh release upload "tflint-ruleset-blueprint/${GORELEASER_CURRENT_TAG}" dist/tflint-ruleset-blueprint_*.zip dist/checksums.txt --repo "${GITHUB_REPOSITORY}" --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

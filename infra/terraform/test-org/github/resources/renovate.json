@@ -11,23 +11,37 @@
   "labels": ["dependencies"],
   "vulnerabilityAlerts": {
     "labels": ["type:security"],
-    "minimumReleaseAge": "0 days"
+    "minimumReleaseAge": null,
+    "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} security deps{{else}}root security deps{{/if}}",
+    "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-security-deps{{else}}root-security-deps{{/if}}"
   },
   "constraints": {
-    "go": "< 1.25"
+    "go": "< 1.27",
+    "%goMod": "< 1.27"
+  },
+  "constraintsVersioning": {
+    "go": "npm",
+    "%goMod": "npm"
   },
   "packageRules": [
     {
-      "matchFileNames": ["*", "modules/**"],
+      "matchFileNames": ["*"],
       "commitMessagePrefix": "fix(deps):"
     },
     {
-      "matchFileNames": ["*", "modules/**"],
-      "matchUpdateTypes": "major",
+      "matchFileNames": ["*"],
+      "matchUpdateTypes": ["major"],
       "commitMessagePrefix": "fix(deps)!:"
     },
     {
-      "matchFileNames": ["examples/**", "test/**", ".github/**", "infra/**", "build/**", "Makefile"],
+      "matchFileNames": [
+        "**/examples/**",
+        "**/test/**",
+        ".github/**",
+        "infra/**",
+        "build/**",
+        "Makefile"
+      ],
       "commitMessagePrefix": "chore(deps):"
     },
     {
@@ -45,13 +59,42 @@
       "matchManagers": ["gomod"],
       "matchDatasources": ["golang-version"],
       "rangeStrategy": "replace",
-      "allowedVersions": "< 1.25",
-      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
+      "allowedVersions": "< 1.27"
     },
     {
-      "matchManagers": ["regex", "gomod"],
-      "matchFileNames": ["test/integration/**", "build/**", "Makefile"],
-      "groupName": "go modules and/or dev-tools"
+      "matchCategories": [
+        "golang",
+        "python",
+        "js",
+        "docker",
+        "ruby",
+        "java",
+        "kubernetes",
+        "ci"
+      ],
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
+      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+    },
+    {
+      "matchCategories": [
+        "golang",
+        "python",
+        "js",
+        "docker",
+        "ruby",
+        "java",
+        "kubernetes"
+      ],
+      "matchFileNames": ["**/test/**"],
+      "groupName": "go modules and/or dev-tools",
+      "groupSlug": "go-modules-andor-dev-tools"
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["cft/developer-tools"],
+      "minimumReleaseAge": null,
+      "groupName": "go modules and/or dev-tools",
+      "groupSlug": "go-modules-andor-dev-tools"
     },
     {
       "matchManagers": ["terraform"],
@@ -61,9 +104,10 @@
       "commitMessagePrefix": "feat(deps):"
     }
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["(^|/)Makefile$"],
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)Makefile$/"],
       "matchStrings": [
         "DOCKER_TAG_VERSION_DEVELOPER_TOOLS := (?<currentValue>.*?)\\n"
       ],
@@ -72,9 +116,10 @@
       "depNameTemplate": "cft/developer-tools"
     },
     {
-      "fileMatch": ["(^|/)build/(int|lint)\\.cloudbuild\\.yaml$"],
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)build/.*\\.cloudbuild(\\.[^/]+)?\\.ya?ml$/"],
       "matchStrings": [
-        "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: '(?<currentValue>.*?)'\\n"
+        "  _DOCKER_TAG_VERSION_DEVELOPER_TOOLS: ['\"]?(?<currentValue>[^'\"\\s]+)['\"]?\\s*\\n"
       ],
       "datasourceTemplate": "docker",
       "registryUrlTemplate": "https://gcr.io/cloud-foundation-cicd",
