@@ -1,6 +1,8 @@
 package bpmetadata
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -149,4 +151,97 @@ func TestCreateBlueprintDisplayMetadata(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGenerateMetadataForBpPathExistingDisplay(t *testing.T) {
+	oldDisplay := mdFlags.display
+	defer func() { mdFlags.display = oldDisplay }()
+	mdFlags.display = false
+
+	oldQuiet := mdFlags.quiet
+	defer func() { mdFlags.quiet = oldQuiet }()
+	mdFlags.quiet = true
+
+	tmpDir := t.TempDir()
+
+	// Create README.md
+	readmeContent := []byte("# Test Module\n\nModule description.\n")
+	err := os.WriteFile(filepath.Join(tmpDir, readmeFileName), readmeContent, 0644)
+	assert.NoError(t, err)
+
+	// Create variables.tf
+	variablesTf := []byte(`variable "existing_var" {
+  type        = string
+  description = "Existing variable"
+}
+
+variable "new_var" {
+  type        = string
+  description = "New variable"
+}
+`)
+	err = os.WriteFile(filepath.Join(tmpDir, "variables.tf"), variablesTf, 0644)
+	assert.NoError(t, err)
+
+	// Create metadata.display.yaml with existing_var having a custom title
+	initialDisplayYaml := []byte(`apiVersion: blueprints.cloud.google.com/v1alpha1
+kind: BlueprintMetadata
+metadata:
+  name: test-module-display
+spec:
+  ui:
+    input:
+      variables:
+        existing_var:
+          name: existing_var
+          title: Custom Existing Title
+`)
+	err = os.WriteFile(filepath.Join(tmpDir, metadataDisplayFileName), initialDisplayYaml, 0644)
+	assert.NoError(t, err)
+
+	// Call generateMetadataForBpPath with mdFlags.display = false
+	err = generateMetadataForBpPath(tmpDir)
+	assert.NoError(t, err)
+
+	// Read updated metadata.display.yaml
+	updatedDisplay, err := UnmarshalMetadata(tmpDir, metadataDisplayFileName)
+	assert.NoError(t, err)
+	assert.NotNil(t, updatedDisplay)
+	assert.NotNil(t, updatedDisplay.Spec)
+	assert.NotNil(t, updatedDisplay.Spec.Ui)
+	assert.NotNil(t, updatedDisplay.Spec.Ui.Input)
+	assert.NotNil(t, updatedDisplay.Spec.Ui.Input.Variables)
+
+	// Verify existing_var preserved its custom title
+	existingVar, ok := updatedDisplay.Spec.Ui.Input.Variables["existing_var"]
+	assert.True(t, ok, "existing_var should be present in display metadata")
+	assert.Equal(t, "Custom Existing Title", existingVar.Title)
+
+	// Verify new_var was added
+	newVar, ok := updatedDisplay.Spec.Ui.Input.Variables["new_var"]
+	assert.True(t, ok, "new_var should be automatically added to existing display metadata")
+	assert.Equal(t, "New Var", newVar.Title)
+}
+
+func TestGenerateMetadataForBpPathNoDisplayWhenFlagFalse(t *testing.T) {
+	oldDisplay := mdFlags.display
+	defer func() { mdFlags.display = oldDisplay }()
+	mdFlags.display = false
+
+	oldQuiet := mdFlags.quiet
+	defer func() { mdFlags.quiet = oldQuiet }()
+	mdFlags.quiet = true
+
+	tmpDir := t.TempDir()
+
+	readmeContent := []byte("# Test Module\n\nModule description.\n")
+	err := os.WriteFile(filepath.Join(tmpDir, readmeFileName), readmeContent, 0644)
+	assert.NoError(t, err)
+
+	err = generateMetadataForBpPath(tmpDir)
+	assert.NoError(t, err)
+
+	// Verify metadata.display.yaml was NOT created
+	_, err = os.Stat(filepath.Join(tmpDir, metadataDisplayFileName))
+	assert.True(t, os.IsNotExist(err), "metadata.display.yaml should not be created when flag is false and it did not exist")
 }
