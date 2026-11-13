@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.21](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.20...infra/module-swapper/v0.4.21) (2026-11-13)
+
+
+### Bug Fixes
+
+* **deps:** update infra/module-swapper deps ([#3520](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3520)) ([5446dfe](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/5446dfed88201a83d67985e21128b41aa1c86b1a))
+* **deps:** update infra/module-swapper security deps [security] ([#3511](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3511)) ([f62bfa3](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/f62bfa3b632f1023a81d5e11419c1e336d2e9da5))
+
 ## [0.4.20](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/infra/module-swapper/v0.4.19...infra/module-swapper/v0.4.20) (2026-05-19)
 
 
