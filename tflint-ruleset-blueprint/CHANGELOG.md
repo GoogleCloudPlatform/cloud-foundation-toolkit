@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.15](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.14...tflint-ruleset-blueprint/v0.2.15) (2026-11-13)
+
+
+### Bug Fixes
+
+* **deps:** update tflint-ruleset-blueprint deps ([#3524](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3524)) ([74e0998](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/74e09982a5f83188d3db1bb4ebe12674bdcd5a43))
+* **deps:** update tflint-ruleset-blueprint security deps [security] ([#3513](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/issues/3513)) ([7bfcd4e](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/commit/7bfcd4eed03aefa1ad34884388bbae2f25f9731b))
+
 ## [0.2.14](https://github.com/GoogleCloudPlatform/cloud-foundation-toolkit/compare/tflint-ruleset-blueprint/v0.2.13...tflint-ruleset-blueprint/v0.2.14) (2026-05-19)
 
 
