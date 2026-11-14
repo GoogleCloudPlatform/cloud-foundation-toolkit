@@ -25,8 +25,8 @@ jobs:
       matrix:
         folder: [cli, infra/blueprint-test, tflint-ruleset-blueprint]
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: changes
         with:
           filters: |
@@ -34,7 +34,7 @@ jobs:
               - ${{ matrix.folder }}/**
               - ".github/workflows/go-lint.yaml"
       - if: steps.changes.outputs.src == 'true'
-        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: ${{ matrix.folder }}/go.mod
           cache-dependency-path: ${{ matrix.folder }}/go.sum
