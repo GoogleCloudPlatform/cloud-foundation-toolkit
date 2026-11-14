@@ -21,7 +21,7 @@ jobs:
       issues: 'write'
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -41,7 +41,7 @@ jobs:
           cd infra/build && make build-image-developer-tools
 
       - name: Filter paths for push
-        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
           filters: |
