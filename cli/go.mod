@@ -2,46 +2,46 @@ module github.com/GoogleCloudPlatform/cloud-foundation-toolkit/cli
 
 go 1.24.6
 
-toolchain go1.24.13
+toolchain go1.26.10
 
 require (
-	cloud.google.com/go/asset v1.22.1
-	cloud.google.com/go/storage v1.60.0
-	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.17.3
+	cloud.google.com/go/asset v1.30.1
+	cloud.google.com/go/storage v1.70.0
+	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.18.0
 	github.com/GoogleCloudPlatform/config-validator v0.0.0-20230824155412-0da46e6a67ad
 	github.com/briandowns/spinner v1.23.2
-	github.com/fatih/color v1.18.0
-	github.com/gammazero/workerpool v1.1.3
+	github.com/fatih/color v1.19.0
+	github.com/gammazero/workerpool v1.3.0
 	github.com/go-git/go-git/v5 v5.16.5
 	github.com/gomarkdown/markdown v0.0.0-20260417124207-7d523f7318df
 	github.com/google/go-cmp v0.7.0
-	github.com/google/go-github/v81 v81.0.0
-	github.com/gruntwork-io/terratest v0.50.0
+	github.com/google/go-github/v93 v93.0.0
+	github.com/gruntwork-io/terratest v1.0.1
 	github.com/hashicorp/go-version v1.9.0
-	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20250828155816-225c06ed5fd9
-	github.com/hashicorp/terraform-json v0.27.2
+	github.com/hashicorp/hcl/v2 v2.25.0
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20260904064934-75d64de68c31
+	github.com/hashicorp/terraform-json v0.29.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/log15 v2.16.0+incompatible
-	github.com/invopop/jsonschema v0.13.0
+	github.com/invopop/jsonschema v0.14.0
 	github.com/itchyny/json2yaml v0.1.5
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
-	github.com/jedib0t/go-pretty/v6 v6.7.8
+	github.com/jedib0t/go-pretty/v6 v6.8.3
 	github.com/manifoldco/promptui v0.9.0
 	github.com/migueleliasweb/go-github-mock v1.5.0
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
-	github.com/open-policy-agent/opa v1.12.2
+	github.com/open-policy-agent/opa v1.22.2
 	github.com/otiai10/copy v1.14.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
-	github.com/stretchr/testify v1.11.1
+	github.com/stretchr/testify v1.12.1
 	github.com/xeipuuv/gojsonschema v1.2.0
-	github.com/zclconf/go-cty v1.17.0
-	golang.org/x/oauth2 v0.35.0
-	golang.org/x/text v0.34.0
-	google.golang.org/api v0.267.0
-	google.golang.org/protobuf v1.36.11
+	github.com/zclconf/go-cty v1.20.0
+	golang.org/x/oauth2 v0.38.0
+	golang.org/x/text v0.43.0
+	google.golang.org/api v0.311.0
+	google.golang.org/protobuf v1.36.12
 	gopkg.in/yaml.v3 v3.0.1
 	sigs.k8s.io/yaml v1.6.0
 )
