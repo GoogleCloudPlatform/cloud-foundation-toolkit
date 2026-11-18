@@ -34,8 +34,8 @@ func TestGetProjectResources(t *testing.T) {
 		wantKeyPath string
 		wantVal     string
 	}{
-		{name: "all", assetTypes: nil, wantKeyPath: "resource.data.nodeConfig.imageType", wantVal: "COS_CONTAINERD"},
-		{name: "cluster", assetTypes: []string{"container.googleapis.com/Cluster", "compute.googleapis.com/Project"}, wantKeyPath: "resource.data.nodeConfig.imageType", wantVal: "COS_CONTAINERD"},
+		{name: "all", assetTypes: nil, wantKeyPath: "resource.data.autoscaling.autoprovisioningNodePoolDefaults.imageType", wantVal: "COS_CONTAINERD"},
+		{name: "cluster", assetTypes: []string{"container.googleapis.com/Cluster", "compute.googleapis.com/Project"}, wantKeyPath: "resource.data.autoscaling.autoprovisioningNodePoolDefaults.imageType", wantVal: "COS_CONTAINERD"},
 	}
 	for _, tt := range tests {
 		tt := tt
