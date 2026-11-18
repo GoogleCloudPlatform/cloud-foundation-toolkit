@@ -21,7 +21,7 @@ cd /build/install_kpt
 
 KPT_VERSION=$1
 
-wget -nv "https://github.com/GoogleContainerTools/kpt/releases/download/v${KPT_VERSION}/kpt_linux_amd64-${KPT_VERSION}.tar.gz"
+wget -nv "https://github.com/kptdev/kpt/releases/download/v${KPT_VERSION}/kpt_linux_amd64-${KPT_VERSION}.tar.gz"
 tar -xzf "kpt_linux_amd64-${KPT_VERSION}.tar.gz"
 install -o 0 -g 0 -m 0755 kpt /usr/local/bin/
 
