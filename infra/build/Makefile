@@ -68,6 +68,9 @@ DOCKER_IMAGE_DEVELOPER_LIGHT := cft/developer-tools-light
 DOCKER_IMAGE_DEVELOPER_TOOLS_JENKINS := cft/developer-tools-jenkins
 REGISTRY_URL := gcr.io/cloud-foundation-cicd
 DEP_TAG_PREFIX := infrastructure-public-image-
+# Disable default BuildKit provenance attestations so single-arch builds push
+# a flat Docker V2 manifest rather than an OCI image index with untagged child manifests.
+export BUILDX_NO_DEFAULT_ATTESTATIONS := 1
 
 
 .PHONY: build-image-developer-tools
