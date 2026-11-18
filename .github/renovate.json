@@ -73,6 +73,7 @@
       "matchManagers": [
         "gomod"
       ],
+      "semanticCommitType": "fix",
       "constraintsFiltering": "strict",
       "postUpdateOptions": [
         "gomodTidy",
@@ -107,9 +108,10 @@
       "matchManagers": [
         "custom.regex"
       ],
+      "semanticCommitType": "chore",
       "additionalBranchPrefix": "",
-      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} deps{{else}}root deps{{/if}}",
-      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-deps{{else}}root-deps{{/if}}"
+      "groupName": "{{#if packageFileDir}}{{{packageFileDir}}} tooling deps{{else}}root tooling deps{{/if}}",
+      "groupSlug": "{{#if packageFileDir}}{{{replace '/' '-' packageFileDir}}}-tooling-deps{{else}}root-tooling-deps{{/if}}"
     },
     {
       "matchManagers": [
