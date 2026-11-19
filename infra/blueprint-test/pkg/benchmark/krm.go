@@ -1,6 +1,7 @@
 package benchmark
 
 import (
+	"context"
 	"os"
 	"path"
 	"path/filepath"
@@ -25,7 +26,7 @@ func KubectlWaitForDeletion(b testing.TB, dir string, retries int, retryInterval
 		WorkingDir: dir,
 	}
 	waitFunction := func() (bool, error) {
-		op, err := shell.RunCommandAndGetStdOutE(b, kptCmd)
+		op, err := shell.RunCommandContextAndGetStdOutE(b, context.Background(), &kptCmd)
 		if err != nil {
 			return false, err
 		}

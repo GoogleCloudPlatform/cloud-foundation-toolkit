@@ -17,6 +17,7 @@
 package tft
 
 import (
+	"context"
 	"os"
 	"path"
 	"testing"
@@ -101,9 +102,9 @@ func getTFOutputMap(t *testing.T, tf string) map[string]interface{} {
 
 	// apply tf and get outputs
 	tOpts := &terraform.Options{TerraformDir: tfDir, Logger: logger.Discard}
-	terraform.Init(t, tOpts)
-	terraform.Apply(t, tOpts)
-	return terraform.OutputAll(t, tOpts)
+	terraform.InitContext(t, context.Background(), tOpts)
+	terraform.ApplyContext(t, context.Background(), tOpts)
+	return terraform.OutputAllContext(t, context.Background(), tOpts)
 }
 
 func TestGetKVFromOutputString(t *testing.T) {
@@ -207,7 +208,7 @@ func TestSetupOverrideString(t *testing.T) {
 				WithTFDir(emptyDir),
 				WithSetupPath(setupDir))
 			// create outputs from setup
-			_, err := terraform.ApplyE(t, &terraform.Options{TerraformDir: setupDir})
+			_, err := terraform.ApplyContextE(t, context.Background(), &terraform.Options{TerraformDir: setupDir})
 			if err != nil {
 				t.Fatalf("Failed to apply setup: %v", err)
 			}
@@ -270,7 +271,7 @@ func TestSetupOverrideList(t *testing.T) {
 				WithTFDir(emptyDir),
 				WithSetupPath(setupDir))
 			// create outputs from setup
-			_, err := terraform.ApplyE(t, &terraform.Options{TerraformDir: setupDir})
+			_, err := terraform.ApplyContextE(t, context.Background(), &terraform.Options{TerraformDir: setupDir})
 			if err != nil {
 				t.Fatalf("Failed to apply setup: %v", err)
 			}

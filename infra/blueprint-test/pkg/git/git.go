@@ -1,6 +1,7 @@
 package git
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -59,7 +60,7 @@ func (g *CmdCfg) RunCmdE(args ...string) (string, error) {
 		Logger:     g.logger,
 		WorkingDir: g.dir,
 	}
-	return shell.RunCommandAndGetStdOutE(g.t, kptCmd)
+	return shell.RunCommandContextAndGetStdOutE(g.t, context.Background(), &kptCmd)
 }
 
 // GetLatestCommit returns latest commit

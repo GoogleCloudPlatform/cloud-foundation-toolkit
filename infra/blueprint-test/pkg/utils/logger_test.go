@@ -40,7 +40,7 @@ func TestNewTestFileLogger(t *testing.T) {
 			assert := assert.New(t)
 			testFile := path.Join(t.TempDir(), fmt.Sprintf("%s.log", tt.name))
 			fl, flClose := NewTestFileLogger(t, testFile)
-			fl.Logf(t, tt.content)
+			fl.Logf(t, "%s", tt.content)
 			flClose(t)
 			gotContent, err := os.ReadFile(testFile)
 			assert.NoError(err)

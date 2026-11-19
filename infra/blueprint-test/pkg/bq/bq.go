@@ -18,6 +18,7 @@
 package bq
 
 import (
+	"context"
 	"os"
 	"strings"
 
@@ -121,7 +122,7 @@ func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error) {
 		Args:    append(gOpts.commonArgs, args...),
 		Logger:  gOpts.logger,
 	}
-	return shell.RunCommandAndGetStdOutE(t, bqCmd)
+	return shell.RunCommandContextAndGetStdOutE(t, context.Background(), &bqCmd)
 }
 
 // Run executes a bq command and returns value as gjson.Result.

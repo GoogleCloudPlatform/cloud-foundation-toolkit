@@ -187,7 +187,7 @@ func (ah *AssertHTTP) httpResponse(t testing.TB, r *http.Request, wantCode int, 
 		// Only log errors and response body once.
 		if bodyErr != nil {
 			logger.Logf(t, "response output:")
-			logger.Logf(t, strings.TrimSpace(out))
+			logger.Logf(t, "%s", strings.TrimSpace(out))
 			return retry, errors.Join(e, bodyErr)
 		}
 
