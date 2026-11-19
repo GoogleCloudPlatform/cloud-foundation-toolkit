@@ -32,7 +32,7 @@ TERRAGRUNT_VERSION := 1.2.2
 # Updated by Update Tooling Workflow
 KUSTOMIZE_VERSION := 5.8.3
 # Updated by Update Tooling Workflow
-KPT_VERSION := 1.0.2-pre.4
+KPT_VERSION := 1.0.1
 PROTOC_VERSION := 23.4
 PROTOC_GEN_GO_VERSION := 1.31
 PROTOC_GEN_GO_GRPC_VERSION := 1.3

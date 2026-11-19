@@ -54,8 +54,8 @@ jobs:
             if [ "$tool" == "CLOUD_SDK" ]; then
               LATEST_TOOL_VERSION=$(curl -s  ${!TOOL_URL} | tar --to-stdout -xzf - google-cloud-sdk/VERSION)
             elif [ "$tool" == "KPT" ]; then
-              # get latest release including pre-releases for kpt, excluding releases of porch
-              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .tag_name | contains("porch/") | not )][0].tag_name' | tr -d "v")
+              # get latest stable kpt release (vX.Y.Z) with published linux_amd64 tarball
+              LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select((.prerelease | not) and (.draft | not) and (.tag_name | test("^v[0-9]+[.][0-9]+[.][0-9]+$"))) | (.tag_name | ltrimstr("v")) as $ver | select([.assets[].name] | index("kpt_linux_amd64-" + $ver + ".tar.gz") != null) ][0].tag_name | ltrimstr("v")')
             elif [ "$tool" == "CFT_CLI" ]; then
               # get latest CFT_CLI release
               LATEST_TOOL_VERSION=$(curl -s ${!TOOL_URL} | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "cli/v")
