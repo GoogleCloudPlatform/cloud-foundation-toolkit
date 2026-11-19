@@ -37,12 +37,18 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: main
+          persist-credentials: false
       - name: Update Tools
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh_curl() {
-            curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "$1" || echo "null"
+            local body
+            if body=$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "$1"); then
+              printf '%s\n' "$body"
+            else
+              echo "null"
+            fi
           }
           PR_UPDATE_BODY=""
           newline=$'\n'
@@ -52,7 +58,7 @@ jobs:
           for tool in "${tools[@]}"
           do
             # get current tool version from Makefile
-            CURRENT_TOOL_VERSION=$(awk -v key="${tool}_VERSION" '$1 == key && $2 == ":=" {print $3; exit}' infra/build/Makefile)
+            CURRENT_TOOL_VERSION=$(awk -v key="${tool}_VERSION" '{sub(/#.*/, "")} $1 == key && $2 == ":=" && NF == 3 {print $3; exit}' infra/build/Makefile)
             TOOL_URL="${tool}_URL"
 
             # get latest tool version from URL
@@ -60,24 +66,24 @@ jobs:
               LATEST_TOOL_VERSION=$(curl -fsSL "${!TOOL_URL}" | tar --to-stdout -xzf - google-cloud-sdk/VERSION || true)
             elif [ "$tool" == "KPT" ]; then
               # get highest stable kpt semver release (vX.Y.Z) with published linux_amd64 tarball
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '(if type == "array" then [ .[] | select((.prerelease | not) and (.draft | not) and ((.tag_name // "") | test("^v[0-9]+[.][0-9]+[.][0-9]+$"))) | (.tag_name | ltrimstr("v")) as $ver | select([(.assets // [])[].name] | index("kpt_linux_amd64-" + $ver + ".tar.gz") != null) ] else [] end) | max_by(.tag_name | ltrimstr("v") | split(".") | map(tonumber)) | (.tag_name // empty) | ltrimstr("v")')
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '(if type == "array" then [ .[] | select((.prerelease | not) and (.draft | not) and ((.tag_name // null) | type == "string") and (.tag_name | test("^v[0-9]+[.][0-9]+[.][0-9]+$"))) | (.tag_name | ltrimstr("v")) as $ver | select([(.assets // [])[]?.name] | index("kpt_linux_amd64-" + $ver + ".tar.gz") != null) ] else [] end) | max_by(.tag_name | ltrimstr("v") | split(".") | map(tonumber)) | (.tag_name // empty) | select(type == "string") | ltrimstr("v")' || true)
             elif [ "$tool" == "CFT_CLI" ]; then
               # get latest CFT_CLI release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("CLI Release")) ][0].tag_name // empty) | ltrimstr("cli/v") else empty end')
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select(((.name // null) | type == "string") and (.name | contains("CLI Release")) and ((.tag_name // null) | type == "string")) ][0].tag_name // empty) | ltrimstr("cli/v") else empty end' || true)
             elif [ "$tool" == "MODULE_SWAPPER" ]; then
               # get latest MODULE_SWAPPER release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("infra/module-swapper")) ][0].tag_name // empty) | ltrimstr("infra/module-swapper/v") else empty end')
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select(((.name // null) | type == "string") and (.name | contains("infra/module-swapper")) and ((.tag_name // null) | type == "string")) ][0].tag_name // empty) | ltrimstr("infra/module-swapper/v") else empty end' || true)
             elif [ "$tool" == "TFLINT_BP_PLUGIN" ]; then
               # get latest TFLINT_BP_PLUGIN release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("tflint-ruleset-blueprint")) ][0].tag_name // empty) | ltrimstr("tflint-ruleset-blueprint/v") else empty end')
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select(((.name // null) | type == "string") and (.name | contains("tflint-ruleset-blueprint")) and ((.tag_name // null) | type == "string")) ][0].tag_name // empty) | ltrimstr("tflint-ruleset-blueprint/v") else empty end' || true)
             elif [ "$tool" == "GATOR" ]; then
               # get latest GATOR_MINOR release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output --arg minor "${GATOR_MINOR}" 'if type == "array" then ([ .[] | select((.name // "") | contains($minor)) ][0].tag_name // empty) | ltrimstr("v") else empty end')
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output --arg minor "${GATOR_MINOR}" 'if type == "array" then ([ .[] | select(((.name // null) | type == "string") and (.name | contains($minor)) and ((.tag_name // null) | type == "string")) ][0].tag_name // empty) | ltrimstr("v") else empty end' || true)
             elif [ "$tool" == "KUSTOMIZE" ]; then
               # get latest KUSTOMIZE release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("kustomize")) ][0].tag_name // empty) | ltrimstr("kustomize/v") else empty end')
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select(((.name // null) | type == "string") and (.name | contains("kustomize")) and ((.tag_name // null) | type == "string")) ][0].tag_name // empty) | ltrimstr("kustomize/v") else empty end' || true)
             else
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '(if type == "object" then .tag_name // empty else empty end) | ltrimstr("v")')
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "object" and ((.tag_name // null) | type == "string") then .tag_name | ltrimstr("v") else empty end' || true)
             fi
             echo "Current ${tool} version: ${CURRENT_TOOL_VERSION}"
 
@@ -104,7 +110,7 @@ jobs:
             else
               echo "${tool} needs to be updated to ${LATEST_TOOL_VERSION}"
               TOOL_KEY="${tool}_VERSION" OLD_VER="${CURRENT_TOOL_VERSION}" NEW_VER="${LATEST_TOOL_VERSION}" \
-                perl -i -pe 's/^\Q$ENV{TOOL_KEY}\E := \Q$ENV{OLD_VER}\E$/$ENV{TOOL_KEY} := $ENV{NEW_VER}/' infra/build/Makefile
+                perl -i -pe '$c += s/^([ \t]*\Q$ENV{TOOL_KEY}\E[ \t]+:=[ \t]+)\Q$ENV{OLD_VER}\E([ \t]*(?:#.*)?)$/${1}$ENV{NEW_VER}${2}/; END { exit 1 unless $c }' infra/build/Makefile
               echo "BUMP_IMG=true" >> "$GITHUB_ENV"
               PR_UPDATE_BODY="${PR_UPDATE_BODY} Updating ${tool} from ${CURRENT_TOOL_VERSION} to ${LATEST_TOOL_VERSION} ${newline}"
             fi
@@ -122,14 +128,14 @@ jobs:
       - name: Bump image patch version
         if: env.BUMP_IMG == 'true'
         run: |
-          CURRENT_IMG_VERSION=$(awk '$1 == "DOCKER_TAG_VERSION_DEVELOPER_TOOLS" && $2 == ":=" {print $3; exit}' infra/build/Makefile)
+          CURRENT_IMG_VERSION=$(awk '{sub(/#.*/, "")} $1 == "DOCKER_TAG_VERSION_DEVELOPER_TOOLS" && $2 == ":=" && NF == 3 {print $3; exit}' infra/build/Makefile)
           if [[ ! "$CURRENT_IMG_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::Invalid DOCKER_TAG_VERSION_DEVELOPER_TOOLS format"
             exit 1
           fi
           NEW_IMG_VERSION=$(echo "$CURRENT_IMG_VERSION" | awk -F. '{$NF+=1; print $0}' OFS=".")
           TOOL_KEY="DOCKER_TAG_VERSION_DEVELOPER_TOOLS" OLD_VER="${CURRENT_IMG_VERSION}" NEW_VER="${NEW_IMG_VERSION}" \
-            perl -i -pe 's/^\Q$ENV{TOOL_KEY}\E := \Q$ENV{OLD_VER}\E$/$ENV{TOOL_KEY} := $ENV{NEW_VER}/' infra/build/Makefile
+            perl -i -pe '$c += s/^([ \t]*\Q$ENV{TOOL_KEY}\E[ \t]+:=[ \t]+)\Q$ENV{OLD_VER}\E([ \t]*(?:#.*)?)$/${1}$ENV{NEW_VER}${2}/; END { exit 1 unless $c }' infra/build/Makefile
           echo "NEW_IMG_VERSION=${NEW_IMG_VERSION}" >> "$GITHUB_ENV"
       - name: Commit Makefile
         if: env.BUMP_IMG == 'true'
