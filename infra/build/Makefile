@@ -32,21 +32,21 @@ TERRAGRUNT_VERSION := 1.2.2
 # Updated by Update Tooling Workflow
 KUSTOMIZE_VERSION := 5.8.3
 # Updated by Update Tooling Workflow
-KPT_VERSION := 1.0.1
+KPT_VERSION := 1.0.2-pre.4
 PROTOC_VERSION := 23.4
 PROTOC_GEN_GO_VERSION := 1.31
 PROTOC_GEN_GO_GRPC_VERSION := 1.3
 PROTOC_GEN_GO_INJECT_TAG := 1.4.0
 # Updated by Update Tooling Workflow
-CFT_CLI_VERSION := 1.5.22
+CFT_CLI_VERSION := 1.5.23
 # Updated by Update Tooling Workflow
 TFLINT_VERSION := 0.66.0
 TINKEY_VERSION := 1.7.0
 ALPINE_VERSION := 3.24
 # Updated by Update Tooling Workflow
-MODULE_SWAPPER_VERSION := 0.4.20
+MODULE_SWAPPER_VERSION := 0.4.21
 # Updated by Update Tooling Workflow
-TFLINT_BP_PLUGIN_VERSION := 0.2.14
+TFLINT_BP_PLUGIN_VERSION := 0.2.15
 
 # For developer-tools-krm
 # Updated by Update Tooling Workflow
@@ -59,7 +59,7 @@ OPA_VERSION := 0.52.0
 # Updated by Update Tooling Workflow
 GCRANE_VERSION := 0.22.1
 
-DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.29.0
+DOCKER_TAG_VERSION_DEVELOPER_TOOLS := 1.29.1
 DOCKER_TAG_MAJOR_VERSION_DEVELOPER_TOOLS := $(firstword $(subst ., , $(DOCKER_TAG_VERSION_DEVELOPER_TOOLS)))
 DOCKER_TAG_MINOR_VERSION_DEVELOPER_TOOLS := $(shell echo "${DOCKER_TAG_VERSION_DEVELOPER_TOOLS}" | awk -F. '{print $$1"."$$2}')
 
