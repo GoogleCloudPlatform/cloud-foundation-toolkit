@@ -26,8 +26,7 @@ env:
   GOLANGCI_URL: "https://api.github.com/repos/golangci/golangci-lint/releases/latest"
 
 permissions:
-  contents: write       # peter-evans/create-pull-request pushes a branch
-  pull-requests: write  # peter-evans/create-pull-request opens the PR
+  contents: read # peter-evans/create-pull-request uses secrets.CFT_ROBOT_PAT
 
 jobs:
   update-tools:
@@ -47,66 +46,91 @@ jobs:
           }
           PR_UPDATE_BODY=""
           newline=$'\n'
+          VERSION_REGEX='^[0-9]+(\.[0-9]+){1,3}([+-][A-Za-z0-9.-]+)?$'
           tools=("TERRAFORM" "CLOUD_SDK" "CFT_CLI" "GATOR" "GCRANE" "KPT" "MODULE_SWAPPER" "KUSTOMIZE" "TERRAGRUNT" "TFLINT" "GOLANGCI" "TFLINT_BP_PLUGIN" "TERRAFORM_DOCS")
 
-          for tool in ${tools[@]}
+          for tool in "${tools[@]}"
           do
             # get current tool version from Makefile
-            CURRENT_TOOL_VERSION=$(cat infra/build/Makefile  | grep "${tool}_VERSION :=" | awk -F" " '{print $3}')
-            TOOL_URL=$tool\_URL
+            CURRENT_TOOL_VERSION=$(awk -v key="${tool}_VERSION" '$1 == key && $2 == ":=" {print $3; exit}' infra/build/Makefile)
+            TOOL_URL="${tool}_URL"
 
             # get latest tool version from URL
             if [ "$tool" == "CLOUD_SDK" ]; then
-              LATEST_TOOL_VERSION=$(curl -s  ${!TOOL_URL} | tar --to-stdout -xzf - google-cloud-sdk/VERSION)
+              LATEST_TOOL_VERSION=$(curl -fsSL "${!TOOL_URL}" | tar --to-stdout -xzf - google-cloud-sdk/VERSION || true)
             elif [ "$tool" == "KPT" ]; then
               # get highest stable kpt semver release (vX.Y.Z) with published linux_amd64 tarball
               LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '(if type == "array" then [ .[] | select((.prerelease | not) and (.draft | not) and ((.tag_name // "") | test("^v[0-9]+[.][0-9]+[.][0-9]+$"))) | (.tag_name | ltrimstr("v")) as $ver | select([(.assets // [])[].name] | index("kpt_linux_amd64-" + $ver + ".tar.gz") != null) ] else [] end) | max_by(.tag_name | ltrimstr("v") | split(".") | map(tonumber)) | (.tag_name // empty) | ltrimstr("v")')
             elif [ "$tool" == "CFT_CLI" ]; then
               # get latest CFT_CLI release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '[ .[] | select( .name | contains("CLI Release"))][0].tag_name' | tr -d "cli/v")
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("CLI Release")) ][0].tag_name // empty) | ltrimstr("cli/v") else empty end')
             elif [ "$tool" == "MODULE_SWAPPER" ]; then
               # get latest MODULE_SWAPPER release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '[ .[] | select( .name | contains("infra/module-swapper"))][0].tag_name' | tr -d "infra/module\-swapper/v")
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("infra/module-swapper")) ][0].tag_name // empty) | ltrimstr("infra/module-swapper/v") else empty end')
             elif [ "$tool" == "TFLINT_BP_PLUGIN" ]; then
               # get latest TFLINT_BP_PLUGIN release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '[ .[] | select( .name | contains("tflint-ruleset-blueprint"))][0].tag_name' | tr -d "tflint\-ruleset\-blueprint/v")
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("tflint-ruleset-blueprint")) ][0].tag_name // empty) | ltrimstr("tflint-ruleset-blueprint/v") else empty end')
             elif [ "$tool" == "GATOR" ]; then
               # get latest GATOR_MINOR release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '[ .[] | select( .name | contains("'${GATOR_MINOR}'"))][0].tag_name' | tr -d "v")
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output --arg minor "${GATOR_MINOR}" 'if type == "array" then ([ .[] | select((.name // "") | contains($minor)) ][0].tag_name // empty) | ltrimstr("v") else empty end')
             elif [ "$tool" == "KUSTOMIZE" ]; then
               # get latest KUSTOMIZE release
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '[ .[] | select( .name | contains("kustomize"))][0].tag_name' | tr -d "kustomize/v")
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output 'if type == "array" then ([ .[] | select((.name // "") | contains("kustomize")) ][0].tag_name // empty) | ltrimstr("kustomize/v") else empty end')
             else
-              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output .tag_name | tr -d "v")
+              LATEST_TOOL_VERSION=$(gh_curl "${!TOOL_URL}" | jq --raw-output '(if type == "object" then .tag_name // empty else empty end) | ltrimstr("v")')
             fi
             echo "Current ${tool} version: ${CURRENT_TOOL_VERSION}"
+
+            if [[ -z "$CURRENT_TOOL_VERSION" || "$CURRENT_TOOL_VERSION" == "null" || -z "$LATEST_TOOL_VERSION" || "$LATEST_TOOL_VERSION" == "null" ]]; then
+              echo "${tool} version is missing"
+              continue
+            fi
+
+            if [[ "$CURRENT_TOOL_VERSION" == *$'\n'* || "$CURRENT_TOOL_VERSION" == *$'\r'* || ! "$CURRENT_TOOL_VERSION" =~ $VERSION_REGEX ]]; then
+              echo "::warning::Skipping ${tool}: current version string failed format validation"
+              continue
+            fi
+
+            if [[ "$LATEST_TOOL_VERSION" == *$'\n'* || "$LATEST_TOOL_VERSION" == *$'\r'* || ! "$LATEST_TOOL_VERSION" =~ $VERSION_REGEX ]]; then
+              echo "::warning::Skipping ${tool}: upstream version string failed format validation"
+              continue
+            fi
+
             echo "Latest ${tool} version: ${LATEST_TOOL_VERSION} via ${!TOOL_URL}"
 
             # update tool version in Makefile if not latest
             if [ "$CURRENT_TOOL_VERSION" == "$LATEST_TOOL_VERSION" ]; then
               echo "${tool} is latest"
-            elif [[ -z "$CURRENT_TOOL_VERSION" || "$CURRENT_TOOL_VERSION" == "null" || -z "$LATEST_TOOL_VERSION" || "$LATEST_TOOL_VERSION" == "null" ]]; then
-              echo "${tool} version is missing"
             else
               echo "${tool} needs to be updated to ${LATEST_TOOL_VERSION}"
-              sed -i "s/${tool}_VERSION := ${CURRENT_TOOL_VERSION}/${tool}_VERSION := ${LATEST_TOOL_VERSION}/g" infra/build/Makefile
-              echo "LATEST_${tool}=${LATEST_TOOL_VERSION}" >> $GITHUB_ENV
-              echo "BUMP_IMG=true" >> $GITHUB_ENV
-              PR_UPDATE_BODY="$PR_UPDATE_BODY Updating ${tool} from ${CURRENT_TOOL_VERSION} to ${LATEST_TOOL_VERSION} ${newline}"
+              TOOL_KEY="${tool}_VERSION" OLD_VER="${CURRENT_TOOL_VERSION}" NEW_VER="${LATEST_TOOL_VERSION}" \
+                perl -i -pe 's/^\Q$ENV{TOOL_KEY}\E := \Q$ENV{OLD_VER}\E$/$ENV{TOOL_KEY} := $ENV{NEW_VER}/' infra/build/Makefile
+              echo "BUMP_IMG=true" >> "$GITHUB_ENV"
+              PR_UPDATE_BODY="${PR_UPDATE_BODY} Updating ${tool} from ${CURRENT_TOOL_VERSION} to ${LATEST_TOOL_VERSION} ${newline}"
             fi
           done
 
           # Create multiline PR body text
-          echo "PR_UPDATE_BODY<<EOF" >> $GITHUB_ENV
-          echo "$PR_UPDATE_BODY" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          if [ -n "$PR_UPDATE_BODY" ]; then
+            EOF_DELIM="EOF_$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+            {
+              echo "PR_UPDATE_BODY<<${EOF_DELIM}"
+              echo "$PR_UPDATE_BODY"
+              echo "${EOF_DELIM}"
+            } >> "$GITHUB_ENV"
+          fi
       - name: Bump image patch version
         if: env.BUMP_IMG == 'true'
         run: |
-          CURRENT_IMG_VERSION=$(cat infra/build/Makefile  | grep 'DOCKER_TAG_VERSION_DEVELOPER_TOOLS :=' | awk -F" " '{print $3}')
-          NEW_IMG_VERSION=$(echo $CURRENT_IMG_VERSION | awk -F. '{$NF+=1; print $0}' OFS=".")
-          sed -i "s/DOCKER_TAG_VERSION_DEVELOPER_TOOLS := ${CURRENT_IMG_VERSION}/DOCKER_TAG_VERSION_DEVELOPER_TOOLS := ${NEW_IMG_VERSION}/g" infra/build/Makefile
-          echo "NEW_IMG_VERSION=${NEW_IMG_VERSION}" >> $GITHUB_ENV
+          CURRENT_IMG_VERSION=$(awk '$1 == "DOCKER_TAG_VERSION_DEVELOPER_TOOLS" && $2 == ":=" {print $3; exit}' infra/build/Makefile)
+          if [[ ! "$CURRENT_IMG_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid DOCKER_TAG_VERSION_DEVELOPER_TOOLS format"
+            exit 1
+          fi
+          NEW_IMG_VERSION=$(echo "$CURRENT_IMG_VERSION" | awk -F. '{$NF+=1; print $0}' OFS=".")
+          TOOL_KEY="DOCKER_TAG_VERSION_DEVELOPER_TOOLS" OLD_VER="${CURRENT_IMG_VERSION}" NEW_VER="${NEW_IMG_VERSION}" \
+            perl -i -pe 's/^\Q$ENV{TOOL_KEY}\E := \Q$ENV{OLD_VER}\E$/$ENV{TOOL_KEY} := $ENV{NEW_VER}/' infra/build/Makefile
+          echo "NEW_IMG_VERSION=${NEW_IMG_VERSION}" >> "$GITHUB_ENV"
       - name: Commit Makefile
         if: env.BUMP_IMG == 'true'
         run: |
