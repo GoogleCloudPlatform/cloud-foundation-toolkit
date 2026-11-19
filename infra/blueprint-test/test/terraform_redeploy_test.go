@@ -17,6 +17,7 @@
 package test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
@@ -39,6 +40,6 @@ func TestRedeploy(t *testing.T) {
 	nt.RedeployTest(3, map[int]map[string]interface{}{2: {"test": "custom"}})
 	expectedWorkspaces := []string{"test-1", "test-2", "test-3"}
 	for _, ws := range expectedWorkspaces {
-		terraform.RunTerraformCommand(t, nt.GetTFOptions(), "workspace", "select", ws)
+		terraform.RunTerraformCommandContext(t, context.Background(), nt.GetTFOptions(), "workspace", "select", ws)
 	}
 }

@@ -18,6 +18,7 @@
 package gcloud
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -103,7 +104,7 @@ func RunCmdE(t testing.TB, cmd string, opts ...cmdOption) (string, error) {
 		Args:    append(args, gOpts.commonArgs...),
 		Logger:  gOpts.logger,
 	}
-	return shell.RunCommandAndGetStdOutE(t, gcloudCmd)
+	return shell.RunCommandContextAndGetStdOutE(t, context.Background(), &gcloudCmd)
 }
 
 // Run executes a gcloud command and returns value as gjson.Result.

@@ -1,7 +1,9 @@
 package kpt
 
 import (
+	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
@@ -80,9 +82,9 @@ func (k *CmdCfg) RunCmd(args ...string) string {
 		WorkingDir: k.dir,
 	}
 	command := func() (string, error) {
-		return shell.RunCommandAndGetStdOutE(k.t, kptCmd)
+		return shell.RunCommandContextAndGetStdOutE(k.t, context.Background(), &kptCmd)
 	}
-	op, err := retry.DoWithRetryE(k.t, fmt.Sprintf("kpt %v",  kptCmd.Args), k.tries, 15*time.Second, command)
+	op, err := retry.DoWithRetryContextE(k.t, context.Background(), fmt.Sprintf("kpt %v", kptCmd.Args), k.tries, 15*time.Second, command)
 	if err != nil {
 		k.t.Fatal(err)
 	}
@@ -115,5 +117,15 @@ func GetKptVersion(t testing.TB, kptBinary string) string {
 		logger:    utils.GetLoggerFromT(),
 		t:         t,
 	}
-	return kVersionOpts.RunCmd("version")
+	return parseKptVersion(kVersionOpts.RunCmd("version"))
+}
+
+func parseKptVersion(raw string) string {
+	for _, line := range strings.Split(raw, "\n") {
+		line = strings.TrimSpace(line)
+		if v, ok := strings.CutPrefix(line, "Version:"); ok {
+			return strings.TrimPrefix(strings.TrimSpace(v), "v")
+		}
+	}
+	return strings.TrimPrefix(strings.TrimSpace(raw), "v")
 }

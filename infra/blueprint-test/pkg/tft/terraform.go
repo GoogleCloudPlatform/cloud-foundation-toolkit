@@ -18,6 +18,7 @@
 package tft
 
 import (
+	"context"
 	b64 "encoding/base64"
 	"fmt"
 	"maps"
@@ -300,7 +301,7 @@ func NewTFBlueprintTest(t testing.TB, opts ...tftOption) *TFBlueprintTest {
 		tft.setupOutputOverrides[k] = v
 	}
 
-	tftVersion := gjson.Get(terraform.RunTerraformCommand(tft.t, tft.GetTFOptions(), "version", "-json"), "terraform_version")
+	tftVersion := gjson.Get(terraform.RunTerraformCommandContext(tft.t, context.Background(), tft.GetTFOptions(), "version", "-json"), "terraform_version")
 	tft.logger.Logf(tft.t, "Running tests TF configs in %s with version %s", tft.tfDir, tftVersion)
 	return tft
 }
@@ -325,7 +326,7 @@ func (b *TFBlueprintTest) getOutputs(sensitive map[string]bool) map[string]inter
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
-	outputs := terraform.OutputAll(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.sensitiveLogger, NoColor: true})
+	outputs := terraform.OutputAllContext(b.t, context.Background(), &terraform.Options{TerraformDir: b.setupDir, Logger: b.sensitiveLogger, NoColor: true})
 	for k, v := range outputs {
 		_, s := sensitive[k]
 		if s {
@@ -396,7 +397,7 @@ func (b *TFBlueprintTest) GetStringOutput(name string) string {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
-	return terraform.Output(b.t, b.GetTFOptions(), name)
+	return terraform.OutputContext(b.t, context.Background(), b.GetTFOptions(), name)
 }
 
 // GetStringOutputList returns TF output for a given key as list.
@@ -418,7 +419,7 @@ func (b *TFBlueprintTest) GetJsonOutput(key string) gjson.Result {
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
 
-	jsonString := terraform.OutputJson(b.t, b.GetTFOptions(), key)
+	jsonString := terraform.OutputJSONContext(b.t, context.Background(), b.GetTFOptions(), key)
 	if !gjson.Valid(jsonString) {
 		b.t.Fatalf("Invalid JSON: %s", jsonString)
 	}
@@ -442,7 +443,7 @@ func (b *TFBlueprintTest) GetTFSetupOutputListVal(key string) []string {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
-	return terraform.OutputList(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
+	return terraform.OutputListContext(b.t, context.Background(), &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
 // GetTFSetupStringOutput returns TF setup output for a given key as string.
@@ -457,7 +458,7 @@ func (b *TFBlueprintTest) GetTFSetupStringOutput(key string) string {
 	// allow only parallel reads as Terraform plugin cache isn't concurrent safe
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
-	return terraform.Output(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
+	return terraform.OutputContext(b.t, context.Background(), &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 }
 
 // GetTFSetupJsonOutput returns TF setup output for a given key as gjson.Result.
@@ -477,7 +478,7 @@ func (b *TFBlueprintTest) GetTFSetupJsonOutput(key string) gjson.Result {
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
 
-	jsonString := terraform.OutputJson(b.t, &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
+	jsonString := terraform.OutputJSONContext(b.t, context.Background(), &terraform.Options{TerraformDir: b.setupDir, Logger: b.logger, NoColor: true}, key)
 	if !gjson.Valid(jsonString) {
 		b.t.Fatalf("Invalid JSON: %s", jsonString)
 	}
@@ -632,12 +633,12 @@ func (b *TFBlueprintTest) DefineTeardown(teardown func(*assert.Assertions)) {
 
 // DefaultTeardown runs TF destroy on a blueprint.
 func (b *TFBlueprintTest) DefaultTeardown(assert *assert.Assertions) {
-	terraform.Destroy(b.t, b.GetTFOptions())
+	terraform.DestroyContext(b.t, context.Background(), b.GetTFOptions())
 }
 
 // DefaultVerify asserts no resource changes exist after apply.
 func (b *TFBlueprintTest) DefaultVerify(assert *assert.Assertions) {
-	e := terraform.PlanExitCode(b.t, b.GetTFOptions())
+	e := terraform.PlanExitCodeContext(b.t, context.Background(), b.GetTFOptions())
 	// exit code 0 is success with no diffs, 2 is success with non-empty diff
 	// https://www.terraform.io/docs/cli/commands/plan.html#detailed-exitcode
 	assert.NotEqual(1, e, "plan after apply should not fail")
@@ -646,10 +647,10 @@ func (b *TFBlueprintTest) DefaultVerify(assert *assert.Assertions) {
 
 // DefaultInit runs TF init and validate on a blueprint.
 func (b *TFBlueprintTest) DefaultInit(assert *assert.Assertions) {
-	terraform.Init(b.t, b.GetTFOptions())
+	terraform.InitContext(b.t, context.Background(), b.GetTFOptions())
 	// if vars are set for common options, this seems to trigger -var flag when calling validate
 	// using custom tfOptions as a workaround
-	terraform.Validate(b.t, terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
+	terraform.ValidateContext(b.t, context.Background(), terraform.WithDefaultRetryableErrors(b.t, &terraform.Options{
 		TerraformDir: b.tfDir,
 		Logger:       b.logger,
 		NoColor:      true,
@@ -675,7 +676,7 @@ func (b *TFBlueprintTest) DefaultApply(assert *assert.Assertions) {
 	if b.shouldRunTerraformVet() {
 		b.Vet(assert)
 	}
-	terraform.Apply(b.t, b.GetTFOptions())
+	terraform.ApplyContext(b.t, context.Background(), b.GetTFOptions())
 }
 
 // Init runs the default or custom init function for the blueprint.
@@ -708,11 +709,11 @@ func (b *TFBlueprintTest) PlanAndShow() (string, *terraform.PlanStruct) {
 	planOpts.PlanFilePath = filepath.Join(tDir, planFilename)
 	rUnlockFn := b.rLockFn()
 	defer rUnlockFn()
-	terraform.Plan(b.t, planOpts)
+	terraform.PlanContext(b.t, context.Background(), planOpts)
 	// Logging show output is not useful since we log plan output above
 	// and show output is parsed and retured.
 	planOpts.Logger = logger.Discard
-	planJSON := terraform.Show(b.t, planOpts)
+	planJSON := terraform.ShowContext(b.t, context.Background(), planOpts)
 	ps, err := terraform.ParsePlanJSON(planJSON)
 	assert.NoError(b.t, err)
 	return planJSON, ps
@@ -799,12 +800,12 @@ func (b *TFBlueprintTest) RedeployTest(n int, nVars map[int]map[string]interface
 		}
 	}
 	for i := 1; i <= n; i++ {
-		ws := terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), fmt.Sprintf("test-%d", i))
+		ws := terraform.WorkspaceSelectOrNewContext(b.t, context.Background(), b.GetTFOptions(), fmt.Sprintf("test-%d", i))
 		overrideVars(i)
 		utils.RunStage(initStage, func() { b.Init(a) })
 		defer func(i int) {
 			overrideVars(i)
-			terraform.WorkspaceSelectOrNew(b.t, b.GetTFOptions(), ws)
+			terraform.WorkspaceSelectOrNewContext(b.t, context.Background(), b.GetTFOptions(), ws)
 			utils.RunStage(teardownStage, func() { b.Teardown(a) })
 		}(i)
 		utils.RunStage(planStage, func() { b.Plan(a) })

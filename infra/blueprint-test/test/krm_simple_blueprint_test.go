@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -25,7 +26,7 @@ func TestKRMSimpleBlueprint(t *testing.T) {
 		func(assert *assert.Assertions) {
 			networkBlueprint.DefaultVerify(assert)
 			k8sOpts := k8s.KubectlOptions{}
-			op, err := k8s.RunKubectlAndGetOutputE(t, &k8sOpts, "get", "pod", "simple-krm-blueprint", "--no-headers", "-o", "custom-columns=:metadata.name")
+			op, err := k8s.RunKubectlAndGetOutputContextE(t, context.Background(), &k8sOpts, "get", "pod", "simple-krm-blueprint", "--no-headers", "-o", "custom-columns=:metadata.name")
 			assert.NoError(err)
 			result := strings.Split(op, "\n")
 			assert.Equal("simple-krm-blueprint", result[len(result)-1])

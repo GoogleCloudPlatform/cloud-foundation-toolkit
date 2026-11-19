@@ -17,6 +17,7 @@
 package test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -40,7 +41,7 @@ func TestRetryErrors(t *testing.T) {
 	// to terraform is in the `bpt.GetTFOptions()` function.
 	bpt.DefineApply(
 		func(assert *assert.Assertions) {
-			out, err := terraform.ApplyE(t, bpt.GetTFOptions())
+			out, err := terraform.ApplyContextE(t, context.Background(), bpt.GetTFOptions())
 			assert.Contains(out, "SERVICE_DISABLED")
 			errMsg := err.Error()
 			assert.Equal(errMsg, "'terraform [apply -input=false -auto-approve -no-color -lock=false]' unsuccessful after 2 retries")
