@@ -28,9 +28,14 @@ env:
 permissions:
   contents: read # peter-evans/create-pull-request uses secrets.CFT_ROBOT_PAT
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: false
+
 jobs:
   update-tools:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
 
     steps:

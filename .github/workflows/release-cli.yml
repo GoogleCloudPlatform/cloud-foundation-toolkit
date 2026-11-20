@@ -10,10 +10,17 @@ env:
   CLI_BUCKET: gs://cft-cli
   RELEASE_URL: https://api.github.com/repos/GoogleCloudPlatform/cloud-foundation-toolkit/releases/latest
 
+permissions: {}
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: false
+
 jobs:
   release-new-cli:
     name: Release new CLI versions
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
 
     permissions:
@@ -22,6 +29,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version-file: cli/go.mod
@@ -44,7 +53,7 @@ jobs:
 
       - name: Retrieve last released version
         run: |-
-          LAST_VERSION=$(curl --silent "${{env.RELEASE_URL}}" | \
+          LAST_VERSION=$(curl --silent "$RELEASE_URL" | \
             jq --raw-output .tag_name)
           echo "LAST_VERSION=${LAST_VERSION}" >> $GITHUB_ENV
 

@@ -7,17 +7,24 @@ on:
 
 permissions:
   contents: write
-  id-token: write
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: false
 
 jobs:
   release:
+    if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: 'tflint-ruleset-blueprint'
     steps:
     - name: Checkout
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        persist-credentials: false
     - name: Set up Go
       uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
       with:

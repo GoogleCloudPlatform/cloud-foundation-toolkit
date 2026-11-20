@@ -27,6 +27,10 @@ permissions:
   pull-requests: write
   actions: write
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.repository }}'
+  cancel-in-progress: false
+
 jobs:
   stale:
     if: github.repository_owner == 'GoogleCloudPlatform' || github.repository_owner == 'terraform-google-modules'

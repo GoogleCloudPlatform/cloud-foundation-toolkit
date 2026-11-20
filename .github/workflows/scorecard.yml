@@ -17,10 +17,16 @@ on:
 # Declare default permissions as read only.
 permissions: read-all
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: false
+
 jobs:
   analysis:
     name: Scorecard analysis
+    if: github.repository == 'GoogleCloudPlatform/cloud-foundation-toolkit'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       # Needed to upload the results to code-scanning dashboard.
       security-events: write

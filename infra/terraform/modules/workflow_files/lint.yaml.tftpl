@@ -37,15 +37,32 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' # v7.0.1
+        with:
+          persist-credentials: false
       - id: variables
         run: |
           MAKEFILE=$(find . -name Makefile -print -quit)
           if [ -z "$MAKEFILE" ]; then
             echo dev-tools=gcr.io/cloud-foundation-cicd/cft/developer-tools:1 >> "$GITHUB_OUTPUT"
           else
-            VERSION=$(grep "DOCKER_TAG_VERSION_DEVELOPER_TOOLS := " $MAKEFILE | cut -d\  -f3)
-            IMAGE=$(grep "DOCKER_IMAGE_DEVELOPER_TOOLS := " $MAKEFILE | cut -d\  -f3)
-            REGISTRY=$(grep "REGISTRY_URL := " $MAKEFILE | cut -d\  -f3)
+            VERSION=$(grep -m1 "^DOCKER_TAG_VERSION_DEVELOPER_TOOLS := " "$MAKEFILE" | cut -d' ' -f3 || true)
+            IMAGE=$(grep -m1 "^DOCKER_IMAGE_DEVELOPER_TOOLS := " "$MAKEFILE" | cut -d' ' -f3 || true)
+            REGISTRY=$(grep -m1 "^REGISTRY_URL := " "$MAKEFILE" | cut -d' ' -f3 || true)
+            case "$REGISTRY" in
+              gcr.io/cloud-foundation-cicd|us-docker.pkg.dev/cloud-foundation-cicd/gcr.io) ;;
+              *)
+                echo "Error: Unsupported REGISTRY_URL '$REGISTRY' in $MAKEFILE" >&2
+                exit 1
+                ;;
+            esac
+            if [[ ! "$IMAGE" =~ ^cft/developer-tools(-krm|-light|-jenkins)?$ ]]; then
+              echo "Error: Unsupported DOCKER_IMAGE_DEVELOPER_TOOLS '$IMAGE' in $MAKEFILE" >&2
+              exit 1
+            fi
+            if [[ ! "$VERSION" =~ ^[0-9]+(\.[0-9]+){0,2}([+-][A-Za-z0-9._-]+)?(@sha256:[a-f0-9]{64})?$ ]]; then
+              echo "Error: Invalid DOCKER_TAG_VERSION_DEVELOPER_TOOLS '$VERSION' in $MAKEFILE" >&2
+              exit 1
+            fi
             echo dev-tools=$${REGISTRY}/$${IMAGE}:$${VERSION} >> "$GITHUB_OUTPUT"
           fi
       - run: docker run --rm %{if lint_env != null }%{ for key, value in lint_env ~}-e ${key} %{ endfor ~}%{ endif }-v "$GITHUB_WORKSPACE":/workspace "$STEPS_VARIABLES_OUTPUTS_DEV_TOOLS" module-swapper
@@ -68,6 +85,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Setup node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:

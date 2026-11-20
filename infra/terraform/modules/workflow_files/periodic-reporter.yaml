@@ -27,6 +27,8 @@ concurrency:
   group: periodic-reporter-${{ github.repository }}
   cancel-in-progress: false
 
+permissions: {}
+
 jobs:
   report:
     if: github.repository_owner == 'GoogleCloudPlatform' || github.repository_owner == 'terraform-google-modules'
