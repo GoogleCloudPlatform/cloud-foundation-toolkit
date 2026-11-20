@@ -30,9 +30,10 @@ module "oidc" {
   source  = "terraform-google-modules/github-actions-runners/google//modules/gh-oidc"
   version = "~> 5.0"
 
-  project_id  = local.project_id
-  pool_id     = "cft-pool"
-  provider_id = "cft-gh-provider"
+  project_id          = local.project_id
+  pool_id             = "cft-pool"
+  provider_id         = "cft-gh-provider"
+  attribute_condition = "assertion.repository_owner == '${local.gh_orgs.infra}' && assertion.repository == '${local.gh_orgs.infra}/${local.gh_repos.infra}'"
   sa_mapping = {
     cft-github-actions = {
       sa_name   = module.service_accounts.service_account.name
