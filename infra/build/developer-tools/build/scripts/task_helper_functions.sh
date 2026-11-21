@@ -425,7 +425,7 @@ function check_documentation() {
     --exclude=".kitchen" \
     --exclude="autogen" \
     --exclude="*.tfvars" \
-    --exclude="*metadata.yaml" \
+    --exclude="metadata.yaml" \
     /workspace "${tempdir}/workspace"
   rc=$?
   if [[ "${rc}" -ne 0 ]]; then
