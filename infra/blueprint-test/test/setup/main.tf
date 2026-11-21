@@ -37,8 +37,9 @@ module "project" {
   folder_id         = var.folder_id
   billing_account   = var.billing_account
 
-  default_service_account  = "DEPRIVILEGE"
-  deletion_policy          = "DELETE"
+  default_service_account     = "DEPRIVILEGE"
+  deletion_policy             = "DELETE"
+  disable_services_on_destroy = false
 
   activate_apis = [
     "cloudresourcemanager.googleapis.com",
