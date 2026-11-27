@@ -11,12 +11,12 @@ require (
 	github.com/gruntwork-io/terratest v1.0.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20260904064934-75d64de68c31
 	github.com/hashicorp/terraform-json v0.29.0
-	github.com/mattn/go-shellwords v1.0.16
+	github.com/mattn/go-shellwords v1.0.17
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210821155943-2d9075ca8770
 	github.com/otiai10/copy v1.14.1
 	github.com/stretchr/testify v1.12.1
-	github.com/tidwall/gjson v1.20.2
-	github.com/tidwall/sjson v1.2.9
+	github.com/tidwall/gjson v1.20.5
+	github.com/tidwall/sjson v1.2.11
 	golang.org/x/mod v0.43.0
 	sigs.k8s.io/kustomize/kyaml v0.21.2
 )
